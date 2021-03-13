@@ -40,8 +40,15 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 include(TargetLinkSystemLibrary)
 include(ConfigureClangTidy)
 include(CppWarningFlags)
+include(CppFlags)
 
 set(NUM_COLLECT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_library(num_collect INTERFACE)
+target_include_directories(num_collect
+                           INTERFACE ${NUM_COLLECT_SOURCE_DIR}/include)
+target_link_libraries(num_collect INTERFACE num_collect_cpp_warnings
+                                            num_collect_cpp_flags)
 
 if(NUM_COLLECT_BUILD_DOC)
     # add_subdirectory(doc)
