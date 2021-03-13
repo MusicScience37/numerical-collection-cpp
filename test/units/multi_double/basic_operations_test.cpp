@@ -112,6 +112,78 @@ TEST_CASE("num_collect::multi_double::impl::split") {
     }
 }
 
+TEST_CASE("num_collect::multi_double::impl::two_prod_no_fma") {
+    using num_collect::multi_double::impl::two_prod_no_fma;
+
+    SECTION("calculate product without error") {
+        constexpr double a = 0x1.000001p+1;
+        constexpr double b = 0x1.0000001p+2;
+        constexpr double p_true = 0x1.0000011000001p+3;
+        constexpr double e_true = 0.0;
+        const auto [p, e] = two_prod_no_fma(a, b);
+        REQUIRE_THAT(p, Catch::Matchers::WithinULP(p_true, 0));
+        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+    }
+
+    SECTION("calculate product with error") {
+        constexpr double a = 0x1.0000001p+1;
+        constexpr double b = 0x1.0000008p-2;
+        constexpr double p_true = 0x1.0000009p-1;
+        constexpr double e_true = 0x1.0p-54;
+        const auto [p, e] = two_prod_no_fma(a, b);
+        REQUIRE_THAT(p, Catch::Matchers::WithinULP(p_true, 0));
+        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+    }
+
+    SECTION("calculate product with small error") {
+        constexpr double a = 0x1.0000000000001p+1;
+        constexpr double b = 0x1.0000000000001p-2;
+        constexpr double p_true = 0x1.0000000000002p-1;
+        constexpr double e_true = 0x1.0p-105;
+        const auto [p, e] = two_prod_no_fma(a, b);
+        REQUIRE_THAT(p, Catch::Matchers::WithinULP(p_true, 0));
+        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+    }
+}
+
+#ifdef __AVX2__
+
+TEST_CASE("num_collect::multi_double::impl::two_prod_fma") {
+    using num_collect::multi_double::impl::two_prod_fma;
+
+    SECTION("calculate product without error") {
+        constexpr double a = 0x1.000001p+1;
+        constexpr double b = 0x1.0000001p+2;
+        constexpr double p_true = 0x1.0000011000001p+3;
+        constexpr double e_true = 0.0;
+        const auto [p, e] = two_prod_fma(a, b);
+        REQUIRE_THAT(p, Catch::Matchers::WithinULP(p_true, 0));
+        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+    }
+
+    SECTION("calculate product with error") {
+        constexpr double a = 0x1.0000001p+1;
+        constexpr double b = 0x1.0000008p-2;
+        constexpr double p_true = 0x1.0000009p-1;
+        constexpr double e_true = 0x1.0p-54;
+        const auto [p, e] = two_prod_fma(a, b);
+        REQUIRE_THAT(p, Catch::Matchers::WithinULP(p_true, 0));
+        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+    }
+
+    SECTION("calculate product with small error") {
+        constexpr double a = 0x1.0000000000001p+1;
+        constexpr double b = 0x1.0000000000001p-2;
+        constexpr double p_true = 0x1.0000000000002p-1;
+        constexpr double e_true = 0x1.0p-105;
+        const auto [p, e] = two_prod_fma(a, b);
+        REQUIRE_THAT(p, Catch::Matchers::WithinULP(p_true, 0));
+        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+    }
+}
+
+#endif
+
 TEST_CASE("num_collect::multi_double::impl::two_prod") {
     using num_collect::multi_double::impl::two_prod;
 

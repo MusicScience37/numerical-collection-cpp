@@ -22,6 +22,10 @@
 
 #include <tuple>
 
+#ifdef __AVX2__
+#include <immintrin.h>
+#endif
+
 namespace num_collect::multi_double::impl {
 
 /*!
@@ -67,6 +71,45 @@ inline auto split(double a) -> std::tuple<double, double> {
 }
 
 /*!
+ * \brief calculate product of a and b, and error of the product without FMA
+ * instructions
+ *
+ * \param[in] a a number
+ * \param[in] b a number
+ * \return product of a and b, and error of product
+ */
+inline auto two_prod_no_fma(double a, double b) -> std::tuple<double, double> {
+    const double p = a * b;
+    const auto [a_h, a_l] = split(a);
+    const auto [b_h, b_l] = split(b);
+    const double e = ((a_h * b_h - p) + a_h * b_l + a_l * b_h) + a_l * b_l;
+    return {p, e};
+}
+
+#ifdef __AVX2__
+
+/*!
+ * \brief calculate product of a and b, and error of the product with FMA
+ * instructions
+ *
+ * \param[in] a a number
+ * \param[in] b a number
+ * \return product of a and b, and error of product
+ */
+inline auto two_prod_fma(double a, double b) -> std::tuple<double, double> {
+    const double p = a * b;
+    const __m128d a_mm = _mm_set_sd(a);
+    const __m128d b_mm = _mm_set_sd(b);
+    const __m128d p_mm = _mm_set_sd(p);
+    const __m128d e_mm = _mm_fmsub_sd(a_mm, b_mm, p_mm);
+    double e = 0.0;
+    _mm_store_sd(&e, e_mm);
+    return {p, e};
+}
+
+#endif
+
+/*!
  * \brief calculate product of a and b, and error of the product
  *
  * \param[in] a a number
@@ -74,11 +117,11 @@ inline auto split(double a) -> std::tuple<double, double> {
  * \return product of a and b, and error of product
  */
 inline auto two_prod(double a, double b) -> std::tuple<double, double> {
-    const double p = a * b;
-    const auto [a_h, a_l] = split(a);
-    const auto [b_h, b_l] = split(b);
-    const double e = ((a_h * b_h - p) + a_h * b_l + a_l * b_h) + a_l * b_l;
-    return {p, e};
+#ifdef __AVX2__
+    return two_prod_fma(a, b);
+#else
+    return two_prod_no_fma(a, b);
+#endif
 }
 
 }  // namespace num_collect::multi_double::impl

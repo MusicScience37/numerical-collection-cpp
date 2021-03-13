@@ -43,7 +43,9 @@ if(HAVE_AVX2_EXTENSIONS)
         if(MSVC)
             target_compile_options(num_collect_cpp_flags INTERFACE /arch:AVX2)
         else()
-            target_compile_options(num_collect_cpp_flags INTERFACE -mavx2)
+            # FMA can be used if AVX2 can be used, but individual flags are
+            # needed.
+            target_compile_options(num_collect_cpp_flags INTERFACE -mfma -mavx2)
         endif()
     endif()
 endif()
