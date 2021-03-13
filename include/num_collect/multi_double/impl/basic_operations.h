@@ -30,12 +30,12 @@ namespace num_collect::multi_double::impl {
  *
  * \param[in] a a number
  * \param[in] b a number
- * \param[out] s sum of a and b
- * \param[out] e error of sum
+ * \return sum of a and b, and error of sum
  */
-inline void quick_two_sum(double a, double b, double& s, double& e) {
-    s = a + b;
-    e = b - (s - a);
+inline auto quick_two_sum(double a, double b) -> std::tuple<double, double> {
+    const double s = a + b;
+    const double e = b - (s - a);
+    return {s, e};
 }
 
 /*!
@@ -43,13 +43,42 @@ inline void quick_two_sum(double a, double b, double& s, double& e) {
  *
  * \param[in] a a number
  * \param[in] b a number
- * \param[out] s sum of a and b
- * \param[out] e error of sum
+ * \return sum of a and b, and error of sum
  */
-inline void two_sum(double a, double b, double& s, double& e) {
-    s = a + b;
-    double v = s - a;
-    e = (a - (s - v)) + (b - v);
+inline auto two_sum(double a, double b) -> std::tuple<double, double> {
+    const double s = a + b;
+    const double v = s - a;
+    const double e = (a - (s - v)) + (b - v);
+    return {s, e};
+}
+
+/*!
+ * \brief split a number to higher bits and lower bits
+ *
+ * \param[in] a a number
+ * \return higher bits and lower bits
+ */
+inline auto split(double a) -> std::tuple<double, double> {
+    constexpr double coeff = 0x1.0p+27 + 1.0;
+    const double t = coeff * a;
+    const double a_h = t - (t - a);
+    const double a_l = a - a_h;
+    return {a_h, a_l};
+}
+
+/*!
+ * \brief calculate product of a and b, and error of the product
+ *
+ * \param[in] a a number
+ * \param[in] b a number
+ * \return product of a and b, and error of product
+ */
+inline auto two_prod(double a, double b) -> std::tuple<double, double> {
+    const double p = a * b;
+    const auto [a_h, a_l] = split(a);
+    const auto [b_h, b_l] = split(b);
+    const double e = ((a_h * b_h - p) + a_h * b_l + a_l * b_h) + a_l * b_l;
+    return {p, e};
 }
 
 }  // namespace num_collect::multi_double::impl
