@@ -20,7 +20,7 @@ macro(target_add_catch2 TARGET)
         set(CATCH2_REPORT_OPTIONS -r junit -o
                                   ${NUM_COLLECT_JUNIT_DIR}/${TARGET}.xml)
     else()
-        set(CATCH2_REPORT_OPTIONS -r compact)
+        set(CATCH2_REPORT_OPTIONS -r console)
     endif()
 
     add_test(
@@ -30,3 +30,8 @@ macro(target_add_catch2 TARGET)
 endmacro()
 
 add_subdirectory(units)
+option(NUM_COLLECT_ENABLE_BENCH "enable benchmarks of numeric-collection-cpp"
+       OFF)
+if(NUM_COLLECT_ENABLE_BENCH)
+    add_subdirectory(bench)
+endif()
