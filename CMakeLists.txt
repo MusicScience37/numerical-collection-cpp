@@ -34,7 +34,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY $<1:${CMAKE_BINARY_DIR}/lib>)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY $<1:${CMAKE_BINARY_DIR}/lib>)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY $<1:${CMAKE_BINARY_DIR}/bin>)
 
-# add_subdirectory(extern)
+add_subdirectory(extern)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 include(TargetLinkSystemLibrary)
@@ -55,5 +55,5 @@ if(NUM_COLLECT_BUILD_DOC)
 endif()
 
 if(NUM_COLLECT_TESTING)
-    # add_subdirectory(test)
+    add_subdirectory(test)
 endif()
