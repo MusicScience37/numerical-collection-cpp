@@ -30,7 +30,7 @@ namespace num_collect::multi_double::impl {
 
 /*!
  * \brief calculate sum of a and b, and error of the sum
- *        on the condition that $|a| \ge |b|$
+ *        on the condition that absolute value of a is larger than one of b
  *
  * \param[in] a a number
  * \param[in] b a number
