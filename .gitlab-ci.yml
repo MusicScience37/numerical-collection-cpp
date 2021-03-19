@@ -13,6 +13,20 @@ stages:
     max: 2
     when: runner_system_failure
 
+sync pipenv:
+  extends: .retry setting
+  stage: Prepare
+  dependencies: []
+  image: musicscience37/clang-ci:clang10-v3.0
+  script:
+    - mkdir -p .venv
+    - pipenv install --dev --python 3.8
+  artifacts:
+    paths:
+      - .venv
+      - Pipfile.lock
+    expire_in: "3 mos"
+
 line count:
   extends: .retry setting
   stage: Prepare
@@ -168,3 +182,41 @@ gcc-10-release:
   image: musicscience37/gcc-ci:gcc10-v3.0
   variables:
     BUILD_DIR: build_gcc10_release
+
+doc:
+  extends: .retry setting
+  stage: Build Documentation
+  needs:
+    - sync pipenv
+  dependencies:
+    - sync pipenv
+  image: musicscience37/sphinx-doxygen:v-3.0
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  script:
+    - mkdir build_doc
+    - cmake -S ./ -B build_doc
+      -DNUM_COLLECT_BUILD_DOC:BOOL=ON
+    - cmake --build build_doc --target num_collect_doc
+  artifacts:
+    paths:
+      - build_doc
+    when: always
+    expire_in: "3 mos"
+
+pages:
+  extends: .retry setting
+  stage: Publish
+  #only:
+  #  - develop
+  needs:
+    - doc
+  dependencies:
+    - doc
+  script:
+    - mkdir public
+    - mv build_doc/doc/sphinx/html public/sphinx
+    - mv build_doc/doc/doxygen/html public/doxygen
+  artifacts:
+    paths:
+      - public
