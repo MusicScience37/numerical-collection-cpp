@@ -207,8 +207,8 @@ doc:
 pages:
   extends: .retry setting
   stage: Publish
-  #only:
-  #  - develop
+  only:
+    - develop
   needs:
     - doc
   dependencies:
