@@ -68,7 +68,7 @@ add_custom_target(
     COMMAND
         ${PIPENV_EXECUTABLE} run sphinx-build -M html
         ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_BINARY_DIR}
-        ${NUM_COLLECT_SPHINX_OPTIONS}
+        ${NUM_COLLECT_SPHINX_OPTIONS} -q
     COMMENT "Generate Sphinx html API documentation for num_collect"
     WORKING_DIRECTORY ${NUM_COLLECT_SOURCE_DIR})
 
