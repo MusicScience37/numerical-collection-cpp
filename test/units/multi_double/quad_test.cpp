@@ -80,4 +80,28 @@ TEST_CASE("num_collect::multi_double::quad") {
             dif.high(), Catch::Matchers::WithinULP(dif_true.high(), 0));
         REQUIRE_THAT(dif.low(), Catch::Matchers::WithinULP(dif_true.low(), 0));
     }
+
+    SECTION("multiply quad numbers with operator*= (1)") {
+        constexpr auto a = quad(0x1.0p+1, 0x0.1p-51);
+        constexpr auto b = quad(0x1.0p+2, 0x0.2p-50);
+        constexpr auto prod_true = quad(0x1.0p+3, 0x0.3p-49);
+        auto prod = a;
+        prod *= b;
+        REQUIRE_THAT(
+            prod.high(), Catch::Matchers::WithinULP(prod_true.high(), 0));
+        REQUIRE_THAT(
+            prod.low(), Catch::Matchers::WithinULP(prod_true.low(), 0));
+    }
+
+    SECTION("multiply quad numbers with operator*= (2)") {
+        constexpr auto a = quad(0x1.0000001p+1);
+        constexpr auto b = quad(0x1.0000001p+2);
+        constexpr auto prod_true = quad(0x1.0000002p+3, 0x0.1p-49);
+        auto prod = a;
+        prod *= b;
+        REQUIRE_THAT(
+            prod.high(), Catch::Matchers::WithinULP(prod_true.high(), 0));
+        REQUIRE_THAT(
+            prod.low(), Catch::Matchers::WithinULP(prod_true.low(), 0));
+    }
 }
