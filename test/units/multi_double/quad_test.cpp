@@ -68,4 +68,16 @@ TEST_CASE("num_collect::multi_double::quad") {
             sum.high(), Catch::Matchers::WithinULP(sum_true.high(), 0));
         REQUIRE_THAT(sum.low(), Catch::Matchers::WithinULP(sum_true.low(), 0));
     }
+
+    SECTION("subtract a quad number with operator-=") {
+        constexpr auto a = quad(0x1.0000000000001p+0, 0x0.7000000000001p-52);
+        constexpr auto b = quad(-0x1.0000000000007p+0, -0x0.8000000000002p-52);
+        constexpr auto dif_true =
+            quad(0x2.0000000000008p+0, 0x0.F000000000003p-52);
+        auto dif = a;
+        dif -= b;
+        REQUIRE_THAT(
+            dif.high(), Catch::Matchers::WithinULP(dif_true.high(), 0));
+        REQUIRE_THAT(dif.low(), Catch::Matchers::WithinULP(dif_true.low(), 0));
+    }
 }

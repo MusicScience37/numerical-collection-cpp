@@ -33,7 +33,7 @@ public:
     /*!
      * \brief construct zero
      */
-    constexpr quad() = default;
+    constexpr quad() noexcept = default;
 
     /*!
      * \brief construct
@@ -41,7 +41,7 @@ public:
      * \param[in] high higher digits
      * \param[in] low lower digits
      */
-    constexpr quad(double high, double low) : high_(high), low_(low) {}
+    constexpr quad(double high, double low) noexcept : high_(high), low_(low) {}
 
     /*!
      * \brief convert implicitly
@@ -53,7 +53,7 @@ public:
         std::enable_if_t<(std::is_integral_v<Scalar> ||
             std::is_floating_point_v<Scalar>)&&(!std::is_same_v<Scalar,
                                                 quad>)>* = nullptr>
-    constexpr quad(Scalar value)  // NOLINT
+    constexpr quad(Scalar value) noexcept  // NOLINT
         : high_(static_cast<double>(value)) {}
 
     /*!
@@ -71,17 +71,34 @@ public:
     [[nodiscard]] auto low() const noexcept -> double { return low_; }
 
     /*!
+     * \brief negate this number
+     *
+     * \return negated number
+     */
+    auto operator-() const noexcept -> quad { return quad(-high_, -low_); }
+
+    /*!
      * \brief add another number
      *
-     * \param[in] right nother number
+     * \param[in] right another number
      * \return this
      */
-    auto operator+=(const quad& right) -> quad& {
+    auto operator+=(const quad& right) noexcept -> quad& {
         auto [x_h, x_l] = impl::two_sum(high_, right.high_);
         x_l += low_;
         x_l += right.low_;
         std::tie(high_, low_) = impl::quick_two_sum(x_h, x_l);
         return *this;
+    }
+
+    /*!
+     * \brief subtract another number
+     *
+     * \param[in] right another number
+     * \return this
+     */
+    auto operator-=(const quad& right) noexcept -> quad& {
+        return operator+=(-right);
     }
 
 private:
