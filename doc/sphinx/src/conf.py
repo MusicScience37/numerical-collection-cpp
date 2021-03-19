@@ -50,7 +50,7 @@ breathe_projects = {'num_collect': ''}
 
 breathe_default_project = 'num_collect'
 
-breathe_default_members = ('members')
+breathe_default_members = ('members',)
 
 breathe_domain_by_extension = {
     "h": "cpp",
