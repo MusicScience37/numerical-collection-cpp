@@ -1,0 +1,95 @@
+/*
+ * Copyright 2021 MusicScience37 (Kenta Kabashima)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*!
+ * \file
+ * \brief declaration and implementation of quad class
+ */
+#pragma once
+
+#include <type_traits>
+
+#include "num_collect/multi_double/impl/basic_operations.h"
+
+namespace num_collect::multi_double {
+
+/*!
+ * \brief class of quadruple precision floating-point numbers
+ */
+class quad {
+public:
+    /*!
+     * \brief construct zero
+     */
+    constexpr quad() = default;
+
+    /*!
+     * \brief construct
+     *
+     * \param[in] high higher digits
+     * \param[in] low lower digits
+     */
+    constexpr quad(double high, double low) : high_(high), low_(low) {}
+
+    /*!
+     * \brief convert implicitly
+     *
+     * \tparam Scalar type of scalar value
+     * \param[in] value value
+     */
+    template <typename Scalar,
+        std::enable_if_t<(std::is_integral_v<Scalar> ||
+            std::is_floating_point_v<Scalar>)&&(!std::is_same_v<Scalar,
+                                                quad>)>* = nullptr>
+    constexpr quad(Scalar value)  // NOLINT
+        : high_(static_cast<double>(value)) {}
+
+    /*!
+     * \brief get higher digits
+     *
+     * \return higher digits
+     */
+    [[nodiscard]] auto high() const noexcept -> double { return high_; }
+
+    /*!
+     * \brief get lower digits
+     *
+     * \return lower digits
+     */
+    [[nodiscard]] auto low() const noexcept -> double { return low_; }
+
+    /*!
+     * \brief add another number
+     *
+     * \param[in] right nother number
+     * \return this
+     */
+    auto operator+=(const quad& right) -> quad& {
+        auto [x_h, x_l] = impl::two_sum(high_, right.high_);
+        x_l += low_;
+        x_l += right.low_;
+        std::tie(high_, low_) = impl::quick_two_sum(x_h, x_l);
+        return *this;
+    }
+
+private:
+    //! higher digits
+    double high_{0.0};
+
+    //! lower digits
+    double low_{0.0};
+};
+
+}  // namespace num_collect::multi_double

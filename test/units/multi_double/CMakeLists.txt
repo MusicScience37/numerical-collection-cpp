@@ -1,2 +1,3 @@
-add_executable(num_collect_test_units_multi_double basic_operations_test.cpp)
+add_executable(num_collect_test_units_multi_double basic_operations_test.cpp
+                                                   quad_test.cpp)
 target_add_catch2(num_collect_test_units_multi_double)
