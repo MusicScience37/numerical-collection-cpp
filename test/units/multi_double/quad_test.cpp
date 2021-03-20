@@ -115,4 +115,16 @@ TEST_CASE("num_collect::multi_double::quad") {
         REQUIRE_THAT(
             prod.low(), Catch::Matchers::WithinULP(prod_true.low(), 0));
     }
+
+    SECTION("divide a quad number with another quad number with operator/=") {
+        constexpr auto a = quad(0x1.0p+3, 0x0.3p-49);
+        constexpr auto b = quad(0x1.0p+1, 0x0.1p-51);
+        constexpr auto quotient_true = quad(0x1.0p+2, 0x0.2p-50);
+        auto quotient = a;
+        quotient /= b;
+        REQUIRE_THAT(quotient.high(),
+            Catch::Matchers::WithinULP(quotient_true.high(), 0));
+        REQUIRE_THAT(
+            quotient.low(), Catch::Matchers::WithinULP(quotient_true.low(), 0));
+    }
 }

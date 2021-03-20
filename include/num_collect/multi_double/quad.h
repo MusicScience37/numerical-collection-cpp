@@ -115,6 +115,23 @@ public:
         return *this;
     }
 
+    /*!
+     * \brief divide by another number
+     *
+     * \param[in] right another number
+     * \return this
+     */
+    auto operator/=(const quad& right) noexcept -> quad& {
+        const double inv_right_h = 1.0 / right.high_;
+        const double rate_right = right.low_ * inv_right_h;
+        const double x_h = high_ * inv_right_h;
+        const auto [r_1, r_2] = impl::two_prod(x_h, right.high_);
+        double x_l = ((high_ - r_1) - r_2) * inv_right_h;
+        x_l += x_h * ((low_ / high_) - rate_right);
+        std::tie(high_, low_) = impl::quick_two_sum(x_h, x_l);
+        return *this;
+    }
+
 private:
     //! higher digits
     double high_{0.0};
