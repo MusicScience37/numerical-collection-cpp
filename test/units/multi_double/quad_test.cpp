@@ -46,6 +46,8 @@ TEST_CASE("num_collect::multi_double::quad") {
         REQUIRE_THAT(num.low(), Catch::Matchers::WithinULP(0.0, 0));
     }
 
+    constexpr std::uint64_t ulp_limit = 8;
+
     SECTION("add a quad number with operator+= (1)") {
         constexpr auto a = quad(0x1.0000000000001p+0, 0x0.7000000000001p-52);
         constexpr auto b = quad(0x1.0000000000007p+0, 0x0.8000000000002p-52);
@@ -55,7 +57,8 @@ TEST_CASE("num_collect::multi_double::quad") {
         sum += b;
         REQUIRE_THAT(
             sum.high(), Catch::Matchers::WithinULP(sum_true.high(), 0));
-        REQUIRE_THAT(sum.low(), Catch::Matchers::WithinULP(sum_true.low(), 0));
+        REQUIRE_THAT(
+            sum.low(), Catch::Matchers::WithinULP(sum_true.low(), ulp_limit));
     }
 
     SECTION("add a quad number with operator+= (2)") {
@@ -66,7 +69,8 @@ TEST_CASE("num_collect::multi_double::quad") {
         sum += b;
         REQUIRE_THAT(
             sum.high(), Catch::Matchers::WithinULP(sum_true.high(), 0));
-        REQUIRE_THAT(sum.low(), Catch::Matchers::WithinULP(sum_true.low(), 0));
+        REQUIRE_THAT(
+            sum.low(), Catch::Matchers::WithinULP(sum_true.low(), ulp_limit));
     }
 
     SECTION("add a quad number with operator+= (3)") {
@@ -77,10 +81,27 @@ TEST_CASE("num_collect::multi_double::quad") {
         sum += b;
         REQUIRE_THAT(
             sum.high(), Catch::Matchers::WithinULP(sum_true.high(), 0));
-        REQUIRE_THAT(sum.low(), Catch::Matchers::WithinULP(sum_true.low(), 0));
+        REQUIRE_THAT(
+            sum.low(), Catch::Matchers::WithinULP(sum_true.low(), ulp_limit));
     }
 
-    SECTION("subtract a quad number with operator-=") {
+    SECTION("add a quad number with operator+= (4)") {
+        // 0x1.fb15fa86d92b228b6596fdb93fp+0
+        constexpr auto a = quad(0x1.fb15fa86d92b2p+0, 0x0.28b6596fdb93fp-52);
+        // 0x1.22738c56c3ecf61e3f58931ec2p+0
+        constexpr auto b = quad(0x1.22738c56c3ecfp+0, 0x0.61e3f58931ec2p-52);
+        // 0x3.1d8986dd9d1818a9a4ef90d801p+0
+        constexpr auto sum_true =
+            quad(0x3.1d8986dd9d182p+0, 0x0.8a9a4ef90d801p-52 - 0x1.0p-52);
+        auto sum = a;
+        sum += b;
+        REQUIRE_THAT(
+            sum.high(), Catch::Matchers::WithinULP(sum_true.high(), 0));
+        REQUIRE_THAT(
+            sum.low(), Catch::Matchers::WithinULP(sum_true.low(), ulp_limit));
+    }
+
+    SECTION("subtract a quad number with operator-= (1)") {
         constexpr auto a = quad(0x1.0000000000001p+0, 0x0.7000000000001p-52);
         constexpr auto b = quad(-0x1.0000000000007p+0, -0x0.8000000000002p-52);
         constexpr auto dif_true =
@@ -89,7 +110,24 @@ TEST_CASE("num_collect::multi_double::quad") {
         dif -= b;
         REQUIRE_THAT(
             dif.high(), Catch::Matchers::WithinULP(dif_true.high(), 0));
-        REQUIRE_THAT(dif.low(), Catch::Matchers::WithinULP(dif_true.low(), 0));
+        REQUIRE_THAT(
+            dif.low(), Catch::Matchers::WithinULP(dif_true.low(), ulp_limit));
+    }
+
+    SECTION("subtract a quad number with operator-= (2)") {
+        // 0x1.fb15fa86d92b228b6596fdb93fp+0
+        constexpr auto a = quad(0x1.fb15fa86d92b2p+0, 0x0.28b6596fdb93fp-52);
+        // 0x1.22738c56c3ecf61e3f58931ec2p+0
+        constexpr auto b = quad(0x1.22738c56c3ecfp+0, 0x0.61e3f58931ec2p-52);
+        // 0xd.8a26e30153e2c6d263e6a9a7dp-4
+        constexpr auto dif_true =
+            quad(0xd.8a26e30153e30p-4, 0xc.6d263e6a9a7dp-56 - 0x10.0p-56);
+        auto dif = a;
+        dif -= b;
+        REQUIRE_THAT(
+            dif.high(), Catch::Matchers::WithinULP(dif_true.high(), 0));
+        REQUIRE_THAT(
+            dif.low(), Catch::Matchers::WithinULP(dif_true.low(), ulp_limit));
     }
 
     SECTION("multiply quad numbers with operator*= (1)") {
@@ -101,7 +139,7 @@ TEST_CASE("num_collect::multi_double::quad") {
         REQUIRE_THAT(
             prod.high(), Catch::Matchers::WithinULP(prod_true.high(), 0));
         REQUIRE_THAT(
-            prod.low(), Catch::Matchers::WithinULP(prod_true.low(), 0));
+            prod.low(), Catch::Matchers::WithinULP(prod_true.low(), ulp_limit));
     }
 
     SECTION("multiply quad numbers with operator*= (2)") {
@@ -113,10 +151,27 @@ TEST_CASE("num_collect::multi_double::quad") {
         REQUIRE_THAT(
             prod.high(), Catch::Matchers::WithinULP(prod_true.high(), 0));
         REQUIRE_THAT(
-            prod.low(), Catch::Matchers::WithinULP(prod_true.low(), 0));
+            prod.low(), Catch::Matchers::WithinULP(prod_true.low(), ulp_limit));
     }
 
-    SECTION("divide a quad number with another quad number with operator/=") {
+    SECTION("multiply quad numbers with operator*= (3)") {
+        // 0x1.fb15fa86d92b228b6596fdb93fp+0
+        constexpr auto a = quad(0x1.fb15fa86d92b2p+0, 0x0.28b6596fdb93fp-52);
+        // 0x1.22738c56c3ecf61e3f58931ec2p+0
+        constexpr auto b = quad(0x1.22738c56c3ecfp+0, 0x0.61e3f58931ec2p-52);
+        // 0x2.3f53c6a82f11712dad9c5fd34db6p+0
+        constexpr auto prod_true =
+            quad(0x2.3f53c6a82f118p+0, 0x0.12dad9c5fd34dp-52 - 0x1.0p-52);
+        auto prod = a;
+        prod *= b;
+        REQUIRE_THAT(
+            prod.high(), Catch::Matchers::WithinULP(prod_true.high(), 0));
+        REQUIRE_THAT(
+            prod.low(), Catch::Matchers::WithinULP(prod_true.low(), ulp_limit));
+    }
+
+    SECTION(
+        "divide a quad number with another quad number with operator/= (1)") {
         constexpr auto a = quad(0x1.0p+3, 0x0.3p-49);
         constexpr auto b = quad(0x1.0p+1, 0x0.1p-51);
         constexpr auto quotient_true = quad(0x1.0p+2, 0x0.2p-50);
@@ -124,7 +179,24 @@ TEST_CASE("num_collect::multi_double::quad") {
         quotient /= b;
         REQUIRE_THAT(quotient.high(),
             Catch::Matchers::WithinULP(quotient_true.high(), 0));
-        REQUIRE_THAT(
-            quotient.low(), Catch::Matchers::WithinULP(quotient_true.low(), 0));
+        REQUIRE_THAT(quotient.low(),
+            Catch::Matchers::WithinULP(quotient_true.low(), ulp_limit));
+    }
+
+    SECTION(
+        "divide a quad number with another quad number with operator/= (2)") {
+        // 0x1.fb15fa86d92b228b6596fdb93fp+0
+        constexpr auto a = quad(0x1.fb15fa86d92b2p+0, 0x0.28b6596fdb93fp-52);
+        // 0x1.22738c56c3ecf61e3f58931ec2p+0
+        constexpr auto b = quad(0x1.22738c56c3ecfp+0, 0x0.61e3f58931ec2p-52);
+        // 0x1.bef0545a14fda729d96fa6624b59p+0
+        constexpr auto quotient_true =
+            quad(0x1.bef0545a14fdap+0, 0x0.729d96fa6624bp-52);
+        auto quotient = a;
+        quotient /= b;
+        REQUIRE_THAT(quotient.high(),
+            Catch::Matchers::WithinULP(quotient_true.high(), 0));
+        REQUIRE_THAT(quotient.low(),
+            Catch::Matchers::WithinULP(quotient_true.low(), ulp_limit));
     }
 }
