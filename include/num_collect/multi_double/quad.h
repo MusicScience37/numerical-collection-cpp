@@ -140,4 +140,48 @@ private:
     double low_{0.0};
 };
 
+/*!
+ * \brief add two number
+ *
+ * \param[in] left left-hand-side number
+ * \param[in] right right-hand-side number
+ * \return result
+ */
+inline auto operator+(const quad& left, const quad& right) -> quad {
+    return quad(left) += right;
+}
+
+/*!
+ * \brief substruct a number from a number
+ *
+ * \param[in] left left-hand-side number
+ * \param[in] right right-hand-side number
+ * \return result
+ */
+inline auto operator-(const quad& left, const quad& right) -> quad {
+    return quad(left) -= right;
+}
+
+/*!
+ * \brief multiply a number by a number
+ *
+ * \param[in] left left-hand-side number
+ * \param[in] right right-hand-side number
+ * \return result
+ */
+inline auto operator*(const quad& left, const quad& right) -> quad {
+    return quad(left) *= right;
+}
+
+/*!
+ * \brief divide a number by a number
+ *
+ * \param[in] left left-hand-side number
+ * \param[in] right right-hand-side number
+ * \return result
+ */
+inline auto operator/(const quad& left, const quad& right) -> quad {
+    return quad(left) /= right;
+}
+
 }  // namespace num_collect::multi_double
