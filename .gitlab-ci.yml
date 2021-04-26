@@ -186,7 +186,7 @@ gcc-10-release:
   variables:
     BUILD_DIR: build_gcc10_release
 
-clang-11-conan:
+.clang-11-conan-base:
   extends: .retry setting
   stage: Test with Clang
   needs:
@@ -200,6 +200,26 @@ clang-11-conan:
     - pipenv run conan install num_collect/${NUM_COLLECT_VERSION}@${CONAN_USER_CHANNEL} --build=num_collect
     - pipenv run conan test test/conan_package num_collect/${NUM_COLLECT_VERSION}@${CONAN_USER_CHANNEL}
     - CONAN_LOGIN_USERNAME=ci_user CONAN_PASSWORD=${CI_JOB_TOKEN} pipenv run conan upload num_collect/${NUM_COLLECT_VERSION}@${CONAN_USER_CHANNEL} --all --remote=gitlab
+
+clang-11-conan:
+  extends: .clang-11-conan-base
+  except:
+    - develop
+    - master
+
+clang-11-conan-dev:
+  extends: .clang-11-conan-base
+  variables:
+    CONAN_USER_CHANNEL: "MusicScience37+numerical-collection-cpp/dev"
+  only:
+    - develop
+
+clang-11-conan-master:
+  extends: .clang-11-conan-base
+  variables:
+    CONAN_USER_CHANNEL: "MusicScience37+numerical-collection-cpp/stable"
+  only:
+    - master
 
 doc:
   extends: .retry setting
