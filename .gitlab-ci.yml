@@ -17,7 +17,7 @@ sync pipenv:
   extends: .retry setting
   stage: Prepare
   dependencies: []
-  image: musicscience37/clang-ci:clang10-v3.0
+  image: musicscience37/clang-ci:clang11-v3.2.1
   script:
     - mkdir -p .venv
     - pipenv install --dev --python 3.8
@@ -53,7 +53,7 @@ static analysis:
   needs:
     - line count
   dependencies: []
-  image: musicscience37/clang-ci:clang10-v3.0
+  image: musicscience37/clang-ci:clang11-v3.2.1
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   before_script:
@@ -127,7 +127,7 @@ static analysis:
 clang coverage:
   extends: .release-test-base
   stage: Test with Clang
-  image: musicscience37/clang-ci:clang10-v3.0
+  image: musicscience37/clang-ci:clang11-v3.2.1
   variables:
     BUILD_DIR: build_clang_coverage
   script:
@@ -150,7 +150,7 @@ clang coverage:
 gcc coverage:
   extends: .release-test-base
   stage: Test with GCC
-  image: musicscience37/gcc-ci:gcc10-v3.0
+  image: musicscience37/gcc-ci:gcc10-v3.2
   variables:
     BUILD_DIR: build_gcc_coverage
   script:
@@ -172,7 +172,7 @@ gcc coverage:
 gcc-10-debug:
   extends: .debug-test-base
   stage: Test with GCC
-  image: musicscience37/gcc-ci:gcc10-v3.0
+  image: musicscience37/gcc-ci:gcc10-v3.2
   variables:
     BUILD_DIR: build_gcc10_debug
 
@@ -190,7 +190,7 @@ doc:
     - sync pipenv
   dependencies:
     - sync pipenv
-  image: musicscience37/sphinx-doxygen:v-3.0
+  image: musicscience37/sphinx-doxygen:v-3.2
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   script:
