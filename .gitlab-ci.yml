@@ -8,6 +8,9 @@ stages:
   - Build Documentation
   - Publish
 
+variables:
+  NUM_COLLECT_VERSION: "0.0.0"
+
 .retry setting:
   retry:
     max: 2
@@ -182,6 +185,21 @@ gcc-10-release:
   image: musicscience37/gcc-ci:gcc10-v3.0
   variables:
     BUILD_DIR: build_gcc10_release
+
+clang-11-conan:
+  extends: .retry setting
+  stage: Test with Clang
+  needs:
+    - sync pipenv
+  image: musicscience37/clang-ci:clang11-v3.2.1
+  variables:
+    CONAN_USER_CHANNEL: "MusicScience37+numerical-collection-cpp/testing"
+  script:
+    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan export . ${CONAN_USER_CHANNEL}
+    - pipenv run conan install num_collect/${NUM_COLLECT_VERSION}@${CONAN_USER_CHANNEL} --build=num_collect
+    - pipenv run conan test test/conan_package num_collect/${NUM_COLLECT_VERSION}@${CONAN_USER_CHANNEL}
+    - CONAN_LOGIN_USERNAME=ci_user CONAN_PASSWORD=${CI_JOB_TOKEN} pipenv run conan upload num_collect/${NUM_COLLECT_VERSION}@${CONAN_USER_CHANNEL} --all --remote=gitlab
 
 doc:
   extends: .retry setting
