@@ -13,6 +13,8 @@ class NumCollectConan(ConanFile):
     settings = None
     exports_sources = "include/*"
     no_copy_source = True
+    requires = "fmt/7.1.3"
+    generators = "cmake_find_package"
 
     def package(self):
         self.copy("*.h")
