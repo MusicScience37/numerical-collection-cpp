@@ -74,6 +74,7 @@ static analysis:
       -DNUM_COLLECT_ENABLE_CLANG_TIDY:BOOL=ON
       -DNUM_COLLECT_TESTING:BOOL=ON
       -DNUM_COLLECT_ENABLE_BENCH=ON
+      -DNUM_COLLECT_BUILD_EXAMPLES=ON
       -DNUM_COLLECT_ENABLE_CPP_WARNINGS:BOOL=ON
     - cmake --build build_static_analysis
       --target num_collect_clang_tidy
