@@ -1,0 +1,2 @@
+add_executable(num_collect_test_units_opt golden_section_search_test.cpp)
+target_add_catch2(num_collect_test_units_opt)
