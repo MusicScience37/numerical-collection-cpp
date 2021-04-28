@@ -20,6 +20,7 @@
 #pragma once
 
 #include "num_collect/util/index_type.h"
+#include "num_collect/util/iteration_logger.h"
 
 namespace num_collect::opt {
 
@@ -63,18 +64,48 @@ public:
     }
 
     /*!
+     * \brief Set information of the last iteration to logger.
+     *
+     * \param[in] logger Iteration logger.
+     */
+    void set_info_to(iteration_logger& logger) const {
+        derived().set_info_to(logger);
+    }
+
+    /*!
+     * \brief Solve the problem.
+     *
+     * Iterate the algorithm until the stopping criteria are satisfied.
+     *
+     * \warning `init` function is assumed to have been called before call to
+     * `solve` function.
+     *
+     * \param[in] logging_stream Stream to write logs.
+     */
+    void solve(std::ostream& logging_stream) {
+        iteration_logger logger;
+        set_info_to(logger);
+        logger.write_to(logging_stream);
+        while (!is_stop_criteria_satisfied()) {
+            iterate();
+            set_info_to(logger);
+            logger.write_to(logging_stream);
+        }
+    }
+
+    /*!
      * \brief Get current optimal variable.
      *
      * \return Current optimal variable.
      */
-    [[nodiscard]] auto opt_variable() const { derived().opt_variable(); }
+    [[nodiscard]] auto opt_variable() const { return derived().opt_variable(); }
 
     /*!
      * \brief Get current optimal value.
      *
      * \return Current optimal value.
      */
-    [[nodiscard]] auto opt_value() const { derived().opt_value(); }
+    [[nodiscard]] auto opt_value() const { return derived().opt_value(); }
 
     /*!
      * \brief Get the number of iterations.
@@ -82,7 +113,7 @@ public:
      * \return Number of iterations.
      */
     [[nodiscard]] auto iterations() const noexcept -> index_type {
-        derived().iterations();
+        return derived().iterations();
     }
 
     /*!
@@ -91,7 +122,7 @@ public:
      * \return Number of function evaluations.
      */
     [[nodiscard]] auto evaluations() const noexcept -> index_type {
-        derived().evaluations();
+        return derived().evaluations();
     }
 
 protected:

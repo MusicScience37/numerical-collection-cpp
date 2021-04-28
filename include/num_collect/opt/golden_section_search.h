@@ -105,6 +105,14 @@ public:
     }
 
     /*!
+     * \copydoc num_collect::opt::optimizer_base::set_info_to
+     */
+    void set_info_to(iteration_logger& logger) const {
+        logger["Iter."] = iterations();
+        logger["Value"] = static_cast<double>(opt_value());
+    }
+
+    /*!
      * \copydoc num_collect::opt::optimizer_base::opt_variable
      */
     [[nodiscard]] auto opt_variable() const { return mid1_; }
