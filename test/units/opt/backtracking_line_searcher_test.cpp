@@ -24,6 +24,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating.hpp>
 
+#include "eigen_approx.h"
 #include "num_prob_collect/opt/multi_quadratic_function.h"
 
 TEST_CASE("num_collect::opt::backtracking_line_searcher") {
@@ -37,6 +38,7 @@ TEST_CASE("num_collect::opt::backtracking_line_searcher") {
             (Eigen::VectorXd(3) << 0.0, 1.0, 2.0).finished();
         searcher.init(init_var);
         REQUIRE(searcher.evaluations() == 1);
+        REQUIRE_THAT(searcher.opt_variable(), eigen_approx(init_var));
     }
 
     SECTION("search") {
