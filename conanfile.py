@@ -13,7 +13,7 @@ class NumCollectConan(ConanFile):
     settings = None
     exports_sources = "include/*"
     no_copy_source = True
-    requires = "fmt/7.1.3"
+    requires = "fmt/7.1.3", "eigen/3.3.9"
     # Without following line, build fails.
     default_options = "fmt:header_only=True"
     generators = "cmake_find_package"

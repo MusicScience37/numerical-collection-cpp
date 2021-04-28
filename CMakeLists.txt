@@ -42,6 +42,7 @@ add_subdirectory(extern)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
 find_package(fmt REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 include(TargetLinkSystemLibrary)
@@ -55,8 +56,9 @@ set(NUM_COLLECT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 add_library(num_collect INTERFACE)
 target_include_directories(num_collect
                            INTERFACE ${NUM_COLLECT_SOURCE_DIR}/include)
-target_link_libraries(num_collect INTERFACE fmt::fmt num_collect_cpp_warnings
-                                            num_collect_cpp_flags)
+target_link_libraries(
+    num_collect INTERFACE fmt::fmt Eigen3::Eigen num_collect_cpp_warnings
+                          num_collect_cpp_flags)
 
 if(NUM_COLLECT_BUILD_DOC)
     add_subdirectory(doc)
