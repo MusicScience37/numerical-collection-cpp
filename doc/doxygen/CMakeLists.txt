@@ -61,8 +61,7 @@ set(DOXYGEN_CREATE_SUBDIRS YES)
 set(DOXYGEN_PROJECT_NAME "numerical-collection-cpp")
 
 doxygen_add_docs(
-    num_collect_doc_doxygen "include" "problems/include" "doc/doxygen"
-    "README.md"
+    num_collect_doc_doxygen "include" "problems" "doc/doxygen" "README.md"
     WORKING_DIRECTORY "${NUM_COLLECT_SOURCE_DIR}"
     ALL
     COMMENT "Generate Doxygen HTML API documentation for ${PROJECT_NAME}")

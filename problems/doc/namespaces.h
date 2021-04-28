@@ -18,17 +18,8 @@
  * \brief documentation of namespaces
  */
 
-//! Namespace of num_collect source codes.
-namespace num_collect {
-    //! Namespace of multiple precision numbers with double numbers.
-    namespace multi_double {
-        //! Namespace of implementations.
-        namespace impl {}
-    }  // namespace multi_double
-
-    //! Namespace of optimization algorithms.
-    namespace opt {
-        //! Namespace of implementations.
-        namespace impl {}
-    }  // namespace opt
-}  // namespace num_collect
+//! Namespace of problems for test of num_collect.
+namespace num_prob_collect {
+    //! Namespace of optimization problems.
+    namespace opt {}
+}  // namespace num_prob_collect
