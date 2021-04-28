@@ -74,8 +74,12 @@ public:
      * \brief Set the minimum length of section between end points.
      *
      * \param[in] value Minimum length of section between end points.
+     * \return This object.
      */
-    void min_section_len(variable_type value) { min_section_len_ = value; }
+    auto min_section_len(variable_type value) -> golden_section_search& {
+        min_section_len_ = value;
+        return *this;
+    }
 
     /*!
      * \copydoc num_collect::opt::optimizer_base::iterate
