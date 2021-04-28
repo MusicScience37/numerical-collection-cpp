@@ -56,5 +56,6 @@ if(NUM_COLLECT_BUILD_DOC)
 endif()
 
 if(NUM_COLLECT_TESTING)
+    add_subdirectory(problems)
     add_subdirectory(test)
 endif()

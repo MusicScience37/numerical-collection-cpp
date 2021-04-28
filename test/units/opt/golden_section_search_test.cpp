@@ -22,26 +22,14 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating.hpp>
 
-namespace {
-
-struct obj_fun {
-    using variable_type = double;
-    using value_type = double;
-
-    void evaluate_on(double x) { y = x * x; }
-
-    [[nodiscard]] auto value() const -> const double& { return y; }
-
-    double y{0.0};
-};
-
-}  // namespace
+#include "num_prob_collect/opt/quadratic_function.h"
 
 TEST_CASE("num_collect::opt::golden_section_search") {
     using num_collect::opt::golden_section_search;
+    using num_prob_collect::opt::quadratic_function;
 
     SECTION("init") {
-        auto opt = golden_section_search<obj_fun>();
+        auto opt = golden_section_search<quadratic_function>();
         constexpr double left = -1.0;
         constexpr double right = 2.0;
         opt.init(left, right);
@@ -52,18 +40,36 @@ TEST_CASE("num_collect::opt::golden_section_search") {
     }
 
     SECTION("iterate") {
-        auto opt = golden_section_search<obj_fun>();
+        auto opt = golden_section_search<quadratic_function>();
         constexpr double left = -1.0;
         constexpr double right = 2.0;
         opt.init(left, right);
         opt.iterate();
-        REQUIRE(opt.section_len() < (right - left));
+        constexpr double coeff = 0.618033988749895;
+        constexpr double section_len = (right - left) * coeff;
+        REQUIRE_THAT(
+            opt.section_len(), Catch::Matchers::WithinRel(section_len));
         REQUIRE(opt.iterations() == 1);
         REQUIRE(opt.evaluations() == 2);
     }
 
+    SECTION("iterate twice") {
+        auto opt = golden_section_search<quadratic_function>();
+        constexpr double left = -1.0;
+        constexpr double right = 2.0;
+        opt.init(left, right);
+        opt.iterate();
+        opt.iterate();
+        constexpr double coeff = 0.618033988749895;
+        constexpr double section_len = (right - left) * coeff * coeff;
+        REQUIRE_THAT(
+            opt.section_len(), Catch::Matchers::WithinRel(section_len));
+        REQUIRE(opt.iterations() == 2);
+        REQUIRE(opt.evaluations() == 3);
+    }
+
     SECTION("solve") {
-        auto opt = golden_section_search<obj_fun>();
+        auto opt = golden_section_search<quadratic_function>();
         constexpr double left = -1.0;
         constexpr double right = 2.0;
         opt.init(left, right);

@@ -13,7 +13,8 @@ set(NUM_COLLECT_TEMP_TEST_DIR
 file(MAKE_DIRECTORY ${NUM_COLLECT_TEMP_TEST_DIR})
 
 macro(target_add_catch2 TARGET)
-    target_link_libraries(${TARGET} PRIVATE Catch2::Catch2WithMain num_collect)
+    target_link_libraries(${TARGET} PRIVATE Catch2::Catch2WithMain num_collect
+                                            num_prob_collect)
     target_check_clang_tidy(${TARGET})
 
     if(NUM_COLLECT_WRITE_JUNIT)
