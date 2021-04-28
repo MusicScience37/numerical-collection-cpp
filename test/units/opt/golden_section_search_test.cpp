@@ -77,7 +77,7 @@ TEST_CASE("num_collect::opt::golden_section_search") {
         constexpr double right = 2.0;
         opt.init(left, right);
         constexpr double tol = 1e-3;
-        opt.min_section_len(tol);
+        opt.tol_section_len(tol);
         opt.solve();
         REQUIRE(opt.section_len() < tol);
         REQUIRE_THAT(opt.opt_variable(), Catch::Matchers::WithinAbs(0.0, tol));
@@ -91,7 +91,7 @@ TEST_CASE("num_collect::opt::golden_section_search") {
         constexpr double right = 2.0;
         opt.init(left, right);
         constexpr double tol = 1e-3;
-        opt.min_section_len(tol);
+        opt.tol_section_len(tol);
         REQUIRE_NOTHROW(opt.solve(stream));
         REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Iter."));
         REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Value"));

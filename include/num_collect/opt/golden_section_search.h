@@ -71,13 +71,13 @@ public:
     }
 
     /*!
-     * \brief Set the minimum length of section between end points.
+     * \brief Set the tolerance of length of section between end points.
      *
-     * \param[in] value Minimum length of section between end points.
+     * \param[in] value Tolerance of length of section between end points.
      * \return This object.
      */
-    auto min_section_len(variable_type value) -> golden_section_search& {
-        min_section_len_ = value;
+    auto tol_section_len(variable_type value) -> golden_section_search& {
+        tol_section_len_ = value;
         return *this;
     }
 
@@ -105,7 +105,7 @@ public:
      * \copydoc num_collect::opt::optimizer_base::is_stop_criteria_satisfied
      */
     [[nodiscard]] auto is_stop_criteria_satisfied() const -> bool {
-        return section_len() < min_section_len_;
+        return section_len() < tol_section_len_;
     }
 
     /*!
@@ -154,8 +154,8 @@ public:
     static inline const auto mid_point_ratio =
         static_cast<variable_type>((3.0 - std::sqrt(5.0)) / 2.0);
 
-    //! Default minimum length of section between end points.
-    static inline const auto default_min_section_len =
+    //! Default tolerance of length of section between end points.
+    static inline const auto default_tol_section_len =
         static_cast<variable_type>(1e-3);
 
 private:
@@ -177,8 +177,8 @@ private:
     //! Number of iterations.
     index_type iterations_{0};
 
-    //! Minimum length of section between end points.
-    variable_type min_section_len_{default_min_section_len};
+    //! Tolerance of length of section between end points.
+    variable_type tol_section_len_{default_tol_section_len};
 };
 
 }  // namespace num_collect::opt

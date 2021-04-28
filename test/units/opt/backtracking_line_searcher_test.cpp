@@ -19,10 +19,7 @@
  */
 #include "num_collect/opt/backtracking_line_searcher.h"
 
-#include <sstream>
-
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_floating.hpp>
 
 #include "eigen_approx.h"
 #include "num_prob_collect/opt/multi_quadratic_function.h"
