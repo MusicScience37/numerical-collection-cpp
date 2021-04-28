@@ -253,6 +253,9 @@ doc:
     GIT_SUBMODULE_STRATEGY: recursive
   script:
     - mkdir build_doc
+    - cd $BUILD_DIR
+    - pipenv run conan install --build=missing ..
+    - cd ../
     - cmake -S ./ -B build_doc
       -DNUM_COLLECT_BUILD_DOC:BOOL=ON
     - cmake --build build_doc --target num_collect_doc
