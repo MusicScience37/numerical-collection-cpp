@@ -100,14 +100,16 @@ protected:
      *
      * \return Reference to the derived object.
      */
-    auto derived() noexcept -> Derived& { return *static_cast<Derived*>(this); }
+    [[nodiscard]] auto derived() noexcept -> Derived& {
+        return *static_cast<Derived*>(this);
+    }
 
     /*!
      * \brief Access derived object.
      *
      * \return Reference to the derived object.
      */
-    auto derived() const noexcept -> const Derived& {
+    [[nodiscard]] auto derived() const noexcept -> const Derived& {
         return *static_cast<const Derived*>(this);
     }
 };
