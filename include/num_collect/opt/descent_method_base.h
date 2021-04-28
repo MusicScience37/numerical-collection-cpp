@@ -40,7 +40,10 @@ public:
         typename line_searcher_type::objective_function_type;
 
     //! Type of variables.
-    using variable_type = typename line_searcher_type::variable_type;
+    using variable_type = typename objective_function_type::variable_type;
+
+    //! Type of function values.
+    using value_type = typename objective_function_type::value_type;
 
     /*!
      * \brief Initialize.
@@ -68,37 +71,11 @@ public:
     }
 
     /*!
-     * \copydoc num_collect::opt::optimizer_base::opt_variable
+     * \copydoc num_collect::opt::optimizer_base::is_stop_criteria_satisfied
      */
-    [[nodiscard]] auto opt_variable() const {
-        return line_searcher_.opt_variable();
+    [[nodiscard]] auto is_stop_criteria_satisfied() const -> bool {
+        return gradient_norm() < tol_grad_norm_;
     }
-
-    /*!
-     * \copydoc num_collect::opt::optimizer_base::opt_value
-     */
-    [[nodiscard]] auto opt_value() const { return line_searcher_.opt_value(); }
-
-    /*!
-     * \copydoc num_collect::opt::optimizer_base::iterations
-     */
-    [[nodiscard]] auto iterations() const noexcept -> index_type {
-        return iterations_;
-    }
-
-    /*!
-     * \copydoc num_collect::opt::optimizer_base::evaluations
-     */
-    [[nodiscard]] auto evaluations() const noexcept -> index_type {
-        return line_searcher_.evaluations();
-    }
-
-    /*!
-     * \brief Get gradient for current optimal variable.
-     *
-     * \return Gradient for current optimal variable.
-     */
-    [[nodiscard]] auto gradient() const { return line_searcher_.gradient(); }
 
     /*!
      * \brief Access object to perform line search.
@@ -116,6 +93,59 @@ public:
      */
     [[nodiscard]] auto line_searcher() const -> const line_searcher_type& {
         return line_searcher_;
+    }
+
+    /*!
+     * \copydoc num_collect::opt::optimizer_base::opt_variable
+     */
+    [[nodiscard]] auto opt_variable() const {
+        return line_searcher().opt_variable();
+    }
+
+    /*!
+     * \copydoc num_collect::opt::optimizer_base::opt_value
+     */
+    [[nodiscard]] auto opt_value() const { return line_searcher().opt_value(); }
+
+    /*!
+     * \copydoc num_collect::opt::optimizer_base::iterations
+     */
+    [[nodiscard]] auto iterations() const noexcept -> index_type {
+        return iterations_;
+    }
+
+    /*!
+     * \copydoc num_collect::opt::optimizer_base::evaluations
+     */
+    [[nodiscard]] auto evaluations() const noexcept -> index_type {
+        return line_searcher().evaluations();
+    }
+
+    /*!
+     * \brief Get gradient for current optimal variable.
+     *
+     * \return Gradient for current optimal variable.
+     */
+    [[nodiscard]] auto gradient() const { return line_searcher().gradient(); }
+
+    /*!
+     * \brief Calculate norm of gradient.
+     *
+     * \return Norm of gradient.
+     */
+    [[nodiscard]] auto gradient_norm() const -> value_type {
+        return gradient().norm();
+    }
+
+    /*!
+     * \brief Set tolerance of norm of gradient.
+     *
+     * \param[in] value Value.
+     * \return This object.
+     */
+    auto tol_gradient_norm(const value_type& value) -> Derived& {
+        tol_grad_norm_ = value;
+        return derived();
     }
 
 protected:
@@ -137,6 +167,13 @@ private:
 
     //! Number of iterations.
     index_type iterations_{0};
+
+    //! Default tolerance of norm of gradient.
+    static inline const auto default_tol_grad_norm =
+        static_cast<value_type>(1e-3);
+
+    //! Tolerance of norm of gradient.
+    value_type tol_grad_norm_{default_tol_grad_norm};
 };
 
 }  // namespace num_collect::opt

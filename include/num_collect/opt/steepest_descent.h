@@ -46,6 +46,7 @@ public:
 
     using base_type::evaluations;
     using base_type::gradient;
+    using base_type::gradient_norm;
     using base_type::iterations;
     using base_type::opt_value;
     using typename base_type::objective_function_type;
@@ -65,22 +66,6 @@ public:
     [[nodiscard]] auto calc_direction() { return -gradient(); }
 
     /*!
-     * \brief Calculate norm of gradient.
-     *
-     * \return Norm of gradient.
-     */
-    [[nodiscard]] auto gradient_norm() const -> value_type {
-        return gradient().norm();
-    }
-
-    /*!
-     * \copydoc num_collect::opt::optimizer_base::is_stop_criteria_satisfied
-     */
-    [[nodiscard]] auto is_stop_criteria_satisfied() const -> bool {
-        return gradient_norm() < tol_grad_norm_;
-    }
-
-    /*!
      * \copydoc num_collect::opt::optimizer_base::set_info_to
      */
     void set_info_to(iteration_logger& logger) const {
@@ -89,25 +74,6 @@ public:
         logger["Value"] = static_cast<double>(opt_value());
         logger["Grad."] = static_cast<double>(gradient_norm());
     }
-
-    /*!
-     * \brief Set tolerance of norm of gradient.
-     *
-     * \param[in] value Value.
-     * \return This object.
-     */
-    auto tol_gradient_norm(const value_type& value) -> steepest_descent& {
-        tol_grad_norm_ = value;
-        return *this;
-    }
-
-private:
-    //! Default tolerance of norm of gradient.
-    static inline const auto default_tol_grad_norm =
-        static_cast<value_type>(1e-3);
-
-    //! Tolerance of norm of gradient.
-    value_type tol_grad_norm_{default_tol_grad_norm};
 };
 
 }  // namespace num_collect::opt
