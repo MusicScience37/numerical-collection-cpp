@@ -46,8 +46,13 @@ Unconstrained Optimization
         optimizer o-- objective_function
 
         class line_searcher {
+            + init(init_variable: variable_type)
             + search(direction: variable_type)
             + obj_fun() : differentiable_objective_function&
+            + opt_variable() : variable_type
+            + opt_value() : value_type
+            + gradient() : variable_type
+            + evaluations() : index_type
         }
         line_searcher o-- differentiable_objective_function
 
