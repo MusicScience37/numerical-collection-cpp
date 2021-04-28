@@ -41,15 +41,13 @@ public:
         descent_method_base<steepest_descent<ObjectiveFunction, LineSearcher>,
             LineSearcher>;
 
-    //! Type of function values.
-    using value_type = typename LineSearcher::value_type;
-
     using base_type::evaluations;
     using base_type::gradient;
     using base_type::gradient_norm;
     using base_type::iterations;
     using base_type::opt_value;
     using typename base_type::objective_function_type;
+    using typename base_type::variable_type;
 
     /*!
      * \brief Construct.
@@ -63,7 +61,9 @@ public:
     /*!
      * \copydoc num_collect::opt::descent_method_base::calc_direction
      */
-    [[nodiscard]] auto calc_direction() { return -gradient(); }
+    [[nodiscard]] auto calc_direction() const -> variable_type {
+        return -gradient();
+    }
 
     /*!
      * \copydoc num_collect::opt::optimizer_base::set_info_to
