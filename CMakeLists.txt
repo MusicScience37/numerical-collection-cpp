@@ -36,6 +36,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY $<1:${CMAKE_BINARY_DIR}/bin>)
 
 add_subdirectory(extern)
 
+# find packages installed with Conan
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
+list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
+find_package(fmt REQUIRED)
+
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 include(TargetLinkSystemLibrary)
 include(ConfigureClangTidy)
@@ -48,7 +53,7 @@ set(NUM_COLLECT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 add_library(num_collect INTERFACE)
 target_include_directories(num_collect
                            INTERFACE ${NUM_COLLECT_SOURCE_DIR}/include)
-target_link_libraries(num_collect INTERFACE num_collect_cpp_warnings
+target_link_libraries(num_collect INTERFACE fmt::fmt num_collect_cpp_warnings
                                             num_collect_cpp_flags)
 
 if(NUM_COLLECT_BUILD_DOC)
