@@ -25,6 +25,8 @@ include(CTest)
 option(NUM_COLLECT_BUILD_DOC "build documentation of numerical-collection-cpp"
        OFF)
 option(NUM_COLLECT_TESTING "enable tests of numerical-collection-cpp" OFF)
+option(NUM_COLLECT_BUILD_EXAMPLES "build examples of numerical-collection-cpp"
+       OFF)
 
 set(CMAKE_CXX_STANDARD
     17
@@ -60,7 +62,14 @@ if(NUM_COLLECT_BUILD_DOC)
     add_subdirectory(doc)
 endif()
 
-if(NUM_COLLECT_TESTING)
+if(NUM_COLLECT_TESTING OR NUM_COLLECT_BUILD_EXAMPLES)
     add_subdirectory(problems)
+endif()
+
+if(NUM_COLLECT_TESTING)
     add_subdirectory(test)
+endif()
+
+if(NUM_COLLECT_BUILD_EXAMPLES)
+    add_subdirectory(examples)
 endif()

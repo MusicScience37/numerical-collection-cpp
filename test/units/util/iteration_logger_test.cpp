@@ -39,8 +39,8 @@ TEST_CASE("num_collect::iteration_logger") {
         logger["test3"] = value3;
         logger.write_to(stream);
         REQUIRE(stream.str() ==
-            "     test1     test2     test3\n"
-            "         0     value     3.141\n");
+            "       test1       test2       test3\n"
+            "           0       value       3.141\n");
     }
 
     SECTION("two lines") {
@@ -49,9 +49,9 @@ TEST_CASE("num_collect::iteration_logger") {
         logger["test1"] = num_collect::index_type(0);
         logger.write_to(stream);
         REQUIRE(stream.str() ==
-            "     test1\n"
-            "          \n"
-            "         0\n");
+            "       test1\n"
+            "            \n"
+            "           0\n");
     }
 
     SECTION("output period") {
@@ -64,9 +64,9 @@ TEST_CASE("num_collect::iteration_logger") {
         logger.write_to(stream);
         logger.write_to(stream);
         REQUIRE(stream.str() ==
-            "     test1\n"
-            "         0\n"
-            "     test1\n"
-            "         0\n");
+            "       test1\n"
+            "           0\n"
+            "       test1\n"
+            "           0\n");
     }
 }

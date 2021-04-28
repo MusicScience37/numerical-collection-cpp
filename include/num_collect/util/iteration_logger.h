@@ -163,7 +163,7 @@ public:
         index_type precision_{default_precision};
 
         //! Default width.
-        static constexpr index_type default_width = 10;
+        static constexpr index_type default_width = 12;
 
         //! Width.
         index_type width_{default_width};
