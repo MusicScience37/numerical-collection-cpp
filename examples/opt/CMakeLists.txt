@@ -5,3 +5,7 @@ target_link_libraries(num_collect_ex_golden_section_search
 add_executable(num_collect_ex_steepest_descent steepest_descent.cpp)
 target_link_libraries(num_collect_ex_steepest_descent PRIVATE num_collect
                                                               num_prob_collect)
+
+add_executable(num_collect_ex_downhill_simplex downhill_simplex.cpp)
+target_link_libraries(num_collect_ex_downhill_simplex PRIVATE num_collect
+                                                              num_prob_collect)
