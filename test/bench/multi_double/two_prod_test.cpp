@@ -24,12 +24,11 @@
 // NOLINTNEXTLINE: external library
 CELERO_MAIN
 
+constexpr double a = 0x1.0000001p+1;
+constexpr double b = 0x1.0000008p-2;
+
 // NOLINTNEXTLINE: external library
 BASELINE(multi_double_two_prod, two_prod_no_fma, 0, 0) {
-    constexpr double a = 0x1.0000001p+1;
-    constexpr double b = 0x1.0000008p-2;
-    constexpr double p_true = 0x1.0000009p-1;
-    constexpr double e_true = 0x1.0p-54;
     using num_collect::multi_double::impl::two_prod_no_fma;
     celero::DoNotOptimizeAway(two_prod_no_fma(a, b));
 }
@@ -37,10 +36,6 @@ BASELINE(multi_double_two_prod, two_prod_no_fma, 0, 0) {
 #ifdef __AVX2__
 // NOLINTNEXTLINE: external library
 BENCHMARK(multi_double_two_prod, two_prod_fma, 0, 0) {
-    constexpr double a = 0x1.0000001p+1;
-    constexpr double b = 0x1.0000008p-2;
-    constexpr double p_true = 0x1.0000009p-1;
-    constexpr double e_true = 0x1.0p-54;
     using num_collect::multi_double::impl::two_prod_fma;
     celero::DoNotOptimizeAway(two_prod_fma(a, b));
 }
