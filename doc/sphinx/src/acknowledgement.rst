@@ -9,6 +9,7 @@ This project uses the following external libraries in source codes:
 This project uses the following external libraries in tests:
 
 - `Catch2 <https://github.com/catchorg/Catch2>`_
+- `Celero <https://github.com/DigitalInBlue/Celero>`_
 
 This project uses the following formatters for source codes:
 
