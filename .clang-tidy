@@ -2,7 +2,6 @@ HeaderFilterRegex: "include/num_collect/|test/"
 Checks: >
   clang-diagnostic-*,
   clang-analyzer-*,
-    -clang-analyzer-core.uninitialized.UndefReturn,
   cppcoreguidelines-*,
   google-*,
     -google-runtime-references,
@@ -21,7 +20,6 @@ Checks: >
 # Ignored checks:
 #
 # - google-runtime-references is a Google-specific rule, and forces use of raw pointers.
-# - clang-analyzer-core.uninitialized.UndefReturn generate warning in Eigen library.
 # - modernize-pass-by-value causes some programs to crash when applied to Eigen's objects
 #   (https://eigen.tuxfamily.org/dox/group__TopicPassingByValue.html).
 
