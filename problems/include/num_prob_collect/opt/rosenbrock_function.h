@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of powell4_function class.
+ * \brief Definition of rosenbrock_function class.
  */
 #pragma once
 
@@ -24,19 +24,18 @@
 namespace num_prob_collect::opt {
 
 /*!
- * \brief Class of Powell function in 4 dimensions.
+ * \brief Class of Rosenbrock function in 3 dimensions.
  *
  * This function has no local minimum except for the global one at
- * (0, 0, 0, 0).
- * Search region is [-4, 5] for each dimension.
+ * (1, 1, 1).
  *
  * Reference:
- * http://www-optima.amp.i.kyoto-u.ac.jp/member/student/hedar/Hedar_files/TestGO_files/Page2720.htm
+ * http://www-optima.amp.i.kyoto-u.ac.jp/member/student/hedar/Hedar_files/TestGO_files/Page2537.htm
  */
-class powell4_function {
+class rosenbrock_function {
 public:
     //! Type of variables.
-    using variable_type = Eigen::Vector4d;
+    using variable_type = Eigen::Vector3d;
 
     //! Type of function values.
     using value_type = double;
@@ -46,20 +45,18 @@ public:
      *
      * \param[in] x Variable.
      */
-    void evaluate_on(const Eigen::Vector4d& x) {
-        value_ = std::pow(x(0) + 10.0 * x(1), 2)  // NOLINT
-            + 5.0 * std::pow(x(2) - x(3), 2)      // NOLINT
-            + std::pow(x(1) - 2.0 * x(2), 4)      // NOLINT
-            + 10.0 * std::pow(x(0) - x(3), 4);    // NOLINT
+    void evaluate_on(const Eigen::Vector3d& x) {
+        value_ = 100.0 * std::pow(x(1) - x(0) * x(0), 2)  // NOLINT
+            + std::pow(x(0) - 1.0, 2)                     // NOLINT
+            + 100.0 * std::pow(x(2) - x(1) * x(1), 2)     // NOLINT
+            + std::pow(x(1) - 1.0, 2);                    // NOLINT
 
-        grad_(0) = 2.0 * (x(0) + 10.0 * x(1))        // NOLINT
-            + 40.0 * std::pow(x(0) - x(3), 3);       // NOLINT
-        grad_(1) = 20.0 * (x(0) + 10.0 * x(1))       // NOLINT
-            + 4.0 * std::pow(x(1) - 2.0 * x(2), 3);  // NOLINT
-        grad_(2) = 10.0 * (x(2) - x(3))              // NOLINT
-            - 8.0 * std::pow(x(1) - 2.0 * x(2), 3);  // NOLINT
-        grad_(3) = -10.0 * (x(2) - x(3))             // NOLINT
-            - 40.0 * std::pow(x(0) - x(3), 3);       // NOLINT
+        grad_(0) = -400.0 * (x(1) - x(0) * x(0)) * x(0)  // NOLINT
+            + 2.0 * (x(0) - 1.0);                        // NOLINT
+        grad_(1) = 200.0 * (x(1) - x(0) * x(0))          // NOLINT
+            - 400.0 * (x(2) - x(1) * x(1)) * x(1)        // NOLINT
+            + 2.0 * (x(1) - 1.0);                        // NOLINT
+        grad_(2) = 200.0 * (x(2) - x(1) * x(1));         // NOLINT
     }
 
     /*!
@@ -74,7 +71,7 @@ public:
      *
      * \return Gradient.
      */
-    [[nodiscard]] auto gradient() const -> const Eigen::Vector4d& {
+    [[nodiscard]] auto gradient() const -> const Eigen::Vector3d& {
         return grad_;
     }
 
@@ -83,7 +80,7 @@ private:
     double value_{};
 
     //! Gradient.
-    Eigen::Vector4d grad_{};
+    Eigen::Vector3d grad_{};
 };
 
 }  // namespace num_prob_collect::opt
