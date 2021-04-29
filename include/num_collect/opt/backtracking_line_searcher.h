@@ -139,14 +139,22 @@ public:
      *
      * \return Current optimal value.
      */
-    [[nodiscard]] auto opt_value() const { return obj_fun_.value(); }
+    [[nodiscard]] auto opt_value() const
+        -> std::invoke_result_t<decltype(&objective_function_type::value),
+            const objective_function_type> {
+        return obj_fun_.value();
+    }
 
     /*!
      * \brief Get gradient for current optimal variable.
      *
      * \return Gradient for current optimal variable.
      */
-    [[nodiscard]] auto gradient() const { return obj_fun_.gradient(); }
+    [[nodiscard]] auto gradient() const
+        -> std::invoke_result_t<decltype(&objective_function_type::gradient),
+            const objective_function_type> {
+        return obj_fun_.gradient();
+    }
 
     /*!
      * \brief Get the number of function evaluations.

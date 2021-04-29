@@ -60,7 +60,9 @@ public:
      *
      * \return Search direction.
      */
-    [[nodiscard]] auto calc_direction() { return derived().calc_direction(); }
+    [[nodiscard]] auto calc_direction() -> variable_type {
+        return derived().calc_direction();
+    }
 
     /*!
      * \copydoc num_collect::opt::optimizer_base::iterate
@@ -105,7 +107,11 @@ public:
     /*!
      * \copydoc num_collect::opt::optimizer_base::opt_value
      */
-    [[nodiscard]] auto opt_value() const { return line_searcher().opt_value(); }
+    [[nodiscard]] auto opt_value() const
+        -> std::invoke_result_t<decltype(&line_searcher_type::opt_value),
+            const line_searcher_type> {
+        return line_searcher().opt_value();
+    }
 
     /*!
      * \copydoc num_collect::opt::optimizer_base::iterations
@@ -126,7 +132,11 @@ public:
      *
      * \return Gradient for current optimal variable.
      */
-    [[nodiscard]] auto gradient() const { return line_searcher().gradient(); }
+    [[nodiscard]] auto gradient() const
+        -> std::invoke_result_t<decltype(&line_searcher_type::gradient),
+            const line_searcher_type> {
+        return line_searcher().gradient();
+    }
 
     /*!
      * \brief Calculate norm of gradient.

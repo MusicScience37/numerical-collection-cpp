@@ -32,6 +32,8 @@ public:
     using variable_type = Eigen::VectorXd;
     //! Type of function values.
     using value_type = double;
+    //! Type of Hessian.
+    using hessian_type = Eigen::MatrixXd;
 
     /*!
      * \brief Evaluate function value on variable.
@@ -42,6 +44,8 @@ public:
         value_ = coeff_ * variable.squaredNorm();
         constexpr double two = 2.0;
         grad_ = two * coeff_ * variable;
+        hessian_ = (two * coeff_) *
+            Eigen::MatrixXd::Identity(variable.size(), variable.size());
     }
 
     /*!
@@ -60,6 +64,15 @@ public:
         return grad_;
     }
 
+    /*!
+     * \brief Get Hessian.
+     *
+     * \return Hessian.
+     */
+    [[nodiscard]] auto hessian() const -> const Eigen::MatrixXd& {
+        return hessian_;
+    }
+
 private:
     //! Coefficient.
     double coeff_{3.0};  // NOLINT
@@ -69,6 +82,9 @@ private:
 
     //! Gradient.
     Eigen::VectorXd grad_{};
+
+    //! Hessian.
+    Eigen::MatrixXd hessian_{};
 };
 
 }  // namespace num_prob_collect::opt
