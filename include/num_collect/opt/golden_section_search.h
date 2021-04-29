@@ -50,8 +50,8 @@ public:
      * \param[in] obj_fun Objective function.
      */
     explicit golden_section_search(
-        objective_function_type obj_fun = objective_function_type())
-        : obj_fun_(std::move(obj_fun)) {}
+        const objective_function_type& obj_fun = objective_function_type())
+        : obj_fun_(obj_fun) {}
 
     /*!
      * \brief Initialize the algorithm.

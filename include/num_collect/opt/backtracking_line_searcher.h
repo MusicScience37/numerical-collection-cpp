@@ -65,8 +65,8 @@ public:
      * \param[in] obj_fun Objective function.
      */
     explicit backtracking_line_searcher(
-        objective_function_type obj_fun = objective_function_type())
-        : obj_fun_(std::move(obj_fun)) {}
+        const objective_function_type& obj_fun = objective_function_type())
+        : obj_fun_(obj_fun) {}
 
     /*!
      * \brief Initialize.
