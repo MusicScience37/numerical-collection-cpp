@@ -15,20 +15,20 @@
  */
 /*!
  * \file
- * \brief documentation of namespaces
+ * \brief Test of golden_section_search class.
  */
+#include "num_collect/opt/golden_section_search.h"
 
-//! Namespace of num_collect source codes.
-namespace num_collect {
-    //! Namespace of multiple precision numbers with double numbers.
-    namespace multi_double {
-        //! Namespace of implementations.
-        namespace impl {}
-    }  // namespace multi_double
+#include <iostream>
 
-    //! Namespace of optimization algorithms.
-    namespace opt {
-        //! Namespace of implementations.
-        namespace impl {}
-    }  // namespace opt
-}  // namespace num_collect
+#include "num_prob_collect/opt/quadratic_function.h"
+
+auto main() -> int {
+    num_collect::opt::golden_section_search<
+        num_prob_collect::opt::quadratic_function>
+        optimizer;
+    constexpr double left = -1.0;
+    constexpr double right = 2.0;
+    optimizer.init(left, right);
+    optimizer.solve(std::cout);
+}

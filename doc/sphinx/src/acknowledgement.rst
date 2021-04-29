@@ -3,7 +3,8 @@ Acknowledgement
 
 This project uses the following external libraries in source codes:
 
-- None
+- `fmt <https://fmt.dev/latest/index.html>`_
+- `Eigen <https://eigen.tuxfamily.org/index.php?title=Main_Page>`_
 
 This project uses the following external libraries in tests:
 

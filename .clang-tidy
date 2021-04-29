@@ -10,6 +10,7 @@ Checks: >
   readability-*,
     readability-identifier-naming,
   modernize-*,
+    -modernize-pass-by-value,
   hicpp-*,
   cert-*,
   bugprone-*,
@@ -19,8 +20,8 @@ Checks: >
 # Ignored checks:
 #
 # - google-runtime-references is a Google-specific rule, and forces use of raw pointers.
-# - cppcoreguidelines-macro-usage cannot be fixed for some use cases,
-#   for example, macros to export functions, macros using __FILE__ for logging, etc...
+# - modernize-pass-by-value causes some programs to crash when applied to Eigen's objects
+#   (https://eigen.tuxfamily.org/dox/group__TopicPassingByValue.html).
 
 CheckOptions:
   # Naming Conventions

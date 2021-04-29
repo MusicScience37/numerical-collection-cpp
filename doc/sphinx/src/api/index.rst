@@ -5,4 +5,6 @@ API Reference
     :maxdepth: 2
     :caption: Contents:
 
+    base
+    opt
     multi_double

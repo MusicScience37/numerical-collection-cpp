@@ -15,20 +15,20 @@
  */
 /*!
  * \file
- * \brief documentation of namespaces
+ * \brief Test of steepest_descent class.
  */
+#include "num_collect/opt/steepest_descent.h"
 
-//! Namespace of num_collect source codes.
-namespace num_collect {
-    //! Namespace of multiple precision numbers with double numbers.
-    namespace multi_double {
-        //! Namespace of implementations.
-        namespace impl {}
-    }  // namespace multi_double
+#include <iostream>
 
-    //! Namespace of optimization algorithms.
-    namespace opt {
-        //! Namespace of implementations.
-        namespace impl {}
-    }  // namespace opt
-}  // namespace num_collect
+#include "num_prob_collect/opt/multi_quadratic_function.h"
+
+auto main() -> int {
+    num_collect::opt::steepest_descent<
+        num_prob_collect::opt::multi_quadratic_function>
+        optimizer;
+    const Eigen::VectorXd init_var =
+        (Eigen::VectorXd(3) << 0.0, 1.0, 2.0).finished();
+    optimizer.init(init_var);
+    optimizer.solve(std::cout);
+}

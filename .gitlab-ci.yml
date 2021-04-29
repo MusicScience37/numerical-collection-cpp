@@ -54,8 +54,9 @@ static analysis:
   extends: .retry setting
   stage: Check
   needs:
-    - line count
-  dependencies: []
+    - sync pipenv
+  dependencies:
+    - sync pipenv
   image: musicscience37/clang-ci:clang11-v3.2.1
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -66,10 +67,14 @@ static analysis:
     - git clone https://github.com/PSPDFKit-labs/clang-tidy-to-junit.git
     - cd ../
   script:
+    - cd build_static_analysis
+    - pipenv run conan install --build=missing ..
+    - cd ../
     - cmake -S ./ -B build_static_analysis
       -DNUM_COLLECT_ENABLE_CLANG_TIDY:BOOL=ON
       -DNUM_COLLECT_TESTING:BOOL=ON
       -DNUM_COLLECT_ENABLE_BENCH=ON
+      -DNUM_COLLECT_BUILD_EXAMPLES=ON
       -DNUM_COLLECT_ENABLE_CPP_WARNINGS:BOOL=ON
     - cmake --build build_static_analysis
       --target num_collect_clang_tidy
@@ -91,12 +96,16 @@ static analysis:
 .release-test-base:
   extends: .retry setting
   needs:
-    - line count
-  dependencies: []
+    - sync pipenv
+  dependencies:
+    - sync pipenv
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   script:
     - mkdir $BUILD_DIR
+    - cd $BUILD_DIR
+    - pipenv run conan install --build=missing ..
+    - cd ../
     - cmake -S ./ -B $BUILD_DIR
       -DCMAKE_BUILD_TYPE=Release
       -DNUM_COLLECT_TESTING:BOOL=ON
@@ -118,6 +127,9 @@ static analysis:
   extends: .release-test-base
   script:
     - mkdir $BUILD_DIR
+    - cd $BUILD_DIR
+    - pipenv run conan install --build=missing ..
+    - cd ../
     - cmake -S ./ -B $BUILD_DIR
       -DCMAKE_BUILD_TYPE=Debug
       -DNUM_COLLECT_TESTING:BOOL=ON
@@ -135,6 +147,9 @@ clang coverage:
     BUILD_DIR: build_clang_coverage
   script:
     - mkdir $BUILD_DIR
+    - cd $BUILD_DIR
+    - pipenv run conan install --build=missing ..
+    - cd ../
     - cmake -S ./ -B $BUILD_DIR
       -DCMAKE_BUILD_TYPE=Debug
       -DNUM_COLLECT_TESTING:BOOL=ON
@@ -158,6 +173,9 @@ gcc coverage:
     BUILD_DIR: build_gcc_coverage
   script:
     - mkdir $BUILD_DIR
+    - cd $BUILD_DIR
+    - pipenv run conan install --build=missing ..
+    - cd ../
     - cmake -S ./ -B $BUILD_DIR
       -DCMAKE_BUILD_TYPE=Debug
       -DNUM_COLLECT_TESTING:BOOL=ON
@@ -182,7 +200,7 @@ gcc-10-debug:
 gcc-10-release:
   extends: .release-test-base
   stage: Test with GCC
-  image: musicscience37/gcc-ci:gcc10-v3.0
+  image: musicscience37/gcc-ci:gcc10-v3.2
   variables:
     BUILD_DIR: build_gcc10_release
 
@@ -191,13 +209,15 @@ gcc-10-release:
   stage: Test with Clang
   needs:
     - sync pipenv
+  dependencies:
+    - sync pipenv
   image: musicscience37/clang-ci:clang11-v3.2.1
   variables:
     CONAN_USER_CHANNEL: "MusicScience37+numerical-collection-cpp/testing"
   script:
     - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan export . ${CONAN_USER_CHANNEL}
-    - pipenv run conan install num_collect/${NUM_COLLECT_VERSION}@${CONAN_USER_CHANNEL} --build=num_collect
+    - pipenv run conan install --build=missing num_collect/${NUM_COLLECT_VERSION}@${CONAN_USER_CHANNEL}
     - pipenv run conan test test/conan_package num_collect/${NUM_COLLECT_VERSION}@${CONAN_USER_CHANNEL}
     - CONAN_LOGIN_USERNAME=ci_user CONAN_PASSWORD=${CI_JOB_TOKEN} pipenv run conan upload num_collect/${NUM_COLLECT_VERSION}@${CONAN_USER_CHANNEL} --all --remote=gitlab
 
@@ -233,6 +253,9 @@ doc:
     GIT_SUBMODULE_STRATEGY: recursive
   script:
     - mkdir build_doc
+    - cd build_doc
+    - pipenv run conan install --build=missing ..
+    - cd ../
     - cmake -S ./ -B build_doc
       -DNUM_COLLECT_BUILD_DOC:BOOL=ON
     - cmake --build build_doc --target num_collect_doc

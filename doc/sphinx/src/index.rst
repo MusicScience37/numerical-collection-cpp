@@ -9,5 +9,6 @@ A collection of algorithms in numerical analysis implemented in C++
 
     convention
     api/index
+    basic_design/index
     license
     acknowledgement

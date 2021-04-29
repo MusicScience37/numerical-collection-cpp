@@ -15,20 +15,20 @@
  */
 /*!
  * \file
- * \brief documentation of namespaces
+ * \brief Definition of index_type type.
  */
+#pragma once
 
-//! Namespace of num_collect source codes.
+#include <cstddef>
+
 namespace num_collect {
-    //! Namespace of multiple precision numbers with double numbers.
-    namespace multi_double {
-        //! Namespace of implementations.
-        namespace impl {}
-    }  // namespace multi_double
 
-    //! Namespace of optimization algorithms.
-    namespace opt {
-        //! Namespace of implementations.
-        namespace impl {}
-    }  // namespace opt
+/*!
+ * \brief Type of indices in this library.
+ *
+ * This library uses this signed integer type for indices and sizes,
+ * as Eigen library does.
+ */
+using index_type = std::ptrdiff_t;
+
 }  // namespace num_collect

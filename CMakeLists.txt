@@ -25,6 +25,8 @@ include(CTest)
 option(NUM_COLLECT_BUILD_DOC "build documentation of numerical-collection-cpp"
        OFF)
 option(NUM_COLLECT_TESTING "enable tests of numerical-collection-cpp" OFF)
+option(NUM_COLLECT_BUILD_EXAMPLES "build examples of numerical-collection-cpp"
+       OFF)
 
 set(CMAKE_CXX_STANDARD
     17
@@ -35,6 +37,12 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY $<1:${CMAKE_BINARY_DIR}/lib>)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY $<1:${CMAKE_BINARY_DIR}/bin>)
 
 add_subdirectory(extern)
+
+# find packages installed with Conan
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
+list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
+find_package(fmt REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 include(TargetLinkSystemLibrary)
@@ -48,13 +56,22 @@ set(NUM_COLLECT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 add_library(num_collect INTERFACE)
 target_include_directories(num_collect
                            INTERFACE ${NUM_COLLECT_SOURCE_DIR}/include)
-target_link_libraries(num_collect INTERFACE num_collect_cpp_warnings
-                                            num_collect_cpp_flags)
+target_link_libraries(
+    num_collect INTERFACE fmt::fmt Eigen3::Eigen num_collect_cpp_warnings
+                          num_collect_cpp_flags)
 
 if(NUM_COLLECT_BUILD_DOC)
     add_subdirectory(doc)
 endif()
 
+if(NUM_COLLECT_TESTING OR NUM_COLLECT_BUILD_EXAMPLES)
+    add_subdirectory(problems)
+endif()
+
 if(NUM_COLLECT_TESTING)
     add_subdirectory(test)
+endif()
+
+if(NUM_COLLECT_BUILD_EXAMPLES)
+    add_subdirectory(examples)
 endif()
