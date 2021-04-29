@@ -1,5 +1,3 @@
-add_subdirectory(multi_double)
-
 option(NUM_COLLECT_TEST_BENCHMARKS "execute benchmarks in tests" OFF)
 
 set(NUM_COLLECT_BENCH_DIR
@@ -24,3 +22,4 @@ function(target_add_to_benchmark TARGET)
 endfunction()
 
 add_subdirectory(opt)
+add_subdirectory(multi_double)
