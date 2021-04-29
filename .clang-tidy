@@ -11,6 +11,7 @@ Checks: >
   readability-*,
     readability-identifier-naming,
   modernize-*,
+    -modernize-pass-by-value,
   hicpp-*,
   cert-*,
   bugprone-*,
@@ -21,6 +22,8 @@ Checks: >
 #
 # - google-runtime-references is a Google-specific rule, and forces use of raw pointers.
 # - clang-analyzer-core.uninitialized.UndefReturn generate warning in Eigen library.
+# - modernize-pass-by-value causes some programs to crash when applied to Eigen's objects
+#   (https://eigen.tuxfamily.org/dox/group__TopicPassingByValue.html).
 
 CheckOptions:
   # Naming Conventions

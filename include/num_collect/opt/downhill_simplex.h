@@ -252,7 +252,7 @@ private:
      * \param[in] variable Variable.
      * \return Function value.
      */
-    auto evaluate_on(const variable_type& variable) {
+    [[nodiscard]] auto evaluate_on(const variable_type& variable) {
         obj_fun_.evaluate_on(variable);
         ++evaluations_;
         return obj_fun_.value();
@@ -274,7 +274,7 @@ private:
      *
      * \return Center.
      */
-    auto calc_face_center() const -> variable_type {
+    [[nodiscard]] auto calc_face_center() const -> variable_type {
         variable_type face_center = variable_type::Zero(dim_);
         for (std::size_t i = 0; i < static_cast<std::size_t>(dim_); ++i) {
             face_center += points_[value_order_[i]];
