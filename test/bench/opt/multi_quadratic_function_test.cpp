@@ -22,6 +22,7 @@
 #include <celero/Celero.h>
 
 #include "iterations_udm.h"
+#include "num_collect/opt/bfgs_optimizer.h"
 #include "num_collect/opt/downhill_simplex.h"
 #include "num_collect/opt/newton_optimizer.h"
 #include "num_collect/opt/steepest_descent.h"
@@ -78,6 +79,17 @@ BENCHMARK_F(opt_multi_quadratic_function, downhill_simplex,
 BENCHMARK_F(opt_multi_quadratic_function, newton_optimizer,
     multi_quadratic_function_fixture, 0, 0) {
     auto optimizer = num_collect::opt::newton_optimizer<
+        num_prob_collect::opt::multi_quadratic_function>();
+    const Eigen::VectorXd init_var =
+        (Eigen::VectorXd(3) << 0.0, 1.0, 2.0).finished();
+    optimizer.init(init_var);
+    this->test_optimizer(optimizer);
+}
+
+// NOLINTNEXTLINE: external library
+BENCHMARK_F(opt_multi_quadratic_function, bfgs_optimizer,
+    multi_quadratic_function_fixture, 0, 0) {
+    auto optimizer = num_collect::opt::bfgs_optimizer<
         num_prob_collect::opt::multi_quadratic_function>();
     const Eigen::VectorXd init_var =
         (Eigen::VectorXd(3) << 0.0, 1.0, 2.0).finished();

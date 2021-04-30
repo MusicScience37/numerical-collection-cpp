@@ -22,8 +22,8 @@
 #include <celero/Celero.h>
 
 #include "iterations_udm.h"
+#include "num_collect/opt/bfgs_optimizer.h"
 #include "num_collect/opt/downhill_simplex.h"
-#include "num_collect/opt/newton_optimizer.h"
 #include "num_collect/opt/steepest_descent.h"
 
 // NOLINTNEXTLINE: external library
@@ -70,6 +70,15 @@ BASELINE_F(opt_rosenbrock_function, steepest_descent,
 BENCHMARK_F(opt_rosenbrock_function, downhill_simplex,
     rosenbrock_function_fixture, 0, 0) {
     auto optimizer = num_collect::opt::downhill_simplex<
+        num_prob_collect::opt::rosenbrock_function>();
+    optimizer.init(init_var());
+    this->test_optimizer(optimizer);
+}
+
+// NOLINTNEXTLINE: external library
+BENCHMARK_F(opt_rosenbrock_function, bfgs_optimizer,
+    rosenbrock_function_fixture, 0, 0) {
+    auto optimizer = num_collect::opt::bfgs_optimizer<
         num_prob_collect::opt::rosenbrock_function>();
     optimizer.init(init_var());
     this->test_optimizer(optimizer);
