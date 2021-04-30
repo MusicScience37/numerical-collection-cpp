@@ -134,8 +134,6 @@ static analysis:
     - cmake -S ./ -B $BUILD_DIR
       -DCMAKE_BUILD_TYPE=Debug
       -DNUM_COLLECT_TESTING:BOOL=ON
-      -DNUM_COLLECT_ENABLE_BENCH=ON
-      -DNUM_COLLECT_TEST_BENCHMARKS=ON
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
     - cd $BUILD_DIR
     - ctest -V -M Experimental -T Configure -T Build -T Test -T MemCheck
