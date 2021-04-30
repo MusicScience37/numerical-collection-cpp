@@ -35,10 +35,42 @@ class multi_quadratic_function_fixture : public celero::TestFixture {
 public:
     multi_quadratic_function_fixture() = default;
 
+    [[nodiscard]] auto getExperimentValues() const
+        -> std::vector<celero::TestFixture::ExperimentValue> override {
+        constexpr auto dimensions_vector =
+            std::array<std::int64_t, 7>{2, 5, 10, 20, 50, 100, 200};
+#ifndef NDEBUG
+        constexpr std::int64_t coeff = 500;
+#else
+        constexpr std::int64_t coeff = 5000;
+#endif
+        std::vector<celero::TestFixture::ExperimentValue> problem_space;
+        problem_space.reserve(dimensions_vector.size());
+        for (const auto dimensions : dimensions_vector) {
+            problem_space.emplace_back(dimensions, coeff / dimensions);
+        }
+        return problem_space;
+    }
+
+    void setUp(
+        const celero::TestFixture::ExperimentValue& experiment_value) override {
+        dimensions_ = experiment_value.Value;
+    }
+
+    [[nodiscard]] auto init_variable() const -> Eigen::VectorXd {
+        constexpr double min_value = 1.0;
+        constexpr double max_value = 2.0;
+        return Eigen::VectorXd::LinSpaced(dimensions_, min_value, max_value);
+    }
+
     template <typename Optimizer>
     void test_optimizer(Optimizer& optimizer) {
         constexpr double tol_value = 1e-6;
+        constexpr num_collect::index_type max_iterations = 1000;
         while (optimizer.opt_value() > tol_value) {
+            if (optimizer.iterations() >= max_iterations) {
+                throw std::runtime_error("failed to solve in 1000 iterations");
+            }
             optimizer.iterate();
         }
         iterations_->addValue(optimizer.iterations());
@@ -52,6 +84,8 @@ public:
 private:
     std::shared_ptr<iterations_udm> iterations_{
         std::make_shared<iterations_udm>()};
+
+    num_collect::index_type dimensions_{1};
 };
 
 // NOLINTNEXTLINE: external library
@@ -59,9 +93,7 @@ BASELINE_F(opt_multi_quadratic_function, steepest_descent,
     multi_quadratic_function_fixture, 0, 0) {
     auto optimizer = num_collect::opt::steepest_descent<
         num_prob_collect::opt::multi_quadratic_function>();
-    const Eigen::VectorXd init_var =
-        (Eigen::VectorXd(3) << 0.0, 1.0, 2.0).finished();
-    optimizer.init(init_var);
+    optimizer.init(this->init_variable());
     this->test_optimizer(optimizer);
 }
 
@@ -70,9 +102,7 @@ BENCHMARK_F(opt_multi_quadratic_function, downhill_simplex,
     multi_quadratic_function_fixture, 0, 0) {
     auto optimizer = num_collect::opt::downhill_simplex<
         num_prob_collect::opt::multi_quadratic_function>();
-    const Eigen::VectorXd init_var =
-        (Eigen::VectorXd(3) << 0.0, 1.0, 2.0).finished();
-    optimizer.init(init_var);
+    optimizer.init(this->init_variable());
     this->test_optimizer(optimizer);
 }
 
@@ -83,7 +113,7 @@ BENCHMARK_F(opt_multi_quadratic_function, newton_optimizer,
         num_prob_collect::opt::multi_quadratic_function>();
     const Eigen::VectorXd init_var =
         (Eigen::VectorXd(3) << 0.0, 1.0, 2.0).finished();
-    optimizer.init(init_var);
+    optimizer.init(this->init_variable());
     this->test_optimizer(optimizer);
 }
 
@@ -94,7 +124,7 @@ BENCHMARK_F(opt_multi_quadratic_function, dfp_optimizer,
         num_prob_collect::opt::multi_quadratic_function>();
     const Eigen::VectorXd init_var =
         (Eigen::VectorXd(3) << 0.0, 1.0, 2.0).finished();
-    optimizer.init(init_var);
+    optimizer.init(this->init_variable());
     this->test_optimizer(optimizer);
 }
 
@@ -105,6 +135,6 @@ BENCHMARK_F(opt_multi_quadratic_function, bfgs_optimizer,
         num_prob_collect::opt::multi_quadratic_function>();
     const Eigen::VectorXd init_var =
         (Eigen::VectorXd(3) << 0.0, 1.0, 2.0).finished();
-    optimizer.init(init_var);
+    optimizer.init(this->init_variable());
     this->test_optimizer(optimizer);
 }
