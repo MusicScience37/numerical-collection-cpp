@@ -30,15 +30,15 @@
  * This macro will be expanded to implementation-defined macros or variables.
  */
 #define NUM_COLLECT_FUNCTION <implementation defined strings>
-#elif __GNUC__  // GCC and Clang
-#define NUM_COLLECT_FUNCTION \
-    __PRETTY_FUNCTION__                   // NOLINT: use of macro is necessary
-#elif _MSC_VER                            // MSVC
-#define NUM_COLLECT_FUNCTION __FUNCSIG__  // NOLINT: use of macro is necessary
-#else                                     // fallback (C++ standard)
-#define NUM_COLLECT_FUNCTION __func__     // NOLINT: use of macro is necessary
+#elif __GNUC__                                    // GCC and Clang
+#define NUM_COLLECT_FUNCTION __PRETTY_FUNCTION__  // NOLINT
+#elif _MSC_VER                                    // MSVC
+#define NUM_COLLECT_FUNCTION __FUNCSIG__          // NOLINT
+#else                                             // fallback (C++ standard)
+#define NUM_COLLECT_FUNCTION __func__             // NOLINT
 #endif
 
+#ifdef NUM_COLLECT_DOCUMENTATION
 /*!
  * \brief Macro to check whether a condition is satisfied.
  *
@@ -52,6 +52,17 @@
                     NUM_COLLECT_FUNCTION));                              \
         }                                                                \
     }()
+#else
+// NOLINTNEXTLINE
+#define NUM_COLLECT_ASSERT(CONDITION)                                    \
+    [&] {                                                                \
+        if (!(CONDITION)) {                                              \
+            throw ::num_collect::assetion_failure(                       \
+                fmt::format("assertion failure: {} (at {})", #CONDITION, \
+                    NUM_COLLECT_FUNCTION));                              \
+        }                                                                \
+    }()
+#endif
 
 #ifdef NUM_COLLECT_DOCUMENTATION
 /*!
@@ -61,7 +72,9 @@
  */
 #define NUM_COLLECT_DEBUG_ASSERT(CONDITION) NUM_COLLECT_ASSERT(CONDITION)
 #elif !defined(NDEBUG)
+// NOLINTNEXTLINE
 #define NUM_COLLECT_DEBUG_ASSERT(CONDITION) NUM_COLLECT_ASSERT(CONDITION)
 #else
+// NOLINTNEXTLINE
 #define NUM_COLLECT_DEBUG_ASSERT(CONDITION) [] {}()
 #endif
