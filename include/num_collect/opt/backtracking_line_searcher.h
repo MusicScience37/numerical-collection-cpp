@@ -23,6 +23,8 @@
 #include <cstddef>
 #include <type_traits>
 
+#include "num_collect/util/assert.h"
+#include "num_collect/util/exception.h"
 #include "num_collect/util/index_type.h"
 
 namespace num_collect::opt {
@@ -104,7 +106,7 @@ public:
             step_ *= step_scale_;
         }
 
-        throw std::runtime_error("failed to search step size");
+        throw algorithm_failure("failed to search step size");
     }
 
     /*!
@@ -179,10 +181,7 @@ public:
      * \return This object.
      */
     auto armijo_coeff(value_type value) -> backtracking_line_searcher& {
-        if (armijo_coeff_ <= value_type(0) || value_type(1) <= armijo_coeff_) {
-            throw std::invalid_argument(
-                "armijo_coeff must be in the range (0, 1)");
-        }
+        NUM_COLLECT_ASSERT(value_type(0) < value && value < value_type(1));
         armijo_coeff_ = value;
         return *this;
     }
@@ -194,10 +193,7 @@ public:
      * \return This object.
      */
     auto step_scale(value_type value) -> backtracking_line_searcher& {
-        if (armijo_coeff_ <= value_type(0) || value_type(1) <= armijo_coeff_) {
-            throw std::invalid_argument(
-                "step_scale must be in the range (0, 1)");
-        }
+        NUM_COLLECT_ASSERT(value_type(0) < value && value < value_type(1));
         step_scale_ = value;
         return *this;
     }

@@ -39,4 +39,12 @@ public:
     using num_collect_exception::num_collect_exception;
 };
 
+/*!
+ * \brief Class of exception on failure in algorithm.
+ */
+class algorithm_failure : public num_collect_exception {
+public:
+    using num_collect_exception::num_collect_exception;
+};
+
 }  // namespace num_collect

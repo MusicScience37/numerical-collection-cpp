@@ -56,3 +56,20 @@ TEST_CASE("num_collect::assetion_failure") {
         REQUIRE(e.what() == message);
     }
 }
+
+TEST_CASE("num_collect::algorithm_failure") {
+    using test_type = num_collect::algorithm_failure;
+
+    SECTION("basic functions") {
+        STATIC_REQUIRE(std::is_nothrow_copy_constructible_v<test_type>);
+        STATIC_REQUIRE(std::is_nothrow_copy_assignable_v<test_type>);
+        STATIC_REQUIRE(std::is_nothrow_move_constructible_v<test_type>);
+        STATIC_REQUIRE(std::is_nothrow_move_assignable_v<test_type>);
+    }
+
+    SECTION("construct") {
+        const auto message = std::string("test message");
+        auto e = test_type(message);
+        REQUIRE(e.what() == message);
+    }
+}
