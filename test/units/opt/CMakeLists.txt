@@ -6,6 +6,9 @@ add_executable(
     backtracking_line_searcher_test.cpp
     steepest_descent_test.cpp
     newton_optimizer_test.cpp
+    dfp_optimizer_test.cpp
+    bfgs_optimizer_test.cpp
+    conjugate_gradient_optimizer_test.cpp
     # etc
     downhill_simplex_test.cpp)
 target_add_catch2(num_collect_test_units_opt)
