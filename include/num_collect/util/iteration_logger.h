@@ -29,6 +29,7 @@
 #include <fmt/core.h>
 #include <fmt/format.h>
 
+#include "num_collect/util/assert.h"
 #include "num_collect/util/index_type.h"
 
 namespace num_collect {
@@ -98,10 +99,7 @@ public:
          * \return This object.
          */
         auto precision(index_type value) -> log_item& {
-            if (value <= 0) {
-                throw std::invalid_argument(
-                    "precision in iteration_logger must be a positive integer");
-            }
+            NUM_COLLECT_ASSERT(value > 0);
             precision_ = value;
             return *this;
         }
@@ -113,10 +111,7 @@ public:
          * \return This object.
          */
         auto width(index_type value) -> log_item& {
-            if (value <= 0) {
-                throw std::invalid_argument(
-                    "width in iteration_logger must be a positive integer");
-            }
+            NUM_COLLECT_ASSERT(value > 0);
             width_ = value;
             return *this;
         }
@@ -230,11 +225,7 @@ public:
      * \return This object.
      */
     auto log_output_period(index_type value) -> iteration_logger& {
-        if (value <= 0) {
-            throw std::invalid_argument(
-                "log output period in iteration_logger must be a positive "
-                "integer");
-        }
+        NUM_COLLECT_ASSERT(value > 0);
         log_output_period_ = value;
         return *this;
     }
@@ -246,11 +237,7 @@ public:
      * \return This object.
      */
     auto title_output_period(index_type value) -> iteration_logger& {
-        if (value <= 0) {
-            throw std::invalid_argument(
-                "title output period in iteration_logger must be a positive "
-                "integer");
-        }
+        NUM_COLLECT_ASSERT(value > 0);
         title_output_period_ = value;
         return *this;
     }
