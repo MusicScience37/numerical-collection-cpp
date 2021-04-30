@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of bfgs_optimizer class.
+ * \brief Definition of dfp_optimizer class.
  */
 #pragma once
 
@@ -27,28 +27,27 @@
 namespace num_collect::opt {
 
 /*!
- * \brief Class of quasi-Newton method with Broyden-Fletcher-Goldfarb-Shanno
- * (BFGS) formula.
+ * \brief Class of quasi-Newton method with Davidon-Fletcher-Powell (DFP)
+ * formula.
  *
  * \warning This implementation assumes Eigen's dense vector types for variable
  * types.
  *
  * \tparam ObjectiveFunction Type of the objective function.
  * \tparam LineSearcher Type of class to perform line search.
- * \tparam HessianSolver Type of solvers of linear equation of Hessian.
+ * \tparam Hessian Type of Hessian matrix.
  */
 template <typename ObjectiveFunction,
     typename LineSearcher = backtracking_line_searcher<ObjectiveFunction>,
-    typename HessianSolver = Eigen::LLT<Eigen::MatrixXd>>
-class bfgs_optimizer
+    typename Hessian = Eigen::MatrixXd>
+class dfp_optimizer
     : public descent_method_base<
-          bfgs_optimizer<ObjectiveFunction, LineSearcher, HessianSolver>,
+          dfp_optimizer<ObjectiveFunction, LineSearcher, Hessian>,
           LineSearcher> {
 public:
     //! Type of base class.
     using base_type = descent_method_base<
-        bfgs_optimizer<ObjectiveFunction, LineSearcher, HessianSolver>,
-        LineSearcher>;
+        dfp_optimizer<ObjectiveFunction, LineSearcher, Hessian>, LineSearcher>;
 
     using typename base_type::objective_function_type;
     using typename base_type::variable_type;
@@ -56,18 +55,15 @@ public:
     //! Type of scalars in variables.
     using variable_scalar_type = typename variable_type::Scalar;
 
-    //! Type of solvers of linear equation of Hessian.
-    using hessian_solver_type = HessianSolver;
-
     //! Type of Hessian.
-    using hessian_type = typename hessian_solver_type::MatrixType;
+    using hessian_type = Hessian;
 
     /*!
      * \brief Construct.
      *
      * \param[in] obj_fun Objective function.
      */
-    explicit bfgs_optimizer(
+    explicit dfp_optimizer(
         const objective_function_type& obj_fun = objective_function_type())
         : base_type(obj_fun) {}
 
@@ -98,19 +94,18 @@ public:
         if (has_first_iteration_done_) {
             diff_var_ = opt_variable() - prev_var_;
             diff_grad_ = gradient() - prev_grad_;
-            hessian_var_ = approx_hessian_ * diff_var_;
+            hessian_grad_ = approx_hessian_ * diff_grad_;
             approx_hessian_ = approx_hessian_ +
-                (diff_grad_ * diff_grad_.transpose()) /
-                    (diff_grad_.dot(diff_var_)) -
-                (hessian_var_ * hessian_var_.transpose()) /
-                    (diff_var_.dot(hessian_var_));
+                (diff_var_ * diff_var_.transpose()) /
+                    (diff_var_.dot(diff_grad_)) -
+                (hessian_grad_ * hessian_grad_.transpose()) /
+                    (diff_grad_.dot(hessian_grad_));
         }
         prev_var_ = opt_variable();
         prev_grad_ = gradient();
         has_first_iteration_done_ = true;
 
-        solver_.compute(approx_hessian_);
-        return -solver_.solve(prev_grad_);
+        return -approx_hessian_ * prev_grad_;
     }
 
     /*!
@@ -139,14 +134,11 @@ private:
     //! Difference of gradient.
     variable_type diff_grad_{};
 
-    //! approx_hessian_ * diff_var_
-    variable_type hessian_var_{};
+    //! approx_hessian_ * diff_grad_
+    variable_type hessian_grad_{};
 
     //! Whether the first iteration has been done.
     bool has_first_iteration_done_{false};
-
-    //! Solver of linear equation of Hessian.
-    hessian_solver_type solver_{};
 };
 
 }  // namespace num_collect::opt

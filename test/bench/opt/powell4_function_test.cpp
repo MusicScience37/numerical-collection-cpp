@@ -23,6 +23,7 @@
 
 #include "iterations_udm.h"
 #include "num_collect/opt/bfgs_optimizer.h"
+#include "num_collect/opt/dfp_optimizer.h"
 #include "num_collect/opt/downhill_simplex.h"
 #include "num_collect/opt/steepest_descent.h"
 
@@ -70,6 +71,15 @@ BASELINE_F(
 BENCHMARK_F(
     opt_powell4_function, downhill_simplex, powell4_function_fixture, 0, 0) {
     auto optimizer = num_collect::opt::downhill_simplex<
+        num_prob_collect::opt::powell4_function>();
+    optimizer.init(init_var());
+    this->test_optimizer(optimizer);
+}
+
+// NOLINTNEXTLINE: external library
+BENCHMARK_F(
+    opt_powell4_function, dfp_optimizer, powell4_function_fixture, 0, 0) {
+    auto optimizer = num_collect::opt::dfp_optimizer<
         num_prob_collect::opt::powell4_function>();
     optimizer.init(init_var());
     this->test_optimizer(optimizer);
