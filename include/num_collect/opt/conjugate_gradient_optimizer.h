@@ -77,7 +77,6 @@ public:
      */
     void init(const variable_type& init_variable) {
         base_type::init(init_variable);
-        const auto dimensions = init_variable.size();
         has_first_iteration_done_ = false;
     }
 
