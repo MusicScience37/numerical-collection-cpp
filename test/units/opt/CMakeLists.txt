@@ -11,6 +11,7 @@ add_executable(
     conjugate_gradient_optimizer_test.cpp
     # direct
     impl/ternary_vector_test.cpp
+    dividing_rectangles_test.cpp
     # etc
     downhill_simplex_test.cpp)
 target_add_catch2(num_collect_test_units_opt)
