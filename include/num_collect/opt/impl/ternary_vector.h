@@ -21,6 +21,7 @@
 
 #include <Eigen/Core>
 #include <cstdint>
+#include <functional>  // std::hash
 #include <limits>
 
 #include "num_collect/util/assert.h"
@@ -210,3 +211,51 @@ private:
 };
 
 }  // namespace num_collect::opt::impl
+
+namespace std {
+
+/*!
+ * \brief Implementation of std::hash for
+ * num_collect::opt::impl::ternary_vector.
+ */
+template <>
+class hash<num_collect::opt::impl::ternary_vector> {
+public:
+    //! Type of argument.
+    using argument_type = num_collect::opt::impl::ternary_vector;
+
+    //! Type of result.
+    using result_type = std::size_t;
+
+    /*!
+     * \brief Calculate hash.
+     *
+     * \param[in] vec Vector.
+     * \return Hash.
+     */
+    [[nodiscard]] auto operator()(const argument_type& vec) const
+        -> result_type {
+        std::size_t res = 0;
+        for (num_collect::index_type i = 0; i < vec.dim(); ++i) {
+            std::size_t temp = 0;
+            num_collect::index_type non_zero_digits = 0;
+            for (num_collect::index_type j = 0; j < vec.digits(i); ++j) {
+                if (vec(i, j) != 0) {
+                    non_zero_digits = j + 1;
+                }
+            }
+            for (num_collect::index_type j = 0; j < non_zero_digits; ++j) {
+                constexpr std::size_t coeff = 3;
+                temp *= coeff;
+                temp += static_cast<std::size_t>(
+                    static_cast<std::uint8_t>(vec(i, j)));
+            }
+            constexpr std::size_t coeff = 79865413;  // a prime number
+            res *= coeff;
+            res += temp;
+        }
+        return res;
+    }
+};
+
+}  // namespace std

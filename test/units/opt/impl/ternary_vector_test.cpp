@@ -198,3 +198,56 @@ TEST_CASE("num_collect::opt::impl::ternary_vector") {
         REQUIRE_THROWS_AS(vec.digits(dim), num_collect::assetion_failure);
     }
 }
+
+TEST_CASE("std::hash<num_collect::opt::impl::ternary_vector>") {
+    using num_collect::opt::impl::ternary_vector;
+
+    const std::hash<ternary_vector> hash;
+
+    SECTION("compare same vectors") {
+        constexpr num_collect::index_type dim = 3;
+        auto vec1 = ternary_vector(dim);
+        vec1.push_back(2, 1);  // NOLINT
+        auto vec2 = ternary_vector(dim);
+        vec2.push_back(2, 1);  // NOLINT
+        REQUIRE(hash(vec1) == hash(vec2));
+    }
+
+    SECTION("compare vectors with a different digit") {
+        constexpr num_collect::index_type dim = 3;
+        auto vec1 = ternary_vector(dim);
+        vec1.push_back(2, 1);  // NOLINT
+        auto vec2 = ternary_vector(dim);
+        vec2.push_back(2, 2);  // NOLINT
+        REQUIRE(hash(vec1) != hash(vec2));
+    }
+
+    SECTION("compare vectors with a digit in different dimensions") {
+        constexpr num_collect::index_type dim = 3;
+        auto vec1 = ternary_vector(dim);
+        vec1.push_back(2, 1);  // NOLINT
+        auto vec2 = ternary_vector(dim);
+        vec2.push_back(1, 1);  // NOLINT
+        REQUIRE(hash(vec1) != hash(vec2));
+    }
+
+    SECTION("compare vectors with different digits but same (lhs is larger)") {
+        constexpr num_collect::index_type dim = 3;
+        auto vec1 = ternary_vector(dim);
+        vec1.push_back(2, 1);  // NOLINT
+        vec1.push_back(2, 0);  // NOLINT
+        auto vec2 = ternary_vector(dim);
+        vec2.push_back(2, 1);  // NOLINT
+        REQUIRE(hash(vec1) == hash(vec2));
+    }
+
+    SECTION("compare vectors with different digits but same (rhs is larger)") {
+        constexpr num_collect::index_type dim = 3;
+        auto vec1 = ternary_vector(dim);
+        vec1.push_back(2, 1);  // NOLINT
+        auto vec2 = ternary_vector(dim);
+        vec2.push_back(2, 1);  // NOLINT
+        vec2.push_back(2, 0);  // NOLINT
+        REQUIRE(hash(vec1) == hash(vec2));
+    }
+}
