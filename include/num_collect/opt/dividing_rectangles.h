@@ -33,27 +33,19 @@
 namespace num_collect::opt {
 
 /*!
- * \brief Class of dividing rectangles (DIRECT) method for optimization.
+ * \brief Class of dividing rectangles (DIRECT) method \cite Jones1993 for
+ * optimization.
  *
  * \tparam ObjectiveFunction Type of the objective function.
- *
- * Reference:
- * D. R. Jones, C. D. Perttunen, and B. E. Stuckman. Lipschitzian optimization
- * without the lipschitz constant. Journal of Optimization Theory and
- * Application, Vol. 79, No. 1, 1993.
  */
 template <typename ObjectiveFunction, typename = void>
 class dividing_rectangles;
 
 /*!
- * \brief Class of dividing rectangles (DIRECT) method for optimization.
+ * \brief Class of dividing rectangles (DIRECT) method \cite Jones1993 for
+ * optimization.
  *
  * \tparam ObjectiveFunction Type of the objective function.
- *
- * Reference:
- * D. R. Jones, C. D. Perttunen, and B. E. Stuckman. Lipschitzian optimization
- * without the lipschitz constant. Journal of Optimization Theory and
- * Application, Vol. 79, No. 1, 1993.
  */
 template <typename ObjectiveFunction>
 class dividing_rectangles<ObjectiveFunction,
