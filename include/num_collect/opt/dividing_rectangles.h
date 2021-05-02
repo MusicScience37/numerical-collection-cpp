@@ -406,7 +406,7 @@ private:
     [[nodiscard]] static auto widest_dimension(const rectangle& rect)
         -> index_type {
         index_type res = 0;
-        value_type max_width = value_type(0);
+        auto max_width = value_type(0);
         for (index_type i = 0; i < rect.lower().size(); ++i) {
             const auto width = rect.upper()(i) - rect.lower()(i);
             if (width > max_width) {
