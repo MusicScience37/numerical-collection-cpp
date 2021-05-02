@@ -25,6 +25,7 @@
 #include "iterations_udm.h"
 #include "num_collect/opt/bfgs_optimizer.h"
 #include "num_collect/opt/dfp_optimizer.h"
+#include "num_collect/opt/dividing_rectangles.h"
 #include "num_collect/opt/downhill_simplex.h"
 #include "num_collect/opt/steepest_descent.h"
 
@@ -63,6 +64,14 @@ private:
     return (Eigen::Vector4d() << 1.0, -2.0, -3.0, 2.0).finished();
 }
 
+[[nodiscard]] auto search_region()
+    -> std::pair<Eigen::Vector4d, Eigen::Vector4d> {
+    constexpr double min_value = -4.0;
+    constexpr double max_value = 5.0;
+    return {Eigen::Vector4d::Constant(min_value),
+        Eigen::Vector4d::Constant(max_value)};
+}
+
 // NOLINTNEXTLINE: external library
 BASELINE_F(
     opt_powell4_function, steepest_descent, powell4_function_fixture, 0, 0) {
@@ -96,5 +105,15 @@ BENCHMARK_F(
     auto optimizer = num_collect::opt::bfgs_optimizer<
         num_prob_collect::opt::powell4_function>();
     optimizer.init(init_var());
+    this->test_optimizer(optimizer);
+}
+
+// NOLINTNEXTLINE: external library
+BENCHMARK_F(
+    opt_powell4_function, dividing_rectangles, powell4_function_fixture, 0, 0) {
+    auto optimizer = num_collect::opt::dividing_rectangles<
+        num_prob_collect::opt::powell4_function>();
+    const auto [lower, upper] = search_region();
+    optimizer.init(lower, upper);
     this->test_optimizer(optimizer);
 }

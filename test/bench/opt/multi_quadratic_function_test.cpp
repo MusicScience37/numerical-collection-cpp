@@ -43,11 +43,11 @@ public:
 #ifndef NDEBUG
         constexpr auto dimensions_vector =
             std::array<std::int64_t, 3>{2, 5, 10};
-        constexpr std::int64_t coeff = 500;
+        constexpr std::int64_t coeff = 10;
 #else
         constexpr auto dimensions_vector =
             std::array<std::int64_t, 6>{2, 5, 10, 20, 50, 100};
-        constexpr std::int64_t coeff = 5000;
+        constexpr std::int64_t coeff = 1000;
 #endif
         std::vector<celero::TestFixture::ExperimentValue> problem_space;
         problem_space.reserve(dimensions_vector.size());
@@ -80,7 +80,7 @@ public:
     template <typename Optimizer>
     void test_optimizer(Optimizer& optimizer) {
         constexpr double tol_value = 1e-4;
-        constexpr num_collect::index_type max_evaluations = 1000;
+        constexpr num_collect::index_type max_evaluations = 10000;
         if (is_failure_) {
             return;
         }
