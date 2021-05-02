@@ -461,7 +461,7 @@ private:
     index_type evaluations_{0};
 
     //! Default maximum number of function evaluations.
-    static constexpr index_type default_max_evaluations = 1000;
+    static constexpr index_type default_max_evaluations = 10000;
 
     //! Maximum number of function evaluations.
     index_type max_evaluations_{default_max_evaluations};
