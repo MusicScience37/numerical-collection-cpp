@@ -21,6 +21,7 @@
 
 #include <celero/Celero.h>
 
+#include "evaluations_udm.h"
 #include "iterations_udm.h"
 #include "num_collect/opt/bfgs_optimizer.h"
 #include "num_collect/opt/dfp_optimizer.h"
@@ -41,16 +42,20 @@ public:
             optimizer.iterate();
         }
         iterations_->addValue(optimizer.iterations());
+        evaluations_->addValue(optimizer.evaluations());
     }
 
     [[nodiscard]] auto getUserDefinedMeasurements() const -> std::vector<
         std::shared_ptr<celero::UserDefinedMeasurement>> override {
-        return {iterations_};
+        return {iterations_, evaluations_};
     }
 
 private:
     std::shared_ptr<iterations_udm> iterations_{
         std::make_shared<iterations_udm>()};
+
+    std::shared_ptr<evaluations_udm> evaluations_{
+        std::make_shared<evaluations_udm>()};
 };
 
 [[nodiscard]] auto init_var() -> Eigen::Vector3d {
@@ -77,8 +82,8 @@ BENCHMARK_F(opt_rosenbrock_function, downhill_simplex,
 }
 
 // NOLINTNEXTLINE: external library
-BENCHMARK_F(opt_rosenbrock_function, dfp_optimizer,
-    rosenbrock_function_fixture, 0, 0) {
+BENCHMARK_F(
+    opt_rosenbrock_function, dfp_optimizer, rosenbrock_function_fixture, 0, 0) {
     auto optimizer = num_collect::opt::dfp_optimizer<
         num_prob_collect::opt::rosenbrock_function>();
     optimizer.init(init_var());
