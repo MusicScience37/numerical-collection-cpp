@@ -34,6 +34,9 @@ namespace num_collect::opt {
  *
  * \tparam ObjectiveFunction Type of the objective function.
  * \tparam LineSearcher Type of class to perform line search.
+ *
+ * \todo Conjugate gradient method for optimization may need to be fixed for
+ * faster convergence.
  */
 template <typename ObjectiveFunction,
     typename LineSearcher = backtracking_line_searcher<ObjectiveFunction>>
