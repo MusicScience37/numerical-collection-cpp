@@ -50,7 +50,7 @@ TEST_CASE("num_collect::opt::dividing_rectangles") {
 
         opt.iterate();
         REQUIRE(opt.iterations() == 1);
-        REQUIRE(opt.evaluations() == 3);
+        REQUIRE(opt.evaluations() == 7);
         REQUIRE(opt.opt_value() <= prev_value);
     }
 

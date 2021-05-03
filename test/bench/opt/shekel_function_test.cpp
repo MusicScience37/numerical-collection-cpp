@@ -30,9 +30,9 @@ CELERO_MAIN
 
 constexpr std::int64_t samples = 30;
 #ifndef NDEBUG
-constexpr std::int64_t iterations = 10;
+constexpr std::int64_t iterations = 1;
 #else
-constexpr std::int64_t iterations = 1000;
+constexpr std::int64_t iterations = 100;
 #endif
 
 class shekel_function_fixture : public celero::TestFixture {
@@ -77,7 +77,7 @@ public:
     void test_optimizer(Optimizer& optimizer) {
         constexpr double tol_value = 1e-4;
         const auto value_bound = minimum_value() + tol_value;
-        constexpr num_collect::index_type max_evaluations = 10000;
+        constexpr num_collect::index_type max_evaluations = 100000;
         if (is_failure_) {
             return;
         }

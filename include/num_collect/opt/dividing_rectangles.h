@@ -20,6 +20,7 @@
 #pragma once
 
 #include <Eigen/Core>
+#include <algorithm>
 #include <limits>
 #include <queue>
 #include <tuple>
@@ -100,8 +101,8 @@ public:
 
         rects_.clear();
         rects_.emplace_back();
-        rects_[0].emplace(
-            variable_type::Zero(dim_), variable_type::Ones(dim_), opt_value_);
+        rects_[0].push(std::make_shared<rectangle>(
+            variable_type::Zero(dim_), variable_type::Ones(dim_), opt_value_));
     }
 
     /*!
@@ -202,6 +203,7 @@ private:
             const value_type& value)
             : lower_(lower),
               upper_(upper),
+              is_divided_(static_cast<std::size_t>(lower.size()), false),
               dist_((lower - upper).norm() * half),
               value_(value) {}
 
@@ -224,6 +226,15 @@ private:
         }
 
         /*!
+         * \brief Get whether each dimension is divided.
+         *
+         * \return Whether each dimension is divided.
+         */
+        [[nodiscard]] auto is_divided() const -> const std::vector<bool>& {
+            return is_divided_;
+        }
+
+        /*!
          * \brief Get distance between center point and end point.
          *
          * \return Distance between center point and end point.
@@ -237,6 +248,47 @@ private:
          */
         [[nodiscard]] auto value() const -> const value_type& { return value_; }
 
+        /*!
+         * \brief Divide this object in place.
+         *
+         * \param[in] dim Dimension index.
+         * \param[in] lower New lower bound.
+         * \param[in] upper New upper bound.
+         * \param[in] value New value.
+         */
+        void divide_in_place(index_type dim, value_type lower, value_type upper,
+            value_type value) {
+            NUM_COLLECT_DEBUG_ASSERT(lower < upper);
+            NUM_COLLECT_DEBUG_ASSERT(!is_divided_[dim]);
+            lower_(dim) = lower;
+            upper_(dim) = upper;
+            dist_ = (lower_ - upper_).norm() * half;
+            value_ = value;
+            is_divided_[dim] = true;
+            if (std::all_of(std::begin(is_divided_), std::end(is_divided_),
+                    [](bool elem) { return elem; })) {
+                std::fill(
+                    std::begin(is_divided_), std::end(is_divided_), false);
+            }
+        }
+
+        /*!
+         * \brief Divide this object and return the divided rectangle.
+         *
+         * \param[in] dim Dimension index.
+         * \param[in] lower New lower bound.
+         * \param[in] upper New upper bound.
+         * \param[in] value New value.
+         * \return Divided rectangle.
+         */
+        [[nodiscard]] auto divide(index_type dim, value_type lower,
+            value_type upper, value_type value) const
+            -> std::shared_ptr<rectangle> {
+            auto ptr = std::make_shared<rectangle>(*this);
+            ptr->divide_in_place(dim, lower, upper, value);
+            return ptr;
+        }
+
     private:
         //! Half.
         static inline const auto half = static_cast<value_type>(0.5);
@@ -246,6 +298,13 @@ private:
 
         //! Element-wise upper limit.
         variable_type upper_;
+
+        /*!
+         * \brief Whether each dimension is divided.
+         *
+         * If all dimensions are divided once, flags are reset.
+         */
+        std::vector<bool> is_divided_;
 
         //! Distance between center point and end point.
         value_type dist_;
@@ -265,9 +324,9 @@ private:
          * \param[in] right Right-hand-side rectangle.
          * \return Result of left > right.
          */
-        [[nodiscard]] auto operator()(
-            const rectangle& left, const rectangle& right) const -> bool {
-            return left.value() > right.value();
+        [[nodiscard]] auto operator()(const std::shared_ptr<rectangle>& left,
+            const std::shared_ptr<rectangle>& right) const -> bool {
+            return left->value() > right->value();
         }
     };
 
@@ -313,8 +372,8 @@ private:
             }
             while (true) {
                 const auto& [last_ind, last_slope] = search_rects.back();
-                const auto slope =
-                    calculate_slope(rects_[last_ind].top(), rects_[ind].top());
+                const auto slope = calculate_slope(
+                    *(rects_[last_ind].top()), *(rects_[ind].top()));
                 if (slope <= last_slope) {
                     search_rects.emplace_back(ind, slope);
                     break;
@@ -327,7 +386,8 @@ private:
         const auto value_bound = opt_value_ - min_rate_imp_ * abs(opt_value_);
         for (auto iter = search_rects.begin(); iter != search_rects.end();) {
             const auto& [ind, slope] = *iter;
-            if (rects_[ind].top().value() - slope * rects_[ind].top().dist() <=
+            if (rects_[ind].top()->value() -
+                    slope * rects_[ind].top()->dist() <=
                 value_bound) {
                 ++iter;
             } else {
@@ -356,57 +416,74 @@ private:
      * \param[in] index Index in rects_.
      */
     void divide_rect(std::size_t index) {
-        const auto& origin = rects_[index].top();
         if (index + 1 == rects_.size()) {
             rects_.emplace_back();
         }
+        const auto origin = rects_[index].top();
+        rects_[index].pop();
 
-        const auto divided_dim = widest_dimension(origin);
-        const value_type divided_lowest = origin.lower()(divided_dim);
-        const value_type divided_uppest = origin.upper()(divided_dim);
+        const auto [divided_dim, lower_value, upper_value] =
+            determine_divided_dimension(*origin);
+        const value_type divided_lowest = origin->lower()(divided_dim);
+        const value_type divided_uppest = origin->upper()(divided_dim);
         const auto [divided_lower, divided_upper] =
             separate_section(divided_lowest, divided_uppest);
 
-        variable_type lower = origin.lower();
-        variable_type upper = origin.upper();
-        upper(divided_dim) = divided_lower;
-        static const auto half = static_cast<value_type>(0.5);
-        variable_type center = (lower + upper) * half;
-        value_type value = evaluate_on(center);
-        rects_[index + 1].emplace(lower, upper, value);
-
-        lower(divided_dim) = divided_lower;
-        upper(divided_dim) = divided_upper;
-        value = origin.value();
-        rects_[index + 1].emplace(lower, upper, value);
-
-        lower(divided_dim) = divided_upper;
-        upper(divided_dim) = divided_uppest;
-        center = (lower + upper) * half;
-        value = evaluate_on(center);
-        rects_[index + 1].emplace(lower, upper, value);
-
-        rects_[index].pop();
+        rects_[index + 1].push(origin->divide(
+            divided_dim, divided_lowest, divided_lower, lower_value));
+        rects_[index + 1].push(origin->divide(
+            divided_dim, divided_upper, divided_uppest, upper_value));
+        origin->divide_in_place(
+            divided_dim, divided_lower, divided_upper, origin->value());
+        rects_[index + 1].push(origin);
     }
 
     /*!
-     * \brief Find the widest dimension of a rectangle.
+     * \brief Determine the divided dimension of a rectangle.
      *
      * \param[in] rect Rectangle.
-     * \return Dimension index.
+     * \return Dimension index, function value at lower new point, and function
+     * value at upper new point.
      */
-    [[nodiscard]] static auto widest_dimension(const rectangle& rect)
-        -> index_type {
-        index_type res = 0;
-        auto max_width = value_type(0);
-        for (index_type i = 0; i < rect.lower().size(); ++i) {
-            const auto width = rect.upper()(i) - rect.lower()(i);
-            if (width > max_width) {
-                max_width = width;
-                res = i;
+    [[nodiscard]] auto determine_divided_dimension(const rectangle& rect)
+        -> std::tuple<index_type, value_type, value_type> {
+        value_type min_value = std::numeric_limits<value_type>::max();
+        index_type dim = 0;
+        value_type dim_lower_value{};
+        value_type dim_upper_value{};
+        for (index_type i = 0; i < dim_; ++i) {
+            if (rect.is_divided()[static_cast<std::size_t>(i)]) {
+                continue;
+            }
+
+            const value_type width = rect.upper()[i] - rect.lower()[i];
+            static const auto one_third = static_cast<value_type>(1.0 / 3.0);
+            const value_type diff = width * one_third;
+
+            static const auto half = static_cast<value_type>(0.5);
+            variable_type center = (rect.lower() + rect.upper()) * half;
+            const value_type origin_center = center[i];
+
+            center[i] = origin_center - diff;
+            const auto lower_value = evaluate_on(center);
+            center[i] = origin_center + diff;
+            const auto upper_value = evaluate_on(center);
+
+            if (lower_value < min_value) {
+                min_value = lower_value;
+                dim = i;
+                dim_lower_value = lower_value;
+                dim_upper_value = upper_value;
+            }
+            if (upper_value < min_value) {
+                min_value = upper_value;
+                dim = i;
+                dim_lower_value = lower_value;
+                dim_upper_value = upper_value;
             }
         }
-        return res;
+
+        return {dim, dim_lower_value, dim_upper_value};
     }
 
     /*!
@@ -432,8 +509,8 @@ private:
      *
      * Rectangles are listed per size.
      */
-    std::vector<std::priority_queue<rectangle, std::vector<rectangle>,
-        greater_rectangle>>
+    std::vector<std::priority_queue<std::shared_ptr<rectangle>,
+        std::vector<std::shared_ptr<rectangle>>, greater_rectangle>>
         rects_{};
 
     //! Element-wise lower limit.
