@@ -179,7 +179,7 @@ public:
      * \param[in] value Value.
      * \return This object.
      */
-    auto min_rate_imp(variable_type value) -> dividing_rectangles& {
+    auto min_rate_imp(value_type value) -> dividing_rectangles& {
         NUM_COLLECT_ASSERT(value > 0);
         min_rate_imp_ = value;
         return *this;
