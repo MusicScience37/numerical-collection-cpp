@@ -55,6 +55,7 @@ TEST_CASE("num_collect::opt::impl::adc_sample_dict") {
         func.evaluate_on(var);
         const auto value = func.value();
         REQUIRE_THAT(dict(point), Catch::Matchers::WithinRel(value));
+        REQUIRE(dict.opt_point() == point);
         REQUIRE_THAT(dict.opt_variable(), eigen_approx(var));
         REQUIRE_THAT(dict.opt_value(), Catch::Matchers::WithinRel(value));
         REQUIRE(dict.evaluations() == 1);
@@ -145,5 +146,73 @@ TEST_CASE("num_collect::opt::impl::adc_rectangle") {
 
         const double dist = 0.5 * std::sqrt(1.0 / 9.0 + 1.0);
         REQUIRE_THAT(rect.dist(), Catch::Matchers::WithinRel(dist));
+    }
+}
+
+TEST_CASE("num_collect::opt::impl::adc_group") {
+    using group_type = num_collect::opt::impl::adc_group<double>;
+    using rectangle_type = typename group_type::rectangle_type;
+    using num_collect::opt::impl::ternary_vector;
+
+    constexpr double dist = 0.1;
+    auto group = group_type(dist);
+
+    SECTION("construct") {
+        REQUIRE_THAT(group.dist(), Catch::Matchers::WithinRel(dist));
+        REQUIRE(group.empty());
+    }
+
+    SECTION("push a rectangle") {
+        auto point1 = ternary_vector(2);
+        point1.push_back(0, 0);
+        point1.push_back(0, 1);
+        point1.push_back(1, 0);
+        constexpr double ave_value1 = 3.14;
+        group.push(std::make_shared<rectangle_type>(point1, ave_value1));
+
+        REQUIRE(group.min_rect()->vertex() == point1);
+        REQUIRE_FALSE(group.empty());
+    }
+
+    SECTION("push rectangles") {
+        auto point1 = ternary_vector(2);
+        point1.push_back(0, 0);
+        point1.push_back(0, 1);
+        point1.push_back(1, 0);
+        constexpr double ave_value1 = 3.14;
+        group.push(std::make_shared<rectangle_type>(point1, ave_value1));
+
+        auto point2 = ternary_vector(2);
+        point2.push_back(0, 0);
+        point2.push_back(1, 0);
+        constexpr double ave_value2 = 1.23;
+        group.push(std::make_shared<rectangle_type>(point2, ave_value2));
+
+        REQUIRE(group.min_rect()->vertex() == point2);
+        REQUIRE_FALSE(group.empty());
+    }
+
+    SECTION("pop rectangles") {
+        auto point1 = ternary_vector(2);
+        point1.push_back(0, 0);
+        point1.push_back(0, 1);
+        point1.push_back(1, 0);
+        constexpr double ave_value1 = 3.14;
+        group.push(std::make_shared<rectangle_type>(point1, ave_value1));
+
+        auto point2 = ternary_vector(2);
+        point2.push_back(0, 0);
+        point2.push_back(1, 0);
+        constexpr double ave_value2 = 1.23;
+        group.push(std::make_shared<rectangle_type>(point2, ave_value2));
+
+        auto popped_rect = group.pop();
+        REQUIRE(popped_rect->vertex() == point2);
+        REQUIRE(group.min_rect()->vertex() == point1);
+        REQUIRE_FALSE(group.empty());
+
+        popped_rect = group.pop();
+        REQUIRE(popped_rect->vertex() == point1);
+        REQUIRE(group.empty());
     }
 }

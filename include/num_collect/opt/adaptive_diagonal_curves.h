@@ -114,6 +114,7 @@ public:
         value_dict_.try_emplace(point, obj_fun_.value());
 
         if (evaluations() == 1 || obj_fun_.value() < opt_value_) {
+            opt_point_ = point;
             opt_variable_ = var;
             opt_value_ = obj_fun_.value();
         }
@@ -126,6 +127,16 @@ public:
      */
     [[nodiscard]] auto opt_variable() const -> const variable_type& {
         return opt_variable_;
+    }
+
+    /*!
+     * \brief Get the point in the unit hyper-cube for the current optimal
+     * variable.
+     *
+     * \return Point in the unit hyper-cube for the current optimal variable.
+     */
+    [[nodiscard]] auto opt_point() const -> const ternary_vector& {
+        return opt_point_;
     }
 
     /*!
@@ -158,6 +169,9 @@ private:
     //! Dictionary of sampled points.
     std::unordered_map<impl::ternary_vector, value_type> value_dict_{};
 
+    //! Point in the unit hyper-cube for the current optimal variable.
+    ternary_vector opt_point_{};
+
     //! Current optimal variable.
     variable_type opt_variable_{};
 
@@ -168,6 +182,8 @@ private:
 /*!
  * \brief Class of rectangles as proposed in \cite Sergeyev2000 for \ref
  * num_collect::opt::adaptive_diagonal_curves.
+ *
+ * \tparam Value Type of function values.
  */
 template <typename Value>
 class adc_rectangle {
@@ -254,6 +270,88 @@ public:
         return half * sqrt(squared_sum);
     }
 
+private:
+    //! A vertex with lower first component.
+    impl::ternary_vector vertex_;
+
+    //! Average function value.
+    value_type ave_value_;
+};
+
+/*!
+ * \brief Class of groups in \cite Sergeyev2006 for \ref
+ * num_collect::opt::adaptive_diagonal_curves.
+ *
+ * \tparam Value Type of function values.
+ */
+template <typename Value>
+class adc_group {
+public:
+    //! Type of function values.
+    using value_type = Value;
+
+    //! Type of hyper-rectangles.
+    using rectangle_type = adc_rectangle<value_type>;
+
+    //! Type of pointers of hyper-rectangles.
+    using rectangle_pointer_type = std::shared_ptr<rectangle_type>;
+
+    /*!
+     * \brief Construct.
+     *
+     * \param[in] dist Distance between center point and vertex.
+     */
+    explicit adc_group(value_type dist) : dist_(dist) {}
+
+    /*!
+     * \brief Add a hyper-rectangle to this group.
+     *
+     * \param[in] rect Rectangle.
+     */
+    void push(rectangle_pointer_type rect) {
+        NUM_COLLECT_DEBUG_ASSERT(rect);
+        rects_.push(rect);
+    }
+
+    /*!
+     * \brief Access the hyper-rectangle with the smallest average of
+     * function values at diagonal vertices.
+     *
+     * \return Reference of pointer to the rectangle.
+     */
+    [[nodiscard]] auto min_rect() const -> const rectangle_pointer_type& {
+        NUM_COLLECT_DEBUG_ASSERT(!rects_.empty());
+        return rects_.top();
+    }
+
+    /*!
+     * \brief Check whether this group is empty.
+     *
+     * \return Whether this group is empty.
+     */
+    [[nodiscard]] auto empty() const -> bool { return rects_.empty(); }
+
+    /*!
+     * \brief Pick out the hyper-rectangle with the smallest average of function
+     * values at diagonal vertices.
+     *
+     * \return Rectangle.
+     */
+    [[nodiscard]] auto pop() -> rectangle_pointer_type {
+        NUM_COLLECT_DEBUG_ASSERT(!rects_.empty());
+        auto rect = rects_.top();
+        rects_.pop();
+        return rect;
+    }
+
+    /*!
+     * \brief Get the distance between center point and vertex.
+     *
+     * \return Distance between center point and vertex.
+     */
+    [[nodiscard]] auto dist() const -> const value_type& { return dist_; }
+
+private:
     /*!
      * \brief Class to compare rectangles.
      */
@@ -265,19 +363,21 @@ public:
          * \param[in] right Right-hand-side rectangle.
          * \return Result of left > right.
          */
-        [[nodiscard]] auto operator()(
-            const std::shared_ptr<adc_rectangle>& left,
-            const std::shared_ptr<adc_rectangle>& right) const -> bool {
-            return left->value() > right->value();
+        [[nodiscard]] auto operator()(const rectangle_pointer_type& left,
+            const rectangle_pointer_type& right) const -> bool {
+            return left->ave_value() > right->ave_value();
         }
     };
 
-private:
-    //! A vertex with lower first component.
-    impl::ternary_vector vertex_;
+    //! Type of queues of rectangles.
+    using queue_type = std::priority_queue<rectangle_pointer_type,
+        std::vector<rectangle_pointer_type>, greater>;
 
-    //! Average function value.
-    value_type ave_value_;
+    //! Rectangles.
+    queue_type rects_{};
+
+    //! Distance between center point and vertex.
+    value_type dist_;
 };
 
 }  // namespace impl
@@ -302,6 +402,40 @@ public:
     using value_type = typename objective_function_type::value_type;
 
     /*!
+     * \brief Enumeration of states in ADC method.
+     */
+    enum class state_type {
+        none,         //!< No operation.
+        local,        //!< Local phase (not last iteration).
+        local_last,   //!< Last iteration in local phase.
+        global,       //!< Global phase (not last iteration).
+        global_last,  //!< Last iteration in global phase.
+    };
+
+    /*!
+     * \brief Convert a state to string.
+     *
+     * \param[in] state State.
+     * \return Name of state.
+     */
+    [[nodiscard]] static auto state_name(state_type state) -> std::string {
+        switch (state) {
+        case state_type::none:
+            return "none";
+        case state_type::local:
+            return "local";
+        case state_type::local_last:
+            return "local (last)";
+        case state_type::global:
+            return "global";
+        case state_type::global_last:
+            return "global (last)";
+        default:
+            return "invalid process";
+        }
+    }
+
+    /*!
      * \brief Construct.
      *
      * \param[in] obj_fun Objective function.
@@ -311,82 +445,115 @@ public:
         : value_dict_(obj_fun) {}
 
     /*!
-     * \brief Enumeration of states in ADC method.
+     * \brief Initialize the algorithm.
+     *
+     * \param[in] lower Lower limit.
+     * \param[in] upper Upper limit.
      */
-    enum class state_type {
-        local,        //!< Local phase (not last iteration).
-        local_last,   //!< Last iteration in local phase.
-        global,       //!< Global phase (not last iteration).
-        global_last,  //!< Last iteration in global phase.
-    };
+    void init(const variable_type& lower, const variable_type& upper) {
+        value_dict_.init(lower, upper);
+        groups_.clear();
+        iterations_ = 0;
+        state_ = state_type::none;
+    }
+
+    /*!
+     * \copydoc num_collect::opt::optimizer_base::iterate
+     */
+    void iterate() {
+        // TODO
+    }
+
+    /*!
+     * \copydoc num_collect::opt::optimizer_base::is_stop_criteria_satisfied
+     */
+    [[nodiscard]] auto is_stop_criteria_satisfied() const -> bool {
+        return evaluations() >= max_evaluations_;
+    }
+
+    /*!
+     * \copydoc num_collect::opt::optimizer_base::set_info_to
+     */
+    void set_info_to(iteration_logger& logger) const {
+        logger["Iter."] = iterations();
+        logger["Eval."] = evaluations();
+        logger["Value"] = static_cast<double>(opt_value());
+        logger["State"] = state_name(last_state());
+    }
+
+    /*!
+     * \copydoc num_collect::opt::optimizer_base::opt_variable
+     */
+    [[nodiscard]] auto opt_variable() const -> const variable_type& {
+        return value_dict_.opt_variable();
+    }
+
+    /*!
+     * \copydoc num_collect::opt::optimizer_base::opt_value
+     */
+    [[nodiscard]] auto opt_value() const -> const value_type& {
+        return value_dict_.opt_value();
+    }
+
+    /*!
+     * \copydoc num_collect::opt::optimizer_base::iterations
+     */
+    [[nodiscard]] auto iterations() const noexcept -> index_type {
+        return iterations_;
+    }
+
+    /*!
+     * \copydoc num_collect::opt::optimizer_base::evaluations
+     */
+    [[nodiscard]] auto evaluations() const noexcept -> index_type {
+        return value_dict_.evaluations();
+    }
+
+    /*!
+     * \brief Get the last state.
+     *
+     * \return Last state.
+     */
+    [[nodiscard]] auto last_state() const noexcept -> state_type {
+        return state_;
+    }
+
+    /*!
+     * \brief Set the maximum number of function evaluations.
+     *
+     * \param[in] value Value.
+     * \return This object.
+     */
+    auto max_evaluations(index_type value) -> adaptive_diagonal_curves& {
+        NUM_COLLECT_ASSERT(value > 0);
+        max_evaluations_ = value;
+        return *this;
+    }
 
 private:
     //! Type of dictionaries of sample points.
     using dict_type = impl::adc_sample_dict<objective_function_type>;
 
-    //! Type of rectangles.
-    using rectangle_type = impl::adc_rectangle<value_type>;
+    //! Type of groups of hyper-rectangles.
+    using group_type = impl::adc_group<value_type>;
 
-    /*!
-     * \brief Class of groups of rectangles.
-     */
-    class group {
-    public:
-        //! Type of queues of rectangles.
-        using queue_type = std::priority_queue<std::shared_ptr<rectangle_type>,
-            std::vector<std::shared_ptr<rectangle_type>>,
-            typename rectangle_type::greater>;
-
-        /*!
-         * \brief Construct.
-         *
-         * \param[in] dist Distance between center point and vertex.
-         */
-        explicit group(value_type dist) : dist_(dist) {}
-
-        /*!
-         * \brief Get rectangles
-         *
-         * \return Rectangles
-         */
-        [[nodiscard]] auto rects() const -> const queue_type& { return rects_; }
-
-        /*!
-         * \brief Get rectangles
-         *
-         * \return Rectangles
-         */
-        [[nodiscard]] auto rects() -> queue_type& { return rects_; }
-
-        /*!
-         * \brief Get the distance between center point and vertex.
-         *
-         * \return Distance between center point and vertex.
-         */
-        [[nodiscard]] auto dist() const -> const value_type& { return dist_; }
-
-    private:
-        //! Rectangles.
-        queue_type rects_{};
-
-        //! Distance between center point and vertex.
-        value_type dist_;
-    };
+    //! Type of hyper-rectangles.
+    using rectangle_type = typename group_type::rectangle_type;
 
     //! Dictionary of sampled points.
     dict_type value_dict_;
 
-    //! Rectangle groups.
-    std::vector<group> groups_{};
+    //! Groups of hyper-rectangles.
+    std::vector<group_type> groups_{};
 
     //! Number of iterations.
     index_type iterations_{0};
 
-    //! Last state.
-    state_type last_state_{};
+    //! State.
+    state_type state_{state_type::none};
 
-    //! Next state.
-    state_type next_state_{};
+    //! Index of the group in which the optimal solution exists.
+    std::size_t optimal_group_index_{0};
 
     //! Default maximum number of function evaluations.
     static constexpr index_type default_max_evaluations = 10000;
