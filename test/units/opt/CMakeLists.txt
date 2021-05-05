@@ -12,6 +12,7 @@ add_executable(
     # direct
     impl/ternary_vector_test.cpp
     dividing_rectangles_test.cpp
+    adaptive_diagonal_curves_test.cpp
     # etc
     downhill_simplex_test.cpp)
 target_add_catch2(num_collect_test_units_opt)
