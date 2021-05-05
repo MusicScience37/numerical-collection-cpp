@@ -455,13 +455,34 @@ public:
         groups_.clear();
         iterations_ = 0;
         state_ = state_type::none;
+        create_first_rectangle();
     }
 
     /*!
      * \copydoc num_collect::opt::optimizer_base::iterate
      */
     void iterate() {
-        // TODO
+        switch_state();
+
+        switch (state_) {
+        case state_type::local:
+            iterate_locally();
+            break;
+        case state_type::local_last:
+            iterate_locally_last();
+            break;
+        case state_type::global:
+            iterate_globally();
+            break;
+        case state_type::global_last:
+            iterate_globally_last();
+            break;
+        default:
+            throw algorithm_failure(
+                "invalid state (bug in adaptive_diagonal_curve class)");
+        }
+
+        ++iterations_;
     }
 
     /*!
@@ -540,6 +561,48 @@ private:
     //! Type of hyper-rectangles.
     using rectangle_type = typename group_type::rectangle_type;
 
+    /*!
+     * \brief Create the first hyper-rectangle.
+     */
+    void create_first_rectangle() {
+        // TODO
+    }
+
+    /*!
+     * \brief Switch to the next state if necessary.
+     */
+    void switch_state() {
+        // TODO
+    }
+
+    /*!
+     * \brief Iterate once in the local phase (not last iteration).
+     */
+    void iterate_locally() {
+        // TODO
+    }
+
+    /*!
+     * \brief Iterate once at the last of the local phase.
+     */
+    void iterate_locally_last() {
+        // TODO
+    }
+
+    /*!
+     * \brief Iterate once in the global phase (not last iteration).
+     */
+    void iterate_globally() {
+        // TODO
+    }
+
+    /*!
+     * \brief Iterate once at teh last of the global phase.
+     */
+    void iterate_globally_last() {
+        // TODO
+    }
+
     //! Dictionary of sampled points.
     dict_type value_dict_;
 
@@ -552,8 +615,15 @@ private:
     //! State.
     state_type state_{state_type::none};
 
+    /*!
+     * \brief Current optimal value.
+     *
+     * This value is used for updating \ref optimal_group_index_.
+     */
+    value_type optimal_value_{};
+
     //! Index of the group in which the optimal solution exists.
-    std::size_t optimal_group_index_{0};
+    index_type optimal_group_index_{0};
 
     //! Default maximum number of function evaluations.
     static constexpr index_type default_max_evaluations = 10000;
