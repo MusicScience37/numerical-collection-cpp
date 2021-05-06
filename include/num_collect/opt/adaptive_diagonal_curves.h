@@ -20,6 +20,7 @@
 #pragma once
 
 #include <Eigen/Core>
+#include <algorithm>
 #include <cmath>
 #include <limits>
 #include <queue>
@@ -121,6 +122,13 @@ public:
 
         return obj_fun_.value();
     }
+
+    /*!
+     * \brief Get the number of dimension.
+     *
+     * \return Number of dimension.
+     */
+    [[nodiscard]] auto dim() const -> index_type { return dim_; }
 
     /*!
      * \copydoc num_collect::opt::optimizer_base::opt_variable
@@ -226,31 +234,7 @@ public:
      */
     [[nodiscard]] auto sample_points() const
         -> std::pair<ternary_vector, ternary_vector> {
-        auto res = std::make_pair(vertex_, vertex_);
-        const auto dim = vertex_.dim();
-        for (index_type i = 0; i < dim; ++i) {
-            const auto digits = vertex_.digits(i);
-            NUM_COLLECT_DEBUG_ASSERT(digits > 0);
-            std::uint_fast32_t one_count = 0;
-            for (index_type j = 0; j < digits; ++j) {
-                if (vertex_(i, j) == ternary_vector::digit_type(1)) {
-                    ++one_count;
-                }
-            }
-
-            auto last_digit =  // NOLINTNEXTLINE: false positive
-                static_cast<std::int_fast32_t>(vertex_(i, digits - 1));
-            ++last_digit;
-            constexpr std::uint_fast32_t odd_mask = 1;
-            if ((one_count & odd_mask) == odd_mask) {
-                res.first(i, digits - 1) =
-                    static_cast<ternary_vector::digit_type>(last_digit);
-            } else {
-                res.second(i, digits - 1) =
-                    static_cast<ternary_vector::digit_type>(last_digit);
-            }
-        }
-        return res;
+        return determine_sample_points(vertex_);
     }
 
     /*!
@@ -268,6 +252,42 @@ public:
         using std::sqrt;
         const auto half = static_cast<value_type>(0.5);
         return half * sqrt(squared_sum);
+    }
+
+    /*!
+     * \brief Determine sampling points.
+     *
+     * \param[in] lowest_vertex A vertex with lower first component.
+     * \return Sampling points.
+     */
+    [[nodiscard]] static auto determine_sample_points(
+        const ternary_vector& lowest_vertex)
+        -> std::pair<ternary_vector, ternary_vector> {
+        auto res = std::make_pair(lowest_vertex, lowest_vertex);
+        const auto dim = lowest_vertex.dim();
+        for (index_type i = 0; i < dim; ++i) {
+            const auto digits = lowest_vertex.digits(i);
+            NUM_COLLECT_DEBUG_ASSERT(digits > 0);
+            std::uint_fast32_t one_count = 0;
+            for (index_type j = 0; j < digits; ++j) {
+                if (lowest_vertex(i, j) == ternary_vector::digit_type(1)) {
+                    ++one_count;
+                }
+            }
+
+            auto last_digit =  // NOLINTNEXTLINE: false positive
+                static_cast<std::int_fast32_t>(lowest_vertex(i, digits - 1));
+            ++last_digit;
+            constexpr std::uint_fast32_t odd_mask = 1;
+            if ((one_count & odd_mask) == odd_mask) {
+                res.first(i, digits - 1) =
+                    static_cast<ternary_vector::digit_type>(last_digit);
+            } else {
+                res.second(i, digits - 1) =
+                    static_cast<ternary_vector::digit_type>(last_digit);
+            }
+        }
+        return res;
     }
 
 private:
@@ -310,7 +330,7 @@ public:
      */
     void push(rectangle_pointer_type rect) {
         NUM_COLLECT_DEBUG_ASSERT(rect);
-        rects_.push(rect);
+        rects_.push(std::move(rect));
     }
 
     /*!
@@ -565,7 +585,24 @@ private:
      * \brief Create the first hyper-rectangle.
      */
     void create_first_rectangle() {
-        // TODO
+        const index_type dim = value_dict_.dim();
+        auto point = impl::ternary_vector(dim);
+        for (index_type i = 0; i < dim; ++i) {
+            point.push_back(i, 0);
+        }
+
+        const auto [lower_vertex, upper_vertex] =
+            rectangle_type::determine_sample_points(point);
+        const auto lower_vertex_value = value_dict_(lower_vertex);
+        const auto upper_vertex_value = value_dict_(upper_vertex);
+        const auto ave_value = half * (lower_vertex_value + upper_vertex_value);
+        const auto rect = std::make_shared<rectangle_type>(point, ave_value);
+
+        groups_.emplace_back(rect->dist());
+        groups_.front().push(rect);
+        using std::min;
+        optimal_value_ = min(lower_vertex_value, upper_vertex_value);
+        optimal_group_index_ = 0;
     }
 
     /*!
@@ -602,6 +639,9 @@ private:
     void iterate_globally_last() {
         // TODO
     }
+
+    //! Half.
+    static inline const auto half = static_cast<value_type>(0.5);
 
     //! Dictionary of sampled points.
     dict_type value_dict_;
