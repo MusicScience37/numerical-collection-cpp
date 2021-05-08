@@ -714,8 +714,8 @@ private:
             return;
         }
 
-        const bool is_optimal_smallest = (optimal_group_index_ ==
-            static_cast<index_type>(groups_.size() - 1));
+        const bool is_optimal_smallest =
+            (optimal_group_index_ == groups_.size() - 1);
         const bool is_all_smallest =
             std::all_of(std::begin(groups_), std::end(groups_) - 1,
                 [](const group_type& group) { return group.empty(); });
