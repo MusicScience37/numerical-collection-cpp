@@ -224,29 +224,29 @@ TEST_CASE("num_collect::opt::adaptive_diagonal_curves") {
 
     SECTION("init") {
         auto opt = adaptive_diagonal_curves<multi_quadratic_function>();
-        opt.init(Eigen::VectorXd::Constant(3, -1.0),  // NOLINT
+        opt.init(Eigen::VectorXd::Constant(3, -2.0),  // NOLINT
             Eigen::VectorXd::Constant(3, 2.0));       // NOLINT
         REQUIRE(opt.iterations() == 0);
         REQUIRE(opt.evaluations() == 2);
         REQUIRE_THAT(opt.opt_variable(),
-            eigen_approx(Eigen::VectorXd::Constant(3, -1.0)));  // NOLINT
+            eigen_approx(Eigen::VectorXd::Constant(3, -2.0)));  // NOLINT
     }
 
-    /*SECTION("iterate") {
+    SECTION("iterate") {
         auto opt = adaptive_diagonal_curves<multi_quadratic_function>();
-        opt.init(Eigen::VectorXd::Constant(3, -1.0),  // NOLINT
+        opt.init(Eigen::VectorXd::Constant(3, -2.0),  // NOLINT
             Eigen::VectorXd::Constant(3, 2.0));       // NOLINT
         const auto prev_value = opt.opt_value();
 
         opt.iterate();
         REQUIRE(opt.iterations() == 1);
-        REQUIRE(opt.evaluations() == 7);
+        REQUIRE(opt.evaluations() == 4);
         REQUIRE(opt.opt_value() <= prev_value);
     }
 
     SECTION("solve") {
         auto opt = adaptive_diagonal_curves<multi_quadratic_function>();
-        opt.init(Eigen::VectorXd::Constant(3, -1.0),  // NOLINT
+        opt.init(Eigen::VectorXd::Constant(3, -2.0),  // NOLINT
             Eigen::VectorXd::Constant(3, 2.0));       // NOLINT
         constexpr double sol_tol = 1e-2;
         opt.max_evaluations(1000);  // NOLINT
@@ -261,9 +261,25 @@ TEST_CASE("num_collect::opt::adaptive_diagonal_curves") {
         std::ostringstream stream;
         opt.init(Eigen::VectorXd::Constant(3, -1.0),  // NOLINT
             Eigen::VectorXd::Constant(3, 2.0));       // NOLINT
+        opt.max_evaluations(1000);                    // NOLINT
         REQUIRE_NOTHROW(opt.solve(stream));
         REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Iter."));
         REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Eval."));
         REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Value"));
-    }*/
+    }
+
+    SECTION("check global phase execution") {
+        auto opt = adaptive_diagonal_curves<multi_quadratic_function>();
+        std::ostringstream stream;
+        opt.init(Eigen::VectorXd::Constant(3, -2.0),  // NOLINT
+            Eigen::VectorXd::Constant(3, 2.0));       // NOLINT
+        constexpr double sol_tol = 1e-2;
+        opt.max_evaluations(1000);     // NOLINT
+        opt.decrease_rate_bound(1.0);  // NOLINT
+        REQUIRE_NOTHROW(opt.solve(stream));
+        REQUIRE_THAT(opt.opt_variable(),
+            eigen_approx(Eigen::VectorXd::Zero(3), sol_tol));
+        REQUIRE_THAT(opt.opt_value(), Catch::Matchers::WithinAbs(0.0, sol_tol));
+        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("global (last)"));
+    }
 }

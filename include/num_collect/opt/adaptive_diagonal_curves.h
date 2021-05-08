@@ -287,10 +287,32 @@ public:
                     static_cast<ternary_vector::digit_type>(last_digit);
             }
         }
+        normalize_point(res.first);
+        normalize_point(res.second);
         return res;
     }
 
 private:
+    /*!
+     * \brief Normalize point.
+     *
+     * \param[in,out] point Point.
+     */
+    static void normalize_point(ternary_vector& point) {
+        for (index_type i = 0; i < point.dim(); ++i) {
+            for (index_type j = point.digits(i) - 1; j > 0; --j) {
+                if (point(i, j) == ternary_vector::digit_type(3)) {
+                    point(i, j) = 0;
+                    std::int_fast32_t temp =
+                        point(i, j - 1);  // NOLINT: false positive
+                    ++temp;
+                    point(i, j - 1) =
+                        static_cast<ternary_vector::digit_type>(temp);
+                }
+            }
+        }
+    }
+
     //! A vertex with lower first component.
     impl::ternary_vector vertex_;
 
@@ -475,7 +497,12 @@ public:
         groups_.clear();
         iterations_ = 0;
         state_ = state_type::none;
+
+        // Initialize groups_, optimal_value_, optimal_group_index_.
         create_first_rectangle();
+
+        // prec_optimal_value_, prec_optimal_group_index, and
+        // iterations_in_current_phase_ are initialized in switch_state().
     }
 
     /*!
@@ -571,6 +598,19 @@ public:
         return *this;
     }
 
+    /*!
+     * \brief Set the rate of function value used to check whether the function
+     * value decreased in the current phase.
+     *
+     * \param[in] value Value.
+     * \return This object.
+     */
+    auto decrease_rate_bound(value_type value) -> adaptive_diagonal_curves& {
+        NUM_COLLECT_ASSERT(value > value_type(0));
+        decrease_rate_bound_ = value;
+        return *this;
+    }
+
 private:
     //! Type of dictionaries of sample points.
     using dict_type = impl::adc_sample_dict<objective_function_type>;
@@ -607,37 +647,266 @@ private:
 
     /*!
      * \brief Switch to the next state if necessary.
+     *
+     * Step 2.1, 2.4, 3, 4.4, 4.5, 4.7 in \cite Sergeyev2006.
      */
     void switch_state() {
-        // TODO
+        using std::abs;
+        switch (state_) {
+        case state_type::local:
+            ++iterations_in_current_phase_;
+            if (iterations_in_current_phase_ > value_dict_.dim()) {
+                state_ = state_type::local_last;
+            }
+            return;
+        case state_type::local_last:
+            switch_state_on_local_last();
+            return;
+        case state_type::global:
+            if (optimal_value_ <= prec_optimal_value_ -
+                    decrease_rate_bound_ * abs(prec_optimal_value_)) {
+                state_ = state_type::local;
+                prec_optimal_value_ = optimal_value_;
+                iterations_in_current_phase_ = 1;
+                prec_optimal_group_index_ = optimal_group_index_;
+                return;
+            }
+            ++iterations_in_current_phase_;
+            if (iterations_in_current_phase_ >
+                static_cast<index_type>((static_cast<std::size_t>(2)
+                    << static_cast<std::size_t>(value_dict_.dim())))) {
+                state_ = state_type::global_last;
+                return;
+            }
+            return;
+        case state_type::global_last:
+            if (optimal_value_ <= prec_optimal_value_ -
+                    decrease_rate_bound_ * abs(prec_optimal_value_)) {
+                state_ = state_type::local;
+                prec_optimal_value_ = optimal_value_;
+                iterations_in_current_phase_ = 1;
+                prec_optimal_group_index_ = optimal_group_index_;
+                return;
+            }
+            state_ = state_type::global;
+            iterations_in_current_phase_ = 1;
+            prec_optimal_group_index_ = optimal_group_index_;
+            return;
+        default:
+            state_ = state_type::local;
+            prec_optimal_value_ = optimal_value_;
+            iterations_in_current_phase_ = 1;
+            prec_optimal_group_index_ = optimal_group_index_;
+        }
+    }
+
+    /*!
+     * \brief Switch to the next state if necessary in local_last state.
+     */
+    void switch_state_on_local_last() {
+        using std::abs;
+        if (optimal_value_ <= prec_optimal_value_ -
+                decrease_rate_bound_ * abs(prec_optimal_value_)) {
+            state_ = state_type::local;
+            prec_optimal_value_ = optimal_value_;
+            iterations_in_current_phase_ = 1;
+            prec_optimal_group_index_ = optimal_group_index_;
+            return;
+        }
+
+        const bool is_optimal_smallest = (optimal_group_index_ ==
+            static_cast<index_type>(groups_.size() - 1));
+        const bool is_all_smallest =
+            std::all_of(std::begin(groups_), std::end(groups_) - 1,
+                [](const group_type& group) { return group.empty(); });
+        if ((!is_optimal_smallest) || is_all_smallest) {
+            state_ = state_type::local;
+            iterations_in_current_phase_ = 1;
+            prec_optimal_group_index_ = optimal_group_index_;
+            return;
+        }
+
+        state_ = state_type::global;
+        prec_optimal_value_ = optimal_value_;
+        iterations_in_current_phase_ = 1;
+        prec_optimal_group_index_ = optimal_group_index_;
     }
 
     /*!
      * \brief Iterate once in the local phase (not last iteration).
      */
     void iterate_locally() {
-        // TODO
+        const std::size_t max_group_index = std::max<std::size_t>(
+            std::max<std::size_t>(prec_optimal_group_index_, 1) - 1,
+            min_nonempty_group_index());
+        divide_nondominated_rectangles(
+            min_nonempty_group_index(), max_group_index);
     }
 
     /*!
      * \brief Iterate once at the last of the local phase.
      */
     void iterate_locally_last() {
-        // TODO
+        const std::size_t max_group_index = std::max<std::size_t>(
+            prec_optimal_group_index_, min_nonempty_group_index());
+        divide_nondominated_rectangles(
+            min_nonempty_group_index(), max_group_index);
     }
 
     /*!
      * \brief Iterate once in the global phase (not last iteration).
      */
     void iterate_globally() {
-        // TODO
+        const std::size_t max_group_index =
+            (std::max<std::size_t>(
+                 prec_optimal_group_index_, min_nonempty_group_index()) +
+                min_nonempty_group_index() + 1) /
+            2;
+        divide_nondominated_rectangles(
+            min_nonempty_group_index(), max_group_index);
     }
 
     /*!
      * \brief Iterate once at teh last of the global phase.
      */
-    void iterate_globally_last() {
-        // TODO
+    void iterate_globally_last() { iterate_locally_last(); }
+
+    /*!
+     * \brief Get the minimum index of non-empty groups.
+     *
+     * \return Minimum index of groups.
+     */
+    [[nodiscard]] auto min_nonempty_group_index() const -> std::size_t {
+        for (std::size_t i = 0; i < groups_.size(); ++i) {
+            if (!groups_[i].empty()) {
+                return i;
+            }
+        }
+        throw assetion_failure("adaptive_diagonal_curves::init is not called.");
+    }
+
+    /*!
+     * \brief Divide nondominated hyper-rectangles.
+     *
+     * \param[in] min_group Minimum index of groups to search in.
+     * \param[in] max_group Maximum index of groups to search in.
+     */
+    void divide_nondominated_rectangles(
+        std::size_t min_group, std::size_t max_group) {
+        const auto search_rect =
+            determine_nondominated_rectangles(min_group, max_group);
+        for (auto iter = std::rbegin(search_rect);
+             iter != std::rend(search_rect); ++iter) {
+            divide_rectangle(iter->first);
+        }
+    }
+
+    /*!
+     * \brief Determine nondominated hyper-rectangles.
+     *
+     * \param[in] min_group Minimum index of groups to search in.
+     * \param[in] max_group Maximum index of groups to search in.
+     * \return List of (index of group, slope).
+     */
+    [[nodiscard]] auto determine_nondominated_rectangles(
+        std::size_t min_group, std::size_t max_group) const
+        -> std::vector<std::pair<std::size_t, value_type>> {
+        NUM_COLLECT_DEBUG_ASSERT(min_group <= max_group);
+        NUM_COLLECT_DEBUG_ASSERT(max_group < groups_.size());
+        NUM_COLLECT_DEBUG_ASSERT(!groups_[min_group].empty());
+
+        std::vector<std::pair<std::size_t, value_type>> search_rects;
+        search_rects.emplace_back(
+            min_group, std::numeric_limits<value_type>::max());
+
+        // convex full scan
+        for (std::size_t i = min_group + 1; i <= max_group; ++i) {
+            if (groups_[i].empty()) {
+                continue;
+            }
+            while (true) {
+                const auto& [last_i, last_slope] = search_rects.back();
+                const auto slope = calculate_slope(last_i, i);
+                if (slope <= last_slope) {
+                    search_rects.emplace_back(i, slope);
+                    break;
+                }
+                search_rects.pop_back();
+            }
+        }
+
+        return search_rects;
+    }
+
+    /*!
+     * \brief Calculate slope.
+     *
+     * \param[in] group_ind1 Index of group.
+     * \param[in] group_ind2 Index of group.
+     * \return Slope.
+     */
+    [[nodiscard]] auto calculate_slope(
+        std::size_t group_ind1, std::size_t group_ind2) const -> value_type {
+        return (groups_[group_ind1].min_rect()->ave_value() -
+                   groups_[group_ind2].min_rect()->ave_value()) /
+            (groups_[group_ind1].dist() - groups_[group_ind2].dist());
+    }
+
+    /*!
+     * \brief Divide a hyper-rectangle.
+     *
+     * \param[in] group_ind Index of group.
+     */
+    void divide_rectangle(std::size_t group_ind) {
+        impl::ternary_vector vertex = groups_[group_ind].pop()->vertex();
+        index_type divided_dim = 1;
+        for (; divided_dim < vertex.dim(); ++divided_dim) {
+            if (vertex.digits(divided_dim) < vertex.digits(0)) {
+                break;
+            }
+        }
+        if (divided_dim == vertex.dim()) {
+            divided_dim = 0;
+        }
+
+        vertex.push_back(divided_dim, 0);
+        const auto rect0 = create_rect(vertex, group_ind + 1);
+        vertex(divided_dim, vertex.digits(divided_dim) - 1) = 1;
+        const auto rect1 = create_rect(vertex, group_ind + 1);
+        vertex(divided_dim, vertex.digits(divided_dim) - 1) = 2;
+        const auto rect2 = create_rect(vertex, group_ind + 1);
+
+        if (groups_.size() == group_ind + 1) {
+            groups_.emplace_back(rect0->dist());
+        }
+        groups_[group_ind + 1].push(rect0);
+        groups_[group_ind + 1].push(rect1);
+        groups_[group_ind + 1].push(rect2);
+    }
+
+    /*!
+     * \brief Create a hyper-rectangle.
+     *
+     * \param[in] vertex Vertex with lower first component.
+     * \param[in] group_ind Group index.
+     * \return Hyper-rectangle.
+     */
+    [[nodiscard]] auto create_rect(const impl::ternary_vector& vertex,
+        std::size_t group_ind) -> std::shared_ptr<rectangle_type> {
+        const auto [vertex1, vertex2] =
+            rectangle_type::determine_sample_points(vertex);
+        const auto value1 = value_dict_(vertex1);
+        const auto value2 = value_dict_(vertex2);
+        const auto ave_value = half * (value1 + value2);
+        if (value1 < optimal_value_) {
+            optimal_value_ = value1;
+            optimal_group_index_ = group_ind;
+        }
+        if (value2 < optimal_value_) {
+            optimal_value_ = value2;
+            optimal_group_index_ = group_ind;
+        }
+        return std::make_shared<rectangle_type>(vertex, ave_value);
     }
 
     //! Half.
@@ -663,13 +932,42 @@ private:
     value_type optimal_value_{};
 
     //! Index of the group in which the optimal solution exists.
-    index_type optimal_group_index_{0};
+    std::size_t optimal_group_index_{0};
+
+    //! Old optimal value at the start of the current phase.
+    value_type prec_optimal_value_{};
+
+    /*!
+     * \brief Index of the group in which the old optimal solution at the start
+     * of the current phase exists.
+     */
+    std::size_t prec_optimal_group_index_{0};
+
+    /*!
+     * \brief Number of iterations in the current phase.
+     *
+     * This is initialized at the start of the local or global phases.
+     */
+    index_type iterations_in_current_phase_{0};
 
     //! Default maximum number of function evaluations.
     static constexpr index_type default_max_evaluations = 10000;
 
     //! Maximum number of function evaluations.
     index_type max_evaluations_{default_max_evaluations};
+
+    /*!
+     * \brief Default rate of function value used to check whether the function
+     * value decreased in the current phase.
+     */
+    static inline const auto default_decrease_rate_bound =
+        static_cast<value_type>(0.01);
+
+    /*!
+     * \brief Rate of function value used to check whether the function value
+     * decreased in the current phase.
+     */
+    value_type decrease_rate_bound_{default_decrease_rate_bound};
 };
 
 }  // namespace num_collect::opt
