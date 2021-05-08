@@ -599,6 +599,19 @@ public:
     }
 
     /*!
+     * \brief Set the minimum rate of improvement in the function value required
+     * for potentially optimal rectangles.
+     *
+     * \param[in] value Value.
+     * \return This object.
+     */
+    auto min_rate_imp(value_type value) -> adaptive_diagonal_curves& {
+        NUM_COLLECT_ASSERT(value > 0);
+        min_rate_imp_ = value;
+        return *this;
+    }
+
+    /*!
      * \brief Set the rate of function value used to check whether the function
      * value decreased in the current phase.
      *
@@ -835,6 +848,21 @@ private:
             }
         }
 
+        // remove rectangles which won't update optimal value
+        using std::abs;
+        const auto value_bound =
+            optimal_value_ - min_rate_imp_ * abs(optimal_value_);
+        for (auto iter = search_rects.begin(); iter != search_rects.end();) {
+            const auto& [ind, slope] = *iter;
+            if (groups_[ind].min_rect()->ave_value() -
+                    slope * groups_[ind].dist() <=
+                value_bound) {
+                ++iter;
+            } else {
+                iter = search_rects.erase(iter);
+            }
+        }
+
         return search_rects;
     }
 
@@ -955,6 +983,19 @@ private:
 
     //! Maximum number of function evaluations.
     index_type max_evaluations_{default_max_evaluations};
+
+    /*!
+     * \brief Default minimum rate of improvement in the function value required
+     * for potentially optimal rectangles.
+     */
+    static inline const auto default_min_rate_imp =
+        static_cast<value_type>(1e-4);
+
+    /*!
+     * \brief Minimum rate of improvement in the function value required for
+     * potentially optimal rectangles.
+     */
+    value_type min_rate_imp_{default_min_rate_imp};
 
     /*!
      * \brief Default rate of function value used to check whether the function
