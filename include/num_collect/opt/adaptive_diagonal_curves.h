@@ -929,9 +929,15 @@ private:
         if (value1 < optimal_value_) {
             optimal_value_ = value1;
             optimal_group_index_ = group_ind;
+        } else if (value1 <= optimal_value_ &&
+            group_ind > optimal_group_index_) {
+            optimal_group_index_ = group_ind;
         }
         if (value2 < optimal_value_) {
             optimal_value_ = value2;
+            optimal_group_index_ = group_ind;
+        } else if (value2 <= optimal_value_ &&
+            group_ind > optimal_group_index_) {
             optimal_group_index_ = group_ind;
         }
         return std::make_shared<rectangle_type>(vertex, ave_value);

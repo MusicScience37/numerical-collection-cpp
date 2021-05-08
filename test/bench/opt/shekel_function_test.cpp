@@ -23,6 +23,7 @@
 
 #include "evaluations_udm.h"
 #include "iterations_udm.h"
+#include "num_collect/opt/adaptive_diagonal_curves.h"
 #include "num_collect/opt/dividing_rectangles.h"
 
 // NOLINTNEXTLINE: external library
@@ -32,7 +33,7 @@ constexpr std::int64_t samples = 30;
 #ifndef NDEBUG
 constexpr std::int64_t iterations = 1;
 #else
-constexpr std::int64_t iterations = 100;
+constexpr std::int64_t iterations = 10;
 #endif
 
 class shekel_function_fixture : public celero::TestFixture {
@@ -113,6 +114,16 @@ private:
 BASELINE_F(opt_shekel_function, dividing_rectangles, shekel_function_fixture,
     samples, iterations) {
     auto optimizer = num_collect::opt::dividing_rectangles<
+        num_prob_collect::opt::shekel_function>(this->function());
+    const auto [lower, upper] = shekel_function_fixture::search_region();
+    optimizer.init(lower, upper);
+    this->test_optimizer(optimizer);
+}
+
+// NOLINTNEXTLINE: external library
+BENCHMARK_F(opt_shekel_function, adaptive_diagonal_curves,
+    shekel_function_fixture, samples, iterations) {
+    auto optimizer = num_collect::opt::adaptive_diagonal_curves<
         num_prob_collect::opt::shekel_function>(this->function());
     const auto [lower, upper] = shekel_function_fixture::search_region();
     optimizer.init(lower, upper);
