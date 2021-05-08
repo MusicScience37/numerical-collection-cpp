@@ -34,6 +34,9 @@ set(DOXYGEN_SEARCH_INCLUDES YES)
 set(DOXYGEN_INCLUDE_PATH include)
 set(DOXYGEN_STRIP_FROM_INC_PATH include)
 
+# citation
+set(DOXYGEN_CITE_BIB_FILES "doc/articles.bib")
+
 # outputs
 set(DOXYGEN_GENERATE_HTML NO)
 set(DOXYGEN_GENERATE_XML YES)

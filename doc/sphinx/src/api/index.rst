@@ -8,3 +8,4 @@ API Reference
     base
     opt
     multi_double
+    reference

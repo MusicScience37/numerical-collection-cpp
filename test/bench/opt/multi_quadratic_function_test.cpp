@@ -21,10 +21,12 @@
 
 #include <celero/Celero.h>
 
+#include "evaluations_udm.h"
 #include "iterations_udm.h"
 #include "num_collect/opt/bfgs_optimizer.h"
 #include "num_collect/opt/conjugate_gradient_optimizer.h"
 #include "num_collect/opt/dfp_optimizer.h"
+#include "num_collect/opt/dividing_rectangles.h"
 #include "num_collect/opt/downhill_simplex.h"
 #include "num_collect/opt/newton_optimizer.h"
 #include "num_collect/opt/steepest_descent.h"
@@ -41,11 +43,11 @@ public:
 #ifndef NDEBUG
         constexpr auto dimensions_vector =
             std::array<std::int64_t, 3>{2, 5, 10};
-        constexpr std::int64_t coeff = 500;
+        constexpr std::int64_t coeff = 10;
 #else
         constexpr auto dimensions_vector =
             std::array<std::int64_t, 6>{2, 5, 10, 20, 50, 100};
-        constexpr std::int64_t coeff = 5000;
+        constexpr std::int64_t coeff = 1000;
 #endif
         std::vector<celero::TestFixture::ExperimentValue> problem_space;
         problem_space.reserve(dimensions_vector.size());
@@ -58,6 +60,7 @@ public:
     void setUp(
         const celero::TestFixture::ExperimentValue& experiment_value) override {
         dimensions_ = experiment_value.Value;
+        is_failure_ = false;
     }
 
     [[nodiscard]] auto init_variable() const -> Eigen::VectorXd {
@@ -66,29 +69,47 @@ public:
         return Eigen::VectorXd::LinSpaced(dimensions_, min_value, max_value);
     }
 
+    [[nodiscard]] auto search_region() const
+        -> std::pair<Eigen::VectorXd, Eigen::VectorXd> {
+        constexpr double min_value = -1.0;
+        constexpr double max_value = 2.0;
+        return {Eigen::VectorXd::Constant(dimensions_, min_value),
+            Eigen::VectorXd::Constant(dimensions_, max_value)};
+    }
+
     template <typename Optimizer>
     void test_optimizer(Optimizer& optimizer) {
         constexpr double tol_value = 1e-4;
-        constexpr num_collect::index_type max_iterations = 1000;
+        constexpr num_collect::index_type max_evaluations = 10000;
+        if (is_failure_) {
+            return;
+        }
         while (optimizer.opt_value() > tol_value) {
-            if (optimizer.iterations() >= max_iterations) {
+            if (optimizer.evaluations() >= max_evaluations) {
+                is_failure_ = true;
                 return;
             }
             optimizer.iterate();
         }
         iterations_->addValue(optimizer.iterations());
+        evaluations_->addValue(optimizer.evaluations());
     }
 
     [[nodiscard]] auto getUserDefinedMeasurements() const -> std::vector<
         std::shared_ptr<celero::UserDefinedMeasurement>> override {
-        return {iterations_};
+        return {iterations_, evaluations_};
     }
 
 private:
     std::shared_ptr<iterations_udm> iterations_{
         std::make_shared<iterations_udm>()};
 
+    std::shared_ptr<evaluations_udm> evaluations_{
+        std::make_shared<evaluations_udm>()};
+
     num_collect::index_type dimensions_{1};
+
+    bool is_failure_{false};
 };
 
 // NOLINTNEXTLINE: external library
@@ -142,5 +163,15 @@ BENCHMARK_F(opt_multi_quadratic_function, conjugate_gradient_optimizer,
     auto optimizer = num_collect::opt::conjugate_gradient_optimizer<
         num_prob_collect::opt::multi_quadratic_function>();
     optimizer.init(this->init_variable());
+    this->test_optimizer(optimizer);
+}
+
+// NOLINTNEXTLINE: external library
+BENCHMARK_F(opt_multi_quadratic_function, dividing_rectangles,
+    multi_quadratic_function_fixture, 0, 0) {
+    auto optimizer = num_collect::opt::dividing_rectangles<
+        num_prob_collect::opt::multi_quadratic_function>();
+    const auto [lower, upper] = this->search_region();
+    optimizer.init(lower, upper);
     this->test_optimizer(optimizer);
 }

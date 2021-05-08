@@ -45,6 +45,9 @@ set(DOXYGEN_SEARCH_INCLUDES YES)
 set(DOXYGEN_INCLUDE_PATH include)
 set(DOXYGEN_STRIP_FROM_INC_PATH include)
 
+# citation
+set(DOXYGEN_CITE_BIB_FILES "doc/articles.bib")
+
 # for html output
 set(DOXYGEN_GENERATE_HTML YES)
 set(DOXYGEN_HTML_COLORSTYLE_HUE 24)
