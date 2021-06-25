@@ -68,6 +68,7 @@ static analysis:
     - cd ../
   script:
     - cd build_static_analysis
+    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build=missing ..
     - cd ../
     - cmake -S ./ -B build_static_analysis
@@ -104,6 +105,7 @@ static analysis:
   script:
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
+    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build=missing ..
     - cd ../
     - cmake -S ./ -B $BUILD_DIR
@@ -129,6 +131,7 @@ static analysis:
   script:
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
+    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build=missing ..
     - cd ../
     - cmake -S ./ -B $BUILD_DIR
@@ -148,6 +151,7 @@ clang coverage:
   script:
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
+    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build=missing ..
     - cd ../
     - cmake -S ./ -B $BUILD_DIR
@@ -174,6 +178,7 @@ gcc coverage:
   script:
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
+    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build=missing ..
     - cd ../
     - cmake -S ./ -B $BUILD_DIR
@@ -233,6 +238,7 @@ doc:
   script:
     - mkdir build_doc
     - cd build_doc
+    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build=missing ..
     - cd ../
     - cmake -S ./ -B build_doc
