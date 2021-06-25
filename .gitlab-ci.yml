@@ -68,6 +68,9 @@ static analysis:
     - cd ../
   script:
     - cd build_static_analysis
+    - pipenv run conan profile new --detect default
+    - pipenv run conan profile update settings.compiler.libcxx=libstdc++11 default
+    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build=missing ..
     - cd ../
     - cmake -S ./ -B build_static_analysis
@@ -104,6 +107,9 @@ static analysis:
   script:
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
+    - pipenv run conan profile new --detect default
+    - pipenv run conan profile update settings.compiler.libcxx=libstdc++11 default
+    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build=missing ..
     - cd ../
     - cmake -S ./ -B $BUILD_DIR
@@ -129,6 +135,9 @@ static analysis:
   script:
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
+    - pipenv run conan profile new --detect default
+    - pipenv run conan profile update settings.compiler.libcxx=libstdc++11 default
+    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build=missing ..
     - cd ../
     - cmake -S ./ -B $BUILD_DIR
@@ -148,6 +157,9 @@ clang coverage:
   script:
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
+    - pipenv run conan profile new --detect default
+    - pipenv run conan profile update settings.compiler.libcxx=libstdc++11 default
+    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build=missing ..
     - cd ../
     - cmake -S ./ -B $BUILD_DIR
@@ -174,6 +186,9 @@ gcc coverage:
   script:
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
+    - pipenv run conan profile new --detect default
+    - pipenv run conan profile update settings.compiler.libcxx=libstdc++11 default
+    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build=missing ..
     - cd ../
     - cmake -S ./ -B $BUILD_DIR
@@ -215,6 +230,8 @@ clang-11-conan:
   variables:
     CONAN_USER_CHANNEL: "MusicScience37+numerical-collection-cpp/testing"
   script:
+    - pipenv run conan profile new --detect default
+    - pipenv run conan profile update settings.compiler.libcxx=libstdc++11 default
     - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan export . ${CONAN_USER_CHANNEL}
     - pipenv run conan install --build=missing num_collect/${NUM_COLLECT_VERSION}@${CONAN_USER_CHANNEL}
@@ -233,6 +250,9 @@ doc:
   script:
     - mkdir build_doc
     - cd build_doc
+    - pipenv run conan profile new --detect default
+    - pipenv run conan profile update settings.compiler.libcxx=libstdc++11 default
+    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build=missing ..
     - cd ../
     - cmake -S ./ -B build_doc

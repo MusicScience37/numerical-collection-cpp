@@ -8,7 +8,8 @@ file(MAKE_DIRECTORY ${NUM_COLLECT_BENCH_DIR})
 set(NUM_COLLECT_BENCH_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 function(target_add_to_benchmark TARGET)
-    target_link_libraries(${TARGET} PRIVATE celero num_collect num_prob_collect)
+    target_link_libraries(${TARGET} PRIVATE celero::celero num_collect
+                                            num_prob_collect)
     target_include_directories(${TARGET}
                                PRIVATE ${NUM_COLLECT_BENCH_INCLUDE_DIR})
     target_check_clang_tidy(${TARGET})
