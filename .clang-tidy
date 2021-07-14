@@ -3,6 +3,7 @@ Checks: >
   clang-diagnostic-*,
   clang-analyzer-*,
     -clang-analyzer-core.UndefinedBinaryOperatorResult,
+    -clang-analyzer-optin.performance.Padding,
   cppcoreguidelines-*,
   google-*,
     -google-runtime-references,
@@ -24,6 +25,7 @@ Checks: >
 # - modernize-pass-by-value causes some programs to crash when applied to Eigen's objects
 #   (https://eigen.tuxfamily.org/dox/group__TopicPassingByValue.html).
 # - clang-analyzer-core.UndefinedBinaryOperatorResult cause warnings for Eigen.
+# - clang-analyzer-optin.performance.Padding is hard to be fixed.
 
 CheckOptions:
   # Naming Conventions
