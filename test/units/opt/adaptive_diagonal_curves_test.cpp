@@ -102,10 +102,10 @@ TEST_CASE("num_collect::opt::impl::adc_sample_dict") {
         REQUIRE_THAT(dict.opt_value(), Catch::Matchers::WithinRel(value));
         REQUIRE(dict.evaluations() == 1);
 
-        point.push_back(1, 2);
+        point.push_back(1, 3);
         const Eigen::VectorXd var2 =
-            (Eigen::VectorXd(2) << 0.0, 1.0).finished();
-        func.evaluate_on(var);
+            (Eigen::VectorXd(2) << 0.0, 2.0).finished();
+        func.evaluate_on(var2);
         const auto value2 = func.value();
         REQUIRE_THAT(dict(point), Catch::Matchers::WithinRel(value2));
         REQUIRE_THAT(dict.opt_variable(), eigen_approx(var));
