@@ -1,0 +1,55 @@
+buildType:
+  default: debug
+  description: Debug
+  choices:
+    debug:
+      short: Debug
+      long: Debug build
+      buildType: Debug
+    release with debug info:
+      short: RelWithDebInfo
+      long: Release build with debug info
+      buildType: RelWithDebInfo
+    release:
+      short: Release
+      long: Release build
+      buildType: Release
+
+tests:
+  default: unit only
+  choices:
+    none:
+      short: None
+      long: Don't set any test options
+    unit only:
+      short: UnitOnly
+      long: Unit tests only
+      settings:
+        NUM_COLLECT_TESTING: ON
+        NUM_COLLECT_WRITE_JUNIT: OFF
+        NUM_COLLECT_ENABLE_BENCH: ON
+        NUM_COLLECT_TEST_BENCHMARKS: OFF
+        NUM_COLLECT_BUILD_EXAMPLES: ON
+    unit and bench:
+      short: UnitAndBench
+      long: Unit tests and benchmarks
+      settings:
+        NUM_COLLECT_TESTING: ON
+        NUM_COLLECT_WRITE_JUNIT: OFF
+        NUM_COLLECT_ENABLE_BENCH: ON
+        NUM_COLLECT_TEST_BENCHMARKS: ON
+        NUM_COLLECT_BUILD_EXAMPLES: ON
+
+docs:
+  default: docs on
+  choices:
+    docs on:
+      short: DocsON
+      long: Build documentation
+      settings:
+        NUM_COLLECT_BUILD_DOC: ON
+    docs off:
+      short: DocsOFF
+      long: Don't build documentation
+      settings:
+        NUM_COLLECT_BUILD_DOC: OFF
