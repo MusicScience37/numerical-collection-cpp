@@ -199,12 +199,12 @@ gcc-10-release:
   variables:
     BUILD_DIR: build_gcc10_release
 
-clang-10-asan:
+clang-10-asan-ubsan:
   extends: .debug-test-base
   stage: Test with Clang
   image: musicscience37/clang-ci:clang11-v3.2.1
   variables:
-    BUILD_DIR: build_clang_asan
+    BUILD_DIR: build_clang_asan_ubsan
   script:
     - cmake -S ./ -B $BUILD_DIR
       -DCMAKE_BUILD_TYPE=Debug
@@ -213,7 +213,7 @@ clang-10-asan:
       -DCMAKE_CXX_FLAGS=-fsanitize=address,undefined
       -DCMAKE_MODULE_LINKER_FLAGS=-fsanitize=address,undefined
     - cd $BUILD_DIR
-    - ctest -V -M Experimental -T Configure -T Build -T Test -T MemCheck
+    - ctest -V -M Experimental -T Configure -T Build -T Test
     - ctest -M Experimental -T Submit
 
 clang-11-conan:
