@@ -149,13 +149,6 @@ clang coverage:
   variables:
     BUILD_DIR: build_clang_coverage
   script:
-    - mkdir $BUILD_DIR
-    - cd $BUILD_DIR
-    - pipenv run conan profile new --detect default
-    - pipenv run conan profile update settings.compiler.libcxx=libstdc++11 default
-    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
-    - pipenv run conan install --build=missing ..
-    - cd ../
     - cmake -S ./ -B $BUILD_DIR
       -DCMAKE_BUILD_TYPE=Debug
       -DNUM_COLLECT_TESTING:BOOL=ON
@@ -178,13 +171,6 @@ gcc coverage:
   variables:
     BUILD_DIR: build_gcc_coverage
   script:
-    - mkdir $BUILD_DIR
-    - cd $BUILD_DIR
-    - pipenv run conan profile new --detect default
-    - pipenv run conan profile update settings.compiler.libcxx=libstdc++11 default
-    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
-    - pipenv run conan install --build=missing ..
-    - cd ../
     - cmake -S ./ -B $BUILD_DIR
       -DCMAKE_BUILD_TYPE=Debug
       -DNUM_COLLECT_TESTING:BOOL=ON
