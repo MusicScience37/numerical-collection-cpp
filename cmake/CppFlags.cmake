@@ -38,7 +38,7 @@ else()
 endif()
 
 if(HAVE_AVX2_EXTENSIONS)
-    option(NUM_COLLECT_USE_AVX2 "use Intel AVX2 instructions" OFF)
+    option(NUM_COLLECT_USE_AVX2 "use Intel AVX2 instructions" ON)
     if(NUM_COLLECT_USE_AVX2)
         if(MSVC)
             target_compile_options(num_collect_cpp_flags INTERFACE /arch:AVX2)

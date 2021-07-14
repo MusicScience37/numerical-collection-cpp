@@ -1,0 +1,14 @@
+{
+  "restructuredtext.linter.name": "doc8",
+  "restructuredtext.languageServer.disabled": true,
+  "restructuredtext.confPath": "${workspaceFolder}/doc/sphinx/src",
+  "doxdocgen.generic.returnTemplate": "\\return ",
+  "doxdocgen.generic.paramTemplate": "\\param[in] {param} ",
+  "doxdocgen.c.firstLine": "/*!",
+  "doxdocgen.c.factoryMethodText": "",
+  "doxdocgen.c.getterText": "Get the {name}.",
+  "doxdocgen.c.setterText": "Set the {name}.",
+  "doxdocgen.c.triggerSequence": "/*!",
+  "doxdocgen.cpp.ctorText": "Construct.",
+  "doxdocgen.cpp.dtorText": "Destruct."
+}
