@@ -104,7 +104,7 @@ static analysis:
     - sync pipenv
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
-  script:
+  before_script:
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --detect default
@@ -112,6 +112,7 @@ static analysis:
     - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build=missing ..
     - cd ../
+  script:
     - cmake -S ./ -B $BUILD_DIR
       -DCMAKE_BUILD_TYPE=Release
       -DNUM_COLLECT_TESTING:BOOL=ON
@@ -133,13 +134,6 @@ static analysis:
 .debug-test-base:
   extends: .release-test-base
   script:
-    - mkdir $BUILD_DIR
-    - cd $BUILD_DIR
-    - pipenv run conan profile new --detect default
-    - pipenv run conan profile update settings.compiler.libcxx=libstdc++11 default
-    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
-    - pipenv run conan install --build=missing ..
-    - cd ../
     - cmake -S ./ -B $BUILD_DIR
       -DCMAKE_BUILD_TYPE=Debug
       -DNUM_COLLECT_TESTING:BOOL=ON
@@ -218,6 +212,23 @@ gcc-10-release:
   image: musicscience37/gcc-ci:gcc10-v3.2
   variables:
     BUILD_DIR: build_gcc10_release
+
+clang-10-asan:
+  extends: .debug-test-base
+  stage: Test with Clang
+  image: musicscience37/clang-ci:clang11-v3.2.1
+  variables:
+    BUILD_DIR: build_clang_asan
+  script:
+    - cmake -S ./ -B $BUILD_DIR
+      -DCMAKE_BUILD_TYPE=Debug
+      -DNUM_COLLECT_TESTING:BOOL=ON
+      -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
+      -DCMAKE_CXX_FLAGS=-fsanitize=address,undefined
+      -DCMAKE_MODULE_LINKER_FLAGS=-fsanitize=address,undefined
+    - cd $BUILD_DIR
+    - ctest -V -M Experimental -T Configure -T Build -T Test -T MemCheck
+    - ctest -M Experimental -T Submit
 
 clang-11-conan:
   extends: .retry setting
