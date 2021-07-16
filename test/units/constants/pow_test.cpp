@@ -50,7 +50,7 @@ TEMPLATE_TEST_CASE("num_collect::constants::pow(Float, Int)", "",
 
     SECTION("low exponent") {
         constexpr auto base = static_cast<Base>(4.321);
-        constexpr auto exp = static_cast<Exp>(-300);
+        constexpr auto exp = static_cast<Exp>(-30);
         constexpr Base val = num_collect::constants::pow(base, exp);
         const Base reference = std::pow(base, static_cast<Base>(exp));
         REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
@@ -66,7 +66,7 @@ TEMPLATE_TEST_CASE("num_collect::constants::pow(Float, Int)", "",
 
     SECTION("large exponent") {
         constexpr auto base = static_cast<Base>(4.321);
-        constexpr auto exp = static_cast<Exp>(100);
+        constexpr auto exp = static_cast<Exp>(30);
         constexpr Base val = num_collect::constants::pow(base, exp);
         const Base reference = std::pow(base, static_cast<Base>(exp));
         REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
