@@ -15,9 +15,9 @@
  */
 /*!
  * \file
- * \brief Test of sqrt function.
+ * \brief Test of cbrt function.
  */
-#include "num_collect/constants/sqrt.h"
+#include "num_collect/constants/cbrt.h"
 
 #include <cmath>
 
@@ -26,36 +26,38 @@
 #include <catch2/matchers/catch_matchers_floating.hpp>
 
 // NOLINTNEXTLINE
-TEMPLATE_TEST_CASE("num_collect::constants::sqrt", "", float, double) {
-    SECTION("sqrt of negative number") {
-        constexpr auto x = static_cast<TestType>(-1.0);
-        constexpr TestType val = num_collect::constants::sqrt(x);
-        REQUIRE(std::isnan(val));
+TEMPLATE_TEST_CASE("num_collect::constants::cbrt", "", float, double) {
+    SECTION("cbrt of negative number") {
+        constexpr auto true_val = static_cast<TestType>(-1.234);
+        constexpr auto x = true_val * true_val * true_val;
+        constexpr auto val = num_collect::constants::cbrt(x);
+        REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
     }
 
-    SECTION("sqrt of zero") {
-        constexpr auto x = static_cast<TestType>(0);
-        constexpr TestType val = num_collect::constants::sqrt(x);
-        REQUIRE(val == num_collect::constants::zero<TestType>);
+    SECTION("cbrt of zero") {
+        constexpr auto true_val = static_cast<TestType>(0);
+        constexpr auto x = true_val * true_val * true_val;
+        constexpr auto val = num_collect::constants::cbrt(x);
+        REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
     }
 
-    SECTION("sqrt of positive number") {
+    SECTION("cbrt of positive number") {
         constexpr auto true_val = static_cast<TestType>(1.234);
-        constexpr TestType x = true_val * true_val;
-        constexpr TestType val = num_collect::constants::sqrt(x);
+        constexpr auto x = true_val * true_val * true_val;
+        constexpr auto val = num_collect::constants::cbrt(x);
         REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
     }
 
-    SECTION("sqrt of large positive number") {
+    SECTION("cbrt of large positive number") {
         constexpr auto true_val = static_cast<TestType>(1.234e+10);
-        constexpr TestType x = true_val * true_val;
-        constexpr TestType val = num_collect::constants::sqrt(x);
+        constexpr auto x = true_val * true_val * true_val;
+        constexpr auto val = num_collect::constants::cbrt(x);
         REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
     }
 
-    SECTION("sqrt of infinity") {
+    SECTION("cbrt of infinity") {
         constexpr TestType x = std::numeric_limits<TestType>::infinity();
-        constexpr TestType val = num_collect::constants::sqrt(x);
+        constexpr TestType val = num_collect::constants::cbrt(x);
         REQUIRE(std::isinf(val));
         REQUIRE(val > num_collect::constants::zero<TestType>);
     }
