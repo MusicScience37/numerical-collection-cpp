@@ -49,7 +49,7 @@ TEMPLATE_TEST_CASE("num_collect::constants::cbrt", "", float, double) {
     }
 
     SECTION("cbrt of large positive number") {
-        constexpr auto true_val = static_cast<TestType>(1.234e+10);
+        constexpr auto true_val = static_cast<TestType>(1.234e+5);
         constexpr auto x = true_val * true_val * true_val;
         constexpr auto val = num_collect::constants::cbrt(x);
         REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));

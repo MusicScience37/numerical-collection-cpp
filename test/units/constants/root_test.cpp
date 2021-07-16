@@ -133,7 +133,7 @@ TEMPLATE_TEST_CASE("num_collect::constants::root", "", float, double) {
     }
 
     SECTION("x >> 0") {
-        constexpr auto true_val = static_cast<TestType>(1.234e+10);
+        constexpr auto true_val = static_cast<TestType>(1.234e+5);
         SECTION("n = 2") {
             constexpr auto n = 2;
             constexpr auto x =
