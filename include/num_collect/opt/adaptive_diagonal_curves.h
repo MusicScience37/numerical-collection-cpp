@@ -795,7 +795,8 @@ private:
                 return i;
             }
         }
-        throw assertion_failure("adaptive_diagonal_curves::init is not called.");
+        throw assertion_failure(
+            "adaptive_diagonal_curves::init is not called.");
     }
 
     /*!
