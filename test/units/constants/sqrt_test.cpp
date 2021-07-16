@@ -60,3 +60,33 @@ TEMPLATE_TEST_CASE("num_collect::constants::sqrt", "", float, double) {
         REQUIRE(val > num_collect::constants::zero<TestType>);
     }
 }
+
+// NOLINTNEXTLINE
+TEMPLATE_TEST_CASE(
+    "num_collect::constants::sqrt (integers)", "", int, long long) {
+    SECTION("sqrt of negative number") {
+        constexpr auto x = static_cast<TestType>(-2);
+        constexpr double val = num_collect::constants::sqrt(x);
+        REQUIRE(std::isnan(val));
+    }
+
+    SECTION("sqrt of zero") {
+        constexpr auto x = static_cast<TestType>(0);
+        constexpr double val = num_collect::constants::sqrt(x);
+        REQUIRE(val == num_collect::constants::zero<TestType>);
+    }
+
+    SECTION("sqrt of positive number") {
+        constexpr auto x = static_cast<TestType>(2);
+        constexpr double val = num_collect::constants::sqrt(x);
+        const double true_val = std::sqrt(static_cast<double>(x));
+        REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+    }
+
+    SECTION("sqrt of large positive number") {
+        constexpr auto x = static_cast<TestType>(123456789);
+        constexpr double val = num_collect::constants::sqrt(x);
+        const double true_val = std::sqrt(static_cast<double>(x));
+        REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+    }
+}

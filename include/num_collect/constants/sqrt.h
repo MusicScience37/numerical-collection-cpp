@@ -58,4 +58,16 @@ constexpr auto sqrt(T x) -> T {
     return value;
 }
 
+/*!
+ * \brief Calculate square root.
+ *
+ * \tparam T Value type.
+ * \param[in] x Value to calculate square root of.
+ * \return Square root.
+ */
+template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
+constexpr auto sqrt(T x) -> double {
+    return sqrt(static_cast<double>(x));
+}
+
 }  // namespace num_collect::constants
