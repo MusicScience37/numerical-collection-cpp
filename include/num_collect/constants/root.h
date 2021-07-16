@@ -26,7 +26,6 @@
 #include "num_collect/constants/impl/pow_pos_int.h"
 #include "num_collect/constants/one.h"
 #include "num_collect/constants/zero.h"
-#include "num_collect/util/exception.h"
 
 namespace num_collect::constants {
 
