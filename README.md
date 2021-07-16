@@ -1,6 +1,10 @@
 # numerical-collection-cpp
 
-A collection of algorithms in numerical analysis implemented in C++ (under development)
+A collection of algorithms in numerical analysis implemented in C++.
+
+[![pipeline status](https://gitlab.com/MusicScience37/numerical-collection-cpp/badges/develop/pipeline.svg)](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/commits/develop)
+[![coverage report](https://gitlab.com/MusicScience37/numerical-collection-cpp/badges/develop/coverage.svg)](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/commits/develop)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 
 ## Documentation
 
@@ -9,6 +13,7 @@ A collection of algorithms in numerical analysis implemented in C++ (under devel
 
 ## Requirements
 
+- [Python](https://www.python.org/) 3.9
 - [pipenv](https://pipenv.pypa.io/en/latest/)
   - Required Python packages can be installed using pipenv.
     - For user: `pipenv install` on this directory.
@@ -24,7 +29,7 @@ A collection of algorithms in numerical analysis implemented in C++ (under devel
 - [Doxygen](https://www.doxygen.nl/index.html)
 - [Graphviz](https://graphviz.org/)
 - [PlantUML](https://plantuml.com)
-  - PlantUML requires a Java runtime environment.
+- Java runtime environment (JRE) for PlantUML
 
 ## Build
 
