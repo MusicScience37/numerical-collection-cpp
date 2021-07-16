@@ -7,5 +7,6 @@ add_executable(
     sqrt_test.cpp
     impl/pow_pos_int_test.cpp
     root_test.cpp
-    cbrt_test.cpp)
+    cbrt_test.cpp
+    trunc_test.cpp)
 target_add_catch2(num_collect_test_units_constants)
