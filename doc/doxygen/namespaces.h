@@ -31,4 +31,10 @@ namespace num_collect {
         //! Namespace of implementations.
         namespace impl {}
     }  // namespace opt
+
+    //! Namespace of constexpr variables and functions.
+    namespace constants {
+        //! Namespace of implementations.
+        namespace impl {}
+    }  // namespace constants
 }  // namespace num_collect
