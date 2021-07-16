@@ -1,21 +1,21 @@
 [[source]]
+name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
-name = "pypi"
 
 [packages]
 conan = "*"
 
 [dev-packages]
-cmake-format = "*"
 autopep8 = "*"
+breathe = "*"
+cmake-format = "*"
+doc8 = "*"
 pylint = "*"
-sphinx = "~=3.5.4"
-sphinx-rtd-theme = "~=0.5.2"
-sphinxcontrib-plantuml = "~=0.20.1"
-sphinx-autobuild = "~=2021.3.14"
-doc8 = "~=0.8.1"
-breathe = "~=4.29.2"
+sphinx = "*"
+sphinx-autobuild = "*"
+sphinx-rtd-theme = "*"
+sphinxcontrib-plantuml = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3.9"
