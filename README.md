@@ -19,6 +19,13 @@ A collection of algorithms in numerical analysis implemented in C++ (under devel
     - GCC 10
     - Clang 11
 
+### Additional Requirements for Developers
+
+- [Doxygen](https://www.doxygen.nl/index.html)
+- [Graphviz](https://graphviz.org/)
+- [PlantUML](https://plantuml.com)
+  - PlantUML requires a Java runtime environment.
+
 ## Build
 
 Build with the following commands:
