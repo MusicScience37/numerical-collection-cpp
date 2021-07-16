@@ -62,3 +62,28 @@ TEMPLATE_TEST_CASE("num_collect::constants::cbrt", "", float, double) {
         REQUIRE(val > num_collect::constants::zero<TestType>);
     }
 }
+
+// NOLINTNEXTLINE
+TEMPLATE_TEST_CASE(
+    "num_collect::constants::cbrt (integers)", "", int, long long) {
+    SECTION("cbrt of negative number") {
+        constexpr auto x = static_cast<TestType>(-5);
+        constexpr auto val = num_collect::constants::cbrt(x);
+        const double true_val = std::cbrt(x);
+        REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+    }
+
+    SECTION("cbrt of zero") {
+        constexpr auto x = static_cast<TestType>(0);
+        constexpr auto val = num_collect::constants::cbrt(x);
+        const double true_val = std::cbrt(x);
+        REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+    }
+
+    SECTION("cbrt of positive number") {
+        constexpr auto x = static_cast<TestType>(10);
+        constexpr auto val = num_collect::constants::cbrt(x);
+        const double true_val = std::cbrt(x);
+        REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+    }
+}

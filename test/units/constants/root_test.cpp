@@ -166,3 +166,158 @@ TEMPLATE_TEST_CASE("num_collect::constants::root", "", float, double) {
         }
     }
 }
+
+// NOLINTNEXTLINE
+TEMPLATE_TEST_CASE(
+    "num_collect::constants::root (integers)", "", int, long long) {
+    SECTION("x < 0, n is even") {
+        constexpr auto x = static_cast<TestType>(-2);
+        SECTION("n = 2") {
+            constexpr auto n = 2;
+            constexpr double val = num_collect::constants::root(x, n);
+            REQUIRE(std::isnan(val));
+        }
+        SECTION("n = 4") {
+            constexpr auto n = 4;
+            constexpr double val = num_collect::constants::root(x, n);
+            REQUIRE(std::isnan(val));
+        }
+    }
+
+    SECTION("x < 0, n is odd") {
+        constexpr auto x = static_cast<TestType>(-5);
+        SECTION("n = 3") {
+            constexpr auto n = 3;
+            constexpr double val = num_collect::constants::root(x, n);
+            const double reference = -std::pow(
+                -static_cast<double>(x), 1.0 / static_cast<double>(n));
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        }
+        SECTION("n = 5") {
+            constexpr auto n = 5;
+            constexpr double val = num_collect::constants::root(x, n);
+            const double reference = -std::pow(
+                -static_cast<double>(x), 1.0 / static_cast<double>(n));
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        }
+        SECTION("n = 11") {
+            constexpr auto n = 11;
+            constexpr double val = num_collect::constants::root(x, n);
+            const double reference = -std::pow(
+                -static_cast<double>(x), 1.0 / static_cast<double>(n));
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        }
+    }
+
+    SECTION("x = 0") {
+        constexpr auto x = static_cast<TestType>(0);
+        constexpr double true_val = 0.0;
+        SECTION("n = 2") {
+            constexpr auto n = 2;
+            constexpr TestType val = num_collect::constants::root(x, n);
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+        }
+        SECTION("n = 3") {
+            constexpr auto n = 3;
+            constexpr TestType val = num_collect::constants::root(x, n);
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+        }
+        SECTION("n = 4") {
+            constexpr auto n = 4;
+            constexpr TestType val = num_collect::constants::root(x, n);
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+        }
+    }
+
+    SECTION("x > 0") {
+        constexpr auto x = static_cast<TestType>(123);
+        SECTION("n = 2") {
+            constexpr auto n = 2;
+            constexpr double val = num_collect::constants::root(x, n);
+            const double reference =
+                std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n));
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        }
+        SECTION("n = 3") {
+            constexpr auto n = 3;
+            constexpr double val = num_collect::constants::root(x, n);
+            const double reference =
+                std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n));
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        }
+        SECTION("n = 4") {
+            constexpr auto n = 4;
+            constexpr double val = num_collect::constants::root(x, n);
+            const double reference =
+                std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n));
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        }
+        SECTION("n = 5") {
+            constexpr auto n = 5;
+            constexpr double val = num_collect::constants::root(x, n);
+            const double reference =
+                std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n));
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        }
+        SECTION("n = 10") {
+            constexpr auto n = 10;
+            constexpr double val = num_collect::constants::root(x, n);
+            const double reference =
+                std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n));
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        }
+        SECTION("n = 11") {
+            constexpr auto n = 11;
+            constexpr double val = num_collect::constants::root(x, n);
+            const double reference =
+                std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n));
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        }
+    }
+
+    SECTION("x >> 0") {
+        constexpr auto x = static_cast<TestType>(1234566789);
+        SECTION("n = 2") {
+            constexpr auto n = 2;
+            constexpr double val = num_collect::constants::root(x, n);
+            const double reference =
+                std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n));
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        }
+        SECTION("n = 3") {
+            constexpr auto n = 3;
+            constexpr double val = num_collect::constants::root(x, n);
+            const double reference =
+                std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n));
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        }
+        SECTION("n = 4") {
+            constexpr auto n = 4;
+            constexpr double val = num_collect::constants::root(x, n);
+            const double reference =
+                std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n));
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        }
+        SECTION("n = 5") {
+            constexpr auto n = 5;
+            constexpr double val = num_collect::constants::root(x, n);
+            const double reference =
+                std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n));
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        }
+        SECTION("n = 10") {
+            constexpr auto n = 10;
+            constexpr double val = num_collect::constants::root(x, n);
+            const double reference =
+                std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n));
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        }
+        SECTION("n = 11") {
+            constexpr auto n = 11;
+            constexpr double val = num_collect::constants::root(x, n);
+            const double reference =
+                std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n));
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        }
+    }
+}

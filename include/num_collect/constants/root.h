@@ -42,7 +42,7 @@ namespace num_collect::constants {
 template <typename T, typename I,
     typename =
         std::enable_if_t<std::is_floating_point_v<T> && std::is_integral_v<I>>>
-constexpr auto root(T x, I n) {
+constexpr auto root(T x, I n) -> T {
     if (n < 2) {
         return std::numeric_limits<T>::quiet_NaN();
     }
@@ -70,6 +70,21 @@ constexpr auto root(T x, I n) {
     }
 
     return value;
+}
+
+/*!
+ * \brief Calculate n-th root.
+ *
+ * \tparam T Value type.
+ * \tparam I Integer type for n.
+ * \param[in] x Value to calculate n-th root of.
+ * \param[in] n Exponent.
+ * \return n-th root of x.
+ */
+template <typename T, typename I,
+    typename = std::enable_if_t<std::is_integral_v<T> && std::is_integral_v<I>>>
+constexpr auto root(T x, I n) -> double {
+    return root(static_cast<double>(x), n);
 }
 
 }  // namespace num_collect::constants
