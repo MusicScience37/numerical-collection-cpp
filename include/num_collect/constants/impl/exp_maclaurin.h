@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of expm1_maclaurin function.
+ * \brief Definition of exp_maclaurin function.
  */
 #pragma once
 
@@ -25,19 +25,19 @@
 namespace num_collect::constants::impl {
 
 /*!
- * \brief Calculate exponential function minus one with Maclaurin series.
+ * \brief Calculate exponential function with Maclaurin series.
  *
- * This calculates \f$ e^x - 1 \f$.
+ * This calculates \f$ e^x \f$.
  *
  * \note This function is suitable for small positive numbers.
  *
  * \tparam T Number type (assumed as floating-point number types).
  * \param[in] x Number.
- * \return Exponential function minus one.
+ * \return Exponential function.
  */
 template <typename T>
-constexpr auto expm1_maclaurin(T x) -> T {
-    T sum = zero<T>;
+constexpr auto exp_maclaurin(T x) -> T {
+    T sum = one<T>;
     T term = one<T>;
     constexpr int max_loops = 1000;
     for (int i = 1; i <= max_loops; ++i) {

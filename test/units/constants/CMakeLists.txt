@@ -11,5 +11,6 @@ add_executable(
     trunc_test.cpp
     floor_test.cpp
     ceil_test.cpp
-    impl/expm1_maclaurin_test.cpp)
+    impl/expm1_maclaurin_test.cpp
+    impl/exp_maclaurin_test.cpp)
 target_add_catch2(num_collect_test_units_constants)
