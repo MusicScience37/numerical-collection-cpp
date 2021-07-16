@@ -9,5 +9,6 @@ add_executable(
     root_test.cpp
     cbrt_test.cpp
     trunc_test.cpp
-    floor_test.cpp)
+    floor_test.cpp
+    ceil_test.cpp)
 target_add_catch2(num_collect_test_units_constants)
