@@ -7,7 +7,21 @@ A collection of algorithms in numerical analysis implemented in C++ (under devel
 - [Documentation built on develop branch with Sphinx](https://musicscience37.gitlab.io/numerical-collection-cpp/sphinx/)
 - [Documentation built on develop branch with Doxygen](https://musicscience37.gitlab.io/numerical-collection-cpp/doxygen/)
 
+## Requirements
+
+- [pipenv](https://pipenv.pypa.io/en/latest/)
+  - Required Python packages can be installed using pipenv.
+    - For user: `pipenv install` on this directory.
+    - For developers: `pipenv install --dev` on this directory.
+- [CMake](https://cmake.org/)
+- C++ 17 Compiler
+  - Following compilers are tested in CI:
+    - GCC 10
+    - Clang 11
+
 ## Build
+
+Build with the following commands:
 
 ```bash
 cd <this-directory>
