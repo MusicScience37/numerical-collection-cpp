@@ -5,10 +5,20 @@ A collection of algorithms in numerical analysis implemented in C++
 
 .. toctree::
     :maxdepth: 2
-    :caption: Contents:
+    :caption: About
 
-    convention
-    api/index
-    basic_design/index
     license
     acknowledgement
+
+.. toctree::
+    :maxdepth: 2
+    :caption: Usage
+
+    basic_design/index
+    api/index
+
+.. toctree::
+    :maxdepth: 2
+    :caption: Development
+
+    convention
