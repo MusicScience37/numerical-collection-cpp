@@ -17,5 +17,6 @@ add_executable(
     exp_test.cpp
     expm1_test.cpp
     impl/log1m_maclaurin_test.cpp
+    log_test.cpp
     log1p_test.cpp)
 target_add_catch2(num_collect_test_units_constants)

@@ -15,55 +15,46 @@
  */
 /*!
  * \file
- * \brief Definition of log1p function.
+ * \brief Definition of log function.
  */
 #pragma once
 
 #include <limits>
 #include <type_traits>
 
-#include "num_collect/constants/expm1.h"
+#include "num_collect/constants/exp.h"
 #include "num_collect/constants/impl/log1m_maclaurin.h"
-#include "num_collect/constants/log.h"
 #include "num_collect/constants/one.h"
 
 namespace num_collect::constants {
 
 /*!
- * \brief Calculate logarithm of 1 + x.
+ * \brief Calculate logarithm.
  *
- * This calculates \f$ \log(1 + x) \f$.
+ * This calculates \f$ \log(x) \f$.
  *
  * \tparam T Number type.
  * \param[in] x Number.
- * \return Logarithm of 1 - x.
+ * \return Logarithm
  */
 template <typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
-constexpr auto log1p(T x) -> T {
-    if (x < -one<T>) {
+constexpr auto log(T x) -> T {
+    if (x < zero<T>) {
         return std::numeric_limits<T>::quiet_NaN();
     }
-    if (x == -one<T>) {
+    if (x == zero<T>) {
         return -std::numeric_limits<T>::infinity();
     }
 
     if (x > one<T>) {
-        return log(x + one<T>);
-    }
-    if (x > zero<T>) {
-        return -log1p(-x / (x + one<T>));
+        return -log(one<T> / x);
     }
 
-    T value = x;
-    if (x > zero<T>) {
-        value = -log1p(-x / (x + one<T>));
-    } else {
-        value = impl::log1m_maclaurin(-x);
-    }
+    T value = impl::log1m_maclaurin(one<T> - x);
     constexpr int max_loops = 1000;
     for (int i = 0; i < max_loops; ++i) {
-        T expm1_val = expm1(value);
-        T next_value = value - (expm1_val - x) / (expm1_val + one<T>);
+        T exp_val = exp(value);
+        T next_value = value - (exp_val - x) / exp_val;
         if (value == next_value) {
             break;
         }

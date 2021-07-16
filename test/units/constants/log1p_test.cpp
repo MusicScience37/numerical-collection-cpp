@@ -81,8 +81,8 @@ TEMPLATE_TEST_CASE("num_collect::constants::log1p", "", float, double) {
         REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
     }
 
-    SECTION("x = 1e+5") {
-        constexpr auto x = static_cast<TestType>(1e+5);
+    SECTION("x = 1e+10") {
+        constexpr auto x = static_cast<TestType>(1e+10);
         constexpr TestType val = num_collect::constants::log1p(x);
         const auto reference = std::log1p(x);
         REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
