@@ -1,2 +1,2 @@
-add_executable(num_collect_test_units_constants pi_test.cpp)
+add_executable(num_collect_test_units_constants pi_test.cpp sqrt_test.cpp)
 target_add_catch2(num_collect_test_units_constants)
