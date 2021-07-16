@@ -47,7 +47,7 @@
 #define NUM_COLLECT_ASSERT(CONDITION)                                    \
     [&] {                                                                \
         if (!(CONDITION)) {                                              \
-            throw ::num_collect::assetion_failure(                       \
+            throw ::num_collect::assertion_failure(                       \
                 fmt::format("assertion failure: {} (at {})", #CONDITION, \
                     NUM_COLLECT_FUNCTION));                              \
         }                                                                \
@@ -57,7 +57,7 @@
 #define NUM_COLLECT_ASSERT(CONDITION)                                    \
     [&] {                                                                \
         if (!(CONDITION)) {                                              \
-            throw ::num_collect::assetion_failure(                       \
+            throw ::num_collect::assertion_failure(                       \
                 fmt::format("assertion failure: {} (at {})", #CONDITION, \
                     NUM_COLLECT_FUNCTION));                              \
         }                                                                \

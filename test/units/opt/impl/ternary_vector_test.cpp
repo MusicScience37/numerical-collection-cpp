@@ -178,7 +178,7 @@ TEST_CASE("num_collect::opt::impl::ternary_vector") {
     SECTION("compare vectors with different dimensions") {
         auto vec1 = ternary_vector(1);
         auto vec2 = ternary_vector(2);
-        REQUIRE_THROWS_AS(vec1 == vec2, num_collect::assetion_failure);
+        REQUIRE_THROWS_AS(vec1 == vec2, num_collect::assertion_failure);
     }
 
     SECTION("get element as double") {
@@ -196,7 +196,7 @@ TEST_CASE("num_collect::opt::impl::ternary_vector") {
     SECTION("get digits of a dimension out of range") {
         constexpr num_collect::index_type dim = 3;
         auto vec = ternary_vector(dim);
-        REQUIRE_THROWS_AS(vec.digits(dim), num_collect::assetion_failure);
+        REQUIRE_THROWS_AS(vec.digits(dim), num_collect::assertion_failure);
     }
 #endif
 }

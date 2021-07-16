@@ -40,8 +40,8 @@ TEST_CASE("num_collect::num_collect_exception") {
     }
 }
 
-TEST_CASE("num_collect::assetion_failure") {
-    using test_type = num_collect::assetion_failure;
+TEST_CASE("num_collect::assertion_failure") {
+    using test_type = num_collect::assertion_failure;
 
     SECTION("basic functions") {
         STATIC_REQUIRE(std::is_nothrow_copy_constructible_v<test_type>);
