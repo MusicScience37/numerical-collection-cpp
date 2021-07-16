@@ -52,11 +52,13 @@ line count:
 
 pre-commit:
   stage: Check
+  needs:
+    - sync pipenv
+  dependencies:
+    - sync pipenv
   image: musicscience37/pipenv:v1.7
   script:
-    - pipenv install --dev
     - pipenv run pre-commit run --all-files
-  needs: []
 
 static analysis:
   extends: .retry setting
