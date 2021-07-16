@@ -30,6 +30,6 @@ auto main() -> int {
     // NOLINTNEXTLINE
     optimizer.init(Eigen::Vector4d::Zero(), Eigen::Vector4d::Constant(10.0));
     optimizer.max_evaluations(10000);  // NOLINT
-    optimizer.min_rate_imp(1e-4);     // NOLINT
+    optimizer.min_rate_imp(1e-4);      // NOLINT
     optimizer.solve(std::cout);
 }
