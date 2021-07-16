@@ -1,0 +1,60 @@
+/*
+ * Copyright 2021 MusicScience37 (Kenta Kabashima)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*!
+ * \file
+ * \brief Definition of exp function.
+ */
+#pragma once
+
+#include <type_traits>
+
+#include "num_collect/constants/exp.h"
+#include "num_collect/constants/impl/expm1_maclaurin.h"
+#include "num_collect/constants/one.h"
+#include "num_collect/constants/zero.h"
+
+namespace num_collect::constants {
+
+/*!
+ * \brief Calculate exponential function minus one.
+ *
+ * This calculates \f$ e^x - 1 \f$.
+ *
+ * \tparam T Number type.
+ * \param[in] x Number.
+ * \return Exponential function minus one.
+ *
+ * This function has following optimization:
+ *
+ * - for \f$ 0 \le x \le 1 \f$, Maclaurin series for \f$ e^x - 1 \f$ is used.
+ * - for \f$ -1 \le x < 0 \f$, \f$ e^x - 1 = - (e^{-x} - 1) / e^{-x} \f$ is
+ *   calculated.
+ */
+template <typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
+constexpr auto expm1(T x) -> T {
+    if (x < -one<T> || one<T> < x) {
+        return exp(x) - one<T>;
+    }
+
+    if (x >= zero<T>) {
+        return impl::expm1_maclaurin(x);
+    }
+
+    T expm1_neg = impl::expm1_maclaurin(-x);
+    return -expm1_neg / (expm1_neg + one<T>);
+}
+
+}  // namespace num_collect::constants
