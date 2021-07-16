@@ -23,7 +23,7 @@ sync pipenv:
   image: musicscience37/clang-ci:clang11-v3.2.2
   script:
     - mkdir -p .venv
-    - pipenv install --dev --python 3.8
+    - pipenv install --dev
   artifacts:
     paths:
       - .venv
@@ -49,6 +49,14 @@ line count:
     paths:
       - line_count
     expire_in: "1 mos"
+
+pre-commit:
+  stage: Check
+  image: musicscience37/pipenv:v1.7
+  script:
+    - pipenv install --dev
+    - pipenv run pre-commit run --all-files
+  needs: []
 
 static analysis:
   extends: .retry setting
