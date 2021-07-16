@@ -28,30 +28,30 @@
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::constants::cbrt", "", float, double) {
     SECTION("cbrt of negative number") {
-        constexpr auto true_val = static_cast<TestType>(-1.234);
-        constexpr auto x = true_val * true_val * true_val;
+        constexpr auto x = static_cast<TestType>(-1.234);
         constexpr auto val = num_collect::constants::cbrt(x);
+        const auto true_val = std::cbrt(x);
         REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
     }
 
     SECTION("cbrt of zero") {
-        constexpr auto true_val = static_cast<TestType>(0);
-        constexpr auto x = true_val * true_val * true_val;
+        constexpr auto x = static_cast<TestType>(0.0);
         constexpr auto val = num_collect::constants::cbrt(x);
+        const auto true_val = std::cbrt(x);
         REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
     }
 
     SECTION("cbrt of positive number") {
-        constexpr auto true_val = static_cast<TestType>(1.234);
-        constexpr auto x = true_val * true_val * true_val;
+        constexpr auto x = static_cast<TestType>(1.234);
         constexpr auto val = num_collect::constants::cbrt(x);
+        const auto true_val = std::cbrt(x);
         REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
     }
 
     SECTION("cbrt of large positive number") {
-        constexpr auto true_val = static_cast<TestType>(1.234e+5);
-        constexpr auto x = true_val * true_val * true_val;
+        constexpr auto x = static_cast<TestType>(1.234e+10);
         constexpr auto val = num_collect::constants::cbrt(x);
+        const auto true_val = std::cbrt(x);
         REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
     }
 

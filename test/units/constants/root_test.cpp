@@ -42,27 +42,27 @@ TEMPLATE_TEST_CASE("num_collect::constants::root", "", float, double) {
     }
 
     SECTION("x < 0, n is odd") {
-        constexpr auto true_val = static_cast<TestType>(-1.234);
+        constexpr auto x = static_cast<TestType>(-1.234);
         SECTION("n = 3") {
             constexpr auto n = 3;
-            constexpr auto x =
-                num_collect::constants::impl::pow_pos_int(true_val, n);
             constexpr TestType val = num_collect::constants::root(x, n);
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+            const TestType reference = -std::pow(
+                -static_cast<TestType>(x), 1.0 / static_cast<TestType>(n));
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
         }
         SECTION("n = 5") {
             constexpr auto n = 5;
-            constexpr auto x =
-                num_collect::constants::impl::pow_pos_int(true_val, n);
             constexpr TestType val = num_collect::constants::root(x, n);
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+            const TestType reference = -std::pow(
+                -static_cast<TestType>(x), 1.0 / static_cast<TestType>(n));
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
         }
         SECTION("n = 11") {
             constexpr auto n = 11;
-            constexpr auto x =
-                num_collect::constants::impl::pow_pos_int(true_val, n);
             constexpr TestType val = num_collect::constants::root(x, n);
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+            const TestType reference = -std::pow(
+                -static_cast<TestType>(x), 1.0 / static_cast<TestType>(n));
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
         }
     }
 
@@ -87,66 +87,66 @@ TEMPLATE_TEST_CASE("num_collect::constants::root", "", float, double) {
     }
 
     SECTION("x > 0") {
-        constexpr auto true_val = static_cast<TestType>(1.234);
+        constexpr auto x = static_cast<TestType>(1.234);
         SECTION("n = 2") {
             constexpr auto n = 2;
-            constexpr auto x =
-                num_collect::constants::impl::pow_pos_int(true_val, n);
             constexpr TestType val = num_collect::constants::root(x, n);
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+            const TestType reference = std::pow(
+                static_cast<TestType>(x), 1.0 / static_cast<TestType>(n));
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
         }
         SECTION("n = 3") {
             constexpr auto n = 3;
-            constexpr auto x =
-                num_collect::constants::impl::pow_pos_int(true_val, n);
             constexpr TestType val = num_collect::constants::root(x, n);
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+            const TestType reference = std::pow(
+                static_cast<TestType>(x), 1.0 / static_cast<TestType>(n));
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
         }
         SECTION("n = 4") {
             constexpr auto n = 4;
-            constexpr auto x =
-                num_collect::constants::impl::pow_pos_int(true_val, n);
             constexpr TestType val = num_collect::constants::root(x, n);
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+            const TestType reference = std::pow(
+                static_cast<TestType>(x), 1.0 / static_cast<TestType>(n));
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
         }
         SECTION("n = 5") {
             constexpr auto n = 5;
-            constexpr auto x =
-                num_collect::constants::impl::pow_pos_int(true_val, n);
             constexpr TestType val = num_collect::constants::root(x, n);
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+            const TestType reference = std::pow(
+                static_cast<TestType>(x), 1.0 / static_cast<TestType>(n));
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
         }
         SECTION("n = 10") {
             constexpr auto n = 10;
-            constexpr auto x =
-                num_collect::constants::impl::pow_pos_int(true_val, n);
             constexpr TestType val = num_collect::constants::root(x, n);
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+            const TestType reference = std::pow(
+                static_cast<TestType>(x), 1.0 / static_cast<TestType>(n));
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
         }
         SECTION("n = 11") {
             constexpr auto n = 11;
-            constexpr auto x =
-                num_collect::constants::impl::pow_pos_int(true_val, n);
             constexpr TestType val = num_collect::constants::root(x, n);
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+            const TestType reference = std::pow(
+                static_cast<TestType>(x), 1.0 / static_cast<TestType>(n));
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
         }
     }
 
     SECTION("x >> 0") {
-        constexpr auto true_val = static_cast<TestType>(1.234e+5);
+        constexpr auto x = static_cast<TestType>(1.234e+10);
         SECTION("n = 2") {
             constexpr auto n = 2;
-            constexpr auto x =
-                num_collect::constants::impl::pow_pos_int(true_val, n);
             constexpr TestType val = num_collect::constants::root(x, n);
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+            const TestType reference = std::pow(
+                static_cast<TestType>(x), 1.0 / static_cast<TestType>(n));
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
         }
         SECTION("n = 3") {
             constexpr auto n = 3;
-            constexpr auto x =
-                num_collect::constants::impl::pow_pos_int(true_val, n);
             constexpr TestType val = num_collect::constants::root(x, n);
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+            const TestType reference = std::pow(
+                static_cast<TestType>(x), 1.0 / static_cast<TestType>(n));
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
         }
     }
 
