@@ -34,7 +34,7 @@ public:
 /*!
  * \brief Class of exception on assertion failure.
  */
-class assetion_failure : public num_collect_exception {
+class assertion_failure : public num_collect_exception {
 public:
     using num_collect_exception::num_collect_exception;
 };
