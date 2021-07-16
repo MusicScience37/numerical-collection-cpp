@@ -1,13 +1,13 @@
 Copyright 2021 MusicScience37 (Kenta Kabashima)
 
-This project uses fmt library, which is available under a 
+This project uses fmt library, which is available under a
 "MIT License." For details, see https://github.com/fmtlib/fmt.
 
-This project uses Eigen library, which is available under a 
+This project uses Eigen library, which is available under a
 "Mozilla Public License, Version 2.0." For details, https://gitlab.com/libeigen/eigen.
 
-This project uses Catch2 library in tests, which is available under a 
+This project uses Catch2 library in tests, which is available under a
 "Boost Software License, Version 1.0." For details, see extern/Catch2.
 
-This project uses Celero library in benchmarks, which is available under a 
+This project uses Celero library in benchmarks, which is available under a
 "Apache License, Version 2.0." For details, see extern/Celero.
