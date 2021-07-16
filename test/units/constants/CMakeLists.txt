@@ -15,5 +15,6 @@ add_executable(
     impl/exp_maclaurin_test.cpp
     napier_test.cpp
     exp_test.cpp
-    expm1_test.cpp)
+    expm1_test.cpp
+    impl/log1m_maclaurin_test.cpp)
 target_add_catch2(num_collect_test_units_constants)
