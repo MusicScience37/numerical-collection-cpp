@@ -15,38 +15,18 @@
  */
 /*!
  * \file
- * \brief Definition of pi.
+ * \brief Definition of half.
  */
 #pragma once
-
-#ifdef NUM_COLLECT_DOCUMENTATION
-/*!
- * \brief First 50 digits of pi.
- */
-#define NUM_COLLECT_PI 3.14159265358979323846264338327950288419716939937510
-#else
-// NOLINTNEXTLINE
-#define NUM_COLLECT_PI 3.14159265358979323846264338327950288419716939937510
-#endif
 
 namespace num_collect::constants {
 
 /*!
- * \brief Value of pi.
+ * \brief Value of half.
  *
  * \tparam T Value type.
  */
 template <typename T>
-constexpr T pi = static_cast<T>(NUM_COLLECT_PI);
-
-/*!
- * \brief Value of pi.
- */
-constexpr double pid = pi<double>;
-
-/*!
- * \brief Value of pi.
- */
-constexpr float pif = pi<float>;
+constexpr T half = static_cast<T>(0.5);
 
 }  // namespace num_collect::constants

@@ -21,40 +21,42 @@
 
 #include <cmath>
 
+#include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating.hpp>
 
-TEST_CASE("num_collect::constants::sqrt") {
+// NOLINTNEXTLINE
+TEMPLATE_TEST_CASE("num_collect::constants::sqrt", "", float, double) {
     SECTION("sqrt of negative number") {
-        constexpr double x = -1.0;
-        constexpr double val = num_collect::constants::sqrt(x);
+        constexpr auto x = static_cast<TestType>(-1.0);
+        constexpr TestType val = num_collect::constants::sqrt(x);
         REQUIRE(std::isnan(val));
     }
 
     SECTION("sqrt of zero") {
-        constexpr double x = 0.0;
-        constexpr double val = num_collect::constants::sqrt(x);
-        REQUIRE(val == 0.0);
+        constexpr auto x = static_cast<TestType>(0);
+        constexpr TestType val = num_collect::constants::sqrt(x);
+        REQUIRE(val == num_collect::constants::zero<TestType>);
     }
 
     SECTION("sqrt of positive number") {
-        constexpr double true_val = 1.234;
-        constexpr double x = true_val * true_val;
-        constexpr double val = num_collect::constants::sqrt(x);
+        constexpr auto true_val = static_cast<TestType>(1.234);
+        constexpr TestType x = true_val * true_val;
+        constexpr TestType val = num_collect::constants::sqrt(x);
         REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
     }
 
     SECTION("sqrt of large positive number") {
-        constexpr double true_val = 1.234e+100;
-        constexpr double x = true_val * true_val;
-        constexpr double val = num_collect::constants::sqrt(x);
+        constexpr auto true_val = static_cast<TestType>(1.234e+50);
+        constexpr TestType x = true_val * true_val;
+        constexpr TestType val = num_collect::constants::sqrt(x);
         REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
     }
 
     SECTION("sqrt of infinity") {
-        constexpr double x = std::numeric_limits<double>::infinity();
-        constexpr double val = num_collect::constants::sqrt(x);
+        constexpr TestType x = std::numeric_limits<TestType>::infinity();
+        constexpr TestType val = num_collect::constants::sqrt(x);
         REQUIRE(std::isinf(val));
-        REQUIRE(val > 0.0);
+        REQUIRE(val > num_collect::constants::zero<TestType>);
     }
 }

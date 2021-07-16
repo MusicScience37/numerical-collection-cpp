@@ -22,6 +22,10 @@
 #include <limits>
 #include <type_traits>
 
+#include "num_collect/constants/half.h"
+#include "num_collect/constants/one.h"
+#include "num_collect/constants/zero.h"
+
 namespace num_collect::constants {
 
 /*!
@@ -33,10 +37,7 @@ namespace num_collect::constants {
  */
 template <typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
 constexpr auto sqrt(T x) -> T {
-    constexpr T zero = T(0);
-    constexpr T half = T(0.5);
-    constexpr T one = T(1);
-    if (x < zero) {
+    if (x < zero<T>) {
         return std::numeric_limits<T>::quiet_NaN();
     }
     if ((x > std::numeric_limits<T>::max()) ||
@@ -45,9 +46,9 @@ constexpr auto sqrt(T x) -> T {
     }
 
     constexpr int max_loops = 1000;  // safe guard
-    T value = half * (x + one);
+    T value = half<T> * (x + one<T>);
     for (int i = 0; i < max_loops; ++i) {
-        T next_value = half * (value + x / value);
+        T next_value = half<T> * (value + x / value);
         if (value == next_value) {
             break;
         }
