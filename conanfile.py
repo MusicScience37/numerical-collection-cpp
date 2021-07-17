@@ -13,13 +13,11 @@ class NumCollectConan(ConanFile):
     settings = None
     exports_sources = "include/*"
     no_copy_source = True
-    requires = "fmt/7.1.3", "eigen/3.3.9"
+    requires = "fmt/[>=8.0.0]", "eigen/[>=3.3.9]"
     build_requires = (
         'catch2/3.0.0@MusicScience37+conan-extra-packages/stable',
         'celero/2.8.2@MusicScience37+conan-extra-packages/stable',
     )
-    # Without following line, build fails.
-    default_options = "fmt:header_only=True"
     generators = "cmake_find_package"
 
     def package(self):
