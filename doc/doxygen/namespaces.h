@@ -37,4 +37,10 @@ namespace num_collect {
         //! Namespace of implementations.
         namespace impl {}
     }  // namespace constants
+
+    //! Namespace of root-finding algorithms.
+    namespace roots {
+        //! Namespace of implementations.
+        namespace impl {}
+    }  // namespace roots
 }  // namespace num_collect

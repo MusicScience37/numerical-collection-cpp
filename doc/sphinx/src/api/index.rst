@@ -9,4 +9,5 @@ API Reference
     opt
     multi_double
     constants
+    roots
     reference

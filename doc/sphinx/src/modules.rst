@@ -19,6 +19,9 @@ Modules
         component multi_double
 
         component constants
+
+        component roots
+        roots ..> util
     }
 
 Names in this diagram are the names of namespaces.
