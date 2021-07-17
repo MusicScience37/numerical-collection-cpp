@@ -14,13 +14,13 @@ Algorithms for equations with non-linear real-valued function
     package problems {
         class function {
             + using variable_type = xxx
-            + using value_type = xxx
             + evaluate_on(variable: variable_type)
-            + value() : value_type
+            + value() : variable_type
         }
 
         class differentiable_function {
-            + gradient() : variable_type
+            + using jacobian_type = xxx
+            + jacobian() : jacobian_type
         }
         function <|-- differentiable_function
     }
@@ -31,14 +31,14 @@ Algorithms for equations with non-linear real-valued function
             + iterate()
             + solve()
             + variable() : variable_type
-            + value() : value_type
+            + value() : variable_type
             + iterations() : index_type
             + evaluations() : index_type
         }
         function_root_finder o-- function
 
         class differentiable_function_root_finder {
-            + gradient() : variable_type
+            + jacobian() : jacobian_type
         }
         function_root_finder <|-- differentiable_function_root_finder
         differentiable_function_root_finder o-- differentiable_function

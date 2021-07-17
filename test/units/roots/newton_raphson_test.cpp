@@ -1,0 +1,86 @@
+/*
+ * Copyright 2021 MusicScience37 (Kenta Kabashima)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*!
+ * \file
+ * \brief Test of newton_raphson class.
+ */
+#include "num_collect/roots/newton_raphson.h"
+
+#include <cmath>
+#include <sstream>
+
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_floating.hpp>
+#include <catch2/matchers/catch_matchers_string.hpp>
+
+#include "eigen_approx.h"
+#include "num_prob_collect/roots/double_cubic_test_function.h"
+
+TEST_CASE("num_collect::roots::newton_raphson<double_cubic_test_function>") {
+    using function_type = num_prob_collect::roots::double_cubic_test_function;
+    using finder_type = num_collect::roots::newton_raphson<function_type>;
+
+    SECTION("initialize") {
+        auto finder = finder_type(function_type());
+        const auto init_var = Eigen::Vector2d(1.0, 1.0);
+        finder.init(init_var);
+        REQUIRE_THAT(finder.variable(), eigen_approx(init_var));
+        const auto value = Eigen::Vector2d(-45.0, -7.0);
+        REQUIRE_THAT(finder.value(), eigen_approx(value));
+        const auto jacobian =
+            (Eigen::Matrix2d() << 6.0, -3.0, 3.0, 0.0).finished();
+        REQUIRE_THAT(finder.jacobian(), eigen_approx(jacobian));
+        REQUIRE(finder.iterations() == 0);
+        REQUIRE(finder.evaluations() == 1);
+        REQUIRE(std::isinf(finder.last_change()));
+        REQUIRE(finder.last_change() > 0.0);
+        REQUIRE_THAT(
+            finder.value_norm(), Catch::Matchers::WithinRel(value.norm()));
+    }
+
+    SECTION("iterate once") {
+        auto finder = finder_type(function_type());
+        const auto init_var = Eigen::Vector2d(1.0, 1.0);
+        finder.init(init_var);
+        REQUIRE_NOTHROW(finder.iterate());
+        REQUIRE(finder.variable()(0) != init_var(0));  // NOLINT
+        REQUIRE(finder.variable()(1) != init_var(1));  // NOLINT
+        REQUIRE(finder.iterations() == 1);
+        REQUIRE(finder.evaluations() > 1);
+    }
+
+    SECTION("solve") {
+        auto finder = finder_type(function_type());
+        const auto init_var = Eigen::Vector2d(1.0, 1.0);
+        finder.init(init_var);
+        REQUIRE_NOTHROW(finder.solve());
+        const auto solution = Eigen::Vector2d(3.0, 2.0);
+        REQUIRE_THAT(finder.variable(), eigen_approx(solution));
+        REQUIRE(finder.iterations() > 1);
+    }
+
+    SECTION("solve with logging") {
+        auto finder = finder_type(function_type());
+        std::ostringstream stream;
+        const auto init_var = Eigen::Vector2d(1.0, 1.0);
+        finder.init(init_var);
+        REQUIRE_NOTHROW(finder.solve(stream));
+        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Iter."));
+        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Eval."));
+        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Value"));
+        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Change"));
+    }
+}
