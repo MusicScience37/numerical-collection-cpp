@@ -1,7 +1,7 @@
 numerical-collection-cpp
 ============================
 
-A collection of algorithms in numerical analysis implemented in C++
+A collection of algorithms in numerical analysis implemented in C++.
 
 .. toctree::
     :maxdepth: 2
@@ -14,6 +14,7 @@ A collection of algorithms in numerical analysis implemented in C++
     :maxdepth: 2
     :caption: Usage
 
+    modules
     basic_design/index
     api/index
 
