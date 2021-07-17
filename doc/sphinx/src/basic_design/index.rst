@@ -6,3 +6,4 @@ Basic Design
     :caption: Contents:
 
     optimization
+    root_finding
