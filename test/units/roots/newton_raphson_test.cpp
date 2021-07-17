@@ -27,7 +27,68 @@
 #include <catch2/matchers/catch_matchers_string.hpp>
 
 #include "eigen_approx.h"
+#include "num_prob_collect/roots/cubic_root_test_function.h"
 #include "num_prob_collect/roots/double_cubic_test_function.h"
+
+TEST_CASE("num_collect::roots::newton_raphson<cubic_root_test_function>") {
+    using function_type = num_prob_collect::roots::cubic_root_test_function;
+    using finder_type = num_collect::roots::newton_raphson<function_type>;
+
+    SECTION("initialize") {
+        constexpr double target = 3.0;
+        auto finder = finder_type(function_type(target));
+        constexpr double init_var = 2.0;
+        finder.init(init_var);
+        REQUIRE_THAT(finder.variable(), Catch::Matchers::WithinRel(init_var));
+        constexpr double value = 5.0;
+        REQUIRE_THAT(finder.value(), Catch::Matchers::WithinRel(value));
+        constexpr double jacobian = 12.0;
+        REQUIRE_THAT(finder.jacobian(), Catch::Matchers::WithinRel(jacobian));
+        REQUIRE(finder.iterations() == 0);
+        REQUIRE(finder.evaluations() == 1);
+        REQUIRE(std::isinf(finder.last_change()));
+        REQUIRE(finder.last_change() > 0.0);
+        REQUIRE_THAT(
+            finder.value_norm(), Catch::Matchers::WithinRel(std::abs(value)));
+    }
+
+    SECTION("iterate once") {
+        constexpr double target = 3.0;
+        auto finder = finder_type(function_type(target));
+        constexpr double init_var = 2.0;
+        finder.init(init_var);
+        REQUIRE_NOTHROW(finder.iterate());
+        REQUIRE(finder.variable() != init_var);  // NOLINT
+        REQUIRE(finder.iterations() == 1);
+        REQUIRE(finder.evaluations() > 1);
+    }
+
+    SECTION("solve") {
+        constexpr double target = 3.0;
+        auto finder = finder_type(function_type(target));
+        constexpr double init_var = 2.0;
+        finder.init(init_var);
+        REQUIRE_NOTHROW(finder.solve());
+        const double solution = std::cbrt(target);
+        constexpr double tol = 1e-4;
+        REQUIRE_THAT(
+            finder.variable(), Catch::Matchers::WithinRel(solution, tol));
+        REQUIRE(finder.iterations() > 1);
+    }
+
+    SECTION("solve with logging") {
+        constexpr double target = 3.0;
+        auto finder = finder_type(function_type(target));
+        std::ostringstream stream;
+        constexpr double init_var = 2.0;
+        finder.init(init_var);
+        REQUIRE_NOTHROW(finder.solve(stream));
+        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Iter."));
+        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Eval."));
+        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Value"));
+        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Change"));
+    }
+}
 
 TEST_CASE("num_collect::roots::newton_raphson<double_cubic_test_function>") {
     using function_type = num_prob_collect::roots::double_cubic_test_function;
@@ -68,7 +129,8 @@ TEST_CASE("num_collect::roots::newton_raphson<double_cubic_test_function>") {
         finder.init(init_var);
         REQUIRE_NOTHROW(finder.solve());
         const auto solution = Eigen::Vector2d(3.0, 2.0);
-        REQUIRE_THAT(finder.variable(), eigen_approx(solution));
+        constexpr double tol = 1e-4;
+        REQUIRE_THAT(finder.variable(), eigen_approx(solution, tol));
         REQUIRE(finder.iterations() > 1);
     }
 
