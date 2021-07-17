@@ -26,7 +26,14 @@
 namespace num_collect::constants {
 
 /*!
- * \brief Calculate the largest integer not greater than x.
+ * \brief Calculate the largest integer not greater than x, \f$ \lfloor x
+ * \rfloor \f$.
+ *
+ * This function calculates similar values as
+ * [floor](https://en.cppreference.com/w/cpp/numeric/math/floor) function in C++
+ * standard library in constexpr.
+ *
+ * \note This function assumes that inputs are floating-point numbers.
  *
  * \tparam T Number type.
  * \param[in] x Number.

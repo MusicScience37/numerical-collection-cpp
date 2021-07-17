@@ -29,19 +29,21 @@
 namespace num_collect::constants {
 
 /*!
- * \brief Calculate exponential function minus one.
+ * \brief Calculate exponential function minus one \f$ e^x - 1 \f$.
  *
- * This calculates \f$ e^x - 1 \f$.
+ * This function calculates similar values as
+ * [expm1](https://en.cppreference.com/w/cpp/numeric/math/expm1) function in C++
+ * standard library in constexpr.
  *
- * \tparam T Number type.
- * \param[in] x Number.
- * \return Exponential function minus one.
- *
- * This function has following optimization:
+ * This function has following optimization for small values:
  *
  * - for \f$ 0 \le x \le 1 \f$, Maclaurin series for \f$ e^x - 1 \f$ is used.
  * - for \f$ -1 \le x < 0 \f$, \f$ e^x - 1 = - (e^{-x} - 1) / e^{-x} \f$ is
  *   calculated.
+ *
+ * \tparam T Number type.
+ * \param[in] x Number.
+ * \return Exponential function minus one.
  */
 template <typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
 constexpr auto expm1(T x) -> T {

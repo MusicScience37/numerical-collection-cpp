@@ -27,7 +27,11 @@
 namespace num_collect::constants {
 
 /*!
- * \brief Truncate the number x.
+ * \brief Truncate the decimal part of a number x.
+ *
+ * This function calculates similar values as
+ * [trunc](https://en.cppreference.com/w/cpp/numeric/math/trunc) function in C++
+ * standard library in constexpr.
  *
  * \note This function assumes that inputs are floating-point numbers.
  *

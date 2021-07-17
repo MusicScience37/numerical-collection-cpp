@@ -30,38 +30,38 @@
 namespace num_collect::constants {
 
 /*!
- * \brief Calculate n-th root.
+ * \brief Calculate n-th root \f$ \sqrt[n]{x} \f$.
  *
- * \tparam T Value type.
+ * \tparam F Value type.
  * \tparam I Integer type for n.
  * \param[in] x Value to calculate n-th root of.
  * \param[in] n Exponent.
  * \return n-th root of x.
  */
-template <typename T, typename I,
-    typename =
-        std::enable_if_t<std::is_floating_point_v<T> && std::is_integral_v<I>>>
-constexpr auto root(T x, I n) -> T {
+template <typename F, typename I,
+    std::enable_if_t<std::is_floating_point_v<F> && std::is_integral_v<I>,
+        void*> = nullptr>
+constexpr auto root(F x, I n) -> F {
     if (n < 2) {
-        return std::numeric_limits<T>::quiet_NaN();
+        return std::numeric_limits<F>::quiet_NaN();
     }
-    if (x < zero<T>) {
+    if (x < zero<F>) {
         if ((n % 2) == 0) {
-            return std::numeric_limits<T>::quiet_NaN();
+            return std::numeric_limits<F>::quiet_NaN();
         }
         return -root(-x, n);
     }
-    if ((x > std::numeric_limits<T>::max()) ||
-        (x < std::numeric_limits<T>::min())) {
+    if ((x > std::numeric_limits<F>::max()) ||
+        (x < std::numeric_limits<F>::min())) {
         return x;
     }
 
     constexpr int max_loops = 1000;  // safe guard
-    T value = one<T> + (x - one<T>) / static_cast<T>(n);
+    F value = one<F> + (x - one<F>) / static_cast<F>(n);
     for (int i = 0; i < max_loops; ++i) {
-        T next_value = (static_cast<T>(n - one<I>) * value +
+        F next_value = (static_cast<F>(n - one<I>) * value +
                            x / impl::pow_pos_int(value, n - one<I>)) /
-            static_cast<T>(n);
+            static_cast<F>(n);
         if (value == next_value) {
             break;
         }
@@ -72,17 +72,18 @@ constexpr auto root(T x, I n) -> T {
 }
 
 /*!
- * \brief Calculate n-th root.
+ * \brief Calculate n-th root \f$ \sqrt[n]{x} \f$.
  *
- * \tparam T Value type.
- * \tparam I Integer type for n.
+ * \tparam IB Value type.
+ * \tparam IE Integer type for n.
  * \param[in] x Value to calculate n-th root of.
  * \param[in] n Exponent.
  * \return n-th root of x.
  */
-template <typename T, typename I,
-    typename = std::enable_if_t<std::is_integral_v<T> && std::is_integral_v<I>>>
-constexpr auto root(T x, I n) -> double {
+template <typename IB, typename IE,
+    std::enable_if_t<std::is_integral_v<IB> && std::is_integral_v<IE>, void*> =
+        nullptr>
+constexpr auto root(IB x, IE n) -> double {
     return root(static_cast<double>(x), n);
 }
 

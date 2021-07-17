@@ -30,9 +30,14 @@
 namespace num_collect::constants {
 
 /*!
- * \brief Calculate logarithm of 1 + x.
+ * \brief Calculate natural logarithm of 1 + x, \f$ \log(1 + x) \f$.
  *
- * This calculates \f$ \log(1 + x) \f$.
+ * This function calculates similar values as
+ * [log1p](https://en.cppreference.com/w/cpp/numeric/math/log1p) function in C++
+ * standard library in constexpr.
+ *
+ * This function can calculate natural logarithm of numbers near to 1 more
+ * accurately.
  *
  * \tparam T Number type.
  * \param[in] x Number.

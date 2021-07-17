@@ -31,9 +31,11 @@
 namespace num_collect::constants {
 
 /*!
- * \brief Calculate exponential function.
+ * \brief Calculate exponential function \f$ e^x \f$.
  *
- * This calculates \f$ e^x \f$.
+ * This function calculates similar values as
+ * [exp](https://en.cppreference.com/w/cpp/numeric/math/exp) function in C++
+ * standard library in constexpr.
  *
  * \tparam T Number type.
  * \param[in] x Number.

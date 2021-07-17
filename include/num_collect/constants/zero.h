@@ -22,7 +22,7 @@
 namespace num_collect::constants {
 
 /*!
- * \brief Value of zero.
+ * \brief Value 0.
  *
  * \tparam T Value type.
  */

@@ -26,7 +26,14 @@
 namespace num_collect::constants {
 
 /*!
- * \brief Calculate the smallest integer not less than x.
+ * \brief Calculate the smallest integer not less than x, \f$ \lceil x \rceil
+ * \f$.
+ *
+ * This function calculates similar values as
+ * [ceil](https://en.cppreference.com/w/cpp/numeric/math/ceil) function in C++
+ * standard library in constexpr.
+ *
+ * \note This function assumes that inputs are floating-point numbers.
  *
  * \tparam T Number type.
  * \param[in] x Number.

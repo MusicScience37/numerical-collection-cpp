@@ -28,7 +28,7 @@ namespace num_collect::constants::impl {
 /*!
  * \brief Calculate the value of base raised to the power exp.
  *
- * \warning Exponent is assumed to be a positive number.
+ * \warning Exponent is assumed to be a positive integer.
  *
  * \tparam T Base type.
  * \tparam I Integer type for exponent.

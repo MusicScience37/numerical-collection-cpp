@@ -24,7 +24,11 @@
 namespace num_collect::constants {
 
 /*!
- * \brief Calculate cubic root.
+ * \brief Calculate cubic root \f$ \sqrt[3]{x} \f$.
+ *
+ * This function calculates similar values as
+ * [cbrt](https://en.cppreference.com/w/cpp/numeric/math/cbrt) function in C++
+ * standard library in constexpr.
  *
  * \tparam T Value type.
  * \param[in] x Value to calculate cubic root of.

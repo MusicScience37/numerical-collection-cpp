@@ -32,7 +32,8 @@
 namespace num_collect::constants {
 
 /*!
- * \brief Value of Napier's constant (or Euler's number).
+ * \brief Value of Napier's constant (or Euler's number),
+ * \f$ e = 2.7182818284590452 \ldots \f$.
  *
  * \tparam T Value type.
  */

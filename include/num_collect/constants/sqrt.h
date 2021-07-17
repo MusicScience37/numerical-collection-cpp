@@ -29,26 +29,31 @@
 namespace num_collect::constants {
 
 /*!
- * \brief Calculate square root.
+ * \brief Calculate square root \f$ \sqrt{x} \f$.
  *
- * \tparam T Value type.
+ * This function calculates similar values as
+ * [sqrt](https://en.cppreference.com/w/cpp/numeric/math/sqrt) function in C++
+ * standard library in constexpr.
+ *
+ * \tparam F Value type.
  * \param[in] x Value to calculate square root of.
  * \return Square root.
  */
-template <typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
-constexpr auto sqrt(T x) -> T {
-    if (x < zero<T>) {
-        return std::numeric_limits<T>::quiet_NaN();
+template <typename F,
+    std::enable_if_t<std::is_floating_point_v<F>, void*> = nullptr>
+constexpr auto sqrt(F x) -> F {
+    if (x < zero<F>) {
+        return std::numeric_limits<F>::quiet_NaN();
     }
-    if ((x > std::numeric_limits<T>::max()) ||
-        (x < std::numeric_limits<T>::min())) {
+    if ((x > std::numeric_limits<F>::max()) ||
+        (x < std::numeric_limits<F>::min())) {
         return x;
     }
 
     constexpr int max_loops = 1000;  // safe guard
-    T value = half<T> * (x + one<T>);
+    F value = half<F> * (x + one<F>);
     for (int i = 0; i < max_loops; ++i) {
-        T next_value = half<T> * (value + x / value);
+        F next_value = half<F> * (value + x / value);
         if (value == next_value) {
             break;
         }
@@ -59,14 +64,18 @@ constexpr auto sqrt(T x) -> T {
 }
 
 /*!
- * \brief Calculate square root.
+ * \brief Calculate square root \f$ \sqrt{x} \f$.
  *
- * \tparam T Value type.
+ * This function calculates similar values as
+ * [sqrt](https://en.cppreference.com/w/cpp/numeric/math/sqrt) function in C++
+ * standard library in constexpr.
+ *
+ * \tparam I Value type.
  * \param[in] x Value to calculate square root of.
  * \return Square root.
  */
-template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
-constexpr auto sqrt(T x) -> double {
+template <typename I, std::enable_if_t<std::is_integral_v<I>, void*> = nullptr>
+constexpr auto sqrt(I x) -> double {
     return sqrt(static_cast<double>(x));
 }
 

@@ -27,7 +27,10 @@ namespace num_collect::constants::impl {
 /*!
  * \brief Calculate exponential function with Maclaurin series.
  *
- * This calculates \f$ e^x \f$.
+ * This calculates the following series:
+ * \f[
+ *     e^x = \sum_{k=0}^\infty \frac{x^k}{k!}
+ * \f]
  *
  * \note This function is suitable for small positive numbers.
  *

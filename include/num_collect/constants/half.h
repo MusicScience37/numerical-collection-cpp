@@ -22,7 +22,7 @@
 namespace num_collect::constants {
 
 /*!
- * \brief Value of half.
+ * \brief Value 0.5.
  *
  * \tparam T Value type.
  */

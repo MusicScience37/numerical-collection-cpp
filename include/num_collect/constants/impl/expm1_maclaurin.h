@@ -27,7 +27,10 @@ namespace num_collect::constants::impl {
 /*!
  * \brief Calculate exponential function minus one with Maclaurin series.
  *
- * This calculates \f$ e^x - 1 \f$.
+ * This calculates the following series:
+ * \f[
+ *     e^x - 1 = \sum_{k=1}^\infty \frac{x^k}{k!}
+ * \f]
  *
  * \note This function is suitable for small positive numbers.
  *

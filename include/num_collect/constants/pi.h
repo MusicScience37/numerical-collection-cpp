@@ -32,7 +32,7 @@
 namespace num_collect::constants {
 
 /*!
- * \brief Value of pi.
+ * \brief Value of pi, \f$ \pi = 3.141592653589793238462 \dots \f$.
  *
  * \tparam T Value type.
  */

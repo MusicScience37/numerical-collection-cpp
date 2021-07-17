@@ -27,9 +27,12 @@ namespace num_collect::constants::impl {
 /*!
  * \brief Calculate logarithm of 1 - x.
  *
- * This calculates \f$ \log(1 - x) \f$.
+ * This calculates the following series:
+ * \f[
+ *     log(1 - x) = -\sum_{k=1}^\infty \frac{x^k}{k}
+ * \f]
  *
- * \warning Number is assumed to be a positive number.
+ * \note This function is suitable for small positive numbers.
  *
  * \tparam T Number type.
  * \param[in] x Number.

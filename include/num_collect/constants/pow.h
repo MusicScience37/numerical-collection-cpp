@@ -31,7 +31,11 @@
 namespace num_collect::constants {
 
 /*!
- * \brief Calculate power.
+ * \brief Calculate power \f$ {base}^{exp} \f$.
+ *
+ * This function calculates similar values as
+ * [pow](https://en.cppreference.com/w/cpp/numeric/math/pow) function in C++
+ * standard library in constexpr.
  *
  * \tparam B Base type.
  * \tparam E Exponent type.
@@ -51,7 +55,11 @@ constexpr auto pow(B base, E exp) -> B {
 }
 
 /*!
- * \brief Calculate power.
+ * \brief Calculate power \f$ {base}^{exp} \f$.
+ *
+ * This function calculates similar values as
+ * [pow](https://en.cppreference.com/w/cpp/numeric/math/pow) function in C++
+ * standard library in constexpr.
  *
  * \tparam T Number type.
  * \param[in] base Base.

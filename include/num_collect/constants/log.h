@@ -29,9 +29,11 @@
 namespace num_collect::constants {
 
 /*!
- * \brief Calculate logarithm.
+ * \brief Calculate logarithm \f$ \log(x) \f$.
  *
- * This calculates \f$ \log(x) \f$.
+ * This function calculates similar values as
+ * [log](https://en.cppreference.com/w/cpp/numeric/math/log) function in C++
+ * standard library in constexpr.
  *
  * \tparam T Number type.
  * \param[in] x Number.
