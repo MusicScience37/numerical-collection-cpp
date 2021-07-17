@@ -1,0 +1,23 @@
+add_executable(
+    num_collect_test_units_constants
+    pi_test.cpp
+    one_test.cpp
+    zero_test.cpp
+    half_test.cpp
+    sqrt_test.cpp
+    impl/pow_pos_int_test.cpp
+    root_test.cpp
+    cbrt_test.cpp
+    trunc_test.cpp
+    floor_test.cpp
+    ceil_test.cpp
+    impl/expm1_maclaurin_test.cpp
+    impl/exp_maclaurin_test.cpp
+    napier_test.cpp
+    exp_test.cpp
+    expm1_test.cpp
+    impl/log1m_maclaurin_test.cpp
+    log_test.cpp
+    log1p_test.cpp
+    pow_test.cpp)
+target_add_catch2(num_collect_test_units_constants)

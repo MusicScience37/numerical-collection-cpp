@@ -8,4 +8,5 @@ API Reference
     base
     opt
     multi_double
+    constants
     reference
