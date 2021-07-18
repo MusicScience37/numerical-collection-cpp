@@ -15,50 +15,28 @@
  */
 /*!
  * \file
- * \brief Test of rk4_formula class.
+ * \brief Test of simple_solver_test class.
  */
-#include "num_collect/ode/runge_kutta/rk4_formula.h"
+#include "num_collect/ode/runge_kutta/simple_solver.h"
 
 #include <cmath>
+#include <sstream>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating.hpp>
+#include <catch2/matchers/catch_matchers_string.hpp>
 
+#include "num_collect/ode/runge_kutta/rk4_formula.h"
 #include "num_prob_collect/ode/exponential_problem.h"
 
-TEST_CASE("num_collect::ode::runge_kutta::rk4_formula") {
+TEST_CASE(
+    "num_collect::ode::runge_kutta::simple_solver<num_collect::ode::runge_"
+    "kutta::rk4_solver>") {
     using problem_type = num_prob_collect::ode::exponential_problem;
     using formula_type =
         num_collect::ode::runge_kutta::rk4_formula<problem_type>;
-
-    SECTION("static definition") {
-        STATIC_REQUIRE(formula_type::stages == 4);
-        STATIC_REQUIRE(formula_type::order == 4);
-    }
-
-    SECTION("initialize") {
-        auto formula = formula_type(problem_type());
-        (void)formula;
-    }
-
-    SECTION("step") {
-        auto formula = formula_type(problem_type());
-
-        constexpr double time = 0.0;
-        constexpr double step_size = 1e-4;
-        constexpr double prev_var = 1.0;
-        double next_var = 0.0;
-        formula.step(time, step_size, prev_var, next_var);
-
-        const double reference = std::exp(step_size);
-        constexpr double tol = 1e-12;
-        REQUIRE_THAT(next_var, Catch::Matchers::WithinRel(reference, tol));
-    }
-}
-
-TEST_CASE("num_collect::ode::runge_kutta::rk4_solver") {
-    using problem_type = num_prob_collect::ode::exponential_problem;
-    using solver_type = num_collect::ode::runge_kutta::rk4_solver<problem_type>;
+    using solver_type =
+        num_collect::ode::runge_kutta::simple_solver<formula_type>;
 
     SECTION("initialize") {
         auto solver = solver_type(problem_type());
@@ -113,5 +91,22 @@ TEST_CASE("num_collect::ode::runge_kutta::rk4_solver") {
         REQUIRE_THAT(
             solver.variable(), Catch::Matchers::WithinRel(reference, tol));
         REQUIRE(solver.steps() > 1);
+    }
+
+    SECTION("solve_till with logging") {
+        auto solver = solver_type(problem_type());
+
+        constexpr double init_time = 1.234;
+        constexpr double init_var = 1.0;
+        solver.init(init_time, init_var);
+
+        constexpr double duration = 2.345;
+        constexpr double end_time = init_time + duration;
+        std::ostringstream stream;
+        REQUIRE_NOTHROW(solver.solve_till(end_time, stream));
+
+        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Steps"));
+        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Time"));
+        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("StepSize"));
     }
 }
