@@ -48,27 +48,25 @@ Here solves the following explicit initial-value problem:
         class formula<Problem> {
             + using problem_type = Problem
             + stages : index_type
-            + step(current: const variable_type&, estimate: variable_type&)
+            + step(time: scalar_type, step_size: scalar_type,\n\tcurrent: const variable_type&, estimate: variable_type&)
             + problem() : problem_type&
         }
         formula o-- problem
 
         class embedded_formula<Problem> {
-            + step(current: const variable_type&, estimate: variable_type&, weak_estimate: variable_type&)
+            + step_embedded(time: scalar_type, step_size: scalar_type,\n\tcurrent: const variable_type&, estimate: variable_type&, weak_estimate: variable_type&)
         }
         formula <|-- embedded_formula
         embedded_formula o-- problem
 
         class solver<Problem, Formula> {
-            + init(variable: variable_type)
+            + init(time: scalar_type, variable: variable_type)
             + step()
             + solve_till(end_time: scalar_type)
             + time() : scalar_type
             + variable() : const variable_type&
-            + diff_coeff() : const variable_type&
             + step_size() : scalar_type
             + steps() : index_type
-            + evaluations() : index_type
             + step_size(val : scalar_type)
         }
         solver o-- formula
