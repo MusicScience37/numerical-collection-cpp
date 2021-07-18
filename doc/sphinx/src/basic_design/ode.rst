@@ -21,16 +21,17 @@ Here solves the following explicit initial-value problem:
         class problem {
             + using variable_type = xxx
             + using scalar_type = xxx
-            + evaluate_on(time: scalar_type, variable: variable_type)
         }
 
         class explicit_problem {
+            + evaluate_on(time: scalar_type, variable: variable_type)
             + diff_coeff() : variable_type
         }
         problem <|-- explicit_problem
 
         class implicit_problem {
             + using jacobian_type = xxx
+            + evaluate_on(time: scalar_type, variable: variable_type, diff_coeff: variable_type)
             + value() : variable_type
             + jacobian() : jacobian_type
         }
