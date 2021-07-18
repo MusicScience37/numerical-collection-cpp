@@ -72,7 +72,7 @@ public:
     static constexpr scalar_type c4 = coeff(1, 6);
     ///@}
 
-    //! \copydoc formula_base::step
+    //! \copydoc runge_kutta::formula_base::step
     void step(scalar_type time, scalar_type step_size,
         const variable_type& current, variable_type& estimate) {
         problem().evaluate_on(time, current);

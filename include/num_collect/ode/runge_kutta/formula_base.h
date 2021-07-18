@@ -59,7 +59,7 @@ public:
      */
     void step(scalar_type time, scalar_type step_size,
         const variable_type& current, variable_type& estimate) {
-        derived().step(step_size, current, estimate);
+        derived().step(time, step_size, current, estimate);
     }
 
     /*!
