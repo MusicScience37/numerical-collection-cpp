@@ -54,7 +54,7 @@ Here solves the following explicit initial-value problem:
         formula o-- problem
 
         class embedded_formula<Problem> {
-            + step_embedded(time: scalar_type, step_size: scalar_type,\n\tcurrent: const variable_type&, estimate: variable_type&, weak_estimate: variable_type&)
+            + step_embedded(time: scalar_type, step_size: scalar_type,\n\tcurrent: const variable_type&, estimate: variable_type&, error: variable_type&)
         }
         formula <|-- embedded_formula
         embedded_formula o-- problem

@@ -63,15 +63,12 @@ TEST_CASE("num_collect::ode::runge_kutta::rkf45_formula") {
         constexpr double step_size = 1e-2;
         constexpr double prev_var = 1.0;
         double next_var = 0.0;
-        double weak_next_var = 0.0;
-        formula.step_embedded(
-            time, step_size, prev_var, next_var, weak_next_var);
+        double error = 0.0;
+        formula.step_embedded(time, step_size, prev_var, next_var, error);
 
         const double reference = std::exp(step_size);
         constexpr double tol = 1e-8;
         REQUIRE_THAT(next_var, Catch::Matchers::WithinRel(reference, tol));
-        REQUIRE_THAT(weak_next_var, Catch::Matchers::WithinRel(reference, tol));
-        REQUIRE_THAT(
-            next_var - weak_next_var, Catch::Matchers::WithinAbs(0.0, tol));
+        REQUIRE_THAT(error, Catch::Matchers::WithinAbs(0.0, tol));
     }
 }

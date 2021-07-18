@@ -54,13 +54,12 @@ public:
      * \param[in] step_size Step size.
      * \param[in] current Current variable.
      * \param[out] estimate Estimate of the next variable.
-     * \param[out] weak_estimate Weak estimate of the next variable with less
-     * order coefficients.
+     * \param[out] error Estimate of error.
      */
     void step_embedded(scalar_type time, scalar_type step_size,
         const variable_type& current, variable_type& estimate,
-        variable_type& weak_estimate) {
-        derived().step(time, step_size, current, estimate, weak_estimate);
+        variable_type& error) {
+        derived().step(time, step_size, current, estimate, error);
     }
 };
 
