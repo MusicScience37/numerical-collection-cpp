@@ -72,3 +72,28 @@ TEST_CASE("num_collect::ode::runge_kutta::rkf45_formula") {
         REQUIRE_THAT(error, Catch::Matchers::WithinAbs(0.0, tol));
     }
 }
+
+TEST_CASE("num_collect::ode::runge_kutta::rkf45_solver") {
+    using problem_type = num_prob_collect::ode::exponential_problem;
+    using solver_type =
+        num_collect::ode::runge_kutta::rkf45_solver<problem_type>;
+
+    SECTION("solve_till") {
+        auto solver = solver_type(problem_type());
+
+        constexpr double init_time = 1.234;
+        constexpr double init_var = 1.0;
+        solver.init(init_time, init_var);
+
+        constexpr double duration = 2.345;
+        constexpr double end_time = init_time + duration;
+        REQUIRE_NOTHROW(solver.solve_till(end_time));
+
+        REQUIRE_THAT(solver.time(), Catch::Matchers::WithinRel(end_time));
+        const double reference = std::exp(duration);
+        constexpr double tol = 1e-6;
+        REQUIRE_THAT(
+            solver.variable(), Catch::Matchers::WithinRel(reference, tol));
+        REQUIRE(solver.steps() > 1);
+    }
+}

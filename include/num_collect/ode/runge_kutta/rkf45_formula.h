@@ -20,6 +20,7 @@
 #pragma once
 
 #include "num_collect/ode/runge_kutta/embedded_formula_base.h"
+#include "num_collect/ode/runge_kutta/embedded_solver.h"
 
 namespace num_collect::ode::runge_kutta {
 
@@ -158,5 +159,13 @@ private:
     variable_type k6_{};
     ///@}
 };
+
+/*!
+ * \brief Class of solver using Runge-Kutta-Fehlberg 45 formula.
+ *
+ * \tparam Problem Type of problem.
+ */
+template <typename Problem>
+using rkf45_solver = embedded_solver<rkf45_formula<Problem>>;
 
 }  // namespace num_collect::ode::runge_kutta
