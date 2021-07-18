@@ -40,24 +40,24 @@ Here solves the following explicit initial-value problem:
             explicit Runge-Kutta methods uses explicit_problem,
             and implicit Runge-Kutta methods uses implicit_problem.
         end note
+        explicit_problem .. problem_type_note
+        implicit_problem .. problem_type_note
     }
 
     package runge_kutta {
-        package formulas {
-            class formula<Problem> {
-                + using problem_type = Problem
-                + stages : index_type
-                + step(current: const variable_type&, estimate: variable_type&)
-                + problem() : problem_type&
-            }
-            formula o-- problem
-
-            class embedded_formula<Problem> {
-                + step(current: const variable_type&, estimate: variable_type&, weak_estimate: variable_type&)
-            }
-            formula <|-- embedded_formula
-            embedded_formula o-- problem
+        class formula<Problem> {
+            + using problem_type = Problem
+            + stages : index_type
+            + step(current: const variable_type&, estimate: variable_type&)
+            + problem() : problem_type&
         }
+        formula o-- problem
+
+        class embedded_formula<Problem> {
+            + step(current: const variable_type&, estimate: variable_type&, weak_estimate: variable_type&)
+        }
+        formula <|-- embedded_formula
+        embedded_formula o-- problem
 
         class solver<Problem, Formula> {
             + init(variable: variable_type)
