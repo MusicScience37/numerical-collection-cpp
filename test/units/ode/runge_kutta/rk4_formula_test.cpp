@@ -60,42 +60,6 @@ TEST_CASE("num_collect::ode::runge_kutta::rk4_solver") {
     using problem_type = num_prob_collect::ode::exponential_problem;
     using solver_type = num_collect::ode::runge_kutta::rk4_solver<problem_type>;
 
-    SECTION("initialize") {
-        auto solver = solver_type(problem_type());
-
-        constexpr double step_size = 1e-4;
-        REQUIRE_NOTHROW(solver.step_size(step_size));
-        constexpr double init_time = 1.234;
-        constexpr double init_var = 1.0;
-        REQUIRE_NOTHROW(solver.init(init_time, init_var));
-
-        REQUIRE_THAT(solver.time(), Catch::Matchers::WithinRel(init_time));
-        REQUIRE_THAT(solver.variable(), Catch::Matchers::WithinRel(init_var));
-        REQUIRE_THAT(solver.step_size(), Catch::Matchers::WithinRel(step_size));
-        REQUIRE(solver.steps() == 0);
-    }
-
-    SECTION("step") {
-        auto solver = solver_type(problem_type());
-
-        constexpr double step_size = 1e-4;
-        REQUIRE_NOTHROW(solver.step_size(step_size));
-        constexpr double init_time = 1.234;
-        constexpr double init_var = 1.0;
-        solver.init(init_time, init_var);
-
-        REQUIRE_NOTHROW(solver.step());
-
-        REQUIRE_THAT(
-            solver.time(), Catch::Matchers::WithinRel(init_time + step_size));
-        const double reference = std::exp(step_size);
-        constexpr double tol = 1e-12;
-        REQUIRE_THAT(
-            solver.variable(), Catch::Matchers::WithinRel(reference, tol));
-        REQUIRE_THAT(solver.step_size(), Catch::Matchers::WithinRel(step_size));
-        REQUIRE(solver.steps() == 1);
-    }
-
     SECTION("solve_till") {
         auto solver = solver_type(problem_type());
 
