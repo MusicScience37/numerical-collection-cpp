@@ -3,7 +3,8 @@ Basic Design
 
 .. toctree::
     :maxdepth: 2
-    :caption: Contents:
+    :caption: Modules
 
     optimization
     root_finding
+    ode

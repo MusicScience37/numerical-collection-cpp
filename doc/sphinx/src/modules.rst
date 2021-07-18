@@ -22,6 +22,10 @@ Modules
 
         component roots
         roots ..> util
+
+        component ode
+        ode ..> util
+        ode ..> roots
     }
 
 Names in this diagram are the names of namespaces.

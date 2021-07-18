@@ -3,11 +3,12 @@ API Reference
 
 .. toctree::
     :maxdepth: 2
-    :caption: Contents:
+    :caption: Namespaces
 
     base
     opt
     multi_double
     constants
     roots
+    ode/index
     reference
