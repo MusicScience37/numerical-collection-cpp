@@ -67,9 +67,15 @@ public:
 
     /*!
      * \name Coefficients in Butcher array.
+     *
+     * - `a` is coefficients of intermidiate variables in calculation of
+     *   intermidiate variables.
+     * - `b` is coefficients of time in calculation of intermidiate variables.
+     * - `c` is coefficients of intermidiate variables in calculation of
+     *   estimates of next variables.
      */
     ///@{
-    //! Coefficnet in Butcher array.
+    //! Coefficient in Butcher array.
     static constexpr scalar_type a11 = coeff(13, 20);
     static constexpr scalar_type a21 = coeff(-127, 180);
     static constexpr scalar_type a22 = coeff(13, 20);
