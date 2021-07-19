@@ -20,6 +20,7 @@
 #include <celero/Celero.h>
 
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
+#include "num_collect/ode/runge_kutta/tanaka1_formula.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
 #include "steps_udm.h"
 
@@ -35,7 +36,11 @@ public:
         constexpr double init_time = 0.0;
         const Eigen::Vector2d init_var = Eigen::Vector2d(1.0, 0.0);
         solver.init(init_time, init_var);
+#ifndef NDEBUG
+        constexpr double end_time = 1.0;
+#else
         constexpr double end_time = 10.0;
+#endif
         solver.solve_till(end_time);
         steps_->addValue(solver.steps());
     }
@@ -55,6 +60,14 @@ using problem_type = num_prob_collect::ode::spring_movement_problem;
 BASELINE_F(ode_rk_spring_movement, rkf45, spring_movement_fixture, 0, 0) {
     using solver_type =
         num_collect::ode::runge_kutta::rkf45_solver<problem_type>;
+    auto solver = solver_type(problem_type());
+    perform(solver);
+}
+
+// NOLINTNEXTLINE: external library
+BENCHMARK_F(ode_rk_spring_movement, tanaka1, spring_movement_fixture, 0, 0) {
+    using solver_type =
+        num_collect::ode::runge_kutta::tanaka1_solver<problem_type>;
     auto solver = solver_type(problem_type());
     perform(solver);
 }
