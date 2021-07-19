@@ -22,4 +22,8 @@
 namespace num_prob_collect {
     //! Namespace of optimization problems.
     namespace opt {}
+    //! Namespace of ordinary differential equation problems.
+    namespace ode {}
+    //! Namespace of root-finding problems.
+    namespace roots {}
 }  // namespace num_prob_collect

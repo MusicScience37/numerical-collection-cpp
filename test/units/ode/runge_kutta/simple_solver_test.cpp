@@ -26,12 +26,14 @@
 #include <catch2/matchers/catch_matchers_floating.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 
+#include "eigen_approx.h"
 #include "num_collect/ode/runge_kutta/rk4_formula.h"
 #include "num_prob_collect/ode/exponential_problem.h"
+#include "num_prob_collect/ode/spring_movement_problem.h"
 
 TEST_CASE(
     "num_collect::ode::runge_kutta::simple_solver<num_collect::ode::runge_"
-    "kutta::rk4_solver>") {
+    "kutta::rk4_formula<num_prob_collect::ode::exponential_problem>>") {
     using problem_type = num_prob_collect::ode::exponential_problem;
     using formula_type =
         num_collect::ode::runge_kutta::rk4_formula<problem_type>;
@@ -98,6 +100,87 @@ TEST_CASE(
 
         constexpr double init_time = 1.234;
         constexpr double init_var = 1.0;
+        solver.init(init_time, init_var);
+
+        constexpr double duration = 2.345;
+        constexpr double end_time = init_time + duration;
+        std::ostringstream stream;
+        REQUIRE_NOTHROW(solver.solve_till(end_time, stream));
+
+        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Steps"));
+        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Time"));
+        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("StepSize"));
+    }
+}
+
+TEST_CASE(
+    "num_collect::ode::runge_kutta::simple_solver<num_collect::ode::runge_"
+    "kutta::rk4_formula<num_prob_collect::ode::spring_movement_problem>>") {
+    using problem_type = num_prob_collect::ode::spring_movement_problem;
+    using formula_type =
+        num_collect::ode::runge_kutta::rk4_formula<problem_type>;
+    using solver_type =
+        num_collect::ode::runge_kutta::simple_solver<formula_type>;
+
+    SECTION("initialize") {
+        auto solver = solver_type(problem_type());
+
+        constexpr double step_size = 1e-4;
+        REQUIRE_NOTHROW(solver.step_size(step_size));
+        constexpr double init_time = 0.0;
+        const Eigen::Vector2d init_var = Eigen::Vector2d(1.0, 0.0);
+        REQUIRE_NOTHROW(solver.init(init_time, init_var));
+
+        REQUIRE_THAT(solver.time(), Catch::Matchers::WithinRel(init_time));
+        REQUIRE_THAT(solver.variable(), eigen_approx(init_var));
+        REQUIRE_THAT(solver.step_size(), Catch::Matchers::WithinRel(step_size));
+        REQUIRE(solver.steps() == 0);
+    }
+
+    SECTION("step") {
+        auto solver = solver_type(problem_type());
+
+        constexpr double step_size = 1e-4;
+        REQUIRE_NOTHROW(solver.step_size(step_size));
+        constexpr double init_time = 0.0;
+        const Eigen::Vector2d init_var = Eigen::Vector2d(1.0, 0.0);
+        solver.init(init_time, init_var);
+
+        REQUIRE_NOTHROW(solver.step());
+
+        REQUIRE_THAT(solver.time(), Catch::Matchers::WithinRel(step_size));
+        const Eigen::Vector2d reference =
+            Eigen::Vector2d(std::cos(step_size), std::sin(step_size));
+        constexpr double tol = 1e-12;
+        REQUIRE_THAT(solver.variable(), eigen_approx(reference, tol));
+        REQUIRE_THAT(solver.step_size(), Catch::Matchers::WithinRel(step_size));
+        REQUIRE(solver.steps() == 1);
+    }
+
+    SECTION("solve_till") {
+        auto solver = solver_type(problem_type());
+
+        constexpr double init_time = 0.0;
+        const Eigen::Vector2d init_var = Eigen::Vector2d(1.0, 0.0);
+        solver.init(init_time, init_var);
+
+        constexpr double duration = 2.345;
+        constexpr double end_time = init_time + duration;
+        REQUIRE_NOTHROW(solver.solve_till(end_time));
+
+        REQUIRE_THAT(solver.time(), Catch::Matchers::WithinRel(end_time));
+        const Eigen::Vector2d reference =
+            Eigen::Vector2d(std::cos(end_time), std::sin(end_time));
+        constexpr double tol = 1e-10;
+        REQUIRE_THAT(solver.variable(), eigen_approx(reference, tol));
+        REQUIRE(solver.steps() > 1);
+    }
+
+    SECTION("solve_till with logging") {
+        auto solver = solver_type(problem_type());
+
+        constexpr double init_time = 0.0;
+        const Eigen::Vector2d init_var = Eigen::Vector2d(1.0, 0.0);
         solver.init(init_time, init_var);
 
         constexpr double duration = 2.345;

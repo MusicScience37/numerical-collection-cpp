@@ -24,7 +24,9 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating.hpp>
 
+#include "eigen_approx.h"
 #include "num_prob_collect/ode/exponential_problem.h"
+#include "num_prob_collect/ode/spring_movement_problem.h"
 
 TEST_CASE("num_collect::ode::runge_kutta::rk4_formula") {
     using problem_type = num_prob_collect::ode::exponential_problem;
@@ -56,7 +58,9 @@ TEST_CASE("num_collect::ode::runge_kutta::rk4_formula") {
     }
 }
 
-TEST_CASE("num_collect::ode::runge_kutta::rk4_solver") {
+TEST_CASE(
+    "num_collect::ode::runge_kutta::rk4_solver<num_prob_collect::ode::"
+    "exponential_problem>") {
     using problem_type = num_prob_collect::ode::exponential_problem;
     using solver_type = num_collect::ode::runge_kutta::rk4_solver<problem_type>;
 
@@ -76,6 +80,32 @@ TEST_CASE("num_collect::ode::runge_kutta::rk4_solver") {
         constexpr double tol = 1e-10;
         REQUIRE_THAT(
             solver.variable(), Catch::Matchers::WithinRel(reference, tol));
+        REQUIRE(solver.steps() > 1);
+    }
+}
+
+TEST_CASE(
+    "num_collect::ode::runge_kutta::rk4_solver<num_prob_collect::ode::spring_"
+    "movement_problem>") {
+    using problem_type = num_prob_collect::ode::spring_movement_problem;
+    using solver_type = num_collect::ode::runge_kutta::rk4_solver<problem_type>;
+
+    SECTION("solve_till") {
+        auto solver = solver_type(problem_type());
+
+        constexpr double init_time = 0.0;
+        const Eigen::Vector2d init_var = Eigen::Vector2d(1.0, 0.0);
+        solver.init(init_time, init_var);
+
+        constexpr double duration = 2.345;
+        constexpr double end_time = init_time + duration;
+        REQUIRE_NOTHROW(solver.solve_till(end_time));
+
+        REQUIRE_THAT(solver.time(), Catch::Matchers::WithinRel(end_time));
+        const Eigen::Vector2d reference =
+            Eigen::Vector2d(std::cos(end_time), std::sin(end_time));
+        constexpr double tol = 1e-10;
+        REQUIRE_THAT(solver.variable(), eigen_approx(reference, tol));
         REQUIRE(solver.steps() > 1);
     }
 }
