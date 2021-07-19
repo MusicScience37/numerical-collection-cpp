@@ -21,10 +21,36 @@
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating.hpp>
-#include <catch2/matchers/catch_matchers_string.hpp>
 
 #include "eigen_approx.h"
+#include "num_prob_collect/ode/exponential_problem.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
+
+TEST_CASE(
+    "num_collect::ode::runge_kutta::semi_implicit_formula_solver<exponential_"
+    "problem, modified_newton_raphson_tag>") {
+    using problem_type = num_prob_collect::ode::exponential_problem;
+    using strategy_type = num_collect::ode::runge_kutta::
+        implicit_formula_solver_strategies::modified_newton_raphson_tag;
+    using solver_type =
+        num_collect::ode::runge_kutta::semi_implicit_formula_solver<
+            problem_type, strategy_type>;
+
+    SECTION("solve for implicit Euler method") {
+        auto solver = solver_type(problem_type());
+
+        constexpr double init_time = 0.0;
+        constexpr double step_size = 1e-4;
+        constexpr double init_var = 1.0;
+        constexpr double k_coeff = 1.0;
+        REQUIRE_NOTHROW(solver.solve(init_time, step_size, init_var, k_coeff));
+
+        const double variable = init_var + step_size * solver.k();
+        const double reference = std::exp(step_size);
+        constexpr double tol = 1e-8;
+        REQUIRE_THAT(variable, Catch::Matchers::WithinRel(reference, tol));
+    }
+}
 
 TEST_CASE(
     "num_collect::ode::runge_kutta::semi_implicit_formula_solver<spring_"

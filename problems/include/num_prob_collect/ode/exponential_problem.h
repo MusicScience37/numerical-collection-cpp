@@ -32,12 +32,16 @@ public:
     //! Type of scalars.
     using scalar_type = double;
 
+    //! Type of Jacobian.
+    using jacobian_type = double;
+
     /*!
      * \brief Evaluate on a (time, variable) pair.
      *
      * \param[in] variable Variable.
      */
-    void evaluate_on(double /*time*/, double variable) {
+    void evaluate_on(
+        double /*time*/, double variable, bool /*needs_jacobian*/ = false) {
         diff_coeff_ = variable;
     }
 
@@ -48,9 +52,21 @@ public:
      */
     [[nodiscard]] auto diff_coeff() const -> double { return diff_coeff_; }
 
+    /*!
+     * \brief Get the Jacobian.
+     *
+     * \return Jacobian.
+     */
+    [[nodiscard]] auto jacobian() const noexcept -> const jacobian_type& {
+        return jacobian_;
+    }
+
 private:
     //! Differential coefficient.
     double diff_coeff_{};
+
+    //! Jacobian.
+    double jacobian_{1.0};
 };
 
 }  // namespace num_prob_collect::ode

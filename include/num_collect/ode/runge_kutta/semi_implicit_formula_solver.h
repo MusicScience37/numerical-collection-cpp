@@ -20,9 +20,11 @@
 #pragma once
 
 #include <Eigen/LU>
+#include <cmath>
 #include <limits>
 #include <type_traits>
 
+#include "num_collect/constants/one.h"
 #include "num_collect/constants/zero.h"
 #include "num_collect/ode/runge_kutta/implicit_formula_solver_strategies.h"
 #include "num_collect/util/assert.h"
@@ -160,6 +162,133 @@ private:
 
     //! Residual norm.
     scalar_type residual_norm_{std::numeric_limits<scalar_type>::infinity()};
+
+    //! Default tolerance of residual norm.
+    static constexpr auto default_tol_residual_norm =
+        static_cast<scalar_type>(1e-8);
+
+    //! Tolerance of residual norm.
+    scalar_type tol_residual_norm_{default_tol_residual_norm};
+};
+
+/*!
+ * \brief Class of solvers of semi-implicit formulas.
+ *
+ * \tparam Problem Type of problem.
+ */
+template <typename Problem>
+class semi_implicit_formula_solver<Problem,
+    implicit_formula_solver_strategies::modified_newton_raphson_tag,
+    std::enable_if_t<
+        std::is_floating_point_v<typename Problem::variable_type> &&
+        std::is_same_v<typename Problem::variable_type,
+            typename Problem::scalar_type> &&
+        std::is_same_v<typename Problem::variable_type,
+            typename Problem::jacobian_type>>> {
+public:
+    //! Type of problem.
+    using problem_type = Problem;
+
+    //! Type of variables.
+    using variable_type = typename problem_type::variable_type;
+
+    //! Type of scalars.
+    using scalar_type = typename problem_type::scalar_type;
+
+    //! Type of Jacobian.
+    using jacobian_type = typename problem_type::jacobian_type;
+
+    /*!
+     * \brief Construct.
+     *
+     * \param[in] problem Problem.
+     */
+    explicit semi_implicit_formula_solver(const problem_type& problem)
+        : problem_{problem} {}
+
+    /*!
+     * \brief Solve.
+     *
+     * \param[in] time Time.
+     * \param[in] step_size Step size.
+     * \param[in] variable Variable.
+     * \param[in] k_coeff Coefficient for intermidiate variable.
+     */
+    void solve(scalar_type time, scalar_type step_size,
+        const variable_type& variable, scalar_type k_coeff) {
+        problem_.evaluate_on(time, variable, true);
+        NUM_COLLECT_DEBUG_ASSERT(step_size * k_coeff * problem_.jacobian() <
+            constants::one<scalar_type>);
+        scalar_type inv_jacobian = constants::one<scalar_type> /
+            (constants::one<scalar_type> -
+                step_size * k_coeff * problem_.jacobian());
+        k_ = problem_.diff_coeff();
+
+        constexpr index_type max_iterations = 1000;  // safe guard
+        for (index_type i = 0; i <= max_iterations; ++i) {
+            problem_.evaluate_on(
+                time, variable + step_size * k_coeff * k_, false);
+            residual_ = k_ - problem_.diff_coeff();
+            using std::abs;
+            if (abs(residual_) < tol_residual_norm_) {
+                break;
+            }
+            k_ -= inv_jacobian * residual_;
+        }
+    }
+
+    /*!
+     * \brief Get the problem.
+     *
+     * \return Problem.
+     */
+    [[nodiscard]] auto problem() -> problem_type& { return problem_; }
+
+    /*!
+     * \brief Get the problem.
+     *
+     * \return Problem.
+     */
+    [[nodiscard]] auto problem() const -> const problem_type& {
+        return problem_;
+    }
+
+    /*!
+     * \brief Get the intermidiate variable.
+     *
+     * \return Intermidiate variable.
+     */
+    [[nodiscard]] auto k() const -> const variable_type& { return k_; }
+
+    /*!
+     * \brief Get residual norm.
+     *
+     * \return Residual norm.
+     */
+    [[nodiscard]] auto residual_norm() const -> scalar_type {
+        using std::abs;
+        return abs(residual_);
+    }
+
+    /*!
+     * \brief Set tolerance of residual norm.
+     *
+     * \param[in] val Value.
+     */
+    void tol_residual_norm(scalar_type val) {
+        NUM_COLLECT_ASSERT(val > constants::zero<scalar_type>);
+        tol_residual_norm_ = val;
+    }
+
+private:
+    //! Problem
+    problem_type problem_;
+
+    //! Intermidiate variable.
+    variable_type k_{};
+
+    //! Residual vector.
+    variable_type residual_{std::numeric_limits<scalar_type>::infinity()};
 
     //! Default tolerance of residual norm.
     static constexpr auto default_tol_residual_norm =
