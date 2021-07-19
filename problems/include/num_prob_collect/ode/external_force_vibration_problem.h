@@ -15,29 +15,33 @@
  */
 /*!
  * \file
- * \brief Definition of spring_movement_problem class.
+ * \brief Definition of external_force_vibration_problem class.
  */
 #pragma once
 
 #include <Eigen/Core>
+#include <cmath>
 
 namespace num_prob_collect::ode {
 
 /*!
- * \brief Class of test problem to spring movement.
+ * \brief Class of test problem of vibration with external force.
  *
- * This solves the following equation of motion of a spring:
+ * This solves for following equation of motion:
  * \f[
- *     \ddot{x} = -x
+ *     \ddot{x} = \sin{t}
  * \f]
  *
  * In this class, the following equation is used to solve the above equation:
  * \f[
  *     \frac{d}{dt} \begin{pmatrix} \dot{x} \\ x \end{pmatrix}
- *     = \begin{pmatrix} -x \\ \dot{x} \end{pmatrix}
+ *     = \begin{pmatrix} \sin{t} \\ \dot{x} \end{pmatrix}
  * \f]
+ *
+ * When the initial variable is \f$(-1, 0)\f$,
+ * the solution is \f$(-\cos{t}, -\sin{t})\f$.
  */
-class spring_movement_problem {
+class external_force_vibration_problem {
 public:
     //! Type of variables.
     using variable_type = Eigen::Vector2d;
@@ -51,16 +55,18 @@ public:
     /*!
      * \brief Construct.
      */
-    spring_movement_problem() { jacobian_ << 0.0, -1.0, 1.0, 0.0; }
+    external_force_vibration_problem() { jacobian_ << 0.0, 0.0, 1.0, 0.0; }
 
     /*!
      * \brief Evaluate on a (time, variable) pair.
      *
+     * \param[in] time Time.
      * \param[in] variable Variable.
      */
-    void evaluate_on(scalar_type /*time*/, const variable_type& variable,
+    void evaluate_on(scalar_type time, const variable_type& variable,
         bool /*needs_jacobian*/ = false) {
-        diff_coeff_ = jacobian_ * variable;
+        diff_coeff_[0] = std::sin(time);
+        diff_coeff_[1] = variable[0];
     }
 
     /*!

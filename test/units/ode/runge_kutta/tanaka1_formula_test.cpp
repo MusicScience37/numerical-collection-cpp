@@ -26,6 +26,7 @@
 
 #include "eigen_approx.h"
 #include "num_prob_collect/ode/exponential_problem.h"
+#include "num_prob_collect/ode/external_force_vibration_problem.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
 
 TEST_CASE("num_collect::ode::runge_kutta::tanaka1_formula") {
@@ -125,6 +126,34 @@ TEST_CASE(
         REQUIRE_THAT(solver.time(), Catch::Matchers::WithinRel(end_time));
         const Eigen::Vector2d reference =
             Eigen::Vector2d(std::cos(end_time), std::sin(end_time));
+        constexpr double tol = 1e-6;
+        REQUIRE_THAT(solver.variable(), eigen_approx(reference, tol));
+        REQUIRE(solver.steps() > 1);
+    }
+}
+
+TEST_CASE(
+    "num_collect::ode::runge_kutta::tanaka1_solver<num_prob_collect::ode::"
+    "external_force_vibration_problem>") {
+    using problem_type =
+        num_prob_collect::ode::external_force_vibration_problem;
+    using solver_type =
+        num_collect::ode::runge_kutta::tanaka1_solver<problem_type>;
+
+    SECTION("solve_till") {
+        auto solver = solver_type(problem_type());
+
+        constexpr double init_time = 0.0;
+        const Eigen::Vector2d init_var = Eigen::Vector2d(-1.0, 0.0);
+        solver.init(init_time, init_var);
+
+        constexpr double duration = 2.345;
+        constexpr double end_time = init_time + duration;
+        REQUIRE_NOTHROW(solver.solve_till(end_time));
+
+        REQUIRE_THAT(solver.time(), Catch::Matchers::WithinRel(end_time));
+        const Eigen::Vector2d reference =
+            Eigen::Vector2d(-std::cos(end_time), -std::sin(end_time));
         constexpr double tol = 1e-6;
         REQUIRE_THAT(solver.variable(), eigen_approx(reference, tol));
         REQUIRE(solver.steps() > 1);
