@@ -132,9 +132,10 @@ Here solves the following explicit initial-value problem:
         implicit_solver_note .. implicit_embedded_formula
 
         note as implicit_formula_solver_selection_note
-            Actual one of these are used in implicit_formula
+            Actually one of these are used in implicit_formula
             depending on formulas.
         end note
-        implicit_formula_solver_selection_note .up. semi_implicit_formula_solver
-        implicit_formula_solver_selection_note .up. full_implicit_formula_solver
+        implicit_formula_solver_selection_note .. semi_implicit_formula_solver
+        implicit_formula_solver_selection_note .. full_implicit_formula_solver
+        implicit_formula_solver_selection_note .up. implicit_formula
     }
