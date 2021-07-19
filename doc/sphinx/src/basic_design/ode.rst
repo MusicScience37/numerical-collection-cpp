@@ -15,52 +15,32 @@ Here solves the following explicit initial-value problem:
 
 .. uml::
 
-    title Abstract Model of Runge-Kutta Method
+    title Abstract Model of Explicit Runge-Kutta Method
 
     package problems {
-        class problem {
+        class explicit_problem {
             + using variable_type = xxx
             + using scalar_type = xxx
-        }
-
-        class explicit_problem {
             + evaluate_on(time: scalar_type, variable: variable_type)
             + diff_coeff() : variable_type
         }
-        problem <|-- explicit_problem
-
-        class implicit_problem {
-            + using jacobian_type = xxx
-            + evaluate_on(time: scalar_type, variable: variable_type, diff_coeff: variable_type)
-            + value() : variable_type
-            + jacobian() : jacobian_type
-        }
-        problem <|-- implicit_problem
-
-        note as problem_type_note
-            explicit Runge-Kutta methods uses explicit_problem,
-            and implicit Runge-Kutta methods uses implicit_problem.
-        end note
-        explicit_problem .. problem_type_note
-        implicit_problem .. problem_type_note
     }
 
     package runge_kutta {
-        class formula<Problem> {
+        class explicit_formula<Problem> {
             + using problem_type = Problem
             + stages : index_type
             + step(time: scalar_type, step_size: scalar_type,\n\tcurrent: const variable_type&, estimate: variable_type&)
             + problem() : problem_type&
         }
-        formula o-- problem
+        explicit_formula o-- explicit_problem
 
-        class embedded_formula<Problem> {
+        class explicit_embedded_formula<Problem> {
             + step_embedded(time: scalar_type, step_size: scalar_type,\n\tcurrent: const variable_type&, estimate: variable_type&, error: variable_type&)
         }
-        formula <|-- embedded_formula
-        embedded_formula o-- problem
+        explicit_formula <|- explicit_embedded_formula
 
-        class solver<Problem, Formula> {
+        class solver<Formula> {
             + init(time: scalar_type, variable: variable_type)
             + step()
             + solve_till(end_time: scalar_type)
@@ -70,14 +50,59 @@ Here solves the following explicit initial-value problem:
             + steps() : index_type
             + step_size(val : scalar_type)
         }
-        solver o-- formula
+        solver o-- explicit_formula
 
-        class embedded_solver<Problem, Formula> {
+        class embedded_solver<Formula> {
             + tol_rel_error(val: scalar_type)
             + tol_abs_error(val: scalar_type)
             + step_size_reduction_rate(val: scalar_type)
             + max_step_size(val: scalar_type)
         }
-        solver <|-- embedded_solver
-        embedded_solver o-- embedded_formula
+        solver <|- embedded_solver
+        embedded_solver o-- explicit_embedded_formula
+    }
+
+.. uml::
+
+    title Abstract Model of Implicit Runge-Kutta Method
+
+    package problems {
+        class implicit_problem {
+            + using variable_type = xxx
+            + using scalar_type = xxx
+            + using jacobian_type = xxx
+            + evaluate_on(time: scalar_type, variable: variable_type, diff_coeff: variable_type)
+            + value() : variable_type
+            + jacobian() : jacobian_type
+        }
+    }
+
+    package roots {
+        class function_root_finder {
+            See Root-Finding Algorithms.
+        }
+        hide function_root_finder methods
+    }
+
+    package runge_kutta {
+        class implicit_formula<Problem> {
+            + using problem_type = Problem
+            + stages : index_type
+            + step(time: scalar_type, step_size: scalar_type,\n\tcurrent: const variable_type&, estimate: variable_type&)
+            + problem() : problem_type&
+            + root_finder() : function_root_finder&
+        }
+        implicit_formula o-- implicit_problem
+        implicit_formula o-- function_root_finder
+
+        class implicit_embedded_formula<Problem> {
+            + step_embedded(time: scalar_type, step_size: scalar_type,\n\tcurrent: const variable_type&, estimate: variable_type&, error: variable_type&)
+        }
+        implicit_formula <|- implicit_embedded_formula
+
+        note as implicit_solver_note
+            Solvers are common with explicit Runge-Kutta method.
+        end note
+        implicit_solver_note .. implicit_formula
+        implicit_solver_note .. implicit_embedded_formula
     }
