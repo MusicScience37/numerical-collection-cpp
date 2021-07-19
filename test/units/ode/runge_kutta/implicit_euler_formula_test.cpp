@@ -99,7 +99,7 @@ TEST_CASE(
     SECTION("solve_till") {
         auto solver = solver_type(problem_type());
 
-        constexpr double step_size = 1e-6;
+        constexpr double step_size = 1e-4;
         solver.step_size(step_size);
 
         constexpr double init_time = 0.0;
@@ -113,7 +113,7 @@ TEST_CASE(
         REQUIRE_THAT(solver.time(), Catch::Matchers::WithinRel(end_time));
         const Eigen::Vector2d reference =
             Eigen::Vector2d(-std::cos(end_time), -std::sin(end_time));
-        constexpr double tol = 1e-4;
+        constexpr double tol = 1e-2;
         REQUIRE_THAT(solver.variable(), eigen_approx(reference, tol));
         REQUIRE(solver.steps() > 1);
     }

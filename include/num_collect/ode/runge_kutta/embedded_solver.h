@@ -255,7 +255,8 @@ private:
     scalar_type step_size_reduction_rate_{default_step_size_reduction_rate};
 
     //! Default maximum step size.
-    static constexpr auto default_max_step_size = static_cast<scalar_type>(1);
+    static constexpr auto default_max_step_size =
+        static_cast<scalar_type>(1e-2);
 
     //! Maximum step size.
     scalar_type max_step_size_{default_max_step_size};
