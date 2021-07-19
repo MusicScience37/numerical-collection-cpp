@@ -116,7 +116,8 @@ Here solves the following explicit initial-value problem:
             {static} + order : index_type
             + step(time: scalar_type, step_size: scalar_type,\n\tcurrent: const variable_type&, estimate: variable_type&)
             + problem() : problem_type&
-            + tol_residual_norm(val: scalar_type)
+            + tol_rel_residual_norm(val: scalar_type)
+            + tol_abs_residual_norm(val: scalar_type)
         }
         implicit_formula o-- semi_implicit_formula_solver
         implicit_formula o-- full_implicit_formula_solver

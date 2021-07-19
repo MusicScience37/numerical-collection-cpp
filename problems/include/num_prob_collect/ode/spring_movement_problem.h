@@ -45,14 +45,19 @@ public:
     //! Type of scalars.
     using scalar_type = double;
 
+    //! Type of Jacobian.
+    using jacobian_type = Eigen::Matrix2d;
+
+    spring_movement_problem() { jacobian_ << 0.0, -1.0, 1.0, 0.0; }
+
     /*!
      * \brief Evaluate on a (time, variable) pair.
      *
      * \param[in] variable Variable.
      */
-    void evaluate_on(scalar_type /*time*/, const variable_type& variable) {
-        diff_coeff_[0] = -variable[1];
-        diff_coeff_[1] = variable[0];
+    void evaluate_on(scalar_type /*time*/, const variable_type& variable,
+        bool /*needs_jacobian*/ = false) {
+        diff_coeff_ = jacobian_ * variable;
     }
 
     /*!
@@ -64,9 +69,21 @@ public:
         return diff_coeff_;
     }
 
+    /*!
+     * \brief Get the Jacobian.
+     *
+     * \return Jacobian.
+     */
+    [[nodiscard]] auto jacobian() const noexcept -> const jacobian_type& {
+        return jacobian_;
+    }
+
 private:
     //! Differential coefficient.
     variable_type diff_coeff_{};
+
+    //! Jacobian.
+    jacobian_type jacobian_{};
 };
 
 }  // namespace num_prob_collect::ode
