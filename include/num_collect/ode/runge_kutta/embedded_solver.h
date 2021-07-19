@@ -68,7 +68,7 @@ public:
     void step() {
         prev_variable_ = variable_;
         const scalar_type tol_error =
-            std::min(tol_abs_error_, tol_rel_error_ * norm(variable_));
+            std::max(tol_abs_error_, tol_rel_error_ * norm(variable_));
 
         formula().step_embedded(
             time_, step_size_, prev_variable_, variable_, error_);
