@@ -25,6 +25,7 @@ Modules
 
         component ode
         ode ..> util
+        ode ..> constants
         ode ..> roots
     }
 
