@@ -19,8 +19,8 @@
  */
 #pragma once
 
-#include "num_collect/ode/runge_kutta/embedded_formula_base.h"
 #include "num_collect/ode/runge_kutta/embedded_solver.h"
+#include "num_collect/ode/runge_kutta/formula_base.h"
 
 namespace num_collect::ode::runge_kutta {
 
@@ -30,11 +30,10 @@ namespace num_collect::ode::runge_kutta {
  * \tparam Problem Type of problem.
  */
 template <typename Problem>
-class rkf45_formula
-    : public embedded_formula_base<rkf45_formula<Problem>, Problem> {
+class rkf45_formula : public formula_base<rkf45_formula<Problem>, Problem> {
 public:
     //! Type of base class.
-    using base_type = embedded_formula_base<rkf45_formula<Problem>, Problem>;
+    using base_type = formula_base<rkf45_formula<Problem>, Problem>;
 
     using typename base_type::problem_type;
     using typename base_type::scalar_type;
@@ -44,7 +43,7 @@ public:
     using base_type::problem;
 
 protected:
-    using formula_base<rkf45_formula<Problem>, Problem>::coeff;
+    using base_type::coeff;
 
 public:
     //! Number of stages of this formula.
@@ -108,7 +107,16 @@ public:
         step_embedded(time, step_size, current, estimate, unused);
     }
 
-    //! \copydoc runge_kutta::embedded_formula_base::step_embedded
+    /*!
+     * \brief Compute the next variable and weak estimate of it with embedded
+     * formula.
+     *
+     * \param[in] time Current time.
+     * \param[in] step_size Step size.
+     * \param[in] current Current variable.
+     * \param[out] estimate Estimate of the next variable.
+     * \param[out] error Estimate of error.
+     */
     void step_embedded(scalar_type time, scalar_type step_size,
         const variable_type& current, variable_type& estimate,
         variable_type& error) {
