@@ -1,0 +1,2 @@
+add_executable(num_collect_bench_ode_spring_movement spring_movement_test.cpp)
+target_add_to_benchmark(num_collect_bench_ode_spring_movement)
