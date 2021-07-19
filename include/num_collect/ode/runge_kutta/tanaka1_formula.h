@@ -109,10 +109,10 @@ public:
         formula_solver().tol_residual_norm(
             tol_residual_norm(current, step_size));
 
-        formula_solver().solve(time, step_size, current, a11);
+        formula_solver().solve(time + b1 * step_size, step_size, current, a11);
         k1_ = formula_solver().k();
 
-        formula_solver().solve(time + b1 * step_size, step_size,
+        formula_solver().solve(time + b2 * step_size, step_size,
             current + step_size * a21 * k1_, a22);
         k2_ = formula_solver().k();
 
