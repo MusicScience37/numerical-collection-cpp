@@ -60,7 +60,7 @@ constexpr auto root(F x, I n) -> F {
     F value = one<F> + (x - one<F>) / static_cast<F>(n);
     for (int i = 0; i < max_loops; ++i) {
         F next_value = (static_cast<F>(n - one<I>) * value +
-                           x / impl::pow_pos_int(value, n - one<I>)) /
+                           x * impl::pow_pos_int(one<I> / value, n - one<I>)) /
             static_cast<F>(n);
         if (value == next_value) {
             break;
