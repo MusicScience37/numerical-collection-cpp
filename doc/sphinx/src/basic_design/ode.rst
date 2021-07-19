@@ -89,6 +89,7 @@ Here solves the following explicit initial-value problem:
             + solve(time: scalar_type, step_size: scalar_type,\n\tvariable: const variable_type&, k_coeff: scalar_type)
             + problem() : problem_type&
             + k() : const variable_type&
+            + tol_residual_norm(val: scalar_type)
         }
         semi_implicit_formula_solver o-- differentiable_problem
         semi_implicit_formula_solver ..> implicit_formula_solver_strategy
@@ -103,6 +104,7 @@ Here solves the following explicit initial-value problem:
             + solve(time: scalar_type, step_size: scalar_type,\n\tvariable: const variable_type&)
             + problem() : problem_type&
             + k(index: index_type) : const variable_type&
+            + tol_residual_norm(val: scalar_type)
         }
         full_implicit_formula_solver o-- differentiable_problem
         full_implicit_formula_solver ..> implicit_formula_solver_coeffs
@@ -114,7 +116,7 @@ Here solves the following explicit initial-value problem:
             {static} + order : index_type
             + step(time: scalar_type, step_size: scalar_type,\n\tcurrent: const variable_type&, estimate: variable_type&)
             + problem() : problem_type&
-            + internal_solver() : <formula-dependent-solver-type>&
+            + tol_residual_norm(val: scalar_type)
         }
         implicit_formula o-- semi_implicit_formula_solver
         implicit_formula o-- full_implicit_formula_solver
