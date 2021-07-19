@@ -30,17 +30,6 @@ class spring_movement_fixture : public celero::TestFixture {
 public:
     spring_movement_fixture() = default;
 
-    [[nodiscard]] auto getExperimentValues() const
-        -> std::vector<celero::TestFixture::ExperimentValue> override {
-        std::vector<celero::TestFixture::ExperimentValue> problem_space;
-        return problem_space;
-    }
-
-    void setUp(
-        const celero::TestFixture::ExperimentValue& experiment_value) override {
-        // no operation
-    }
-
     template <typename Solver>
     void perform(Solver& solver) {
         constexpr double init_time = 0.0;
