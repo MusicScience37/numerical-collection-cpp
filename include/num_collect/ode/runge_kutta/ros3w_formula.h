@@ -19,97 +19,11 @@
  */
 #pragma once
 
-#include <Eigen/LU>
-#include <type_traits>
-
-#include "num_collect/constants/one.h"
 #include "num_collect/ode/runge_kutta/embedded_solver.h"
 #include "num_collect/ode/runge_kutta/formula_base.h"
-#include "num_collect/util/is_eigen_matrix.h"
+#include "num_collect/ode/runge_kutta/impl/rosenbrock_helper.h"
 
 namespace num_collect::ode::runge_kutta {
-
-namespace impl {
-
-/*!
- * \brief Class to help implementation of Rosenbrock method.
- *
- * \tparam Jacobian Type of Jacobian.
- */
-template <typename Jacobian, typename = void>
-class rosenbrock_helper;
-
-/*!
- * \brief Class to help implementation of Rosenbrock method.
- *
- * \tparam Jacobian Type of Jacobian.
- */
-template <typename Jacobian>
-class rosenbrock_helper<Jacobian,
-    std::enable_if_t<is_eigen_matrix_v<Jacobian>>> {
-public:
-    /*!
-     * \brief Compute LU decomposition.
-     *
-     * \tparam T Type of matrix.
-     * \param[in] matrix Matrix.
-     */
-    template <typename T>
-    void compute(const T& matrix) {
-        const auto size = matrix.rows();
-        lu_.compute(Jacobian::Identity(size, size) - matrix);
-    }
-
-    /*!
-     * \brief Solve an equation.
-     *
-     * \tparam T Variable type.
-     * \param[in] right Right-hand-side variable.
-     * \return Solution.
-     */
-    template <typename T>
-    auto solve(const T& right) {
-        return lu_.solve(right);
-    }
-
-private:
-    //! Solver.
-    Eigen::PartialPivLU<Jacobian> lu_{};
-};
-
-/*!
- * \brief Class to help implementation of Rosenbrock method.
- *
- * \tparam Jacobian Type of Jacobian.
- */
-template <typename Jacobian>
-class rosenbrock_helper<Jacobian,
-    std::enable_if_t<std::is_floating_point_v<Jacobian>>> {
-public:
-    /*!
-     * \brief Compute the inverse of the Jacobian.
-     *
-     * \param[in] jacobian Jacobian.
-     */
-    void compute(const Jacobian& jacobian) {
-        inverse_ =
-            constants::one<Jacobian> / (constants::one<Jacobian> - jacobian);
-    }
-
-    /*!
-     * \brief Solve an equation.
-     *
-     * \param[in] right Right-hand-side variable.
-     * \return Solution.
-     */
-    auto solve(const Jacobian& right) { return inverse_ * right; }
-
-private:
-    //! Inverse.
-    Jacobian inverse_{};
-};
-
-}  // namespace impl
 
 /*!
  * \brief Class of ROS3w formula in \cite Rang2005 for Rosenbrock method.
