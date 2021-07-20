@@ -8,3 +8,7 @@ target_add_to_benchmark(num_collect_bench_ode_external_force_vibration)
 add_executable(num_collect_bench_ode_free_fall_in_resistance
                free_fall_in_resistance_test.cpp)
 target_add_to_benchmark(num_collect_bench_ode_free_fall_in_resistance)
+
+add_executable(num_collect_bench_ode_pendulum_movement
+               pendulum_movement_test.cpp)
+target_add_to_benchmark(num_collect_bench_ode_pendulum_movement)
