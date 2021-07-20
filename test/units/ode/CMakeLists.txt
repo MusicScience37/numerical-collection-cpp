@@ -7,5 +7,6 @@ add_executable(
     runge_kutta/semi_implicit_formula_solver_test.cpp
     runge_kutta/implicit_euler_formula_test.cpp
     runge_kutta/tanaka1_formula_test.cpp
-    runge_kutta/tanaka2_formula_test.cpp)
+    runge_kutta/tanaka2_formula_test.cpp
+    runge_kutta/ros3w_formula_test.cpp)
 target_add_catch2(num_collect_test_units_ode)
