@@ -43,4 +43,13 @@ namespace num_collect {
         //! Namespace of implementations.
         namespace impl {}
     }  // namespace roots
+
+    //! Namespace of solvers of ordinary differential equations (ODE).
+    namespace ode {
+        //! Namespace of Runge-Kutta method.
+        namespace runge_kutta {
+            //! Namespace of implementations.
+            namespace impl {}
+        }  // namespace runge_kutta
+    }      // namespace ode
 }  // namespace num_collect

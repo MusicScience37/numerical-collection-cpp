@@ -15,15 +15,20 @@
  */
 /*!
  * \file
- * \brief documentation of namespaces
+ * \brief Definition of implicit_formula_solver_strategies namespace.
  */
+#pragma once
 
-//! Namespace of problems for test of num_collect.
-namespace num_prob_collect {
-    //! Namespace of optimization problems.
-    namespace opt {}
-    //! Namespace of ordinary differential equation problems.
-    namespace ode {}
-    //! Namespace of root-finding problems.
-    namespace roots {}
-}  // namespace num_prob_collect
+namespace num_collect::ode::runge_kutta {  // NOLINT
+
+//! Namespace of tags for solvers in implicit formulas in Runge-Kutta method.
+namespace implicit_formula_solver_strategies {  // NOLINT
+
+/*!
+ * \brief Tag class for modified Newton-Raphson method.
+ */
+struct modified_newton_raphson_tag {};
+
+}  // namespace implicit_formula_solver_strategies
+
+}  // namespace num_collect::ode::runge_kutta
