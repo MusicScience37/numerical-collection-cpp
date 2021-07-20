@@ -20,6 +20,7 @@
 #include <celero/Celero.h>
 
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
+#include "num_collect/ode/runge_kutta/ros3w_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka1_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka2_formula.h"
 #include "num_prob_collect/ode/external_force_vibration_problem.h"
@@ -38,7 +39,7 @@ public:
         const Eigen::Vector2d init_var = Eigen::Vector2d(-1.0, 0.0);
         solver.init(init_time, init_var);
 #ifndef NDEBUG
-        constexpr double end_time = 1.0;
+        constexpr double end_time = 0.1;
 #else
         constexpr double end_time = 10.0;
 #endif
@@ -58,7 +59,7 @@ private:
 using problem_type = num_prob_collect::ode::external_force_vibration_problem;
 
 // NOLINTNEXTLINE: external library
-BASELINE_F(ode_rk_spring_movement, rkf45, spring_movement_fixture, 0, 0) {
+BASELINE_F(ode_rk_spring_movement, rkf45, spring_movement_fixture, 30, 100) {
     using solver_type =
         num_collect::ode::runge_kutta::rkf45_solver<problem_type>;
     auto solver = solver_type(problem_type());
@@ -66,7 +67,7 @@ BASELINE_F(ode_rk_spring_movement, rkf45, spring_movement_fixture, 0, 0) {
 }
 
 // NOLINTNEXTLINE: external library
-BENCHMARK_F(ode_rk_spring_movement, tanaka1, spring_movement_fixture, 0, 0) {
+BENCHMARK_F(ode_rk_spring_movement, tanaka1, spring_movement_fixture, 30, 10) {
     using solver_type =
         num_collect::ode::runge_kutta::tanaka1_solver<problem_type>;
     auto solver = solver_type(problem_type());
@@ -74,9 +75,17 @@ BENCHMARK_F(ode_rk_spring_movement, tanaka1, spring_movement_fixture, 0, 0) {
 }
 
 // NOLINTNEXTLINE: external library
-BENCHMARK_F(ode_rk_spring_movement, tanaka2, spring_movement_fixture, 0, 0) {
+BENCHMARK_F(ode_rk_spring_movement, tanaka2, spring_movement_fixture, 30, 100) {
     using solver_type =
         num_collect::ode::runge_kutta::tanaka2_solver<problem_type>;
+    auto solver = solver_type(problem_type());
+    perform(solver);
+}
+
+// NOLINTNEXTLINE: external library
+BENCHMARK_F(ode_rk_spring_movement, ros3w, spring_movement_fixture, 30, 100) {
+    using solver_type =
+        num_collect::ode::runge_kutta::ros3w_solver<problem_type>;
     auto solver = solver_type(problem_type());
     perform(solver);
 }
