@@ -19,6 +19,5 @@ add_executable(
     impl/log1m_maclaurin_test.cpp
     log_test.cpp
     log1p_test.cpp
-    pow_test.cpp
-    legendre_test.cpp)
+    pow_test.cpp)
 target_add_catch2(num_collect_test_units_constants)

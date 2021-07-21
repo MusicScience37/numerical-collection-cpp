@@ -28,7 +28,7 @@
 #include "num_collect/constants/two.h"
 #include "num_collect/constants/zero.h"
 
-namespace num_collect::constants {
+namespace num_collect::functions {
 
 /*!
  * \brief Calculate Legendre function.
@@ -44,23 +44,24 @@ template <typename F, typename I,
         void*> = nullptr>
 constexpr auto legendre(F x, I n) -> F {
     if constexpr (std::is_signed_v<I>) {
-        if (n < 0) {
+        if (n < constants::zero<I>) {
             return std::numeric_limits<F>::quiet_NaN();
         }
     }
-    if (n == 0) {
-        return one<F>;
+    if (n == constants::zero<I>) {
+        return constants::one<F>;
     }
-    if (n == 1) {
+    if (n == constants::one<I>) {
         return x;
     }
-    F y_p = zero<F>;
+    F y_p = constants::zero<F>;
     F y = x;
-    F y_m = one<F>;
-    for (I i = one<I>; i < n; ++i) {
-        y_p = (static_cast<F>(two<I> * i + one<I>) * x * y -
-                  static_cast<F>(i) * y_m) /
-            static_cast<F>(i + one<I>);
+    F y_m = constants::one<F>;
+    for (I i = constants::one<I>; i < n; ++i) {
+        y_p =
+            (static_cast<F>(constants::two<I> * i + constants::one<I>) * x * y -
+                static_cast<F>(i) * y_m) /
+            static_cast<F>(i + constants::one<I>);
         y_m = y;
         y = y_p;
     }
@@ -81,45 +82,49 @@ template <typename F, typename I,
         void*> = nullptr>
 constexpr auto legendre_with_diff(F x, I n) -> std::pair<F, F> {
     if constexpr (std::is_signed_v<I>) {
-        if (n < 0) {
+        if (n < constants::zero<I>) {
             return {std::numeric_limits<F>::quiet_NaN(),
                 std::numeric_limits<F>::quiet_NaN()};
         }
     }
-    if (n == 0) {
-        return {one<F>, zero<F>};
+    if (n == constants::zero<I>) {
+        return {constants::one<F>, constants::zero<F>};
     }
-    if (n == 1) {
-        return {x, one<F>};
+    if (n == constants::one<I>) {
+        return {x, constants::one<F>};
     }
 
-    if (x == one<F>) {
-        return {
-            one<F>, half<F> * static_cast<F>(n) * static_cast<F>(n + one<I>)};
+    if (x == constants::one<F>) {
+        return {constants::one<F>,
+            constants::half<F> * static_cast<F>(n) *
+                static_cast<F>(n + constants::one<I>)};
     }
-    if (x == -one<F>) {
-        if (n % 2 == 0) {
-            return {one<F>,
-                -half<F> * static_cast<F>(n) * static_cast<F>(n + one<I>)};
+    if (x == -constants::one<F>) {
+        if (n % constants::two<I> == constants::zero<I>) {
+            return {constants::one<F>,
+                -constants::half<F> * static_cast<F>(n) *
+                    static_cast<F>(n + constants::one<I>)};
         }
-        return {
-            -one<F>, half<F> * static_cast<F>(n) * static_cast<F>(n + one<I>)};
+        return {-constants::one<F>,
+            constants::half<F> * static_cast<F>(n) *
+                static_cast<F>(n + constants::one<I>)};
     }
 
-    F y_p = zero<F>;
+    F y_p = constants::zero<F>;
     F y = x;
-    F y_m = one<F>;
-    for (I i = 1; i < n; ++i) {
-        y_p = (static_cast<F>(two<I> * i + one<I>) * x * y -
-                  static_cast<F>(i) * y_m) /
-            static_cast<F>(i + one<I>);
+    F y_m = constants::one<F>;
+    for (I i = constants::one<I>; i < n; ++i) {
+        y_p =
+            (static_cast<F>(constants::two<I> * i + constants::one<I>) * x * y -
+                static_cast<F>(i) * y_m) /
+            static_cast<F>(i + constants::one<I>);
         y_m = y;
         y = y_p;
     }
 
-    F dif = n * (y_m - x * y) / (1.0 - x * x);
+    F dif = n * (y_m - x * y) / (constants::one<F> - x * x);
 
     return {y, dif};
 }
 
-}  // namespace num_collect::constants
+}  // namespace num_collect::functions

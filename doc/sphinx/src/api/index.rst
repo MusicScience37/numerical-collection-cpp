@@ -10,5 +10,6 @@ API Reference
     multi_double
     constants
     roots
+    functions
     ode/index
     reference
