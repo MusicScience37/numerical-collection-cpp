@@ -11,5 +11,6 @@ API Reference
     constants
     roots
     functions
+    integration
     ode/index
     reference

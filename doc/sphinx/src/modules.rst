@@ -24,7 +24,14 @@ Modules
         roots ..> util
 
         component functions
+        functions ..> util
         functions ..> constants
+        functions ..> roots
+
+        component integration
+        integration ..> util
+        integration ..> constants
+        integration ..> functions
 
         component ode
         ode ..> util

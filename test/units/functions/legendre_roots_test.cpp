@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Test of legendre_roots function.
+ * \brief Test of legendre_roots class.
  */
 #include "num_collect/functions/legendre_roots.h"
 
