@@ -20,7 +20,7 @@
 #pragma once
 
 #include "num_collect/util/index_type.h"
-#include "num_collect/util/iteration_logger.h"
+#include "num_collect/util/iterative_solver_base.h"
 
 namespace num_collect::opt {
 
@@ -30,7 +30,7 @@ namespace num_collect::opt {
  * \tparam Derived Type of derived class.
  */
 template <typename Derived>
-class optimizer_base {
+class optimizer_base : public iterative_solver_base<Derived> {
 public:
     /*!
      * \brief Iterate the algorithm once.
@@ -39,59 +39,6 @@ public:
      * `iterate` function.
      */
     void iterate() { derived().iterate(); }
-
-    /*!
-     * \brief Determine if stopping criteria of the algorithm are satisfied.
-     *
-     * \return If stopping criteria of the algorithm are satisfied.
-     */
-    [[nodiscard]] auto is_stop_criteria_satisfied() const -> bool {
-        return derived().is_stop_criteria_satisfied();
-    }
-
-    /*!
-     * \brief Solve the problem.
-     *
-     * Iterate the algorithm until the stopping criteria are satisfied.
-     *
-     * \warning `init` function is assumed to have been called before call to
-     * `solve` function.
-     */
-    void solve() {
-        while (!is_stop_criteria_satisfied()) {
-            iterate();
-        }
-    }
-
-    /*!
-     * \brief Set information of the last iteration to logger.
-     *
-     * \param[in] logger Iteration logger.
-     */
-    void set_info_to(iteration_logger& logger) const {
-        derived().set_info_to(logger);
-    }
-
-    /*!
-     * \brief Solve the problem.
-     *
-     * Iterate the algorithm until the stopping criteria are satisfied.
-     *
-     * \warning `init` function is assumed to have been called before call to
-     * `solve` function.
-     *
-     * \param[in] logging_stream Stream to write logs.
-     */
-    void solve(std::ostream& logging_stream) {
-        iteration_logger logger;
-        set_info_to(logger);
-        logger.write_to(logging_stream);
-        while (!is_stop_criteria_satisfied()) {
-            iterate();
-            set_info_to(logger);
-            logger.write_to(logging_stream);
-        }
-    }
 
     /*!
      * \brief Get current optimal variable.

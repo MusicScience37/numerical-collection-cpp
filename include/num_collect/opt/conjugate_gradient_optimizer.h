@@ -105,7 +105,7 @@ public:
     }
 
     /*!
-     * \copydoc num_collect::opt::optimizer_base::set_info_to
+     * \copydoc num_collect::iterative_solver_base::set_info_to
      */
     void set_info_to(iteration_logger& logger) const {
         logger["Iter."] = iterations();
