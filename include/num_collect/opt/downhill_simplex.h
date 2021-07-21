@@ -162,7 +162,7 @@ public:
     }
 
     /*!
-     * \copydoc num_collect::opt::optimizer_base::is_stop_criteria_satisfied
+     * \copydoc num_collect::iterative_solver_base::is_stop_criteria_satisfied
      */
     [[nodiscard]] auto is_stop_criteria_satisfied() const -> bool {
         return (simplex_size() < tol_simplex_size_) ||
@@ -170,7 +170,7 @@ public:
     }
 
     /*!
-     * \copydoc num_collect::opt::optimizer_base::set_info_to
+     * \copydoc num_collect::iterative_solver_base::set_info_to
      */
     void set_info_to(iteration_logger& logger) const {
         logger["Iter."] = iterations();

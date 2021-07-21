@@ -101,14 +101,14 @@ public:
         value_norm_ = abs(function().value());
     }
 
-    //! \copydoc function_root_finder_base::is_stop_criteria_satisfied
+    //! \copydoc iterative_solver_base::is_stop_criteria_satisfied
     [[nodiscard]] auto is_stop_criteria_satisfied() const -> bool {
         return (iterations() > max_iterations_) ||
             (last_change() < tol_last_change_) ||
             (value_norm() < tol_value_norm_);
     }
 
-    //! \copydoc function_root_finder_base::set_info_to
+    //! \copydoc iterative_solver_base::set_info_to
     void set_info_to(iteration_logger& logger) const {
         logger["Iter."] = iterations();
         logger["Eval."] = evaluations();
