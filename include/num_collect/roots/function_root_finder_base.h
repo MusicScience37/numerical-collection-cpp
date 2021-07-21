@@ -51,14 +51,6 @@ public:
         : function_(function) {}
 
     /*!
-     * \brief Iterate the algorithm once.
-     *
-     * \warning `init` function is assumed to have been called before call to
-     * `iterate` function.
-     */
-    void iterate() { derived().iterate(); }
-
-    /*!
      * \brief Get the function of equation.
      *
      * \return Function of equation.
@@ -72,25 +64,6 @@ public:
      */
     [[nodiscard]] auto function() const -> const function_type& {
         return function_;
-    }
-
-protected:
-    /*!
-     * \brief Access derived object.
-     *
-     * \return Reference to the derived object.
-     */
-    [[nodiscard]] auto derived() noexcept -> Derived& {
-        return *static_cast<Derived*>(this);
-    }
-
-    /*!
-     * \brief Access derived object.
-     *
-     * \return Reference to the derived object.
-     */
-    [[nodiscard]] auto derived() const noexcept -> const Derived& {
-        return *static_cast<const Derived*>(this);
     }
 
 private:

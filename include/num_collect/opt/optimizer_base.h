@@ -31,15 +31,10 @@ namespace num_collect::opt {
  */
 template <typename Derived>
 class optimizer_base : public iterative_solver_base<Derived> {
-public:
-    /*!
-     * \brief Iterate the algorithm once.
-     *
-     * \warning `init` function is assumed to have been called before call to
-     * `iterate` function.
-     */
-    void iterate() { derived().iterate(); }
+protected:
+    using iterative_solver_base<Derived>::derived;
 
+public:
     /*!
      * \brief Get current optimal variable.
      *
@@ -70,25 +65,6 @@ public:
      */
     [[nodiscard]] auto evaluations() const noexcept -> index_type {
         return derived().evaluations();
-    }
-
-protected:
-    /*!
-     * \brief Access derived object.
-     *
-     * \return Reference to the derived object.
-     */
-    [[nodiscard]] auto derived() noexcept -> Derived& {
-        return *static_cast<Derived*>(this);
-    }
-
-    /*!
-     * \brief Access derived object.
-     *
-     * \return Reference to the derived object.
-     */
-    [[nodiscard]] auto derived() const noexcept -> const Derived& {
-        return *static_cast<const Derived*>(this);
     }
 };
 
