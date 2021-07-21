@@ -1,0 +1,3 @@
+add_executable(num_collect_test_units_functions legendre_test.cpp
+                                                legendre_roots_test.cpp)
+target_add_catch2(num_collect_test_units_functions)
