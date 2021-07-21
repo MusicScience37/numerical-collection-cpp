@@ -34,7 +34,8 @@ public:
     /*!
      * \brief Iterate the algorithm once.
      *
-     * \warning Any required initializations are assumed to have been done.
+     * \warning Any required initializations (with `init` functions) are assumed
+     * to have been done.
      */
     void iterate() { derived().iterate(); }
 
@@ -52,8 +53,8 @@ public:
      *
      * Iterate the algorithm until the stopping criteria are satisfied.
      *
-     * \warning `init` function is assumed to have been called before call to
-     * `solve` function.
+     * \warning Any required initializations (with `init` functions) are assumed
+     * to have been done.
      */
     void solve() {
         while (!is_stop_criteria_satisfied()) {
@@ -75,8 +76,8 @@ public:
      *
      * Iterate the algorithm until the stopping criteria are satisfied.
      *
-     * \warning `init` function is assumed to have been called before call to
-     * `solve` function.
+     * \warning Any required initializations (with `init` functions) are assumed
+     * to have been done.
      *
      * \param[in] logging_stream Stream to write logs.
      */
