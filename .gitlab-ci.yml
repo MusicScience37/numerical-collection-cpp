@@ -49,6 +49,7 @@ line count:
     paths:
       - line_count
     expire_in: "1 mos"
+  allow_failure: true
 
 pre-commit:
   stage: Check
