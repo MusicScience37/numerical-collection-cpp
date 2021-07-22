@@ -24,6 +24,7 @@
 #include "log_error_udm.h"
 #include "num_collect/integration/de_finite_integrator.h"
 #include "num_collect/integration/gauss_legendre_integrator.h"
+#include "num_collect/integration/gauss_legendre_kronrod_integrator.h"
 
 // NOLINTNEXTLINE: external library
 CELERO_MAIN
@@ -77,6 +78,36 @@ static const auto gl_50_integrator =
 
 // NOLINTNEXTLINE: external library
 BENCHMARK_F(integ_exp, gl_50, exp_fixture, 0, 0) { perform(gl_50_integrator); }
+
+// NOLINTNEXTLINE: initialization is required before benchmark.
+static const auto glk_3_integrator =
+    num_collect::integration::gauss_legendre_kronrod_integrator<double>(3);
+
+// NOLINTNEXTLINE: external library
+BENCHMARK_F(integ_exp, glk_3, exp_fixture, 0, 0) { perform(glk_3_integrator); }
+
+// NOLINTNEXTLINE: initialization is required before benchmark.
+static const auto glk_5_integrator =
+    num_collect::integration::gauss_legendre_kronrod_integrator<double>(5);
+
+// NOLINTNEXTLINE: external library
+BENCHMARK_F(integ_exp, glk_5, exp_fixture, 0, 0) { perform(glk_5_integrator); }
+
+// NOLINTNEXTLINE: initialization is required before benchmark.
+static const auto glk_7_integrator =
+    num_collect::integration::gauss_legendre_kronrod_integrator<double>(7);
+
+// NOLINTNEXTLINE: external library
+BENCHMARK_F(integ_exp, glk_7, exp_fixture, 0, 0) { perform(glk_7_integrator); }
+
+// NOLINTNEXTLINE: initialization is required before benchmark.
+static const auto glk_10_integrator =
+    num_collect::integration::gauss_legendre_kronrod_integrator<double>(10);
+
+// NOLINTNEXTLINE: external library
+BENCHMARK_F(integ_exp, glk_10, exp_fixture, 0, 0) {
+    perform(glk_10_integrator);
+}
 
 // NOLINTNEXTLINE: initialization is required before benchmark.
 static const auto de_5_integrator =
