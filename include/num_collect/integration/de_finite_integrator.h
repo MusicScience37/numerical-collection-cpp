@@ -158,7 +158,7 @@ private:
     }
 
     //! Default maximum point in changed variable.
-    static constexpr auto default_max_point = static_cast<variable_type>(4);
+    static constexpr auto default_max_point = static_cast<variable_type>(3);
 
     //! Maximum point in changed variable.
     variable_type max_point_{default_max_point};

@@ -20,6 +20,7 @@
 #include "num_collect/integration/de_finite_integrator.h"
 
 #include <cmath>
+#include <complex>
 #include <limits>
 
 #include <catch2/catch_template_test_macros.hpp>
@@ -101,5 +102,49 @@ TEMPLATE_TEST_CASE(
         constexpr auto tol = std::numeric_limits<TestType>::epsilon() *
             static_cast<TestType>(1e+4);
         REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val, tol));
+    }
+
+    SECTION("integrate exp(ix)") {
+        auto integrator =
+            num_collect::integration::de_finite_integrator<TestType>();
+        constexpr num_collect::index_type points = 30;
+        integrator.points(points);
+
+        constexpr auto left = static_cast<TestType>(0);
+        constexpr auto right =
+            static_cast<TestType>(2) * num_collect::constants::pi<TestType>;
+        const auto val = integrator(
+            [](TestType x) {
+                return std::exp(
+                    std::complex<TestType>(static_cast<TestType>(0), x));
+            },
+            left, right);
+
+        constexpr auto tol = std::numeric_limits<TestType>::epsilon() *
+            static_cast<TestType>(1e+4);
+        REQUIRE_THAT(val.real(),
+            Catch::Matchers::WithinAbs(static_cast<TestType>(0), tol));
+        REQUIRE_THAT(val.imag(),
+            Catch::Matchers::WithinAbs(static_cast<TestType>(0), tol));
+    }
+
+    if constexpr (std::is_same_v<TestType, double>) {
+        SECTION("integrate 1/sqrt(1-x^2)") {
+            auto integrator =
+                num_collect::integration::de_finite_integrator<TestType>();
+
+            constexpr auto left = static_cast<TestType>(-1);
+            constexpr auto right = static_cast<TestType>(1);
+            const auto val = integrator(
+                [](TestType x) {
+                    return static_cast<TestType>(1) /
+                        std::sqrt(static_cast<TestType>(1) - x * x);
+                },
+                left, right);
+
+            const auto true_val = num_collect::constants::pi<TestType>;
+            constexpr auto tol = static_cast<TestType>(1e-4);
+            REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val, tol));
+        }
     }
 }
