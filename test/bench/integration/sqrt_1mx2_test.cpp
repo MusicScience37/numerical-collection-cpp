@@ -25,6 +25,7 @@
 #include "num_collect/constants/pi.h"
 #include "num_collect/integration/de_finite_integrator.h"
 #include "num_collect/integration/gauss_legendre_integrator.h"
+#include "num_collect/integration/gauss_legendre_kronrod_integrator.h"
 
 // NOLINTNEXTLINE: external library
 CELERO_MAIN
@@ -85,6 +86,42 @@ static const auto gl_50_integrator =
 // NOLINTNEXTLINE: external library
 BENCHMARK_F(integ_sqrt_1mx2, gl_50, sqrt_1mx2_fixture, 0, 0) {
     perform(gl_50_integrator);
+}
+
+// NOLINTNEXTLINE: initialization is required before benchmark.
+static const auto glk_3_integrator =
+    num_collect::integration::gauss_legendre_kronrod_integrator<double>(3);
+
+// NOLINTNEXTLINE: external library
+BENCHMARK_F(integ_sqrt_1mx2, glk_3, sqrt_1mx2_fixture, 0, 0) {
+    perform(glk_3_integrator);
+}
+
+// NOLINTNEXTLINE: initialization is required before benchmark.
+static const auto glk_5_integrator =
+    num_collect::integration::gauss_legendre_kronrod_integrator<double>(5);
+
+// NOLINTNEXTLINE: external library
+BENCHMARK_F(integ_sqrt_1mx2, glk_5, sqrt_1mx2_fixture, 0, 0) {
+    perform(glk_5_integrator);
+}
+
+// NOLINTNEXTLINE: initialization is required before benchmark.
+static const auto glk_7_integrator =
+    num_collect::integration::gauss_legendre_kronrod_integrator<double>(7);
+
+// NOLINTNEXTLINE: external library
+BENCHMARK_F(integ_sqrt_1mx2, glk_7, sqrt_1mx2_fixture, 0, 0) {
+    perform(glk_7_integrator);
+}
+
+// NOLINTNEXTLINE: initialization is required before benchmark.
+static const auto glk_10_integrator =
+    num_collect::integration::gauss_legendre_kronrod_integrator<double>(10);
+
+// NOLINTNEXTLINE: external library
+BENCHMARK_F(integ_sqrt_1mx2, glk_10, sqrt_1mx2_fixture, 0, 0) {
+    perform(glk_10_integrator);
 }
 
 // NOLINTNEXTLINE: initialization is required before benchmark.
