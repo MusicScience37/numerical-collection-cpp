@@ -72,42 +72,44 @@ public:
      * \brief Integrate a function.
      *
      * \tparam Function Type of function.
+     * \tparam Result Type of result.
      * \param[in] function Function.
      * \param[in] left Left boundary.
      * \param[in] right Right boundary.
      * \return Result.
      */
-    template <typename Function>
+    template <typename Function,
+        typename Result =
+            std::decay_t<std::invoke_result_t<Function, variable_type>>>
     [[nodiscard]] auto integrate(const Function& function, variable_type left,
-        variable_type right) const -> variable_type {
-        static_assert(
-            std::is_invocable_r_v<variable_type, Function, variable_type>);
-
-        variable_type ans = constants::zero<variable_type>;
+        variable_type right) const -> Result {
         const auto order = roots_.order();
         const auto mean = constants::half<variable_type> * (left + right);
         const auto half_width = constants::half<variable_type> * (right - left);
+        Result sum = function(mean) * constants::zero<variable_type>;
         for (index_type i = 0; i < order; ++i) {
             const variable_type x = mean + half_width * roots_[i];
             const variable_type weight = weights_[i];
-            ans += weight * function(x);
+            sum += weight * function(x);
         }
-        ans *= half_width;
-        return ans;
+        return sum * half_width;
     }
 
     /*!
      * \brief Integrate a function.
      *
      * \tparam Function Type of function.
+     * \tparam Result Type of result.
      * \param[in] function Function.
      * \param[in] left Left boundary.
      * \param[in] right Right boundary.
      * \return Result.
      */
-    template <typename Function>
+    template <typename Function,
+        typename Result =
+            std::decay_t<std::invoke_result_t<Function, variable_type>>>
     [[nodiscard]] auto operator()(const Function& function, variable_type left,
-        variable_type right) const -> variable_type {
+        variable_type right) const -> Result {
         return integrate(function, left, right);
     }
 

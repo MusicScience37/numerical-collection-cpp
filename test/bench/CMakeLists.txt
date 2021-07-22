@@ -24,4 +24,5 @@ endfunction()
 
 add_subdirectory(opt)
 add_subdirectory(multi_double)
+add_subdirectory(integration)
 add_subdirectory(ode)
