@@ -41,8 +41,8 @@
 namespace num_collect::integration {
 
 /*!
- * \brief Class to perform numerical integration with Gauss-Legendre-Kronrod
- * formula in \cite Laurie1997.
+ * \brief Class to perform numerical adaptive integration with
+ * Gauss-Legendre-Kronrod formula in \cite Laurie1997.
  *
  * \tparam T Type of variables.
  */
