@@ -32,6 +32,38 @@
 
 namespace num_collect::integration {
 
+namespace impl {
+
+/*!
+ * \brief Helper class of constants for use in de_finite_integrator class.
+ *
+ * \tparam Variable Type of variables.
+ */
+template <typename Variable>
+struct de_finite_integrator_traits;
+
+/*!
+ * \brief Implementation of de_finite_integrator_traits for float.
+ */
+template <>
+struct de_finite_integrator_traits<float> {
+public:
+    //! Default maximum point in changed variable.
+    static constexpr float default_max_point = 2.4F;
+};
+
+/*!
+ * \brief Implementation of de_finite_integrator_traits for float.
+ */
+template <>
+struct de_finite_integrator_traits<double> {
+public:
+    //! Default maximum point in changed variable.
+    static constexpr double default_max_point = 3.0;
+};
+
+}  // namespace impl
+
 /*!
  * \brief Class to perform numerical integration on finite range using double
  * exponential rule.
@@ -158,7 +190,8 @@ private:
     }
 
     //! Default maximum point in changed variable.
-    static constexpr auto default_max_point = static_cast<variable_type>(3);
+    static constexpr auto default_max_point =
+        impl::de_finite_integrator_traits<Variable>::default_max_point;
 
     //! Maximum point in changed variable.
     variable_type max_point_{default_max_point};

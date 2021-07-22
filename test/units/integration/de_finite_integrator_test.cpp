@@ -128,23 +128,21 @@ TEMPLATE_TEST_CASE(
             Catch::Matchers::WithinAbs(static_cast<TestType>(0), tol));
     }
 
-    if constexpr (std::is_same_v<TestType, double>) {
-        SECTION("integrate 1/sqrt(1-x^2)") {
-            auto integrator =
-                num_collect::integration::de_finite_integrator<TestType>();
+    SECTION("integrate 1/sqrt(1-x^2)") {
+        auto integrator =
+            num_collect::integration::de_finite_integrator<TestType>();
 
-            constexpr auto left = static_cast<TestType>(-1);
-            constexpr auto right = static_cast<TestType>(1);
-            const auto val = integrator(
-                [](TestType x) {
-                    return static_cast<TestType>(1) /
-                        std::sqrt(static_cast<TestType>(1) - x * x);
-                },
-                left, right);
+        constexpr auto left = static_cast<TestType>(-1);
+        constexpr auto right = static_cast<TestType>(1);
+        const auto val = integrator(
+            [](TestType x) {
+                return static_cast<TestType>(1) /
+                    std::sqrt(static_cast<TestType>(1) - x * x);
+            },
+            left, right);
 
-            const auto true_val = num_collect::constants::pi<TestType>;
-            constexpr auto tol = static_cast<TestType>(1e-4);
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val, tol));
-        }
+        const auto true_val = num_collect::constants::pi<TestType>;
+        constexpr auto tol = static_cast<TestType>(1e-4);
+        REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val, tol));
     }
 }
