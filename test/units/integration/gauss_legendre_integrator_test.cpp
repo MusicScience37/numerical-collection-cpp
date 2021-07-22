@@ -103,4 +103,26 @@ TEMPLATE_TEST_CASE(
         constexpr auto tol = static_cast<TestType>(1e-4);
         REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val, tol));
     }
+
+    SECTION("integrate exp(ix)") {
+        auto integrator =
+            num_collect::integration::gauss_legendre_integrator<TestType>();
+
+        constexpr auto left = static_cast<TestType>(0);
+        constexpr auto right =
+            static_cast<TestType>(2) * num_collect::constants::pi<TestType>;
+        const auto val = integrator(
+            [](TestType x) {
+                return std::exp(
+                    std::complex<TestType>(static_cast<TestType>(0), x));
+            },
+            left, right);
+
+        constexpr auto tol = std::numeric_limits<TestType>::epsilon() *
+            static_cast<TestType>(1e+4);
+        REQUIRE_THAT(val.real(),
+            Catch::Matchers::WithinAbs(static_cast<TestType>(0), tol));
+        REQUIRE_THAT(val.imag(),
+            Catch::Matchers::WithinAbs(static_cast<TestType>(0), tol));
+    }
 }
