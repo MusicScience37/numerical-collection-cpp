@@ -22,6 +22,7 @@ function(target_add_to_benchmark TARGET)
     endif()
 endfunction()
 
+add_subdirectory(util)
 add_subdirectory(opt)
 add_subdirectory(multi_double)
 add_subdirectory(integration)
