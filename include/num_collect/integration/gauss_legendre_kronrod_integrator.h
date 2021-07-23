@@ -145,8 +145,9 @@ public:
         while (true) {
             const auto [val_gauss, val_kronrod] =
                 integrate_once(function, cur_left, cur_right);
-            const variable_type val_norm = norm(val_kronrod);
-            const variable_type error_norm = norm(val_gauss - val_kronrod);
+            const variable_type val_norm = num_collect::norm(val_kronrod);
+            const variable_type error_norm =
+                num_collect::norm(val_gauss - val_kronrod);
             using std::abs;
             const auto div_rate = (cur_right - cur_left) * inv_width;
             if ((error_norm < tol_abs_error_ * div_rate) ||

@@ -21,6 +21,7 @@
 
 #include <Eigen/Core>
 #include <cmath>
+#include <complex>
 #include <type_traits>
 
 namespace num_collect {
@@ -49,6 +50,18 @@ template <typename T,
 auto norm(T val) -> T {
     using std::abs;
     return abs(val);
+}
+
+/*!
+ * \brief Calculate the absolute value of a complex number.
+ *
+ * \tparam T Floating-point number type.
+ * \param[in] val Number.
+ * \return Absolute value.
+ */
+template <typename T>
+auto norm(const std::complex<T>& val) -> T {
+    return std::abs(val);
 }
 
 }  // namespace num_collect
