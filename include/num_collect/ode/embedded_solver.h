@@ -29,10 +29,10 @@
 #include "num_collect/util/assert.h"
 #include "num_collect/util/is_eigen_vector.h"
 
-namespace num_collect::ode::runge_kutta {
+namespace num_collect::ode {
 
 /*!
- * \brief Class of solvers using embedded formulas in Runge-Kutta method.
+ * \brief Class of solvers of ODEs using embedded formulas.
  *
  * \tparam Formula Type of formula.
  */
@@ -91,7 +91,7 @@ public:
             error_norm = std::numeric_limits<scalar_type>::min();
         }
         constexpr scalar_type exponent = static_cast<scalar_type>(1) /
-            static_cast<scalar_type>(lesser_order);
+            static_cast<scalar_type>(lesser_order + 1);
         step_size_ *= std::pow(tol_error / error_norm, exponent);
         if (step_size_ > max_step_size_) {
             step_size_ = max_step_size_;
@@ -268,4 +268,4 @@ private:
     index_type steps_{};
 };
 
-}  // namespace num_collect::ode::runge_kutta
+}  // namespace num_collect::ode

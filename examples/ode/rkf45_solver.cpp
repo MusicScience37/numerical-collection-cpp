@@ -21,7 +21,6 @@
 #include <iomanip>
 #include <iostream>
 
-#include "num_collect/ode/runge_kutta/embedded_solver.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
 #include "num_prob_collect/ode/exponential_problem.h"
 
