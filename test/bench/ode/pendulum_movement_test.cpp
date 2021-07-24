@@ -19,6 +19,8 @@
  */
 #include <celero/Celero.h>
 
+#include "num_collect/ode/non_embedded_formula_wrapper.h"
+#include "num_collect/ode/runge_kutta/rk4_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
 #include "num_collect/ode/runge_kutta/ros34pw3_formula.h"
 #include "num_collect/ode/runge_kutta/ros3w_formula.h"
@@ -60,7 +62,8 @@ private:
 using problem_type = num_prob_collect::ode::pendulum_movement_problem;
 
 // NOLINTNEXTLINE: external library
-BASELINE_F(ode_rk_spring_movement, rkf45, pendulum_movement_fixture, 30, 100) {
+BASELINE_F(
+    ode_rk_pendulum_movement, rkf45, pendulum_movement_fixture, 30, 100) {
     using solver_type =
         num_collect::ode::runge_kutta::rkf45_solver<problem_type>;
     auto solver = solver_type(problem_type());
@@ -69,7 +72,7 @@ BASELINE_F(ode_rk_spring_movement, rkf45, pendulum_movement_fixture, 30, 100) {
 
 // NOLINTNEXTLINE: external library
 BENCHMARK_F(
-    ode_rk_spring_movement, tanaka1, pendulum_movement_fixture, 30, 10) {
+    ode_rk_pendulum_movement, tanaka1, pendulum_movement_fixture, 30, 10) {
     using solver_type =
         num_collect::ode::runge_kutta::tanaka1_solver<problem_type>;
     auto solver = solver_type(problem_type());
@@ -78,7 +81,7 @@ BENCHMARK_F(
 
 // NOLINTNEXTLINE: external library
 BENCHMARK_F(
-    ode_rk_spring_movement, tanaka2, pendulum_movement_fixture, 30, 100) {
+    ode_rk_pendulum_movement, tanaka2, pendulum_movement_fixture, 30, 100) {
     using solver_type =
         num_collect::ode::runge_kutta::tanaka2_solver<problem_type>;
     auto solver = solver_type(problem_type());
@@ -86,7 +89,8 @@ BENCHMARK_F(
 }
 
 // NOLINTNEXTLINE: external library
-BENCHMARK_F(ode_rk_spring_movement, ros3w, pendulum_movement_fixture, 30, 100) {
+BENCHMARK_F(
+    ode_rk_pendulum_movement, ros3w, pendulum_movement_fixture, 30, 100) {
     using solver_type =
         num_collect::ode::runge_kutta::ros3w_solver<problem_type>;
     auto solver = solver_type(problem_type());
@@ -95,9 +99,18 @@ BENCHMARK_F(ode_rk_spring_movement, ros3w, pendulum_movement_fixture, 30, 100) {
 
 // NOLINTNEXTLINE: external library
 BENCHMARK_F(
-    ode_rk_spring_movement, ros34pw3, pendulum_movement_fixture, 30, 100) {
+    ode_rk_pendulum_movement, ros34pw3, pendulum_movement_fixture, 30, 100) {
     using solver_type =
         num_collect::ode::runge_kutta::ros34pw3_solver<problem_type>;
+    auto solver = solver_type(problem_type());
+    perform(solver);
+}
+
+// NOLINTNEXTLINE: external library
+BENCHMARK_F(
+    ode_rk_pendulum_movement, rk4_auto, pendulum_movement_fixture, 30, 100) {
+    using solver_type = num_collect::ode::non_embedded_auto_solver<
+        num_collect::ode::runge_kutta::rk4_formula<problem_type>>;
     auto solver = solver_type(problem_type());
     perform(solver);
 }

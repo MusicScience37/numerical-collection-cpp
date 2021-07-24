@@ -19,6 +19,8 @@
  */
 #include <celero/Celero.h>
 
+#include "num_collect/ode/non_embedded_formula_wrapper.h"
+#include "num_collect/ode/runge_kutta/rk4_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
 #include "num_collect/ode/runge_kutta/ros34pw3_formula.h"
 #include "num_collect/ode/runge_kutta/ros3w_formula.h"
@@ -100,6 +102,15 @@ BENCHMARK_F(ode_rk_external_force_vibration, ros34pw3,
     external_force_vibration_fixture, 30, 100) {
     using solver_type =
         num_collect::ode::runge_kutta::ros34pw3_solver<problem_type>;
+    auto solver = solver_type(problem_type());
+    perform(solver);
+}
+
+// NOLINTNEXTLINE: external library
+BENCHMARK_F(ode_rk_external_force_vibration, rk4_auto,
+    external_force_vibration_fixture, 30, 100) {
+    using solver_type = num_collect::ode::non_embedded_auto_solver<
+        num_collect::ode::runge_kutta::rk4_formula<problem_type>>;
     auto solver = solver_type(problem_type());
     perform(solver);
 }
