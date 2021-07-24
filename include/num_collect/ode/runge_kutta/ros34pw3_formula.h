@@ -19,8 +19,8 @@
  */
 #pragma once
 
+#include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/formula_base.h"
-#include "num_collect/ode/runge_kutta/embedded_solver.h"
 #include "num_collect/ode/runge_kutta/impl/rosenbrock_helper.h"
 
 namespace num_collect::ode::runge_kutta {

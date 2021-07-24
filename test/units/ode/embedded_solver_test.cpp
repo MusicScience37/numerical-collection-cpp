@@ -17,7 +17,7 @@
  * \file
  * \brief Test of embedded_solver_test class.
  */
-#include "num_collect/ode/runge_kutta/embedded_solver.h"
+#include "num_collect/ode/embedded_solver.h"
 
 #include <cmath>
 #include <sstream>
@@ -32,13 +32,12 @@
 #include "num_prob_collect/ode/spring_movement_problem.h"
 
 TEST_CASE(
-    "num_collect::ode::runge_kutta::embedded_solver<num_collect::ode::runge_"
+    "num_collect::ode::embedded_solver<num_collect::ode::runge_"
     "kutta::rkf45_formula<num_prob_collect::ode::exponential_problem>>") {
     using problem_type = num_prob_collect::ode::exponential_problem;
     using formula_type =
         num_collect::ode::runge_kutta::rkf45_formula<problem_type>;
-    using solver_type =
-        num_collect::ode::runge_kutta::embedded_solver<formula_type>;
+    using solver_type = num_collect::ode::embedded_solver<formula_type>;
 
     SECTION("initialize") {
         auto solver = solver_type(problem_type());
@@ -115,13 +114,12 @@ TEST_CASE(
 }
 
 TEST_CASE(
-    "num_collect::ode::runge_kutta::embedded_solver<num_collect::ode::runge_"
+    "num_collect::ode::embedded_solver<num_collect::ode::runge_"
     "kutta::rkf45_formula<num_prob_collect::ode::spring_movement_problem>>") {
     using problem_type = num_prob_collect::ode::spring_movement_problem;
     using formula_type =
         num_collect::ode::runge_kutta::rkf45_formula<problem_type>;
-    using solver_type =
-        num_collect::ode::runge_kutta::embedded_solver<formula_type>;
+    using solver_type = num_collect::ode::embedded_solver<formula_type>;
 
     SECTION("initialize") {
         auto solver = solver_type(problem_type());

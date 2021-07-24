@@ -3,7 +3,7 @@ add_executable(
     runge_kutta/rk4_formula_test.cpp
     simple_solver_test.cpp
     runge_kutta/rkf45_formula_test.cpp
-    runge_kutta/embedded_solver_test.cpp
+    embedded_solver_test.cpp
     runge_kutta/semi_implicit_formula_solver_test.cpp
     runge_kutta/implicit_euler_formula_test.cpp
     runge_kutta/tanaka1_formula_test.cpp
