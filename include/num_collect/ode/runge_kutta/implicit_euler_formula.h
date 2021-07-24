@@ -22,7 +22,7 @@
 #include "num_collect/constants/one.h"
 #include "num_collect/ode/runge_kutta/implicit_formula_base.h"
 #include "num_collect/ode/runge_kutta/semi_implicit_formula_solver.h"
-#include "num_collect/ode/runge_kutta/simple_solver.h"
+#include "num_collect/ode/simple_solver.h"
 
 namespace num_collect::ode::runge_kutta {
 

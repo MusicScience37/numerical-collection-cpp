@@ -19,8 +19,8 @@
  */
 #pragma once
 
-#include "num_collect/ode/runge_kutta/formula_base.h"
-#include "num_collect/ode/runge_kutta/simple_solver.h"
+#include "num_collect/ode/formula_base.h"
+#include "num_collect/ode/simple_solver.h"
 
 namespace num_collect::ode::runge_kutta {
 
@@ -78,7 +78,7 @@ public:
     static constexpr scalar_type c4 = coeff(1, 6);
     ///@}
 
-    //! \copydoc runge_kutta::formula_base::step
+    //! \copydoc ode::formula_base::step
     void step(scalar_type time, scalar_type step_size,
         const variable_type& current, variable_type& estimate) {
         problem().evaluate_on(time, current);

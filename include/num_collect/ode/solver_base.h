@@ -22,10 +22,10 @@
 #include "num_collect/util/index_type.h"
 #include "num_collect/util/iteration_logger.h"
 
-namespace num_collect::ode::runge_kutta {
+namespace num_collect::ode {
 
 /*!
- * \brief Base class of solvers using Runge-Kutta method.
+ * \brief Base class of solvers of ODEs.
  *
  * \tparam Derived Type of derived class.
  * \tparam Formula Type of formula.
@@ -225,4 +225,4 @@ private:
     formula_type formula_;
 };
 
-}  // namespace num_collect::ode::runge_kutta
+}  // namespace num_collect::ode
