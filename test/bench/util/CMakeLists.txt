@@ -1,0 +1,2 @@
+add_executable(num_collect_bench_util_summation summation_test.cpp)
+target_add_to_benchmark(num_collect_bench_util_summation)
