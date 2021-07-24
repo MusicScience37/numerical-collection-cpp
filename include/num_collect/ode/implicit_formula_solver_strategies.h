@@ -19,7 +19,7 @@
  */
 #pragma once
 
-namespace num_collect::ode::runge_kutta {  // NOLINT
+namespace num_collect::ode {  // NOLINT
 
 //! Namespace of tags for solvers in implicit formulas in Runge-Kutta method.
 namespace implicit_formula_solver_strategies {  // NOLINT
@@ -31,4 +31,4 @@ struct modified_newton_raphson_tag {};
 
 }  // namespace implicit_formula_solver_strategies
 
-}  // namespace num_collect::ode::runge_kutta
+}  // namespace num_collect::ode

@@ -25,7 +25,7 @@
 
 #include "num_collect/constants/one.h"
 #include "num_collect/constants/zero.h"
-#include "num_collect/ode/runge_kutta/solver_base.h"
+#include "num_collect/ode/solver_base.h"
 #include "num_collect/util/assert.h"
 #include "num_collect/util/is_eigen_vector.h"
 
@@ -57,14 +57,14 @@ public:
     using base_type::formula;
     using base_type::problem;
 
-    //! \copydoc runge_kutta::solver_base::init
+    //! \copydoc ode::solver_base::init
     void init(scalar_type time, const variable_type& variable) {
         time_ = time;
         variable_ = variable;
         steps_ = 0;
     }
 
-    //! \copydoc runge_kutta::solver_base::step
+    //! \copydoc ode::solver_base::step
     void step() {
         prev_variable_ = variable_;
         const scalar_type tol_error =
@@ -100,7 +100,7 @@ public:
         ++steps_;
     }
 
-    //! \copydoc runge_kutta::solver_base::set_info_to
+    //! \copydoc ode::solver_base::set_info_to
     void set_info_to(iteration_logger& logger) const {
         logger["Steps"] = steps();
         logger["Time"] = time();
@@ -108,15 +108,15 @@ public:
         logger["Error"] = error_norm();
     }
 
-    //! \copydoc runge_kutta::solver_base::time
+    //! \copydoc ode::solver_base::time
     [[nodiscard]] auto time() const -> scalar_type { return time_; }
 
-    //! \copydoc runge_kutta::solver_base::variable
+    //! \copydoc ode::solver_base::variable
     [[nodiscard]] auto variable() const -> const variable_type& {
         return variable_;
     }
 
-    //! \copydoc runge_kutta::solver_base::step_size()
+    //! \copydoc ode::solver_base::step_size()
     [[nodiscard]] auto step_size() const -> scalar_type { return step_size_; }
 
     /*!
@@ -137,10 +137,10 @@ public:
         return norm(error_);
     }
 
-    //! \copydoc runge_kutta::solver_base::steps
+    //! \copydoc ode::solver_base::steps
     [[nodiscard]] auto steps() const -> index_type { return steps_; }
 
-    //! \copydoc runge_kutta::solver_base::step_size(scalar_type)
+    //! \copydoc ode::solver_base::step_size(scalar_type)
     auto step_size(scalar_type val) -> this_type& {
         NUM_COLLECT_ASSERT(val > constants::zero<scalar_type>);
         step_size_ = val;

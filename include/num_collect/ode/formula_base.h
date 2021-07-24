@@ -21,7 +21,7 @@
 
 #include "num_collect/util/index_type.h"
 
-namespace num_collect::ode::runge_kutta {
+namespace num_collect::ode {
 
 /*!
  * \brief Class of formulas in Runge-Kutta method.
@@ -128,4 +128,4 @@ private:
     problem_type problem_;
 };
 
-}  // namespace num_collect::ode::runge_kutta
+}  // namespace num_collect::ode

@@ -26,7 +26,7 @@
 
 #include "num_collect/constants/one.h"
 #include "num_collect/constants/zero.h"
-#include "num_collect/ode/runge_kutta/implicit_formula_solver_strategies.h"
+#include "num_collect/ode/implicit_formula_solver_strategies.h"
 #include "num_collect/util/assert.h"
 #include "num_collect/util/index_type.h"
 #include "num_collect/util/is_eigen_matrix.h"

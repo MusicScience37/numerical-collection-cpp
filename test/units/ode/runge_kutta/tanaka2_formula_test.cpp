@@ -33,7 +33,7 @@ TEST_CASE("num_collect::ode::runge_kutta::tanaka2_formula") {
     using problem_type = num_prob_collect::ode::exponential_problem;
     using formula_type =
         num_collect::ode::runge_kutta::tanaka2_formula<problem_type,
-            num_collect::ode::runge_kutta::implicit_formula_solver_strategies::
+            num_collect::ode::implicit_formula_solver_strategies::
                 modified_newton_raphson_tag>;
 
     SECTION("static definition") {

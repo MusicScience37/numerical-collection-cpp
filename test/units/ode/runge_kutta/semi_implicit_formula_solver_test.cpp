@@ -30,8 +30,8 @@ TEST_CASE(
     "num_collect::ode::runge_kutta::semi_implicit_formula_solver<exponential_"
     "problem, modified_newton_raphson_tag>") {
     using problem_type = num_prob_collect::ode::exponential_problem;
-    using strategy_type = num_collect::ode::runge_kutta::
-        implicit_formula_solver_strategies::modified_newton_raphson_tag;
+    using strategy_type = num_collect::ode::implicit_formula_solver_strategies::
+        modified_newton_raphson_tag;
     using solver_type =
         num_collect::ode::runge_kutta::semi_implicit_formula_solver<
             problem_type, strategy_type>;
@@ -56,8 +56,8 @@ TEST_CASE(
     "num_collect::ode::runge_kutta::semi_implicit_formula_solver<spring_"
     "movement_problem, modified_newton_raphson_tag>") {
     using problem_type = num_prob_collect::ode::spring_movement_problem;
-    using strategy_type = num_collect::ode::runge_kutta::
-        implicit_formula_solver_strategies::modified_newton_raphson_tag;
+    using strategy_type = num_collect::ode::implicit_formula_solver_strategies::
+        modified_newton_raphson_tag;
     using solver_type =
         num_collect::ode::runge_kutta::semi_implicit_formula_solver<
             problem_type, strategy_type>;
