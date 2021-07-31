@@ -12,5 +12,6 @@ add_executable(
     runge_kutta/ros3w_formula_test.cpp
     runge_kutta/ros34pw3_formula_test.cpp
     avf/avf2_formula_test.cpp
-    avf/avf3_formula_test.cpp)
+    avf/avf3_formula_test.cpp
+    avf/avf4_formula_test.cpp)
 target_add_catch2(num_collect_test_units_ode)

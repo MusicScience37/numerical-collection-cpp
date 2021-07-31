@@ -15,9 +15,9 @@
  */
 /*!
  * \file
- * \brief Test of avf3_formula class.
+ * \brief Test of avf4_formula class.
  */
-#include "num_collect/ode/avf/avf3_formula.h"
+#include "num_collect/ode/avf/avf4_formula.h"
 
 #include <cmath>
 
@@ -28,11 +28,11 @@
 #include "num_prob_collect/ode/exponential_problem.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
 
-TEST_CASE("num_collect::ode::avf::avf3_formula") {
+TEST_CASE("num_collect::ode::avf::avf4_formula") {
     using problem_type = num_prob_collect::ode::spring_movement_problem;
-    using formula_type = num_collect::ode::avf::avf3_formula<problem_type>;
+    using formula_type = num_collect::ode::avf::avf4_formula<problem_type>;
 
-    SECTION("static definition") { STATIC_REQUIRE(formula_type::order == 3); }
+    SECTION("static definition") { STATIC_REQUIRE(formula_type::order == 4); }
 
     SECTION("initialize") {
         auto formula = formula_type(problem_type());
@@ -56,10 +56,10 @@ TEST_CASE("num_collect::ode::avf::avf3_formula") {
 }
 
 TEST_CASE(
-    "num_collect::ode::avf::avf3_solver<num_prob_collect::ode::"
+    "num_collect::ode::avf::avf4_solver<num_prob_collect::ode::"
     "spring_movement_problem>") {
     using problem_type = num_prob_collect::ode::spring_movement_problem;
-    using solver_type = num_collect::ode::avf::avf3_solver<problem_type>;
+    using solver_type = num_collect::ode::avf::avf4_solver<problem_type>;
 
     SECTION("solve_till") {
         auto solver = solver_type(problem_type());
@@ -82,10 +82,10 @@ TEST_CASE(
 }
 
 TEST_CASE(
-    "num_collect::ode::avf::avf3_auto_solver<num_prob_collect::ode::"
+    "num_collect::ode::avf::avf4_auto_solver<num_prob_collect::ode::"
     "spring_movement_problem>") {
     using problem_type = num_prob_collect::ode::spring_movement_problem;
-    using solver_type = num_collect::ode::avf::avf3_auto_solver<problem_type>;
+    using solver_type = num_collect::ode::avf::avf4_auto_solver<problem_type>;
 
     SECTION("solve_till") {
         auto solver = solver_type(problem_type());

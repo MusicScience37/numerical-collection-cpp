@@ -15,10 +15,11 @@
  */
 /*!
  * \file
- * \brief Definition of avf3_formula class.
+ * \brief Definition of avf4_formula class.
  */
 #pragma once
 
+#include "num_collect/constants/half.h"
 #include "num_collect/constants/one.h"
 #include "num_collect/constants/zero.h"
 #include "num_collect/integration/gauss_legendre_integrator.h"
@@ -31,13 +32,13 @@
 namespace num_collect::ode::avf {
 
 /*!
- * \brief Class of 3rd order average vector field (AVF) method
+ * \brief Class of 4th order average vector field (AVF) method
  * \cite Quispel2008.
  *
  * \tparam Problem Type of problem.
  */
 template <typename Problem>
-class avf3_formula {
+class avf4_formula {
 public:
     //! Type of problem.
     using problem_type = Problem;
@@ -52,14 +53,14 @@ public:
     using jacobian_type = typename problem_type::jacobian_type;
 
     //! Order of this formula.
-    static constexpr index_type order = 3;
+    static constexpr index_type order = 4;
 
     /*!
      * \brief Construct.
      *
      * \param[in] problem Problem.
      */
-    explicit avf3_formula(const problem_type& problem = problem_type())
+    explicit avf4_formula(const problem_type& problem = problem_type())
         : integrand_(problem) {}
 
     /*!
@@ -77,7 +78,7 @@ public:
         problem().evaluate_on(time, current, true);
         static constexpr scalar_type coeff_jacobi =
             -static_cast<scalar_type>(1) / static_cast<scalar_type>(12);
-        const jacobian_type coeff = step_size *
+        jacobian_type coeff = step_size *
             (jacobian_type::Identity(dim, dim) +
                 coeff_jacobi * step_size * step_size * problem().jacobian() *
                     problem().jacobian());
@@ -89,6 +90,13 @@ public:
         variable_type prev_estimate;
         constexpr index_type max_loops = 10000;
         for (index_type i = 0; i < max_loops; ++i) {
+            problem().evaluate_on(time,
+                constants::half<scalar_type> * (current + estimate), true);
+            coeff = step_size *
+                (jacobian_type::Identity(dim, dim) +
+                    coeff_jacobi * step_size * step_size *
+                        problem().jacobian() * problem().jacobian());
+
             integrand_.next_var(estimate);
             prev_estimate = estimate;
             estimate = current +
@@ -149,21 +157,21 @@ private:
 };
 
 /*!
- * \brief Class of solver using 3rd order average vector field (AVF) method
+ * \brief Class of solver using 4th order average vector field (AVF) method
  * \cite Quispel2008.
  *
  * \tparam Problem Type of problem.
  */
 template <typename Problem>
-using avf3_solver = simple_solver<avf3_formula<Problem>>;
+using avf4_solver = simple_solver<avf4_formula<Problem>>;
 
 /*!
- * \brief Class of solver using 3rd order average vector field (AVF) method
+ * \brief Class of solver using 4th order average vector field (AVF) method
  * \cite Quispel2008 with automatic step sizes.
  *
  * \tparam Problem Type of problem.
  */
 template <typename Problem>
-using avf3_auto_solver = non_embedded_auto_solver<avf3_formula<Problem>>;
+using avf4_auto_solver = non_embedded_auto_solver<avf4_formula<Problem>>;
 
 }  // namespace num_collect::ode::avf
