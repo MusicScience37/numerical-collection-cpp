@@ -19,6 +19,7 @@
  */
 #include <celero/Celero.h>
 
+#include "log_energy_change.h"
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
 #include "num_collect/ode/runge_kutta/rk4_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
@@ -36,6 +37,11 @@ class pendulum_movement_fixture : public celero::TestFixture {
 public:
     pendulum_movement_fixture() = default;
 
+    [[nodiscard]] static auto calc_energy(const Eigen::Vector2d& var)
+        -> double {
+        return 0.5 * var[0] * var[0] - std::cos(var[1]);  // NOLINT
+    }
+
     template <typename Solver>
     void perform(Solver& solver) {
         constexpr double init_time = 0.0;
@@ -48,15 +54,22 @@ public:
 #endif
         solver.solve_till(end_time);
         steps_->addValue(solver.steps());
+
+        const double init_energy = calc_energy(init_var);
+        const double energy = calc_energy(solver.variable());
+        log_energy_change_->addValue(
+            std::log10(std::abs(energy - init_energy)));
     }
 
     [[nodiscard]] auto getUserDefinedMeasurements() const -> std::vector<
         std::shared_ptr<celero::UserDefinedMeasurement>> override {
-        return {steps_};
+        return {steps_, log_energy_change_};
     }
 
 private:
     std::shared_ptr<steps_udm> steps_{std::make_shared<steps_udm>()};
+    std::shared_ptr<log_energy_change> log_energy_change_{
+        std::make_shared<log_energy_change>()};
 };
 
 using problem_type = num_prob_collect::ode::pendulum_movement_problem;
