@@ -28,6 +28,7 @@
 #include "multi_double/basic_operations_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "multi_double/quad_test.cpp"     // NOLINT(bugprone-suspicious-include)
 #include "ode/avf/avf2_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "ode/avf/avf3_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "ode/embedded_solver_test.cpp"   // NOLINT(bugprone-suspicious-include)
 #include "ode/non_embedded_formula_wrapper_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "ode/runge_kutta/implicit_euler_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
