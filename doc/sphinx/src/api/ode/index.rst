@@ -6,6 +6,7 @@ num_collect::ode namespace
     :caption: Namespaces
 
     runge_kutta
+    avf
 
 .. doxygennamespace:: num_collect::ode
     :content-only:

@@ -63,5 +63,11 @@ namespace num_collect {
             //! Namespace of implementations.
             namespace impl {}
         }  // namespace runge_kutta
+
+        //! Namespace of average vector field (AVF) method \cite Quispel2008.
+        namespace avf {
+            //! Namespace of implementations.
+            namespace impl {}
+        }  // namespace avf
     }      // namespace ode
 }  // namespace num_collect
