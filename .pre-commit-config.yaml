@@ -20,5 +20,11 @@ repos:
         name: cmake-format
         description: Format CMake files with cmake-format.
         language: system
-        files: (CMakeLists.txt|.*.cmake)$
+        files: (CMakeLists.txt|.*\.cmake)$
         entry: pipenv run cmake-format -i
+      - id: update-unity-source-in-unit-test
+        name: update-unity-source-in-unit-test
+        description: Update the source code for the unity build of unit tests.
+        language: system
+        files: test/units/.*\.cpp$
+        entry: pipenv run python test/units/create_unity_file.py
