@@ -94,8 +94,10 @@ public:
         variable_type rough_estimate;
         step(time, step_size, current, rough_estimate);
         variable_type half_estimate;
-        step(time, step_size, current, half_estimate);
-        step(time, step_size, current, estimate);
+        const scalar_type half_step_size =
+            constants::half<scalar_type> * step_size;
+        step(time, half_step_size, current, half_estimate);
+        step(time, half_step_size, half_estimate, estimate);
         error = rough_estimate - estimate;
     }
 

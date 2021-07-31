@@ -84,16 +84,15 @@ public:
         time_ += step_size_;
         last_step_size_ = step_size_;
 
-        scalar_type error_norm = norm(error_);
-        using std::abs;
-        using std::isinf;
-        if (isinf(error_norm) || abs(error_norm)) {
-            error_norm = std::numeric_limits<scalar_type>::min();
-        }
+        const scalar_type error_norm = norm(error_);
         constexpr scalar_type exponent = static_cast<scalar_type>(1) /
             static_cast<scalar_type>(lesser_order + 1);
         step_size_ *= std::pow(tol_error / error_norm, exponent);
         if (step_size_ > max_step_size_) {
+            step_size_ = max_step_size_;
+        }
+        using std::isfinite;
+        if (!isfinite(step_size_)) {
             step_size_ = max_step_size_;
         }
 
