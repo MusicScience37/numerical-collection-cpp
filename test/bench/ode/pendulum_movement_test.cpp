@@ -20,6 +20,7 @@
 #include <celero/Celero.h>
 
 #include "log_energy_change.h"
+#include "num_collect/ode/avf/avf2_formula.h"
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
 #include "num_collect/ode/runge_kutta/rk4_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
@@ -124,6 +125,14 @@ BENCHMARK_F(
     ode_rk_pendulum_movement, rk4_auto, pendulum_movement_fixture, 30, 100) {
     using solver_type = num_collect::ode::non_embedded_auto_solver<
         num_collect::ode::runge_kutta::rk4_formula<problem_type>>;
+    auto solver = solver_type(problem_type());
+    perform(solver);
+}
+
+// NOLINTNEXTLINE: external library
+BENCHMARK_F(
+    ode_rk_pendulum_movement, avf2_auto, pendulum_movement_fixture, 30, 100) {
+    using solver_type = num_collect::ode::avf::avf2_auto_solver<problem_type>;
     auto solver = solver_type(problem_type());
     perform(solver);
 }
