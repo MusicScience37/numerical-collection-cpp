@@ -19,6 +19,7 @@
  */
 #include <celero/Celero.h>
 
+#include "log_error_udm.h"
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
 #include "num_collect/ode/runge_kutta/rk4_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
@@ -67,17 +68,26 @@ public:
 #endif
         solver.solve_till(end_time);
         steps_->addValue(solver.steps());
+
+        const Eigen::Vector2d reference =
+            Eigen::Vector2d((g_ / k_) * std::expm1(-k_ * end_time),
+                -(g_ / (k_ * k_)) * std::expm1(-k_ * end_time) -
+                    g_ / k_ * end_time);
+        log_error_->addValue(
+            std::log10((solver.variable() - reference).norm()));
     }
 
     [[nodiscard]] auto getUserDefinedMeasurements() const -> std::vector<
         std::shared_ptr<celero::UserDefinedMeasurement>> override {
-        return {steps_};
+        return {steps_, log_error_};
     }
 
 private:
     double k_{1.0};
     double g_{1.0};
     std::shared_ptr<steps_udm> steps_{std::make_shared<steps_udm>()};
+    std::shared_ptr<log_error_udm> log_error_{
+        std::make_shared<log_error_udm>()};
 };
 
 // NOLINTNEXTLINE: external library
