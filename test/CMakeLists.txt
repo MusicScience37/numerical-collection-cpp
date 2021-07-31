@@ -19,7 +19,6 @@ macro(target_add_catch2 TARGET)
                                             num_prob_collect)
     target_include_directories(${TARGET}
                                PRIVATE ${NUM_COLLECT_TEST_INCLUDE_DIR})
-    target_check_clang_tidy(${TARGET})
 
     if(NUM_COLLECT_WRITE_JUNIT)
         set(CATCH2_REPORT_OPTIONS -r junit -o
