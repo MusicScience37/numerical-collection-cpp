@@ -57,7 +57,8 @@ public:
 
     //! \copydoc ode::solver_base::step
     void step() {
-        formula().step(time_, step_size_, variable_, variable_);
+        prev_variable_ = variable_;
+        formula().step(time_, step_size_, prev_variable_, variable_);
         time_ += step_size_;
         ++steps_;
     }
@@ -93,6 +94,9 @@ public:
 private:
     //! Variable.
     variable_type variable_{};
+
+    //! Previous variable.
+    variable_type prev_variable_{};
 
     //! Default step size.
     static constexpr auto default_step_size = static_cast<scalar_type>(1e-4);
