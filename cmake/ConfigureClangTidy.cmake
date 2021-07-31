@@ -33,7 +33,7 @@ option(${UPPER_PROJECT_NAME}_ENABLE_CLANG_TIDY "enable clang-tidy" OFF)
 set(COMPILE_COMMANDS_PATH "${CMAKE_BINARY_DIR}/compile_commands.json")
 
 # target for clang-tidy of all targets
-add_custom_target(${PROJECT_NAME}_clang_tidy)
+add_custom_target(${PROJECT_NAME}_clang_tidy ALL)
 # set directory for output
 set(${UPPER_PROJECT_NAME}_CLANG_TIDY_RESULTS_DIR
     "${CMAKE_BINARY_DIR}/clang_tidy")

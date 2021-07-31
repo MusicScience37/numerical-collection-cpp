@@ -12,7 +12,6 @@ function(target_add_to_benchmark TARGET)
                                             num_prob_collect)
     target_include_directories(${TARGET}
                                PRIVATE ${NUM_COLLECT_BENCH_INCLUDE_DIR})
-    target_check_clang_tidy(${TARGET})
 
     if(NUM_COLLECT_TEST_BENCHMARKS)
         add_test(
