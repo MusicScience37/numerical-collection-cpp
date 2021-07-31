@@ -21,7 +21,7 @@
 
 #include "num_collect/constants/one.h"
 #include "num_collect/constants/zero.h"
-#include "num_collect/integration/gauss_legendre_kronrod_integrator.h"
+#include "num_collect/integration/gauss_legendre_integrator.h"
 #include "num_collect/ode/avf/impl/avf_integrand.h"
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
 #include "num_collect/ode/simple_solver.h"
@@ -121,8 +121,12 @@ private:
     //! Integrand.
     impl::avf_integrand<problem_type> integrand_;
 
+    //! Order of integrator.
+    static constexpr index_type integrator_order = 5;
+
     //! Integrator.
-    integration::gauss_legendre_kronrod_integrator<scalar_type> integrator_{};
+    integration::gauss_legendre_integrator<scalar_type> integrator_{
+        integrator_order};
 
     //! Default tolerance of residual norm.
     static constexpr auto default_tol_residual_norm =
