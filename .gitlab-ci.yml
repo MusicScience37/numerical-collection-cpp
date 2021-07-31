@@ -105,12 +105,6 @@ static analysis:
         - build_static_analysis/clang_tidy/clang_tidy_junit.xml
     when: always
     expire_in: "3 mos"
-  allow_failure: true
-  only:
-    - develop
-    - master
-    - release
-    - tags
 
 .release-test-base:
   extends: .retry setting
