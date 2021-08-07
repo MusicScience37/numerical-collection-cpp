@@ -14,6 +14,7 @@ A collection of algorithms in numerical analysis implemented in C++.
     :maxdepth: 2
     :caption: Usage
 
+    how_to_use
     modules
     basic_design/index
     api/index
@@ -22,4 +23,5 @@ A collection of algorithms in numerical analysis implemented in C++.
     :maxdepth: 2
     :caption: Development
 
+    how_to_build_in_repository
     convention
