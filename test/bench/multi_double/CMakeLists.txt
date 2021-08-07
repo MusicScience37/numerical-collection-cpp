@@ -1,0 +1,2 @@
+add_executable(num_collect_bench_multi_double_two_prod two_prod_test.cpp)
+target_add_to_benchmark(num_collect_bench_multi_double_two_prod)
