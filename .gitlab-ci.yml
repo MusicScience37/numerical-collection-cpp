@@ -10,6 +10,7 @@ stages:
 
 variables:
   NUM_COLLECT_VERSION: "0.0.0"
+  CONAN_USER: "MusicScience37+numerical-collection-cpp"
 
 .retry setting:
   retry:
@@ -259,14 +260,31 @@ clang-11-conan:
     - sync pipenv
   image: musicscience37/clang-ci:clang11-v3.2.2
   variables:
-    CONAN_USER_CHANNEL: "MusicScience37+numerical-collection-cpp/testing"
+    CONAN_CHANNEL: "testing"
   script:
     - pipenv run conan profile new --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libstdc++11 default
     - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
-    - pipenv run conan export . ${CONAN_USER_CHANNEL}
-    - pipenv run conan install --build=missing num_collect/${NUM_COLLECT_VERSION}@${CONAN_USER_CHANNEL}
-    - pipenv run conan test test/conan_package num_collect/${NUM_COLLECT_VERSION}@${CONAN_USER_CHANNEL}
+    - pipenv run conan create --build missing --test-folder test/conan_package . ${CONAN_USER}/${CONAN_CHANNEL}
+
+clang-11-conan-dev:
+  extends: .retry setting
+  stage: Publish
+  needs:
+    - sync pipenv
+  dependencies:
+    - sync pipenv
+  image: musicscience37/clang-ci:clang11-v3.2.2
+  variables:
+    CONAN_CHANNEL: "testing"
+  script:
+    - pipenv run conan profile new --detect default
+    - pipenv run conan profile update settings.compiler.libcxx=libstdc++11 default
+    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan create --build missing --test-folder test/conan_package . ${CONAN_USER}/${CONAN_CHANNEL}
+    - pipenv run conan upload -r gitlab num_collect/${NUM_COLLECT_VERSION}@${CONAN_USER}/${CONAN_CHANNEL} --all
+  only:
+    - develop
 
 doc:
   extends: .retry setting
