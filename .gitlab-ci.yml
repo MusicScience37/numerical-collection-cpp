@@ -264,9 +264,7 @@ clang-11-conan:
     - pipenv run conan profile new --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libstdc++11 default
     - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
-    - pipenv run conan export . ${CONAN_USER_CHANNEL}
-    - pipenv run conan install --build=missing num_collect/${NUM_COLLECT_VERSION}@${CONAN_USER_CHANNEL}
-    - pipenv run conan test test/conan_package num_collect/${NUM_COLLECT_VERSION}@${CONAN_USER_CHANNEL}
+    - pipenv run conan create --build missing --test-folder test/conan_package . ${CONAN_USER_CHANNEL}
 
 doc:
   extends: .retry setting
