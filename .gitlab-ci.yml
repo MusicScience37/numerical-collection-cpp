@@ -276,7 +276,7 @@ clang-11-conan-dev:
     - sync pipenv
   image: musicscience37/clang-ci:clang11-v3.2.2
   variables:
-    CONAN_CHANNEL: "testing"
+    CONAN_CHANNEL: "dev"
   script:
     - pipenv run conan profile new --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libstdc++11 default
@@ -285,6 +285,13 @@ clang-11-conan-dev:
     - CONAN_LOGIN_USERNAME=ci_user CONAN_PASSWORD=${CI_JOB_TOKEN} pipenv run conan upload -r gitlab num_collect/${NUM_COLLECT_VERSION}@${CONAN_USER}/${CONAN_CHANNEL} --all
   only:
     - develop
+
+clang-11-conan-release:
+  extends: clang-11-conan-dev
+  variables:
+    CONAN_CHANNEL: "stable"
+  only:
+    - tags
 
 doc:
   extends: .retry setting
