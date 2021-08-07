@@ -286,6 +286,13 @@ clang-11-conan-dev:
   only:
     - develop
 
+clang-11-conan-release:
+  extends: clang-11-conan-dev
+  variables:
+    CONAN_CHANNEL: "stable"
+  only:
+    - tags
+
 doc:
   extends: .retry setting
   stage: Build Documentation
