@@ -39,4 +39,30 @@ Modules
         ode ..> roots
     }
 
-Names in this diagram are the names of namespaces.
+Names in this diagram are the names of namespaces,
+except for ``util`` which has no namespace
+and implemented in ``num_collect`` namespace.
+
+util
+    Utility common in this project.
+
+opt
+    Optimization algorithms.
+
+multi_double
+    Multiple precision numbers with double numbers.
+
+constants
+    ``constexpr`` variables and functions.
+
+roots
+    Root-finding algorithms.
+
+functions
+    Special functions.
+
+integration
+    Numerical integration.
+
+ode
+    Solvers of ordinary differential equations (ODE).
