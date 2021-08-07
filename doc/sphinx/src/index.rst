@@ -3,6 +3,9 @@ numerical-collection-cpp
 
 A collection of algorithms in numerical analysis implemented in C++.
 
+Developed at
+`https://gitlab.com/MusicScience37/numerical-collection-cpp <https://gitlab.com/MusicScience37/numerical-collection-cpp>`_.
+
 .. toctree::
     :maxdepth: 2
     :caption: About
