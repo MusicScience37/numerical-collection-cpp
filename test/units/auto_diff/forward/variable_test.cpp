@@ -19,6 +19,8 @@
  */
 #include "num_collect/auto_diff/forward/variable.h"
 
+#include <Eigen/Core>
+
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating.hpp>
@@ -359,5 +361,25 @@ TEMPLATE_TEST_CASE(
             eigen_approx(
                 (right.value() * left.diff() - left.value() * right.diff()) /
                 (right.value() * right.value())));
+    }
+}
+
+TEST_CASE("Eigen::Matrix<num_collect::auto_diff::forward::variable>") {
+    using diff_type = Eigen::Vector2d;
+    using variable_type =
+        num_collect::auto_diff::forward::variable<double, diff_type>;
+    using vector_type = Eigen::Matrix<variable_type, 2, 1>;
+    using num_collect::auto_diff::forward::create_diff_variable;
+
+    const auto vec =
+        vector_type(create_diff_variable<double, diff_type>(1.234, 2, 0),
+            create_diff_variable<double, diff_type>(2.345, 2, 1));
+
+    SECTION("prod") {
+        const variable_type res = vec.prod();
+        REQUIRE_THAT(res.value(),
+            Catch::Matchers::WithinRel(vec(0).value() * vec(1).value()));
+        REQUIRE_THAT(res.diff(),
+            eigen_approx(diff_type(vec(1).value(), vec(0).value())));
     }
 }

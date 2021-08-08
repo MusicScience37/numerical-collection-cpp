@@ -19,6 +19,8 @@
  */
 #pragma once
 
+#include <Eigen/Core>
+#include <limits>
 #include <type_traits>
 
 #include "num_collect/util/index_type.h"
@@ -56,17 +58,22 @@ public:
     /*!
      * \brief Construct.
      *
-     * \note This constructor can be used when diff_type is a type of scalars.
+     * \note This constructor doesn't initialize the differential coefficients
+     * if Diff is not a floating-point value type.
      *
      * \param[in] value Value.
      */
-    explicit variable(const value_type& value)
-        : variable(value, static_cast<diff_type>(0)) {}
+    explicit variable(const value_type& value) : value_(value) {
+        if constexpr (std::is_floating_point_v<diff_type>) {
+            diff_ = static_cast<diff_type>(0);
+        }
+    }
 
     /*!
      * \brief Construct.
      *
-     * \note This constructor can be used when diff_type is a type of scalars.
+     * \note This constructor doesn't initialize the differential coefficients
+     * if Diff is not a floating-point value type.
      */
     variable() : variable(static_cast<value_type>(0)) {}
 
@@ -416,3 +423,106 @@ template <typename Value, typename Diff>
 }
 
 }  // namespace num_collect::auto_diff::forward
+
+namespace Eigen {
+
+/*!
+ * \brief Specialization of Eigen::NumTraits for
+ * num_collect::auto_diff::forward::variable.
+ *
+ * See
+ * [Reference](https://eigen.tuxfamily.org/dox/structEigen_1_1NumTraits.html)
+ * for description.
+ *
+ * \tparam Value Type of values.
+ * \tparam Diff Type of differential coefficients.
+ */
+template <typename Value, typename Diff>
+struct NumTraits<num_collect::auto_diff::forward::variable<Value, Diff>> {
+    //! Type of the variable.
+    using Real = num_collect::auto_diff::forward::variable<Value, Diff>;
+
+    //! Type of the variable.
+    using NonInteger = Real;
+
+    //! Type of the variable.
+    using Literal = Real;
+
+    //! Type of the variable.
+    using Nested = Real;
+
+    enum {
+        IsInteger = 0,              // NOLINT
+        IsSigned = 1,               // NOLINT
+        IsComplex = 0,              // NOLINT
+        RequireInitialization = 1,  // NOLINT
+        ReadCost = 1,               // NOLINT
+        AddCost = 2,                // NOLINT
+        MulCost = 4                 // NOLINT
+    };
+
+    /*!
+     * \brief Get machine epsilon.
+     *
+     * \return Machine epsilon.
+     */
+    static constexpr auto epsilon() -> Real {
+        return NumTraits<Value>::epsilon();
+    }
+
+    /*!
+     * \brief Get dummy precision.
+     *
+     * \return Dummy precision.
+     */
+    static constexpr auto dummy_precision() -> Real {
+        return NumTraits<Value>::dummy_precision();
+    }
+
+    /*!
+     * \brief Get the highest value.
+     *
+     * \return Highest value.
+     */
+    static constexpr auto highest() -> Real {
+        return NumTraits<Value>::highest();
+    }
+
+    /*!
+     * \brief Get the lowest value.
+     *
+     * \return Lowest value.
+     */
+    static constexpr auto lowest() -> Real {
+        return NumTraits<Value>::lowest();
+    }
+
+    /*!
+     * \brief Get the number of digits.
+     *
+     * \return Number of digits.
+     */
+    static constexpr auto digits10() -> int {
+        return NumTraits<Value>::digits10();
+    }
+
+    /*!
+     * \brief Get the infinity.
+     *
+     * \return Infinity.
+     */
+    static constexpr auto infinity() -> Real {
+        return NumTraits<Value>::infinity();
+    }
+
+    /*!
+     * \brief Get the quiet NaN value.
+     *
+     * \return Quiet NaN value.
+     */
+    static constexpr auto quiet_NaN() -> Real {  // NOLINT
+        return NumTraits<Value>::quiet_NaN();
+    }
+};
+
+}  // namespace Eigen
