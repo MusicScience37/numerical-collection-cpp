@@ -141,3 +141,53 @@ TEMPLATE_TEST_CASE(
             Catch::Matchers::WithinRel(static_cast<TestType>(0)));
     }
 }
+
+// NOLINTNEXTLINE
+TEMPLATE_TEST_CASE(
+    "num_collect::auto_diff::forward::variable<Scalar> operators", "", float,
+    double) {
+    using variable_type = num_collect::auto_diff::forward::variable<TestType>;
+
+    SECTION("variable + variable") {
+        const auto var1 = variable_type(1.234, 2.345);
+        const auto var2 = variable_type(3.456, -4.567);
+        const auto var = var1 + var2;
+        REQUIRE_THAT(var.value(),
+            Catch::Matchers::WithinRel(var1.value() + var2.value()));
+        REQUIRE_THAT(
+            var.diff(), Catch::Matchers::WithinRel(var1.diff() + var2.diff()));
+    }
+
+    SECTION("variable - variable") {
+        const auto var1 = variable_type(1.234, 2.345);
+        const auto var2 = variable_type(3.456, -4.567);
+        const auto var = var1 - var2;
+        REQUIRE_THAT(var.value(),
+            Catch::Matchers::WithinRel(var1.value() - var2.value()));
+        REQUIRE_THAT(
+            var.diff(), Catch::Matchers::WithinRel(var1.diff() - var2.diff()));
+    }
+
+    SECTION("variable * variable") {
+        const auto var1 = variable_type(1.234, 2.345);
+        const auto var2 = variable_type(3.456, -4.567);
+        const auto var = var1 * var2;
+        REQUIRE_THAT(var.value(),
+            Catch::Matchers::WithinRel(var1.value() * var2.value()));
+        REQUIRE_THAT(var.diff(),
+            Catch::Matchers::WithinRel(
+                var2.value() * var1.diff() + var1.value() * var2.diff()));
+    }
+
+    SECTION("variable / variable") {
+        const auto var1 = variable_type(1.234, 2.345);
+        const auto var2 = variable_type(3.456, -4.567);
+        const auto var = var1 / var2;
+        REQUIRE_THAT(var.value(),
+            Catch::Matchers::WithinRel(var1.value() / var2.value()));
+        REQUIRE_THAT(var.diff(),
+            Catch::Matchers::WithinRel(
+                (var2.value() * var1.diff() - var1.value() * var2.diff()) /
+                (var2.value() * var2.value())));
+    }
+}

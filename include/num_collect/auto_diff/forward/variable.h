@@ -181,4 +181,64 @@ template <typename Value, typename Diff,
     return variable<Value, Diff>(value, diff);
 }
 
+/*!
+ * \brief Add two variables.
+ *
+ * \tparam Value Type of value.
+ * \tparam Diff Type of differential coefficients.
+ * \param[in] left Left-hand-side variable.
+ * \param[in] right Right-hand-side variable.
+ * \return Sum.
+ */
+template <typename Value, typename Diff>
+[[nodiscard]] inline auto operator+(const variable<Value, Diff>& left,
+    const variable<Value, Diff>& right) -> variable<Value, Diff> {
+    return variable<Value, Diff>(left) += right;
+}
+
+/*!
+ * \brief Subtract a variable from another variable.
+ *
+ * \tparam Value Type of value.
+ * \tparam Diff Type of differential coefficients.
+ * \param[in] left Left-hand-side variable.
+ * \param[in] right Right-hand-side variable.
+ * \return Difference.
+ */
+template <typename Value, typename Diff>
+[[nodiscard]] inline auto operator-(const variable<Value, Diff>& left,
+    const variable<Value, Diff>& right) -> variable<Value, Diff> {
+    return variable<Value, Diff>(left) -= right;
+}
+
+/*!
+ * \brief Multiply two variables.
+ *
+ * \tparam Value Type of value.
+ * \tparam Diff Type of differential coefficients.
+ * \param[in] left Left-hand-side variable.
+ * \param[in] right Right-hand-side variable.
+ * \return Product.
+ */
+template <typename Value, typename Diff>
+[[nodiscard]] inline auto operator*(const variable<Value, Diff>& left,
+    const variable<Value, Diff>& right) -> variable<Value, Diff> {
+    return variable<Value, Diff>(left) *= right;
+}
+
+/*!
+ * \brief Divide a variable by another variable.
+ *
+ * \tparam Value Type of value.
+ * \tparam Diff Type of differential coefficients.
+ * \param[in] left Left-hand-side variable.
+ * \param[in] right Right-hand-side variable.
+ * \return Quotient.
+ */
+template <typename Value, typename Diff>
+[[nodiscard]] inline auto operator/(const variable<Value, Diff>& left,
+    const variable<Value, Diff>& right) -> variable<Value, Diff> {
+    return variable<Value, Diff>(left) /= right;
+}
+
 }  // namespace num_collect::auto_diff::forward
