@@ -23,6 +23,8 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating.hpp>
 
+#include "eigen_approx.h"
+
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::auto_diff::forward::variable<Scalar>", "", float, double) {
@@ -308,5 +310,54 @@ TEMPLATE_TEST_CASE(
             var.value(), Catch::Matchers::WithinRel(var1.value() / var2));
         REQUIRE_THAT(
             var.diff(), Catch::Matchers::WithinRel(var1.diff() / var2));
+    }
+}
+
+// NOLINTNEXTLINE
+TEMPLATE_TEST_CASE(
+    "num_collect::auto_diff::forward::variable<Scalar, Vector> operations", "",
+    float, double) {
+    using diff_type = Eigen::Matrix<TestType, 2, 1>;
+    using variable_type =
+        num_collect::auto_diff::forward::variable<TestType, diff_type>;
+
+    const variable_type left =
+        num_collect::auto_diff::forward::create_diff_variable<TestType,
+            diff_type>(1.234, 2, 0);
+    const variable_type right =
+        num_collect::auto_diff::forward::create_diff_variable<TestType,
+            diff_type>(2.345, 2, 1);
+
+    SECTION("addition") {
+        const variable_type res = left + right;
+        REQUIRE_THAT(res.value(),
+            Catch::Matchers::WithinRel(left.value() + right.value()));
+        REQUIRE_THAT(res.diff(), eigen_approx(left.diff() + right.diff()));
+    }
+
+    SECTION("subtraction") {
+        const variable_type res = left - right;
+        REQUIRE_THAT(res.value(),
+            Catch::Matchers::WithinRel(left.value() - right.value()));
+        REQUIRE_THAT(res.diff(), eigen_approx(left.diff() - right.diff()));
+    }
+
+    SECTION("multiplication") {
+        const variable_type res = left * right;
+        REQUIRE_THAT(res.value(),
+            Catch::Matchers::WithinRel(left.value() * right.value()));
+        REQUIRE_THAT(res.diff(),
+            eigen_approx(
+                right.value() * left.diff() + left.value() * right.diff()));
+    }
+
+    SECTION("division") {
+        const variable_type res = left / right;
+        REQUIRE_THAT(res.value(),
+            Catch::Matchers::WithinRel(left.value() / right.value()));
+        REQUIRE_THAT(res.diff(),
+            eigen_approx(
+                (right.value() * left.diff() - left.value() * right.diff()) /
+                (right.value() * right.value())));
     }
 }
