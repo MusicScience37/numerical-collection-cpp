@@ -1,3 +1,4 @@
+#include "auto_diff/forward/variable_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "constants/cbrt_test.cpp"   // NOLINT(bugprone-suspicious-include)
 #include "constants/ceil_test.cpp"   // NOLINT(bugprone-suspicious-include)
 #include "constants/exp_test.cpp"    // NOLINT(bugprone-suspicious-include)

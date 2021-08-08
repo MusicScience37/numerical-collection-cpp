@@ -26,6 +26,12 @@ namespace num_collect {
         namespace impl {}
     }  // namespace multi_double
 
+    //! Namespace of automatic differentiation.
+    namespace auto_diff {
+        //! Namespace of forward-mode automatic differentiation.
+        namespace forward {}
+    }  // namespace auto_diff
+
     //! Namespace of optimization algorithms.
     namespace opt {
         //! Namespace of implementations.

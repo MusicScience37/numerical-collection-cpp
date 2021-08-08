@@ -8,6 +8,7 @@ API Reference
     base
     opt
     multi_double
+    auto_diff/index
     constants
     roots
     functions
