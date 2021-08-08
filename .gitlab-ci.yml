@@ -329,9 +329,8 @@ pages:
   dependencies:
     - doc
   script:
-    - mkdir public
-    - mv build_doc/doc/sphinx/html public/sphinx
-    - mv build_doc/doc/doxygen/html public/doxygen
+    - rm -rf public
+    - mv build_doc/doc/html public
   artifacts:
     paths:
       - public
