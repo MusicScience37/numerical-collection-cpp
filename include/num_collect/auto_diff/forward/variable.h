@@ -89,6 +89,13 @@ public:
     }
 
     /*!
+     * \brief Negate this variable.
+     *
+     * \return Negated variable.
+     */
+    auto operator-() const -> variable { return variable(-value_, -diff_); }
+
+    /*!
      * \brief Add a variable.
      *
      * \param[in] right Right-hand-side variable.
@@ -243,6 +250,36 @@ template <typename Value, typename Diff>
 }
 
 /*!
+ * \brief Add two variables.
+ *
+ * \tparam Value Type of value.
+ * \tparam Diff Type of differential coefficients.
+ * \param[in] left Left-hand-side variable.
+ * \param[in] right Right-hand-side variable.
+ * \return Sum.
+ */
+template <typename Value, typename Diff>
+[[nodiscard]] inline auto operator+(const Value& left,
+    const variable<Value, Diff>& right) -> variable<Value, Diff> {
+    return variable<Value, Diff>(right) += left;
+}
+
+/*!
+ * \brief Add two variables.
+ *
+ * \tparam Value Type of value.
+ * \tparam Diff Type of differential coefficients.
+ * \param[in] left Left-hand-side variable.
+ * \param[in] right Right-hand-side variable.
+ * \return Sum.
+ */
+template <typename Value, typename Diff>
+[[nodiscard]] inline auto operator+(const variable<Value, Diff>& left,
+    const Value& right) -> variable<Value, Diff> {
+    return variable<Value, Diff>(left) += right;
+}
+
+/*!
  * \brief Subtract a variable from another variable.
  *
  * \tparam Value Type of value.
@@ -254,6 +291,36 @@ template <typename Value, typename Diff>
 template <typename Value, typename Diff>
 [[nodiscard]] inline auto operator-(const variable<Value, Diff>& left,
     const variable<Value, Diff>& right) -> variable<Value, Diff> {
+    return variable<Value, Diff>(left) -= right;
+}
+
+/*!
+ * \brief Subtract a variable from another variable.
+ *
+ * \tparam Value Type of value.
+ * \tparam Diff Type of differential coefficients.
+ * \param[in] left Left-hand-side variable.
+ * \param[in] right Right-hand-side variable.
+ * \return Difference.
+ */
+template <typename Value, typename Diff>
+[[nodiscard]] inline auto operator-(const Value& left,
+    const variable<Value, Diff>& right) -> variable<Value, Diff> {
+    return (-right) += left;
+}
+
+/*!
+ * \brief Subtract a variable from another variable.
+ *
+ * \tparam Value Type of value.
+ * \tparam Diff Type of differential coefficients.
+ * \param[in] left Left-hand-side variable.
+ * \param[in] right Right-hand-side variable.
+ * \return Difference.
+ */
+template <typename Value, typename Diff>
+[[nodiscard]] inline auto operator-(const variable<Value, Diff>& left,
+    const Value& right) -> variable<Value, Diff> {
     return variable<Value, Diff>(left) -= right;
 }
 
@@ -273,6 +340,36 @@ template <typename Value, typename Diff>
 }
 
 /*!
+ * \brief Multiply two variables.
+ *
+ * \tparam Value Type of value.
+ * \tparam Diff Type of differential coefficients.
+ * \param[in] left Left-hand-side variable.
+ * \param[in] right Right-hand-side variable.
+ * \return Product.
+ */
+template <typename Value, typename Diff>
+[[nodiscard]] inline auto operator*(const Value& left,
+    const variable<Value, Diff>& right) -> variable<Value, Diff> {
+    return variable<Value, Diff>(right) *= left;
+}
+
+/*!
+ * \brief Multiply two variables.
+ *
+ * \tparam Value Type of value.
+ * \tparam Diff Type of differential coefficients.
+ * \param[in] left Left-hand-side variable.
+ * \param[in] right Right-hand-side variable.
+ * \return Product.
+ */
+template <typename Value, typename Diff>
+[[nodiscard]] inline auto operator*(const variable<Value, Diff>& left,
+    const Value& right) -> variable<Value, Diff> {
+    return variable<Value, Diff>(left) *= right;
+}
+
+/*!
  * \brief Divide a variable by another variable.
  *
  * \tparam Value Type of value.
@@ -284,6 +381,37 @@ template <typename Value, typename Diff>
 template <typename Value, typename Diff>
 [[nodiscard]] inline auto operator/(const variable<Value, Diff>& left,
     const variable<Value, Diff>& right) -> variable<Value, Diff> {
+    return variable<Value, Diff>(left) /= right;
+}
+
+/*!
+ * \brief Divide a variable by another variable.
+ *
+ * \tparam Value Type of value.
+ * \tparam Diff Type of differential coefficients.
+ * \param[in] left Left-hand-side variable.
+ * \param[in] right Right-hand-side variable.
+ * \return Quotient.
+ */
+template <typename Value, typename Diff>
+[[nodiscard]] inline auto operator/(const Value& left,
+    const variable<Value, Diff>& right) -> variable<Value, Diff> {
+    return variable<Value, Diff>(left / right.value(),
+        -left / (right.value() * right.value()) * right.diff());
+}
+
+/*!
+ * \brief Divide a variable by another variable.
+ *
+ * \tparam Value Type of value.
+ * \tparam Diff Type of differential coefficients.
+ * \param[in] left Left-hand-side variable.
+ * \param[in] right Right-hand-side variable.
+ * \return Quotient.
+ */
+template <typename Value, typename Diff>
+[[nodiscard]] inline auto operator/(const variable<Value, Diff>& left,
+    const Value& right) -> variable<Value, Diff> {
     return variable<Value, Diff>(left) /= right;
 }
 
