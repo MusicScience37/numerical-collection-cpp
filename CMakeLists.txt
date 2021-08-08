@@ -8,7 +8,7 @@ endif()
 
 project(
     num_collect
-    VERSION 0.0.0
+    VERSION 0.1.0
     DESCRIPTION
         "A collection of algorithms in numerical analysis implemented in C++"
     LANGUAGES CXX)
