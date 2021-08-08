@@ -60,8 +60,6 @@ TEMPLATE_TEST_CASE(
 TEMPLATE_TEST_CASE(
     "num_collect::auto_diff::forward::create_diff_variable<Scalar>", "", float,
     double) {
-    using variable_type = num_collect::auto_diff::forward::variable<TestType>;
-
     SECTION("create a variable") {
         constexpr auto value = static_cast<TestType>(1.234);
         const auto var =
@@ -79,8 +77,6 @@ TEMPLATE_TEST_CASE(
     float, double) {
     SECTION("create a variable with Eigen::VectorXx type") {
         using diff_type = Eigen::Matrix<TestType, Eigen::Dynamic, 1>;
-        using variable_type =
-            num_collect::auto_diff::forward::variable<TestType, diff_type>;
 
         constexpr auto value = static_cast<TestType>(1.234);
         constexpr num_collect::index_type size = 3;
