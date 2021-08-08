@@ -101,6 +101,17 @@ public:
     }
 
     /*!
+     * \brief Add a value.
+     *
+     * \param[in] right Right-hand-side value.
+     * \return This.
+     */
+    auto operator+=(const value_type& right) -> variable& {
+        value_ += right;
+        return *this;
+    }
+
+    /*!
      * \brief Subtract a variable.
      *
      * \param[in] right Right-hand-side variable.
@@ -109,6 +120,17 @@ public:
     auto operator-=(const variable& right) -> variable& {
         value_ -= right.value_;
         diff_ -= right.diff_;
+        return *this;
+    }
+
+    /*!
+     * \brief Subtract a value.
+     *
+     * \param[in] right Right-hand-side value.
+     * \return This.
+     */
+    auto operator-=(const value_type& right) -> variable& {
+        value_ -= right;
         return *this;
     }
 
@@ -125,6 +147,18 @@ public:
     }
 
     /*!
+     * \brief Multiply a value.
+     *
+     * \param[in] right Right-hand-side value.
+     * \return This.
+     */
+    auto operator*=(const value_type& right) -> variable& {
+        diff_ *= right;
+        value_ *= right;
+        return *this;
+    }
+
+    /*!
      * \brief Divide by a variable.
      *
      * \param[in] right Right-hand-side variable.
@@ -133,6 +167,18 @@ public:
     auto operator/=(const variable& right) -> variable& {
         value_ /= right.value_;
         diff_ = (diff_ - right.diff_ * value_) / right.value_;
+        return *this;
+    }
+
+    /*!
+     * \brief Divide by a value.
+     *
+     * \param[in] right Right-hand-side value.
+     * \return This.
+     */
+    auto operator/=(const value_type& right) -> variable& {
+        value_ /= right;
+        diff_ /= right;
         return *this;
     }
 

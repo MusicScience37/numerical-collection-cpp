@@ -66,6 +66,16 @@ TEMPLATE_TEST_CASE(
             var.diff(), Catch::Matchers::WithinRel(var1.diff() + var2.diff()));
     }
 
+    SECTION("add a value") {
+        const auto var1 = variable_type(1.234, 2.345);
+        const auto var2 = static_cast<TestType>(3.456);
+        variable_type var = var1;
+        var += var2;
+        REQUIRE_THAT(
+            var.value(), Catch::Matchers::WithinRel(var1.value() + var2));
+        REQUIRE_THAT(var.diff(), Catch::Matchers::WithinRel(var1.diff()));
+    }
+
     SECTION("subtract a variable") {
         const auto var1 = variable_type(1.234, 2.345);
         const auto var2 = variable_type(3.456, -4.567);
@@ -75,6 +85,16 @@ TEMPLATE_TEST_CASE(
             Catch::Matchers::WithinRel(var1.value() - var2.value()));
         REQUIRE_THAT(
             var.diff(), Catch::Matchers::WithinRel(var1.diff() - var2.diff()));
+    }
+
+    SECTION("subtract a value") {
+        const auto var1 = variable_type(1.234, 2.345);
+        const auto var2 = static_cast<TestType>(3.456);
+        variable_type var = var1;
+        var -= var2;
+        REQUIRE_THAT(
+            var.value(), Catch::Matchers::WithinRel(var1.value() - var2));
+        REQUIRE_THAT(var.diff(), Catch::Matchers::WithinRel(var1.diff()));
     }
 
     SECTION("multiply a variable") {
@@ -89,6 +109,17 @@ TEMPLATE_TEST_CASE(
                 var2.value() * var1.diff() + var1.value() * var2.diff()));
     }
 
+    SECTION("multiply a value") {
+        const auto var1 = variable_type(1.234, 2.345);
+        const auto var2 = static_cast<TestType>(3.456);
+        variable_type var = var1;
+        var *= var2;
+        REQUIRE_THAT(
+            var.value(), Catch::Matchers::WithinRel(var1.value() * var2));
+        REQUIRE_THAT(
+            var.diff(), Catch::Matchers::WithinRel(var2 * var1.diff()));
+    }
+
     SECTION("divide by a variable") {
         const auto var1 = variable_type(1.234, 2.345);
         const auto var2 = variable_type(3.456, -4.567);
@@ -100,6 +131,17 @@ TEMPLATE_TEST_CASE(
             Catch::Matchers::WithinRel(
                 (var2.value() * var1.diff() - var1.value() * var2.diff()) /
                 (var2.value() * var2.value())));
+    }
+
+    SECTION("divide by a value") {
+        const auto var1 = variable_type(1.234, 2.345);
+        const auto var2 = static_cast<TestType>(3.456);
+        variable_type var = var1;
+        var /= var2;
+        REQUIRE_THAT(
+            var.value(), Catch::Matchers::WithinRel(var1.value() / var2));
+        REQUIRE_THAT(
+            var.diff(), Catch::Matchers::WithinRel(var1.diff() / var2));
     }
 }
 
