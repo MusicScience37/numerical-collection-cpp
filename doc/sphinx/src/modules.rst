@@ -14,9 +14,12 @@ Modules
         util ..> Eigen
 
         component auto_diff
+        auto_diff ..> util
+        auto_diff ..> Eigen
 
         component opt
         opt ..> util
+        opt ..> Eigen
 
         component multi_double
 
@@ -24,6 +27,7 @@ Modules
 
         component roots
         roots ..> util
+        roots ..> Eigen
 
         component functions
         functions ..> util
@@ -39,6 +43,7 @@ Modules
         ode ..> util
         ode ..> constants
         ode ..> roots
+        ode ..> Eigen
     }
 
 Names in this diagram are the names of namespaces,
