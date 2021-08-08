@@ -124,6 +124,18 @@ public:
         return *this;
     }
 
+    /*!
+     * \brief Divide by a variable.
+     *
+     * \param[in] right Right-hand-side variable.
+     * \return This.
+     */
+    auto operator/=(const variable& right) -> variable& {
+        value_ /= right.value_;
+        diff_ = (diff_ - right.diff_ * value_) / right.value_;
+        return *this;
+    }
+
 private:
     //! Value.
     value_type value_;
