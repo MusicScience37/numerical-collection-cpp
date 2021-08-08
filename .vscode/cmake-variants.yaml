@@ -48,14 +48,12 @@ docs:
       long: Build documentation
       settings:
         NUM_COLLECT_BUILD_DOC: ON
-        NUM_COLLECT_BUILD_DOC_DOXYGEN: ON
         NUM_COLLECT_BUILD_DOC_SPHINX: ON
     doxygen only:
       short: DoxOnly
       long: Build documentation of doxygen only
       settings:
         NUM_COLLECT_BUILD_DOC: ON
-        NUM_COLLECT_BUILD_DOC_DOXYGEN: ON
         NUM_COLLECT_BUILD_DOC_SPHINX: OFF
     docs off:
       short: DocsOFF
