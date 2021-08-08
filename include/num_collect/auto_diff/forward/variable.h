@@ -112,6 +112,18 @@ public:
         return *this;
     }
 
+    /*!
+     * \brief Multiply a variable.
+     *
+     * \param[in] right Right-hand-side variable.
+     * \return This.
+     */
+    auto operator*=(const variable& right) -> variable& {
+        diff_ = right.value_ * diff_ + value_ * right.diff_;
+        value_ *= right.value_;
+        return *this;
+    }
+
 private:
     //! Value.
     value_type value_;
