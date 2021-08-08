@@ -28,7 +28,8 @@
 namespace num_collect::auto_diff::forward {
 
 /*!
- * \brief Class of variables in forward-mode automatic differentiation.
+ * \brief Class of variables in forward-mode automatic differentiation
+ *        \cite Kubota1998.
  *
  * \tparam Value Type of values.
  * \tparam Diff Type of differential coefficients
