@@ -1,5 +1,6 @@
 add_subdirectory(util)
 add_subdirectory(multi_double)
+add_subdirectory(auto_diff)
 add_subdirectory(opt)
 add_subdirectory(constants)
 add_subdirectory(roots)
