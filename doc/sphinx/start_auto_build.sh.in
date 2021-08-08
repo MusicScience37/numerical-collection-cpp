@@ -2,8 +2,7 @@
 
 cd ${SRPC_SOURCE_DIR}
 pipenv run sphinx-autobuild \
-    ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_BINARY_DIR}/html_auto \
+    ${CMAKE_CURRENT_SOURCE_DIR}/src ${NUM_COLLECT_HTML_ROOT} \
     -D plantuml="java -jar ${PLANTUML_JAR_PATH}" \
     -D release=${PROJECT_VERSION} \
-    -D breathe_projects.num_collect="${CMAKE_CURRENT_BINARY_DIR}/xml" \
     --port 8888

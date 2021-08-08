@@ -8,7 +8,6 @@ conan = "*"
 
 [dev-packages]
 autopep8 = "*"
-breathe = "*"
 cmake-format = "*"
 doc8 = "*"
 myst-parser = "*"
