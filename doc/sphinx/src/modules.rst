@@ -13,6 +13,8 @@ Modules
         util ..> fmt
         util ..> Eigen
 
+        component auto_diff
+
         component opt
         opt ..> util
 
@@ -45,6 +47,9 @@ and implemented in ``num_collect`` namespace.
 
 util
     Utility common in this project.
+
+auto_diff
+    Automatic differentiation.
 
 opt
     Optimization algorithms.
