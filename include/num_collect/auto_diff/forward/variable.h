@@ -88,6 +88,30 @@ public:
         return diff_;
     }
 
+    /*!
+     * \brief Add a variable.
+     *
+     * \param[in] right Right-hand-side variable.
+     * \return This.
+     */
+    auto operator+=(const variable& right) -> variable& {
+        value_ += right.value_;
+        diff_ += right.diff_;
+        return *this;
+    }
+
+    /*!
+     * \brief Subtract a variable.
+     *
+     * \param[in] right Right-hand-side variable.
+     * \return This.
+     */
+    auto operator-=(const variable& right) -> variable& {
+        value_ -= right.value_;
+        diff_ -= right.diff_;
+        return *this;
+    }
+
 private:
     //! Value.
     value_type value_;

@@ -54,6 +54,28 @@ TEMPLATE_TEST_CASE(
         REQUIRE_THAT(var.value(), Catch::Matchers::WithinRel(value));
         REQUIRE_THAT(var.diff(), Catch::Matchers::WithinRel(diff));
     }
+
+    SECTION("add a variable") {
+        const auto var1 = variable_type(1.234, 2.345);
+        const auto var2 = variable_type(3.456, -4.567);
+        variable_type var = var1;
+        var += var2;
+        REQUIRE_THAT(var.value(),
+            Catch::Matchers::WithinRel(var1.value() + var2.value()));
+        REQUIRE_THAT(
+            var.diff(), Catch::Matchers::WithinRel(var1.diff() + var2.diff()));
+    }
+
+    SECTION("subtract a variable") {
+        const auto var1 = variable_type(1.234, 2.345);
+        const auto var2 = variable_type(3.456, -4.567);
+        variable_type var = var1;
+        var -= var2;
+        REQUIRE_THAT(var.value(),
+            Catch::Matchers::WithinRel(var1.value() - var2.value()));
+        REQUIRE_THAT(
+            var.diff(), Catch::Matchers::WithinRel(var1.diff() - var2.diff()));
+    }
 }
 
 // NOLINTNEXTLINE
