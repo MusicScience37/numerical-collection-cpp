@@ -121,4 +121,18 @@ private:
     std::vector<child_node<scalar_type>> children_;
 };
 
+/*!
+ * \brief Create a node.
+ *
+ * \tparam Scalar Type of scalars.
+ * \param[in] children Child nodes.
+ * \return Created node.
+ */
+template <typename Scalar>
+[[nodiscard]] inline auto create_node(std::vector<child_node<Scalar>> children =
+                                          std::vector<child_node<Scalar>>())
+    -> node_ptr<Scalar> {
+    return std::make_shared<node<Scalar>>(children);
+}
+
 }  // namespace num_collect::auto_diff::backward::graph

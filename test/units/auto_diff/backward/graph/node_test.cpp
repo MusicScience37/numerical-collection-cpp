@@ -23,17 +23,17 @@
 
 TEST_CASE("num_collect::auto_diff::backward::graph::node") {
     using num_collect::auto_diff::backward::graph::child_node;
+    using num_collect::auto_diff::backward::graph::create_node;
     using num_collect::auto_diff::backward::graph::node;
 
     SECTION("construct") {
-        const auto n1 = std::make_shared<node<double>>();
-        const auto n2 = std::make_shared<node<double>>();
+        const auto n1 = create_node<double>();
+        const auto n2 = create_node<double>();
         constexpr auto c1 = 1.234;
         constexpr auto c2 = 2.345;
 
-        const auto n =
-            std::make_shared<node<double>>(std::vector<child_node<double>>{
-                child_node<double>(n1, c1), child_node<double>(n2, c2)});
+        const auto n = create_node(std::vector<child_node<double>>{
+            child_node<double>(n1, c1), child_node<double>(n2, c2)});
 
         REQUIRE(n->children().size() == 2);
         REQUIRE(n->children()[0].node() == n1);
