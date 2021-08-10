@@ -39,8 +39,7 @@ TEST_CASE("num_collect::auto_diff::backward::graph::node_differentiator") {
     SECTION("compute two nodes") {
         const auto n1 = create_node<double>();
         constexpr double c12 = 1.234;
-        const auto n2 = create_node(
-            std::vector<child_node<double>>{child_node<double>(n1, c12)});
+        const auto n2 = create_node<double>(n1, c12);
 
         auto diff = node_differentiator<double>();
         REQUIRE_NOTHROW(diff.compute(n2));
@@ -53,8 +52,7 @@ TEST_CASE("num_collect::auto_diff::backward::graph::node_differentiator") {
         const auto n2 = create_node<double>();
         constexpr double c13 = 1.234;
         constexpr double c23 = 2.468;
-        const auto n3 = create_node(std::vector<child_node<double>>{
-            child_node<double>(n1, c13), child_node<double>(n2, c23)});
+        const auto n3 = create_node<double>(n1, c13, n2, c23);
 
         auto diff = node_differentiator<double>();
         REQUIRE_NOTHROW(diff.compute(n3));
@@ -65,11 +63,9 @@ TEST_CASE("num_collect::auto_diff::backward::graph::node_differentiator") {
     SECTION("compute three series nodes") {
         const auto n1 = create_node<double>();
         constexpr double c12 = 1.234;
-        const auto n2 = create_node<double>(
-            std::vector<child_node<double>>{child_node<double>(n1, c12)});
+        const auto n2 = create_node<double>(n1, c12);
         constexpr double c23 = 2.468;
-        const auto n3 = create_node(
-            std::vector<child_node<double>>{child_node<double>(n2, c23)});
+        const auto n3 = create_node<double>(n2, c23);
 
         auto diff = node_differentiator<double>();
         REQUIRE_NOTHROW(diff.compute(n3));

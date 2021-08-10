@@ -20,6 +20,7 @@
 #pragma once
 
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "num_collect/util/assert.h"
@@ -121,6 +122,8 @@ private:
     std::vector<child_node<scalar_type>> children_;
 };
 
+namespace impl {
+
 /*!
  * \brief Create a node.
  *
@@ -129,10 +132,45 @@ private:
  * \return Created node.
  */
 template <typename Scalar>
-[[nodiscard]] inline auto create_node(std::vector<child_node<Scalar>> children =
-                                          std::vector<child_node<Scalar>>())
-    -> node_ptr<Scalar> {
-    return std::make_shared<node<Scalar>>(children);
+[[nodiscard]] inline auto create_node_impl(
+    std::vector<child_node<Scalar>>& children) -> node_ptr<Scalar> {
+    return std::make_shared<node<Scalar>>(std::move(children));
+}
+
+/*!
+ * \brief Create a node.
+ *
+ * \tparam Scalar Type of scalars.
+ * \tparam Args Types of remaining arguments.
+ * \param[in] children Child nodes.
+ * \param[in] node Child node.
+ * \param[in] sensitivity Partial differential coefficient of the parent node by
+ * the child node.
+ * \param[in] args Remaining arguments.
+ * \return Created node.
+ */
+template <typename Scalar, typename... Args>
+[[nodiscard]] inline auto create_node_impl(
+    std::vector<child_node<Scalar>>& children, node_ptr<Scalar> node,
+    const Scalar& sensitivity, Args&&... args) -> node_ptr<Scalar> {
+    children.emplace_back(std::move(node), sensitivity);
+    return create_node_impl(children, std::forward<Args>(args)...);
+}
+
+}  // namespace impl
+
+/*!
+ * \brief Create a node.
+ *
+ * \tparam Scalar Type of scalars.
+ * \tparam Args Types of arguments.
+ * \param[in] args Arguments.
+ * \return Created node.
+ */
+template <typename Scalar, typename... Args>
+[[nodiscard]] inline auto create_node(Args&&... args) -> node_ptr<Scalar> {
+    std::vector<child_node<Scalar>> children;
+    return impl::create_node_impl(children, std::forward<Args>(args)...);
 }
 
 }  // namespace num_collect::auto_diff::backward::graph

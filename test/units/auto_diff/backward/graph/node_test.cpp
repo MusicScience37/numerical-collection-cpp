@@ -32,8 +32,7 @@ TEST_CASE("num_collect::auto_diff::backward::graph::node") {
         constexpr auto c1 = 1.234;
         constexpr auto c2 = 2.345;
 
-        const auto n = create_node(std::vector<child_node<double>>{
-            child_node<double>(n1, c1), child_node<double>(n2, c2)});
+        const auto n = create_node<double>(n1, c1, n2, c2);
 
         REQUIRE(n->children().size() == 2);
         REQUIRE(n->children()[0].node() == n1);
