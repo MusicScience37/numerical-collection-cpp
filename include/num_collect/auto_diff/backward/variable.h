@@ -102,6 +102,26 @@ public:
         return node_;
     }
 
+    /*!
+     * \brief Add a variable to this variable.
+     *
+     * \param[in] right Right-hand-side variable.
+     * \return This.
+     */
+    auto operator+=(const variable& right) -> variable& {
+        if (node_) {
+            if (right.node_) {
+                node_ = graph::create_node<scalar_type>(node_,
+                    static_cast<scalar_type>(1), right.node_,
+                    static_cast<scalar_type>(1));
+            }
+        } else {
+            node_ = right.node_;
+        }
+        value_ += right.value_;
+        return *this;
+    }
+
 private:
     //! Value.
     scalar_type value_;
@@ -109,5 +129,47 @@ private:
     //! Node.
     graph::node_ptr<scalar_type> node_;
 };
+
+/*!
+ * \brief Add two variables.
+ *
+ * \tparam Scalar Type of scalars.
+ * \param[in] left Left-hand-side variable.
+ * \param[in] right Right-hand-side variable.
+ * \return Sum.
+ */
+template <typename Scalar>
+[[nodiscard]] inline auto operator+(const variable<Scalar>& left,
+    const variable<Scalar>& right) -> variable<Scalar> {
+    return variable<Scalar>(left) += right;
+}
+
+/*!
+ * \brief Add two variables.
+ *
+ * \tparam Scalar Type of scalars.
+ * \param[in] left Left-hand-side variable.
+ * \param[in] right Right-hand-side variable.
+ * \return Sum.
+ */
+template <typename Scalar>
+[[nodiscard]] inline auto operator+(
+    const Scalar& left, const variable<Scalar>& right) -> variable<Scalar> {
+    return variable<Scalar>(left, constant_tag()) += right;
+}
+
+/*!
+ * \brief Add two variables.
+ *
+ * \tparam Scalar Type of scalars.
+ * \param[in] left Left-hand-side variable.
+ * \param[in] right Right-hand-side variable.
+ * \return Sum.
+ */
+template <typename Scalar>
+[[nodiscard]] inline auto operator+(
+    const variable<Scalar>& left, const Scalar& right) -> variable<Scalar> {
+    return variable<Scalar>(left) += variable<Scalar>(right, constant_tag());
+}
 
 }  // namespace num_collect::auto_diff::backward
