@@ -17,7 +17,6 @@ Backward-Mode Automatic Differentiation
 
         class node<Scalar> {
             + using scalar_type = Scalar
-            + value() : scalar_type
             + children() : vector<child_node>
         }
         node o-- child_node
@@ -32,6 +31,7 @@ Backward-Mode Automatic Differentiation
 
     class variable<Scalar> {
         + using scalar_type = Scalar
+        + value() : scalar_type
         + node() : shared_ptr<node>
     }
     variable o-- node
