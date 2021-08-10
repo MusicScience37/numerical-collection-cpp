@@ -72,4 +72,33 @@ TEST_CASE("num_collect::auto_diff::backward::graph::node_differentiator") {
         REQUIRE_THAT(diff.coeff(n1), Catch::Matchers::WithinRel(c12 * c23));
         REQUIRE_THAT(diff.coeff(n2), Catch::Matchers::WithinRel(c23));
     }
+
+    SECTION("compute four nodes in a diamond") {
+        const auto n1 = create_node<double>();
+        constexpr double c12 = 1.234;
+        const auto n2 = create_node<double>(n1, c12);
+        constexpr double c13 = 2.345;
+        const auto n3 = create_node<double>(n1, c13);
+        constexpr double c24 = 3.456;
+        constexpr double c34 = 4.567;
+        const auto n4 = create_node<double>(n2, c24, n3, c34);
+
+        auto diff = node_differentiator<double>();
+        REQUIRE_NOTHROW(diff.compute(n4));
+        REQUIRE_THAT(
+            diff.coeff(n1), Catch::Matchers::WithinRel(c12 * c24 + c13 * c34));
+        REQUIRE_THAT(diff.coeff(n2), Catch::Matchers::WithinRel(c24));
+        REQUIRE_THAT(diff.coeff(n3), Catch::Matchers::WithinRel(c34));
+        REQUIRE_THAT(diff.coeff(n4), Catch::Matchers::WithinRel(1.0));
+    }
+
+    SECTION("compute two nodes separated") {
+        const auto n1 = create_node<double>();
+        const auto n2 = create_node<double>();
+
+        auto diff = node_differentiator<double>();
+        REQUIRE_NOTHROW(diff.compute(n2));
+        REQUIRE_THAT(diff.coeff(n1), Catch::Matchers::WithinRel(0.0));
+        REQUIRE_THAT(diff.coeff(n2), Catch::Matchers::WithinRel(1.0));
+    }
 }
