@@ -1,5 +1,6 @@
 #include "auto_diff/backward/graph/node_differentiator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "auto_diff/backward/graph/node_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "auto_diff/backward/variable_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "auto_diff/forward/variable_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "constants/cbrt_test.cpp"   // NOLINT(bugprone-suspicious-include)
 #include "constants/ceil_test.cpp"   // NOLINT(bugprone-suspicious-include)

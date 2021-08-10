@@ -19,4 +19,95 @@
  */
 #pragma once
 
-namespace num_collect::auto_diff::backward {}
+#include "num_collect/auto_diff/backward/graph/node.h"
+
+namespace num_collect::auto_diff::backward {
+
+/*!
+ * \brief Tag class to specify constants.
+ */
+struct constant_tag {};
+
+/*!
+ * \brief Tag class to specify variables.
+ */
+struct variable_tag {};
+
+/*!
+ * \brief Class of variables in backward-mode automatic differentiation
+ *        \cite Kubota1998.
+ *
+ * \tparam Scalar Type of scalars.
+ */
+template <typename Scalar>
+class variable {
+public:
+    //! Type of scalars.
+    using scalar_type = Scalar;
+
+    /*!
+     * \brief Construct.
+     *
+     * \param[in] value Value.
+     * \param[in] node Node.
+     */
+    variable(const scalar_type& value, graph::node_ptr<scalar_type> node)
+        : value_(value), node_(std::move(node)) {}
+
+    /*!
+     * \brief Construct constants.
+     *
+     * \param[in] value Value.
+     */
+    variable(const scalar_type& value, const constant_tag& /*tag*/)
+        : variable(value, nullptr) {}
+
+    /*!
+     * \brief Construct variables.
+     *
+     * \param[in] value Value.
+     */
+    variable(const scalar_type& value, const variable_tag& /*tag*/)
+        : variable(value, graph::create_node<scalar_type>()) {}
+
+    /*!
+     * \brief Construct constants.
+     *
+     * \param[in] value Value.
+     */
+    explicit variable(const scalar_type& value)
+        : variable(value, constant_tag()) {}
+
+    /*!
+     * \brief Construct.
+     */
+    variable() : variable(static_cast<scalar_type>(0)) {}
+
+    /*!
+     * \brief Get the value.
+     *
+     * \return Value.
+     */
+    [[nodiscard]] auto value() const noexcept -> const scalar_type& {
+        return value_;
+    }
+
+    /*!
+     * \brief Get the node.
+     *
+     * \return Node.
+     */
+    [[nodiscard]] auto node() const noexcept
+        -> const graph::node_ptr<scalar_type>& {
+        return node_;
+    }
+
+private:
+    //! Value.
+    scalar_type value_;
+
+    //! Node.
+    graph::node_ptr<scalar_type> node_;
+};
+
+}  // namespace num_collect::auto_diff::backward

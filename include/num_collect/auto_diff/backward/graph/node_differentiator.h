@@ -29,7 +29,8 @@
 namespace num_collect::auto_diff::backward::graph {
 
 /*!
- * \brief Class to compute differential coefficients for nodes.
+ * \brief Class to compute differential coefficients for nodes in backward-mode
+ * automatic differentiation \cite Kubota1998.
  *
  * \tparam Scalar Type of scalars.
  */
