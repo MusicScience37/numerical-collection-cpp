@@ -69,20 +69,6 @@ public:
         return static_cast<scalar_type>(0);
     }
 
-    /*!
-     * \brief Get the list of processed nodes.
-     *
-     * \return List of processed nodes.
-     */
-    auto processed_nodes() const -> std::vector<node_ptr<scalar_type>> {
-        std::vector<node_ptr<scalar_type>> nodes;
-        nodes.reserve(info_dict_.size());
-        for (const auto& info_pair : info_dict_) {
-            nodes.push_back(info_pair.first);
-        }
-        return nodes;
-    }
-
 private:
     //! Struct to save internal information of nodes.
     struct node_info {
