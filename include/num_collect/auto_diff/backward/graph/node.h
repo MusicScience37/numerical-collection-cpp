@@ -57,7 +57,9 @@ public:
      * node by the child node.
      */
     child_node(node_ptr<scalar_type> node, const scalar_type& sensitivity)
-        : node_(std::move(node)), sensitivity_(sensitivity) {}
+        : node_(std::move(node)), sensitivity_(sensitivity) {
+        NUM_COLLECT_ASSERT(node_);
+    }
 
     /*!
      * \brief Get the child node.

@@ -23,6 +23,7 @@
 #include <unordered_map>
 
 #include "num_collect/auto_diff/backward/graph/node.h"
+#include "num_collect/util/assert.h"
 #include "num_collect/util/index_type.h"
 
 namespace num_collect::auto_diff::backward::graph {
@@ -49,6 +50,7 @@ public:
      * \param[in] top_node Top node to differentiate.
      */
     void compute(const node_ptr<scalar_type>& top_node) {
+        NUM_COLLECT_ASSERT(top_node);
         list_nodes(top_node);
         compute_coeffs(top_node);
     }
@@ -60,6 +62,7 @@ public:
      * \return Differential coefficient of the node.
      */
     [[nodiscard]] auto coeff(const node_ptr<scalar_type>& node) const {
+        NUM_COLLECT_DEBUG_ASSERT(node);
         if (const auto iter = info_dict_.find(node); iter != info_dict_.end()) {
             return iter->second.diff;
         }
