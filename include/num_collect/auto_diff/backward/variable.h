@@ -75,7 +75,7 @@ public:
      *
      * \param[in] value Value.
      */
-    explicit variable(const scalar_type& value)
+    variable(const scalar_type& value)  // NOLINT: implicit convertion required
         : variable(value, constant_tag()) {}
 
     /*!
@@ -169,7 +169,7 @@ template <typename Scalar>
 template <typename Scalar>
 [[nodiscard]] inline auto operator+(
     const variable<Scalar>& left, const Scalar& right) -> variable<Scalar> {
-    return variable<Scalar>(left) += variable<Scalar>(right, constant_tag());
+    return variable<Scalar>(left) += right;
 }
 
 }  // namespace num_collect::auto_diff::backward
