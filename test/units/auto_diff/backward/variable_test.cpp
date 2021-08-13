@@ -213,3 +213,77 @@ TEMPLATE_TEST_CASE(
         REQUIRE(res.node() == nullptr);
     }
 }
+
+// NOLINTNEXTLINE
+TEMPLATE_TEST_CASE(
+    "num_collect::auto_diff::backward::operator*", "", float, double) {
+    using scalar_type = TestType;
+    using variable_type =
+        num_collect::auto_diff::backward::variable<scalar_type>;
+    using num_collect::auto_diff::backward::constant_tag;
+    using num_collect::auto_diff::backward::variable_tag;
+
+    SECTION("variable * variable") {
+        const auto left =
+            variable_type(static_cast<scalar_type>(1.234), variable_tag());
+        const auto right =
+            variable_type(static_cast<scalar_type>(2.345), variable_tag());
+
+        const variable_type res = left * right;
+
+        REQUIRE_THAT(res.value(),
+            Catch::Matchers::WithinRel(left.value() * right.value()));
+        REQUIRE(res.node());
+        REQUIRE(res.node()->children().size() == 2);
+        REQUIRE(res.node()->children()[0].node() == left.node());
+        REQUIRE(res.node()->children()[1].node() == right.node());
+        REQUIRE_THAT(res.node()->children()[0].sensitivity(),
+            Catch::Matchers::WithinRel(right.value()));
+        REQUIRE_THAT(res.node()->children()[1].sensitivity(),
+            Catch::Matchers::WithinRel(left.value()));
+    }
+
+    SECTION("scalar * variable") {
+        const auto left = static_cast<scalar_type>(1.234);
+        const auto right =
+            variable_type(static_cast<scalar_type>(2.345), variable_tag());
+
+        const variable_type res = left * right;
+
+        REQUIRE_THAT(
+            res.value(), Catch::Matchers::WithinRel(left * right.value()));
+        REQUIRE(res.node());
+        REQUIRE(res.node()->children().size() == 1);
+        REQUIRE(res.node()->children()[0].node() == right.node());
+        REQUIRE_THAT(res.node()->children()[0].sensitivity(),
+            Catch::Matchers::WithinRel(left));
+    }
+
+    SECTION("variable * scalar") {
+        const auto left =
+            variable_type(static_cast<scalar_type>(1.234), variable_tag());
+        const auto right = static_cast<scalar_type>(2.345);
+
+        const variable_type res = left * right;
+
+        REQUIRE_THAT(
+            res.value(), Catch::Matchers::WithinRel(left.value() * right));
+        REQUIRE(res.node());
+        REQUIRE(res.node()->children().size() == 1);
+        REQUIRE(res.node()->children()[0].node() == left.node());
+        REQUIRE_THAT(res.node()->children()[0].sensitivity(),
+            Catch::Matchers::WithinRel(right));
+    }
+
+    SECTION("scalar * scalar") {
+        const auto left =
+            variable_type(static_cast<scalar_type>(1.234), constant_tag());
+        const auto right = static_cast<scalar_type>(2.345);
+
+        const variable_type res = left * right;
+
+        REQUIRE_THAT(
+            res.value(), Catch::Matchers::WithinRel(left.value() * right));
+        REQUIRE(res.node() == nullptr);
+    }
+}

@@ -145,6 +145,29 @@ public:
         return *this;
     }
 
+    /*!
+     * \brief Multiply this variable by a variable.
+     *
+     * \param[in] right Right-hand-side variable.
+     * \return This.
+     */
+    auto operator*=(const variable& right) -> variable& {
+        if (node_) {
+            if (right.node_) {
+                node_ = graph::create_node<scalar_type>(
+                    node_, right.value_, right.node_, value_);
+            } else {
+                node_ = graph::create_node<scalar_type>(node_, right.value_);
+            }
+        } else {
+            if (right.node_) {
+                node_ = graph::create_node<scalar_type>(right.node_, value_);
+            }
+        }
+        value_ *= right.value_;
+        return *this;
+    }
+
 private:
     //! Value.
     scalar_type value_;
@@ -235,6 +258,48 @@ template <typename Scalar>
 [[nodiscard]] inline auto operator-(
     const variable<Scalar>& left, const Scalar& right) -> variable<Scalar> {
     return variable<Scalar>(left) -= right;
+}
+
+/*!
+ * \brief Multiply two variables.
+ *
+ * \tparam Scalar Type of scalars.
+ * \param[in] left Left-hand-side variable.
+ * \param[in] right Right-hand-side variable.
+ * \return Product.
+ */
+template <typename Scalar>
+[[nodiscard]] inline auto operator*(const variable<Scalar>& left,
+    const variable<Scalar>& right) -> variable<Scalar> {
+    return variable<Scalar>(left) *= right;
+}
+
+/*!
+ * \brief Multiply two variables.
+ *
+ * \tparam Scalar Type of scalars.
+ * \param[in] left Left-hand-side variable.
+ * \param[in] right Right-hand-side variable.
+ * \return Product.
+ */
+template <typename Scalar>
+[[nodiscard]] inline auto operator*(
+    const Scalar& left, const variable<Scalar>& right) -> variable<Scalar> {
+    return variable<Scalar>(left) *= right;
+}
+
+/*!
+ * \brief Multiply two variables.
+ *
+ * \tparam Scalar Type of scalars.
+ * \param[in] left Left-hand-side variable.
+ * \param[in] right Right-hand-side variable.
+ * \return Product.
+ */
+template <typename Scalar>
+[[nodiscard]] inline auto operator*(
+    const variable<Scalar>& left, const Scalar& right) -> variable<Scalar> {
+    return variable<Scalar>(left) *= right;
 }
 
 }  // namespace num_collect::auto_diff::backward
