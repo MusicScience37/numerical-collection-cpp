@@ -21,6 +21,7 @@ repos:
         description: Format CMake files with cmake-format.
         language: system
         files: (CMakeLists.txt|.*\.cmake)$
+        exclude: source_list.cmake
         entry: pipenv run cmake-format -i
       - id: update-unity-source-in-unit-test
         name: update-unity-source-in-unit-test

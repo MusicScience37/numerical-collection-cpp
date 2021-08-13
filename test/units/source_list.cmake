@@ -65,4 +65,5 @@ set(SOURCE_FILES
     auto_diff/backward/differentiate_test.cpp
     auto_diff/backward/variable_test.cpp
     multi_double/quad_test.cpp
-    multi_double/basic_operations_test.cpp)
+    multi_double/basic_operations_test.cpp
+)

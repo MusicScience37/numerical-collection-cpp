@@ -44,10 +44,7 @@ def write_cmake_var_file(file_paths: list[str]):
         file.write('set(SOURCE_FILES\n')
         for source_file in file_paths:
             file.write(f'    {source_file}\n')
-        file.write(')')
-
-    subprocess.run(
-        ['cmake-format', '-i', str(CMAKE_VAR_FILE_PATH)], check=True)
+        file.write(')\n')
 
 
 def main():
