@@ -76,6 +76,19 @@ TEMPLATE_TEST_CASE(
         REQUIRE(var.value() == static_cast<scalar_type>(0));
         REQUIRE(var.node() == nullptr);
     }
+
+    SECTION("construct with a node") {
+        const auto orig =
+            variable_type(static_cast<scalar_type>(1.234), variable_tag());
+
+        const variable_type res = -orig;
+        REQUIRE_THAT(res.value(), Catch::Matchers::WithinRel(-orig.value()));
+        REQUIRE(res.node());
+        REQUIRE(res.node()->children().size() == 1);
+        REQUIRE(res.node()->children()[0].node() == orig.node());
+        REQUIRE_THAT(res.node()->children()[0].sensitivity(),
+            Catch::Matchers::WithinRel(static_cast<scalar_type>(-1)));
+    }
 }
 
 // NOLINTNEXTLINE

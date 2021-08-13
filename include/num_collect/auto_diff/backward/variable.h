@@ -103,6 +103,20 @@ public:
     }
 
     /*!
+     * \brief Negate this variable.
+     *
+     * \return Negative variable.
+     */
+    auto operator-() const -> variable {
+        if (node_) {
+            return variable(-value_,
+                graph::create_node<scalar_type>(
+                    node_, static_cast<scalar_type>(-1)));
+        }
+        return variable(-value_, nullptr);
+    }
+
+    /*!
      * \brief Add a variable to this variable.
      *
      * \param[in] right Right-hand-side variable.
