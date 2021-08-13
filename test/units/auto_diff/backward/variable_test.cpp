@@ -249,7 +249,7 @@ TEMPLATE_TEST_CASE(
             variable_type(static_cast<scalar_type>(1.234), variable_tag());
         auto var = orig;
 
-        var -= var;
+        var -= var;  // NOLINT
 
         REQUIRE(var.value() == static_cast<scalar_type>(0));
         REQUIRE(var.node() == nullptr);
@@ -428,7 +428,7 @@ TEMPLATE_TEST_CASE(
             variable_type(static_cast<scalar_type>(1.234), variable_tag());
         auto var = orig;
 
-        var /= var;
+        var /= var;  // NOLINT
 
         REQUIRE(var.value() == static_cast<scalar_type>(1));
         REQUIRE(var.node() == nullptr);
