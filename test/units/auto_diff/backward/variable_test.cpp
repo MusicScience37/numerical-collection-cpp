@@ -142,6 +142,25 @@ TEMPLATE_TEST_CASE(
             res.value(), Catch::Matchers::WithinRel(left.value() + right));
         REQUIRE(res.node() == nullptr);
     }
+
+    SECTION("self assignment") {
+        const auto orig =
+            variable_type(static_cast<scalar_type>(1.234), variable_tag());
+        auto var = orig;
+
+        var += var;
+
+        REQUIRE_THAT(var.value(),
+            Catch::Matchers::WithinRel(orig.value() + orig.value()));
+        REQUIRE(var.node());
+        REQUIRE(var.node()->children().size() == 2);
+        REQUIRE(var.node()->children()[0].node() == orig.node());
+        REQUIRE(var.node()->children()[1].node() == orig.node());
+        REQUIRE_THAT(var.node()->children()[0].sensitivity(),
+            Catch::Matchers::WithinRel(static_cast<scalar_type>(1)));
+        REQUIRE_THAT(var.node()->children()[1].sensitivity(),
+            Catch::Matchers::WithinRel(static_cast<scalar_type>(1)));
+    }
 }
 
 // NOLINTNEXTLINE
@@ -211,6 +230,24 @@ TEMPLATE_TEST_CASE(
         REQUIRE_THAT(
             res.value(), Catch::Matchers::WithinRel(left.value() - right));
         REQUIRE(res.node() == nullptr);
+    }
+
+    SECTION("self assignment") {
+        const auto orig =
+            variable_type(static_cast<scalar_type>(1.234), variable_tag());
+        auto var = orig;
+
+        var -= var;
+
+        REQUIRE(var.value() == static_cast<scalar_type>(0));
+        REQUIRE(var.node());
+        REQUIRE(var.node()->children().size() == 2);
+        REQUIRE(var.node()->children()[0].node() == orig.node());
+        REQUIRE(var.node()->children()[1].node() == orig.node());
+        REQUIRE_THAT(var.node()->children()[0].sensitivity(),
+            Catch::Matchers::WithinRel(static_cast<scalar_type>(1)));
+        REQUIRE_THAT(var.node()->children()[1].sensitivity(),
+            Catch::Matchers::WithinRel(static_cast<scalar_type>(-1)));
     }
 }
 
@@ -285,5 +322,24 @@ TEMPLATE_TEST_CASE(
         REQUIRE_THAT(
             res.value(), Catch::Matchers::WithinRel(left.value() * right));
         REQUIRE(res.node() == nullptr);
+    }
+
+    SECTION("self assignment") {
+        const auto orig =
+            variable_type(static_cast<scalar_type>(1.234), variable_tag());
+        auto var = orig;
+
+        var *= var;
+
+        REQUIRE_THAT(var.value(),
+            Catch::Matchers::WithinRel(orig.value() * orig.value()));
+        REQUIRE(var.node());
+        REQUIRE(var.node()->children().size() == 2);
+        REQUIRE(var.node()->children()[0].node() == orig.node());
+        REQUIRE(var.node()->children()[1].node() == orig.node());
+        REQUIRE_THAT(var.node()->children()[0].sensitivity(),
+            Catch::Matchers::WithinRel(orig.value()));
+        REQUIRE_THAT(var.node()->children()[1].sensitivity(),
+            Catch::Matchers::WithinRel(orig.value()));
     }
 }
