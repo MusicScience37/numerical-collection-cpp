@@ -62,7 +62,8 @@ public:
      * \param[in] node Node.
      * \return Differential coefficient of the node.
      */
-    [[nodiscard]] auto coeff(const node_ptr<scalar_type>& node) const {
+    [[nodiscard]] auto coeff(const node_ptr<scalar_type>& node) const
+        -> scalar_type {
         if (const auto iter = info_dict_.find(node); iter != info_dict_.end()) {
             return iter->second.diff;
         }
