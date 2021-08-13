@@ -1,2 +1,2 @@
-add_executable(num_collect_bench_auto_diff quadratic_test.cpp)
+add_executable(num_collect_bench_auto_diff quadratic_test.cpp sum_test.cpp)
 target_add_to_benchmark(num_collect_bench_auto_diff)
