@@ -436,7 +436,6 @@ TEMPLATE_TEST_CASE(
 }
 
 TEST_CASE("Eigen::Matrix<num_collect::auto_diff::backward::variable>") {
-    using diff_type = Eigen::Vector2d;
     using variable_type = num_collect::auto_diff::backward::variable<double>;
     using vector_type = Eigen::Matrix<variable_type, 2, 1>;
     using num_collect::auto_diff::backward::variable_tag;
