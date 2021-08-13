@@ -30,7 +30,12 @@ namespace num_collect {
     namespace auto_diff {
         //! Namespace of forward-mode automatic differentiation.
         namespace forward {}
-    }  // namespace auto_diff
+        //! Namespace of backward-mode automatic differentiation.
+        namespace backward {
+            //! Namespace of graphs in backward-mode automatic differentiation.
+            namespace graph {}
+        }  // namespace backward
+    }      // namespace auto_diff
 
     //! Namespace of optimization algorithms.
     namespace opt {
