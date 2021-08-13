@@ -84,6 +84,10 @@ inline void differentiate(const variable<Scalar>& func_value,
  * \param[in] func_value Variable of the function value.
  * \param[in] arg Variable of the argument.
  * \return Differential coefficients.
+ *
+ * \todo Use NullaryExpr as in
+ * https://eigen.tuxfamily.org/dox/TopicCustomizing_NullaryExpr.html
+ * for more performance.
  */
 template <typename Scalar, int Rows, int Cols, int Options, int MaxRows,
     int MaxCols>
