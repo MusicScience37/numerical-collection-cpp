@@ -19,6 +19,8 @@
  */
 #include "num_collect/auto_diff/backward/variable.h"
 
+#include <Eigen/Core>
+
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating.hpp>
@@ -430,5 +432,29 @@ TEMPLATE_TEST_CASE(
 
         REQUIRE(var.value() == static_cast<scalar_type>(1));
         REQUIRE(var.node() == nullptr);
+    }
+}
+
+TEST_CASE("Eigen::Matrix<num_collect::auto_diff::backward::variable>") {
+    using diff_type = Eigen::Vector2d;
+    using variable_type = num_collect::auto_diff::backward::variable<double>;
+    using vector_type = Eigen::Matrix<variable_type, 2, 1>;
+    using num_collect::auto_diff::backward::variable_tag;
+
+    const auto vec = vector_type(variable_type(1.234, variable_tag()),
+        variable_type(2.345, variable_tag()));
+
+    SECTION("prod") {
+        const variable_type res = vec.prod();
+        REQUIRE_THAT(res.value(),
+            Catch::Matchers::WithinRel(vec(0).value() * vec(1).value()));
+        REQUIRE(res.node());
+        REQUIRE(res.node()->children().size() == 2);
+        REQUIRE(res.node()->children()[0].node() == vec[0].node());
+        REQUIRE(res.node()->children()[1].node() == vec[1].node());
+        REQUIRE_THAT(res.node()->children()[0].sensitivity(),
+            Catch::Matchers::WithinRel(vec[1].value()));
+        REQUIRE_THAT(res.node()->children()[1].sensitivity(),
+            Catch::Matchers::WithinRel(vec[0].value()));
     }
 }

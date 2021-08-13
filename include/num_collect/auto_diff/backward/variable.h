@@ -19,6 +19,8 @@
  */
 #pragma once
 
+#include <Eigen/Core>
+
 #include "num_collect/auto_diff/backward/graph/node.h"
 
 namespace num_collect::auto_diff::backward {
@@ -407,3 +409,106 @@ template <typename Scalar>
 }
 
 }  // namespace num_collect::auto_diff::backward
+
+namespace Eigen {
+
+/*!
+ * \brief Specialization of Eigen::NumTraits for
+ * num_collect::auto_diff::forward::variable.
+ *
+ * See
+ * [Reference](https://eigen.tuxfamily.org/dox/structEigen_1_1NumTraits.html)
+ * for description.
+ *
+ * \tparam Scalar Type of scalars.
+ * \tparam Diff Type of differential coefficients.
+ */
+template <typename Scalar>
+struct NumTraits<num_collect::auto_diff::backward::variable<Scalar>> {
+    //! Type of the variable.
+    using Real = num_collect::auto_diff::backward::variable<Scalar>;
+
+    //! Type of the variable.
+    using NonInteger = Real;
+
+    //! Type of the variable.
+    using Literal = Real;
+
+    //! Type of the variable.
+    using Nested = Real;
+
+    enum {
+        IsInteger = 0,              // NOLINT
+        IsSigned = 1,               // NOLINT
+        IsComplex = 0,              // NOLINT
+        RequireInitialization = 1,  // NOLINT
+        ReadCost = 1,               // NOLINT
+        AddCost = 2,                // NOLINT
+        MulCost = 4                 // NOLINT
+    };
+
+    /*!
+     * \brief Get machine epsilon.
+     *
+     * \return Machine epsilon.
+     */
+    static constexpr auto epsilon() -> Real {
+        return NumTraits<Scalar>::epsilon();
+    }
+
+    /*!
+     * \brief Get dummy precision.
+     *
+     * \return Dummy precision.
+     */
+    static constexpr auto dummy_precision() -> Real {
+        return NumTraits<Scalar>::dummy_precision();
+    }
+
+    /*!
+     * \brief Get the highest value.
+     *
+     * \return Highest value.
+     */
+    static constexpr auto highest() -> Real {
+        return NumTraits<Scalar>::highest();
+    }
+
+    /*!
+     * \brief Get the lowest value.
+     *
+     * \return Lowest value.
+     */
+    static constexpr auto lowest() -> Real {
+        return NumTraits<Scalar>::lowest();
+    }
+
+    /*!
+     * \brief Get the number of digits.
+     *
+     * \return Number of digits.
+     */
+    static constexpr auto digits10() -> int {
+        return NumTraits<Scalar>::digits10();
+    }
+
+    /*!
+     * \brief Get the infinity.
+     *
+     * \return Infinity.
+     */
+    static constexpr auto infinity() -> Real {
+        return NumTraits<Scalar>::infinity();
+    }
+
+    /*!
+     * \brief Get the quiet NaN value.
+     *
+     * \return Quiet NaN value.
+     */
+    static constexpr auto quiet_NaN() -> Real {  // NOLINT
+        return NumTraits<Scalar>::quiet_NaN();
+    }
+};
+
+}  // namespace Eigen
