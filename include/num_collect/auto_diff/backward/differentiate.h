@@ -20,6 +20,7 @@
 #pragma once
 
 #include <Eigen/Core>
+#include <type_traits>
 
 #include "num_collect/auto_diff/backward/graph/node.h"
 #include "num_collect/auto_diff/backward/graph/node_differentiator.h"
@@ -41,6 +42,58 @@ template <typename Scalar>
     graph::node_differentiator<Scalar> diff;
     diff.compute(func_value.node());
     return diff.coeff(arg.node());
+}
+
+/*!
+ * \brief Compute differential coefficients.
+ *
+ * \tparam Scalar Type of scalars.
+ * \tparam ArgDerived Derived class of argument.
+ * \tparam ResDerived Derived class of the result.
+ * \param[in] func_value Variable of the function value.
+ * \param[in] arg Variable of the argument.
+ * \param[out] result Differential coefficients.
+ */
+template <typename Scalar, typename ArgDerived, typename ResDerived>
+inline void differentiate(const variable<Scalar>& func_value,
+    const Eigen::MatrixBase<ArgDerived>& arg,
+    Eigen::MatrixBase<ResDerived>& result) {
+    static_assert(
+        std::is_same_v<typename ArgDerived::Scalar, variable<Scalar>>);
+    static_assert(std::is_same_v<typename ResDerived::Scalar, Scalar>);
+
+    graph::node_differentiator<Scalar> diff;
+    diff.compute(func_value.node());
+    result.derived().resize(arg.rows(), arg.cols());
+    for (Eigen::Index i = 0; i < arg.rows(); ++i) {
+        for (Eigen::Index j = 0; j < arg.cols(); ++j) {
+            result(i, j) = diff.coeff(arg(i, j).node());
+        }
+    }
+}
+
+/*!
+ * \brief Compute differential coefficients.
+ *
+ * \tparam Scalar Type of scalars.
+ * \tparam Rows Number of rows at compile time.
+ * \tparam Cols Number of columns at compile time.
+ * \tparam Options Options in Eigen::Matrix.
+ * \tparam MaxRows Maximum number of rows.
+ * \tparam MaxCols Maximum number of columns.
+ * \param[in] func_value Variable of the function value.
+ * \param[in] arg Variable of the argument.
+ * \return Differential coefficients.
+ */
+template <typename Scalar, int Rows, int Cols, int Options, int MaxRows,
+    int MaxCols>
+[[nodiscard]] inline auto differentiate(const variable<Scalar>& func_value,
+    const Eigen::Matrix<variable<Scalar>, Rows, Cols, Options, MaxRows,
+        MaxCols>& arg)
+    -> Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols> {
+    Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols> res;
+    differentiate(func_value, arg, res);
+    return res;
 }
 
 }  // namespace num_collect::auto_diff::backward

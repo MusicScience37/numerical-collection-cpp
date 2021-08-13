@@ -23,6 +23,9 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating.hpp>
 
+#include "eigen_approx.h"
+#include "num_collect/util/index_type.h"
+
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::auto_diff::backward::differentiate(variable, variable)", "",
@@ -65,5 +68,58 @@ TEMPLATE_TEST_CASE(
         const scalar_type coeff = differentiate(var1, var2);
 
         REQUIRE(coeff == static_cast<scalar_type>(0));
+    }
+}
+
+// NOLINTNEXTLINE
+TEMPLATE_TEST_CASE(
+    "num_collect::auto_diff::backward::differentiate(variable, matrix)", "",
+    float, double) {
+    using scalar_type = TestType;
+    using variable_type =
+        num_collect::auto_diff::backward::variable<scalar_type>;
+    using num_collect::auto_diff::backward::differentiate;
+    using num_collect::auto_diff::backward::variable_tag;
+
+    SECTION("product of all elements in a vector") {
+        using vector_type = Eigen::Matrix<variable_type, 2, 1>;
+        using diff_type = Eigen::Matrix<scalar_type, 2, 1>;
+        const auto vec = vector_type(
+            variable_type(static_cast<scalar_type>(1.234), variable_tag()),
+            variable_type(static_cast<scalar_type>(2.345), variable_tag()));
+        const auto val = vec.prod();
+        CHECK_THAT(val.value(),
+            Catch::Matchers::WithinRel(vec[0].value() * vec[1].value()));
+
+        const diff_type coeff = differentiate(val, vec);
+
+        const auto true_coeff = diff_type(vec[1].value(), vec[0].value());
+        REQUIRE_THAT(coeff, eigen_approx(true_coeff));
+    }
+
+    SECTION("sum of all elements in a matrix") {
+        using matrix_type =
+            Eigen::Matrix<variable_type, Eigen::Dynamic, Eigen::Dynamic>;
+        using diff_type =
+            Eigen::Matrix<scalar_type, Eigen::Dynamic, Eigen::Dynamic>;
+
+        matrix_type mat;
+        mat.resize(2, 2);
+        mat(0, 0) = variable_type(static_cast<scalar_type>(1), variable_tag());
+        mat(0, 1) = variable_type(static_cast<scalar_type>(2), variable_tag());
+        mat(1, 0) = mat(0, 1);
+        const auto val = mat.sum();
+        CHECK_THAT(val.value(),
+            Catch::Matchers::WithinRel(static_cast<scalar_type>(5)));  // NOLINT
+
+        const diff_type coeff = differentiate(val, mat);
+
+        diff_type true_coeff;
+        true_coeff.resize(2, 2);
+        true_coeff(0, 0) = static_cast<scalar_type>(1);
+        true_coeff(0, 1) = static_cast<scalar_type>(2);
+        true_coeff(1, 0) = static_cast<scalar_type>(2);
+        true_coeff(1, 1) = static_cast<scalar_type>(0);
+        REQUIRE_THAT(coeff, eigen_approx(true_coeff));
     }
 }
