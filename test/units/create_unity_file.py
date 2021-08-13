@@ -23,11 +23,11 @@ def list_source_files(base_dir: Path) -> list[Path]:
 
 def list_source_file_paths() -> list[str]:
     source_files = list_source_files(THIS_DIR)
-    return [
+    return sorted([
         str(source_file.relative_to(THIS_DIR))
         for source_file in source_files
         if str(source_file) != str(UNITY_SOURCE_FILE)
-    ]
+    ])
 
 
 def write_unity_source(file_paths: list[str]):
