@@ -20,7 +20,9 @@
 #pragma once
 
 #include <Eigen/Core>
+#include <memory>
 #include <type_traits>
+#include <utility>
 
 #include "num_collect/auto_diff/backward/graph/node.h"
 #include "num_collect/auto_diff/backward/graph/node_differentiator.h"
@@ -44,60 +46,87 @@ template <typename Scalar>
     return diff.coeff(arg.node());
 }
 
+namespace impl {
+
+/*!
+ * \brief Class of functor to assign differential coefficients to matrices
+ *        on the condition that a scalar-valued function is differentiated
+ *        by a matrix-valued variable.
+ *
+ * \tparam ArgType Type of function argument.
+ */
+template <typename ArgType>
+class differentiate_scalar_with_matrix_functor {
+public:
+    //! Type of variables.
+    using variable_type = typename ArgType::Scalar;
+
+    //! Type of scalars.
+    using scalar_type = typename variable_type::scalar_type;
+
+    //! Type of resulting differential coefficients.
+    using result_type = Eigen::Matrix<scalar_type, ArgType::RowsAtCompileTime,
+        ArgType::ColsAtCompileTime, Eigen::ColMajor,
+        ArgType::MaxRowsAtCompileTime, ArgType::MaxColsAtCompileTime>;
+
+    /*!
+     * \brief Construct.
+     *
+     * \param[in] arg Matrix of variable.
+     * \param[in] diff Differentiator.
+     */
+    differentiate_scalar_with_matrix_functor(const ArgType& arg,
+        std::shared_ptr<const graph::node_differentiator<scalar_type>> diff)
+        : arg_(arg), diff_(std::move(diff)) {}
+
+    /*!
+     * \brief Get an element of differential coefficients.
+     *
+     * \param[in] row Row index.
+     * \param[in] col Column index.
+     * \return Differential coefficient.
+     */
+    auto operator()(index_type row, index_type col) const -> scalar_type {
+        return diff_->coeff(arg_(row, col).node());
+    }
+
+private:
+    //! Matrix of variable.
+    const ArgType& arg_;
+
+    //! Differentiator.
+    std::shared_ptr<const graph::node_differentiator<scalar_type>> diff_;
+};
+
+}  // namespace impl
+
 /*!
  * \brief Compute differential coefficients.
  *
  * \tparam Scalar Type of scalars.
  * \tparam ArgDerived Derived class of argument.
- * \tparam ResDerived Derived class of the result.
  * \param[in] func_value Variable of the function value.
  * \param[in] arg Variable of the argument.
- * \param[out] result Differential coefficients.
+ * \return Expression of differential coefficients.
  */
-template <typename Scalar, typename ArgDerived, typename ResDerived>
-inline void differentiate(const variable<Scalar>& func_value,
-    const Eigen::MatrixBase<ArgDerived>& arg,
-    Eigen::MatrixBase<ResDerived>& result) {
+template <typename Scalar, typename ArgDerived>
+[[nodiscard]] inline auto differentiate(const variable<Scalar>& func_value,
+    const Eigen::MatrixBase<ArgDerived>& arg)
+    -> Eigen::CwiseNullaryOp<
+        impl::differentiate_scalar_with_matrix_functor<ArgDerived>,
+        typename impl::differentiate_scalar_with_matrix_functor<
+            ArgDerived>::result_type> {
     static_assert(
         std::is_same_v<typename ArgDerived::Scalar, variable<Scalar>>);
-    static_assert(std::is_same_v<typename ResDerived::Scalar, Scalar>);
 
-    graph::node_differentiator<Scalar> diff;
-    diff.compute(func_value.node());
-    result.derived().resize(arg.rows(), arg.cols());
-    for (Eigen::Index i = 0; i < arg.rows(); ++i) {
-        for (Eigen::Index j = 0; j < arg.cols(); ++j) {
-            result(i, j) = diff.coeff(arg(i, j).node());
-        }
-    }
-}
+    auto diff = std::make_shared<graph::node_differentiator<Scalar>>();
+    diff->compute(func_value.node());
 
-/*!
- * \brief Compute differential coefficients.
- *
- * \tparam Scalar Type of scalars.
- * \tparam Rows Number of rows at compile time.
- * \tparam Cols Number of columns at compile time.
- * \tparam Options Options in Eigen::Matrix.
- * \tparam MaxRows Maximum number of rows.
- * \tparam MaxCols Maximum number of columns.
- * \param[in] func_value Variable of the function value.
- * \param[in] arg Variable of the argument.
- * \return Differential coefficients.
- *
- * \todo Use NullaryExpr as in
- * https://eigen.tuxfamily.org/dox/TopicCustomizing_NullaryExpr.html
- * for more performance.
- */
-template <typename Scalar, int Rows, int Cols, int Options, int MaxRows,
-    int MaxCols>
-[[nodiscard]] inline auto differentiate(const variable<Scalar>& func_value,
-    const Eigen::Matrix<variable<Scalar>, Rows, Cols, Options, MaxRows,
-        MaxCols>& arg)
-    -> Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols> {
-    Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols> res;
-    differentiate(func_value, arg, res);
-    return res;
+    using result_type = typename impl::differentiate_scalar_with_matrix_functor<
+        ArgDerived>::result_type;
+    return result_type::NullaryExpr(arg.rows(), arg.cols(),
+        impl::differentiate_scalar_with_matrix_functor<ArgDerived>(
+            arg.derived(), std::move(diff)));
 }
 
 }  // namespace num_collect::auto_diff::backward
