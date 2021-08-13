@@ -109,6 +109,12 @@ public:
      * \return This.
      */
     auto operator+=(const variable& right) -> variable& {
+        if (this == &right) {
+            node_ = graph::create_node<scalar_type>(
+                node_, static_cast<scalar_type>(2));
+            value_ += right.value_;
+            return *this;
+        }
         if (node_) {
             if (right.node_) {
                 node_ = graph::create_node<scalar_type>(node_,
@@ -129,6 +135,11 @@ public:
      * \return This.
      */
     auto operator-=(const variable& right) -> variable& {
+        if (this == &right) {
+            value_ -= right.value_;
+            node_.reset();
+            return *this;
+        }
         if (node_) {
             if (right.node_) {
                 node_ = graph::create_node<scalar_type>(node_,
@@ -152,6 +163,12 @@ public:
      * \return This.
      */
     auto operator*=(const variable& right) -> variable& {
+        if (this == &right) {
+            node_ = graph::create_node<scalar_type>(
+                node_, static_cast<scalar_type>(2) * value_);
+            value_ *= right.value_;
+            return *this;
+        }
         if (node_) {
             if (right.node_) {
                 node_ = graph::create_node<scalar_type>(

@@ -153,13 +153,10 @@ TEMPLATE_TEST_CASE(
         REQUIRE_THAT(var.value(),
             Catch::Matchers::WithinRel(orig.value() + orig.value()));
         REQUIRE(var.node());
-        REQUIRE(var.node()->children().size() == 2);
+        REQUIRE(var.node()->children().size() == 1);
         REQUIRE(var.node()->children()[0].node() == orig.node());
-        REQUIRE(var.node()->children()[1].node() == orig.node());
         REQUIRE_THAT(var.node()->children()[0].sensitivity(),
-            Catch::Matchers::WithinRel(static_cast<scalar_type>(1)));
-        REQUIRE_THAT(var.node()->children()[1].sensitivity(),
-            Catch::Matchers::WithinRel(static_cast<scalar_type>(1)));
+            Catch::Matchers::WithinRel(static_cast<scalar_type>(2)));
     }
 }
 
@@ -240,14 +237,7 @@ TEMPLATE_TEST_CASE(
         var -= var;
 
         REQUIRE(var.value() == static_cast<scalar_type>(0));
-        REQUIRE(var.node());
-        REQUIRE(var.node()->children().size() == 2);
-        REQUIRE(var.node()->children()[0].node() == orig.node());
-        REQUIRE(var.node()->children()[1].node() == orig.node());
-        REQUIRE_THAT(var.node()->children()[0].sensitivity(),
-            Catch::Matchers::WithinRel(static_cast<scalar_type>(1)));
-        REQUIRE_THAT(var.node()->children()[1].sensitivity(),
-            Catch::Matchers::WithinRel(static_cast<scalar_type>(-1)));
+        REQUIRE(var.node() == nullptr);
     }
 }
 
@@ -334,12 +324,10 @@ TEMPLATE_TEST_CASE(
         REQUIRE_THAT(var.value(),
             Catch::Matchers::WithinRel(orig.value() * orig.value()));
         REQUIRE(var.node());
-        REQUIRE(var.node()->children().size() == 2);
+        REQUIRE(var.node()->children().size() == 1);
         REQUIRE(var.node()->children()[0].node() == orig.node());
-        REQUIRE(var.node()->children()[1].node() == orig.node());
         REQUIRE_THAT(var.node()->children()[0].sensitivity(),
-            Catch::Matchers::WithinRel(orig.value()));
-        REQUIRE_THAT(var.node()->children()[1].sensitivity(),
-            Catch::Matchers::WithinRel(orig.value()));
+            Catch::Matchers::WithinRel(
+                static_cast<scalar_type>(2) * orig.value()));
     }
 }
