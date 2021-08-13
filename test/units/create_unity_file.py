@@ -4,7 +4,11 @@
 from os import write
 from pathlib import Path
 import subprocess
+
+
 THIS_DIR = Path(__file__).parent.absolute()
+UNITY_SOURCE_FILE = THIS_DIR / 'unity_source.cpp'
+CMAKE_VAR_FILE_PATH = THIS_DIR / 'source_list.cmake'
 
 
 def list_source_files(base_dir: Path) -> list[Path]:
@@ -17,21 +21,37 @@ def list_source_files(base_dir: Path) -> list[Path]:
     return files
 
 
-def write_unity_source():
-    unity_source_file = THIS_DIR / 'unity_source.cpp'
+def list_source_file_paths() -> list[str]:
     source_files = list_source_files(THIS_DIR)
-    source_files = [
-        source_file
+    return sorted([
+        str(source_file.relative_to(THIS_DIR))
         for source_file in source_files
-        if str(source_file) != str(unity_source_file)
-    ]
-    with open(str(unity_source_file), mode='w', encoding='ascii') as file:
-        for source_file in source_files:
-            file.write(
-                f'#include "{source_file.relative_to(THIS_DIR)}" // NOLINT(bugprone-suspicious-include)\n')
+        if str(source_file) != str(UNITY_SOURCE_FILE)
+    ])
 
-    subprocess.run(['clang-format', '-i', str(unity_source_file)], check=True)
+
+def write_unity_source(file_paths: list[str]):
+    with open(str(UNITY_SOURCE_FILE), mode='w', encoding='ascii') as file:
+        for source_file in file_paths:
+            file.write(
+                f'#include "{source_file}" // NOLINT(bugprone-suspicious-include)\n')
+
+    subprocess.run(['clang-format', '-i', str(UNITY_SOURCE_FILE)], check=True)
+
+
+def write_cmake_var_file(file_paths: list[str]):
+    with open(str(CMAKE_VAR_FILE_PATH), mode='w', encoding='ascii') as file:
+        file.write('set(SOURCE_FILES\n')
+        for source_file in file_paths:
+            file.write(f'    {source_file}\n')
+        file.write(')\n')
+
+
+def main():
+    file_paths = list_source_file_paths()
+    write_unity_source(file_paths)
+    write_cmake_var_file(file_paths)
 
 
 if __name__ == '__main__':
-    write_unity_source()
+    main()
