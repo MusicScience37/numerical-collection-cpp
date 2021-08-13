@@ -4,11 +4,14 @@
 
 - Modules
   - auto_diff (new)
-    - Implemented forward-mode automatic differentiation
-    - Implemented backward-mode automatic differentiation
+    - Implemented forward-mode automatic differentiation.
+    - Implemented backward-mode automatic differentiation.
 - Build system
-  - Refactored documentation
-  - Merged all unit tests to one binary
+  - Refactored documentation.
+  - Merged all unit tests to one binary.
+- Miscellaneous
+  - Started to write change log.
+  - Introduced architectural decision records.
 
 ## v0.1.0 (2021/8/8)
 
