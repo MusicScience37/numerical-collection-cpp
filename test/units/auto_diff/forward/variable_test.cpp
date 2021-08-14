@@ -44,7 +44,6 @@ TEMPLATE_TEST_CASE(
 
     SECTION("construct with one argument") {
         constexpr auto value = static_cast<TestType>(1.234);
-        constexpr auto diff = static_cast<TestType>(0.0);
         const auto var = variable_type(value);
 
         REQUIRE_THAT(var.value(), Catch::Matchers::WithinRel(value));
@@ -54,7 +53,6 @@ TEMPLATE_TEST_CASE(
 
     SECTION("construct without arguments") {
         constexpr auto value = static_cast<TestType>(0.0);
-        constexpr auto diff = static_cast<TestType>(0.0);
         const auto var = variable_type();
 
         REQUIRE_THAT(var.value(), Catch::Matchers::WithinRel(value));
