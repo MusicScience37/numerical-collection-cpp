@@ -54,8 +54,9 @@ public:
      * \param[in] value Value.
      * \param[in] diff Differential coefficients.
      */
-    variable(const value_type& value, const diff_type& diff)
-        : value_(value), diff_(diff) {}
+    template <typename DiffArg>
+    variable(const value_type& value, DiffArg&& diff)
+        : value_(value), diff_(std::forward<DiffArg>(diff)) {}
 
     /*!
      * \brief Construct.

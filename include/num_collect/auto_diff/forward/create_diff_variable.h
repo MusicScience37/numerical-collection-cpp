@@ -55,9 +55,7 @@ template <typename Value, typename Diff,
     std::enable_if_t<is_eigen_vector_v<Diff>, void*> = nullptr>
 [[nodiscard]] inline auto create_diff_variable(const Value& value,
     index_type size, index_type index) -> variable<Value, Diff> {
-    Diff diff = Diff::Zero(size);
-    diff(index) = static_cast<typename Diff::Scalar>(1);
-    return variable<Value, Diff>(value, diff);
+    return variable<Value, Diff>(value, Diff::Unit(size, index));
 }
 
 }  // namespace num_collect::auto_diff::forward
