@@ -27,6 +27,7 @@
 #include "num_collect/auto_diff/backward/graph/node.h"
 #include "num_collect/auto_diff/backward/graph/node_differentiator.h"
 #include "num_collect/auto_diff/backward/variable.h"
+#include "num_collect/util/assert.h"
 
 namespace num_collect::auto_diff::backward {
 
@@ -126,6 +127,105 @@ template <typename Scalar, typename ArgDerived>
         ArgDerived>::result_type;
     return result_type::NullaryExpr(arg.rows(), arg.cols(),
         impl::differentiate_scalar_with_matrix_functor<ArgDerived>(
+            arg.derived(), std::move(diff)));
+}
+
+namespace impl {
+
+/*!
+ * \brief Class of functor to assign differential coefficients to matrices
+ *        on the condition that a vector-valued function is differentiated
+ *        by a vector-valued variable.
+ *
+ * \tparam FuncValType Type of function values.
+ * \tparam ArgType Type of function arguments.
+ */
+template <typename FuncValType, typename ArgType>
+class differentiate_vector_with_vector_functor {
+public:
+    //! Type of variables.
+    using variable_type = typename FuncValType::Scalar;
+
+    static_assert(std::is_same_v<typename ArgType::Scalar, variable_type>);
+
+    //! Type of scalars.
+    using scalar_type = typename variable_type::scalar_type;
+
+    //! Type of resulting differential coefficients.
+    using result_type =
+        Eigen::Matrix<scalar_type, FuncValType::RowsAtCompileTime,
+            ArgType::RowsAtCompileTime, Eigen::ColMajor,
+            FuncValType::MaxRowsAtCompileTime, ArgType::MaxRowsAtCompileTime>;
+
+    /*!
+     * \brief Construct.
+     *
+     * \param[in] arg Matrix of variable.
+     * \param[in] diff Differentiators.
+     */
+    differentiate_vector_with_vector_functor(const ArgType& arg,
+        std::shared_ptr<std::vector<graph::node_differentiator<scalar_type>>>
+            diff)
+        : arg_(arg), diff_(std::move(diff)) {}
+
+    /*!
+     * \brief Get an element of differential coefficients.
+     *
+     * \param[in] row Row index.
+     * \param[in] col Column index.
+     * \return Differential coefficient.
+     */
+    auto operator()(index_type row, index_type col) const -> scalar_type {
+        return diff_->at(static_cast<std::size_t>(row))
+            .coeff(arg_(col, 0).node());
+    }
+
+private:
+    //! Matrix of variable.
+    const ArgType& arg_;
+
+    //! Differentiators.
+    std::shared_ptr<std::vector<graph::node_differentiator<scalar_type>>> diff_;
+};
+
+}  // namespace impl
+
+/*!
+ * \brief Compute differential coefficients.
+ *
+ * \tparam FuncValType Type of function values.
+ * \tparam ArgType Type of function arguments.
+ * \param[in] func_value Variable of the function value.
+ * \param[in] arg Variable of the argument.
+ * \return Expression of differential coefficients.
+ */
+template <typename FuncValType, typename ArgType>
+[[nodiscard]] inline auto differentiate(
+    const Eigen::MatrixBase<FuncValType>& func_value,
+    const Eigen::MatrixBase<ArgType>& arg)
+    -> Eigen::CwiseNullaryOp<
+        impl::differentiate_vector_with_vector_functor<FuncValType, ArgType>,
+        typename impl::differentiate_vector_with_vector_functor<FuncValType,
+            ArgType>::result_type> {
+    using variable_type = typename FuncValType::Scalar;
+    using scalar_type = typename variable_type::scalar_type;
+
+    NUM_COLLECT_ASSERT(func_value.cols() == 1);
+    NUM_COLLECT_ASSERT(arg.cols() == 1);
+
+    auto diff = std::make_shared<
+        std::vector<graph::node_differentiator<scalar_type>>>();
+    diff->resize(static_cast<std::size_t>(func_value.size()));
+    for (index_type i = 0; i < func_value.size(); ++i) {
+        diff->operator[](static_cast<std::size_t>(i))
+            .compute(func_value(i, 0).node());
+    }
+
+    using result_type =
+        typename impl::differentiate_vector_with_vector_functor<FuncValType,
+            ArgType>::result_type;
+    return result_type::NullaryExpr(func_value.size(), arg.size(),
+        impl::differentiate_vector_with_vector_functor<FuncValType, ArgType>(
             arg.derived(), std::move(diff)));
 }
 
