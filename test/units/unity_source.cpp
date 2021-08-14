@@ -1,3 +1,4 @@
+#include "auto_diff/backward/create_diff_variable_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "auto_diff/backward/differentiate_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "auto_diff/backward/graph/node_differentiator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "auto_diff/backward/graph/node_test.cpp"  // NOLINT(bugprone-suspicious-include)

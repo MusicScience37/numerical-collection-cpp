@@ -1,4 +1,5 @@
 set(SOURCE_FILES
+    auto_diff/backward/create_diff_variable_test.cpp
     auto_diff/backward/differentiate_test.cpp
     auto_diff/backward/graph/node_differentiator_test.cpp
     auto_diff/backward/graph/node_test.cpp
