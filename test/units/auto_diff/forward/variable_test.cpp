@@ -26,6 +26,7 @@
 #include <catch2/matchers/catch_matchers_floating.hpp>
 
 #include "eigen_approx.h"
+#include "num_collect/auto_diff/forward/create_diff_variable.h"
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
@@ -147,45 +148,6 @@ TEMPLATE_TEST_CASE(
             var.value(), Catch::Matchers::WithinRel(var1.value() / var2));
         REQUIRE_THAT(
             var.diff(), Catch::Matchers::WithinRel(var1.diff() / var2));
-    }
-}
-
-// NOLINTNEXTLINE
-TEMPLATE_TEST_CASE(
-    "num_collect::auto_diff::forward::create_diff_variable<Scalar>", "", float,
-    double) {
-    SECTION("create a variable") {
-        constexpr auto value = static_cast<TestType>(1.234);
-        const auto var =
-            num_collect::auto_diff::forward::create_diff_variable<TestType>(
-                value);
-        REQUIRE_THAT(var.value(), Catch::Matchers::WithinRel(value));
-        REQUIRE_THAT(
-            var.diff(), Catch::Matchers::WithinRel(static_cast<TestType>(1)));
-    }
-}
-
-// NOLINTNEXTLINE
-TEMPLATE_TEST_CASE(
-    "num_collect::auto_diff::forward::create_diff_variable<Scalar, Vector>", "",
-    float, double) {
-    SECTION("create a variable with Eigen::VectorXx type") {
-        using diff_type = Eigen::Matrix<TestType, Eigen::Dynamic, 1>;
-
-        constexpr auto value = static_cast<TestType>(1.234);
-        constexpr num_collect::index_type size = 3;
-        constexpr num_collect::index_type index = 1;
-        const auto var =
-            num_collect::auto_diff::forward::create_diff_variable<TestType,
-                diff_type>(value, size, index);
-
-        REQUIRE_THAT(var.value(), Catch::Matchers::WithinRel(value));
-        REQUIRE_THAT(var.diff()(0),
-            Catch::Matchers::WithinRel(static_cast<TestType>(0)));
-        REQUIRE_THAT(var.diff()(1),
-            Catch::Matchers::WithinRel(static_cast<TestType>(1)));
-        REQUIRE_THAT(var.diff()(2),
-            Catch::Matchers::WithinRel(static_cast<TestType>(0)));
     }
 }
 
