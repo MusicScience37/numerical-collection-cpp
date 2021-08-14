@@ -60,18 +60,13 @@ private:
 BASELINE_F(sum, forward, sum_fixture, samples, iterations) {
     using scalar_type = double;
     using diff_type = Eigen::VectorXd;
-    using variable_type =
-        num_collect::auto_diff::forward::variable<scalar_type, diff_type>;
-    using vector_type = Eigen::Matrix<variable_type, Eigen::Dynamic, 1>;
-    using num_collect::auto_diff::forward::create_diff_variable;
+    using vector_type =
+        num_collect::auto_diff::forward::variable_vector_type<Eigen::VectorXd>;
+    using num_collect::auto_diff::forward::create_diff_variable_vector;
 
-    vector_type vec;
     const num_collect::index_type size = get_size();
-    vec.resize(size);
-    for (num_collect::index_type i = 0; i < size; ++i) {
-        vec(i) = create_diff_variable<scalar_type, diff_type>(
-            static_cast<scalar_type>(1), size, i);
-    }
+    const vector_type vec =
+        create_diff_variable_vector(Eigen::VectorXd::Ones(size));
     const auto val = vec.sum();
     const diff_type& coeff = val.diff();
 

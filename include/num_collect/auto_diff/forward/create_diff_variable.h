@@ -84,8 +84,11 @@ public:
     //! Type of values.
     using value_type = typename ValueVector::Scalar;
 
+    //! Type of differential coefficients.
+    using diff_type = typename ValueVector::PlainMatrix;
+
     //! Type of variables.
-    using variable_type = variable<value_type, ValueVector>;
+    using variable_type = variable<value_type, diff_type>;
 
     //! Type of resulting differential coefficients.
     using result_type =
@@ -110,7 +113,7 @@ public:
     [[nodiscard]] auto operator()(index_type row, index_type col) const
         -> variable_type {
         NUM_COLLECT_DEBUG_ASSERT(col == 0);
-        return create_diff_variable<value_type, ValueVector>(
+        return create_diff_variable<value_type, diff_type>(
             value_vec_(row, col), value_vec_.size(), row);
     }
 
@@ -128,18 +131,20 @@ private:
  * \param[in] value_vec Vector of values.
  * \return Vector of variables.
  */
-template <typename ValueVector,
-    std::enable_if_t<is_eigen_vector_v<ValueVector>, void*> = nullptr>
+template <typename ValueVector>
 [[nodiscard]] inline auto create_diff_variable_vector(
-    const ValueVector& value_vec)
+    const Eigen::MatrixBase<ValueVector>& value_vec)
     -> Eigen::CwiseNullaryOp<
         impl::create_diff_variable_vector_functor<ValueVector>,
         typename impl::create_diff_variable_vector_functor<
             ValueVector>::result_type> {
+    NUM_COLLECT_ASSERT(value_vec.cols() == 1);
+
     using result_type = typename impl::create_diff_variable_vector_functor<
         ValueVector>::result_type;
     return result_type::NullaryExpr(value_vec.rows(), 1,
-        impl::create_diff_variable_vector_functor<ValueVector>(value_vec));
+        impl::create_diff_variable_vector_functor<ValueVector>(
+            value_vec.derived()));
 }
 
 }  // namespace num_collect::auto_diff::forward

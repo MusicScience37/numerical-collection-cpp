@@ -90,6 +90,35 @@ TEMPLATE_TEST_CASE(
             REQUIRE(var(i).diff().rows() == 3);
             REQUIRE(var(i).diff().cols() == 1);
             for (num_collect::index_type j = 0; j < 3; ++j) {
+                INFO("j = " << j);
+                REQUIRE_THAT(var(i).diff()(j),
+                    Catch::Matchers::WithinRel(
+                        static_cast<value_type>((i == j) ? 1 : 0)));
+            }
+        }
+    }
+
+    SECTION("create a variable from constant expression") {
+        using value_type = TestType;
+        using value_vector_type = Eigen::Matrix<TestType, Eigen::Dynamic, 1>;
+        using variable_vector_type =
+            num_collect::auto_diff::forward::variable_vector_type<
+                value_vector_type>;
+
+        const variable_vector_type var =
+            num_collect::auto_diff::forward::create_diff_variable_vector(
+                value_vector_type::Ones(3));
+
+        REQUIRE(var.rows() == 3);
+        REQUIRE(var.cols() == 1);
+        for (num_collect::index_type i = 0; i < 3; ++i) {
+            INFO("i = " << i);
+            REQUIRE_THAT(var(i).value(),
+                Catch::Matchers::WithinRel(static_cast<value_type>(1)));
+            REQUIRE(var(i).diff().rows() == 3);
+            REQUIRE(var(i).diff().cols() == 1);
+            for (num_collect::index_type j = 0; j < 3; ++j) {
+                INFO("j = " << j);
                 REQUIRE_THAT(var(i).diff()(j),
                     Catch::Matchers::WithinRel(
                         static_cast<value_type>((i == j) ? 1 : 0)));
