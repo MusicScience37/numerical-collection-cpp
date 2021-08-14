@@ -42,7 +42,6 @@ TEMPLATE_TEST_CASE(
     "num_collect::auto_diff::backward::create_diff_variable_vector", "", float,
     double) {
     SECTION("create a vector") {
-        using value_type = TestType;
         using value_vector_type = Eigen::Matrix<TestType, Eigen::Dynamic, 1>;
         using variable_vector_type =
             num_collect::auto_diff::backward::variable_vector_type<
