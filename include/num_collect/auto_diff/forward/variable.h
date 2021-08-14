@@ -200,43 +200,6 @@ private:
 };
 
 /*!
- * \brief Create a variable by which functions will be differentiated
- *        (for scalar differential coefficients).
- *
- * This will set the differential coefficient to one.
- *
- * \tparam Value Type of the value.
- * \tparam Diff Type of the differential coefficient.
- * \param[in] value Value.
- * \return Variable.
- */
-template <typename Value>
-[[nodiscard]] inline auto create_diff_variable(const Value& value)
-    -> variable<Value> {
-    return variable<Value>(value, static_cast<Value>(1));
-}
-
-/*!
- * \brief Create a variable by which functions will be differentiated
- *        (for vector differential coefficients).
- *
- * \tparam Value Type of the value.
- * \tparam Diff Type of the differential coefficients.
- * \param[in] value Value.
- * \param[in] size Size of Diff.
- * \param[in] index Index of the variable.
- * \return Variable.
- */
-template <typename Value, typename Diff,
-    std::enable_if_t<is_eigen_vector_v<Diff>, void*> = nullptr>
-[[nodiscard]] inline auto create_diff_variable(const Value& value,
-    index_type size, index_type index) -> variable<Value, Diff> {
-    Diff diff = Diff::Zero(size);
-    diff(index) = static_cast<typename Diff::Scalar>(1);
-    return variable<Value, Diff>(value, diff);
-}
-
-/*!
  * \brief Add two variables.
  *
  * \tparam Value Type of value.

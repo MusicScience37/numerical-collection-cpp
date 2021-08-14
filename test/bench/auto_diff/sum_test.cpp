@@ -21,7 +21,7 @@
 
 #include "auto_diff_fixture.h"
 #include "num_collect/auto_diff/backward/differentiate.h"
-#include "num_collect/auto_diff/forward/variable.h"
+#include "num_collect/auto_diff/forward/create_diff_variable.h"
 
 constexpr int samples = 30;
 #ifdef NDEBUG
