@@ -122,7 +122,7 @@ public:
             if (diff_) {
                 *diff_ += *right.diff_;
             } else {
-                diff_ = right.diff_;
+                diff_ = *right.diff_;
             }
         }
         return *this;
@@ -155,13 +155,14 @@ public:
     auto operator*=(const variable& right) -> variable& {
         if (right.diff_) {
             if (diff_) {
-                *diff_ = right.value_ * (*diff_) + value_ * (*right.diff_);
+                *diff_ *= right.value_;
+                *diff_ += value_ * (*right.diff_);
             } else {
                 diff_ = value_ * (*right.diff_);
             }
         } else {
             if (diff_) {
-                *diff_ = right.value_ * (*diff_);
+                *diff_ *= right.value_;
             }
         }
         value_ *= right.value_;
