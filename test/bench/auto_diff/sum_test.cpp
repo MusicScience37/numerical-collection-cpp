@@ -20,6 +20,7 @@
 #include <celero/Celero.h>
 
 #include "auto_diff_fixture.h"
+#include "num_collect/auto_diff/backward/create_diff_variable.h"
 #include "num_collect/auto_diff/backward/differentiate.h"
 #include "num_collect/auto_diff/forward/create_diff_variable.h"
 
@@ -78,18 +79,14 @@ BASELINE_F(sum, forward, sum_fixture, samples, iterations) {
 BENCHMARK_F(sum, backward, sum_fixture, samples, iterations) {
     using scalar_type = double;
     using diff_type = Eigen::VectorXd;
-    using variable_type =
-        num_collect::auto_diff::backward::variable<scalar_type>;
-    using vector_type = Eigen::Matrix<variable_type, Eigen::Dynamic, 1>;
+    using vector_type =
+        num_collect::auto_diff::backward::variable_vector_type<Eigen::VectorXd>;
+    using num_collect::auto_diff::backward::create_diff_variable_vector;
     using num_collect::auto_diff::backward::differentiate;
-    using num_collect::auto_diff::backward::variable_tag;
 
-    vector_type vec;
     const num_collect::index_type size = get_size();
-    vec.resize(size);
-    for (num_collect::index_type i = 0; i < size; ++i) {
-        vec(i) = variable_type(1.0, variable_tag());
-    }
+    const vector_type vec =
+        create_diff_variable_vector(Eigen::VectorXd::Ones(size));
     const auto val = vec.sum();
     const diff_type coeff = differentiate(val, vec);
 
