@@ -123,3 +123,36 @@ TEMPLATE_TEST_CASE(
         REQUIRE_THAT(coeff, eigen_approx(true_coeff));
     }
 }
+
+// NOLINTNEXTLINE
+TEMPLATE_TEST_CASE(
+    "num_collect::auto_diff::backward::differentiate(vector, vector)", "",
+    float, double) {
+    using scalar_type = TestType;
+    using variable_type =
+        num_collect::auto_diff::backward::variable<scalar_type>;
+    using num_collect::auto_diff::backward::differentiate;
+    using num_collect::auto_diff::backward::variable_tag;
+
+    SECTION("Jacobian of a function") {
+        using arg_type = Eigen::Matrix<variable_type, 2, 1>;
+        using val_type = Eigen::Matrix<variable_type, 3, 1>;
+        using diff_type = Eigen::Matrix<scalar_type, 3, 2>;
+        const auto vec = arg_type(
+            variable_type(static_cast<scalar_type>(1.234), variable_tag()),
+            variable_type(static_cast<scalar_type>(2.345), variable_tag()));
+        const auto val =
+            val_type(vec[0] + vec[1], vec[0] - vec[1], vec[0] * vec[1]);
+
+        const diff_type coeff = differentiate(val, vec);
+
+        diff_type true_coeff;
+        true_coeff(0, 0) = static_cast<scalar_type>(1);
+        true_coeff(0, 1) = static_cast<scalar_type>(1);
+        true_coeff(1, 0) = static_cast<scalar_type>(1);
+        true_coeff(1, 1) = static_cast<scalar_type>(-1);
+        true_coeff(2, 0) = vec[1].value();
+        true_coeff(2, 1) = vec[0].value();
+        REQUIRE_THAT(coeff, eigen_approx(true_coeff));
+    }
+}
