@@ -71,11 +71,9 @@ TEMPLATE_TEST_CASE(
     SECTION("create a variable") {
         using value_type = TestType;
         using value_vector_type = Eigen::Matrix<TestType, Eigen::Dynamic, 1>;
-        using variable_type =
-            num_collect::auto_diff::forward::variable<value_type,
-                value_vector_type>;
         using variable_vector_type =
-            Eigen::Matrix<variable_type, Eigen::Dynamic, 1>;
+            num_collect::auto_diff::forward::variable_vector_type<
+                value_vector_type>;
 
         const value_vector_type value_vec =
             (value_vector_type(3) << 1.234, 2.345, 3.456).finished();

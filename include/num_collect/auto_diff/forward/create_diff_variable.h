@@ -58,6 +58,17 @@ template <typename Value, typename Diff,
     return variable<Value, Diff>(value, Diff::Unit(size, index));
 }
 
+/*!
+ * \brief Get type of vectors of variables.
+ *
+ * \tparam ValueVector Type of vectors of values.
+ */
+template <typename ValueVector>
+using variable_vector_type =
+    Eigen::Matrix<variable<typename ValueVector::Scalar, ValueVector>,
+        ValueVector::RowsAtCompileTime, 1, Eigen::ColMajor,
+        ValueVector::MaxRowsAtCompileTime, 1>;
+
 namespace impl {
 
 /*!
