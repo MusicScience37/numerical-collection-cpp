@@ -38,25 +38,26 @@ TEMPLATE_TEST_CASE(
         const auto var = variable_type(value, diff);
 
         REQUIRE_THAT(var.value(), Catch::Matchers::WithinRel(value));
+        REQUIRE(var.has_diff());
         REQUIRE_THAT(var.diff(), Catch::Matchers::WithinRel(diff));
     }
 
     SECTION("construct with one argument") {
         constexpr auto value = static_cast<TestType>(1.234);
-        constexpr auto diff = static_cast<TestType>(0.0);
         const auto var = variable_type(value);
 
         REQUIRE_THAT(var.value(), Catch::Matchers::WithinRel(value));
-        REQUIRE_THAT(var.diff(), Catch::Matchers::WithinRel(diff));
+        REQUIRE_FALSE(var.has_diff());
+        REQUIRE_THROWS(var.diff());
     }
 
     SECTION("construct without arguments") {
         constexpr auto value = static_cast<TestType>(0.0);
-        constexpr auto diff = static_cast<TestType>(0.0);
         const auto var = variable_type();
 
         REQUIRE_THAT(var.value(), Catch::Matchers::WithinRel(value));
-        REQUIRE_THAT(var.diff(), Catch::Matchers::WithinRel(diff));
+        REQUIRE_FALSE(var.has_diff());
+        REQUIRE_THROWS(var.diff());
     }
 
     SECTION("add a variable") {
