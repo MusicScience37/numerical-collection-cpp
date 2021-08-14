@@ -5,6 +5,7 @@ set(SOURCE_FILES
     auto_diff/backward/graph/node_test.cpp
     auto_diff/backward/variable_test.cpp
     auto_diff/forward/create_diff_variable_test.cpp
+    auto_diff/forward/make_jacobian_test.cpp
     auto_diff/forward/variable_test.cpp
     constants/cbrt_test.cpp
     constants/ceil_test.cpp
