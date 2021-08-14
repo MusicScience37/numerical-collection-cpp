@@ -21,8 +21,10 @@
 
 #include <Eigen/Core>
 #include <limits>
+#include <optional>
 #include <type_traits>
 
+#include "num_collect/util/assert.h"
 #include "num_collect/util/index_type.h"
 #include "num_collect/util/is_eigen_matrix.h"
 #include "num_collect/util/is_eigen_vector.h"
@@ -58,22 +60,13 @@ public:
     /*!
      * \brief Construct.
      *
-     * \note This constructor doesn't initialize the differential coefficients
-     * if Diff is not a floating-point value type.
-     *
      * \param[in] value Value.
      */
-    explicit variable(const value_type& value) : value_(value) {
-        if constexpr (std::is_floating_point_v<diff_type>) {
-            diff_ = static_cast<diff_type>(0);
-        }
-    }
+    variable(const value_type& value)  // NOLINT: implicit convertion required
+        : value_(value) {}
 
     /*!
      * \brief Construct.
-     *
-     * \note This constructor doesn't initialize the differential coefficients
-     * if Diff is not a floating-point value type.
      */
     variable() : variable(static_cast<value_type>(0)) {}
 
@@ -87,12 +80,22 @@ public:
     }
 
     /*!
+     * \brief Get whether this variable has differential coefficients.
+     *
+     * \return Whether this variable has differential coefficients.
+     */
+    [[nodiscard]] auto has_diff() const noexcept -> bool {
+        return diff_.has_value();
+    }
+
+    /*!
      * \brief Get the differential coefficients.
      *
      * \return Differential coefficients.
      */
-    [[nodiscard]] auto diff() const noexcept -> const diff_type& {
-        return diff_;
+    [[nodiscard]] auto diff() const -> const diff_type& {
+        NUM_COLLECT_ASSERT(diff_);
+        return *diff_;
     }
 
     /*!
@@ -100,7 +103,12 @@ public:
      *
      * \return Negated variable.
      */
-    auto operator-() const -> variable { return variable(-value_, -diff_); }
+    auto operator-() const -> variable {
+        if (diff_) {
+            return variable(-value_, -*diff_);
+        }
+        return variable(-value_);
+    }
 
     /*!
      * \brief Add a variable.
@@ -110,18 +118,13 @@ public:
      */
     auto operator+=(const variable& right) -> variable& {
         value_ += right.value_;
-        diff_ += right.diff_;
-        return *this;
-    }
-
-    /*!
-     * \brief Add a value.
-     *
-     * \param[in] right Right-hand-side value.
-     * \return This.
-     */
-    auto operator+=(const value_type& right) -> variable& {
-        value_ += right;
+        if (right.diff_) {
+            if (diff_) {
+                *diff_ += *right.diff_;
+            } else {
+                diff_ = right.diff_;
+            }
+        }
         return *this;
     }
 
@@ -133,18 +136,13 @@ public:
      */
     auto operator-=(const variable& right) -> variable& {
         value_ -= right.value_;
-        diff_ -= right.diff_;
-        return *this;
-    }
-
-    /*!
-     * \brief Subtract a value.
-     *
-     * \param[in] right Right-hand-side value.
-     * \return This.
-     */
-    auto operator-=(const value_type& right) -> variable& {
-        value_ -= right;
+        if (right.diff_) {
+            if (diff_) {
+                *diff_ -= *right.diff_;
+            } else {
+                diff_ = -*right.diff_;
+            }
+        }
         return *this;
     }
 
@@ -155,20 +153,18 @@ public:
      * \return This.
      */
     auto operator*=(const variable& right) -> variable& {
-        diff_ = right.value_ * diff_ + value_ * right.diff_;
+        if (right.diff_) {
+            if (diff_) {
+                *diff_ = right.value_ * (*diff_) + value_ * (*right.diff_);
+            } else {
+                diff_ = value_ * (*right.diff_);
+            }
+        } else {
+            if (diff_) {
+                *diff_ = right.value_ * (*diff_);
+            }
+        }
         value_ *= right.value_;
-        return *this;
-    }
-
-    /*!
-     * \brief Multiply a value.
-     *
-     * \param[in] right Right-hand-side value.
-     * \return This.
-     */
-    auto operator*=(const value_type& right) -> variable& {
-        diff_ *= right;
-        value_ *= right;
         return *this;
     }
 
@@ -180,19 +176,17 @@ public:
      */
     auto operator/=(const variable& right) -> variable& {
         value_ /= right.value_;
-        diff_ = (diff_ - right.diff_ * value_) / right.value_;
-        return *this;
-    }
-
-    /*!
-     * \brief Divide by a value.
-     *
-     * \param[in] right Right-hand-side value.
-     * \return This.
-     */
-    auto operator/=(const value_type& right) -> variable& {
-        value_ /= right;
-        diff_ /= right;
+        if (right.diff_) {
+            if (diff_) {
+                *diff_ = ((*diff_) - (*right.diff_) * value_) / right.value_;
+            } else {
+                diff_ = -(*right.diff_) * value_ / right.value_;
+            }
+        } else {
+            if (diff_) {
+                *diff_ = (*diff_) / right.value_;
+            }
+        }
         return *this;
     }
 
@@ -201,7 +195,7 @@ private:
     value_type value_;
 
     //! Differential coefficients.
-    diff_type diff_;
+    std::optional<diff_type> diff_{};
 };
 
 /*!
@@ -268,7 +262,7 @@ template <typename Value, typename Diff>
 template <typename Value, typename Diff>
 [[nodiscard]] inline auto operator+(const Value& left,
     const variable<Value, Diff>& right) -> variable<Value, Diff> {
-    return variable<Value, Diff>(right) += left;
+    return variable<Value, Diff>(left) += right;
 }
 
 /*!
@@ -313,7 +307,7 @@ template <typename Value, typename Diff>
 template <typename Value, typename Diff>
 [[nodiscard]] inline auto operator-(const Value& left,
     const variable<Value, Diff>& right) -> variable<Value, Diff> {
-    return (-right) += left;
+    return variable<Value, Diff>(left) -= right;
 }
 
 /*!
@@ -358,7 +352,7 @@ template <typename Value, typename Diff>
 template <typename Value, typename Diff>
 [[nodiscard]] inline auto operator*(const Value& left,
     const variable<Value, Diff>& right) -> variable<Value, Diff> {
-    return variable<Value, Diff>(right) *= left;
+    return variable<Value, Diff>(left) *= right;
 }
 
 /*!
@@ -403,8 +397,7 @@ template <typename Value, typename Diff>
 template <typename Value, typename Diff>
 [[nodiscard]] inline auto operator/(const Value& left,
     const variable<Value, Diff>& right) -> variable<Value, Diff> {
-    return variable<Value, Diff>(left / right.value(),
-        -left / (right.value() * right.value()) * right.diff());
+    return variable<Value, Diff>(left) /= right;
 }
 
 /*!
