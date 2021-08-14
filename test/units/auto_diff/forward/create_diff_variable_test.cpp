@@ -63,3 +63,39 @@ TEMPLATE_TEST_CASE(
             Catch::Matchers::WithinRel(static_cast<TestType>(0)));
     }
 }
+
+// NOLINTNEXTLINE
+TEMPLATE_TEST_CASE(
+    "num_collect::auto_diff::forward::create_diff_variable_vector", "", float,
+    double) {
+    SECTION("create a variable") {
+        using value_type = TestType;
+        using value_vector_type = Eigen::Matrix<TestType, Eigen::Dynamic, 1>;
+        using variable_type =
+            num_collect::auto_diff::forward::variable<value_type,
+                value_vector_type>;
+        using variable_vector_type =
+            Eigen::Matrix<variable_type, Eigen::Dynamic, 1>;
+
+        const value_vector_type value_vec =
+            (value_vector_type(3) << 1.234, 2.345, 3.456).finished();
+        const variable_vector_type var =
+            num_collect::auto_diff::forward::create_diff_variable_vector(
+                value_vec);
+
+        REQUIRE(var.rows() == 3);
+        REQUIRE(var.cols() == 1);
+        for (num_collect::index_type i = 0; i < 3; ++i) {
+            INFO("i = " << i);
+            REQUIRE_THAT(
+                var(i).value(), Catch::Matchers::WithinRel(value_vec(i)));
+            REQUIRE(var(i).diff().rows() == 3);
+            REQUIRE(var(i).diff().cols() == 1);
+            for (num_collect::index_type j = 0; j < 3; ++j) {
+                REQUIRE_THAT(var(i).diff()(j),
+                    Catch::Matchers::WithinRel(
+                        static_cast<value_type>((i == j) ? 1 : 0)));
+            }
+        }
+    }
+}

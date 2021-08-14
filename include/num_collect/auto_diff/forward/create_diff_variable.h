@@ -58,4 +58,77 @@ template <typename Value, typename Diff,
     return variable<Value, Diff>(value, Diff::Unit(size, index));
 }
 
+namespace impl {
+
+/*!
+ * \brief Class of functor to create a vector of variables by which functions
+ * will be differentiated.
+ *
+ * \tparam Value
+ * \tparam Diff
+ */
+template <typename ValueVector>
+class create_diff_variable_vector_functor {
+public:
+    //! Type of values.
+    using value_type = typename ValueVector::Scalar;
+
+    //! Type of variables.
+    using variable_type = variable<value_type, ValueVector>;
+
+    //! Type of resulting differential coefficients.
+    using result_type =
+        Eigen::Matrix<variable_type, ValueVector::RowsAtCompileTime, 1,
+            Eigen::ColMajor, ValueVector::MaxRowsAtCompileTime, 1>;
+
+    /*!
+     * \brief Constructor.
+     *
+     * \param[in] value_vec Values of the vector.
+     */
+    explicit create_diff_variable_vector_functor(const ValueVector& value_vec)
+        : value_vec_(value_vec) {}
+
+    /*!
+     * \brief Get an element of the vector.
+     *
+     * \param[in] row Row index.
+     * \param[in] col Column index.
+     * \return Element.
+     */
+    [[nodiscard]] auto operator()(index_type row, index_type col) const
+        -> variable_type {
+        NUM_COLLECT_DEBUG_ASSERT(col == 0);
+        return create_diff_variable<value_type, ValueVector>(
+            value_vec_(row, col), value_vec_.size(), row);
+    }
+
+private:
+    //! Values of the vector.
+    const ValueVector& value_vec_;
+};
+
+}  // namespace impl
+
+/*!
+ * \brief Create a vector of variables.
+ *
+ * \tparam ValueVector Type of vectors of values.
+ * \param[in] value_vec Vector of values.
+ * \return Vector of variables.
+ */
+template <typename ValueVector,
+    std::enable_if_t<is_eigen_vector_v<ValueVector>, void*> = nullptr>
+[[nodiscard]] inline auto create_diff_variable_vector(
+    const ValueVector& value_vec)
+    -> Eigen::CwiseNullaryOp<
+        impl::create_diff_variable_vector_functor<ValueVector>,
+        typename impl::create_diff_variable_vector_functor<
+            ValueVector>::result_type> {
+    using result_type = typename impl::create_diff_variable_vector_functor<
+        ValueVector>::result_type;
+    return result_type::NullaryExpr(value_vec.rows(), 1,
+        impl::create_diff_variable_vector_functor<ValueVector>(value_vec));
+}
+
 }  // namespace num_collect::auto_diff::forward
