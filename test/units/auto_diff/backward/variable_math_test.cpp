@@ -88,3 +88,37 @@ TEMPLATE_TEST_CASE("num_collect::auto_diff::backward::log", "", float, double) {
         REQUIRE_FALSE(res.node());
     }
 }
+
+// NOLINTNEXTLINE
+TEMPLATE_TEST_CASE(
+    "num_collect::auto_diff::backward::sqrt", "", float, double) {
+    using scalar_type = TestType;
+    using variable_type =
+        num_collect::auto_diff::backward::variable<scalar_type>;
+    using num_collect::auto_diff::backward::constant_tag;
+    using num_collect::auto_diff::backward::differentiate;
+    using num_collect::auto_diff::backward::variable_tag;
+
+    SECTION("process an argument with node") {
+        const auto var = variable_type(1.234, variable_tag());
+
+        const variable_type res = sqrt(var);
+        REQUIRE_THAT(
+            res.value(), Catch::Matchers::WithinRel(std::sqrt(var.value())));
+        REQUIRE(res.node());
+
+        const scalar_type coeff = differentiate(res, var);
+        REQUIRE_THAT(coeff,
+            Catch::Matchers::WithinRel(
+                1 / static_cast<scalar_type>(2) / std::sqrt(var.value())));
+    }
+
+    SECTION("process an argument without node") {
+        const auto var = variable_type(1.234, constant_tag());
+
+        const variable_type res = log(var);
+        REQUIRE_THAT(
+            res.value(), Catch::Matchers::WithinRel(std::log(var.value())));
+        REQUIRE_FALSE(res.node());
+    }
+}

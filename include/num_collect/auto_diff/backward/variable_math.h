@@ -76,4 +76,19 @@ template <typename Scalar>
         x, log(x.value()), static_cast<Scalar>(1) / x.value());
 }
 
+/*!
+ * \brief Calculate square root.
+ *
+ * \tparam Scalar Type of scalars.
+ * \param[in] x Argument.
+ * \return Value.
+ */
+template <typename Scalar>
+[[nodiscard]] inline auto sqrt(const variable<Scalar>& x) -> variable<Scalar> {
+    using std::sqrt;
+    const auto val = sqrt(x.value());
+    const auto half = static_cast<Scalar>(0.5);
+    return impl::process_one_arg_function(x, val, half / val);
+}
+
 }  // namespace num_collect::auto_diff::backward
