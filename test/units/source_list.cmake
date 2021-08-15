@@ -3,6 +3,7 @@ set(SOURCE_FILES
     auto_diff/backward/differentiate_test.cpp
     auto_diff/backward/graph/node_differentiator_test.cpp
     auto_diff/backward/graph/node_test.cpp
+    auto_diff/backward/variable_math_test.cpp
     auto_diff/backward/variable_test.cpp
     auto_diff/forward/create_diff_variable_test.cpp
     auto_diff/forward/make_jacobian_test.cpp
