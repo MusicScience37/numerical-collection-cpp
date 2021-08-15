@@ -2,6 +2,7 @@
 #include "auto_diff/backward/differentiate_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "auto_diff/backward/graph/node_differentiator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "auto_diff/backward/graph/node_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "auto_diff/backward/variable_math_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "auto_diff/backward/variable_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "auto_diff/forward/create_diff_variable_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "auto_diff/forward/make_jacobian_test.cpp"  // NOLINT(bugprone-suspicious-include)
