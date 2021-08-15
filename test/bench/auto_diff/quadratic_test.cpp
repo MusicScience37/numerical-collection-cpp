@@ -26,15 +26,8 @@
 // NOLINTNEXTLINE: external library
 CELERO_MAIN
 
-constexpr int samples = 30;
-#ifdef NDEBUG
-constexpr int iterations = 10000;
-#else
-constexpr int iterations = 100;
-#endif
-
 // NOLINTNEXTLINE: external library
-BASELINE_F(quadratic, forward, auto_diff_fixture, samples, iterations) {
+BASELINE_F(quadratic, forward, auto_diff_fixture, 0, 0) {
     using scalar_type = double;
     using variable_type =
         num_collect::auto_diff::forward::variable<scalar_type>;
@@ -49,7 +42,7 @@ BASELINE_F(quadratic, forward, auto_diff_fixture, samples, iterations) {
 }
 
 // NOLINTNEXTLINE: external library
-BENCHMARK_F(quadratic, backward, auto_diff_fixture, samples, iterations) {
+BENCHMARK_F(quadratic, backward, auto_diff_fixture, 0, 0) {
     using scalar_type = double;
     using variable_type =
         num_collect::auto_diff::backward::variable<scalar_type>;
