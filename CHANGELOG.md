@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.2.0 (on development)
+## 0.2.0 (2021/8/16)
 
 - Modules
   - auto_diff (new)
