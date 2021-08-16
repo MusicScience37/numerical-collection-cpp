@@ -3,7 +3,7 @@ from conans import ConanFile
 
 class NumCollectConan(ConanFile):
     name = "num_collect"
-    version = "0.1.0"
+    version = "0.2.0"
     description = "A collection of algorithms in numerical analysis implemented in C++"
     homepage = "https://gitlab.com/MusicScience37/numerical-collection-cpp"
     url = "https://gitlab.com/MusicScience37/numerical-collection-cpp.git"
