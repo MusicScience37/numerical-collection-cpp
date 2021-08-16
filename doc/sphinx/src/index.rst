@@ -6,6 +6,8 @@ A collection of algorithms in numerical analysis implemented in C++.
 Developed at
 `https://gitlab.com/MusicScience37/numerical-collection-cpp <https://gitlab.com/MusicScience37/numerical-collection-cpp>`_.
 
+API reference can be viewed `here <api/index.html>`_.
+
 .. toctree::
     :maxdepth: 2
     :caption: About
@@ -20,7 +22,6 @@ Developed at
     how_to_use
     modules
     basic_design/index
-    api/index
 
 .. toctree::
     :maxdepth: 2

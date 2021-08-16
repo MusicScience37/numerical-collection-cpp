@@ -8,3 +8,4 @@ Basic Design
     optimization
     root_finding
     ode
+    auto_diff

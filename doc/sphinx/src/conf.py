@@ -42,21 +42,6 @@ extensions += ['sphinxcontrib.plantuml']
 plantuml_output_format = 'svg'
 plantuml_syntax_error_image = True
 
-# -- Options for breathe -----------------------------------------------------
-
-extensions += ['breathe']
-
-# this variable must be set from command line
-breathe_projects = {'num_collect': ''}
-
-breathe_default_project = 'num_collect'
-
-breathe_default_members = ('members',)
-
-breathe_domain_by_extension = {
-    "h": "cpp",
-}
-
 # -- Options for mathjax -----------------------------------------------------
 
 extensions += ['sphinx.ext.mathjax']

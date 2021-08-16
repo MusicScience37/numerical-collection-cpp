@@ -63,15 +63,14 @@ set(PLANTUML_JAR_PATH
 
 set(NUM_COLLECT_DOXYGEN_XML_DIR "${CMAKE_CURRENT_BINARY_DIR}/doxygen_xml")
 
-set(NUM_COLLECT_SPHINX_OPTIONS
-    -D "plantuml=java -jar ${PLANTUML_JAR_PATH}" -D release=${PROJECT_VERSION}
-    -D breathe_projects.num_collect="${CMAKE_CURRENT_BINARY_DIR}/xml")
+set(NUM_COLLECT_SPHINX_OPTIONS -D "plantuml=java -jar ${PLANTUML_JAR_PATH}" -D
+                               "release=${PROJECT_VERSION}")
 
 add_custom_target(
     num_collect_doc_sphinx_html ALL
     COMMAND
-        ${PIPENV_EXECUTABLE} run sphinx-build -M html
-        ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_BINARY_DIR}
+        ${PIPENV_EXECUTABLE} run sphinx-build -b html
+        ${CMAKE_CURRENT_SOURCE_DIR}/src ${NUM_COLLECT_HTML_ROOT}
         ${NUM_COLLECT_SPHINX_OPTIONS} -q
     COMMENT "Generate Sphinx html API documentation for num_collect"
     WORKING_DIRECTORY ${NUM_COLLECT_SOURCE_DIR})
