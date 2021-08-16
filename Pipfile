@@ -7,8 +7,8 @@ verify_ssl = true
 conan = "*"
 
 [dev-packages]
+adr-tools-python = "*"
 autopep8 = "*"
-breathe = "*"
 cmake-format = "*"
 doc8 = "*"
 myst-parser = "*"

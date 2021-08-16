@@ -9,7 +9,7 @@ stages:
   - Publish
 
 variables:
-  NUM_COLLECT_VERSION: "0.1.0"
+  NUM_COLLECT_VERSION: "0.2.0"
   CONAN_USER: "MusicScience37+numerical-collection-cpp"
 
 .retry setting:
@@ -131,8 +131,8 @@ static analysis:
       -DNUM_COLLECT_TEST_BENCHMARKS=ON
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
     - cd $BUILD_DIR
-    - ctest -V -M Experimental -T Configure -T Build -T Test
-    - ctest -M Experimental -T Submit
+    - cmake --build .
+    - ctest -V
   artifacts:
     paths:
       - $BUILD_DIR
@@ -150,8 +150,8 @@ static analysis:
       -DNUM_COLLECT_TESTING:BOOL=ON
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
     - cd $BUILD_DIR
-    - ctest -V -M Experimental -T Configure -T Build -T Test -T MemCheck
-    - ctest -M Experimental -T Submit
+    - cmake --build .
+    - ctest -V
 
 clang coverage:
   extends: .release-test-base
@@ -169,8 +169,8 @@ clang coverage:
     - cd $BUILD_DIR
     - mkdir coverage
     - export LLVM_PROFILE_FILE=$(pwd)/coverage/coverage_%p.profraw
-    - ctest -V -M Experimental -T Configure -T Build -T Test
-    - ctest -M Experimental -T Submit
+    - cmake --build .
+    - ctest -V
     - cd ../
     - scripts/collect_llvm_coverage.sh build_clang_coverage
   coverage: '/Line Coverage: \d+\.\d+/'
@@ -189,9 +189,8 @@ gcc coverage:
       "-DCMAKE_CXX_FLAGS=--coverage"
       "-DCMAKE_MODULE_LINKER_FLAGS=--coverage"
     - cd $BUILD_DIR
-    - ctest -V -M Experimental -T Configure -T Build -T Test
-    - ctest -M Experimental -T Coverage || true
-    - ctest -M Experimental -T Submit
+    - cmake --build .
+    - ctest -V
     - cd ../
     - scripts/collect_gcc_coverage.sh build_gcc_coverage
   coverage: '/Total:\|\s*(\d+\.?\d+?)%/'
@@ -231,8 +230,8 @@ clang-11-asan-ubsan:
       -DCMAKE_CXX_FLAGS=-fsanitize=address,undefined
       -DCMAKE_MODULE_LINKER_FLAGS=-fsanitize=address,undefined
     - cd $BUILD_DIR
-    - ctest -V -M Experimental -T Configure -T Build -T Test
-    - ctest -M Experimental -T Submit
+    - cmake --build .
+    - ctest -V
 
 clang-11-tsan:
   extends: .debug-test-base
@@ -248,8 +247,8 @@ clang-11-tsan:
       -DCMAKE_CXX_FLAGS=-fsanitize=thread
       -DCMAKE_MODULE_LINKER_FLAGS=-fsanitize=thread
     - cd $BUILD_DIR
-    - ctest -V -M Experimental -T Configure -T Build -T Test
-    - ctest -M Experimental -T Submit
+    - cmake --build .
+    - ctest -V
 
 clang-11-conan:
   extends: .retry setting
@@ -330,9 +329,8 @@ pages:
   dependencies:
     - doc
   script:
-    - mkdir public
-    - mv build_doc/doc/sphinx/html public/sphinx
-    - mv build_doc/doc/doxygen/html public/doxygen
+    - rm -rf public
+    - mv build_doc/doc/html public
   artifacts:
     paths:
       - public
