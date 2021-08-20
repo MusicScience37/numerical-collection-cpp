@@ -17,6 +17,7 @@ include:
   - template: Dependency-Scanning.gitlab-ci.yml
 dependency_scanning:
   stage: Check
+  needs: []
 gemnasium-python-dependency_scanning:
   image:
     name: registry.gitlab.com/gitlab-org/security-products/analyzers/gemnasium-python:2-python-3.9
