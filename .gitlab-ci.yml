@@ -11,6 +11,13 @@ stages:
 variables:
   NUM_COLLECT_VERSION: "0.2.0"
   CONAN_USER: "MusicScience37+numerical-collection-cpp"
+  SECURE_LOG_LEVEL: debug
+
+include:
+  - template: Dependency-Scanning.gitlab-ci.yml
+gemnasium-python-dependency_scanning:
+  image:
+    name: registry.gitlab.com/gitlab-org/security-products/analyzers/gemnasium-python:2-python-3.9
 
 .retry setting:
   retry:
