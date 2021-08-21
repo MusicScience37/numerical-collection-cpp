@@ -63,6 +63,7 @@ set(SOURCE_FILES
     opt/impl/ternary_vector_test.cpp
     opt/newton_optimizer_test.cpp
     opt/steepest_descent_test.cpp
+    regularization/explicit_l_curve_test.cpp
     regularization/tikhonov_test.cpp
     roots/newton_raphson_test.cpp
     util/assert_test.cpp
