@@ -43,6 +43,12 @@ namespace num_collect {
         namespace impl {}
     }  // namespace opt
 
+    //! Namespace of regularization algorithms.
+    namespace regularization {
+        //! Namespace of implementations.
+        namespace impl {}
+    }  // namespace regularization
+
     //! Namespace of constexpr variables and functions.
     namespace constants {
         //! Namespace of implementations.

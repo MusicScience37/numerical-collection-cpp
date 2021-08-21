@@ -8,27 +8,23 @@ Regularization Using L2 Norm
 
     title Abstract Model of Regularization Using L2 Norm
 
-    interface regularized_solver_base<Scalar> {
+    interface explicit_regularized_solver_base<Scalar> {
         + using scalar_type = Scalar
         + residual_norm(param: scalar_type) : scalar_type
-        + regularization_norm(param: scalar_type) : scalar_type
+        + regularization_term(param: scalar_type) : scalar_type
+        + first_derivative_of_residual_norm(param: scalar_type) : scalar_type
+        + first_derivative_of_regularization_term(param: scalar_type) : scalar_type
+        + second_derivative_of_residual_norm(param: scalar_type) : scalar_type
+        + second_derivative_of_regularization_term(param: scalar_type) : scalar_type
+        + sum_of_filter_factor(param: scalar_type) : scalar_type
         + param_search_region() : pair<scalar_type, scalar_type>
     }
-
-    interface explicit_regularized_solver_base<Scalar> {
-        + first_derivative_of_residual_norm(param: scalar_type) : scalar_type
-        + first_derivative_of_regularization_norm(param: scalar_type) : scalar_type
-        + second_derivative_of_residual_norm(param: scalar_type) : scalar_type
-        + second_derivative_of_regularization_norm(param: scalar_type) : scalar_type
-        + sum_of_filter_factor(param: scalar_type) : scalar_type
-    }
-    regularized_solver_base <|-- explicit_regularized_solver_base
 
     class tikhonov<Coeff, Data> {
         + using coeff_type = Coeff
         + using data_type = Data
         + compute(coeff: const coeff_type&, data: const data_type&)
-        + solve(param: scalar_type) : expression
+        + solve(param: scalar_type, solution: data_type&)
     }
     explicit_regularized_solver_base <|-- tikhonov
 
@@ -36,7 +32,7 @@ Regularization Using L2 Norm
         + using coeff_type = Coeff
         + using data_type = Data
         + compute(coeff: const coeff_type&, data: const data_type&, reg_coeff: const coeff_type&)
-        + solve(param: scalar_type) : expression
+        + solve(param: scalar_type, solution: data_type&)
     }
     explicit_regularized_solver_base <|-- general_tikhonov
     general_tikhonov o-- tikhonov
@@ -47,13 +43,13 @@ Regularization Using L2 Norm
         + search()
         + opt_param() : scalar_type
     }
-    param_searcher_base o-left- regularized_solver_base
+    param_searcher_base o-left- explicit_regularized_solver_base
 
     class l_curve_point<Scalar> {
         + using scalar_type = Scalar
         + param() : scalar_type
         + residual_norm() : scalar_type
-        + regularization_norm() : scalar_type
+        + regularization_term() : scalar_type
         + curvature() : scalar_type
     }
 
