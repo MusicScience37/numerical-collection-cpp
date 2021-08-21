@@ -26,6 +26,7 @@
 #include <celero/Celero.h>
 
 #include "log_error_udm.h"
+#include "num_collect/regularization/explicit_gcv.h"
 #include "num_collect/regularization/explicit_l_curve.h"
 #include "num_collect/regularization/tikhonov.h"
 
@@ -39,10 +40,10 @@ public:
     [[nodiscard]] auto getExperimentValues() const
         -> std::vector<celero::TestFixture::ExperimentValue> override {
         std::vector<celero::TestFixture::ExperimentValue> problem_space;
-        problem_space.emplace_back(-10);  // NOLINT
-        problem_space.emplace_back(-4);   // NOLINT
-        problem_space.emplace_back(-2);   // NOLINT
-        problem_space.emplace_back(0);    // NOLINT
+        problem_space.emplace_back(-100);  // NOLINT
+        problem_space.emplace_back(-4);    // NOLINT
+        problem_space.emplace_back(-2);    // NOLINT
+        problem_space.emplace_back(0);     // NOLINT
         return problem_space;
     }
 
@@ -117,6 +118,25 @@ BASELINE_F(
         num_collect::regularization::tikhonov<coeff_type, data_type>;
     using searcher_type =
         num_collect::regularization::explicit_l_curve<solver_type>;
+
+    solver_type solver;
+    solver.compute(prob().coeff(), data_with_error());
+
+    searcher_type searcher{solver};
+    searcher.search();
+    Eigen::VectorXd solution;
+    searcher.solve(solution);
+
+    set_error(solution);
+}
+
+// NOLINTNEXTLINE: external library
+BENCHMARK_F(
+    reg_blur_sine, tikhonov_gcv, blur_sine_fixture, samples, iterations) {
+    using solver_type =
+        num_collect::regularization::tikhonov<coeff_type, data_type>;
+    using searcher_type =
+        num_collect::regularization::explicit_gcv<solver_type>;
 
     solver_type solver;
     solver.compute(prob().coeff(), data_with_error());
