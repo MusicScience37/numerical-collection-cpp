@@ -36,7 +36,7 @@ Regularization Using L2 Norm
         + solve(param: scalar_type, solution: data_type&)
     }
     explicit_regularized_solver_base <|-- general_tikhonov
-    general_tikhonov o-- tikhonov
+    general_tikhonov o-left- tikhonov
 
     interface param_searcher_base<Solver> {
         + using solver_type = Solver
@@ -45,26 +45,3 @@ Regularization Using L2 Norm
         + opt_param() : scalar_type
     }
     param_searcher_base o-left- explicit_regularized_solver_base
-
-    class l_curve_point<Scalar> {
-        + using scalar_type = Scalar
-        + param() : scalar_type
-        + residual_norm() : scalar_type
-        + regularization_term() : scalar_type
-        + curvature() : scalar_type
-    }
-
-    class explicit_l_curve<Solver, Optimizer> {
-        + using optimizer_type = Optimizer
-        + generate_table(param_list: const vector<scalar>&) : vector<l_curve_point>
-        + generate_table() : vector<l_curve_point>
-        + curvature(param: scalar_type) : scalar_type
-    }
-    param_searcher_base <|-- explicit_l_curve
-    explicit_l_curve ..> l_curve_point
-
-    class explicit_gcv<Solver, Optimizer> {
-        + using optimizer_type = Optimizer
-        + evaluate(param: scalar_type) : scalar_type
-    }
-    param_searcher_base <|-- explicit_gcv
