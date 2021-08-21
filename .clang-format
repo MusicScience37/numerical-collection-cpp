@@ -14,9 +14,11 @@ AlignOperands: false
 IncludeCategories:
   - Regex: '^<.*\.(h|hpp)>$'
     Priority: 2
-  - Regex: '^<'
+  - Regex: "^<"
     Priority: 1
-  - Regex: '.*'
+  - Regex: ".*"
     Priority: 3
 
 NamespaceMacros: []
+
+CommentPragmas: "\\copydoc"
