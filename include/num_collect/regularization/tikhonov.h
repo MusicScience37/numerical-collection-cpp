@@ -206,6 +206,9 @@ public:
         return res;
     }
 
+    //! \copydoc explicit_regularized_solver_base::data_size
+    [[nodiscard]] auto data_size() const -> index_type { return svd_.rows(); }
+
     //! \copydoc explicit_regularized_solver_base::param_search_region
     [[nodiscard]] auto param_search_region() const
         -> std::pair<scalar_type, scalar_type> {

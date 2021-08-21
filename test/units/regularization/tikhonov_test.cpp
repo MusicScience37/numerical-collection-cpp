@@ -214,6 +214,18 @@ TEST_CASE("num_collect::regularization::tikhonov") {
             Catch::Matchers::WithinRel(expected));
     }
 
+    SECTION("data_size") {
+        constexpr num_collect::index_type solution_size = 15;
+        constexpr num_collect::index_type data_size = 10;
+        const auto prob = num_prob_collect::regularization::blur_sine(
+            data_size, solution_size);
+
+        num_collect::regularization::tikhonov<coeff_type, data_type> tikhonov;
+        tikhonov.compute(prob.coeff(), prob.data());
+
+        REQUIRE(tikhonov.data_size() == data_size);
+    }
+
     SECTION("param_search_region") {
         constexpr num_collect::index_type solution_size = 15;
         constexpr num_collect::index_type data_size = 10;

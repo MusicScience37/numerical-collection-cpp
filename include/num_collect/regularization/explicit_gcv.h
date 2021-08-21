@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of explicit_l_curve class.
+ * \brief Definition of explicit_gcv class.
  */
 #pragma once
 
@@ -27,14 +27,14 @@
 namespace num_collect::regularization {
 
 /*!
- * \brief Class to calculate the curvature of L-curve.
+ * \brief Class to calculate the value of GCV.
  *
  * \warning This class is meant for use in optimizers.
  *
  * \tparam Solver Type of solvers.
  */
 template <typename Solver>
-class explicit_l_curve_curvature {
+class explicit_gcv_function {
 public:
     //! Type of solvers.
     using solver_type = Solver;
@@ -53,40 +53,23 @@ public:
      *
      * \param[in] solver Solver.
      */
-    explicit explicit_l_curve_curvature(const solver_type& solver)
+    explicit explicit_gcv_function(const solver_type& solver)
         : solver_(&solver) {}
 
     /*!
-     * \brief Calculate the curvature of L-curve.
+     * \brief Calculate GCV function.
      *
      * \param[in] param Regularization parameter.
-     * \return Curvature of L-curve.
+     * \return Value.
      */
-    [[nodiscard]] auto curvature(const scalar_type& param) const {
-        const scalar_type res = solver_->residual_norm(param);
-        const scalar_type reg = solver_->regularization_term(param);
-        const scalar_type res1 =
-            solver_->first_derivative_of_residual_norm(param);
-        const scalar_type res2 =
-            solver_->second_derivative_of_residual_norm(param);
-        const scalar_type reg1 =
-            solver_->first_derivative_of_regularization_term(param);
-        const scalar_type reg2 =
-            solver_->second_derivative_of_regularization_term(param);
-
-        const scalar_type log_res1 = res1 / res;
-        const scalar_type log_reg1 = reg1 / reg;
-        const scalar_type log_res2 = (res2 * res - res1 * res1) / (res * res);
-        const scalar_type log_reg2 = (reg2 * reg - reg1 * reg1) / (reg * reg);
-
-        using std::pow;
-        return (log_res1 * log_reg2 - log_res2 * log_reg1) /
-            pow(log_res1 * log_res1 + log_reg1 * log_reg1,
-                static_cast<scalar_type>(1.5));  // NOLINT
+    [[nodiscard]] auto gcv(const scalar_type& param) const -> scalar_type {
+        const scalar_type den = static_cast<scalar_type>(solver_->data_size()) -
+            solver_->sum_of_filter_factor(param);
+        return solver_->residual_norm(param) / (den * den);
     }
 
     /*!
-     * \brief Calculate the curvature of L-curve.
+     * \brief Calculate GCV function.
      *
      * \param[in] log_param Logarithm of a regularization parameter.
      */
@@ -94,39 +77,39 @@ public:
         using std::pow;
         const scalar_type param = pow(static_cast<scalar_type>(10),  // NOLINT
             log_param);
-        curvature_ = curvature(param);
+        value_ = gcv(param);
     }
 
     /*!
-     * \brief Get the negated value of the curvature.
+     * \brief Get the value.
      *
-     * \return Negated value of the curvature.
+     * \return Value.
      */
-    [[nodiscard]] auto value() const -> scalar_type { return -curvature_; }
+    [[nodiscard]] auto value() const -> scalar_type { return value_; }
 
 private:
     //! Solver.
     const solver_type* solver_;
 
-    //! Curvature.
-    scalar_type curvature_{};
+    //! Value.
+    scalar_type value_{};
 };
 
 /*!
- * \brief Class to search optimal regularization parameter using l-curve.
+ * \brief Class to search
  *
  * \tparam Solver Type of solvers.
  * \tparam Optimizer Type of optimizers.
  */
 template <typename Solver,
     typename Optimizer =
-        opt::golden_section_search<explicit_l_curve_curvature<Solver>>>
-class explicit_l_curve
-    : public param_searcher_base<explicit_l_curve<Solver, Optimizer>, Solver> {
+        opt::golden_section_search<explicit_gcv_function<Solver>>>
+class explicit_gcv
+    : public param_searcher_base<explicit_gcv<Solver, Optimizer>, Solver> {
 public:
     //! Type of base class.
     using base_type =
-        param_searcher_base<explicit_l_curve<Solver, Optimizer>, Solver>;
+        param_searcher_base<explicit_gcv<Solver, Optimizer>, Solver>;
 
     using typename base_type::scalar_type;
     using typename base_type::solver_type;
@@ -139,9 +122,8 @@ public:
      *
      * \param[in] solver Solver.
      */
-    explicit explicit_l_curve(const solver_type& solver)
-        : solver_(&solver),
-          optimizer_(explicit_l_curve_curvature<Solver>(solver)) {}
+    explicit explicit_gcv(const solver_type& solver)
+        : solver_(&solver), optimizer_(explicit_gcv_function<Solver>(solver)) {}
 
     /*!
      * \brief Search the optimal regularization parameter.

@@ -21,6 +21,8 @@
 
 #include <utility>
 
+#include "num_collect/util/index_type.h"
+
 namespace num_collect::regularization {
 
 /*!
@@ -112,6 +114,15 @@ public:
     [[nodiscard]] auto sum_of_filter_factor(const scalar_type& param) const
         -> scalar_type {
         return derived().sum_of_filter_factor(param);
+    }
+
+    /*!
+     * \brief Get the size of data.
+     *
+     * \return Size of data.
+     */
+    [[nodiscard]] auto data_size() const -> index_type {
+        return derived().data_size();
     }
 
     /*!

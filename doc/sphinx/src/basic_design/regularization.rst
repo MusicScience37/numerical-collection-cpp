@@ -17,6 +17,7 @@ Regularization Using L2 Norm
         + second_derivative_of_residual_norm(param: scalar_type) : scalar_type
         + second_derivative_of_regularization_term(param: scalar_type) : scalar_type
         + sum_of_filter_factor(param: scalar_type) : scalar_type
+        + data_size() : index_type
         + param_search_region() : pair<scalar_type, scalar_type>
     }
 
