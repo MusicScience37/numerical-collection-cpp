@@ -44,4 +44,24 @@ TEST_CASE("num_collect::regularization::tikhonov") {
 
         REQUIRE_THAT(solution, eigen_approx(prob.solution()));
     }
+
+    SECTION("solve with different parameters") {
+        constexpr num_collect::index_type solution_size = 15;
+        constexpr num_collect::index_type data_size = 30;
+        const auto prob = num_prob_collect::regularization::blur_sine(
+            data_size, solution_size);
+
+        num_collect::regularization::tikhonov<coeff_type, data_type> tikhonov;
+        tikhonov.compute(prob.coeff(), prob.data());
+
+        constexpr double param_small = 1e-2;
+        Eigen::VectorXd solution_small;
+        tikhonov.solve(param_small, solution_small);
+
+        constexpr double param_large = 1e+2;
+        Eigen::VectorXd solution_large;
+        tikhonov.solve(param_large, solution_large);
+
+        REQUIRE(solution_large.squaredNorm() < solution_small.squaredNorm());
+    }
 }
