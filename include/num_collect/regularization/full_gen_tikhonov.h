@@ -87,11 +87,11 @@ public:
         const index_type n = coeff.cols();
         const index_type p = reg_coeff.rows();
 
-        Eigen::HouseholderQR<coeff_type> qr_reg_adj;
+        Eigen::ColPivHouseholderQR<coeff_type> qr_reg_adj;
         qr_reg_adj.compute(reg_coeff.adjoint());
         const coeff_type v = qr_reg_adj.householderQ();
 
-        Eigen::HouseholderQR<coeff_type> qr_coeff_v2;
+        Eigen::ColPivHouseholderQR<coeff_type> qr_coeff_v2;
         qr_coeff_v2.compute(coeff * v.rightCols(n - p));
         const coeff_type q = qr_coeff_v2.householderQ();
 
