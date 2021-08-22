@@ -26,6 +26,7 @@
 #include <celero/Celero.h>
 
 #include "log_error_udm.h"
+#include "log_param_udm.h"
 #include "num_collect/regularization/explicit_gcv.h"
 #include "num_collect/regularization/explicit_l_curve.h"
 #include "num_collect/regularization/tikhonov.h"
@@ -67,9 +68,11 @@ public:
                 prob_.solution().squaredNorm()));
     }
 
+    void set_param(double val) { log_param_->addValue(std::log10(val)); }
+
     [[nodiscard]] auto getUserDefinedMeasurements() const -> std::vector<
         std::shared_ptr<celero::UserDefinedMeasurement>> override {
-        return {log_error_};
+        return {log_error_, log_param_};
     }
 
     [[nodiscard]] auto prob() const
@@ -97,6 +100,8 @@ private:
 
     std::shared_ptr<log_error_udm> log_error_{
         std::make_shared<log_error_udm>()};
+    std::shared_ptr<log_param_udm> log_param_{
+        std::make_shared<log_param_udm>()};
 };
 
 constexpr std::int64_t samples = 30;
@@ -128,6 +133,7 @@ BASELINE_F(
     searcher.solve(solution);
 
     set_error(solution);
+    set_param(searcher.opt_param());
 }
 
 // NOLINTNEXTLINE: external library
@@ -147,4 +153,5 @@ BENCHMARK_F(
     searcher.solve(solution);
 
     set_error(solution);
+    set_param(searcher.opt_param());
 }
