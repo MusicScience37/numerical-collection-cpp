@@ -70,6 +70,7 @@ set(SOURCE_FILES
     roots/newton_raphson_test.cpp
     util/assert_test.cpp
     util/exception_test.cpp
+    util/get_size_test.cpp
     util/is_eigen_matrix_test.cpp
     util/is_eigen_vector_test.cpp
     util/iteration_logger_test.cpp
