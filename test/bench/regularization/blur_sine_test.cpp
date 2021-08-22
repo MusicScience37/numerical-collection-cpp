@@ -29,7 +29,9 @@
 #include "log_param_udm.h"
 #include "num_collect/regularization/explicit_gcv.h"
 #include "num_collect/regularization/explicit_l_curve.h"
+#include "num_collect/regularization/full_gen_tikhonov.h"
 #include "num_collect/regularization/tikhonov.h"
+#include "num_prob_collect/regularization/dense_diff_matrix.h"
 
 // NOLINTNEXTLINE: external library
 CELERO_MAIN
@@ -84,6 +86,10 @@ public:
         return data_with_error_;
     }
 
+    [[nodiscard]] auto dense_diff_matrix() const -> const Eigen::MatrixXd& {
+        return dense_diff_matrix_;
+    }
+
 private:
     double error_rate_{};
 
@@ -94,9 +100,14 @@ private:
     static constexpr num_collect::index_type data_size = 40;
     static constexpr num_collect::index_type solution_size = 60;
 #endif
-    num_prob_collect::regularization::blur_sine prob_{data_size, solution_size};
+    const num_prob_collect::regularization::blur_sine prob_{
+        data_size, solution_size};
 
     Eigen::VectorXd data_with_error_{};
+
+    const Eigen::MatrixXd dense_diff_matrix_{
+        num_prob_collect::regularization::dense_diff_matrix<Eigen::MatrixXd>(
+            solution_size)};
 
     std::shared_ptr<log_error_udm> log_error_{
         std::make_shared<log_error_udm>()};
@@ -146,6 +157,46 @@ BENCHMARK_F(
 
     solver_type solver;
     solver.compute(prob().coeff(), data_with_error());
+
+    searcher_type searcher{solver};
+    searcher.search();
+    Eigen::VectorXd solution;
+    searcher.solve(solution);
+
+    set_error(solution);
+    set_param(searcher.opt_param());
+}
+
+// NOLINTNEXTLINE: external library
+BENCHMARK_F(reg_blur_sine, full_gen_tik_l_curve, blur_sine_fixture, samples,
+    iterations) {
+    using solver_type =
+        num_collect::regularization::full_gen_tikhonov<coeff_type, data_type>;
+    using searcher_type =
+        num_collect::regularization::explicit_l_curve<solver_type>;
+
+    solver_type solver;
+    solver.compute(prob().coeff(), data_with_error(), dense_diff_matrix());
+
+    searcher_type searcher{solver};
+    searcher.search();
+    Eigen::VectorXd solution;
+    searcher.solve(solution);
+
+    set_error(solution);
+    set_param(searcher.opt_param());
+}
+
+// NOLINTNEXTLINE: external library
+BENCHMARK_F(
+    reg_blur_sine, full_gen_tik_gcv, blur_sine_fixture, samples, iterations) {
+    using solver_type =
+        num_collect::regularization::full_gen_tikhonov<coeff_type, data_type>;
+    using searcher_type =
+        num_collect::regularization::explicit_gcv<solver_type>;
+
+    solver_type solver;
+    solver.compute(prob().coeff(), data_with_error(), dense_diff_matrix());
 
     searcher_type searcher{solver};
     searcher.search();
