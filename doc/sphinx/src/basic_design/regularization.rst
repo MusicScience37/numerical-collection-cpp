@@ -29,14 +29,14 @@ Regularization Using L2 Norm
     }
     explicit_regularized_solver_base <|-- tikhonov
 
-    class general_tikhonov<Coeff, Data> {
+    class full_gen_tikhonov<Coeff, Data> {
         + using coeff_type = Coeff
         + using data_type = Data
         + compute(coeff: const coeff_type&, data: const data_type&, reg_coeff: const coeff_type&)
         + solve(param: scalar_type, solution: data_type&)
     }
-    explicit_regularized_solver_base <|-- general_tikhonov
-    general_tikhonov o-left- tikhonov
+    explicit_regularized_solver_base <|-- full_gen_tikhonov
+    full_gen_tikhonov o-left- tikhonov
 
     interface param_searcher_base<Solver> {
         + using solver_type = Solver

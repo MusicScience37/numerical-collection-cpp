@@ -65,6 +65,7 @@ set(SOURCE_FILES
     opt/steepest_descent_test.cpp
     regularization/explicit_gcv_test.cpp
     regularization/explicit_l_curve_test.cpp
+    regularization/full_gen_tikhonov_test.cpp
     regularization/tikhonov_test.cpp
     roots/newton_raphson_test.cpp
     util/assert_test.cpp

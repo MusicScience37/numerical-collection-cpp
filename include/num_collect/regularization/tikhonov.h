@@ -103,7 +103,7 @@ public:
         return svd_.singularValues();
     }
 
-    //! \copydoc explicit_regularized_solver_base::residual_norm
+    //! \copydoc num_collect::regularization::explicit_regularized_solver_base::residual_norm
     [[nodiscard]] auto residual_norm(const scalar_type& param) const
         -> scalar_type {
         auto res = static_cast<scalar_type>(0);
@@ -117,7 +117,7 @@ public:
         return res + min_res_;
     }
 
-    //! \copydoc explicit_regularized_solver_base::regularization_term
+    //! \copydoc num_collect::regularization::explicit_regularized_solver_base::regularization_term
     [[nodiscard]] auto regularization_term(const scalar_type& param) const
         -> scalar_type {
         auto res = static_cast<scalar_type>(0);
@@ -131,7 +131,7 @@ public:
         return res;
     }
 
-    //! \copydoc explicit_regularized_solver_base::first_derivative_of_residual_norm
+    //! \copydoc num_collect::regularization::explicit_regularized_solver_base::first_derivative_of_residual_norm
     [[nodiscard]] auto first_derivative_of_residual_norm(
         const scalar_type& param) const -> scalar_type {
         auto res = static_cast<scalar_type>(0);
@@ -146,7 +146,7 @@ public:
         return res;
     }
 
-    //! \copydoc explicit_regularized_solver_base::first_derivative_of_regularization_term
+    //! \copydoc num_collect::regularization::explicit_regularized_solver_base::first_derivative_of_regularization_term
     [[nodiscard]] auto first_derivative_of_regularization_term(
         const scalar_type& param) const -> scalar_type {
         auto res = static_cast<scalar_type>(0);
@@ -161,7 +161,7 @@ public:
         return res;
     }
 
-    //! \copydoc explicit_regularized_solver_base::second_derivative_of_residual_norm
+    //! \copydoc num_collect::regularization::explicit_regularized_solver_base::second_derivative_of_residual_norm
     [[nodiscard]] auto second_derivative_of_residual_norm(
         const scalar_type& param) const -> scalar_type {
         auto res = static_cast<scalar_type>(0);
@@ -178,7 +178,7 @@ public:
         return res;
     }
 
-    //! \copydoc explicit_regularized_solver_base::second_derivative_of_regularization_term
+    //! \copydoc num_collect::regularization::explicit_regularized_solver_base::second_derivative_of_regularization_term
     [[nodiscard]] auto second_derivative_of_regularization_term(
         const scalar_type& param) const -> scalar_type {
         auto res = static_cast<scalar_type>(0);
@@ -193,7 +193,7 @@ public:
         return res;
     }
 
-    //! \copydoc explicit_regularized_solver_base::sum_of_filter_factor
+    //! \copydoc num_collect::regularization::explicit_regularized_solver_base::sum_of_filter_factor
     [[nodiscard]] auto sum_of_filter_factor(const scalar_type& param) const
         -> scalar_type {
         auto res = static_cast<scalar_type>(0);
@@ -206,10 +206,10 @@ public:
         return res;
     }
 
-    //! \copydoc explicit_regularized_solver_base::data_size
+    //! \copydoc num_collect::regularization::explicit_regularized_solver_base::data_size
     [[nodiscard]] auto data_size() const -> index_type { return svd_.rows(); }
 
-    //! \copydoc explicit_regularized_solver_base::param_search_region
+    //! \copydoc num_collect::regularization::explicit_regularized_solver_base::param_search_region
     [[nodiscard]] auto param_search_region() const
         -> std::pair<scalar_type, scalar_type> {
         const scalar_type max_singular_value = singular_values()(0);

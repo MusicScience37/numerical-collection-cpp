@@ -64,6 +64,7 @@
 #include "opt/steepest_descent_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "regularization/explicit_gcv_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "regularization/explicit_l_curve_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "regularization/full_gen_tikhonov_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "regularization/tikhonov_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "roots/newton_raphson_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "util/assert_test.cpp"           // NOLINT(bugprone-suspicious-include)
