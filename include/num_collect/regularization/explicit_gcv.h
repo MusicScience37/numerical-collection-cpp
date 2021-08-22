@@ -125,9 +125,7 @@ public:
     explicit explicit_gcv(const solver_type& solver)
         : solver_(&solver), optimizer_(explicit_gcv_function<Solver>(solver)) {}
 
-    /*!
-     * \brief Search the optimal regularization parameter.
-     */
+    //! \copydoc param_searcher_base::search
     void search() {
         using std::log10;
         using std::pow;
@@ -140,19 +138,10 @@ public:
             optimizer_.opt_variable());
     }
 
-    /*!
-     * \brief Get the optimal regularization parameter.
-     *
-     * \return Optimal regularization parameter.
-     */
+    //! \copydoc param_searcher_base::opt_param
     [[nodiscard]] auto opt_param() const -> scalar_type { return opt_param_; }
 
-    /*!
-     * \brief Solver with the optimal regularization parameter.
-     *
-     * \tparam Solution Type of the solution.
-     * \param[out] solution Solution.
-     */
+    //! \copydoc param_searcher_base::solve
     template <typename Solution>
     void solve(Solution& solution) const {
         solver_->solve(opt_param_, solution);

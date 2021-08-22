@@ -50,6 +50,17 @@ public:
         return derived().opt_param();
     }
 
+    /*!
+     * \brief Solver with the optimal regularization parameter.
+     *
+     * \tparam Solution Type of the solution.
+     * \param[out] solution Solution.
+     */
+    template <typename Solution>
+    void solve(Solution& solution) const {
+        derived().solve(solution);
+    }
+
 protected:
     /*!
      * \brief Access derived object.
