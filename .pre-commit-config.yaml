@@ -29,3 +29,8 @@ repos:
         language: system
         files: test/units/.*\.cpp$
         entry: pipenv run python test/units/create_unity_file.py
+      - id: check-encoding
+        name: check-encoding
+        description: Check encoding of files.
+        language: system
+        entry: pipenv run python scripts/check_encoding.py
