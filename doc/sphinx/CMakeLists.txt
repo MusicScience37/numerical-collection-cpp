@@ -18,6 +18,7 @@ set(DOXYGEN_QUIET YES)
 set(DOXYGEN_WARNINGS YES)
 set(DOXYGEN_WARN_IF_UNDOCUMENTED YES)
 set(DOXYGEN_WARN_NO_PARAMDOC YES)
+set(DOXYGEN_WARN_AS_ERROR FAIL_ON_WARNINGS)
 
 # for class documentations
 set(DOXYGEN_BUILTIN_STL_SUPPORT YES)
@@ -69,7 +70,7 @@ set(NUM_COLLECT_SPHINX_OPTIONS -D "plantuml=java -jar ${PLANTUML_JAR_PATH}" -D
 add_custom_target(
     num_collect_doc_sphinx_html ALL
     COMMAND
-        ${PIPENV_EXECUTABLE} run sphinx-build -b html
+        ${PIPENV_EXECUTABLE} run sphinx-build -b html -W
         ${CMAKE_CURRENT_SOURCE_DIR}/src ${NUM_COLLECT_HTML_ROOT}
         ${NUM_COLLECT_SPHINX_OPTIONS} -q
     COMMENT "Generate Sphinx html API documentation for num_collect"
