@@ -15,26 +15,27 @@
  */
 /*!
  * \file
- * \brief Test of optimization of quadratic function with vibration.
+ * \brief Test of optimization of quadratic function.
  */
-#include "num_prob_collect/opt/vibrated_quadratic_function.h"
+#include "num_prob_collect/opt/quadratic_function.h"
 
 #include <celero/Celero.h>
 
 #include "evaluations_udm.h"
 #include "iterations_udm.h"
 #include "num_collect/opt/dividing_rectangles.h"
+#include "num_collect/opt/golden_section_search.h"
 
 // NOLINTNEXTLINE: external library
 CELERO_MAIN
 
-class vibrated_quadratic_function_fixture : public celero::TestFixture {
+class quadratic_function_fixture : public celero::TestFixture {
 public:
-    vibrated_quadratic_function_fixture() = default;
+    quadratic_function_fixture() = default;
 
     template <typename Optimizer>
     void test_optimizer(Optimizer& optimizer) {
-        constexpr double tol_value = -1.0 + 1e-3;
+        constexpr double tol_value = 1e-3;
         while (optimizer.opt_value() > tol_value) {
             optimizer.iterate();
         }
@@ -62,10 +63,20 @@ private:
 }
 
 // NOLINTNEXTLINE: external library
-BASELINE_F(opt_vibrated_quadratic_function, dividing_rectangles,
-    vibrated_quadratic_function_fixture, 0, 0) {
+BASELINE_F(opt_quadratic_function, golden_section_search,
+    quadratic_function_fixture, 0, 0) {
+    auto optimizer = num_collect::opt::golden_section_search<
+        num_prob_collect::opt::quadratic_function>();
+    const auto [lower, upper] = search_region();
+    optimizer.init(lower, upper);
+    this->test_optimizer(optimizer);
+}
+
+// NOLINTNEXTLINE: external library
+BENCHMARK_F(opt_quadratic_function, dividing_rectangles,
+    quadratic_function_fixture, 0, 0) {
     auto optimizer = num_collect::opt::dividing_rectangles<
-        num_prob_collect::opt::vibrated_quadratic_function>();
+        num_prob_collect::opt::quadratic_function>();
     const auto [lower, upper] = search_region();
     optimizer.init(lower, upper);
     this->test_optimizer(optimizer);
