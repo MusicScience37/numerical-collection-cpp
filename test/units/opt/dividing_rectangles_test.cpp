@@ -27,8 +27,9 @@
 
 #include "eigen_approx.h"
 #include "num_prob_collect/opt/multi_quadratic_function.h"
+#include "num_prob_collect/opt/vibrated_quadratic_function.h"
 
-TEST_CASE("num_collect::opt::dividing_rectangles") {
+TEST_CASE("num_collect::opt::dividing_rectangles (multi variables)") {
     using num_collect::opt::dividing_rectangles;
     using num_prob_collect::opt::multi_quadratic_function;
 
@@ -71,6 +72,53 @@ TEST_CASE("num_collect::opt::dividing_rectangles") {
         std::ostringstream stream;
         opt.init(Eigen::VectorXd::Constant(3, -1.0),  // NOLINT
             Eigen::VectorXd::Constant(3, 2.0));       // NOLINT
+        REQUIRE_NOTHROW(opt.solve(stream));
+        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Iter."));
+        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Eval."));
+        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Value"));
+    }
+}
+
+TEST_CASE("num_collect::opt::dividing_rectangles (one variable)") {
+    using num_collect::opt::dividing_rectangles;
+    using num_prob_collect::opt::vibrated_quadratic_function;
+
+    SECTION("init") {
+        auto opt = dividing_rectangles<vibrated_quadratic_function>();
+        opt.init(-5.0, 10.0);  // NOLINT
+        REQUIRE(opt.iterations() == 0);
+        REQUIRE(opt.evaluations() == 1);  // NOLINT
+        REQUIRE_THAT(
+            opt.opt_variable(), Catch::Matchers::WithinRel(2.5));  // NOLINT
+    }
+
+    SECTION("iterate") {
+        auto opt = dividing_rectangles<vibrated_quadratic_function>();
+        opt.init(-5.0, 10.0);  // NOLINT
+        const auto prev_value = opt.opt_value();
+
+        opt.iterate();
+        REQUIRE(opt.iterations() == 1);
+        REQUIRE(opt.evaluations() == 3);
+        REQUIRE(opt.opt_value() <= prev_value);
+    }
+
+    SECTION("solve") {
+        auto opt = dividing_rectangles<vibrated_quadratic_function>();
+        opt.init(-5.0, 10.0);  // NOLINT
+        constexpr double sol_tol = 1e-2;
+        opt.max_evaluations(1000);  // NOLINT
+        opt.solve();
+        REQUIRE_THAT(opt.opt_variable(),
+            Catch::Matchers::WithinAbs(0.0, sol_tol));  // NOLINT
+        REQUIRE_THAT(
+            opt.opt_value(), Catch::Matchers::WithinAbs(-1.0, sol_tol));
+    }
+
+    SECTION("solve with logs") {
+        auto opt = dividing_rectangles<vibrated_quadratic_function>();
+        std::ostringstream stream;
+        opt.init(-5.0, 10.0);  // NOLINT
         REQUIRE_NOTHROW(opt.solve(stream));
         REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Iter."));
         REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Eval."));
