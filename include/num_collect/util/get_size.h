@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of norm class.
+ * \brief Definition of get_size class.
  */
 #pragma once
 
@@ -24,44 +24,47 @@
 #include <complex>
 #include <type_traits>
 
+#include "num_collect/util/index_type.h"
+
 namespace num_collect {
 
 /*!
- * \brief Calculate norm of a matrix.
+ * \brief Get the size.
  *
- * \tparam Derived Matrix type.
+ * \tparam Derived Type of matrix.
  * \param[in] matrix Matrix.
- * \return Norm.
+ * \return Size.
  */
 template <typename Derived>
-auto norm(const Eigen::MatrixBase<Derived>& matrix) {
-    return matrix.norm();
+auto get_size(const Eigen::MatrixBase<Derived>& matrix) -> index_type {
+    return matrix.size();
 }
 
 /*!
- * \brief Calculate the absolute value of a number.
+ * \brief Get the size.
  *
- * \tparam T Floating-point number type.
- * \param[in] val Number.
- * \return Absolute value.
+ * \tparam T Type of the number.
+ * \param[in] val Value.
+ * \return Size.
  */
 template <typename T,
     std::enable_if_t<std::is_floating_point_v<T>, void*> = nullptr>
-auto norm(T val) -> T {
-    using std::abs;
-    return abs(val);
+auto get_size(const T& val) -> index_type {
+    (void)val;
+    return 1;
 }
 
 /*!
- * \brief Calculate the absolute value of a complex number.
+ * \brief Get the size.
  *
- * \tparam T Floating-point number type.
- * \param[in] val Number.
- * \return Absolute value.
+ * \tparam T Type of the number.
+ * \param[in] val Value.
+ * \return Size.
  */
 template <typename T>
-auto norm(const std::complex<T>& val) -> T {
-    return std::abs(val);
+auto get_size(const std::complex<T>& val) -> index_type {
+    (void)val;
+    return 1;
 }
 
 }  // namespace num_collect

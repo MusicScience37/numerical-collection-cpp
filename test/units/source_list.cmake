@@ -60,8 +60,10 @@ set(SOURCE_FILES
     opt/dividing_rectangles_test.cpp
     opt/downhill_simplex_test.cpp
     opt/golden_section_search_test.cpp
+    opt/heuristic_1dim_optimizer_test.cpp
     opt/impl/ternary_vector_test.cpp
     opt/newton_optimizer_test.cpp
+    opt/sampling_optimizer_test.cpp
     opt/steepest_descent_test.cpp
     regularization/explicit_gcv_test.cpp
     regularization/explicit_l_curve_test.cpp
@@ -70,6 +72,7 @@ set(SOURCE_FILES
     roots/newton_raphson_test.cpp
     util/assert_test.cpp
     util/exception_test.cpp
+    util/get_size_test.cpp
     util/is_eigen_matrix_test.cpp
     util/is_eigen_vector_test.cpp
     util/iteration_logger_test.cpp
