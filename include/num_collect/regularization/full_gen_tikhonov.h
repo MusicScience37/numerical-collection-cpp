@@ -26,6 +26,7 @@
 #include "num_collect/regularization/explicit_regularized_solver_base.h"
 #include "num_collect/regularization/tikhonov.h"
 #include "num_collect/util/assert.h"
+#include "num_collect/util/exception.h"
 #include "num_collect/util/index_type.h"
 
 namespace num_collect::regularization {
@@ -89,10 +90,21 @@ public:
 
         Eigen::ColPivHouseholderQR<coeff_type> qr_reg_adj;
         qr_reg_adj.compute(reg_coeff.adjoint());
+        if (qr_reg_adj.rank() < qr_reg_adj.cols()) {
+            throw assertion_failure(
+                fmt::format("reg_coeff must have full row rank (at {})",
+                    NUM_COLLECT_FUNCTION));
+        }
         const coeff_type v = qr_reg_adj.householderQ();
 
         Eigen::ColPivHouseholderQR<coeff_type> qr_coeff_v2;
         qr_coeff_v2.compute(coeff * v.rightCols(n - p));
+        if (qr_coeff_v2.rank() < qr_coeff_v2.cols()) {
+            throw assertion_failure(
+                fmt::format("reg_coeff and coeff must not have common elements "
+                            "other than zero in their kernel (at {})",
+                    NUM_COLLECT_FUNCTION));
+        }
         const coeff_type q = qr_coeff_v2.householderQ();
 
         const coeff_type coeff_arr =

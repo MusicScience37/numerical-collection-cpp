@@ -69,6 +69,22 @@ public:
  * \brief Create a dense differential matrix.
  *
  * \tparam Matrix Type of the matrix.
+ * \param[in] rows Number of rows.
+ * \param[in] cols Number of columns.
+ * \return Expression.
+ */
+template <typename Matrix>
+[[nodiscard]] inline auto dense_diff_matrix(
+    num_collect::index_type rows, num_collect::index_type cols)
+    -> Eigen::CwiseNullaryOp<impl::dense_diff_matrix_functor<Matrix>, Matrix> {
+    return Matrix::NullaryExpr(
+        rows, cols, impl::dense_diff_matrix_functor<Matrix>());
+}
+
+/*!
+ * \brief Create a dense differential matrix.
+ *
+ * \tparam Matrix Type of the matrix.
  * \param[in] size Size (number of columns).
  * \return Expression.
  */
@@ -76,8 +92,7 @@ template <typename Matrix>
 [[nodiscard]] inline auto dense_diff_matrix(num_collect::index_type size)
     -> Eigen::CwiseNullaryOp<impl::dense_diff_matrix_functor<Matrix>, Matrix> {
     NUM_COLLECT_ASSERT(size > 2);
-    return Matrix::NullaryExpr(
-        size - 1, size, impl::dense_diff_matrix_functor<Matrix>());
+    return dense_diff_matrix<Matrix>(size - 1, size);
 }
 
 }  // namespace num_prob_collect::regularization

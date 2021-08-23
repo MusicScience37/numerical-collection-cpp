@@ -134,4 +134,33 @@ TEST_CASE("num_collect::regularization::full_gen_tikhonov") {
         REQUIRE(full_gen_tikhonov.param_search_region() ==
             full_gen_tikhonov.internal_solver().param_search_region());
     }
+
+    SECTION("try to solve using reg_coeff without full row rank") {
+        constexpr num_collect::index_type solution_size = 15;
+        constexpr num_collect::index_type data_size = 30;
+        const auto prob = num_prob_collect::regularization::blur_sine(
+            data_size, solution_size);
+        coeff_type reg_mat =
+            num_prob_collect::regularization::dense_diff_matrix<coeff_type>(
+                solution_size);
+        reg_mat.bottomRows(1).setZero();
+
+        num_collect::regularization::full_gen_tikhonov<coeff_type, data_type>
+            full_gen_tikhonov;
+        REQUIRE_THROWS(
+            full_gen_tikhonov.compute(prob.coeff(), prob.data(), reg_mat));
+    }
+
+    SECTION("try to solve using same matrices for coeff and reg_coeff") {
+        constexpr num_collect::index_type solution_size = 15;
+        constexpr num_collect::index_type data_size = 3;
+        const auto prob = num_prob_collect::regularization::blur_sine(
+            data_size, solution_size);
+        const auto& reg_mat = prob.coeff();
+
+        num_collect::regularization::full_gen_tikhonov<coeff_type, data_type>
+            full_gen_tikhonov;
+        REQUIRE_THROWS(
+            full_gen_tikhonov.compute(prob.coeff(), prob.data(), reg_mat));
+    }
 }
