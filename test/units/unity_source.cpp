@@ -61,6 +61,7 @@
 #include "opt/golden_section_search_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "opt/impl/ternary_vector_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "opt/newton_optimizer_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "opt/sampling_optimizer_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "opt/steepest_descent_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "regularization/explicit_gcv_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "regularization/explicit_l_curve_test.cpp"  // NOLINT(bugprone-suspicious-include)

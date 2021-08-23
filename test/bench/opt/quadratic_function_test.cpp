@@ -25,6 +25,7 @@
 #include "iterations_udm.h"
 #include "num_collect/opt/dividing_rectangles.h"
 #include "num_collect/opt/golden_section_search.h"
+#include "num_collect/opt/sampling_optimizer.h"
 
 // NOLINTNEXTLINE: external library
 CELERO_MAIN
@@ -76,6 +77,16 @@ BASELINE_F(opt_quadratic_function, golden_section_search,
 BENCHMARK_F(opt_quadratic_function, dividing_rectangles,
     quadratic_function_fixture, 0, 0) {
     auto optimizer = num_collect::opt::dividing_rectangles<
+        num_prob_collect::opt::quadratic_function>();
+    const auto [lower, upper] = search_region();
+    optimizer.init(lower, upper);
+    this->test_optimizer(optimizer);
+}
+
+// NOLINTNEXTLINE: external library
+BENCHMARK_F(opt_quadratic_function, sampling_optimizer,
+    quadratic_function_fixture, 0, 0) {
+    auto optimizer = num_collect::opt::sampling_optimizer<
         num_prob_collect::opt::quadratic_function>();
     const auto [lower, upper] = search_region();
     optimizer.init(lower, upper);

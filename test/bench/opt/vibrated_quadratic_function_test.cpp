@@ -24,6 +24,7 @@
 #include "evaluations_udm.h"
 #include "iterations_udm.h"
 #include "num_collect/opt/dividing_rectangles.h"
+#include "num_collect/opt/sampling_optimizer.h"
 
 // NOLINTNEXTLINE: external library
 CELERO_MAIN
@@ -65,6 +66,16 @@ private:
 BASELINE_F(opt_vibrated_quadratic_function, dividing_rectangles,
     vibrated_quadratic_function_fixture, 0, 0) {
     auto optimizer = num_collect::opt::dividing_rectangles<
+        num_prob_collect::opt::vibrated_quadratic_function>();
+    const auto [lower, upper] = search_region();
+    optimizer.init(lower, upper);
+    this->test_optimizer(optimizer);
+}
+
+// NOLINTNEXTLINE: external library
+BENCHMARK_F(opt_vibrated_quadratic_function, sampling_optimizer,
+    vibrated_quadratic_function_fixture, 0, 0) {
+    auto optimizer = num_collect::opt::sampling_optimizer<
         num_prob_collect::opt::vibrated_quadratic_function>();
     const auto [lower, upper] = search_region();
     optimizer.init(lower, upper);

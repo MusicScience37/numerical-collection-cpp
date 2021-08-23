@@ -62,6 +62,7 @@ set(SOURCE_FILES
     opt/golden_section_search_test.cpp
     opt/impl/ternary_vector_test.cpp
     opt/newton_optimizer_test.cpp
+    opt/sampling_optimizer_test.cpp
     opt/steepest_descent_test.cpp
     regularization/explicit_gcv_test.cpp
     regularization/explicit_l_curve_test.cpp
