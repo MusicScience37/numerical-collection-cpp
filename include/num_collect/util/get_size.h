@@ -50,6 +50,7 @@ auto get_size(const Eigen::MatrixBase<Derived>& matrix) -> index_type {
 template <typename T,
     std::enable_if_t<std::is_floating_point_v<T>, void*> = nullptr>
 auto get_size(const T& val) -> index_type {
+    (void)val;
     return 1;
 }
 
@@ -62,6 +63,7 @@ auto get_size(const T& val) -> index_type {
  */
 template <typename T>
 auto get_size(const std::complex<T>& val) -> index_type {
+    (void)val;
     return 1;
 }
 
