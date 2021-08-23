@@ -20,6 +20,9 @@
 
 //! Namespace of num_collect source codes.
 namespace num_collect {
+    //! Namespace of implementations.
+    namespace impl {}
+
     //! Namespace of multiple precision numbers with double numbers.
     namespace multi_double {
         //! Namespace of implementations.

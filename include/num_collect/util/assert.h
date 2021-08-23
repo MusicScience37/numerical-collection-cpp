@@ -23,6 +23,28 @@
 
 #include "num_collect/util/exception.h"
 
+namespace num_collect::impl {
+
+/*!
+ * \brief Check whether a condition is satisfied.
+ *
+ * \param[in] condition_result Result of the condition.
+ * \param[in] condition_str String expression of the condition.
+ * \param[in] function Function name.
+ */
+template <typename ConditionResult, typename ConditionStr, typename Function>
+void assert_impl(ConditionResult&& condition_result,
+    ConditionStr&& condition_str, Function&& function) {
+    if (!std::forward<ConditionResult>(condition_result)) {
+        throw ::num_collect::assertion_failure(
+            fmt::format("assertion failure: {} (at {})",
+                std::forward<ConditionStr>(condition_str),
+                std::forward<Function>(function)));
+    }
+}
+
+}  // namespace num_collect::impl
+
 #ifdef NUM_COLLECT_DOCUMENTATION
 /*!
  * \brief macro to get function name
@@ -44,24 +66,15 @@
  *
  * \param[in] CONDITION Condition.
  */
-#define NUM_COLLECT_ASSERT(CONDITION)                                    \
-    [&] {                                                                \
-        if (!(CONDITION)) {                                              \
-            throw ::num_collect::assertion_failure(                      \
-                fmt::format("assertion failure: {} (at {})", #CONDITION, \
-                    NUM_COLLECT_FUNCTION));                              \
-        }                                                                \
-    }()
+#define NUM_COLLECT_ASSERT(CONDITION)             \
+    ::num_collect::impl::assert_impl((CONDITION), \
+        static_cast<const char*>(#CONDITION),     \
+        static_cast<const char*>(NUM_COLLECT_FUNCTION))
 #else
 // NOLINTNEXTLINE
-#define NUM_COLLECT_ASSERT(CONDITION)                                    \
-    [&] {                                                                \
-        if (!(CONDITION)) {                                              \
-            throw ::num_collect::assertion_failure(                      \
-                fmt::format("assertion failure: {} (at {})", #CONDITION, \
-                    NUM_COLLECT_FUNCTION));                              \
-        }                                                                \
-    }()
+#define NUM_COLLECT_ASSERT(CONDITION) \
+    ::num_collect::impl::assert_impl( \
+        (CONDITION), (#CONDITION), (NUM_COLLECT_FUNCTION))
 #endif
 
 #ifdef NUM_COLLECT_DOCUMENTATION
