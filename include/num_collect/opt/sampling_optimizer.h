@@ -20,6 +20,7 @@
 #pragma once
 
 #include <limits>
+#include <type_traits>
 #include <vector>
 
 #include "num_collect/opt/optimizer_base.h"

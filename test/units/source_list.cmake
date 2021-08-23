@@ -60,6 +60,7 @@ set(SOURCE_FILES
     opt/dividing_rectangles_test.cpp
     opt/downhill_simplex_test.cpp
     opt/golden_section_search_test.cpp
+    opt/heuristic_1dim_optimizer_test.cpp
     opt/impl/ternary_vector_test.cpp
     opt/newton_optimizer_test.cpp
     opt/sampling_optimizer_test.cpp
