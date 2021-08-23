@@ -88,3 +88,6 @@ namespace num_collect {
         }  // namespace avf
     }      // namespace ode
 }  // namespace num_collect
+
+//! Namespace of Eigen library.
+namespace Eigen {}
