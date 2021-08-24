@@ -21,7 +21,7 @@
 
 #include <cmath>
 
-#include "num_collect/opt/golden_section_search.h"
+#include "num_collect/opt/heuristic_1dim_optimizer.h"
 #include "num_collect/regularization/param_searcher_base.h"
 
 namespace num_collect::regularization {
@@ -103,7 +103,7 @@ private:
  */
 template <typename Solver,
     typename Optimizer =
-        opt::golden_section_search<explicit_gcv_function<Solver>>>
+        opt::heuristic_1dim_optimizer<explicit_gcv_function<Solver>>>
 class explicit_gcv
     : public param_searcher_base<explicit_gcv<Solver, Optimizer>, Solver> {
 public:
