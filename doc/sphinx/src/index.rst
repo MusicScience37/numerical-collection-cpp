@@ -21,7 +21,7 @@ API reference can be viewed `here <api/index.html>`_.
 
     how_to_use
     modules
-    basic_design/index
+    directories
 
 .. toctree::
     :maxdepth: 2
@@ -29,3 +29,4 @@ API reference can be viewed `here <api/index.html>`_.
 
     how_to_build_in_repository
     convention
+    basic_design/index
