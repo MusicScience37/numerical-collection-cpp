@@ -17,6 +17,7 @@ class NumCollectConan(ConanFile):
     build_requires = (
         'catch2/3.0.0@MusicScience37+conan-extra-packages/stable',
         'celero/2.8.2',
+        'pybind11/2.7.0',
     )
     generators = "cmake_find_package"
 
