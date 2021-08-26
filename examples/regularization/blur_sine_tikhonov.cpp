@@ -37,8 +37,8 @@ auto main() -> int {
 
     using coeff_type = Eigen::MatrixXd;
     using data_type = Eigen::VectorXd;
-    constexpr num_collect::index_type solution_size = 15;
-    constexpr num_collect::index_type data_size = 30;
+    static constexpr num_collect::index_type solution_size = 60;
+    static constexpr num_collect::index_type data_size = 60;
     constexpr double error_rate = 0.01;
 
     // create test problem
