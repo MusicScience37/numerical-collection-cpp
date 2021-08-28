@@ -78,4 +78,5 @@ set(SOURCE_FILES
     util/iteration_logger_test.cpp
     util/kahan_adder_test.cpp
     util/norm_test.cpp
+    util/safe_cast_test.cpp
 )
