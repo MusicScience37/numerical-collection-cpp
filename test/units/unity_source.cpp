@@ -77,3 +77,4 @@
 #include "util/iteration_logger_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "util/kahan_adder_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "util/norm_test.cpp"         // NOLINT(bugprone-suspicious-include)
+#include "util/safe_cast_test.cpp"    // NOLINT(bugprone-suspicious-include)

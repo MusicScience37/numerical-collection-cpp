@@ -32,6 +32,7 @@
 #include "num_collect/util/get_size.h"
 #include "num_collect/util/is_eigen_vector.h"
 #include "num_collect/util/norm.h"
+#include "num_collect/util/safe_cast.h"
 
 namespace num_collect::opt {
 
@@ -210,7 +211,7 @@ private:
             const value_type& value)
             : lower_(lower),
               upper_(upper),
-              is_divided_(static_cast<std::size_t>(get_size(lower)), false),
+              is_divided_(safe_cast<std::size_t>(get_size(lower)), false),
               dist_(norm(lower - upper) * half),
               value_(value) {}
 
@@ -476,7 +477,7 @@ private:
         value_type dim_lower_value{};
         value_type dim_upper_value{};
         for (index_type i = 0; i < dim_; ++i) {
-            if (rect.is_divided()[static_cast<std::size_t>(i)]) {
+            if (rect.is_divided()[safe_cast<std::size_t>(i)]) {
                 continue;
             }
 
