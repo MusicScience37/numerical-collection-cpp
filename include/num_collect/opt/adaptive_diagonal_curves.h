@@ -33,6 +33,7 @@
 #include "num_collect/opt/optimizer_base.h"
 #include "num_collect/util/assert.h"
 #include "num_collect/util/is_eigen_vector.h"
+#include "num_collect/util/safe_cast.h"
 
 namespace num_collect::opt {
 
@@ -686,8 +687,8 @@ private:
             }
             ++iterations_in_current_phase_;
             if (iterations_in_current_phase_ >
-                static_cast<index_type>((static_cast<std::size_t>(2)
-                    << static_cast<std::size_t>(value_dict_.dim())))) {
+                safe_cast<index_type>((static_cast<std::size_t>(2)
+                    << safe_cast<std::size_t>(value_dict_.dim())))) {
                 state_ = state_type::global_last;
                 return;
             }

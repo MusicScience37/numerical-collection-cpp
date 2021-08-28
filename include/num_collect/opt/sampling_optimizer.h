@@ -26,6 +26,7 @@
 #include "num_collect/opt/optimizer_base.h"
 #include "num_collect/util/assert.h"
 #include "num_collect/util/index_type.h"
+#include "num_collect/util/safe_cast.h"
 
 namespace num_collect::opt {
 
@@ -86,7 +87,7 @@ public:
      * \copydoc num_collect::opt::optimizer_base::iterate
      */
     void iterate() {
-        const auto num_samples_size_t = static_cast<std::size_t>(num_samples_);
+        const auto num_samples_size_t = safe_cast<std::size_t>(num_samples_);
         samples_.resize(num_samples_size_t);
         values_.resize(num_samples_size_t);
 
