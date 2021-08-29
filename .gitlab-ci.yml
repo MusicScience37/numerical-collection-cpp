@@ -148,6 +148,8 @@ static analysis:
   artifacts:
     paths:
       - $BUILD_DIR
+      - "*.png"
+      - "*.html"
     reports:
       junit:
         - $BUILD_DIR/junit/*.xml
