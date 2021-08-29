@@ -94,11 +94,11 @@ private:
     double error_rate_{};
 
 #ifndef NDEBUG
-    static constexpr num_collect::index_type data_size = 20;
     static constexpr num_collect::index_type solution_size = 30;
+    static constexpr num_collect::index_type data_size = solution_size;
 #else
-    static constexpr num_collect::index_type data_size = 40;
     static constexpr num_collect::index_type solution_size = 60;
+    static constexpr num_collect::index_type data_size = solution_size;
 #endif
     const num_prob_collect::regularization::blur_sine prob_{
         data_size, solution_size};
