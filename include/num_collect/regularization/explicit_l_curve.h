@@ -22,7 +22,7 @@
 #include <cmath>
 
 #include "num_collect/opt/heuristic_1dim_optimizer.h"
-#include "num_collect/regularization/param_searcher_base.h"
+#include "num_collect/regularization/explicit_param_searcher_base.h"
 
 namespace num_collect::regularization {
 
@@ -63,7 +63,7 @@ public:
      * \return Curvature of L-curve.
      */
     [[nodiscard]] auto curvature(const scalar_type& param) const {
-        return solver_->curvature(param);
+        return solver_->l_curve_curvature(param);
     }
 
     /*!
@@ -103,12 +103,15 @@ template <typename Solver,
     typename Optimizer =
         opt::heuristic_1dim_optimizer<explicit_l_curve_curvature<Solver>>>
 class explicit_l_curve
-    : public param_searcher_base<explicit_l_curve<Solver, Optimizer>, Solver> {
+    : public explicit_param_searcher_base<explicit_l_curve<Solver, Optimizer>,
+          Solver> {
 public:
     //! Type of base class.
     using base_type =
-        param_searcher_base<explicit_l_curve<Solver, Optimizer>, Solver>;
+        explicit_param_searcher_base<explicit_l_curve<Solver, Optimizer>,
+            Solver>;
 
+    using typename base_type::data_type;
     using typename base_type::scalar_type;
     using typename base_type::solver_type;
 
@@ -124,7 +127,7 @@ public:
         : solver_(&solver),
           optimizer_(explicit_l_curve_curvature<Solver>(solver)) {}
 
-    //! \copydoc param_searcher_base::search
+    //! \copydoc explicit_param_searcher_base::search
     void search() {
         using std::log10;
         using std::pow;
@@ -137,12 +140,11 @@ public:
             optimizer_.opt_variable());
     }
 
-    //! \copydoc param_searcher_base::opt_param
+    //! \copydoc explicit_param_searcher_base::opt_param
     [[nodiscard]] auto opt_param() const -> scalar_type { return opt_param_; }
 
-    //! \copydoc param_searcher_base::solve
-    template <typename Solution>
-    void solve(Solution& solution) const {
+    //! \copydoc explicit_param_searcher_base::solve
+    void solve(data_type& solution) const {
         solver_->solve(opt_param_, solution);
     }
 

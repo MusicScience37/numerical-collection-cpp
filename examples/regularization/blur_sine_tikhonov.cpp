@@ -92,7 +92,7 @@ auto main() -> int {
         type_list.emplace_back("regularization term");
         value_list.push_back(regularization_term);
 
-        const double curvature_value = tikhonov.curvature(param);
+        const double curvature_value = tikhonov.l_curve_curvature(param);
         param_list.push_back(param);
         type_list.emplace_back("curvature");
         value_list.push_back(curvature_value);

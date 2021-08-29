@@ -36,20 +36,18 @@ namespace num_collect::regularization {
  * \tparam Data Type of data vectors.
  */
 template <typename Coeff, typename Data>
-class tikhonov : public explicit_regularized_solver_base<tikhonov<Coeff, Data>,
-                     typename Coeff::Scalar> {
+class tikhonov
+    : public explicit_regularized_solver_base<tikhonov<Coeff, Data>, Data> {
 public:
     //! Type of base class.
-    using base_type = explicit_regularized_solver_base<tikhonov<Coeff, Data>,
-        typename Coeff::Scalar>;
+    using base_type =
+        explicit_regularized_solver_base<tikhonov<Coeff, Data>, Data>;
 
+    using typename base_type::data_type;
     using typename base_type::scalar_type;
 
     //! Type of coefficient matrices.
     using coeff_type = Coeff;
-
-    //! Type of data vectors.
-    using data_type = Data;
 
     static_assert(std::is_same_v<typename coeff_type::Scalar, scalar_type>);
     static_assert(std::is_same_v<typename data_type::Scalar, scalar_type>);
@@ -76,12 +74,7 @@ public:
                        .squaredNorm();
     }
 
-    /*!
-     * \brief Solve for a regularization parameter.
-     *
-     * \param[in] param Regularization parameter.
-     * \param[out] solution Solution.
-     */
+    //! \copydoc num_collect::regularization::explicit_regularized_solver_base::solve
     void solve(const scalar_type& param, data_type& solution) const {
         solution = data_type::Zero(svd_.cols(), rot_data_.cols());
         const index_type rank = svd_.nonzeroSingularValues();

@@ -22,7 +22,7 @@
 #include <cmath>
 
 #include "num_collect/opt/heuristic_1dim_optimizer.h"
-#include "num_collect/regularization/param_searcher_base.h"
+#include "num_collect/regularization/explicit_param_searcher_base.h"
 
 namespace num_collect::regularization {
 
@@ -103,12 +103,14 @@ template <typename Solver,
     typename Optimizer =
         opt::heuristic_1dim_optimizer<explicit_gcv_function<Solver>>>
 class explicit_gcv
-    : public param_searcher_base<explicit_gcv<Solver, Optimizer>, Solver> {
+    : public explicit_param_searcher_base<explicit_gcv<Solver, Optimizer>,
+          Solver> {
 public:
     //! Type of base class.
     using base_type =
-        param_searcher_base<explicit_gcv<Solver, Optimizer>, Solver>;
+        explicit_param_searcher_base<explicit_gcv<Solver, Optimizer>, Solver>;
 
+    using typename base_type::data_type;
     using typename base_type::scalar_type;
     using typename base_type::solver_type;
 
@@ -123,7 +125,7 @@ public:
     explicit explicit_gcv(const solver_type& solver)
         : solver_(&solver), optimizer_(explicit_gcv_function<Solver>(solver)) {}
 
-    //! \copydoc param_searcher_base::search
+    //! \copydoc explicit_param_searcher_base::search
     void search() {
         using std::log10;
         using std::pow;
@@ -136,12 +138,11 @@ public:
             optimizer_.opt_variable());
     }
 
-    //! \copydoc param_searcher_base::opt_param
+    //! \copydoc explicit_param_searcher_base::opt_param
     [[nodiscard]] auto opt_param() const -> scalar_type { return opt_param_; }
 
-    //! \copydoc param_searcher_base::solve
-    template <typename Solution>
-    void solve(Solution& solution) const {
+    //! \copydoc explicit_param_searcher_base::solve
+    void solve(data_type& solution) const {
         solver_->solve(opt_param_, solution);
     }
 

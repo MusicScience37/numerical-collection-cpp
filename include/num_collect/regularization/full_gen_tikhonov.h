@@ -42,20 +42,17 @@ namespace num_collect::regularization {
 template <typename Coeff, typename Data>
 class full_gen_tikhonov
     : public explicit_regularized_solver_base<full_gen_tikhonov<Coeff, Data>,
-          typename Coeff::Scalar> {
+          Data> {
 public:
     //! Type of base class.
     using base_type =
-        explicit_regularized_solver_base<full_gen_tikhonov<Coeff, Data>,
-            typename Coeff::Scalar>;
+        explicit_regularized_solver_base<full_gen_tikhonov<Coeff, Data>, Data>;
 
+    using typename base_type::data_type;
     using typename base_type::scalar_type;
 
     //! Type of coefficient matrices.
     using coeff_type = Coeff;
-
-    //! Type of data vectors.
-    using data_type = Data;
 
     static_assert(std::is_same_v<typename coeff_type::Scalar, scalar_type>);
     static_assert(std::is_same_v<typename data_type::Scalar, scalar_type>);
@@ -124,12 +121,7 @@ public:
         offset_actual_solution_ = v.rightCols(n - p) * coeff_v2_inv_data;
     }
 
-    /*!
-     * \brief Solve for a regularization parameter.
-     *
-     * \param[in] param Regularization parameter.
-     * \param[out] solution Solution.
-     */
+    //! \copydoc num_collect::regularization::explicit_regularized_solver_base::solve
     void solve(const scalar_type& param, data_type& solution) const {
         data_type tikhonov_solution;
         tikhonov_.solve(param, tikhonov_solution);

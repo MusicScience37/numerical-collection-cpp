@@ -30,23 +30,24 @@ namespace num_collect::regularization {
  * \brief Base class of solvers using explicit formulas for regularization.
  *
  * \tparam Derived Type of derived class.
- * \tparam Scalar Type of scalars.
+ * \tparam Data Type of data.
  */
-template <typename Derived, typename Scalar>
+template <typename Derived, typename Data>
 class explicit_regularized_solver_base {
 public:
+    //! Type of data.
+    using data_type = Data;
+
     //! Type of scalars.
-    using scalar_type = Scalar;
+    using scalar_type = typename data_type::Scalar;
 
     /*!
      * \brief Solve for a regularization parameter.
      *
-     * \tparam Solution Type of the solution.
      * \param[in] param Regularization parameter.
      * \param[out] solution Solution.
      */
-    template <typename Solution>
-    void solve(const scalar_type& param, Solution& solution) const {
+    void solve(const scalar_type& param, data_type& solution) const {
         return derived().solve(param, solution);
     }
 
@@ -155,7 +156,7 @@ public:
      * \param[in] param Regularization parameter.
      * \return Curvature of L-curve.
      */
-    [[nodiscard]] auto curvature(const scalar_type& param) const {
+    [[nodiscard]] auto l_curve_curvature(const scalar_type& param) const {
         const scalar_type res = residual_norm(param);
         const scalar_type reg = regularization_term(param);
         const scalar_type res1 = first_derivative_of_residual_norm(param);
