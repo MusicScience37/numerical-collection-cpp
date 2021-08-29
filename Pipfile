@@ -9,7 +9,7 @@ conan = "*"
 [dev-packages]
 adr-tools-python = "*"
 autopep8 = "*"
-cmake-format = "*"
+cmakelang = "*"
 doc8 = "*"
 kaleido = "*"
 myst-parser = "*"
