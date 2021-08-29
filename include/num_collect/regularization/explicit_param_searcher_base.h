@@ -15,26 +15,30 @@
  */
 /*!
  * \file
- * \brief Definition of tikhonov class.
+ * \brief Definition of explicit_param_searcher_base class.
  */
 #pragma once
 
 namespace num_collect::regularization {
 
 /*!
- * \brief Base class for searching the optimal regularization parameters.
+ * \brief Base class for searching the optimal regularization parameters using
+ * explicit formulas for regularization.
  *
  * \tparam Derived Type of the derived class.
  * \tparam Solver Type of solvers.
  */
 template <typename Derived, typename Solver>
-class param_searcher_base {
+class explicit_param_searcher_base {
 public:
     //! Type of solvers.
     using solver_type = Solver;
 
     //! Type of scalars.
     using scalar_type = typename solver_type::scalar_type;
+
+    //! Type of data.
+    using data_type = typename solver_type::data_type;
 
     /*!
      * \brief Search the optimal regularization parameter.
@@ -56,10 +60,7 @@ public:
      * \tparam Solution Type of the solution.
      * \param[out] solution Solution.
      */
-    template <typename Solution>
-    void solve(Solution& solution) const {
-        derived().solve(solution);
-    }
+    void solve(data_type& solution) const { derived().solve(solution); }
 
 protected:
     /*!

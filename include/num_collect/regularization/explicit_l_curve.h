@@ -22,7 +22,7 @@
 #include <cmath>
 
 #include "num_collect/opt/heuristic_1dim_optimizer.h"
-#include "num_collect/regularization/param_searcher_base.h"
+#include "num_collect/regularization/explicit_param_searcher_base.h"
 
 namespace num_collect::regularization {
 
@@ -63,26 +63,7 @@ public:
      * \return Curvature of L-curve.
      */
     [[nodiscard]] auto curvature(const scalar_type& param) const {
-        const scalar_type res = solver_->residual_norm(param);
-        const scalar_type reg = solver_->regularization_term(param);
-        const scalar_type res1 =
-            solver_->first_derivative_of_residual_norm(param);
-        const scalar_type res2 =
-            solver_->second_derivative_of_residual_norm(param);
-        const scalar_type reg1 =
-            solver_->first_derivative_of_regularization_term(param);
-        const scalar_type reg2 =
-            solver_->second_derivative_of_regularization_term(param);
-
-        const scalar_type log_res1 = res1 / res;
-        const scalar_type log_reg1 = reg1 / reg;
-        const scalar_type log_res2 = (res2 * res - res1 * res1) / (res * res);
-        const scalar_type log_reg2 = (reg2 * reg - reg1 * reg1) / (reg * reg);
-
-        using std::pow;
-        return (log_res1 * log_reg2 - log_res2 * log_reg1) /
-            pow(log_res1 * log_res1 + log_reg1 * log_reg1,
-                static_cast<scalar_type>(1.5));  // NOLINT
+        return solver_->l_curve_curvature(param);
     }
 
     /*!
@@ -122,12 +103,15 @@ template <typename Solver,
     typename Optimizer =
         opt::heuristic_1dim_optimizer<explicit_l_curve_curvature<Solver>>>
 class explicit_l_curve
-    : public param_searcher_base<explicit_l_curve<Solver, Optimizer>, Solver> {
+    : public explicit_param_searcher_base<explicit_l_curve<Solver, Optimizer>,
+          Solver> {
 public:
     //! Type of base class.
     using base_type =
-        param_searcher_base<explicit_l_curve<Solver, Optimizer>, Solver>;
+        explicit_param_searcher_base<explicit_l_curve<Solver, Optimizer>,
+            Solver>;
 
+    using typename base_type::data_type;
     using typename base_type::scalar_type;
     using typename base_type::solver_type;
 
@@ -143,7 +127,7 @@ public:
         : solver_(&solver),
           optimizer_(explicit_l_curve_curvature<Solver>(solver)) {}
 
-    //! \copydoc param_searcher_base::search
+    //! \copydoc explicit_param_searcher_base::search
     void search() {
         using std::log10;
         using std::pow;
@@ -156,12 +140,11 @@ public:
             optimizer_.opt_variable());
     }
 
-    //! \copydoc param_searcher_base::opt_param
+    //! \copydoc explicit_param_searcher_base::opt_param
     [[nodiscard]] auto opt_param() const -> scalar_type { return opt_param_; }
 
-    //! \copydoc param_searcher_base::solve
-    template <typename Solution>
-    void solve(Solution& solution) const {
+    //! \copydoc explicit_param_searcher_base::solve
+    void solve(data_type& solution) const {
         solver_->solve(opt_param_, solution);
     }
 

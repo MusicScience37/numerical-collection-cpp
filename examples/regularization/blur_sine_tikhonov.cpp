@@ -72,9 +72,6 @@ auto main() -> int {
               << std::endl;
 
     // plot graphs
-    using curvature_type =
-        num_collect::regularization::explicit_l_curve_curvature<solver_type>;
-    curvature_type curvature{tikhonov};
     std::vector<double> param_list;
     std::vector<std::string> type_list;
     std::vector<double> value_list;
@@ -95,7 +92,7 @@ auto main() -> int {
         type_list.emplace_back("regularization term");
         value_list.push_back(regularization_term);
 
-        const double curvature_value = curvature.curvature(param);
+        const double curvature_value = tikhonov.l_curve_curvature(param);
         param_list.push_back(param);
         type_list.emplace_back("curvature");
         value_list.push_back(curvature_value);

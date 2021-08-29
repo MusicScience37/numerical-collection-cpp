@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <cmath>
 #include <utility>
 
 #include "num_collect/util/index_type.h"
@@ -29,13 +30,26 @@ namespace num_collect::regularization {
  * \brief Base class of solvers using explicit formulas for regularization.
  *
  * \tparam Derived Type of derived class.
- * \tparam Scalar Type of scalars.
+ * \tparam Data Type of data.
  */
-template <typename Derived, typename Scalar>
+template <typename Derived, typename Data>
 class explicit_regularized_solver_base {
 public:
+    //! Type of data.
+    using data_type = Data;
+
     //! Type of scalars.
-    using scalar_type = Scalar;
+    using scalar_type = typename data_type::Scalar;
+
+    /*!
+     * \brief Solve for a regularization parameter.
+     *
+     * \param[in] param Regularization parameter.
+     * \param[out] solution Solution.
+     */
+    void solve(const scalar_type& param, data_type& solution) const {
+        return derived().solve(param, solution);
+    }
 
     /*!
      * \brief Calculate the squared norm of the residual.
@@ -134,6 +148,44 @@ public:
     [[nodiscard]] auto param_search_region() const
         -> std::pair<scalar_type, scalar_type> {
         return derived().param_search_region();
+    }
+
+    /*!
+     * \brief Calculate the curvature of L-curve.
+     *
+     * \param[in] param Regularization parameter.
+     * \return Curvature of L-curve.
+     */
+    [[nodiscard]] auto l_curve_curvature(const scalar_type& param) const {
+        const scalar_type res = residual_norm(param);
+        const scalar_type reg = regularization_term(param);
+        const scalar_type res1 = first_derivative_of_residual_norm(param);
+        const scalar_type res2 = second_derivative_of_residual_norm(param);
+        const scalar_type reg1 = first_derivative_of_regularization_term(param);
+        const scalar_type reg2 =
+            second_derivative_of_regularization_term(param);
+
+        const scalar_type log_res1 = res1 / res;
+        const scalar_type log_reg1 = reg1 / reg;
+        const scalar_type log_res2 = (res2 * res - res1 * res1) / (res * res);
+        const scalar_type log_reg2 = (reg2 * reg - reg1 * reg1) / (reg * reg);
+
+        using std::pow;
+        return (log_res1 * log_reg2 - log_res2 * log_reg1) /
+            pow(log_res1 * log_res1 + log_reg1 * log_reg1,
+                static_cast<scalar_type>(1.5));  // NOLINT
+    }
+
+    /*!
+     * \brief Calculate GCV function.
+     *
+     * \param[in] param Regularization parameter.
+     * \return Value.
+     */
+    [[nodiscard]] auto gcv(const scalar_type& param) const -> scalar_type {
+        const scalar_type den =
+            static_cast<scalar_type>(data_size()) - sum_of_filter_factor(param);
+        return residual_norm(param) / (den * den);
     }
 
 protected:
