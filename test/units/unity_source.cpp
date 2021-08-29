@@ -58,6 +58,7 @@
 #include "opt/dfp_optimizer_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "opt/dividing_rectangles_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "opt/downhill_simplex_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "opt/function_object_wrapper_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "opt/golden_section_search_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "opt/heuristic_1dim_optimizer_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "opt/impl/ternary_vector_test.cpp"  // NOLINT(bugprone-suspicious-include)
