@@ -39,6 +39,18 @@ public:
     using scalar_type = Scalar;
 
     /*!
+     * \brief Solve for a regularization parameter.
+     *
+     * \tparam Solution Type of the solution.
+     * \param[in] param Regularization parameter.
+     * \param[out] solution Solution.
+     */
+    template <typename Solution>
+    void solve(const scalar_type& param, Solution& solution) const {
+        return derived().solve(param, solution);
+    }
+
+    /*!
      * \brief Calculate the squared norm of the residual.
      *
      * \param[in] param Regularization parameter.
