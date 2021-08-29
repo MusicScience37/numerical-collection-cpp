@@ -1,5 +1,2 @@
-add_executable(num_collect_ex_auto_diff_forward forward.cpp)
-target_link_libraries(num_collect_ex_auto_diff_forward PRIVATE num_collect)
-
-add_executable(num_collect_ex_auto_diff_backward backward.cpp)
-target_link_libraries(num_collect_ex_auto_diff_backward PRIVATE num_collect)
+add_example(num_collect_ex_auto_diff_forward forward.cpp)
+add_example(num_collect_ex_auto_diff_backward backward.cpp)
