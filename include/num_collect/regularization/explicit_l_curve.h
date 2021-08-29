@@ -21,20 +21,21 @@
 
 #include <cmath>
 
+#include "num_collect/opt/function_object_wrapper.h"
 #include "num_collect/opt/heuristic_1dim_optimizer.h"
 #include "num_collect/regularization/explicit_param_searcher_base.h"
 
 namespace num_collect::regularization {
 
 /*!
- * \brief Class to calculate the curvature of L-curve.
+ * \brief Class of objective function in L-curve.
  *
  * \warning This class is meant for use in optimizers.
  *
  * \tparam Solver Type of solvers.
  */
 template <typename Solver>
-class explicit_l_curve_curvature {
+class explicit_l_curve_objective_function {
 public:
     //! Type of solvers.
     using solver_type = Solver;
@@ -42,55 +43,31 @@ public:
     //! Type of scalars.
     using scalar_type = typename solver_type::scalar_type;
 
-    //! Type of variables.
-    using variable_type = scalar_type;
-
-    //! Type of function values.
-    using value_type = scalar_type;
-
     /*!
      * \brief Construct.
      *
      * \param[in] solver Solver.
      */
-    explicit explicit_l_curve_curvature(const solver_type& solver)
+    explicit explicit_l_curve_objective_function(const solver_type& solver)
         : solver_(&solver) {}
 
     /*!
      * \brief Calculate the curvature of L-curve.
      *
-     * \param[in] param Regularization parameter.
-     * \return Curvature of L-curve.
-     */
-    [[nodiscard]] auto curvature(const scalar_type& param) const {
-        return solver_->l_curve_curvature(param);
-    }
-
-    /*!
-     * \brief Calculate the curvature of L-curve.
-     *
      * \param[in] log_param Logarithm of a regularization parameter.
+     * \return Negated value of the curvature.
      */
-    void evaluate_on(const scalar_type& log_param) {
+    [[nodiscard]] auto operator()(const scalar_type& log_param) const
+        -> scalar_type {
         using std::pow;
         const scalar_type param = pow(static_cast<scalar_type>(10),  // NOLINT
             log_param);
-        curvature_ = curvature(param);
+        return -solver_->l_curve_curvature(param);
     }
-
-    /*!
-     * \brief Get the negated value of the curvature.
-     *
-     * \return Negated value of the curvature.
-     */
-    [[nodiscard]] auto value() const -> scalar_type { return -curvature_; }
 
 private:
     //! Solver.
     const solver_type* solver_;
-
-    //! Curvature.
-    scalar_type curvature_{};
 };
 
 /*!
@@ -100,8 +77,7 @@ private:
  * \tparam Optimizer Type of optimizers.
  */
 template <typename Solver,
-    typename Optimizer =
-        opt::heuristic_1dim_optimizer<explicit_l_curve_curvature<Solver>>>
+    template <typename> typename Optimizer = opt::heuristic_1dim_optimizer>
 class explicit_l_curve
     : public explicit_param_searcher_base<explicit_l_curve<Solver, Optimizer>,
           Solver> {
@@ -116,7 +92,9 @@ public:
     using typename base_type::solver_type;
 
     //! Type of optimizers.
-    using optimizer_type = Optimizer;
+    using optimizer_type =
+        Optimizer<opt::function_object_wrapper<scalar_type(scalar_type),
+            explicit_l_curve_objective_function<solver_type>>>;
 
     /*!
      * \brief Construct.
@@ -125,7 +103,9 @@ public:
      */
     explicit explicit_l_curve(const solver_type& solver)
         : solver_(&solver),
-          optimizer_(explicit_l_curve_curvature<Solver>(solver)) {}
+          optimizer_(
+              opt::make_function_object_wrapper<scalar_type(scalar_type)>(
+                  explicit_l_curve_objective_function<solver_type>(solver))) {}
 
     //! \copydoc explicit_param_searcher_base::search
     void search() {

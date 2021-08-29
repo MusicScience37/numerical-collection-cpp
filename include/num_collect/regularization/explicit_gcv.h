@@ -21,20 +21,21 @@
 
 #include <cmath>
 
+#include "num_collect/opt/function_object_wrapper.h"
 #include "num_collect/opt/heuristic_1dim_optimizer.h"
 #include "num_collect/regularization/explicit_param_searcher_base.h"
 
 namespace num_collect::regularization {
 
 /*!
- * \brief Class to calculate the value of GCV.
+ * \brief Class of objective function in GCV.
  *
  * \warning This class is meant for use in optimizers.
  *
  * \tparam Solver Type of solvers.
  */
 template <typename Solver>
-class explicit_gcv_function {
+class explicit_gcv_objective_function {
 public:
     //! Type of solvers.
     using solver_type = Solver;
@@ -42,55 +43,31 @@ public:
     //! Type of scalars.
     using scalar_type = typename solver_type::scalar_type;
 
-    //! Type of variables.
-    using variable_type = scalar_type;
-
-    //! Type of function values.
-    using value_type = scalar_type;
-
     /*!
      * \brief Construct.
      *
      * \param[in] solver Solver.
      */
-    explicit explicit_gcv_function(const solver_type& solver)
+    explicit explicit_gcv_objective_function(const solver_type& solver)
         : solver_(&solver) {}
 
     /*!
      * \brief Calculate GCV function.
      *
-     * \param[in] param Regularization parameter.
+     * \param[in] log_param Logarithm of a regularization parameter.
      * \return Value.
      */
-    [[nodiscard]] auto gcv(const scalar_type& param) const -> scalar_type {
-        return solver_->gcv(param);
-    }
-
-    /*!
-     * \brief Calculate GCV function.
-     *
-     * \param[in] log_param Logarithm of a regularization parameter.
-     */
-    void evaluate_on(const scalar_type& log_param) {
+    [[nodiscard]] auto operator()(const scalar_type& log_param) const
+        -> scalar_type {
         using std::pow;
         const scalar_type param = pow(static_cast<scalar_type>(10),  // NOLINT
             log_param);
-        value_ = gcv(param);
+        return solver_->gcv(param);
     }
-
-    /*!
-     * \brief Get the value.
-     *
-     * \return Value.
-     */
-    [[nodiscard]] auto value() const -> scalar_type { return value_; }
 
 private:
     //! Solver.
     const solver_type* solver_;
-
-    //! Value.
-    scalar_type value_{};
 };
 
 /*!
@@ -100,8 +77,7 @@ private:
  * \tparam Optimizer Type of optimizers.
  */
 template <typename Solver,
-    typename Optimizer =
-        opt::heuristic_1dim_optimizer<explicit_gcv_function<Solver>>>
+    template <typename> typename Optimizer = opt::heuristic_1dim_optimizer>
 class explicit_gcv
     : public explicit_param_searcher_base<explicit_gcv<Solver, Optimizer>,
           Solver> {
@@ -115,7 +91,9 @@ public:
     using typename base_type::solver_type;
 
     //! Type of optimizers.
-    using optimizer_type = Optimizer;
+    using optimizer_type =
+        Optimizer<opt::function_object_wrapper<scalar_type(scalar_type),
+            explicit_gcv_objective_function<solver_type>>>;
 
     /*!
      * \brief Construct.
@@ -123,7 +101,10 @@ public:
      * \param[in] solver Solver.
      */
     explicit explicit_gcv(const solver_type& solver)
-        : solver_(&solver), optimizer_(explicit_gcv_function<Solver>(solver)) {}
+        : solver_(&solver),
+          optimizer_(
+              opt::make_function_object_wrapper<scalar_type(scalar_type)>(
+                  explicit_gcv_objective_function<solver_type>(solver))) {}
 
     //! \copydoc explicit_param_searcher_base::search
     void search() {
