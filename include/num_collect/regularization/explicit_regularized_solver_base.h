@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <cmath>
 #include <utility>
 
 #include "num_collect/util/index_type.h"
@@ -134,6 +135,44 @@ public:
     [[nodiscard]] auto param_search_region() const
         -> std::pair<scalar_type, scalar_type> {
         return derived().param_search_region();
+    }
+
+    /*!
+     * \brief Calculate the curvature of L-curve.
+     *
+     * \param[in] param Regularization parameter.
+     * \return Curvature of L-curve.
+     */
+    [[nodiscard]] auto curvature(const scalar_type& param) const {
+        const scalar_type res = residual_norm(param);
+        const scalar_type reg = regularization_term(param);
+        const scalar_type res1 = first_derivative_of_residual_norm(param);
+        const scalar_type res2 = second_derivative_of_residual_norm(param);
+        const scalar_type reg1 = first_derivative_of_regularization_term(param);
+        const scalar_type reg2 =
+            second_derivative_of_regularization_term(param);
+
+        const scalar_type log_res1 = res1 / res;
+        const scalar_type log_reg1 = reg1 / reg;
+        const scalar_type log_res2 = (res2 * res - res1 * res1) / (res * res);
+        const scalar_type log_reg2 = (reg2 * reg - reg1 * reg1) / (reg * reg);
+
+        using std::pow;
+        return (log_res1 * log_reg2 - log_res2 * log_reg1) /
+            pow(log_res1 * log_res1 + log_reg1 * log_reg1,
+                static_cast<scalar_type>(1.5));  // NOLINT
+    }
+
+    /*!
+     * \brief Calculate GCV function.
+     *
+     * \param[in] param Regularization parameter.
+     * \return Value.
+     */
+    [[nodiscard]] auto gcv(const scalar_type& param) const -> scalar_type {
+        const scalar_type den =
+            static_cast<scalar_type>(data_size()) - sum_of_filter_factor(param);
+        return residual_norm(param) / (den * den);
     }
 
 protected:

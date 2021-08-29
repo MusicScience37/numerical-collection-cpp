@@ -63,9 +63,7 @@ public:
      * \return Value.
      */
     [[nodiscard]] auto gcv(const scalar_type& param) const -> scalar_type {
-        const scalar_type den = static_cast<scalar_type>(solver_->data_size()) -
-            solver_->sum_of_filter_factor(param);
-        return solver_->residual_norm(param) / (den * den);
+        return solver_->gcv(param);
     }
 
     /*!

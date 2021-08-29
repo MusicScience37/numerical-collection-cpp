@@ -63,26 +63,7 @@ public:
      * \return Curvature of L-curve.
      */
     [[nodiscard]] auto curvature(const scalar_type& param) const {
-        const scalar_type res = solver_->residual_norm(param);
-        const scalar_type reg = solver_->regularization_term(param);
-        const scalar_type res1 =
-            solver_->first_derivative_of_residual_norm(param);
-        const scalar_type res2 =
-            solver_->second_derivative_of_residual_norm(param);
-        const scalar_type reg1 =
-            solver_->first_derivative_of_regularization_term(param);
-        const scalar_type reg2 =
-            solver_->second_derivative_of_regularization_term(param);
-
-        const scalar_type log_res1 = res1 / res;
-        const scalar_type log_reg1 = reg1 / reg;
-        const scalar_type log_res2 = (res2 * res - res1 * res1) / (res * res);
-        const scalar_type log_reg2 = (reg2 * reg - reg1 * reg1) / (reg * reg);
-
-        using std::pow;
-        return (log_res1 * log_reg2 - log_res2 * log_reg1) /
-            pow(log_res1 * log_res1 + log_reg1 * log_reg1,
-                static_cast<scalar_type>(1.5));  // NOLINT
+        return solver_->curvature(param);
     }
 
     /*!
