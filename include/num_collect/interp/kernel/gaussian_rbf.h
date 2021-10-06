@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief declaration and implementation of gaussian_rbf class
+ * \brief Definition of gaussian_rbf class
  */
 #pragma once
 

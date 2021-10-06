@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief declaration and implementation of euclidean_distance class
+ * \brief Definition of euclidean_distance class
  */
 #pragma once
 

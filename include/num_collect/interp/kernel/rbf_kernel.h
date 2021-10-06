@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief declaration and implementation of rbf_kernel class
+ * \brief Definition of rbf_kernel class
  */
 #pragma once
 
@@ -141,7 +141,7 @@ public:
                 if (i == j) {
                     continue;
                 }
-                const auto dist = dist_(list.at(i), list.at(j));
+                const auto dist = dist_(list[i], list[j]);
                 if (dist < min_dist) {
                     min_dist = dist;
                 }
