@@ -24,6 +24,9 @@ Modules
         component regularization
         regularization ..> opt
 
+        component interp
+        interp ..> util
+
         component multi_double
 
         component constants
@@ -64,6 +67,9 @@ opt
 
 regularization
     Regularization algorithms.
+
+interp
+    Interpolation algorithms.
 
 multi_double
     Multiple precision numbers with double numbers.

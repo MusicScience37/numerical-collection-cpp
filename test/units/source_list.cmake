@@ -36,6 +36,7 @@ set(SOURCE_FILES
     integration/de_semi_infinite_integrator_test.cpp
     integration/gauss_legendre_integrator_test.cpp
     integration/gauss_legendre_kronrod_integrator_test.cpp
+    interp/kernel/euclidean_distance_test.cpp
     multi_double/basic_operations_test.cpp
     multi_double/quad_test.cpp
     ode/avf/avf2_formula_test.cpp

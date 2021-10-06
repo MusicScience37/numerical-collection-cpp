@@ -35,6 +35,7 @@
 #include "integration/de_semi_infinite_integrator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "integration/gauss_legendre_integrator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "integration/gauss_legendre_kronrod_integrator_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "interp/kernel/euclidean_distance_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "multi_double/basic_operations_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "multi_double/quad_test.cpp"     // NOLINT(bugprone-suspicious-include)
 #include "ode/avf/avf2_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
