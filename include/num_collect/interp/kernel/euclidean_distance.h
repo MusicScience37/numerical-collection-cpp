@@ -19,6 +19,8 @@
  */
 #pragma once
 
+#include <type_traits>
+
 #include "num_collect/util/norm.h"
 
 namespace num_collect::interp::kernel {
@@ -35,7 +37,8 @@ public:
     using variable_type = Variable;
 
     //! Type of values of distances.
-    using value_type = Variable;
+    using value_type =
+        std::decay_t<decltype(norm(std::declval<variable_type>()))>;
 
     /*!
      * \brief Calculate a distance.
@@ -44,8 +47,8 @@ public:
      * \param[in] var2 Variable.
      * \return Distance between var1 and var2.
      */
-    [[nodiscard]] auto operator()(
-        const variable_type& var1, const variable_type& var2) const {
+    [[nodiscard]] auto operator()(const variable_type& var1,
+        const variable_type& var2) const -> value_type {
         return norm(var1 - var2);
     }
 };
