@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief test of quad class
+ * \brief Test of euclidean_distance class.
  */
 #include "num_collect/interp/kernel/euclidean_distance.h"
 
