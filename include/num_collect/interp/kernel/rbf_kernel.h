@@ -93,10 +93,12 @@ public:
      * \brief Set the length parameter.
      *
      * \param[in] value Value.
+     * \return This.
      */
-    void len_param(const len_param_type& value) {
+    auto len_param(const len_param_type& value) -> rbf_kernel& {
         NUM_COLLECT_ASSERT(value > static_cast<len_param_type>(0));
         len_param_ = value;
+        return *this;
     }
 
     /*!
@@ -113,11 +115,13 @@ public:
      * \brief Set the kernel parameter (logarithm of length parameter).
      *
      * \param[in] value Value.
+     * \return This.
      */
-    void kernel_param(const kernel_param_type& value) {
+    auto kernel_param(const kernel_param_type& value) -> rbf_kernel& {
         using std::pow;
         static const auto base = static_cast<kernel_param_type>(10);
         len_param(pow(base, value));
+        return *this;
     }
 
     /*!
