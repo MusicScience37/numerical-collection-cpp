@@ -40,6 +40,7 @@ set(SOURCE_FILES
     interp/kernel/euclidean_distance_test.cpp
     interp/kernel/gaussian_rbf_test.cpp
     interp/kernel/rbf_kernel_test.cpp
+    interp/kernel/self_adjoint_kernel_solver_test.cpp
     multi_double/basic_operations_test.cpp
     multi_double/quad_test.cpp
     ode/avf/avf2_formula_test.cpp

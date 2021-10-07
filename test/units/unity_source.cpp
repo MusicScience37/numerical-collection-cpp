@@ -39,6 +39,7 @@
 #include "interp/kernel/euclidean_distance_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "interp/kernel/gaussian_rbf_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "interp/kernel/rbf_kernel_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "interp/kernel/self_adjoint_kernel_solver_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "multi_double/basic_operations_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "multi_double/quad_test.cpp"     // NOLINT(bugprone-suspicious-include)
 #include "ode/avf/avf2_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
