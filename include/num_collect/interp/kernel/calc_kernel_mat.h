@@ -97,7 +97,7 @@ template <typename Kernel, typename Container>
     -> Eigen::CwiseNullaryOp<impl::calc_kernel_mat_functor<Kernel, Container>,
         typename impl::calc_kernel_mat_functor<Kernel,
             Container>::result_type> {
-    NUM_COLLECT_ASSERT(list.size() > 0);
+    NUM_COLLECT_ASSERT(!list.empty());
 
     using result_type =
         typename impl::calc_kernel_mat_functor<Kernel, Container>::result_type;

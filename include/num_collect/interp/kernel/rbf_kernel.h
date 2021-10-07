@@ -85,7 +85,7 @@ public:
      *
      * \return Length parameter.
      */
-    auto len_param() const noexcept -> const len_param_type& {
+    [[nodiscard]] auto len_param() const noexcept -> const len_param_type& {
         return len_param_;
     }
 
@@ -104,7 +104,7 @@ public:
      *
      * \return Kernel parameter.
      */
-    auto kernel_param() const noexcept -> kernel_param_type {
+    [[nodiscard]] auto kernel_param() const noexcept -> kernel_param_type {
         using std::log10;
         return log10(len_param());
     }
@@ -128,7 +128,7 @@ public:
      * \return Search region (lower and upper bounds).
      */
     template <typename Container>
-    auto kernel_param_search_region(const Container& list) const
+    [[nodiscard]] auto kernel_param_search_region(const Container& list) const
         -> std::pair<kernel_param_type, kernel_param_type> {
         NUM_COLLECT_ASSERT(list.size() > 1);
 
