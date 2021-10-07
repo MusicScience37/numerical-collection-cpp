@@ -17,7 +17,7 @@
  * \file
  * \brief Test of self_adjoint_kernel_solver class.
  */
-#include "num_collect/interp/kernel/self_adjoint_kernel_solver.h"
+#include "num_collect/interp/kernel/impl/self_adjoint_kernel_solver.h"
 
 #include <Eigen/Core>
 
@@ -36,7 +36,7 @@ TEST_CASE("num_collect::interp::kernel::self_adjoint_kernel_solver") {
     using num_collect::interp::kernel::euclidean_distance;
     using num_collect::interp::kernel::gaussian_rbf;
     using num_collect::interp::kernel::rbf_kernel;
-    using num_collect::interp::kernel::self_adjoint_kernel_solver;
+    using num_collect::interp::kernel::impl::self_adjoint_kernel_solver;
 
     const auto vars = std::vector<double>{0.0, 0.1, 0.2, 0.4, 0.6, 1.0};
     const auto data = Eigen::VectorXd{{0.0, 0.2, 0.4, 0.7, 1.0, 2.0}};

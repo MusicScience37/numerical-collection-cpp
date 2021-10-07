@@ -23,7 +23,7 @@
 #include <Eigen/Eigenvalues>
 #include <type_traits>
 
-namespace num_collect::interp::kernel {
+namespace num_collect::interp::kernel::impl {
 
 /*!
  * \brief Class to solve linear equations with self-adjoint kernel matrices.
@@ -118,4 +118,4 @@ private:
     data_type spectre_{};
 };
 
-}  // namespace num_collect::interp::kernel
+}  // namespace num_collect::interp::kernel::impl
