@@ -41,6 +41,7 @@ set(SOURCE_FILES
     interp/kernel/gaussian_rbf_test.cpp
     interp/kernel/impl/auto_regularizer_test.cpp
     interp/kernel/impl/kernel_interpolator_impl_test.cpp
+    interp/kernel/impl/kernel_parameter_optimizer_test.cpp
     interp/kernel/impl/self_adjoint_kernel_solver_test.cpp
     interp/kernel/rbf_kernel_test.cpp
     multi_double/basic_operations_test.cpp

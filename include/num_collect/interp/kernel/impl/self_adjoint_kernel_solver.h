@@ -21,6 +21,7 @@
 
 #include <Eigen/Core>
 #include <Eigen/Eigenvalues>
+#include <limits>
 #include <type_traits>
 
 #include "num_collect/util/assert.h"
@@ -104,12 +105,21 @@ public:
      */
     [[nodiscard]] auto calc_mle_objective(const scalar_type& reg_param) const
         -> scalar_type {
-        NUM_COLLECT_ASSERT(kernel_eigen_.eigenvalues()(0) + reg_param >
-            static_cast<scalar_type>(0));
+        constexpr scalar_type limit = std::numeric_limits<scalar_type>::max() *
+            static_cast<scalar_type>(1e-20);
+        if (kernel_eigen_.eigenvalues()(0) + reg_param <=
+            static_cast<scalar_type>(0)) {
+            return limit;
+        }
 
         using std::log;
-        return spectre_.rows() * log(calc_reg_term(reg_param)) +
+        const scalar_type value =
+            spectre_.rows() * log(calc_reg_term(reg_param)) +
             calc_log_determinant(reg_param);
+        if (value < limit) {
+            return value;
+        }
+        return limit;
     }
 
     /*!
