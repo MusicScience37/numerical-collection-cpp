@@ -21,7 +21,7 @@
 
 #include <vector>
 
-#include "num_collect/interp/kernel/impl/kernel_interpolator_impl.h"
+#include "num_collect/interp/kernel/impl/auto_regularizer_wrapper.h"
 #include "num_collect/interp/kernel/impl/kernel_parameter_optimizer.h"
 
 namespace num_collect::interp::kernel {
@@ -208,7 +208,7 @@ private:
     Eigen::VectorX<value_type> coeff_{};
 
     //! Internal interpolator.
-    impl::kernel_interpolator_impl<value_type> interpolator_{};
+    impl::auto_regularizer_wrapper<value_type> interpolator_{};
 
     //! Optimizer of kernel parameters.
     std::unique_ptr<impl::kernel_parameter_optimizer<kernel_type>> optimizer_{};

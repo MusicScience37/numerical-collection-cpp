@@ -15,9 +15,9 @@
  */
 /*!
  * \file
- * \brief Test of kernel_interpolator_impl class.
+ * \brief Test of auto_regularizer_wrapper class.
  */
-#include "num_collect/interp/kernel/impl/kernel_interpolator_impl.h"
+#include "num_collect/interp/kernel/impl/auto_regularizer_wrapper.h"
 
 #include <Eigen/Core>
 
@@ -31,11 +31,11 @@
 #include "num_collect/interp/kernel/gaussian_rbf.h"
 #include "num_collect/interp/kernel/rbf_kernel.h"
 
-TEST_CASE("num_collect::interp::kernel::impl::kernel_interpolator_impl") {
+TEST_CASE("num_collect::interp::kernel::impl::auto_regularizer_wrapper") {
     using num_collect::interp::kernel::euclidean_distance;
     using num_collect::interp::kernel::gaussian_rbf;
     using num_collect::interp::kernel::rbf_kernel;
-    using num_collect::interp::kernel::impl::kernel_interpolator_impl;
+    using num_collect::interp::kernel::impl::auto_regularizer_wrapper;
 
     const auto vars = std::vector<double>{0.0, 0.1, 0.2, 0.4, 0.6, 1.0};
     const auto data = Eigen::VectorXd{{0.0, 0.2, 0.4, 0.7, 1.0, 2.0}};
@@ -49,7 +49,7 @@ TEST_CASE("num_collect::interp::kernel::impl::kernel_interpolator_impl") {
     const Eigen::MatrixXd kernel_mat = calc_kernel_mat(kernel, vars);
 
     SECTION("compute with default settings") {
-        auto interpolator = kernel_interpolator_impl<double>();
+        auto interpolator = auto_regularizer_wrapper<double>();
 
         REQUIRE(interpolator.reg_param() == 0.0);  // NOLINT
 
@@ -67,7 +67,7 @@ TEST_CASE("num_collect::interp::kernel::impl::kernel_interpolator_impl") {
     }
 
     SECTION("compute with a fixed regularization parameter") {
-        auto interpolator = kernel_interpolator_impl<double>();
+        auto interpolator = auto_regularizer_wrapper<double>();
 
         constexpr double reg_param = 1e-4;
         interpolator.regularize_with(reg_param);
@@ -87,7 +87,7 @@ TEST_CASE("num_collect::interp::kernel::impl::kernel_interpolator_impl") {
     }
 
     SECTION("compute with automatic regularization") {
-        auto interpolator = kernel_interpolator_impl<double>();
+        auto interpolator = auto_regularizer_wrapper<double>();
 
         interpolator.regularize_automatically();
         interpolator.compute(kernel, vars, data);

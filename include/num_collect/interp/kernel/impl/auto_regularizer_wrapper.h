@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of kernel_interpolator_impl class.
+ * \brief Definition of auto_regularizer_wrapper class.
  */
 #pragma once
 
@@ -30,15 +30,12 @@
 namespace num_collect::interp::kernel::impl {
 
 /*!
- * \brief Helper class of interpolation using kernels.
+ * \brief Helper class to use auto_regularizer class only if needed.
  *
  * \tparam Scalar Type of scalars.
- *
- * \note This class is an intermidiate class to implement interpolation using
- * kernels.
  */
 template <typename Scalar>
-class kernel_interpolator_impl {
+class auto_regularizer_wrapper {
 public:
     //! Type of scalars.
     using scalar_type = Scalar;

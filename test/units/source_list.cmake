@@ -40,7 +40,7 @@ set(SOURCE_FILES
     interp/kernel/euclidean_distance_test.cpp
     interp/kernel/gaussian_rbf_test.cpp
     interp/kernel/impl/auto_regularizer_test.cpp
-    interp/kernel/impl/kernel_interpolator_impl_test.cpp
+    interp/kernel/impl/auto_regularizer_wrapper_test.cpp
     interp/kernel/impl/kernel_parameter_optimizer_test.cpp
     interp/kernel/impl/self_adjoint_kernel_solver_test.cpp
     interp/kernel/kernel_interpolator_test.cpp

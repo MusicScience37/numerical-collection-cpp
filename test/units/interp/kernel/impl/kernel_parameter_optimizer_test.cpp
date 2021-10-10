@@ -29,14 +29,14 @@
 #include "num_collect/interp/kernel/calc_kernel_mat.h"
 #include "num_collect/interp/kernel/euclidean_distance.h"
 #include "num_collect/interp/kernel/gaussian_rbf.h"
-#include "num_collect/interp/kernel/impl/kernel_interpolator_impl.h"
+#include "num_collect/interp/kernel/impl/auto_regularizer_wrapper.h"
 #include "num_collect/interp/kernel/rbf_kernel.h"
 
 TEST_CASE("num_collect::interp::kernel::impl::kernel_parameter_optimizer") {
     using num_collect::interp::kernel::euclidean_distance;
     using num_collect::interp::kernel::gaussian_rbf;
     using num_collect::interp::kernel::rbf_kernel;
-    using num_collect::interp::kernel::impl::kernel_interpolator_impl;
+    using num_collect::interp::kernel::impl::auto_regularizer_wrapper;
     using num_collect::interp::kernel::impl::kernel_parameter_optimizer;
 
     const auto vars = std::vector<double>{0.0, 0.1, 0.2, 0.4, 0.6, 1.0};
@@ -46,7 +46,7 @@ TEST_CASE("num_collect::interp::kernel::impl::kernel_parameter_optimizer") {
         rbf_kernel<euclidean_distance<double>, gaussian_rbf<double>>;
     auto kernel = kernel_type();
 
-    auto interpolator = kernel_interpolator_impl<double>();
+    auto interpolator = auto_regularizer_wrapper<double>();
 
     SECTION("compute") {
         auto optimizer =
