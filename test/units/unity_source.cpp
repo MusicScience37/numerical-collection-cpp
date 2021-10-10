@@ -42,6 +42,7 @@
 #include "interp/kernel/impl/kernel_interpolator_impl_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "interp/kernel/impl/kernel_parameter_optimizer_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "interp/kernel/impl/self_adjoint_kernel_solver_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "interp/kernel/kernel_interpolator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "interp/kernel/rbf_kernel_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "multi_double/basic_operations_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "multi_double/quad_test.cpp"     // NOLINT(bugprone-suspicious-include)

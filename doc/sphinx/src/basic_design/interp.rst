@@ -68,7 +68,7 @@ Kernel Interpolation
         + search_kernel_param_auto()
         + compute(variable_list: vector<variable_type>, value_list: Eigen::VectorX<value_type>)
         + mle_objective_function_value() : value_type
-        + value(variable: variable_type) : value_type
+        + interpolate_on(variable: variable_type) : value_type
         + operator()(variable: variable_type) : value_type
         + kernel() : kernel_type
     }
