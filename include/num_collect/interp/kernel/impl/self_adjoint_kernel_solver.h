@@ -23,6 +23,8 @@
 #include <Eigen/Eigenvalues>
 #include <type_traits>
 
+#include "num_collect/util/assert.h"
+
 namespace num_collect::interp::kernel::impl {
 
 /*!
@@ -100,8 +102,11 @@ public:
      * \param[in] reg_param Regularization parameter.
      * \return Value of the MLE objective function.
      */
-    [[nodiscard]] auto calc_mle_objective(const scalar_type& reg_param)
+    [[nodiscard]] auto calc_mle_objective(const scalar_type& reg_param) const
         -> scalar_type {
+        NUM_COLLECT_ASSERT(kernel_eigen_.eigenvalues()(0) + reg_param >
+            static_cast<scalar_type>(0));
+
         using std::log;
         return spectre_.rows() *
             log((spectre_.array().abs2().rowwise().sum() /
