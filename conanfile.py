@@ -11,15 +11,30 @@ class NumCollectConan(ConanFile):
     author = "Kenta Kabashima (kenta_program37@hotmail.co.jp)"
     topics = ("numerical-analysis")
     settings = None
+    options = {
+        "requirements_for_tests": [True, False],
+        "stack_traces_support": [True, False],
+    }
+    default_options = {
+        "requirements_for_tests": True,
+        "stack_traces_support": True,
+    }
     exports_sources = "include/*"
     no_copy_source = True
-    requires = "fmt/8.0.1", "eigen/3.4.0"
-    build_requires = (
-        'catch2/3.0.0@MusicScience37+conan-extra-packages/stable',
-        'celero/2.8.2',
-        'pybind11/2.7.0',
-    )
     generators = "cmake_find_package"
+
+    def requirements(self):
+        self.requires("fmt/8.0.1")
+        self.requires("eigen/3.4.0")
+        if self.options.stack_traces_support:
+            self.requires("backward-cpp/1.6")
+
+    def build_requirements(self):
+        if self.options.requirements_for_tests:
+            self.build_requires(
+                "catch2/3.0.0@MusicScience37+conan-extra-packages/stable")
+            self.build_requires("celero/2.8.2")
+            self.build_requires("pybind11/2.7.0")
 
     def package(self):
         self.copy("*.h")
