@@ -101,4 +101,14 @@ TEST_CASE("num_collect::interp::kernel::self_adjoint_kernel_solver") {
 
         REQUIRE(mle_large > mle_zero);
     }
+
+    SECTION("calculate the coefficient of the kernel common in variables") {
+        auto solver =
+            self_adjoint_kernel_solver<Eigen::MatrixXd, Eigen::VectorXd>();
+        solver.compute(kernel_mat, data);
+
+        REQUIRE(solver.calc_common_coeff(0.0) > 0.0);
+        constexpr double reg_param = 1e-3;
+        REQUIRE(solver.calc_common_coeff(reg_param) > 0.0);
+    }
 }

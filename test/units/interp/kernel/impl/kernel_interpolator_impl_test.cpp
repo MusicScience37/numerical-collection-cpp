@@ -57,9 +57,10 @@ TEST_CASE("num_collect::interp::kernel::impl::kernel_interpolator_impl") {
 
         REQUIRE(interpolator.reg_param() == 0.0);  // NOLINT
         REQUIRE_THAT(interpolator.mle_objective_function_value(), is_finite());
+        REQUIRE(interpolator.common_coeff() > 0.0);
 
         Eigen::VectorXd coeff;
-        interpolator.calc_coeff(coeff);
+        interpolator.solve(coeff);
         const Eigen::VectorXd retrieved_data = kernel_mat * coeff;
         constexpr double tol_error = 1e-12;
         REQUIRE_THAT(retrieved_data, eigen_approx(data, tol_error));
@@ -76,9 +77,10 @@ TEST_CASE("num_collect::interp::kernel::impl::kernel_interpolator_impl") {
 
         REQUIRE(interpolator.reg_param() == reg_param);
         REQUIRE_THAT(interpolator.mle_objective_function_value(), is_finite());
+        REQUIRE(interpolator.common_coeff() > 0.0);
 
         Eigen::VectorXd coeff;
-        interpolator.calc_coeff(coeff);
+        interpolator.solve(coeff);
         const Eigen::VectorXd retrieved_data = kernel_mat * coeff;
         constexpr double tol_error = 1e-2;
         REQUIRE_THAT(retrieved_data, eigen_approx(data, tol_error));
@@ -92,9 +94,10 @@ TEST_CASE("num_collect::interp::kernel::impl::kernel_interpolator_impl") {
 
         REQUIRE(interpolator.reg_param() > 0.0);
         REQUIRE_THAT(interpolator.mle_objective_function_value(), is_finite());
+        REQUIRE(interpolator.common_coeff() > 0.0);
 
         Eigen::VectorXd coeff;
-        interpolator.calc_coeff(coeff);
+        interpolator.solve(coeff);
         const Eigen::VectorXd retrieved_data = kernel_mat * coeff;
         constexpr double tol_error = 1e-4;
         REQUIRE_THAT(retrieved_data, eigen_approx(data, tol_error));

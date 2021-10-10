@@ -105,13 +105,13 @@ public:
     }
 
     /*!
-     * \brief Calculate coefficients of the kernel.
+     * \brief Calculate coefficients of the kernel for variables.
      *
      * \tparam Coeff Type of coefficients.
-     * \param[in] coeff Coefficients.
+     * \param[out] coeff Coefficients.
      */
     template <typename Coeff>
-    void calc_coeff(Eigen::MatrixBase<Coeff>& coeff) const {
+    void solve(Eigen::MatrixBase<Coeff>& coeff) const {
         solver_.solve(reg_param_, coeff);
     }
 
@@ -122,6 +122,15 @@ public:
      */
     [[nodiscard]] auto mle_objective_function_value() const -> scalar_type {
         return solver_.calc_mle_objective(reg_param_);
+    }
+
+    /*!
+     * \brief Calculate the coefficient of the kernel common in variables.
+     *
+     * \return Value.
+     */
+    [[nodiscard]] auto common_coeff() const -> scalar_type {
+        return solver_.calc_common_coeff(reg_param_);
     }
 
 private:
