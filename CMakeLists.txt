@@ -41,6 +41,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
 find_package(fmt REQUIRED)
 find_package(Eigen3 REQUIRED)
+find_package(Backward)
 if(NUM_COLLECT_TESTING)
     find_package(Catch2)
     find_package(Celero)
@@ -61,6 +62,12 @@ target_include_directories(num_collect
 target_link_libraries(
     num_collect INTERFACE fmt::fmt Eigen3::Eigen num_collect_cpp_warnings
                           num_collect_cpp_flags)
+if(Backward_FOUND)
+    option(NUM_COLLECT_STACK_TRACES_SUPPORT "enable support of stack traces" ON)
+    if(NUM_COLLECT_STACK_TRACES_SUPPORT)
+        target_link_libraries(num_collect INTERFACE Backward::Backward)
+    endif()
+endif()
 
 if(NUM_COLLECT_BUILD_DOC)
     add_subdirectory(doc)
