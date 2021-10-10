@@ -96,7 +96,8 @@ public:
     }
 
     /*!
-     * \brief Calculate maximum likelihood estimation (MLE) objective function.
+     * \brief Calculate maximum likelihood estimation (MLE) objective function
+     * \cite Scheuerer2011.
      *
      * Minimize this function to get the optimal parameter.
      *

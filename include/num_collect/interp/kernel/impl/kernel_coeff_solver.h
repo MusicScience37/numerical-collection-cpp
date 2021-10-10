@@ -165,7 +165,8 @@ public:
     }
 
     /*!
-     * \brief Get the value of the MLE objective function.
+     * \brief Get the value of the MLE objective function
+     * \cite Scheuerer2011.
      *
      * \return Value of the MLE objective function.
      */

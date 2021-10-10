@@ -28,6 +28,11 @@ namespace num_collect::interp::kernel {
 /*!
  * \brief Class to interpolate data using kernels.
  *
+ * This class determines parameters automatically if set to do so
+ * using maximum likelihood estimation (MLE) \cite Scheuerer2011.
+ * And this class can evaluate mean and variance in Gaussian process as in
+ * \cite Brochu2010.
+ *
  * \tparam Kernel Type of the kernel.
  */
 template <typename Kernel>
@@ -192,7 +197,8 @@ public:
     }
 
     /*!
-     * \brief Get the value of the MLE objective function.
+     * \brief Get the value of the MLE objective function
+     * \cite Scheuerer2011.
      *
      * \return Value of the MLE objective function.
      */
