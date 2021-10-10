@@ -52,6 +52,15 @@ namespace num_collect {
         namespace impl {}
     }  // namespace regularization
 
+    //! Namespace of interpolation algorithms.
+    namespace interp {
+        //! namespace of interpolation using kernels.
+        namespace kernel {
+            //! Namespace of implementations.
+            namespace impl {}
+        }  // namespace kernel
+    }      // namespace interp
+
     //! Namespace of constexpr variables and functions.
     namespace constants {
         //! Namespace of implementations.

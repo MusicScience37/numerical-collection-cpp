@@ -36,6 +36,15 @@ set(SOURCE_FILES
     integration/de_semi_infinite_integrator_test.cpp
     integration/gauss_legendre_integrator_test.cpp
     integration/gauss_legendre_kronrod_integrator_test.cpp
+    interp/kernel/calc_kernel_mat_test.cpp
+    interp/kernel/euclidean_distance_test.cpp
+    interp/kernel/gaussian_rbf_test.cpp
+    interp/kernel/impl/auto_regularizer_test.cpp
+    interp/kernel/impl/kernel_interpolator_impl_test.cpp
+    interp/kernel/impl/kernel_parameter_optimizer_test.cpp
+    interp/kernel/impl/self_adjoint_kernel_solver_test.cpp
+    interp/kernel/kernel_interpolator_test.cpp
+    interp/kernel/rbf_kernel_test.cpp
     multi_double/basic_operations_test.cpp
     multi_double/quad_test.cpp
     ode/avf/avf2_formula_test.cpp
