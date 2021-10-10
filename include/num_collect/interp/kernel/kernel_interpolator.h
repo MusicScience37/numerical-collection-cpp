@@ -21,8 +21,7 @@
 
 #include <vector>
 
-#include "num_collect/interp/kernel/impl/auto_regularizer_wrapper.h"
-#include "num_collect/interp/kernel/impl/kernel_parameter_optimizer.h"
+#include "num_collect/interp/kernel/impl/kernel_coeff_solver.h"
 
 namespace num_collect::interp::kernel {
 
@@ -52,7 +51,7 @@ public:
      * \param[in] kernel Kernel.
      */
     explicit kernel_interpolator(const kernel_type& kernel = kernel_type())
-        : kernel_(kernel) {
+        : solver_(kernel) {
         search_kernel_param_auto();
     }
 
@@ -63,7 +62,7 @@ public:
      * \return This.
      */
     auto regularize_with(const value_type& reg_param) -> kernel_interpolator& {
-        interpolator_.regularize_with(reg_param);
+        solver_.regularize_with(reg_param);
         return *this;
     }
 
@@ -73,7 +72,7 @@ public:
      * \return This.
      */
     auto regularize_automatically() -> kernel_interpolator& {
-        interpolator_.regularize_automatically();
+        solver_.regularize_automatically();
         return *this;
     }
 
@@ -83,7 +82,7 @@ public:
      * \return This.
      */
     auto disable_regularization() -> kernel_interpolator& {
-        regularize_with(static_cast<value_type>(0));
+        solver_.regularize_with(static_cast<value_type>(0));
         return *this;
     }
 
@@ -93,7 +92,7 @@ public:
      * \return Regularization parameter.
      */
     [[nodiscard]] auto reg_param() const -> value_type {
-        return interpolator_.reg_param();
+        return solver_.reg_param();
     }
 
     /*!
@@ -104,8 +103,7 @@ public:
      */
     auto fix_kernel_param(const kernel_param_type& kernel_param)
         -> kernel_interpolator& {
-        kernel_.kernel_param(kernel_param);
-        optimizer_.reset();
+        solver_.fix_kernel_param(kernel_param);
         return *this;
     }
 
@@ -115,11 +113,7 @@ public:
      * \return This.
      */
     auto search_kernel_param_auto() -> kernel_interpolator& {
-        if (!optimizer_) {
-            optimizer_ =
-                std::make_unique<impl::kernel_parameter_optimizer<kernel_type>>(
-                    interpolator_, kernel_);
-        }
+        solver_.search_kernel_param_auto();
         return *this;
     }
 
@@ -128,7 +122,9 @@ public:
      *
      * \return Kernel.
      */
-    [[nodiscard]] auto kernel() const -> const kernel_type& { return kernel_; }
+    [[nodiscard]] auto kernel() const -> const kernel_type& {
+        return solver_.kernel();
+    }
 
     /*!
      * \brief Compute internal matrices.
@@ -137,20 +133,11 @@ public:
      * \param[in] data Data vector.
      */
     template <typename Data>
-    void compute(const std::vector<variable_type>& variable_list,
+    void compute(std::vector<variable_type> variable_list,
         const Eigen::MatrixBase<Data>& data) {
-        NUM_COLLECT_ASSERT(
-            static_cast<std::size_t>(data.rows()) == variable_list.size());
-        NUM_COLLECT_ASSERT(data.cols() == 1);
-
-        if (optimizer_) {
-            optimizer_->compute(variable_list, data);
-            kernel_.kernel_param(optimizer_->opt_param());
-        }
-        interpolator_.compute(kernel_, variable_list, data);
-        interpolator_.solve(coeff_);
-
-        variable_list_ = variable_list;
+        solver_.compute(variable_list, data);
+        solver_.solve(coeff_);
+        variable_list_ = std::move(variable_list);
     }
 
     /*!
@@ -159,7 +146,7 @@ public:
      * \return Value of the MLE objective function.
      */
     [[nodiscard]] auto mle_objective_function_value() const -> value_type {
-        return interpolator_.mle_objective_function_value();
+        return solver_.mle_objective_function_value();
     }
 
     /*!
@@ -168,7 +155,7 @@ public:
      * \return Value.
      */
     [[nodiscard]] auto common_coeff() const -> value_type {
-        return interpolator_.common_coeff();
+        return solver_.common_coeff();
     }
 
     /*!
@@ -181,7 +168,7 @@ public:
         -> value_type {
         auto value = static_cast<value_type>(0);
         for (std::size_t i = 0; i < variable_list_.size(); ++i) {
-            value += kernel_(variable, variable_list_[i]) *
+            value += kernel()(variable, variable_list_[i]) *
                 coeff_(static_cast<index_type>(i));
         }
         return value;
@@ -198,20 +185,14 @@ public:
     }
 
 private:
-    //! Kernel.
-    kernel_type kernel_;
+    //! Solver.
+    impl::kernel_coeff_solver<kernel_type> solver_;
 
     //! List of variables.
     std::vector<variable_type> variable_list_;
 
     //! Coefficients of kernels for variables.
     Eigen::VectorX<value_type> coeff_{};
-
-    //! Internal interpolator.
-    impl::auto_regularizer_wrapper<value_type> interpolator_{};
-
-    //! Optimizer of kernel parameters.
-    std::unique_ptr<impl::kernel_parameter_optimizer<kernel_type>> optimizer_{};
 };
 
 }  // namespace num_collect::interp::kernel
