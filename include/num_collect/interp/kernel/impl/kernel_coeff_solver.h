@@ -182,6 +182,19 @@ public:
         return interpolator_.common_coeff();
     }
 
+    /*!
+     * \brief Calculate the regularization term for a vector.
+     *
+     * \tparam InputData Type of the input data.
+     * \param[in] data Data vector.
+     * \return Value.
+     */
+    template <typename InputData>
+    [[nodiscard]] auto calc_reg_term(
+        const Eigen::MatrixBase<InputData>& data) const -> value_type {
+        return interpolator_.calc_reg_term(data);
+    }
+
 private:
     //! Kernel.
     kernel_type kernel_;

@@ -138,24 +138,7 @@ public:
         solver_.compute(variable_list, data);
         solver_.solve(coeff_);
         variable_list_ = std::move(variable_list);
-    }
-
-    /*!
-     * \brief Get the value of the MLE objective function.
-     *
-     * \return Value of the MLE objective function.
-     */
-    [[nodiscard]] auto mle_objective_function_value() const -> value_type {
-        return solver_.mle_objective_function_value();
-    }
-
-    /*!
-     * \brief Calculate the coefficient of the kernel common in variables.
-     *
-     * \return Value.
-     */
-    [[nodiscard]] auto common_coeff() const -> value_type {
-        return solver_.common_coeff();
+        common_coeff_ = solver_.common_coeff();
     }
 
     /*!
@@ -180,8 +163,63 @@ public:
      * \param[in] variable Variable.
      * \return Value.
      */
-    [[nodiscard]] auto operator()(const variable_type& variable) const {
+    [[nodiscard]] auto operator()(const variable_type& variable) const
+        -> value_type {
         return interpolate_on(variable);
+    }
+
+    /*!
+     * \brief Evaluate mean and variance for a variable.
+     *
+     * \param[in] variable Variable.
+     * \return Mean and variance.
+     */
+    [[nodiscard]] auto evaluate_mean_and_variance_on(
+        const variable_type& variable) const
+        -> std::pair<value_type, value_type> {
+        Eigen::VectorXd kernel_vec;
+        kernel_vec.resize(static_cast<index_type>(variable_list_.size()));
+        for (std::size_t i = 0; i < variable_list_.size(); ++i) {
+            kernel_vec(static_cast<index_type>(i)) =
+                kernel()(variable, variable_list_[i]);
+        }
+
+        const value_type mean = kernel_vec.dot(coeff_);
+        const value_type variance = common_coeff_ *
+            std::max(kernel()(variable, variable) - calc_reg_term(kernel_vec),
+                static_cast<value_type>(0));
+        return {mean, variance};
+    }
+
+    /*!
+     * \brief Get the value of the MLE objective function.
+     *
+     * \return Value of the MLE objective function.
+     */
+    [[nodiscard]] auto mle_objective_function_value() const -> value_type {
+        return solver_.mle_objective_function_value();
+    }
+
+    /*!
+     * \brief Calculate the coefficient of the kernel common in variables.
+     *
+     * \return Value.
+     */
+    [[nodiscard]] auto common_coeff() const -> value_type {
+        return common_coeff_;
+    }
+
+    /*!
+     * \brief Calculate the regularization term for a vector.
+     *
+     * \tparam InputData Type of the input data.
+     * \param[in] data Data vector.
+     * \return Value.
+     */
+    template <typename InputData>
+    [[nodiscard]] auto calc_reg_term(
+        const Eigen::MatrixBase<InputData>& data) const -> value_type {
+        return solver_.calc_reg_term(data);
     }
 
 private:
@@ -193,6 +231,9 @@ private:
 
     //! Coefficients of kernels for variables.
     Eigen::VectorX<value_type> coeff_{};
+
+    //! Coefficient of the kernel common in variables.
+    value_type common_coeff_{};
 };
 
 }  // namespace num_collect::interp::kernel

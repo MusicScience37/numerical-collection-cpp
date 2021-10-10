@@ -132,4 +132,51 @@ TEST_CASE("num_collect::interp::kernel::kernel_interpolator") {
                     data(static_cast<num_collect::index_type>(i)), tol_error));
         }
     }
+
+    SECTION("evaluate variance without regularization") {
+        auto interpolator = kernel_interpolator<kernel_type>();
+        constexpr double len_param = 0.1;
+        interpolator.fix_kernel_param(std::log10(len_param));
+        interpolator.disable_regularization();
+
+        interpolator.compute(vars, data);
+
+        constexpr double tol_error = 1e-4;
+        for (std::size_t i = 0; i < vars.size(); ++i) {
+            INFO("i = " << i);
+            const auto [mean, variance] =
+                interpolator.evaluate_mean_and_variance_on(vars[i]);
+            REQUIRE_THAT(mean,
+                Catch::Matchers::WithinAbs(
+                    data(static_cast<num_collect::index_type>(i)), tol_error));
+
+            REQUIRE(variance >= 0.0);
+            REQUIRE_THAT(variance, Catch::Matchers::WithinAbs(0.0, tol_error));
+        }
+    }
+
+    SECTION("evaluate variance with regularization") {
+        auto interpolator = kernel_interpolator<kernel_type>();
+        constexpr double len_param = 0.1;
+        interpolator.fix_kernel_param(std::log10(len_param));
+        constexpr double reg_param = 1e-4;
+        interpolator.regularize_with(reg_param);
+
+        interpolator.compute(vars, data);
+
+        constexpr double tol_error = 1e-2;
+        for (std::size_t i = 0; i < vars.size(); ++i) {
+            INFO("i = " << i);
+            const auto [mean, variance] =
+                interpolator.evaluate_mean_and_variance_on(vars[i]);
+            REQUIRE_THAT(mean,
+                Catch::Matchers::WithinAbs(
+                    data(static_cast<num_collect::index_type>(i)), tol_error));
+
+            REQUIRE(variance > 0.0);
+            REQUIRE_THAT(variance,
+                Catch::Matchers::WithinAbs(
+                    interpolator.common_coeff() * reg_param, tol_error));
+        }
+    }
 }

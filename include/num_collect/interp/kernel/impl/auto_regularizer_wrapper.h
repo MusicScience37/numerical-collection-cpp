@@ -130,6 +130,19 @@ public:
         return solver_.calc_common_coeff(reg_param_);
     }
 
+    /*!
+     * \brief Calculate the regularization term for a vector.
+     *
+     * \tparam InputData Type of the input data.
+     * \param[in] data Data vector.
+     * \return Value.
+     */
+    template <typename InputData>
+    [[nodiscard]] auto calc_reg_term(
+        const Eigen::MatrixBase<InputData>& data) const -> scalar_type {
+        return solver_.calc_reg_term(reg_param_, data);
+    }
+
 private:
     //! Kernel matrix.
     kernel_mat_type kernel_mat_{};
