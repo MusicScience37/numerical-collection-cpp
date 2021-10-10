@@ -139,7 +139,8 @@ public:
     template <typename Data>
     void compute(const std::vector<variable_type>& variable_list,
         const Eigen::MatrixBase<Data>& data) {
-        NUM_COLLECT_ASSERT(data.rows() == variable_list.size());
+        NUM_COLLECT_ASSERT(
+            static_cast<std::size_t>(data.rows()) == variable_list.size());
         NUM_COLLECT_ASSERT(data.cols() == 1);
 
         if (optimizer_) {
