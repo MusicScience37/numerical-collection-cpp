@@ -19,6 +19,7 @@
  */
 #include "num_collect/interp/kernel/impl/self_adjoint_kernel_solver.h"
 
+#include <Eigen/Cholesky>
 #include <Eigen/Core>
 
 #include <catch2/catch_test_macros.hpp>
@@ -110,5 +111,21 @@ TEST_CASE("num_collect::interp::kernel::self_adjoint_kernel_solver") {
         REQUIRE(solver.calc_common_coeff(0.0) > 0.0);
         constexpr double reg_param = 1e-3;
         REQUIRE(solver.calc_common_coeff(reg_param) > 0.0);
+    }
+
+    SECTION("calculate the regularization term for a vector") {
+        auto solver =
+            self_adjoint_kernel_solver<Eigen::MatrixXd, Eigen::VectorXd>();
+        solver.compute(kernel_mat, data);
+
+        constexpr double reg_param = 1e-3;
+        const auto vec = Eigen::VectorXd{{0.1, 0.2, 0.4, 0.5, 1.0, 0.7}};
+        Eigen::LLT<Eigen::MatrixXd> llt;
+        llt.compute(kernel_mat +
+            reg_param * Eigen::MatrixXd::Identity(data.size(), data.size()));
+        const Eigen::VectorXd inv_kernel_vec = llt.solve(vec);
+        const auto expected = inv_kernel_vec.dot(vec);
+        REQUIRE_THAT(solver.calc_reg_term(reg_param, vec),
+            Catch::Matchers::WithinRel(expected));
     }
 }

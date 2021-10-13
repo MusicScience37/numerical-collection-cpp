@@ -96,7 +96,8 @@ public:
     }
 
     /*!
-     * \brief Calculate maximum likelihood estimation (MLE) objective function.
+     * \brief Calculate maximum likelihood estimation (MLE) objective function
+     * \cite Scheuerer2011.
      *
      * Minimize this function to get the optimal parameter.
      *
@@ -131,6 +132,26 @@ public:
     [[nodiscard]] auto calc_common_coeff(const scalar_type& reg_param) const
         -> scalar_type {
         return calc_reg_term(reg_param) / spectre_.rows();
+    }
+
+    /*!
+     * \brief Calculate the regularization term for a vector.
+     *
+     * \tparam InputData Type of the input data.
+     * \param[in] reg_param Regularization parameter.
+     * \param[in] data Data vector.
+     * \return Value.
+     */
+    template <typename InputData>
+    [[nodiscard]] auto calc_reg_term(const scalar_type& reg_param,
+        const Eigen::MatrixBase<InputData>& data) const -> scalar_type {
+        return ((kernel_eigen_.eigenvectors().adjoint() * data)
+                    .array()
+                    .abs2()
+                    .rowwise()
+                    .sum() /
+            (kernel_eigen_.eigenvalues().array() + reg_param))
+            .sum();
     }
 
 private:

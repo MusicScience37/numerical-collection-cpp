@@ -23,7 +23,7 @@
 #include <functional>
 #include <memory>
 
-#include "num_collect/interp/kernel/impl/kernel_interpolator_impl.h"
+#include "num_collect/interp/kernel/impl/auto_regularizer_wrapper.h"
 #include "num_collect/opt/dividing_rectangles.h"
 #include "num_collect/opt/function_object_wrapper.h"
 
@@ -56,7 +56,7 @@ public:
      * \param[in] kernel Kernel.
      */
     kernel_parameter_optimizer(
-        kernel_interpolator_impl<value_type>& interpolator, kernel_type& kernel)
+        auto_regularizer_wrapper<value_type>& interpolator, kernel_type& kernel)
         : interpolator_(&interpolator), kernel_(&kernel) {
         constexpr index_type default_max_evaluations = 10;
         optimizer_.max_evaluations(default_max_evaluations);
@@ -103,7 +103,7 @@ public:
 
 private:
     //! Interpolator.
-    kernel_interpolator_impl<value_type>* interpolator_;
+    auto_regularizer_wrapper<value_type>* interpolator_;
 
     //! Kernel.
     kernel_type* kernel_;

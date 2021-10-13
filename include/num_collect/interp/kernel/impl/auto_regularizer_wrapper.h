@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of kernel_interpolator_impl class.
+ * \brief Definition of auto_regularizer_wrapper class.
  */
 #pragma once
 
@@ -30,15 +30,12 @@
 namespace num_collect::interp::kernel::impl {
 
 /*!
- * \brief Helper class of interpolation using kernels.
+ * \brief Helper class to use auto_regularizer class only if needed.
  *
  * \tparam Scalar Type of scalars.
- *
- * \note This class is an intermidiate class to implement interpolation using
- * kernels.
  */
 template <typename Scalar>
-class kernel_interpolator_impl {
+class auto_regularizer_wrapper {
 public:
     //! Type of scalars.
     using scalar_type = Scalar;
@@ -116,7 +113,8 @@ public:
     }
 
     /*!
-     * \brief Get the value of the MLE objective function.
+     * \brief Get the value of the MLE objective function
+     * \cite Scheuerer2011.
      *
      * \return Value of the MLE objective function.
      */
@@ -131,6 +129,19 @@ public:
      */
     [[nodiscard]] auto common_coeff() const -> scalar_type {
         return solver_.calc_common_coeff(reg_param_);
+    }
+
+    /*!
+     * \brief Calculate the regularization term for a vector.
+     *
+     * \tparam InputData Type of the input data.
+     * \param[in] data Data vector.
+     * \return Value.
+     */
+    template <typename InputData>
+    [[nodiscard]] auto calc_reg_term(
+        const Eigen::MatrixBase<InputData>& data) const -> scalar_type {
+        return solver_.calc_reg_term(reg_param_, data);
     }
 
 private:

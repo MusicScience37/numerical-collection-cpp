@@ -7,6 +7,8 @@
     - Tikhonov regularization.
     - L-curve.
     - GCV.
+  - interp (new)
+    - Kernel interpolation.
   - util
     - Remove lambda functions in macro definition.
     - Helper function to cast integers safely.
