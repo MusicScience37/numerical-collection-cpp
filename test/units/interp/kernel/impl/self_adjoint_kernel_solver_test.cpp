@@ -125,6 +125,7 @@ TEST_CASE("num_collect::interp::kernel::self_adjoint_kernel_solver") {
             reg_param * Eigen::MatrixXd::Identity(data.size(), data.size()));
         const Eigen::VectorXd inv_kernel_vec = llt.solve(vec);
         const auto expected = inv_kernel_vec.dot(vec);
-        REQUIRE(solver.calc_reg_term(reg_param, vec));
+        REQUIRE_THAT(solver.calc_reg_term(reg_param, vec),
+            Catch::Matchers::WithinRel(expected));
     }
 }
