@@ -1,0 +1,1 @@
+add_example_using_pybind11(num_collect_ex_interp_rbf_1dim rbf_1dim.cpp)
