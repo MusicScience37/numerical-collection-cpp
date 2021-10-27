@@ -80,6 +80,7 @@
 #include "regularization/tikhonov_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "roots/newton_raphson_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "util/assert_test.cpp"           // NOLINT(bugprone-suspicious-include)
+#include "util/bidirectional_vector_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "util/exception_test.cpp"        // NOLINT(bugprone-suspicious-include)
 #include "util/get_size_test.cpp"         // NOLINT(bugprone-suspicious-include)
 #include "util/get_stack_trace_test.cpp"  // NOLINT(bugprone-suspicious-include)

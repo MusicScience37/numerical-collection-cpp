@@ -81,6 +81,7 @@ set(SOURCE_FILES
     regularization/tikhonov_test.cpp
     roots/newton_raphson_test.cpp
     util/assert_test.cpp
+    util/bidirectional_vector_test.cpp
     util/exception_test.cpp
     util/get_size_test.cpp
     util/get_stack_trace_test.cpp
