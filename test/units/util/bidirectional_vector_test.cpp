@@ -109,6 +109,14 @@ TEST_CASE("num_collect::bidirectional_vector") {
         REQUIRE(vec.at(ind1) == value1);
         REQUIRE(vec.at(ind2) == value2);
         REQUIRE(vec.at(0) == 0);
+
+        constexpr num_collect::index_type ind3 = 13;
+        constexpr int value3 = 17;
+        vec.get_or_prepare(ind3) = value3;
+
+        REQUIRE(vec.min_index() == ind2);
+        REQUIRE(vec.max_index() == ind3);
+        REQUIRE(vec.at(ind3) == value3);
     }
 
     SECTION("change size") {
