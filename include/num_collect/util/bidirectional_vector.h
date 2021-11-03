@@ -169,6 +169,19 @@ public:
     void resize(index_type min_index, index_type max_index,
         const value_type& value = value_type()) {
         const index_type current_min_index = this->min_index();
+        const index_type current_max_index = this->max_index();
+
+        if (max_index < current_min_index || current_max_index < min_index) {
+            origin_index_ = min_index;
+            const auto next_size =
+                static_cast<std::size_t>(max_index - min_index + 1);
+            container_.resize(next_size);
+            for (auto& elem : container_) {
+                elem = value;
+            }
+            return;
+        }
+
         if (min_index < current_min_index) {
             const auto num_added =
                 static_cast<std::size_t>(current_min_index - min_index);
@@ -180,7 +193,6 @@ public:
         }
         origin_index_ = min_index;
 
-        const index_type current_max_index = this->max_index();
         if (max_index > current_max_index) {
             const auto num_added =
                 static_cast<std::size_t>(max_index - current_max_index);

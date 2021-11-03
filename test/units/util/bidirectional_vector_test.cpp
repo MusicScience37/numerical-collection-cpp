@@ -125,14 +125,18 @@ TEST_CASE("num_collect::bidirectional_vector") {
 
         SECTION("change size to left") {
             constexpr num_collect::index_type min_ind2 = -12;
-            constexpr num_collect::index_type max_ind2 = -3;
+            constexpr num_collect::index_type max_ind2 = 6;
+            static_assert(
+                min_ind2 < min_ind && min_ind < max_ind2 && max_ind2 < max_ind);
             constexpr int value = 37;
             vec.resize(min_ind2, max_ind2, value);
 
             REQUIRE(vec.min_index() == min_ind2);
             REQUIRE(vec.max_index() == max_ind2);
             REQUIRE(vec.at(min_ind2) == value);
-            REQUIRE(vec.at(max_ind2) == value);
+            REQUIRE(vec.at(min_ind - 1) == value);
+            REQUIRE(vec.at(min_ind) == 0);
+            REQUIRE(vec.at(max_ind2) == 0);
         }
 
         SECTION("change size to right") {
@@ -150,5 +154,72 @@ TEST_CASE("num_collect::bidirectional_vector") {
             REQUIRE(vec.at(max_ind + 1) == value);
             REQUIRE(vec.at(max_ind2) == value);
         }
+    }
+
+    SECTION("add value to the beggining") {
+        auto vec = bidirectional_vector<int>();
+
+        constexpr int value = 37;
+        vec.push_front(value);
+
+        REQUIRE(vec.min_index() == -1);
+        REQUIRE(vec.max_index() == -1);
+        REQUIRE(vec.at(-1) == value);
+    }
+
+    SECTION("add value to the beggining to fail") {
+        auto vec = bidirectional_vector<int>();
+        constexpr auto min_ind =
+            std::numeric_limits<num_collect::index_type>::min();
+        vec.resize(min_ind, min_ind);
+
+        REQUIRE_THROWS(vec.push_front(0));
+    }
+
+    SECTION("add value to the end") {
+        auto vec = bidirectional_vector<int>();
+
+        constexpr int value = 37;
+        vec.push_back(value);
+
+        REQUIRE(vec.min_index() == 0);
+        REQUIRE(vec.max_index() == 0);
+        REQUIRE(vec.at(0) == value);
+    }
+
+    SECTION("move position") {
+        auto vec = bidirectional_vector<int>();
+        constexpr int value = 37;
+        vec.push_front(value);
+        REQUIRE(vec.min_index() == -1);
+        REQUIRE(vec.max_index() == -1);
+        REQUIRE(vec.at(-1) == value);
+
+        vec.move_position(3);
+
+        REQUIRE(vec.min_index() == 2);
+        REQUIRE(vec.max_index() == 2);
+        REQUIRE(vec.at(2) == value);
+    }
+
+    SECTION("move position to too left one") {
+        auto vec = bidirectional_vector<int>();
+        vec.push_front(0);
+        REQUIRE(vec.min_index() == -1);
+        REQUIRE(vec.max_index() == -1);
+
+        REQUIRE_THROWS(vec.move_position(
+            std::numeric_limits<num_collect::index_type>::min()));
+    }
+
+    SECTION("move position to too right one") {
+        auto vec = bidirectional_vector<int>();
+        vec.push_back(0);
+        vec.push_back(0);
+        REQUIRE(vec.min_index() == 0);
+        REQUIRE(vec.max_index() == 1);
+
+        REQUIRE_THROWS(vec.move_position(
+            std::numeric_limits<num_collect::index_type>::max()));
     }
 }
