@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.3.0 (on development)
+## 0.3.0 (2021/12/6)
 
 - Modules
   - regularization (new)

@@ -9,7 +9,7 @@ stages:
   - Publish
 
 variables:
-  NUM_COLLECT_VERSION: "0.2.0"
+  NUM_COLLECT_VERSION: "0.3.0"
   CONAN_USER: "MusicScience37+numerical-collection-cpp"
   SECURE_LOG_LEVEL: debug
 
