@@ -47,6 +47,7 @@ set(SOURCE_FILES
     interp/kernel/rbf_kernel_test.cpp
     multi_double/basic_operations_test.cpp
     multi_double/quad_test.cpp
+    numbers/custom_float_test.cpp
     ode/avf/avf2_formula_test.cpp
     ode/avf/avf3_formula_test.cpp
     ode/avf/avf4_formula_test.cpp
@@ -81,6 +82,7 @@ set(SOURCE_FILES
     regularization/tikhonov_test.cpp
     roots/newton_raphson_test.cpp
     util/assert_test.cpp
+    util/bidirectional_vector_test.cpp
     util/exception_test.cpp
     util/get_size_test.cpp
     util/get_stack_trace_test.cpp

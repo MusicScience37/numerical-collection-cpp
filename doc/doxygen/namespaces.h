@@ -23,6 +23,12 @@ namespace num_collect {
     //! Namespace of implementations.
     namespace impl {}
 
+    //! Namespace of classes of numbers.
+    namespace numbers {
+        //! Namespace of implementations.
+        namespace impl {}
+    }  // namespace numbers
+
     //! Namespace of multiple precision numbers with double numbers.
     namespace multi_double {
         //! Namespace of implementations.

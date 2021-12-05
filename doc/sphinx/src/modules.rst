@@ -27,6 +27,9 @@ Modules
         component interp
         interp ..> util
 
+        component numbers
+        numbers ..> util
+
         component multi_double
 
         component constants
