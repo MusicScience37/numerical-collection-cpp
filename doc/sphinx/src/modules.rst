@@ -21,6 +21,15 @@ Modules
         opt ..> util
         opt ..> Eigen
 
+        component regularization
+        regularization ..> opt
+
+        component interp
+        interp ..> util
+
+        component numbers
+        numbers ..> util
+
         component multi_double
 
         component constants
@@ -58,6 +67,12 @@ auto_diff
 
 opt
     Optimization algorithms.
+
+regularization
+    Regularization algorithms.
+
+interp
+    Interpolation algorithms.
 
 multi_double
     Multiple precision numbers with double numbers.

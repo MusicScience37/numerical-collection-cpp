@@ -26,4 +26,9 @@ namespace num_prob_collect {
     namespace ode {}
     //! Namespace of root-finding problems.
     namespace roots {}
+    //! Namespace of regularization.
+    namespace regularization {
+        //! Namespace of implementations.
+        namespace impl {}
+    }  // namespace regularization
 }  // namespace num_prob_collect

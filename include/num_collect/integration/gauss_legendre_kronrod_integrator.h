@@ -37,6 +37,7 @@
 #include "num_collect/util/assert.h"
 #include "num_collect/util/index_type.h"
 #include "num_collect/util/norm.h"
+#include "num_collect/util/safe_cast.h"
 
 namespace num_collect::integration {
 
@@ -264,7 +265,7 @@ private:
         NUM_COLLECT_ASSERT(weights_all.allFinite());
 
         std::unordered_set<index_type> additional_nodes_index;
-        additional_nodes_index.reserve(static_cast<std::size_t>(extended_size));
+        additional_nodes_index.reserve(safe_cast<std::size_t>(extended_size));
         for (index_type i = 0; i < extended_size; ++i) {
             additional_nodes_index.insert(i);
         }
@@ -289,9 +290,9 @@ private:
         const auto additional_nodes_vec = std::vector<index_type>(
             additional_nodes_index.begin(), additional_nodes_index.end());
         for (std::size_t i = 0; i < additional_nodes_vec.size(); ++i) {
-            nodes_kronrod_[static_cast<index_type>(i)] =
+            nodes_kronrod_[safe_cast<index_type>(i)] =
                 nodes_all[additional_nodes_vec[i]];
-            weights_kronrod_[static_cast<index_type>(i)] =
+            weights_kronrod_[safe_cast<index_type>(i)] =
                 weights_all[additional_nodes_vec[i]];
         }
         NUM_COLLECT_ASSERT(nodes_kronrod_.allFinite());

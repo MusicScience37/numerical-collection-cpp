@@ -36,8 +36,18 @@ set(SOURCE_FILES
     integration/de_semi_infinite_integrator_test.cpp
     integration/gauss_legendre_integrator_test.cpp
     integration/gauss_legendre_kronrod_integrator_test.cpp
+    interp/kernel/calc_kernel_mat_test.cpp
+    interp/kernel/euclidean_distance_test.cpp
+    interp/kernel/gaussian_rbf_test.cpp
+    interp/kernel/impl/auto_regularizer_test.cpp
+    interp/kernel/impl/auto_regularizer_wrapper_test.cpp
+    interp/kernel/impl/kernel_parameter_optimizer_test.cpp
+    interp/kernel/impl/self_adjoint_kernel_solver_test.cpp
+    interp/kernel/kernel_interpolator_test.cpp
+    interp/kernel/rbf_kernel_test.cpp
     multi_double/basic_operations_test.cpp
     multi_double/quad_test.cpp
+    numbers/custom_float_test.cpp
     ode/avf/avf2_formula_test.cpp
     ode/avf/avf3_formula_test.cpp
     ode/avf/avf4_formula_test.cpp
@@ -59,16 +69,26 @@ set(SOURCE_FILES
     opt/dfp_optimizer_test.cpp
     opt/dividing_rectangles_test.cpp
     opt/downhill_simplex_test.cpp
+    opt/function_object_wrapper_test.cpp
     opt/golden_section_search_test.cpp
+    opt/heuristic_1dim_optimizer_test.cpp
     opt/impl/ternary_vector_test.cpp
     opt/newton_optimizer_test.cpp
+    opt/sampling_optimizer_test.cpp
     opt/steepest_descent_test.cpp
+    regularization/explicit_gcv_test.cpp
+    regularization/explicit_l_curve_test.cpp
+    regularization/full_gen_tikhonov_test.cpp
+    regularization/tikhonov_test.cpp
     roots/newton_raphson_test.cpp
     util/assert_test.cpp
+    util/bidirectional_vector_test.cpp
     util/exception_test.cpp
+    util/get_size_test.cpp
     util/is_eigen_matrix_test.cpp
     util/is_eigen_vector_test.cpp
     util/iteration_logger_test.cpp
     util/kahan_adder_test.cpp
     util/norm_test.cpp
+    util/safe_cast_test.cpp
 )

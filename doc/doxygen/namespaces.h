@@ -20,6 +20,15 @@
 
 //! Namespace of num_collect source codes.
 namespace num_collect {
+    //! Namespace of implementations.
+    namespace impl {}
+
+    //! Namespace of classes of numbers.
+    namespace numbers {
+        //! Namespace of implementations.
+        namespace impl {}
+    }  // namespace numbers
+
     //! Namespace of multiple precision numbers with double numbers.
     namespace multi_double {
         //! Namespace of implementations.
@@ -42,6 +51,21 @@ namespace num_collect {
         //! Namespace of implementations.
         namespace impl {}
     }  // namespace opt
+
+    //! Namespace of regularization algorithms.
+    namespace regularization {
+        //! Namespace of implementations.
+        namespace impl {}
+    }  // namespace regularization
+
+    //! Namespace of interpolation algorithms.
+    namespace interp {
+        //! namespace of interpolation using kernels.
+        namespace kernel {
+            //! Namespace of implementations.
+            namespace impl {}
+        }  // namespace kernel
+    }      // namespace interp
 
     //! Namespace of constexpr variables and functions.
     namespace constants {
@@ -82,3 +106,6 @@ namespace num_collect {
         }  // namespace avf
     }      // namespace ode
 }  // namespace num_collect
+
+//! Namespace of Eigen library.
+namespace Eigen {}

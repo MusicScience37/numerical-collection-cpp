@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief declaration and implementation of basic operations in multi-double
+ * \brief Definition of basic operations in multi-double
  * calculations
  */
 #pragma once

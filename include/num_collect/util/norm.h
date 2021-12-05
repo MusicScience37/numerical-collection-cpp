@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of iteration_logger class.
+ * \brief Definition of norm class.
  */
 #pragma once
 

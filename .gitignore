@@ -213,3 +213,6 @@ Thumbs.db  #thumbnail cache on Windows
 !.vscode/cmake-variants.yaml
 !.vscode/default-settings.json
 !.vscode/README.md
+
+/*.html
+/*.png

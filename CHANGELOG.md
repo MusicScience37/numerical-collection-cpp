@@ -1,5 +1,34 @@
 # Change Log
 
+## 0.3.0 (on development)
+
+- Modules
+  - regularization (new)
+    - Tikhonov regularization.
+    - L-curve.
+    - GCV.
+  - interp (new)
+    - Kernel interpolation.
+  - util
+    - Remove lambda functions in macro definition.
+    - Helper function to cast integers safely.
+  - opt
+    - Wrapper class to make ordinary function objects to objective functions in optimization.
+    - 1-dimensional global optimization using sampling.
+  - numbers
+    - Class of floating numbers in a custom number system with given radix.
+- Build system
+  - Check execution of examples in CI.
+- Documentation
+  - Check warnings in documentation.
+  - Add documentation of some namespaces without documentation comments.
+  - Documentation of directory structure.
+- Miscellaneous
+  - Change cmake-format to cmakelang in Pipfile.
+  - Check encoding of source codes.
+  - Upgrade Eigen to 3.4.0.
+  - Dependency scanning in CI.
+
 ## 0.2.0 (2021/8/16)
 
 - Modules

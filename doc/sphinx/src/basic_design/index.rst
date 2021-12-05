@@ -9,3 +9,5 @@ Basic Design
     root_finding
     ode
     auto_diff
+    regularization
+    interp
