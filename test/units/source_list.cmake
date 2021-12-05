@@ -85,7 +85,6 @@ set(SOURCE_FILES
     util/bidirectional_vector_test.cpp
     util/exception_test.cpp
     util/get_size_test.cpp
-    util/get_stack_trace_test.cpp
     util/is_eigen_matrix_test.cpp
     util/is_eigen_vector_test.cpp
     util/iteration_logger_test.cpp

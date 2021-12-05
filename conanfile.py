@@ -26,8 +26,6 @@ class NumCollectConan(ConanFile):
     def requirements(self):
         self.requires("fmt/8.0.1")
         self.requires("eigen/3.4.0")
-        if self.options.stack_traces_support:
-            self.requires("backward-cpp/1.6")
 
     def build_requirements(self):
         if self.options.requirements_for_tests:

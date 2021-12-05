@@ -12,7 +12,6 @@
   - util
     - Remove lambda functions in macro definition.
     - Helper function to cast integers safely.
-    - Function to get stack traces.
   - opt
     - Wrapper class to make ordinary function objects to objective functions in optimization.
     - 1-dimensional global optimization using sampling.
