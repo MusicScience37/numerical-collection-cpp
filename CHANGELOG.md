@@ -16,6 +16,8 @@
   - opt
     - Wrapper class to make ordinary function objects to objective functions in optimization.
     - 1-dimensional global optimization using sampling.
+  - numbers
+    - Class of floating numbers in a custom number system with given radix.
 - Build system
   - Check execution of examples in CI.
 - Documentation
