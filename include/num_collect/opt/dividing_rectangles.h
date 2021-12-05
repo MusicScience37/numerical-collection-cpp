@@ -29,7 +29,10 @@
 
 #include "num_collect/opt/optimizer_base.h"
 #include "num_collect/util/assert.h"
+#include "num_collect/util/get_size.h"
 #include "num_collect/util/is_eigen_vector.h"
+#include "num_collect/util/norm.h"
+#include "num_collect/util/safe_cast.h"
 
 namespace num_collect::opt {
 
@@ -51,7 +54,8 @@ class dividing_rectangles;
 template <typename ObjectiveFunction>
 class dividing_rectangles<ObjectiveFunction,
     std::enable_if_t<
-        is_eigen_vector_v<typename ObjectiveFunction::variable_type>>>
+        is_eigen_vector_v<typename ObjectiveFunction::variable_type> ||
+        std::is_floating_point_v<typename ObjectiveFunction::variable_type>>>
     : public optimizer_base<dividing_rectangles<ObjectiveFunction>> {
 public:
     //! Type of the objective function.
@@ -62,10 +66,6 @@ public:
 
     //! Type of function values.
     using value_type = typename objective_function_type::value_type;
-
-    static_assert(std::is_same_v<typename variable_type::Scalar, value_type>,
-        "This class assumes that scalars in Eigen::Matrix class is same as "
-        "value_type");
 
     /*!
      * \brief Construct.
@@ -83,15 +83,16 @@ public:
      * \param[in] upper Upper limit.
      */
     void init(const variable_type& lower, const variable_type& upper) {
-        NUM_COLLECT_ASSERT(lower.size() == upper.size());
+        if constexpr (is_eigen_vector_v<variable_type>) {
+            NUM_COLLECT_ASSERT(lower.size() == upper.size());
+        }
         lower_ = lower;
         upper_ = upper;
         width_ = upper_ - lower_;
-        dim_ = lower_.size();
+        dim_ = get_size(lower_);
 
         const auto half = static_cast<value_type>(0.5);
-        const variable_type first_var =
-            width_.cwiseProduct(variable_type::Constant(dim_, half)) + lower_;
+        const variable_type first_var = half * width_ + lower_;
         obj_fun_.evaluate_on(first_var);
         opt_variable_ = first_var;
         opt_value_ = obj_fun_.value();
@@ -101,8 +102,15 @@ public:
 
         rects_.clear();
         rects_.emplace_back();
-        rects_[0].push(std::make_shared<rectangle>(
-            variable_type::Zero(dim_), variable_type::Ones(dim_), opt_value_));
+        if constexpr (is_eigen_vector_v<variable_type>) {
+            rects_[0].push(
+                std::make_shared<rectangle>(variable_type::Zero(dim_),
+                    variable_type::Ones(dim_), opt_value_));
+        } else {
+            rects_[0].push(
+                std::make_shared<rectangle>(static_cast<variable_type>(0),
+                    static_cast<variable_type>(1), opt_value_));
+        }
     }
 
     /*!
@@ -203,8 +211,8 @@ private:
             const value_type& value)
             : lower_(lower),
               upper_(upper),
-              is_divided_(static_cast<std::size_t>(lower.size()), false),
-              dist_((lower - upper).norm() * half),
+              is_divided_(safe_cast<std::size_t>(get_size(lower)), false),
+              dist_(norm(lower - upper) * half),
               value_(value) {}
 
         /*!
@@ -260,9 +268,14 @@ private:
             value_type value) {
             NUM_COLLECT_DEBUG_ASSERT(lower < upper);
             NUM_COLLECT_DEBUG_ASSERT(!is_divided_[dim]);
-            lower_(dim) = lower;
-            upper_(dim) = upper;
-            dist_ = (lower_ - upper_).norm() * half;
+            if constexpr (is_eigen_vector_v<variable_type>) {
+                lower_(dim) = lower;
+                upper_(dim) = upper;
+            } else {
+                lower_ = lower;
+                upper_ = upper;
+            }
+            dist_ = norm(lower_ - upper_) * half;
             value_ = value;
             is_divided_[dim] = true;
             if (std::all_of(std::begin(is_divided_), std::end(is_divided_),
@@ -338,7 +351,12 @@ private:
      */
     [[nodiscard]] auto evaluate_on(const variable_type& variable)
         -> value_type {
-        variable_type actual_var = variable.cwiseProduct(width_) + lower_;
+        variable_type actual_var;
+        if constexpr (is_eigen_vector_v<variable_type>) {
+            actual_var = variable.cwiseProduct(width_) + lower_;
+        } else {
+            actual_var = variable * width_ + lower_;
+        }
         obj_fun_.evaluate_on(actual_var);
         if (obj_fun_.value() < opt_value_) {
             opt_variable_ = actual_var;
@@ -424,8 +442,15 @@ private:
 
         const auto [divided_dim, lower_value, upper_value] =
             determine_divided_dimension(*origin);
-        const value_type divided_lowest = origin->lower()(divided_dim);
-        const value_type divided_uppest = origin->upper()(divided_dim);
+        value_type divided_lowest;
+        value_type divided_uppest;
+        if constexpr (is_eigen_vector_v<variable_type>) {
+            divided_lowest = origin->lower()(divided_dim);
+            divided_uppest = origin->upper()(divided_dim);
+        } else {
+            divided_lowest = origin->lower();
+            divided_uppest = origin->upper();
+        }
         const auto [divided_lower, divided_upper] =
             separate_section(divided_lowest, divided_uppest);
 
@@ -452,22 +477,39 @@ private:
         value_type dim_lower_value{};
         value_type dim_upper_value{};
         for (index_type i = 0; i < dim_; ++i) {
-            if (rect.is_divided()[static_cast<std::size_t>(i)]) {
+            if (rect.is_divided()[safe_cast<std::size_t>(i)]) {
                 continue;
             }
 
-            const value_type width = rect.upper()[i] - rect.lower()[i];
+            value_type width;
+            if constexpr (is_eigen_vector_v<variable_type>) {
+                width = rect.upper()[i] - rect.lower()[i];
+            } else {
+                width = rect.upper() - rect.lower();
+            }
             static const auto one_third = static_cast<value_type>(1.0 / 3.0);
             const value_type diff = width * one_third;
 
             static const auto half = static_cast<value_type>(0.5);
             variable_type center = (rect.lower() + rect.upper()) * half;
-            const value_type origin_center = center[i];
+            value_type origin_center;
+            if constexpr (is_eigen_vector_v<variable_type>) {
+                origin_center = center[i];
+            } else {
+                origin_center = center;
+            }
 
-            center[i] = origin_center - diff;
-            const auto lower_value = evaluate_on(center);
-            center[i] = origin_center + diff;
-            const auto upper_value = evaluate_on(center);
+            value_type lower_value;
+            value_type upper_value;
+            if constexpr (is_eigen_vector_v<variable_type>) {
+                center[i] = origin_center - diff;
+                lower_value = evaluate_on(center);
+                center[i] = origin_center + diff;
+                upper_value = evaluate_on(center);
+            } else {
+                lower_value = evaluate_on(origin_center - diff);
+                upper_value = evaluate_on(origin_center + diff);
+            }
 
             if (lower_value < min_value) {
                 min_value = lower_value;

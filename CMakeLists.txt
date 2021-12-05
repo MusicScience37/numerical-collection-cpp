@@ -8,7 +8,7 @@ endif()
 
 project(
     num_collect
-    VERSION 0.2.0
+    VERSION 0.3.0
     DESCRIPTION
         "A collection of algorithms in numerical analysis implemented in C++"
     LANGUAGES CXX)
@@ -61,6 +61,12 @@ target_include_directories(num_collect
 target_link_libraries(
     num_collect INTERFACE fmt::fmt Eigen3::Eigen num_collect_cpp_warnings
                           num_collect_cpp_flags)
+if(Backward_FOUND)
+    option(NUM_COLLECT_STACK_TRACES_SUPPORT "enable support of stack traces" ON)
+    if(NUM_COLLECT_STACK_TRACES_SUPPORT)
+        target_link_libraries(num_collect INTERFACE Backward::Backward)
+    endif()
+endif()
 
 if(NUM_COLLECT_BUILD_DOC)
     add_subdirectory(doc)

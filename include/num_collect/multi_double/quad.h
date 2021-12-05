@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief declaration and implementation of quad class
+ * \brief Definition of quad class
  */
 #pragma once
 
