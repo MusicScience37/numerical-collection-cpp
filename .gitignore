@@ -206,13 +206,12 @@ Thumbs.db  #thumbnail cache on Windows
 
 ### vscode ###
 .vscode/*
+!.vscode/settings.json
 *.code-workspace
 
 # End of https://www.toptal.com/developers/gitignore/api/c++,vscode,cmake,python
 
 !.vscode/cmake-variants.yaml
-!.vscode/default-settings.json
-!.vscode/README.md
 
-/*.html
-/*.png
+*.html
+*.png
