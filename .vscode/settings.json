@@ -1,4 +1,12 @@
 {
+  "cSpell.words": ["pipenv"],
+  "clangd.arguments": [
+    "--compile-commands-dir=${workspaceFolder}/build/Debug",
+    "--clang-tidy",
+    "-header-insertion=iwyu"
+  ],
+  "cmake.buildDirectory": "${workspaceFolder}/build/${buildType}",
+  "cmake.preferredGenerators": ["Ninja"],
   "restructuredtext.linter.name": "doc8",
   "restructuredtext.languageServer.disabled": true,
   "restructuredtext.confPath": "${workspaceFolder}/doc/sphinx/src",
