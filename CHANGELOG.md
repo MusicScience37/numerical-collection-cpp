@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.4.0 (on development)
+
+- Miscellaneous
+  - Add GitLab Issue templates ([Issue #109](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/109)).
+  - Add .gitmessage for writing Git commit messages ([Issue #109](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/109)).
+
 ## 0.3.0 (2021/12/6)
 
 - Modules
