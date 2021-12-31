@@ -2,6 +2,8 @@
 
 ## 0.4.0 (on development)
 
+- Build system
+  - Add option to enable OpenMP ([Issue #110](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/110)).
 - Miscellaneous
   - Add GitLab Issue templates ([Issue #109](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/109)).
   - Add .gitmessage for writing Git commit messages ([Issue #109](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/109)).
