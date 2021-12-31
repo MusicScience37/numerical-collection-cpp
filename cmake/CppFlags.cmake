@@ -1,3 +1,32 @@
+add_library(num_collect_cpp_flags INTERFACE)
+
+# Flag for precise calculation of floating-point numbers.
+if(MSVC)
+    target_compile_options(num_collect_cpp_flags INTERFACE /fp:precise)
+else()
+    target_compile_options(num_collect_cpp_flags
+                           INTERFACE -fno-unsafe-math-optimizations)
+endif()
+
+# Workaround error in MSVC
+if(MSVC)
+    target_compile_options(num_collect_cpp_flags INTERFACE /bigobj /EHsc /utf-8)
+endif()
+
+# OpenMP
+find_package(OpenMP)
+if(OpenMP_FOUND)
+    option(NUM_COLLECT_USE_OPENMP "use OpenMP" ON)
+    if(NUM_COLLECT_USE_OPENMP)
+        target_link_libraries(num_collect_cpp_flags
+                              INTERFACE OpenMP::OpenMP_CXX)
+    endif()
+endif()
+
+# ##############################################################################
+# Configure AVX CPU instruction
+# ##############################################################################
+
 include(CheckCXXSourceRuns)
 set(CMAKE_REQUIRED_FLAGS)
 
@@ -27,15 +56,6 @@ check_cxx_source_runs(
         return 0;
     }"
     HAVE_AVX2_EXTENSIONS)
-
-add_library(num_collect_cpp_flags INTERFACE)
-
-if(MSVC)
-    target_compile_options(num_collect_cpp_flags INTERFACE /fp:precise /bigobj)
-else()
-    target_compile_options(num_collect_cpp_flags
-                           INTERFACE -fno-unsafe-math-optimizations)
-endif()
 
 if(HAVE_AVX2_EXTENSIONS)
     option(NUM_COLLECT_USE_AVX2 "use Intel AVX2 instructions" ON)
