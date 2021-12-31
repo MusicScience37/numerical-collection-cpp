@@ -1,5 +1,18 @@
 {
-  "cSpell.words": ["pipenv"],
+  "cSpell.words": [
+    "Celero",
+    "CMake",
+    "cmakelang",
+    "Eigen",
+    "gitmessage",
+    "interp",
+    "Kabashima",
+    "Kenta",
+    "pipenv",
+    "Pipfile",
+    "Pybind11",
+    "Tikhonov"
+  ],
   "clangd.arguments": [
     "--compile-commands-dir=${workspaceFolder}/build/Debug",
     "--clang-tidy",
