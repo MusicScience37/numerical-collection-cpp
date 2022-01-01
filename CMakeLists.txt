@@ -29,7 +29,7 @@ option(NUM_COLLECT_BUILD_EXAMPLES "build examples of numerical-collection-cpp"
        OFF)
 
 set(CMAKE_CXX_STANDARD
-    17
+    20
     CACHE STRING "C++ standard")
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY $<1:${CMAKE_BINARY_DIR}/lib>)
