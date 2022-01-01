@@ -13,10 +13,11 @@ you will require following dependencies:
     Execute `pipenv run pre-commit install` on this directory
     if you develop this library.
 - [CMake](https://cmake.org/)
-- C++ 17 Compiler
+- C++ 20 Compiler
   - Following compilers are tested in CI:
     - GCC 10
     - Clang 12
+    - MSVC 19
 
 Additionally, you will require following dependencies
 to build documentation.
