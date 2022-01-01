@@ -334,7 +334,7 @@ msvc-debug:
     - cd ../
   script:
     - cmake -S ./ -B $BUILD_DIR
-      -DCMAKE_BUILD_TYPE=Release
+      -DCMAKE_BUILD_TYPE=Debug
       -DNUM_COLLECT_TESTING:BOOL=ON
       -DNUM_COLLECT_ENABLE_BENCH=ON
       -DNUM_COLLECT_TEST_BENCHMARKS=OFF
