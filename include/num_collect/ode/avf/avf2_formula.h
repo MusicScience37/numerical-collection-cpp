@@ -48,6 +48,9 @@ public:
     //! Type of scalars.
     using scalar_type = typename problem_type::scalar_type;
 
+    //! Number of stages of this formula.
+    static constexpr index_type stages = 1;
+
     //! Order of this formula.
     static constexpr index_type order = 2;
 
