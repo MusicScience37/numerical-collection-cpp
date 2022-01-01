@@ -19,10 +19,11 @@
  */
 #pragma once
 
-#include <Eigen/Core>
 #include <cmath>
 #include <limits>
 #include <tuple>
+
+#include <Eigen/Core>
 
 #include "num_collect/constants/pi.h"
 #include "num_collect/constants/zero.h"

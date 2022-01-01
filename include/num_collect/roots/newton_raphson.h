@@ -19,9 +19,10 @@
  */
 #pragma once
 
-#include <Eigen/LU>
 #include <limits>
 #include <type_traits>
+
+#include <Eigen/LU>
 
 #include "num_collect/roots/function_root_finder_base.h"
 #include "num_collect/util/assert.h"

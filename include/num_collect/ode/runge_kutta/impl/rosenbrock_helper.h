@@ -19,8 +19,9 @@
  */
 #pragma once
 
-#include <Eigen/LU>
 #include <type_traits>
+
+#include <Eigen/LU>
 
 #include "num_collect/constants/one.h"
 #include "num_collect/util/is_eigen_matrix.h"

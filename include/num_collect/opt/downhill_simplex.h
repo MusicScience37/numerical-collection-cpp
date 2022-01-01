@@ -19,11 +19,12 @@
  */
 #pragma once
 
-#include <Eigen/Core>
 #include <algorithm>
 #include <string>
 #include <type_traits>
 #include <vector>
+
+#include <Eigen/Core>
 
 #include "num_collect/opt/optimizer_base.h"
 #include "num_collect/util/safe_cast.h"

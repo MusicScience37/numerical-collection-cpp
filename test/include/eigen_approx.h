@@ -19,10 +19,10 @@
  */
 #pragma once
 
-#include <Eigen/Core>
 #include <cmath>
 #include <sstream>
 
+#include <Eigen/Core>
 #include <catch2/matchers/catch_matchers_templated.hpp>
 
 /*!

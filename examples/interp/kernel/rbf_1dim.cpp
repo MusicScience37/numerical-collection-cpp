@@ -18,7 +18,6 @@
  * \brief Example of 1-dimensional RBF interpolation.
  */
 #include <Eigen/Core>
-
 #include <pybind11/eigen.h>
 #include <pybind11/embed.h>
 #include <pybind11/pybind11.h>

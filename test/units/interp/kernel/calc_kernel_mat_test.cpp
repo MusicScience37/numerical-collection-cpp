@@ -20,7 +20,6 @@
 #include "num_collect/interp/kernel/calc_kernel_mat.h"
 
 #include <Eigen/Core>
-
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating.hpp>
 

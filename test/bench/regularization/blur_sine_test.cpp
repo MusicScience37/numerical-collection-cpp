@@ -19,10 +19,10 @@
  */
 #include "num_prob_collect/regularization/blur_sine.h"
 
-#include <Eigen/Core>
 #include <cmath>
 #include <random>
 
+#include <Eigen/Core>
 #include <celero/Celero.h>
 
 #include "log_error_udm.h"

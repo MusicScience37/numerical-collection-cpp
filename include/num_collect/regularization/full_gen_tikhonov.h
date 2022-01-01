@@ -19,9 +19,10 @@
  */
 #pragma once
 
+#include <type_traits>
+
 #include <Eigen/Core>
 #include <Eigen/Householder>
-#include <type_traits>
 
 #include "num_collect/regularization/explicit_regularized_solver_base.h"
 #include "num_collect/regularization/tikhonov.h"

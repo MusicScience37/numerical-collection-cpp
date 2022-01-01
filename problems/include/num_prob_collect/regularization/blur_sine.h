@@ -19,8 +19,9 @@
  */
 #pragma once
 
-#include <Eigen/Core>
 #include <cmath>
+
+#include <Eigen/Core>
 
 #include "num_collect/util/index_type.h"
 
