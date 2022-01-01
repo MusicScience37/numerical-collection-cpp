@@ -341,6 +341,7 @@ msvc-debug:
       -DNUM_COLLECT_BUILD_EXAMPLES=ON
       -DNUM_COLLECT_TEST_EXAMPLES=OFF
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
+      "-DCMAKE_CXX_FLAGS=/DFMT_USE_NONTYPE_TEMPLATE_PARAMETERS=0"
     - cd $BUILD_DIR
     - cmake --build . --config Debug --parallel
     - ctest -V --build-config Debug
@@ -378,6 +379,7 @@ msvc-release:
       -DNUM_COLLECT_BUILD_EXAMPLES=ON
       -DNUM_COLLECT_TEST_EXAMPLES=OFF
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
+      "-DCMAKE_CXX_FLAGS=/DFMT_USE_NONTYPE_TEMPLATE_PARAMETERS=0"
     - cd $BUILD_DIR
     - cmake --build . --config Release --parallel
     - ctest -V --build-config Release
