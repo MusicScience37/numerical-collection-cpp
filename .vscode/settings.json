@@ -6,6 +6,7 @@
     "cloc",
     "CMake",
     "cmakelang",
+    "Codecov",
     "conanfile",
     "ctest",
     "DCMAKE",
