@@ -19,6 +19,8 @@
  */
 #pragma once
 
+#include <algorithm>
+
 #include "num_collect/constants/zero.h"
 #include "num_collect/util/assert.h"
 #include "num_collect/util/norm.h"

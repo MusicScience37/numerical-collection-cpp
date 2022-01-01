@@ -5,6 +5,7 @@ stages:
   - Check
   - Test with Clang
   - Test with GCC
+  - Test with MSVC
   - Build Documentation
   - Publish
 
@@ -31,7 +32,7 @@ sync pipenv:
   extends: .retry setting
   stage: Prepare
   dependencies: []
-  image: musicscience37/clang-ci:clang11-v3.2.2
+  image: musicscience37/clang-ci:clang12-v3.4
   script:
     - mkdir -p .venv
     - pipenv install --dev
@@ -45,7 +46,7 @@ line count:
   extends: .retry setting
   stage: Prepare
   dependencies: []
-  image: registry.gitlab.com/musicscience37_ci/cloc-docker:v1-3
+  image: registry.gitlab.com/musicscience37_ci/cloc-docker:v1-4
   script:
     - mkdir -p line_count
     - cloc ./
@@ -67,7 +68,7 @@ pre-commit:
     - sync pipenv
   dependencies:
     - sync pipenv
-  image: musicscience37/clang-ci:clang11-v3.2.2
+  image: musicscience37/clang-ci:clang12-v3.4
   script:
     - pipenv run pre-commit run --all-files
 
@@ -78,7 +79,7 @@ static analysis:
     - sync pipenv
   dependencies:
     - sync pipenv
-  image: musicscience37/clang-ci:clang11-v3.2.2
+  image: musicscience37/clang-ci:clang12-v3.4
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   before_script:
@@ -172,7 +173,7 @@ static analysis:
 clang coverage:
   extends: .release-test-base
   stage: Test with Clang
-  image: musicscience37/clang-ci:clang11-v3.2.2
+  image: musicscience37/clang-ci:clang12-v3.4
   variables:
     BUILD_DIR: build_clang_coverage
   script:
@@ -189,12 +190,11 @@ clang coverage:
     - ctest -V
     - cd ../
     - scripts/collect_llvm_coverage.sh build_clang_coverage
-  coverage: '/Line Coverage: \d+\.\d+/'
 
 gcc coverage:
   extends: .release-test-base
   stage: Test with GCC
-  image: musicscience37/gcc-ci:gcc10-v3.3
+  image: musicscience37/gcc-ci:gcc10-v3.4
   variables:
     BUILD_DIR: build_gcc_coverage
   script:
@@ -214,28 +214,28 @@ gcc coverage:
 gcc-10-debug:
   extends: .debug-test-base
   stage: Test with GCC
-  image: musicscience37/gcc-ci:gcc10-v3.3
+  image: musicscience37/gcc-ci:gcc10-v3.4
   variables:
     BUILD_DIR: build_gcc10_debug
 
 gcc-10-release:
   extends: .release-test-base
   stage: Test with GCC
-  image: musicscience37/gcc-ci:gcc10-v3.3
+  image: musicscience37/gcc-ci:gcc10-v3.4
   variables:
     BUILD_DIR: build_gcc10_release
 
 clang-11-release:
   extends: .release-test-base
   stage: Test with Clang
-  image: musicscience37/clang-ci:clang11-v3.2.2
+  image: musicscience37/clang-ci:clang12-v3.4
   variables:
     BUILD_DIR: build_clang11_release
 
 clang-11-asan-ubsan:
   extends: .debug-test-base
   stage: Test with Clang
-  image: musicscience37/clang-ci:clang11-v3.2.2
+  image: musicscience37/clang-ci:clang12-v3.4
   variables:
     BUILD_DIR: build_clang_asan_ubsan
   script:
@@ -252,7 +252,7 @@ clang-11-asan-ubsan:
 clang-11-tsan:
   extends: .debug-test-base
   stage: Test with Clang
-  image: musicscience37/clang-ci:clang11-v3.2.2
+  image: musicscience37/clang-ci:clang12-v3.4
   variables:
     BUILD_DIR: build_clang_tsan
   script:
@@ -273,7 +273,7 @@ clang-11-conan:
     - sync pipenv
   dependencies:
     - sync pipenv
-  image: musicscience37/clang-ci:clang11-v3.2.2
+  image: musicscience37/clang-ci:clang12-v3.4
   variables:
     CONAN_CHANNEL: "testing"
   script:
@@ -289,7 +289,7 @@ clang-11-conan-dev:
     - sync pipenv
   dependencies:
     - sync pipenv
-  image: musicscience37/clang-ci:clang11-v3.2.2
+  image: musicscience37/clang-ci:clang12-v3.4
   variables:
     CONAN_CHANNEL: "dev"
   script:
@@ -308,6 +308,80 @@ clang-11-conan-release:
   only:
     - tags
 
+msvc-debug:
+  extends: .debug-test-base
+  tags:
+    - shared-windows
+    - windows
+    - windows-1809
+  stage: Test with MSVC
+  needs: []
+  dependencies: []
+  variables:
+    BUILD_DIR: build_msvc_debug
+  before_script:
+    - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+    - choco install cmake -y --installargs 'ADD_CMAKE_TO_PATH=System'
+    - choco install python --version=3.9.9 -y
+    - RefreshEnv
+    - pip install pipenv
+    - pipenv install
+    - mkdir $BUILD_DIR
+    - cd $BUILD_DIR
+    - pipenv run conan profile new --detect default
+    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan install --build=missing -s build_type=Debug ..
+    - cd ../
+  script:
+    - cmake -S ./ -B $BUILD_DIR
+      -DCMAKE_BUILD_TYPE=Debug
+      -DNUM_COLLECT_TESTING:BOOL=ON
+      -DNUM_COLLECT_ENABLE_BENCH=ON
+      -DNUM_COLLECT_TEST_BENCHMARKS=OFF
+      -DNUM_COLLECT_BUILD_EXAMPLES=ON
+      -DNUM_COLLECT_TEST_EXAMPLES=OFF
+      -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
+    - cd $BUILD_DIR
+    - cmake --build . --config Debug
+    - ctest -V --build-config Debug
+
+msvc-release:
+  extends: .release-test-base
+  tags:
+    - shared-windows
+    - windows
+    - windows-1809
+  stage: Test with MSVC
+  needs: []
+  dependencies: []
+  variables:
+    BUILD_DIR: build_msvc
+  before_script:
+    - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+    - choco install cmake -y --installargs 'ADD_CMAKE_TO_PATH=System'
+    - choco install python --version=3.9.9 -y
+    - RefreshEnv
+    - pip install pipenv
+    - pipenv install
+    - mkdir $BUILD_DIR
+    - cd $BUILD_DIR
+    - pipenv run conan profile new --detect default
+    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan install --build=missing -s build_type=Release ..
+    - cd ../
+  script:
+    - cmake -S ./ -B $BUILD_DIR
+      -DCMAKE_BUILD_TYPE=Release
+      -DNUM_COLLECT_TESTING:BOOL=ON
+      -DNUM_COLLECT_ENABLE_BENCH=ON
+      -DNUM_COLLECT_TEST_BENCHMARKS=OFF
+      -DNUM_COLLECT_BUILD_EXAMPLES=ON
+      -DNUM_COLLECT_TEST_EXAMPLES=OFF
+      -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
+    - cd $BUILD_DIR
+    - cmake --build . --config Release
+    - ctest -V --build-config Release
+
 doc:
   extends: .retry setting
   stage: Build Documentation
@@ -315,7 +389,7 @@ doc:
     - sync pipenv
   dependencies:
     - sync pipenv
-  image: musicscience37/sphinx-doxygen:v3.3
+  image: musicscience37/sphinx-doxygen:v3.4
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   script:

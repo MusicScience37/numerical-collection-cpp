@@ -16,7 +16,7 @@ you will require following dependencies:
 - C++ 17 Compiler
   - Following compilers are tested in CI:
     - GCC 10
-    - Clang 11
+    - Clang 12
 
 Additionally, you will require following dependencies
 to build documentation.

@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <algorithm>
 #include <vector>
 
 #include "num_collect/interp/kernel/impl/kernel_coeff_solver.h"

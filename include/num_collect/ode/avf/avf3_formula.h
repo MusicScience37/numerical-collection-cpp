@@ -51,6 +51,9 @@ public:
     //! Type of Jacobian.
     using jacobian_type = typename problem_type::jacobian_type;
 
+    //! Number of stages of this formula.
+    static constexpr index_type stages = 1;
+
     //! Order of this formula.
     static constexpr index_type order = 3;
 
