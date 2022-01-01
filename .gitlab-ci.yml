@@ -333,7 +333,7 @@ msvc-debug:
     - pipenv run conan install --build=missing -s build_type=Debug ..
     - cd ../
   script:
-    - cmake -S ./ -B $BUILD_DIR
+    - cmake -G Ninja -S ./ -B $BUILD_DIR
       -DCMAKE_BUILD_TYPE=Release
       -DNUM_COLLECT_TESTING:BOOL=ON
       -DNUM_COLLECT_ENABLE_BENCH=ON
@@ -370,7 +370,7 @@ msvc-release:
     - pipenv run conan install --build=missing -s build_type=Release ..
     - cd ../
   script:
-    - cmake -S ./ -B $BUILD_DIR
+    - cmake -G Ninja -S ./ -B $BUILD_DIR
       -DCMAKE_BUILD_TYPE=Release
       -DNUM_COLLECT_TESTING:BOOL=ON
       -DNUM_COLLECT_ENABLE_BENCH=ON
