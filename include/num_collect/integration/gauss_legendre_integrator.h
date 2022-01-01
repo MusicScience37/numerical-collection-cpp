@@ -19,8 +19,9 @@
  */
 #pragma once
 
-#include <Eigen/Core>
 #include <type_traits>
+
+#include <Eigen/Core>
 
 #include "num_collect/constants/half.h"
 #include "num_collect/constants/one.h"

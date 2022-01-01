@@ -17,9 +17,9 @@
  * \file
  * \brief Definition of auto_diff_fixture class.
  */
-#include <Eigen/Core>
 #include <cmath>
 
+#include <Eigen/Core>
 #include <celero/Celero.h>
 
 #include "error_udm.h"

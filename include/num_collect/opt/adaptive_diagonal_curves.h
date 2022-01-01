@@ -19,7 +19,6 @@
  */
 #pragma once
 
-#include <Eigen/Core>
 #include <algorithm>
 #include <cmath>
 #include <limits>
@@ -28,6 +27,8 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+
+#include <Eigen/Core>
 
 #include "num_collect/opt/impl/ternary_vector.h"
 #include "num_collect/opt/optimizer_base.h"

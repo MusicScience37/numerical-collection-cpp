@@ -19,10 +19,11 @@
  */
 #pragma once
 
-#include <Eigen/Core>
 #include <memory>
 #include <type_traits>
 #include <utility>
+
+#include <Eigen/Core>
 
 #include "num_collect/auto_diff/backward/graph/node.h"
 #include "num_collect/auto_diff/backward/graph/node_differentiator.h"

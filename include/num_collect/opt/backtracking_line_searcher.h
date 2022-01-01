@@ -19,9 +19,10 @@
  */
 #pragma once
 
-#include <Eigen/Core>
 #include <cstddef>
 #include <type_traits>
+
+#include <Eigen/Core>
 
 #include "num_collect/util/assert.h"
 #include "num_collect/util/exception.h"

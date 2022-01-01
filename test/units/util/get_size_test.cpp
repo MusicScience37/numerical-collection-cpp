@@ -19,10 +19,10 @@
  */
 #include "num_collect/util/get_size.h"
 
-#include <Eigen/Core>
 #include <cmath>
 #include <complex>
 
+#include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("num_collect::get_size") {

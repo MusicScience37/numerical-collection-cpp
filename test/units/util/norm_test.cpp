@@ -19,10 +19,10 @@
  */
 #include "num_collect/util/norm.h"
 
-#include <Eigen/Core>
 #include <cmath>
 #include <complex>
 
+#include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating.hpp>
 

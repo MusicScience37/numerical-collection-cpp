@@ -19,10 +19,11 @@
  */
 #pragma once
 
-#include <Eigen/Core>
 #include <cmath>
 #include <complex>
 #include <type_traits>
+
+#include <Eigen/Core>
 
 namespace num_collect {
 

@@ -19,14 +19,15 @@
  */
 #pragma once
 
-#include <Eigen/Core>
-#include <Eigen/Eigenvalues>
 #include <cmath>
 #include <limits>
 #include <stack>
 #include <type_traits>
 #include <unordered_set>
 #include <utility>
+
+#include <Eigen/Core>
+#include <Eigen/Eigenvalues>
 
 #include "num_collect/constants/half.h"
 #include "num_collect/constants/one.h"

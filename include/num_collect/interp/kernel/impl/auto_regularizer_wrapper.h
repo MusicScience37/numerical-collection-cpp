@@ -19,8 +19,9 @@
  */
 #pragma once
 
-#include <Eigen/Core>
 #include <memory>
+
+#include <Eigen/Core>
 
 #include "num_collect/interp/kernel/calc_kernel_mat.h"
 #include "num_collect/interp/kernel/impl/auto_regularizer.h"

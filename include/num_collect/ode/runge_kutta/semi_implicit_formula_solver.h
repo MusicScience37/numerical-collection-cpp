@@ -19,10 +19,11 @@
  */
 #pragma once
 
-#include <Eigen/LU>
 #include <cmath>
 #include <limits>
 #include <type_traits>
+
+#include <Eigen/LU>
 
 #include "num_collect/constants/one.h"
 #include "num_collect/constants/zero.h"

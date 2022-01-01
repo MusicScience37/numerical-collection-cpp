@@ -19,10 +19,11 @@
  */
 #pragma once
 
-#include <Eigen/Core>
 #include <limits>
 #include <optional>
 #include <type_traits>
+
+#include <Eigen/Core>
 
 #include "num_collect/util/assert.h"
 #include "num_collect/util/index_type.h"

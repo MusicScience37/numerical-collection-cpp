@@ -19,13 +19,14 @@
  */
 #pragma once
 
-#include <Eigen/Core>
 #include <algorithm>
 #include <limits>
 #include <queue>
 #include <tuple>
 #include <type_traits>
 #include <vector>
+
+#include <Eigen/Core>
 
 #include "num_collect/opt/optimizer_base.h"
 #include "num_collect/util/assert.h"

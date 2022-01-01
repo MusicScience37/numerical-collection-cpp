@@ -19,9 +19,10 @@
  */
 #pragma once
 
-#include <Eigen/Core>
 #include <functional>
 #include <memory>
+
+#include <Eigen/Core>
 
 #include "num_collect/interp/kernel/impl/auto_regularizer_wrapper.h"
 #include "num_collect/opt/dividing_rectangles.h"

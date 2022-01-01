@@ -17,13 +17,13 @@
  * \file
  * \brief Example of tikhonov class with blurred sine test problem.
  */
-#include <Eigen/Core>
 #include <iomanip>
 #include <iostream>
 #include <random>
 #include <unordered_map>
 #include <vector>
 
+#include <Eigen/Core>
 #include <pybind11/embed.h>
 #include <pybind11/stl.h>
 
