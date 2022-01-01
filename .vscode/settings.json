@@ -53,5 +53,6 @@
   "doxdocgen.c.setterText": "Set the {name}.",
   "doxdocgen.c.triggerSequence": "/*!",
   "doxdocgen.cpp.ctorText": "Construct.",
-  "doxdocgen.cpp.dtorText": "Destruct."
+  "doxdocgen.cpp.dtorText": "Destruct.",
+  "cmake.ctest.parallelJobs": 1
 }

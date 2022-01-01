@@ -1,0 +1,12 @@
+set(SOURCE_FILES
+    backward/create_diff_variable_test.cpp
+    backward/differentiate_test.cpp
+    backward/graph/node_differentiator_test.cpp
+    backward/graph/node_test.cpp
+    backward/variable_math_test.cpp
+    backward/variable_test.cpp
+    forward/create_diff_variable_test.cpp
+    forward/make_jacobian_test.cpp
+    forward/variable_math_test.cpp
+    forward/variable_test.cpp
+)

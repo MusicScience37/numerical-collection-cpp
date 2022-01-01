@@ -1,0 +1,16 @@
+set(SOURCE_FILES
+    adaptive_diagonal_curves_test.cpp
+    backtracking_line_searcher_test.cpp
+    bfgs_optimizer_test.cpp
+    conjugate_gradient_optimizer_test.cpp
+    dfp_optimizer_test.cpp
+    dividing_rectangles_test.cpp
+    downhill_simplex_test.cpp
+    function_object_wrapper_test.cpp
+    golden_section_search_test.cpp
+    heuristic_1dim_optimizer_test.cpp
+    impl/ternary_vector_test.cpp
+    newton_optimizer_test.cpp
+    sampling_optimizer_test.cpp
+    steepest_descent_test.cpp
+)
