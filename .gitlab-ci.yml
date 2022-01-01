@@ -342,7 +342,7 @@ msvc-debug:
       -DNUM_COLLECT_TEST_EXAMPLES=OFF
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
     - cd $BUILD_DIR
-    - cmake --build . --config Debug
+    - cmake --build . --config Debug --parallel
     - ctest -V --build-config Debug
 
 msvc-release:
@@ -379,7 +379,7 @@ msvc-release:
       -DNUM_COLLECT_TEST_EXAMPLES=OFF
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
     - cd $BUILD_DIR
-    - cmake --build . --config Release
+    - cmake --build . --config Release --parallel
     - ctest -V --build-config Release
 
 doc:
