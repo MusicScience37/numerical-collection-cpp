@@ -6,6 +6,7 @@
     "cloc",
     "CMake",
     "cmakelang",
+    "Codecov",
     "ctest",
     "DCMAKE",
     "DFMT",
