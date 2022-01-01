@@ -8,6 +8,7 @@
     "cmakelang",
     "ctest",
     "DCMAKE",
+    "DFMT",
     "DNUM",
     "doxygen",
     "Eigen",
@@ -26,6 +27,7 @@
     "mkdir",
     "MSVC",
     "MusicScience37",
+    "NONTYPE",
     "pipenv",
     "Pipfile",
     "profraw",
@@ -53,5 +55,6 @@
   "doxdocgen.c.setterText": "Set the {name}.",
   "doxdocgen.c.triggerSequence": "/*!",
   "doxdocgen.cpp.ctorText": "Construct.",
-  "doxdocgen.cpp.dtorText": "Destruct."
+  "doxdocgen.cpp.dtorText": "Destruct.",
+  "cmake.ctest.parallelJobs": 1
 }

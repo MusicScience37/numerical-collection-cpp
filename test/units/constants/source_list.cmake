@@ -1,0 +1,22 @@
+set(SOURCE_FILES
+    cbrt_test.cpp
+    ceil_test.cpp
+    exp_test.cpp
+    expm1_test.cpp
+    floor_test.cpp
+    half_test.cpp
+    impl/exp_maclaurin_test.cpp
+    impl/expm1_maclaurin_test.cpp
+    impl/log1m_maclaurin_test.cpp
+    impl/pow_pos_int_test.cpp
+    log1p_test.cpp
+    log_test.cpp
+    napier_test.cpp
+    one_test.cpp
+    pi_test.cpp
+    pow_test.cpp
+    root_test.cpp
+    sqrt_test.cpp
+    trunc_test.cpp
+    zero_test.cpp
+)

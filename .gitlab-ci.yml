@@ -343,7 +343,7 @@ msvc-debug:
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
       "-DCMAKE_CXX_FLAGS=/DFMT_USE_NONTYPE_TEMPLATE_PARAMETERS=0"
     - cd $BUILD_DIR
-    - cmake --build . --config Debug --parallel
+    - cmake --build . --config Debug --parallel 2
     - ctest -V --build-config Debug
 
 msvc-release:
@@ -381,7 +381,7 @@ msvc-release:
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
       "-DCMAKE_CXX_FLAGS=/DFMT_USE_NONTYPE_TEMPLATE_PARAMETERS=0"
     - cd $BUILD_DIR
-    - cmake --build . --config Release --parallel
+    - cmake --build . --config Release --parallel 2
     - ctest -V --build-config Release
 
 doc:
