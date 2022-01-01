@@ -5,8 +5,8 @@ A collection of algorithms in numerical analysis implemented in C++.
 [![GitLab Release](https://img.shields.io/gitlab/v/release/25109105?sort=semver)](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/releases)
 [![C++ standard](https://img.shields.io/badge/standard-C%2B%2B20-blue?logo=c%2B%2B)](https://en.cppreference.com/w/cpp/compiler_support/20)
 [![pipeline status](https://gitlab.com/MusicScience37/numerical-collection-cpp/badges/develop/pipeline.svg)](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/commits/develop)
-[![coverage report](https://gitlab.com/MusicScience37/numerical-collection-cpp/badges/develop/coverage.svg)](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/commits/develop)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+[![codecov](https://codecov.io/gl/MusicScience37/numerical-collection-cpp/branch/develop/graph/badge.svg?token=HRS501E1UU)](https://codecov.io/gl/MusicScience37/numerical-collection-cpp)
 
 ## Repositories
 
