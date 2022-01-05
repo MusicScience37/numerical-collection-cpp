@@ -25,6 +25,12 @@
 
 #if defined(NUM_COLLECT_DOCUMENTATION)
 
+/*!
+ * \brief Whether the compiler has source_location class in C++ standard
+ * library. (Value is compiler-dependent.)
+ */
+#define NUM_COLLECT_HAS_SOURCE_LOCATION 1
+
 #include <source_location>
 
 namespace num_collect::impl {
@@ -37,6 +43,9 @@ using source_location_type = std::source_location;
 }  // namespace num_collect::impl
 
 #elif __has_include(<source_location>)
+
+// NOLINTNEXTLINE
+#define NUM_COLLECT_HAS_SOURCE_LOCATION 1
 
 #include <source_location>
 
@@ -51,6 +60,9 @@ using source_location_type = std::source_location;
 
 #elif __has_include(<experimental/source_location>)
 
+// NOLINTNEXTLINE
+#define NUM_COLLECT_HAS_SOURCE_LOCATION 1
+
 #include <experimental/source_location>
 
 namespace num_collect::impl {
@@ -63,7 +75,10 @@ using source_location_type = std::experimental::source_location;
 }  // namespace num_collect::impl
 
 #else
-#error "source_location in C++ 20 is needed."
+
+// NOLINTNEXTLINE
+#define NUM_COLLECT_HAS_SOURCE_LOCATION 0
+
 #endif
 
 namespace num_collect {
@@ -76,6 +91,7 @@ namespace num_collect {
  */
 class source_info_view {
 public:
+#if defined(NUM_COLLECT_DOCUMENTATION) || NUM_COLLECT_HAS_SOURCE_LOCATION
     /*!
      * \brief Constructor
      *
@@ -84,10 +100,17 @@ public:
     explicit constexpr source_info_view(
         impl::source_location_type location =
             impl::source_location_type::current())
-        : file_path_(location.file_name()),
-          line_(static_cast<index_type>(location.line())),
-          column_(static_cast<index_type>(location.column())),
-          function_name_(location.function_name()) {}
+        : source_info_view(location.file_name(),
+              static_cast<index_type>(location.line()),
+              static_cast<index_type>(location.column()),
+              location.function_name()) {}
+#else
+    /*!
+     * \brief Constructor
+     */
+    constexpr source_info_view()
+        : source_info_view("unknown", 0, 0, "unknown") {}
+#endif
 
     /*!
      * \brief Construct.

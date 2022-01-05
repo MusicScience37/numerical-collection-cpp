@@ -36,11 +36,15 @@ TEST_CASE("num_collect::source_info_view") {
     SECTION("get information") {
         const num_collect::source_info_view info = source_info_view_test2();
 
+#if NUM_COLLECT_HAS_SOURCE_LOCATION
         CHECK_THAT(std::string(info.file_path()),
             Catch::Matchers::Contains("source_info_view_test.cpp"));
         CHECK(info.line() == 32);
         CHECK(info.column() >= 0);
         CHECK_THAT(std::string(info.function_name()),
             Catch::Matchers::Contains("source_info_view_test2"));
+#else
+        (void)info;
+#endif
     }
 }
