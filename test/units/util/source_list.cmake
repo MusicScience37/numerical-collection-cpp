@@ -9,4 +9,5 @@ set(SOURCE_FILES
     kahan_adder_test.cpp
     norm_test.cpp
     safe_cast_test.cpp
+    source_info_view_test.cpp
 )
