@@ -3,6 +3,7 @@ set(SOURCE_FILES
     bidirectional_vector_test.cpp
     exception_test.cpp
     get_size_test.cpp
+    hash_string_test.cpp
     is_eigen_matrix_test.cpp
     is_eigen_vector_test.cpp
     iteration_logger_test.cpp

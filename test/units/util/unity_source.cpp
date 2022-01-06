@@ -2,6 +2,7 @@
 #include "bidirectional_vector_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "exception_test.cpp"             // NOLINT(bugprone-suspicious-include)
 #include "get_size_test.cpp"              // NOLINT(bugprone-suspicious-include)
+#include "hash_string_test.cpp"           // NOLINT(bugprone-suspicious-include)
 #include "is_eigen_matrix_test.cpp"       // NOLINT(bugprone-suspicious-include)
 #include "is_eigen_vector_test.cpp"       // NOLINT(bugprone-suspicious-include)
 #include "iteration_logger_test.cpp"      // NOLINT(bugprone-suspicious-include)
