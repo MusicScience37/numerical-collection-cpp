@@ -21,27 +21,14 @@
 
 #include <type_traits>
 
+#include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_string.hpp>
 
-TEST_CASE("num_collect::num_collect_exception") {
-    using test_type = num_collect::num_collect_exception;
-
-    SECTION("basic functions") {
-        STATIC_REQUIRE(std::is_nothrow_copy_constructible_v<test_type>);
-        STATIC_REQUIRE(std::is_nothrow_copy_assignable_v<test_type>);
-        STATIC_REQUIRE(std::is_nothrow_move_constructible_v<test_type>);
-        STATIC_REQUIRE(std::is_nothrow_move_assignable_v<test_type>);
-    }
-
-    SECTION("construct") {
-        const auto message = std::string("test message");
-        auto e = test_type(message);
-        REQUIRE(e.what() == message);
-    }
-}
-
-TEST_CASE("num_collect::assertion_failure") {
-    using test_type = num_collect::assertion_failure;
+// NOLINTNEXTLINE
+TEMPLATE_TEST_CASE("exceptions", "", num_collect::num_collect_exception,
+    num_collect::assertion_failure, num_collect::algorithm_failure) {
+    using test_type = TestType;
 
     SECTION("basic functions") {
         STATIC_REQUIRE(std::is_nothrow_copy_constructible_v<test_type>);
@@ -53,23 +40,9 @@ TEST_CASE("num_collect::assertion_failure") {
     SECTION("construct") {
         const auto message = std::string("test message");
         auto e = test_type(message);
-        REQUIRE(e.what() == message);
-    }
-}
-
-TEST_CASE("num_collect::algorithm_failure") {
-    using test_type = num_collect::algorithm_failure;
-
-    SECTION("basic functions") {
-        STATIC_REQUIRE(std::is_nothrow_copy_constructible_v<test_type>);
-        STATIC_REQUIRE(std::is_nothrow_copy_assignable_v<test_type>);
-        STATIC_REQUIRE(std::is_nothrow_move_constructible_v<test_type>);
-        STATIC_REQUIRE(std::is_nothrow_move_assignable_v<test_type>);
-    }
-
-    SECTION("construct") {
-        const auto message = std::string("test message");
-        auto e = test_type(message);
-        REQUIRE(e.what() == message);
+        REQUIRE_THAT(e.what(), Catch::Matchers::Contains(message));
+#if NUM_COLLECT_HAS_SOURCE_LOCATION
+        REQUIRE_THAT(e.what(), Catch::Matchers::Contains("exception_test.cpp"));
+#endif
     }
 }

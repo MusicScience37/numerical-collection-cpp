@@ -21,14 +21,43 @@
 
 #include <stdexcept>
 
+#include <fmt/format.h>
+
+#include "num_collect/util/source_info_view.h"
+
 namespace num_collect {
+
+namespace impl {
+
+/*!
+ * \brief Format error.
+ *
+ * \param[in] message Error message.
+ * \param[in] source_info Information of source codes.
+ * \return Formatted string.
+ */
+[[nodiscard]] inline auto format_error(
+    std::string_view message, source_info_view source_info) -> std::string {
+    return fmt::format(FMT_STRING("{} ({}:{}:{})"), message,
+        source_info.file_path(), source_info.line(), source_info.column());
+}
+
+}  // namespace impl
 
 /*!
  * \brief Class of exception in this project.
  */
 class num_collect_exception : public std::runtime_error {
 public:
-    using std::runtime_error::runtime_error;
+    /*!
+     * \brief Construct.
+     *
+     * \param[in] message Error message.
+     * \param[in] source_info Information of source codes.
+     */
+    explicit num_collect_exception(std::string_view message,
+        source_info_view source_info = source_info_view())
+        : std::runtime_error(impl::format_error(message, source_info)) {}
 };
 
 /*!

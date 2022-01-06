@@ -35,6 +35,8 @@
     "mkdir",
     "MSVC",
     "MusicScience37",
+    "NOLINT",
+    "NOLINTNEXTLINE",
     "NONTYPE",
     "openmp",
     "optin",
