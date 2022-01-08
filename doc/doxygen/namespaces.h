@@ -31,6 +31,7 @@
 
 //! Namespace of num_collect source codes.
 namespace num_collect {
+
     //! Namespace of internal implementations.
     namespace impl {}
 
@@ -294,3 +295,6 @@ namespace num_collect {
 
 //! Namespace of Eigen library.
 namespace Eigen {}
+
+//! Namespace of fmt library.
+namespace fmt {}
