@@ -41,7 +41,17 @@ namespace num_collect {
      */
 
     //! Namespace of logging.
-    namespace logging {}
+    namespace logging {
+
+        /*!
+         * \dir num_collect/logging/impl
+         * \brief Directory of implementation.
+         */
+
+        //! Namespace of internal implementations.
+        namespace impl {}
+
+    }  // namespace logging
 
     /*!
      * \dir num_collect/auto_diff
