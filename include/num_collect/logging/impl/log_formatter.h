@@ -135,6 +135,8 @@ namespace num_collect::logging::impl {
         return "iter";
     case log_level::summary:
         return "summary";
+    case log_level::info:
+        return "info";
     case log_level::warning:
         return "warning";
     case log_level::error:

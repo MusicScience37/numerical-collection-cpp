@@ -234,6 +234,23 @@ public:
     }
 
     /*!
+     * \brief Write a information log.
+     *
+     * \param[in] source Information of the source code.
+     * \return Proxy object to write log.
+     *
+     * \note Argument source should be left to be the default value if you want
+     * to write logs with the current position.
+     */
+    [[nodiscard]] auto info(
+        source_info_view source = source_info_view()) const noexcept
+        -> logging_proxy {
+        constexpr bool write_log = true;
+        return logging_proxy(tag_.name(), log_level::info, source,
+            config_.sink().get(), write_log);
+    }
+
+    /*!
      * \brief Write a warning log.
      *
      * \param[in] source Information of the source code.

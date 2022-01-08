@@ -27,6 +27,7 @@
 
 TEST_CASE("num_collect::logging::logger") {
     using num_collect::logging::log_config;
+    using num_collect::logging::log_level;
     using num_collect::logging::log_tag_config;
     using num_collect::logging::log_tag_view;
     using num_collect::logging::logger;
@@ -54,13 +55,14 @@ TEST_CASE("num_collect::logging::logger") {
                                 .sink(sink);
         CHECK_NOTHROW(log_config::instance().set_config_of(tag, config));
 
-        REQUIRE_CALL(*sink, write(_, _, _, _, _)).TIMES(6);
+        REQUIRE_CALL(*sink, write(_, _, _, _, _)).TIMES(7);
 
         const auto l = logger(tag);
         l.trace()("Test trace log.");
         l.iteration()("Test iteration log.");
         l.iteration_label()("Test iteration_label log.");
         l.summary()("Test summary log.");
+        l.info()("Test info log.");
         l.warning()("Test warning log.");
         l.error()("Test error log.");
     }
@@ -72,11 +74,10 @@ TEST_CASE("num_collect::logging::logger") {
         CHECK_NOTHROW(log_config::instance().set_config_of(tag, config));
 
         REQUIRE_CALL(*sink,
-            write(_, _, _, _,
-                std::string_view(
-                    "Test warning log with formatting. (value=3)")));
+            write(_, std::string_view(tag.name()), log_level::info, _,
+                std::string_view("Test info log with formatting. (value=3)")));
 
         const auto l = logger(tag);
-        l.warning()("Test warning log {}. (value={})", "with formatting", 3);
+        l.info()("Test info log {}. (value={})", "with formatting", 3);
     }
 }

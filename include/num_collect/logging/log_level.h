@@ -41,6 +41,9 @@ enum class log_level {
     //! For summary of calculations.
     summary,
 
+    //! For some information. (Meant for use in user code, not in algorithms.)
+    info,
+
     //! For warnings.
     warning,
 
@@ -65,6 +68,8 @@ enum class log_level {
         return "iteration_label";
     case log_level::summary:
         return "summary";
+    case log_level::info:
+        return "info";
     case log_level::warning:
         return "warning";
     case log_level::error:
