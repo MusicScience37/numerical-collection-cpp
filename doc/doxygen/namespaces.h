@@ -15,96 +15,268 @@
  */
 /*!
  * \file
- * \brief documentation of namespaces
+ * \brief Documentation of namespaces
+ * \note This file must be consistent with `doc/sphinx/src/modules.rst`.
+ */
+
+/*!
+ * \dir num_collect
+ * \brief Directory of num_collect source codes.
+ */
+
+/*!
+ * \dir num_collect/util
+ * \brief Directory of utility classes.
  */
 
 //! Namespace of num_collect source codes.
 namespace num_collect {
-    //! Namespace of implementations.
+    //! Namespace of internal implementations.
     namespace impl {}
 
-    //! Namespace of classes of numbers.
-    namespace numbers {
-        //! Namespace of implementations.
-        namespace impl {}
-    }  // namespace numbers
+    /*!
+     * \dir num_collect/logging
+     * \brief Directory of logging.
+     */
 
-    //! Namespace of multiple precision numbers with double numbers.
-    namespace multi_double {
-        //! Namespace of implementations.
-        namespace impl {}
-    }  // namespace multi_double
+    //! Namespace of logging.
+    namespace logging {}
+
+    /*!
+     * \dir num_collect/auto_diff
+     * \brief Directory of automatic differentiation.
+     */
 
     //! Namespace of automatic differentiation.
     namespace auto_diff {
+
+        /*!
+         * \dir num_collect/auto_diff/forward
+         * \brief Directory of forward-mode automatic
+         * differentiation.
+         */
+
         //! Namespace of forward-mode automatic differentiation.
         namespace forward {}
+
+        /*!
+         * \dir num_collect/auto_diff/backward
+         * \brief Directory of backward-mode automatic
+         * differentiation.
+         */
+
         //! Namespace of backward-mode automatic differentiation.
         namespace backward {
+
+            /*!
+             * \dir num_collect/auto_diff/backward/graph
+             * \brief Directory of graphs in backward-mode automatic
+             * differentiation.
+             */
+
             //! Namespace of graphs in backward-mode automatic differentiation.
             namespace graph {}
+
         }  // namespace backward
     }      // namespace auto_diff
 
+    /*!
+     * \dir num_collect/opt
+     * \brief Directory of optimization algorithms.
+     */
+
     //! Namespace of optimization algorithms.
     namespace opt {
-        //! Namespace of implementations.
+
+        /*!
+         * \dir num_collect/opt/impl
+         * \brief Directory of implementation.
+         */
+
+        //! Namespace of internal implementations.
         namespace impl {}
+
     }  // namespace opt
+
+    /*!
+     * \dir num_collect/regularization
+     * \brief Directory of regularization algorithms.
+     */
 
     //! Namespace of regularization algorithms.
     namespace regularization {
-        //! Namespace of implementations.
+
+        /*!
+         * \dir num_collect/regularization/impl
+         * \brief Directory of internal implementations.
+         */
+
+        //! Namespace of internal implementations.
         namespace impl {}
+
     }  // namespace regularization
+
+    /*!
+     * \dir num_collect/interp
+     * \brief Directory of interpolation algorithms.
+     */
 
     //! Namespace of interpolation algorithms.
     namespace interp {
+
+        /*!
+         * \dir num_collect/interp/kernel
+         * \brief Directory of interpolation using kernels.
+         */
+
         //! namespace of interpolation using kernels.
         namespace kernel {
-            //! Namespace of implementations.
+
+            /*!
+             * \dir num_collect/interp/kernel/impl
+             * \brief Directory of internal implementations.
+             */
+
+            //! Namespace of internal implementations.
             namespace impl {}
+
         }  // namespace kernel
     }      // namespace interp
 
+    /*!
+     * \dir num_collect/numbers
+     * \brief Directory of classes of numbers.
+     */
+
+    //! Namespace of classes of numbers.
+    namespace numbers {
+
+        //! Namespace of internal implementations.
+        namespace impl {}
+
+    }  // namespace numbers
+
+    /*!
+     * \dir num_collect/multi_double
+     * \brief Directory of multiple precision numbers with double numbers.
+     */
+
+    //! Namespace of multiple precision numbers with double numbers.
+    namespace multi_double {
+
+        /*!
+         * \dir num_collect/multi_double/impl
+         * \brief Directory of internal implementations.
+         */
+
+        //! Namespace of internal implementations.
+        namespace impl {}
+
+    }  // namespace multi_double
+
+    /*!
+     * \dir num_collect/constants
+     * \brief Directory of constexpr variables and functions.
+     */
+
     //! Namespace of constexpr variables and functions.
     namespace constants {
-        //! Namespace of implementations.
+
+        /*!
+         * \dir num_collect/constants/impl
+         * \brief Directory of internal implementations.
+         */
+
+        //! Namespace of internal implementations.
         namespace impl {}
+
     }  // namespace constants
+
+    /*!
+     * \dir num_collect/roots
+     * \brief Directory of root-finding algorithms.
+     */
 
     //! Namespace of root-finding algorithms.
     namespace roots {
-        //! Namespace of implementations.
+
+        //! Namespace of internal implementations.
         namespace impl {}
+
     }  // namespace roots
+
+    /*!
+     * \dir num_collect/functions
+     * \brief Directory of special functions.
+     */
 
     //! Namespace of special functions.
     namespace functions {
-        //! Namespace of implementations.
+
+        //! Namespace of internal implementations.
         namespace impl {}
+
     }  // namespace functions
+
+    /*!
+     * \dir num_collect/integration
+     * \brief Directory of numerical integration.
+     */
 
     //! Namespace of numerical integration.
     namespace integration {
-        //! Namespace of implementations.
+
+        //! Namespace of internal implementations.
         namespace impl {}
+
     }  // namespace integration
+
+    /*!
+     * \dir num_collect/ode
+     * \brief Directory of solvers of ordinary differential equations (ODE).
+     */
 
     //! Namespace of solvers of ordinary differential equations (ODE).
     namespace ode {
+
+        /*!
+         * \dir num_collect/ode/runge_kutta
+         * \brief Directory of Runge-Kutta method.
+         */
+
         //! Namespace of Runge-Kutta method.
         namespace runge_kutta {
-            //! Namespace of implementations.
+
+            /*!
+             * \dir num_collect/ode/runge_kutta/impl
+             * \brief Directory of internal implementations.
+             */
+
+            //! Namespace of internal implementations.
             namespace impl {}
+
         }  // namespace runge_kutta
 
-        //! Namespace of average vector field (AVF) method \cite Quispel2008.
+        /*!
+         * \dir num_collect/ode/avf
+         * \brief Directory of average vector field (AVF) method.
+         */
+
+        //! Namespace of average vector field (AVF) method.
         namespace avf {
-            //! Namespace of implementations.
+
+            /*!
+             * \dir num_collect/ode/avf/impl
+             * \brief Directory of internal implementations.
+             */
+
+            //! Namespace of internal implementations.
             namespace impl {}
+
         }  // namespace avf
-    }      // namespace ode
+
+    }  // namespace ode
+
 }  // namespace num_collect
 
 //! Namespace of Eigen library.

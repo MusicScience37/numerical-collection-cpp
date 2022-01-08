@@ -13,6 +13,9 @@ Modules
         util ..> fmt
         util ..> Eigen
 
+        component logging
+        logging ..> util
+
         component auto_diff
         auto_diff ..> util
         auto_diff ..> Eigen
