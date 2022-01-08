@@ -80,4 +80,19 @@ TEST_CASE("num_collect::logging::logger") {
         const auto l = logger(tag);
         l.info()("Test info log {}. (value={})", "with formatting", 3);
     }
+
+    SECTION("skip logging using configuration") {
+        constexpr auto tag = log_tag_view("num_collect::logging::logger_test4");
+        const auto sink = std::make_shared<mock_log_sink>();
+        const auto config = log_tag_config().sink(sink);
+
+        FORBID_CALL(*sink, write(_, _, _, _, _));
+
+        const auto l = logger(tag, config);
+        l.trace()("Test trace log.");
+        l.iteration()("Test iteration log.");
+        l.iteration_label()("Test iteration_label log.");
+        l.summary()("Test summary log.");
+        l.summary()("Test summary log. (arg=)", 1);
+    }
 }
