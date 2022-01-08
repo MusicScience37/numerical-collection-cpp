@@ -80,9 +80,6 @@ public:
      */
     constexpr auto operator<=>(const log_tag_view& right) const noexcept
         -> std::strong_ordering {
-        if (this->hash() == right.hash()) {
-            return std::strong_ordering::equal;
-        }
         return this->name().compare(right.name()) <=> 0;
     }
 
@@ -93,7 +90,12 @@ public:
      * \return Result.
      */
     constexpr auto operator==(const log_tag_view& right) const noexcept
-        -> bool = default;
+        -> bool {
+        if (this->hash() != right.hash()) {
+            return false;
+        }
+        return this->name() == right.name();
+    }
 
     /*!
      * \brief Compare two tags.

@@ -64,9 +64,6 @@ public:
      */
     auto operator<=>(const log_tag& right) const noexcept
         -> std::strong_ordering {
-        if (this->hash() == right.hash()) {
-            return std::strong_ordering::equal;
-        }
         return this->name().compare(right.name()) <=> 0;
     }
 
@@ -76,7 +73,12 @@ public:
      * \param[in] right Right-hand-side object.
      * \return Result.
      */
-    auto operator==(const log_tag& right) const noexcept -> bool = default;
+    auto operator==(const log_tag& right) const noexcept -> bool {
+        if (this->hash() != right.hash()) {
+            return false;
+        }
+        return this->name() == right.name();
+    }
 
     /*!
      * \brief Compare two tags.
