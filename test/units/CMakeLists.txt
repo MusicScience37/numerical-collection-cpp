@@ -2,7 +2,11 @@ set(NUM_COLLECT_TEST_UNITS_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 function(add_unit_test_for MODULE_NAME)
     include(${NUM_COLLECT_TEST_UNITS_DIR}/${MODULE_NAME}/source_list.cmake)
-    add_executable(num_collect_test_units_${MODULE_NAME} ${SOURCE_FILES})
+    add_executable(num_collect_test_units_${MODULE_NAME}
+                   ${SOURCE_FILES} ../catch_event_listner.cpp)
+    target_compile_definitions(
+        num_collect_test_units_${MODULE_NAME}
+        PRIVATE NUM_COLLECT_TEST_MODULE_NAME=${MODULE_NAME})
     target_add_catch2(num_collect_test_units_${MODULE_NAME})
 
     add_executable(num_collect_test_units_${MODULE_NAME}_unity EXCLUDE_FROM_ALL
