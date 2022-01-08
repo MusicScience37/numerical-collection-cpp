@@ -6,6 +6,7 @@ Checks: >
     -clang-analyzer-optin.performance.Padding,
   cppcoreguidelines-*,
     -cppcoreguidelines-owning-memory,
+    -cppcoreguidelines-pro-bounds-constant-array-index,
   google-*,
     -google-runtime-references,
   performance-*,
@@ -31,6 +32,7 @@ Checks: >
 # - clang-analyzer-optin.performance.Padding is hard to be fixed.
 # - readability-function-cognitive-complexity is hard to be fixed in tests.
 # - cppcoreguidelines-owning-memory forces to use an external library.
+# - cppcoreguidelines-pro-bounds-constant-array-index forces to use an external library.
 
 CheckOptions:
   # Naming Conventions
