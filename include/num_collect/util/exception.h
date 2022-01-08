@@ -76,4 +76,12 @@ public:
     using num_collect_exception::num_collect_exception;
 };
 
+/*!
+ * \brief Class of exception on errors in files.
+ */
+class file_error : public num_collect_exception {
+public:
+    using num_collect_exception::num_collect_exception;
+};
+
 }  // namespace num_collect
