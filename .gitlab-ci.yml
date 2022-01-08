@@ -83,6 +83,8 @@ static analysis:
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   before_script:
+    - apt update
+    - apt install -y libstdc++-10-dev
     - pip3 install junit2html
     - mkdir build_static_analysis
     - cd build_static_analysis
@@ -127,6 +129,8 @@ static analysis:
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   before_script:
+    - apt update
+    - apt install -y libstdc++-10-dev
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --detect default
