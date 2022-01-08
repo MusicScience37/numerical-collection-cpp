@@ -78,4 +78,15 @@ TEST_CASE("num_collect::logging::log_tag_view") {
         REQUIRE(tag.name() == std::string(name));
         REQUIRE(tag.hash() == tag_view.hash());
     }
+
+    SECTION("compare") {
+        constexpr auto tag1 = log_tag_view("Tag1");
+        constexpr auto tag2 = log_tag_view("Tag2");
+        const auto tag3 = log_tag(tag1);
+
+        REQUIRE(tag1 == tag1);
+        REQUIRE(tag1 != tag2);
+        REQUIRE(tag1 < tag2);
+        REQUIRE(tag1 == tag3);
+    }
 }

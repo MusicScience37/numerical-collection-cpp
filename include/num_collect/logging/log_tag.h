@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <compare>
 #include <string>
 #include <string_view>
 
@@ -54,6 +55,36 @@ public:
      * \return Hash number.
      */
     [[nodiscard]] auto hash() const noexcept -> std::size_t { return hash_; }
+
+    /*!
+     * \brief Compare two tags.
+     *
+     * \param[in] right Right-hand-side object.
+     * \return Result.
+     */
+    auto operator<=>(const log_tag& right) const noexcept
+        -> std::strong_ordering {
+        if (this->hash() == right.hash()) {
+            return std::strong_ordering::equal;
+        }
+        return this->name().compare(right.name()) <=> 0;
+    }
+
+    /*!
+     * \brief Compare two tags.
+     *
+     * \param[in] right Right-hand-side object.
+     * \return Result.
+     */
+    auto operator==(const log_tag& right) const noexcept -> bool = default;
+
+    /*!
+     * \brief Compare two tags.
+     *
+     * \param[in] right Right-hand-side object.
+     * \return Result.
+     */
+    auto operator!=(const log_tag& right) const noexcept -> bool = default;
 
 private:
     //! Name.
