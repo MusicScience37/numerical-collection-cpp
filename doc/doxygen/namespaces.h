@@ -57,7 +57,12 @@ namespace num_collect {
          */
 
         //! Namespace of forward-mode automatic differentiation.
-        namespace forward {}
+        namespace forward {
+
+            //! Namespace of internal implementations.
+            namespace impl {}
+
+        }  // namespace forward
 
         /*!
          * \dir num_collect/auto_diff/backward
@@ -75,7 +80,15 @@ namespace num_collect {
              */
 
             //! Namespace of graphs in backward-mode automatic differentiation.
-            namespace graph {}
+            namespace graph {
+
+                //! Namespace of internal implementations.
+                namespace impl {}
+
+            }  // namespace graph
+
+            //! Namespace of internal implementations.
+            namespace impl {}
 
         }  // namespace backward
     }      // namespace auto_diff
