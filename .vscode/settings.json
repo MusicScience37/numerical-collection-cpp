@@ -52,6 +52,7 @@
     "Runge",
     "Struct",
     "Tikhonov",
+    "trompeloeil",
     "tsan",
     "ubsan",
     "venv"
