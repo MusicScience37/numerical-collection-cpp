@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief test of basic operations in multi-double calculations
+ * \brief Test of basic operations in multi-double calculations
  */
 #include "num_collect/multi_double/impl/basic_operations.h"
 

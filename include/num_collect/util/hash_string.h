@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 MusicScience37 (Kenta Kabashima)
+ * Copyright 2022 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of index_type type.
+ * \brief Definition of hash_string function.
  */
 #pragma once
 
@@ -32,7 +32,7 @@ namespace num_collect {
  * \param[in] str String.
  * \return Hash number.
  */
-[[nodiscard]] constexpr inline auto hash_string(std::string_view str)
+[[nodiscard]] constexpr inline auto hash_string(std::string_view str) noexcept
     -> std::uint32_t {
     constexpr std::uint32_t init_num = 0x5928ACD1U;
     std::uint32_t num = init_num;
