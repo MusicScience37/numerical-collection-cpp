@@ -15,51 +15,36 @@
  */
 /*!
  * \file
- * \brief Definition of log_tag_view class.
+ * \brief Definition of log_tag class.
  */
 #pragma once
 
+#include <string>
 #include <string_view>
 
-#include "num_collect/logging/log_tag.h"
 #include "num_collect/util/hash_string.h"
 
 namespace num_collect::logging {
 
 /*!
- * \brief Class of tags of logs without memory management.
+ * \brief Class of tags of logs.
  */
-class log_tag_view {
+class log_tag {
 public:
     /*!
      * \brief Constructor.
      *
      * \param[in] name Name of this tag.
      */
-    constexpr explicit log_tag_view(std::string_view name) noexcept
+    explicit log_tag(std::string_view name)
         : name_(name), hash_(hash_string(name)) {}
-
-    /*!
-     * \brief Construct (implicit convertion).
-     *
-     * \param[in] tag Tag.
-     */
-    log_tag_view(const log_tag& tag) noexcept  // NOLINT
-        : name_(tag.name()), hash_(tag.hash()) {}
-
-    /*!
-     * \brief Convert to log_tag object.
-     *
-     * \return Converted tag.
-     */
-    explicit operator log_tag() const { return log_tag(name_); }
 
     /*!
      * \brief Get the name of this tag.
      *
      * \return Name.
      */
-    [[nodiscard]] constexpr auto name() const noexcept -> std::string_view {
+    [[nodiscard]] auto name() const noexcept -> const std::string& {
         return name_;
     }
 
@@ -68,13 +53,11 @@ public:
      *
      * \return Hash number.
      */
-    [[nodiscard]] constexpr auto hash() const noexcept -> std::size_t {
-        return hash_;
-    }
+    [[nodiscard]] auto hash() const noexcept -> std::size_t { return hash_; }
 
 private:
     //! Name.
-    std::string_view name_;
+    std::string name_;
 
     //! Hash number.
     std::size_t hash_;

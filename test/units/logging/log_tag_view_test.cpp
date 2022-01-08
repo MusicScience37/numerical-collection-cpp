@@ -28,6 +28,7 @@
 
 TEST_CASE("num_collect::logging::log_tag_view") {
     using num_collect::hash_string;
+    using num_collect::logging::log_tag;
     using num_collect::logging::log_tag_view;
 
     SECTION("check noexcept") {
@@ -56,5 +57,25 @@ TEST_CASE("num_collect::logging::log_tag_view") {
 
         REQUIRE(std::string(tag.name()) == name);
         REQUIRE(tag.hash() == hash_string(name));
+    }
+
+    SECTION("convert from log_tag") {
+        const std::string name = "Tag";
+        const auto tag = log_tag(name);
+
+        const log_tag_view tag_view = tag;
+
+        REQUIRE(std::string(tag_view.name()) == name);
+        REQUIRE(tag_view.hash() == tag.hash());
+    }
+
+    SECTION("convert to log_tag") {
+        constexpr std::string_view name = "Tag";
+        constexpr auto tag_view = log_tag_view(name);
+
+        const auto tag = log_tag(tag_view);
+
+        REQUIRE(tag.name() == std::string(name));
+        REQUIRE(tag.hash() == tag_view.hash());
     }
 }
