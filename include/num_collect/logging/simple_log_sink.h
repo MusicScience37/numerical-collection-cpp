@@ -22,6 +22,7 @@
 #include <cstdio>
 #include <filesystem>
 #include <iostream>
+#include <mutex>
 
 #include "num_collect/logging/impl/log_formatter.h"
 #include "num_collect/logging/log_sink_base.h"
@@ -78,6 +79,7 @@ public:
         log_level level, source_info_view source,
         std::string_view body) noexcept override {
         try {
+            std::unique_lock<std::mutex> lock(mutex_);
             const auto formatted =
                 formatter_.format(time, tag, level, source, body);
             std::fwrite(formatted.data(), 1, formatted.size(), file_);
@@ -116,6 +118,9 @@ private:
 
     //! Whether to close file on destruction.
     bool close_on_destruction_{false};
+
+    //! Mutex.
+    std::mutex mutex_{};
 
     //! Log formatter.
     impl::log_formatter formatter_{};

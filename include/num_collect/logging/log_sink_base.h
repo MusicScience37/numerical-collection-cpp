@@ -43,6 +43,8 @@ public:
      * \param[in] level Log level.
      * \param[in] source Information of the source code.
      * \param[in] body Log body.
+     *
+     * \note Implementations of this function must be thread-safe.
      */
     virtual void write(std::chrono::system_clock::time_point time,
         std::string_view tag, log_level level, source_info_view source,
