@@ -1,6 +1,8 @@
 Modules
 ===============
 
+.. This must be consistent with doc/doxygen/namespaces.h
+
 .. uml::
 
     title Module Relation
@@ -14,6 +16,7 @@ Modules
         util ..> Eigen
 
         component logging
+        logging ..> fmt
         logging ..> util
 
         component auto_diff
@@ -64,6 +67,9 @@ and implemented in ``num_collect`` namespace.
 
 util
     Utility common in this project.
+
+logging
+    Logging.
 
 auto_diff
     Automatic differentiation.

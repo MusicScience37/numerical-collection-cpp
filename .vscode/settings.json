@@ -9,6 +9,7 @@
     "cmakelang",
     "Codecov",
     "conanfile",
+    "constexpr",
     "copydoc",
     "cppcoreguidelines",
     "ctest",
