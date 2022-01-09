@@ -418,6 +418,10 @@ public:
      */
     void write_iteration_to(
         const logger& l, source_info_view source = source_info_view()) {
+        if (!l.config().write_iterations()) {
+            return;
+        }
+
         if ((iterations_ % l.config().iteration_output_period()) != 0) {
             ++iterations_;
             return;

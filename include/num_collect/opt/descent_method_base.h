@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include "num_collect/logging/log_tag_view.h"
 #include "num_collect/opt/optimizer_base.h"
 
 namespace num_collect::opt {
@@ -165,11 +166,12 @@ protected:
     /*!
      * \brief Construct.
      *
+     * \param[in] tag Log tag.
      * \param[in] obj_fun Objective function.
      */
-    explicit descent_method_base(
+    explicit descent_method_base(logging::log_tag_view tag,
         const objective_function_type& obj_fun = objective_function_type())
-        : line_searcher_(obj_fun) {}
+        : optimizer_base<Derived>(tag), line_searcher_(obj_fun) {}
 
 private:
     //! Object to perform line search.

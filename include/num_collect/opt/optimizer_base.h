@@ -36,6 +36,14 @@ protected:
 
 public:
     /*!
+     * \brief Construct.
+     *
+     * \param[in] tag Log tag.
+     */
+    explicit optimizer_base(logging::log_tag_view tag)
+        : iterative_solver_base<Derived>(tag) {}
+
+    /*!
      * \brief Get current optimal variable.
      *
      * \return Current optimal variable.

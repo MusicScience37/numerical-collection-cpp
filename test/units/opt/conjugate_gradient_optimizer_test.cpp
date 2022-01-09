@@ -68,17 +68,4 @@ TEST_CASE("num_collect::opt::conjugate_gradient_optimizer") {
             opt.opt_variable(), eigen_approx(Eigen::VectorXd::Zero(3), tol));
         REQUIRE_THAT(opt.opt_value(), Catch::Matchers::WithinAbs(0.0, tol));
     }
-
-    SECTION("solve with logs") {
-        auto opt = conjugate_gradient_optimizer<multi_quadratic_function>();
-        std::ostringstream stream;
-        const Eigen::VectorXd init_var =
-            (Eigen::VectorXd(3) << 0.0, 1.0, 2.0).finished();
-        opt.init(init_var);
-        REQUIRE_NOTHROW(opt.solve(stream));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Iter."));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Eval."));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Value"));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Grad."));
-    }
 }

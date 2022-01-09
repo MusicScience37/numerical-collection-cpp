@@ -1,6 +1,8 @@
 {
   "cSpell.words": [
     "asan",
+    "bfgs",
+    "Broyden",
     "bugprone",
     "Celero",
     "choco",
@@ -24,6 +26,7 @@
     "fsanitize",
     "gemnasium",
     "gitmessage",
+    "Goldfarb",
     "Graphviz",
     "hicpp",
     "htmlreport",
@@ -49,7 +52,9 @@
     "Pybind11",
     "pyenv",
     "Quispel",
+    "Raphson",
     "Runge",
+    "Shanno",
     "Struct",
     "Tikhonov",
     "trompeloeil",

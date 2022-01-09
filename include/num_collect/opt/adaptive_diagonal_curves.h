@@ -30,13 +30,19 @@
 
 #include <Eigen/Core>
 
+#include "num_collect/logging/log_tag_view.h"
 #include "num_collect/opt/impl/ternary_vector.h"
 #include "num_collect/opt/optimizer_base.h"
 #include "num_collect/util/assert.h"
+#include "num_collect/util/index_type.h"
 #include "num_collect/util/is_eigen_vector.h"
 #include "num_collect/util/safe_cast.h"
 
 namespace num_collect::opt {
+
+//! Tag of adaptive_diagonal_curves.
+inline constexpr auto adaptive_diagonal_curves_tag =
+    logging::log_tag_view("num_collect::opt::adaptive_diagonal_curves");
 
 namespace impl {
 
@@ -486,7 +492,9 @@ public:
      */
     explicit adaptive_diagonal_curves(
         const objective_function_type& obj_fun = objective_function_type())
-        : value_dict_(obj_fun) {}
+        : optimizer_base<adaptive_diagonal_curves<ObjectiveFunction>>(
+              adaptive_diagonal_curves_tag),
+          value_dict_(obj_fun) {}
 
     /*!
      * \brief Initialize the algorithm.
@@ -542,13 +550,21 @@ public:
     }
 
     /*!
-     * \copydoc num_collect::iterative_solver_base::set_info_to
+     * \copydoc num_collect::iterative_solver_base::configure_iteration_logger
      */
-    void set_info_to(iteration_logger& logger) const {
-        logger["Iter."] = iterations();
-        logger["Eval."] = evaluations();
-        logger["Value"] = static_cast<double>(opt_value());
-        logger["State"] = state_name(last_state());
+    void configure_iteration_logger(
+        logging::iteration_logger& iteration_logger) const {
+        iteration_logger.append<index_type>(
+            "Iter.", [this] { return iterations(); });
+        iteration_logger.append<index_type>(
+            "Eval.", [this] { return evaluations(); });
+        iteration_logger.append<value_type>(
+            "Value", [this] { return opt_value(); });
+        constexpr index_type state_width = 15;
+        iteration_logger
+            .append<std::string>(
+                "State", [this] { return state_name(last_state()); })
+            ->width(state_width);
     }
 
     /*!

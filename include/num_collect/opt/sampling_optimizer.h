@@ -30,6 +30,10 @@
 
 namespace num_collect::opt {
 
+//! Tag of golden_section_search.
+inline constexpr auto sampling_optimizer_tag =
+    logging::log_tag_view("num_collect::opt::sampling_optimizer");
+
 /*!
  * \brief Class to perform optimization using samples of objective functions.
  *
@@ -65,7 +69,9 @@ public:
      */
     explicit sampling_optimizer(
         const objective_function_type& obj_fun = objective_function_type())
-        : obj_fun_(obj_fun) {}
+        : optimizer_base<sampling_optimizer<ObjectiveFunction>>(
+              sampling_optimizer_tag),
+          obj_fun_(obj_fun) {}
 
     /*!
      * \brief Initialize the algorithm.
@@ -130,12 +136,16 @@ public:
     }
 
     /*!
-     * \copydoc num_collect::iterative_solver_base::set_info_to
+     * \copydoc num_collect::iterative_solver_base::configure_iteration_logger
      */
-    void set_info_to(iteration_logger& logger) const {
-        logger["Iter."] = iterations();
-        logger["Eval."] = evaluations();
-        logger["Value"] = static_cast<double>(opt_value());
+    void configure_iteration_logger(
+        logging::iteration_logger& iteration_logger) const {
+        iteration_logger.append<index_type>(
+            "Iter.", [this] { return iterations(); });
+        iteration_logger.append<index_type>(
+            "Eval.", [this] { return evaluations(); });
+        iteration_logger.append<value_type>(
+            "Value", [this] { return opt_value(); });
     }
 
     /*!

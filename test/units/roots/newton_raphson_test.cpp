@@ -75,19 +75,6 @@ TEST_CASE("num_collect::roots::newton_raphson<cubic_root_test_function>") {
             finder.variable(), Catch::Matchers::WithinRel(solution, tol));
         REQUIRE(finder.iterations() > 1);
     }
-
-    SECTION("solve with logging") {
-        constexpr double target = 3.0;
-        auto finder = finder_type(function_type(target));
-        std::ostringstream stream;
-        constexpr double init_var = 2.0;
-        finder.init(init_var);
-        REQUIRE_NOTHROW(finder.solve(stream));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Iter."));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Eval."));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Value"));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Change"));
-    }
 }
 
 TEST_CASE("num_collect::roots::newton_raphson<double_cubic_test_function>") {
@@ -132,17 +119,5 @@ TEST_CASE("num_collect::roots::newton_raphson<double_cubic_test_function>") {
         constexpr double tol = 1e-4;
         REQUIRE_THAT(finder.variable(), eigen_approx(solution, tol));
         REQUIRE(finder.iterations() > 1);
-    }
-
-    SECTION("solve with logging") {
-        auto finder = finder_type(function_type());
-        std::ostringstream stream;
-        const auto init_var = Eigen::Vector2d(1.0, 1.0);
-        finder.init(init_var);
-        REQUIRE_NOTHROW(finder.solve(stream));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Iter."));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Eval."));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Value"));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Change"));
     }
 }

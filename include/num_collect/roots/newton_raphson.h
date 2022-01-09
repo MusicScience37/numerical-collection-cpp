@@ -24,11 +24,16 @@
 
 #include <Eigen/LU>
 
+#include "num_collect/logging/log_tag_view.h"
 #include "num_collect/roots/function_root_finder_base.h"
 #include "num_collect/util/assert.h"
 #include "num_collect/util/is_eigen_vector.h"
 
 namespace num_collect::roots {
+
+//! Tag of newton_raphson.
+inline constexpr auto newton_raphson_tag =
+    logging::log_tag_view("num_collect::roots::newton_raphson");
 
 /*!
  * \brief Class of Newton-Raphson method.
@@ -70,7 +75,7 @@ public:
      * \param[in] function Function of equation.
      */
     explicit newton_raphson(const function_type& function = function_type())
-        : base_type(function) {}
+        : base_type(newton_raphson_tag, function) {}
 
     /*!
      * \brief Initialize.
@@ -109,12 +114,17 @@ public:
             (value_norm() < tol_value_norm_);
     }
 
-    //! \copydoc iterative_solver_base::set_info_to
-    void set_info_to(iteration_logger& logger) const {
-        logger["Iter."] = iterations();
-        logger["Eval."] = evaluations();
-        logger["Value"] = value_norm();
-        logger["Change"] = last_change();
+    //! \copydoc iterative_solver_base::configure_iteration_logger
+    void configure_iteration_logger(
+        logging::iteration_logger& iteration_logger) const {
+        iteration_logger.append<index_type>(
+            "Iter.", [this] { return iterations(); });
+        iteration_logger.append<index_type>(
+            "Eval.", [this] { return evaluations(); });
+        iteration_logger.append<variable_type>(
+            "Value", [this] { return value_norm(); });
+        iteration_logger.append<variable_type>(
+            "Change", [this] { return last_change(); });
     }
 
     using base_type::function;
@@ -300,7 +310,7 @@ public:
      * \param[in] function Function of equation.
      */
     explicit newton_raphson(const function_type& function = function_type())
-        : base_type(function) {}
+        : base_type(newton_raphson_tag, function) {}
 
     /*!
      * \brief Initialize.
@@ -338,12 +348,17 @@ public:
             (value_norm() < tol_value_norm_);
     }
 
-    //! \copydoc function_root_finder_base::set_info_to
-    void set_info_to(iteration_logger& logger) const {
-        logger["Iter."] = iterations();
-        logger["Eval."] = evaluations();
-        logger["Value"] = value_norm();
-        logger["Change"] = last_change();
+    //! \copydoc iterative_solver_base::configure_iteration_logger
+    void configure_iteration_logger(
+        logging::iteration_logger& iteration_logger) const {
+        iteration_logger.append<index_type>(
+            "Iter.", [this] { return iterations(); });
+        iteration_logger.append<index_type>(
+            "Eval.", [this] { return evaluations(); });
+        iteration_logger.append<scalar_type>(
+            "Value", [this] { return value_norm(); });
+        iteration_logger.append<scalar_type>(
+            "Change", [this] { return last_change(); });
     }
 
     using base_type::function;

@@ -26,6 +26,10 @@
 
 namespace num_collect::opt {
 
+//! Tag of bfgs_optimizer.
+inline constexpr auto bfgs_optimizer_tag =
+    logging::log_tag_view("num_collect::opt::bfgs_optimizer");
+
 /*!
  * \brief Class of quasi-Newton method with Broyden-Fletcher-Goldfarb-Shanno
  * (BFGS) formula.
@@ -69,7 +73,7 @@ public:
      */
     explicit bfgs_optimizer(
         const objective_function_type& obj_fun = objective_function_type())
-        : base_type(obj_fun) {}
+        : base_type(bfgs_optimizer_tag, obj_fun) {}
 
     using base_type::evaluations;
     using base_type::gradient;
@@ -78,6 +82,7 @@ public:
     using base_type::line_searcher;
     using base_type::opt_value;
     using base_type::opt_variable;
+    using typename base_type::value_type;
 
     /*!
      * \brief Initialize.
@@ -114,13 +119,18 @@ public:
     }
 
     /*!
-     * \copydoc num_collect::iterative_solver_base::set_info_to
+     * \copydoc num_collect::iterative_solver_base::configure_iteration_logger
      */
-    void set_info_to(iteration_logger& logger) const {
-        logger["Iter."] = iterations();
-        logger["Eval."] = evaluations();
-        logger["Value"] = static_cast<double>(opt_value());
-        logger["Grad."] = static_cast<double>(gradient_norm());
+    void configure_iteration_logger(
+        logging::iteration_logger& iteration_logger) const {
+        iteration_logger.append<index_type>(
+            "Iter.", [this] { return iterations(); });
+        iteration_logger.append<index_type>(
+            "Eval.", [this] { return evaluations(); });
+        iteration_logger.append<value_type>(
+            "Value", [this] { return opt_value(); });
+        iteration_logger.append<value_type>(
+            "Grad.", [this] { return gradient_norm(); });
     }
 
 private:
