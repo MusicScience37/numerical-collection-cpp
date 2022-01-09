@@ -83,5 +83,5 @@
   "doxdocgen.c.triggerSequence": "/*!",
   "doxdocgen.cpp.ctorText": "Construct.",
   "doxdocgen.cpp.dtorText": "Destruct.",
-  "cmake.ctest.parallelJobs": 1
+  "cmake.ctest.parallelJobs": 2
 }

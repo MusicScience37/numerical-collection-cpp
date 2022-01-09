@@ -27,6 +27,7 @@
 
 #include "num_collect/constants/one.h"
 #include "num_collect/constants/zero.h"
+#include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/implicit_formula_solver_strategies.h"
 #include "num_collect/util/assert.h"
 #include "num_collect/util/index_type.h"
@@ -34,6 +35,10 @@
 #include "num_collect/util/is_eigen_vector.h"
 
 namespace num_collect::ode::runge_kutta {
+
+//! Tag of semi_implicit_formula_solver.
+inline constexpr auto semi_implicit_formula_solver_tag = logging::log_tag_view(
+    "num_collect::ode::runge_kutta::semi_implicit_formula_solver");
 
 /*!
  * \brief Class of solvers of semi-implicit formulas.
@@ -94,16 +99,23 @@ public:
         k_ = problem_.diff_coeff();
 
         constexpr index_type max_iterations = 1000;  // safe guard
-        for (index_type i = 0; i <= max_iterations; ++i) {
+        index_type iterations = 0;
+        for (; iterations <= max_iterations; ++iterations) {
             problem_.evaluate_on(
                 time, variable + step_size * k_coeff * k_, false);
             residual_ = k_ - problem_.diff_coeff();
             residual_norm_ = residual_.norm();
             if (residual_norm_ < tol_residual_norm_) {
+                ++iterations;
                 break;
             }
             k_ -= lu_.solve(residual_);
         }
+
+        logger_.trace()(
+            FMT_STRING("Solved an implicit formula: step_size={:.3e}, "
+                       "iterations={}, residual={:.3e}"),
+            step_size, iterations, residual_norm_);
     }
 
     /*!
@@ -170,6 +182,9 @@ private:
 
     //! Tolerance of residual norm.
     scalar_type tol_residual_norm_{default_tol_residual_norm};
+
+    //! Logger.
+    logging::logger logger_{semi_implicit_formula_solver_tag};
 };
 
 /*!
@@ -226,16 +241,23 @@ public:
         k_ = problem_.diff_coeff();
 
         constexpr index_type max_iterations = 1000;  // safe guard
-        for (index_type i = 0; i <= max_iterations; ++i) {
+        index_type iterations = 0;
+        using std::abs;
+        for (; iterations <= max_iterations; ++iterations) {
             problem_.evaluate_on(
                 time, variable + step_size * k_coeff * k_, false);
             residual_ = k_ - problem_.diff_coeff();
-            using std::abs;
             if (abs(residual_) < tol_residual_norm_) {
+                ++iterations;
                 break;
             }
             k_ -= inv_jacobian * residual_;
         }
+
+        logger_.trace()(
+            FMT_STRING("Solved an implicit formula: step_size={:.3e}, "
+                       "iterations={}, residual={:.3e}"),
+            step_size, iterations, abs(residual_));
     }
 
     /*!
@@ -297,6 +319,9 @@ private:
 
     //! Tolerance of residual norm.
     scalar_type tol_residual_norm_{default_tol_residual_norm};
+
+    //! Logger.
+    logging::logger logger_{semi_implicit_formula_solver_tag};
 };
 
 }  // namespace num_collect::ode::runge_kutta
