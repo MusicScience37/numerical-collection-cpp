@@ -36,6 +36,14 @@ namespace num_collect {
     namespace impl {}
 
     /*!
+     * \dir num_collect/concepts
+     * \brief Directory of concepts.
+     */
+
+    //! Namespace of concepts.
+    namespace concepts {}
+
+    /*!
      * \dir num_collect/logging
      * \brief Directory of logging.
      */

@@ -24,6 +24,7 @@
 
 #include <fmt/format.h>
 
+#include "num_collect/concepts/floating_point.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/util/exception.h"
@@ -160,11 +161,11 @@ private:
 
 /*!
  * \brief Class of logging items in num_collect::logging::iteration_logger
- * class.
+ * class specialized for floating-point values.
  *
  * \tparam Value Type of the value.
  */
-template <std::floating_point Value>
+template <concepts::floating_point Value>
 class iteration_logger_item<Value> final : public iteration_logger_item_base {
 public:
     /*!
