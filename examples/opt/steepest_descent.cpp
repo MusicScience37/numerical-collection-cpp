@@ -25,6 +25,7 @@
 #include "num_prob_collect/opt/multi_quadratic_function.h"
 
 auto main() -> int {
+    configure_logging();
     num_collect::opt::steepest_descent<
         num_prob_collect::opt::multi_quadratic_function>
         optimizer;
