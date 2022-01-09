@@ -7,6 +7,7 @@ Better logging.
 ### Breaking Change
 
 - Changed C++ standard to C++20 ([Issue #105](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/105)).
+- Removed the old version of iteration_logger in util module ([Issue #103](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/103)).
 
 ### Feature
 
