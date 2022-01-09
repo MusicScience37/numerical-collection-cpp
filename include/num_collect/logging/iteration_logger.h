@@ -29,6 +29,7 @@
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/util/exception.h"
+#include "num_collect/util/source_info_view.h"
 
 namespace num_collect::logging {
 
@@ -366,10 +367,12 @@ public:
      * \brief Write an iteration to a logger.
      *
      * \param[in] l Logger.
+     * \param[in] source Information of the source code.
      *
      * \note This will write logs taking period configurations into account.
      */
-    void write_iteration_to(const logger& l) {
+    void write_iteration_to(
+        const logger& l, source_info_view source = source_info_view()) {
         if ((iterations_ % l.config().iteration_output_period()) != 0) {
             ++iterations_;
             return;
@@ -380,13 +383,13 @@ public:
                     l.config().iteration_output_period())) == 0) {
             buffer_.clear();
             format_labels_to(buffer_);
-            l.iteration_label()(
+            l.iteration_label(source)(
                 std::string_view(buffer_.data(), buffer_.size()));
         }
 
         buffer_.clear();
         format_values_to(buffer_);
-        l.iteration()(std::string_view(buffer_.data(), buffer_.size()));
+        l.iteration(source)(std::string_view(buffer_.data(), buffer_.size()));
 
         ++iterations_;
     }
