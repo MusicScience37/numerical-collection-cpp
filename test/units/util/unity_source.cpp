@@ -5,7 +5,6 @@
 #include "hash_string_test.cpp"           // NOLINT(bugprone-suspicious-include)
 #include "is_eigen_matrix_test.cpp"       // NOLINT(bugprone-suspicious-include)
 #include "is_eigen_vector_test.cpp"       // NOLINT(bugprone-suspicious-include)
-#include "iteration_logger_test.cpp"      // NOLINT(bugprone-suspicious-include)
 #include "kahan_adder_test.cpp"           // NOLINT(bugprone-suspicious-include)
 #include "norm_test.cpp"                  // NOLINT(bugprone-suspicious-include)
 #include "safe_cast_test.cpp"             // NOLINT(bugprone-suspicious-include)
