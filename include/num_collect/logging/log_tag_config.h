@@ -25,7 +25,7 @@
 
 #include "num_collect/logging/log_sink_base.h"
 #include "num_collect/logging/simple_log_sink.h"
-#include "num_collect/util/assert.h"
+#include "num_collect/util/exception.h"
 #include "num_collect/util/index_type.h"
 
 namespace num_collect::logging {
@@ -73,8 +73,10 @@ public:
      * \return This.
      */
     auto sink(std::shared_ptr<log_sink_base> val) -> log_tag_config& {
-        NUM_COLLECT_ASSERT(val);
-        sink_ = val;
+        if (!val) {
+            throw assertion_failure("Null sink.");
+        }
+        sink_ = std::move(val);
         return *this;
     }
 
@@ -154,7 +156,10 @@ public:
      * \return This.
      */
     auto iteration_output_period(index_type val) -> log_tag_config& {
-        NUM_COLLECT_ASSERT(val > 0);
+        if (val <= 0) {
+            throw assertion_failure(
+                "iteration_output_period must be a positive integer.");
+        }
         iteration_output_period_ = val;
         return *this;
     }
@@ -175,7 +180,10 @@ public:
      * \return This.
      */
     auto iteration_label_period(index_type val) -> log_tag_config& {
-        NUM_COLLECT_ASSERT(val > 0);
+        if (val <= 0) {
+            throw assertion_failure(
+                "iteration_label_period must be a positive integer.");
+        }
         iteration_label_period_ = val;
         return *this;
     }

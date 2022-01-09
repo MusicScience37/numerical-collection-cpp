@@ -2,6 +2,25 @@
 
 ## 0.4.0 (on development)
 
+Better logging.
+
+### Breaking Change
+
+- Changed C++ standard to C++20 ([Issue #105](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/105)).
+
+### Feature
+
+- Modules
+  - concepts (new)
+    - Added concepts ([Issue #103](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/103)).
+  - logging (new)
+    - Implemented logging ([Issue #103](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/103)).
+  - util
+    - Source location in exceptions ([Issue #97](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/97)).
+    - Logging in assertions ([Issue #103](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/103)).
+
+### Miscellaneous
+
 - Build system
   - Add option to enable OpenMP ([Issue #110](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/110)).
 - Miscellaneous

@@ -19,7 +19,7 @@ Modules
 
         component logging
         logging ..> fmt
-        logging ..> util
+        logging <..> util
         logging ..> concepts
 
         component auto_diff

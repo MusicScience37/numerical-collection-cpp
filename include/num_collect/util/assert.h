@@ -19,9 +19,14 @@
  */
 #pragma once
 
-#include <fmt/core.h>
+#include <iterator>
+#include <string_view>
 
+#include <fmt/format.h>
+
+#include "num_collect/logging/logger.h"
 #include "num_collect/util/exception.h"
+#include "num_collect/util/source_info_view.h"
 
 namespace num_collect::impl {
 
@@ -30,16 +35,19 @@ namespace num_collect::impl {
  *
  * \param[in] condition_result Result of the condition.
  * \param[in] condition_str String expression of the condition.
- * \param[in] function Function name.
+ * \param[in] source Information of the source code.
  */
-template <typename ConditionResult, typename ConditionStr, typename Function>
+template <typename ConditionResult>
 void assert_impl(ConditionResult&& condition_result,
-    ConditionStr&& condition_str, Function&& function) {
+    std::string_view condition_str,
+    source_info_view source = source_info_view()) {
     if (!std::forward<ConditionResult>(condition_result)) {
-        throw ::num_collect::assertion_failure(
-            fmt::format("assertion failure: {} (at {})",
-                std::forward<ConditionStr>(condition_str),
-                std::forward<Function>(function)));
+        fmt::memory_buffer buffer;
+        fmt::format_to(std::back_inserter(buffer),
+            FMT_STRING("Assertion failure: {}"), condition_str);
+        const auto message = std::string_view(buffer.data(), buffer.size());
+        logging::logger().error(source)(message);
+        throw ::num_collect::assertion_failure(message);
     }
 }
 
@@ -47,34 +55,16 @@ void assert_impl(ConditionResult&& condition_result,
 
 #ifdef NUM_COLLECT_DOCUMENTATION
 /*!
- * \brief macro to get function name
- *
- * This macro will be expanded to implementation-defined macros or variables.
- */
-#define NUM_COLLECT_FUNCTION <implementation defined strings>
-#elif __GNUC__                                    // GCC and Clang
-#define NUM_COLLECT_FUNCTION __PRETTY_FUNCTION__  // NOLINT
-#elif _MSC_VER                                    // MSVC
-#define NUM_COLLECT_FUNCTION __FUNCSIG__          // NOLINT
-#else                                             // fallback (C++ standard)
-#define NUM_COLLECT_FUNCTION __func__             // NOLINT
-#endif
-
-#ifdef NUM_COLLECT_DOCUMENTATION
-/*!
  * \brief Macro to check whether a condition is satisfied.
  *
  * \param[in] CONDITION Condition.
  */
-#define NUM_COLLECT_ASSERT(CONDITION)             \
-    ::num_collect::impl::assert_impl((CONDITION), \
-        static_cast<const char*>(#CONDITION),     \
-        static_cast<const char*>(NUM_COLLECT_FUNCTION))
+#define NUM_COLLECT_ASSERT(CONDITION) \
+    ::num_collect::impl::assert_impl((CONDITION), (#CONDITION))
 #else
 // NOLINTNEXTLINE
 #define NUM_COLLECT_ASSERT(CONDITION) \
-    ::num_collect::impl::assert_impl( \
-        (CONDITION), (#CONDITION), (NUM_COLLECT_FUNCTION))
+    ::num_collect::impl::assert_impl((CONDITION), (#CONDITION))
 #endif
 
 #ifdef NUM_COLLECT_DOCUMENTATION
