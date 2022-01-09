@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/runge_kutta/implicit_formula_base.h"
 #include "num_collect/ode/runge_kutta/semi_implicit_formula_solver.h"
@@ -64,6 +65,10 @@ public:
 
     //! Order of lesser coefficients of this formula.
     static constexpr index_type lesser_order = 2;
+
+    //! Log tag.
+    static constexpr auto log_tag =
+        logging::log_tag_view("num_collect::ode::runge_kutta::tanaka2_formula");
 
     /*!
      * \name Coefficients in Butcher array.

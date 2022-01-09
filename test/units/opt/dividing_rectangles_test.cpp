@@ -66,17 +66,6 @@ TEST_CASE("num_collect::opt::dividing_rectangles (multi variables)") {
             eigen_approx(Eigen::VectorXd::Zero(3), sol_tol));
         REQUIRE_THAT(opt.opt_value(), Catch::Matchers::WithinAbs(0.0, sol_tol));
     }
-
-    SECTION("solve with logs") {
-        auto opt = dividing_rectangles<multi_quadratic_function>();
-        std::ostringstream stream;
-        opt.init(Eigen::VectorXd::Constant(3, -1.0),  // NOLINT
-            Eigen::VectorXd::Constant(3, 2.0));       // NOLINT
-        REQUIRE_NOTHROW(opt.solve(stream));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Iter."));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Eval."));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Value"));
-    }
 }
 
 TEST_CASE("num_collect::opt::dividing_rectangles (one variable)") {
@@ -113,15 +102,5 @@ TEST_CASE("num_collect::opt::dividing_rectangles (one variable)") {
             Catch::Matchers::WithinAbs(0.0, sol_tol));  // NOLINT
         REQUIRE_THAT(
             opt.opt_value(), Catch::Matchers::WithinAbs(-1.0, sol_tol));
-    }
-
-    SECTION("solve with logs") {
-        auto opt = dividing_rectangles<vibrated_quadratic_function>();
-        std::ostringstream stream;
-        opt.init(-5.0, 10.0);  // NOLINT
-        REQUIRE_NOTHROW(opt.solve(stream));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Iter."));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Eval."));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Value"));
     }
 }

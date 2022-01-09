@@ -44,11 +44,12 @@ public:
     /*!
      * \brief Construct.
      *
+     * \param[in] tag Log tag.
      * \param[in] function Function of equation.
      */
-    explicit function_root_finder_base(
+    explicit function_root_finder_base(logging::log_tag_view tag,
         const function_type& function = function_type())
-        : function_(function) {}
+        : iterative_solver_base<Derived>(tag), function_(function) {}
 
     /*!
      * \brief Get the function of equation.

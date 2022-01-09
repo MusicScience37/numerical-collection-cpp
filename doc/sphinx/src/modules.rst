@@ -1,6 +1,8 @@
 Modules
 ===============
 
+.. This must be consistent with doc/doxygen/namespaces.h
+
 .. uml::
 
     title Module Relation
@@ -9,9 +11,16 @@ Modules
     component Eigen
 
     component num_collect {
+        component concepts
+
         component util
         util ..> fmt
         util ..> Eigen
+
+        component logging
+        logging ..> fmt
+        logging <..> util
+        logging ..> concepts
 
         component auto_diff
         auto_diff ..> util
@@ -59,8 +68,14 @@ Names in this diagram are the names of namespaces,
 except for ``util`` which has no namespace
 and implemented in ``num_collect`` namespace.
 
+concepts
+    C++ concepts for types used in this project.
+
 util
     Utility common in this project.
+
+logging
+    Logging.
 
 auto_diff
     Automatic differentiation.

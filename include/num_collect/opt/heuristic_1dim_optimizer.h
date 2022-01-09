@@ -31,6 +31,10 @@
 
 namespace num_collect::opt {
 
+//! Tag of dividing_rectangles.
+inline constexpr auto heuristic_1dim_optimizer_tag =
+    logging::log_tag_view("num_collect::opt::heuristic_1dim_optimizer");
+
 /*!
  * \brief Class to perform global optimization in 1 dimension using heuristics.
  *
@@ -58,7 +62,10 @@ public:
      */
     explicit heuristic_1dim_optimizer(
         const objective_function_type& obj_fun = objective_function_type())
-        : opt1_(obj_fun), opt2_(obj_fun) {}
+        : optimizer_base<heuristic_1dim_optimizer<ObjectiveFunction>>(
+              heuristic_1dim_optimizer_tag),
+          opt1_(obj_fun),
+          opt2_(obj_fun) {}
 
     /*!
      * \brief Initialize the algorithm.
@@ -84,12 +91,16 @@ public:
     }
 
     /*!
-     * \copydoc num_collect::iterative_solver_base::set_info_to
+     * \copydoc num_collect::iterative_solver_base::configure_iteration_logger
      */
-    void set_info_to(iteration_logger& logger) const {
-        logger["Iter."] = iterations();
-        logger["Eval."] = evaluations();
-        logger["Value"] = static_cast<double>(opt2_.opt_value());
+    void configure_iteration_logger(
+        logging::iteration_logger& iteration_logger) const {
+        iteration_logger.append<index_type>(
+            "Iter.", [this] { return iterations(); });
+        iteration_logger.append<index_type>(
+            "Eval.", [this] { return evaluations(); });
+        iteration_logger.append<value_type>(
+            "Value", [this] { return opt_value(); });
     }
 
     /*!

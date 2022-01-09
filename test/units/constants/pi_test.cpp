@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief test of pi
+ * \brief Test of pi
  */
 #include "num_collect/constants/pi.h"
 

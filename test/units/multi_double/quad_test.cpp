@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief test of quad class
+ * \brief Test of quad class
  */
 #include "num_collect/multi_double/quad.h"
 

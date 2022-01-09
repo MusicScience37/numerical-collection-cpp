@@ -28,8 +28,8 @@ TEST_CASE("NUM_COLLECT_ASSERT") {
     }
 
     SECTION("condition not satisfied") {
-        REQUIRE_THROWS_WITH(NUM_COLLECT_ASSERT(false),
-            Catch::Matchers::StartsWith("assertion failure: false"));
+        REQUIRE_THROWS_WITH(NUM_COLLECT_ASSERT(0 == 1),  // NOLINT
+            Catch::Matchers::StartsWith("Assertion failure: 0 == 1"));
     }
 }
 
@@ -40,8 +40,8 @@ TEST_CASE("NUM_COLLECT_DEBUG_ASSERT") {
 
     SECTION("condition not satisfied") {
 #ifndef NDEBUG
-        REQUIRE_THROWS_WITH(NUM_COLLECT_DEBUG_ASSERT(false),
-            Catch::Matchers::StartsWith("assertion failure: false"));
+        REQUIRE_THROWS_WITH(NUM_COLLECT_DEBUG_ASSERT(0 == 1),  // NOLINT
+            Catch::Matchers::StartsWith("Assertion failure: 0 == 1"));
 #else
         REQUIRE_NOTHROW(NUM_COLLECT_DEBUG_ASSERT(false));
 #endif

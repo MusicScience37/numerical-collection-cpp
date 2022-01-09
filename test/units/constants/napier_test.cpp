@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief test of napier
+ * \brief Test of napier
  */
 #include "num_collect/constants/napier.h"
 

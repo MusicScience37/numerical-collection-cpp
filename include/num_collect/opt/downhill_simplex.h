@@ -26,10 +26,15 @@
 
 #include <Eigen/Core>
 
+#include "num_collect/logging/log_tag_view.h"
 #include "num_collect/opt/optimizer_base.h"
 #include "num_collect/util/safe_cast.h"
 
 namespace num_collect::opt {
+
+//! Tag of downhill_simplex.
+inline constexpr auto downhill_simplex_tag =
+    logging::log_tag_view("num_collect::opt::downhill_simplex");
 
 /*!
  * \brief Class of downhill simplex method.
@@ -103,7 +108,9 @@ public:
      */
     explicit downhill_simplex(
         const objective_function_type& obj_fun = objective_function_type())
-        : obj_fun_(obj_fun) {}
+        : optimizer_base<downhill_simplex<ObjectiveFunction>>(
+              downhill_simplex_tag),
+          obj_fun_(obj_fun) {}
 
     /*!
      * \brief Initialize the algorithm.
@@ -172,16 +179,23 @@ public:
     }
 
     /*!
-     * \copydoc num_collect::iterative_solver_base::set_info_to
+     * \copydoc num_collect::iterative_solver_base::configure_iteration_logger
      */
-    void set_info_to(iteration_logger& logger) const {
-        logger["Iter."] = iterations();
-        logger["Eval."] = evaluations();
-        logger["Value"] = static_cast<double>(opt_value());
-        logger["SimplexSize"] = static_cast<double>(simplex_size());
-        logger["Process"] = process_name(last_process());
+    void configure_iteration_logger(
+        logging::iteration_logger& iteration_logger) const {
+        iteration_logger.append<index_type>(
+            "Iter.", [this] { return iterations(); });
+        iteration_logger.append<index_type>(
+            "Eval.", [this] { return evaluations(); });
+        iteration_logger.append<value_type>(
+            "Value", [this] { return opt_value(); });
+        iteration_logger.append<variable_scalar_type>(
+            "SimplexSize", [this] { return simplex_size(); });
         constexpr index_type process_width = 26;
-        logger["Process"].width(process_width);
+        iteration_logger
+            .append<std::string>(
+                "Process", [this] { return process_name(last_process()); })
+            ->width(process_width);
     }
 
     /*!

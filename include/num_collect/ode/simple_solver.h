@@ -22,6 +22,7 @@
 #include "num_collect/constants/zero.h"
 #include "num_collect/ode/solver_base.h"
 #include "num_collect/util/assert.h"
+#include "num_collect/util/index_type.h"
 
 namespace num_collect::ode {
 
@@ -63,11 +64,14 @@ public:
         ++steps_;
     }
 
-    //! \copydoc ode::solver_base::set_info_to
-    void set_info_to(iteration_logger& logger) const {
-        logger["Steps"] = steps();
-        logger["Time"] = time();
-        logger["StepSize"] = step_size();
+    //! \copydoc ode::solver_base::configure_iteration_logger
+    void configure_iteration_logger(
+        logging::iteration_logger& iteration_logger) const {
+        iteration_logger.append<index_type>(
+            "Steps", [this] { return steps(); });
+        iteration_logger.append<scalar_type>("Time", [this] { return time(); });
+        iteration_logger.append<scalar_type>(
+            "StepSize", [this] { return step_size(); });
     }
 
     //! \copydoc ode::solver_base::time

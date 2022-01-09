@@ -31,6 +31,7 @@ class NumCollectConan(ConanFile):
         if self.options.requirements_for_tests:
             self.build_requires(
                 "catch2/3.0.0@MusicScience37+conan-extra-packages/stable")
+            self.build_requires("trompeloeil/42")
             self.build_requires("celero/2.8.2")
             self.build_requires("pybind11/2.7.1")
 

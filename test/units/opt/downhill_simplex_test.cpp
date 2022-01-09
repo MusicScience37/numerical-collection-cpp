@@ -71,18 +71,4 @@ TEST_CASE("num_collect::opt::downhill_simplex") {
             eigen_approx(Eigen::VectorXd::Zero(3), sol_tol));
         REQUIRE_THAT(opt.opt_value(), Catch::Matchers::WithinAbs(0.0, sol_tol));
     }
-
-    SECTION("solve with logs") {
-        auto opt = downhill_simplex<multi_quadratic_function>();
-        std::ostringstream stream;
-        const Eigen::VectorXd init_var =
-            (Eigen::VectorXd(3) << 0.0, 1.0, 2.0).finished();
-        opt.init(init_var);
-        REQUIRE_NOTHROW(opt.solve(stream));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Iter."));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Eval."));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Value"));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("SimplexSize"));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Process"));
-    }
 }
