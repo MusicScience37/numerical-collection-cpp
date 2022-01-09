@@ -313,7 +313,8 @@ clang-12-conan-release:
   only:
     - tags
 
-msvc-debug:
+# TODO: choco is unusable now. https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/117
+.msvc-debug:
   extends: .debug-test-base
   tags:
     - shared-windows
@@ -351,7 +352,8 @@ msvc-debug:
     - cmake --build . --config Debug --parallel 2
     - ctest -V --build-config Debug
 
-msvc-release:
+# TODO: choco is unusable now. https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/117
+.msvc-release:
   extends: .release-test-base
   tags:
     - shared-windows
