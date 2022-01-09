@@ -21,6 +21,7 @@
 
 #include <concepts>
 #include <iterator>
+#include <memory>
 
 #include <fmt/format.h>
 
@@ -60,6 +61,13 @@ public:
      * \param[in] buffer Buffer to write the value.
      */
     virtual void format_label_to(fmt::memory_buffer& buffer) const = 0;
+
+    /*!
+     * \brief Get the label.
+     *
+     * \return Label.
+     */
+    [[nodiscard]] virtual auto label() const noexcept -> const std::string& = 0;
 
     iteration_logger_item_base(const iteration_logger_item_base&) = delete;
     iteration_logger_item_base(iteration_logger_item_base&&) = delete;
@@ -116,6 +124,15 @@ public:
     void format_label_to(fmt::memory_buffer& buffer) const override {
         fmt::format_to(std::back_inserter(buffer), FMT_STRING("{0: >{1}}"),
             label_, width_);
+    }
+
+    /*!
+     * \brief Get the label.
+     *
+     * \return Label.
+     */
+    [[nodiscard]] auto label() const noexcept -> const std::string& override {
+        return label_;
     }
 
     /*!
@@ -198,6 +215,15 @@ public:
     }
 
     /*!
+     * \brief Get the label.
+     *
+     * \return Label.
+     */
+    [[nodiscard]] auto label() const noexcept -> const std::string& override {
+        return label_;
+    }
+
+    /*!
      * \brief Set width.
      *
      * \param[in] value Value
@@ -258,6 +284,116 @@ private:
 
     //! Width.
     index_type width_{impl::iteration_logger_default_width};
+};
+
+/*!
+ * \brief Class to write logs of iterations.
+ *
+ * \note This class is not thread safe because this class is meant for use only
+ * from single thread at the end of each iteration.
+ */
+class iteration_logger {
+public:
+    /*!
+     * \brief Construct.
+     */
+    iteration_logger() = default;
+
+    /*!
+     * \brief Reset the iteration count.
+     */
+    void reset_count() { iterations_ = 0; }
+
+    /*!
+     * \brief Append an item.
+     *
+     * \param[in] item Item.
+     */
+    void append(std::shared_ptr<iteration_logger_item_base> item) {
+        items_.push_back(std::move(item));
+    }
+
+    /*!
+     * \brief Append an item.
+     *
+     * \tparam Value Type of the value.
+     * \param[in] label Label.
+     * \param[in] value Value.
+     * \return Item.
+     *
+     * \note This will hold the reference to the value inside this object.
+     */
+    template <typename Value>
+    auto append(std::string label, const Value& value)
+        -> std::shared_ptr<iteration_logger_item<Value>> {
+        auto item = std::make_shared<iteration_logger_item<Value>>(
+            std::move(label), value);
+        append(item);
+        return item;
+    }
+
+    /*!
+     * \brief Format a line of labels.
+     *
+     * \param[in] buffer Buffer to format to.
+     */
+    void format_labels_to(fmt::memory_buffer& buffer) const {
+        for (const auto& item : items_) {
+            buffer.push_back(' ');
+            item->format_label_to(buffer);
+        }
+    }
+
+    /*!
+     * \brief Format a line of values.
+     *
+     * \param[in] buffer Buffer to format to.
+     */
+    void format_values_to(fmt::memory_buffer& buffer) const {
+        for (const auto& item : items_) {
+            buffer.push_back(' ');
+            item->format_value_to(buffer);
+        }
+    }
+
+    /*!
+     * \brief Write an iteration to a logger.
+     *
+     * \param[in] l Logger.
+     *
+     * \note This will write logs taking period configurations into account.
+     */
+    void write_iteration_to(const logger& l) {
+        if ((iterations_ % l.config().iteration_output_period()) != 0) {
+            ++iterations_;
+            return;
+        }
+
+        if ((iterations_ %
+                (l.config().iteration_label_period() *
+                    l.config().iteration_output_period())) == 0) {
+            buffer_.clear();
+            format_labels_to(buffer_);
+            l.iteration_label()(
+                std::string_view(buffer_.data(), buffer_.size()));
+        }
+
+        buffer_.clear();
+        format_values_to(buffer_);
+        l.iteration()(std::string_view(buffer_.data(), buffer_.size()));
+
+        ++iterations_;
+    }
+
+private:
+    //! Log items.
+    std::vector<std::shared_ptr<iteration_logger_item_base>> items_{};
+
+    //! Current number of iterations.
+    index_type iterations_{0};
+
+    //! Buffer of logging data.
+    fmt::memory_buffer buffer_{};
 };
 
 }  // namespace num_collect::logging

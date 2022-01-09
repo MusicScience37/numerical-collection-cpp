@@ -104,7 +104,7 @@ public:
      * \return value.
      */
     [[nodiscard]] auto write_iterations() const noexcept -> bool {
-        return write_traces_;
+        return write_iterations_;
     }
 
     /*!
@@ -114,7 +114,7 @@ public:
      * \return This.
      */
     auto write_iterations(bool val) -> log_tag_config& {
-        write_traces_ = val;
+        write_iterations_ = val;
         return *this;
     }
 
@@ -124,7 +124,7 @@ public:
      * \return value.
      */
     [[nodiscard]] auto write_summary() const noexcept -> bool {
-        return write_traces_;
+        return write_summary_;
     }
 
     /*!
@@ -134,7 +134,7 @@ public:
      * \return This.
      */
     auto write_summary(bool val) -> log_tag_config& {
-        write_traces_ = val;
+        write_summary_ = val;
         return *this;
     }
 
@@ -165,7 +165,7 @@ public:
      * \return value.
      */
     [[nodiscard]] auto iteration_label_period() const noexcept -> index_type {
-        return iteration_output_period_;
+        return iteration_label_period_;
     }
 
     /*!
@@ -176,7 +176,7 @@ public:
      */
     auto iteration_label_period(index_type val) -> log_tag_config& {
         NUM_COLLECT_ASSERT(val > 0);
-        iteration_output_period_ = val;
+        iteration_label_period_ = val;
         return *this;
     }
 

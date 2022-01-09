@@ -24,6 +24,11 @@
 #include <catch2/catch_test_macros.hpp>
 #include <fmt/format.h>
 
+#include "mock_log_sink.h"
+#include "num_collect/logging/log_config.h"
+#include "num_collect/logging/log_tag_config.h"
+#include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logger.h"
 #include "num_collect/util/index_type.h"
 
 TEST_CASE("num_collect::logging::iteration_logger_item") {
@@ -87,5 +92,117 @@ TEST_CASE("num_collect::logging::iteration_logger_item") {
         buffer.clear();
         item.format_label_to(buffer);
         CHECK(std::string(buffer.data(), buffer.size()) == "    abc");
+    }
+}
+
+TEST_CASE("num_collect::logging::iteration_logger") {
+    using trompeloeil::_;
+
+    constexpr num_collect::index_type iteration_output_period = 2;
+    constexpr num_collect::index_type iteration_label_period = 3;
+
+    constexpr auto tag = num_collect::logging::log_tag_view(
+        "num_collect::logging::iteration_logger_test");
+    const auto sink =
+        std::make_shared<num_collect_test::logging::mock_log_sink>();
+    const auto config = num_collect::logging::log_tag_config()
+                            .write_traces(true)
+                            .write_iterations(true)
+                            .write_summary(true)
+                            .iteration_output_period(iteration_output_period)
+                            .iteration_label_period(iteration_label_period)
+                            .sink(sink);
+    const auto logger = num_collect::logging::logger(tag, config);
+    auto iteration_logger = num_collect::logging::iteration_logger();
+
+    SECTION("set items") {
+        constexpr num_collect::index_type width = 7;
+        int val1 = 0;
+        iteration_logger.append("val1", val1)->width(width);
+        double val2 = 0.0;
+        iteration_logger.append("val2", val2)->width(width)->precision(3);
+        std::string val3;
+        iteration_logger.append("val3", val3)->width(width);
+
+        std::vector<std::string> logs;
+        REQUIRE_CALL(*sink, write(_, _, _, _, _))
+            .TIMES(2)
+            // NOLINTNEXTLINE
+            .LR_SIDE_EFFECT(logs.emplace_back(_5));
+
+        val1 = 12345;  // NOLINT
+        val2 = 3.14;   // NOLINT
+        val3 = "abc";
+        iteration_logger.write_iteration_to(logger);
+
+        REQUIRE(logs.size() == 2);
+        CHECK(logs.at(0) == "    val1    val2    val3");
+        CHECK(logs.at(1) == "   12345    3.14     abc");
+    }
+
+    SECTION("take period configurations into account") {
+        constexpr num_collect::index_type width = 7;
+        int val1 = 0;
+        iteration_logger.append("val1", val1)->width(width);
+        double val2 = 0.0;
+        iteration_logger.append("val2", val2)->width(width)->precision(3);
+        std::string val3;
+        iteration_logger.append("val3", val3)->width(width);
+
+        std::vector<std::string> logs;
+        ALLOW_CALL(*sink, write(_, _, _, _, _))
+            // NOLINTNEXTLINE
+            .LR_SIDE_EFFECT(logs.emplace_back(_5));
+
+        val2 = 3.14;  // NOLINT
+        val3 = "abc";
+
+        constexpr int repetition = 10;
+        for (int i = 0; i < repetition; ++i) {
+            val1 = i;
+            iteration_logger.write_iteration_to(logger);
+        }
+
+        CHECK(logs.size() == 7);                          // NOLINT
+        CHECK(logs.at(0) == "    val1    val2    val3");  // 0th time.
+        CHECK(logs.at(1) == "       0    3.14     abc");  // 0th time.
+        CHECK(logs.at(2) == "       2    3.14     abc");  // 2nd time.
+        CHECK(logs.at(3) == "       4    3.14     abc");  // 4th time.
+        CHECK(logs.at(4) == "    val1    val2    val3");  // 6th time.
+        CHECK(logs.at(5) == "       6    3.14     abc");  // 6th time.
+        CHECK(logs.at(6) == "       8    3.14     abc");  // 8th time.
+    }
+
+    SECTION("reset iteration count") {
+        constexpr num_collect::index_type width = 7;
+        int val1 = 0;
+        iteration_logger.append("val1", val1)->width(width);
+        double val2 = 0.0;
+        iteration_logger.append("val2", val2)->width(width)->precision(3);
+        std::string val3;
+        iteration_logger.append("val3", val3)->width(width);
+
+        std::vector<std::string> logs;
+        ALLOW_CALL(*sink, write(_, _, _, _, _))
+            // NOLINTNEXTLINE
+            .LR_SIDE_EFFECT(logs.emplace_back(_5));
+
+        val2 = 3.14;  // NOLINT
+        val3 = "abc";
+
+        constexpr int repetition = 3;
+        for (int i = 0; i < repetition; ++i) {
+            iteration_logger.reset_count();
+            val1 = i;
+            iteration_logger.write_iteration_to(logger);
+        }
+
+        CHECK(logs.size() == 6);                          // NOLINT
+        CHECK(logs.at(0) == "    val1    val2    val3");  // 0th time.
+        CHECK(logs.at(1) == "       0    3.14     abc");  // 0th time.
+        CHECK(logs.at(2) == "    val1    val2    val3");  // 1st time.
+        CHECK(logs.at(3) == "       1    3.14     abc");  // 1st time.
+        CHECK(logs.at(4) == "    val1    val2    val3");  // 2nd time.
+        CHECK(logs.at(5) == "       2    3.14     abc");  // 2nd time.
     }
 }
