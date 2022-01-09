@@ -39,7 +39,7 @@ namespace impl {
  */
 [[nodiscard]] inline auto get_default_log_sink()
     -> std::shared_ptr<log_sink_base> {
-    static auto sink = std::make_shared<simple_log_sink>(stdin, false);
+    static auto sink = std::make_shared<simple_log_sink>(stdout, false);
     return sink;
 }
 
