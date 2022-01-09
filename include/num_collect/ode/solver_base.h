@@ -19,8 +19,9 @@
  */
 #pragma once
 
+#include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/log_tag_view.h"
 #include "num_collect/util/index_type.h"
-#include "num_collect/util/iteration_logger.h"
 
 namespace num_collect::ode {
 
@@ -56,7 +57,8 @@ public:
      *
      * \param[in] problem Problem.
      */
-    explicit solver_base(const problem_type& problem) : formula_(problem) {}
+    explicit solver_base(const problem_type& problem)
+        : formula_(problem), logger_() {}
 
     /*!
      * \brief Initialize.
@@ -85,46 +87,27 @@ public:
      * \param[in] end_time Time to compute the variable at.
      */
     void solve_till(scalar_type end_time) {
+        logging::iteration_logger logger;
+        configure_iteration_logger(logger);
+        logger.write_iteration_to(logger_);
         while (time() < end_time) {
             const scalar_type max_step_size = end_time - time();
             if (step_size() > max_step_size) {
                 step_size(max_step_size);
             }
             step();
+            logger.write_iteration_to(logger_);
         }
     }
 
     /*!
-     * \brief Set information of the last iteration to logger.
+     * \brief Configure an iteration logger.
      *
-     * \param[in] logger Iteration logger.
+     * \param[in] iteration_logger Iteration logger.
      */
-    void set_info_to(iteration_logger& logger) const {
-        derived().set_info_to(logger);
-    }
-
-    /*!
-     * \brief Compute the variable at the given time.
-     *
-     * \warning `init` function is assumed to have been called before call to
-     * `solve_till` function.
-     *
-     * \param[in] end_time Time to compute the variable at.
-     * \param[in] logging_stream Stream to write logs.
-     */
-    void solve_till(scalar_type end_time, std::ostream& logging_stream) {
-        iteration_logger logger;
-        set_info_to(logger);
-        logger.write_to(logging_stream);
-        while (time() < end_time) {
-            const scalar_type max_step_size = end_time - time();
-            if (step_size() > max_step_size) {
-                step_size(max_step_size);
-            }
-            step();
-            set_info_to(logger);
-            logger.write_to(logging_stream);
-        }
+    void configure_iteration_logger(
+        logging::iteration_logger& iteration_logger) const {
+        derived().configure_iteration_logger(iteration_logger);
     }
 
     /*!
@@ -223,6 +206,9 @@ protected:
 private:
     //! Formula.
     formula_type formula_;
+
+    //! Logger.
+    logging::logger logger_;
 };
 
 }  // namespace num_collect::ode
