@@ -24,7 +24,7 @@
 
 #include <fmt/format.h>
 
-#include "num_collect/logging/logger.h"
+#include "num_collect/logging/log_and_throw.h"
 #include "num_collect/util/exception.h"
 #include "num_collect/util/source_info_view.h"
 
@@ -45,9 +45,8 @@ void assert_impl(ConditionResult&& condition_result,
         fmt::memory_buffer buffer;
         fmt::format_to(std::back_inserter(buffer),
             FMT_STRING("Assertion failure: {}"), condition_str);
-        const auto message = std::string_view(buffer.data(), buffer.size());
-        logging::logger().error(source)(message);
-        throw ::num_collect::assertion_failure(message);
+        logging::log_and_throw<assertion_failure>(
+            std::string_view(buffer.data(), buffer.size()), source);
     }
 }
 
