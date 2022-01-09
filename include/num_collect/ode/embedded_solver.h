@@ -107,7 +107,7 @@ public:
             "Steps", [this] { return steps(); });
         iteration_logger.append<scalar_type>("Time", [this] { return time(); });
         iteration_logger.append<scalar_type>(
-            "StepSize", [this] { return step_size(); });
+            "StepSize", [this] { return last_step_size(); });
         iteration_logger.append<scalar_type>(
             "EstError", [this] { return error_norm(); });
     }
