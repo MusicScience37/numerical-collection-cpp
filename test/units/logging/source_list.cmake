@@ -1,5 +1,6 @@
 set(SOURCE_FILES
     impl/log_formatter_test.cpp
+    iteration_logger_test.cpp
     log_config_test.cpp
     log_level_test.cpp
     log_tag_config_test.cpp

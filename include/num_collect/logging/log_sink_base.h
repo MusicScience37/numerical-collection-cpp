@@ -31,7 +31,6 @@ namespace num_collect::logging {
 
 /*!
  * \brief Interface of log sinks.
- *
  */
 class log_sink_base {
 public:

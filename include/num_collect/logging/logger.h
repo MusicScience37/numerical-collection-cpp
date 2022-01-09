@@ -36,7 +36,7 @@ namespace num_collect::logging {
  * \brief Proxy class to write logs.
  *
  * \warning This class is assumed to be used only as an temporary object
- * returned from logger class.
+ * returned from num_collect::logging::logger class.
  */
 class logging_proxy {
 public:
@@ -123,6 +123,10 @@ inline constexpr auto default_tag = log_tag_view("");
 
 /*!
  * \brief Class of loggers.
+ *
+ * \note Member functions in this class except for constructors are thread safe
+ * thanks to thread safety in log sinks (objects derived from
+ * num_collect::logging::log_sink_base class).
  */
 class logger {
 public:
