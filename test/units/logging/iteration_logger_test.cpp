@@ -53,6 +53,10 @@ TEST_CASE("num_collect::logging::iteration_logger_item") {
         buffer.clear();
         item.format_label_to(buffer);
         CHECK(std::string(buffer.data(), buffer.size()) == "    abc");
+
+        buffer.clear();
+        item.format_summary_to(buffer);
+        CHECK(std::string(buffer.data(), buffer.size()) == "abc=12345");
     }
 
     SECTION("format string") {
@@ -74,6 +78,10 @@ TEST_CASE("num_collect::logging::iteration_logger_item") {
         buffer.clear();
         item.format_label_to(buffer);
         CHECK(std::string(buffer.data(), buffer.size()) == "    abc");
+
+        buffer.clear();
+        item.format_summary_to(buffer);
+        CHECK(std::string(buffer.data(), buffer.size()) == "abc=def");
     }
 
     SECTION("format floating-point value") {
@@ -98,6 +106,10 @@ TEST_CASE("num_collect::logging::iteration_logger_item") {
         buffer.clear();
         item.format_label_to(buffer);
         CHECK(std::string(buffer.data(), buffer.size()) == "    abc");
+
+        buffer.clear();
+        item.format_summary_to(buffer);
+        CHECK(std::string(buffer.data(), buffer.size()) == "abc=3.14");
     }
 }
 
@@ -211,5 +223,29 @@ TEST_CASE("num_collect::logging::iteration_logger") {
         CHECK(logs.at(3) == "       1    3.14     abc");  // 1st time.
         CHECK(logs.at(4) == "    val1    val2    val3");  // 2nd time.
         CHECK(logs.at(5) == "       2    3.14     abc");  // 2nd time.
+    }
+
+    SECTION("write summary") {
+        constexpr num_collect::index_type width = 7;
+        int val1 = 0;
+        iteration_logger.append("val1", val1)->width(width);
+        double val2 = 0.0;
+        iteration_logger.append("val2", val2)->width(width)->precision(3);
+        std::string val3;
+        iteration_logger.append("val3", val3)->width(width);
+
+        std::vector<std::string> logs;
+        ALLOW_CALL(*sink, write(_, _, _, _, _))
+            // NOLINTNEXTLINE
+            .LR_SIDE_EFFECT(logs.emplace_back(_5));
+
+        val1 = 12345;  // NOLINT
+        val2 = 3.14;   // NOLINT
+        val3 = "abc";
+
+        iteration_logger.write_summary_to(logger);
+
+        CHECK(logs.size() == 1);  // NOLINT
+        CHECK(logs.at(0) == "Last state: val1=12345, val2=3.14, val3=abc, ");
     }
 }

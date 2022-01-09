@@ -99,6 +99,9 @@ static void write_iterations() {
         val1 = i;
         iteration_logger.write_iteration_to(logger);
     }
+
+    // Last state.
+    iteration_logger.write_summary_to(logger);
 }
 
 auto main(int argc, char** argv) -> int {

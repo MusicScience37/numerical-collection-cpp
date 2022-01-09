@@ -98,6 +98,7 @@ public:
             step();
             logger.write_iteration_to(logger_);
         }
+        logger.write_summary_to(logger_);
     }
 
     /*!

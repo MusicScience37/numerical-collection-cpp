@@ -64,6 +64,7 @@ public:
                 num_collect::logging::log_config::instance().get_config_of(
                     num_collect::opt::heuristic_1dim_optimizer_tag);
             config.write_iterations(false);
+            config.write_summary(false);
             num_collect::logging::log_config::instance().set_config_of(
                 num_collect::opt::heuristic_1dim_optimizer_tag, config);
         }

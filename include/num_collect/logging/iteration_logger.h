@@ -23,6 +23,7 @@
 #include <functional>
 #include <iterator>
 #include <memory>
+#include <string_view>
 #include <type_traits>
 
 #include <fmt/format.h>
@@ -61,9 +62,16 @@ public:
     /*!
      * \brief Format the label to a buffer.
      *
-     * \param[in] buffer Buffer to write the value.
+     * \param[in] buffer Buffer to write the label.
      */
     virtual void format_label_to(fmt::memory_buffer& buffer) = 0;
+
+    /*!
+     * \brief Format the summary to a buffer.
+     *
+     * \param[in] buffer Buffer to write the summary.
+     */
+    virtual void format_summary_to(fmt::memory_buffer& buffer) = 0;
 
     /*!
      * \brief Get the label.
@@ -138,11 +146,21 @@ public:
     /*!
      * \brief Format the label to a buffer.
      *
-     * \param[in] buffer Buffer to write the value.
+     * \param[in] buffer Buffer to write the label.
      */
     void format_label_to(fmt::memory_buffer& buffer) override {
         fmt::format_to(std::back_inserter(buffer), FMT_STRING("{0: >{1}}"),
             label_, width_);
+    }
+
+    /*!
+     * \brief Format the summary to a buffer.
+     *
+     * \param[in] buffer Buffer to write the summary.
+     */
+    void format_summary_to(fmt::memory_buffer& buffer) override {
+        fmt::format_to(std::back_inserter(buffer), FMT_STRING("{0}={1}"),
+            label_, function_());
     }
 
     /*!
@@ -234,11 +252,21 @@ public:
     /*!
      * \brief Format the label to a buffer.
      *
-     * \param[in] buffer Buffer to write the value.
+     * \param[in] buffer Buffer to write the label.
      */
     void format_label_to(fmt::memory_buffer& buffer) override {
         fmt::format_to(std::back_inserter(buffer), FMT_STRING("{0: >{1}}"),
             label_, width_);
+    }
+
+    /*!
+     * \brief Format the summary to a buffer.
+     *
+     * \param[in] buffer Buffer to write the summary.
+     */
+    void format_summary_to(fmt::memory_buffer& buffer) override {
+        fmt::format_to(std::back_inserter(buffer), FMT_STRING("{0}={1:.{2}}"),
+            label_, function_(), precision_);
     }
 
     /*!
@@ -409,6 +437,20 @@ public:
     }
 
     /*!
+     * \brief Format a line of summary.
+     *
+     * \param[in] buffer Buffer to format to.
+     */
+    void format_summary_to(fmt::memory_buffer& buffer) const {
+        buffer.append(std::string_view("Last state: "));
+        for (const auto& item : items_) {
+            item->format_summary_to(buffer);
+            buffer.push_back(',');
+            buffer.push_back(' ');
+        }
+    }
+
+    /*!
      * \brief Write an iteration to a logger.
      *
      * \param[in] l Logger.
@@ -441,6 +483,23 @@ public:
         l.iteration(source)(std::string_view(buffer_.data(), buffer_.size()));
 
         ++iterations_;
+    }
+
+    /*!
+     * \brief Write a summary to a logger.
+     *
+     * \param[in] l Logger.
+     * \param[in] source Information of the source code.
+     */
+    void write_summary_to(
+        const logger& l, source_info_view source = source_info_view()) {
+        if (!l.config().write_summary()) {
+            return;
+        }
+
+        buffer_.clear();
+        format_summary_to(buffer_);
+        l.summary(source)(std::string_view(buffer_.data(), buffer_.size()));
     }
 
 private:
