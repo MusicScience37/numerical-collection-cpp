@@ -201,8 +201,11 @@ private:
     //! Whether to write summary logs.
     bool write_summary_{false};
 
+    //! Default period to write iteration logs.
+    static constexpr index_type default_iteration_output_period = 10;
+
     //! Period to write iteration logs.
-    index_type iteration_output_period_{1};
+    index_type iteration_output_period_{default_iteration_output_period};
 
     //! Default period to write labels of iteration logs.
     static constexpr index_type default_iteration_label_period = 20;

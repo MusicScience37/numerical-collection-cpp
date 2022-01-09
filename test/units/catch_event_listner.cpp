@@ -35,6 +35,7 @@
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/logging/simple_log_sink.h"
+#include "num_collect/opt/heuristic_1dim_optimizer.h"
 
 #define STRING1(STR) #STR
 #define STRING(STR) STRING1(STR)
@@ -56,6 +57,16 @@ public:
                                 .write_summary(true);
         num_collect::logging::log_config::instance().set_default_tag_config(
             config);
+
+        // Heuristic configuration to prevent massive logging.
+        if (std::string(STRING(NUM_COLLECT_TEST_MODULE_NAME)) == "interp") {
+            auto config =
+                num_collect::logging::log_config::instance().get_config_of(
+                    num_collect::opt::heuristic_1dim_optimizer_tag);
+            config.write_iterations(false);
+            num_collect::logging::log_config::instance().set_config_of(
+                num_collect::opt::heuristic_1dim_optimizer_tag, config);
+        }
 
         logger_ = num_collect::logging::logger();
         logger_.value().info()(std::string(line_length, '='));

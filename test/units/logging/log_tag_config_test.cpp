@@ -34,7 +34,7 @@ TEST_CASE("num_collect::logging::log_tag_config") {
         CHECK(!config.write_traces());
         CHECK(!config.write_iterations());
         CHECK(!config.write_summary());
-        CHECK(config.iteration_output_period() == 1);
+        CHECK(config.iteration_output_period() > 0);
         CHECK(config.iteration_label_period() > 0);
     }
 
