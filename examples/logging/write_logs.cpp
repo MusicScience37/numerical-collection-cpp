@@ -82,13 +82,14 @@ static void write_iterations() {
     iteration_logger.append("val1", val1);  // Reference is hold here.
     std::string val2;
     iteration_logger.append("val2", val2);
-    double val3 = 0.0;
-    iteration_logger.append("val3", val3);
+    iteration_logger.append<double>("val3", [] {
+        // Use a function to return the value.
+        return 1.23456;  // NOLINT
+    });
 
     // Set and write values.
     val1 = 3;  // NOLINT
     val2 = "abc";
-    val3 = 1.23;  // NOLINT
     iteration_logger.write_iteration_to(logger);
 
     // Iteratively set and write values.

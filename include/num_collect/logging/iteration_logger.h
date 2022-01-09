@@ -20,8 +20,10 @@
 #pragma once
 
 #include <concepts>
+#include <functional>
 #include <iterator>
 #include <memory>
+#include <type_traits>
 
 #include <fmt/format.h>
 
@@ -54,14 +56,14 @@ public:
      *
      * \param[in] buffer Buffer to write the value.
      */
-    virtual void format_value_to(fmt::memory_buffer& buffer) const = 0;
+    virtual void format_value_to(fmt::memory_buffer& buffer) = 0;
 
     /*!
      * \brief Format the label to a buffer.
      *
      * \param[in] buffer Buffer to write the value.
      */
-    virtual void format_label_to(fmt::memory_buffer& buffer) const = 0;
+    virtual void format_label_to(fmt::memory_buffer& buffer) = 0;
 
     /*!
      * \brief Get the label.
@@ -90,31 +92,47 @@ protected:
 };
 
 /*!
+ * \brief Concept of functions used in
+ * num_collect::logging::iteration_logger_item class.
+ *
+ * \tparam Function
+ * \tparam Value
+ */
+template <typename Function, typename Value>
+concept iteration_logger_item_function = requires(Function& func) {
+    { func() } -> std::convertible_to<Value>;
+};
+
+/*!
  * \brief Class of logging items in num_collect::logging::iteration_logger
  * class.
  *
  * \tparam Value Type of the value.
+ * \tparam Func Type of the function to get the value.
  */
-template <typename Value>
+template <typename Value, iteration_logger_item_function<Value> Function>
 class iteration_logger_item final : public iteration_logger_item_base {
 public:
     /*!
      * \brief Construct.
      *
+     * \tparam InputFunction Type of the input function.
      * \param[in] label Label.
-     * \param[in] value Reference to the value.
+     * \param[in] function Function to to get the value.
      */
-    iteration_logger_item(std::string label, const Value& value)
-        : label_(std::move(label)), value_(value) {}
+    template <iteration_logger_item_function<Value> InputFunction>
+    iteration_logger_item(std::string label, InputFunction&& function)
+        : label_(std::move(label)),
+          function_(std::forward<InputFunction>(function)) {}
 
     /*!
      * \brief Format the current value to a buffer.
      *
      * \param[in] buffer Buffer to write the value.
      */
-    void format_value_to(fmt::memory_buffer& buffer) const override {
+    void format_value_to(fmt::memory_buffer& buffer) override {
         fmt::format_to(std::back_inserter(buffer), FMT_STRING("{0: >{1}}"),
-            value_, width_);
+            function_(), width_);
     }
 
     /*!
@@ -122,7 +140,7 @@ public:
      *
      * \param[in] buffer Buffer to write the value.
      */
-    void format_label_to(fmt::memory_buffer& buffer) const override {
+    void format_label_to(fmt::memory_buffer& buffer) override {
         fmt::format_to(std::back_inserter(buffer), FMT_STRING("{0: >{1}}"),
             label_, width_);
     }
@@ -172,8 +190,8 @@ private:
     //! Label.
     std::string label_;
 
-    //! Reference to the value.
-    const Value& value_;
+    //! Function to get the value.
+    Function function_;
 
     //! Width.
     index_type width_{impl::iteration_logger_default_width};
@@ -184,27 +202,33 @@ private:
  * class specialized for floating-point values.
  *
  * \tparam Value Type of the value.
+ * \tparam Func Type of the function to get the value.
  */
-template <concepts::floating_point Value>
-class iteration_logger_item<Value> final : public iteration_logger_item_base {
+template <concepts::floating_point Value,
+    iteration_logger_item_function<Value> Function>
+class iteration_logger_item<Value, Function> final
+    : public iteration_logger_item_base {
 public:
     /*!
      * \brief Construct.
      *
+     * \tparam InputFunction Type of the input function.
      * \param[in] label Label.
-     * \param[in] value Reference to the value.
+     * \param[in] function Function to to get the value.
      */
-    iteration_logger_item(std::string label, const Value& value)
-        : label_(std::move(label)), value_(value) {}
+    template <iteration_logger_item_function<Value> InputFunction>
+    iteration_logger_item(std::string label, InputFunction&& function)
+        : label_(std::move(label)),
+          function_(std::forward<InputFunction>(function)) {}
 
     /*!
      * \brief Format the current value to a buffer.
      *
      * \param[in] buffer Buffer to write the value.
      */
-    void format_value_to(fmt::memory_buffer& buffer) const override {
+    void format_value_to(fmt::memory_buffer& buffer) override {
         fmt::format_to(std::back_inserter(buffer), FMT_STRING("{0: >{1}.{2}}"),
-            value_, width_, precision_);
+            function_(), width_, precision_);
     }
 
     /*!
@@ -212,7 +236,7 @@ public:
      *
      * \param[in] buffer Buffer to write the value.
      */
-    void format_label_to(fmt::memory_buffer& buffer) const override {
+    void format_label_to(fmt::memory_buffer& buffer) override {
         fmt::format_to(std::back_inserter(buffer), FMT_STRING("{0: >{1}}"),
             label_, width_);
     }
@@ -283,8 +307,8 @@ private:
     //! Label.
     std::string label_;
 
-    //! Reference to the value.
-    const Value& value_;
+    //! Function to get the value.
+    Function function_;
 
     //! Precision.
     index_type precision_{impl::iteration_logger_default_precision};
@@ -324,17 +348,38 @@ public:
      * \brief Append an item.
      *
      * \tparam Value Type of the value.
+     * \tparam InputFunction Type of the input function.
      * \param[in] label Label.
-     * \param[in] value Value.
+     * \param[in] function Function to to get the value.
+     * \return Item.
+     */
+    template <typename Value,
+        iteration_logger_item_function<Value> InputFunction>
+    auto append(std::string label, InputFunction&& function) -> std::shared_ptr<
+        iteration_logger_item<Value, std::decay_t<InputFunction>>> {
+        auto item = std::make_shared<
+            iteration_logger_item<Value, std::decay_t<InputFunction>>>(
+            std::move(label), std::forward<InputFunction>(function));
+        append(item);
+        return item;
+    }
+
+    /*!
+     * \brief Append an item.
+     *
+     * \tparam Value Type of the value.
+     * \param[in] label Label.
+     * \param[in] value Reference to the value.
      * \return Item.
      *
      * \note This will hold the reference to the value inside this object.
      */
     template <typename Value>
-    auto append(std::string label, const Value& value)
-        -> std::shared_ptr<iteration_logger_item<Value>> {
-        auto item = std::make_shared<iteration_logger_item<Value>>(
-            std::move(label), value);
+    auto append(std::string label, const Value& value) -> std::shared_ptr<
+        iteration_logger_item<Value, std::function<const Value&()>>> {
+        auto item = std::make_shared<
+            iteration_logger_item<Value, std::function<const Value&()>>>(
+            std::move(label), [&value]() -> const Value& { return value; });
         append(item);
         return item;
     }

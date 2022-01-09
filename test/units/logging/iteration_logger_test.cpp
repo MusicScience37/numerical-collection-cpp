@@ -37,7 +37,9 @@ TEST_CASE("num_collect::logging::iteration_logger_item") {
     SECTION("format integers") {
         using value_type = num_collect::index_type;
         value_type val = 0;
-        iteration_logger_item<value_type> item{"abc", val};
+        const auto get_val = [&val] { return val; };
+        iteration_logger_item<value_type, decltype(get_val)> item{
+            "abc", get_val};
         constexpr num_collect::index_type width = 7;
         item.width(width);
         CHECK(item.width() == width);
@@ -56,7 +58,9 @@ TEST_CASE("num_collect::logging::iteration_logger_item") {
     SECTION("format string") {
         using value_type = std::string;
         value_type val;
-        iteration_logger_item<value_type> item{"abc", val};
+        const auto get_val = [&val] { return val; };
+        iteration_logger_item<value_type, decltype(get_val)> item{
+            "abc", get_val};
         constexpr num_collect::index_type width = 7;
         item.width(width);
         CHECK(item.width() == width);
@@ -75,7 +79,9 @@ TEST_CASE("num_collect::logging::iteration_logger_item") {
     SECTION("format floating-point value") {
         using value_type = double;
         value_type val = 0.0;
-        iteration_logger_item<value_type> item{"abc", val};
+        const auto get_val = [&val] { return val; };
+        iteration_logger_item<value_type, decltype(get_val)> item{
+            "abc", get_val};
         constexpr num_collect::index_type width = 7;
         constexpr num_collect::index_type precision = 3;
         item.width(width);
@@ -118,7 +124,8 @@ TEST_CASE("num_collect::logging::iteration_logger") {
     SECTION("set items") {
         constexpr num_collect::index_type width = 7;
         int val1 = 0;
-        iteration_logger.append("val1", val1)->width(width);
+        const auto get_val1 = [&val1] { return val1; };
+        iteration_logger.append<int>("val1", get_val1)->width(width);
         double val2 = 0.0;
         iteration_logger.append("val2", val2)->width(width)->precision(3);
         std::string val3;
