@@ -22,6 +22,7 @@
 #include "num_collect/constants/one.h"
 #include "num_collect/constants/zero.h"
 #include "num_collect/integration/gauss_legendre_integrator.h"
+#include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/avf/impl/avf_integrand.h"
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
 #include "num_collect/ode/simple_solver.h"
@@ -56,6 +57,10 @@ public:
 
     //! Order of this formula.
     static constexpr index_type order = 3;
+
+    //! Log tag.
+    static constexpr auto log_tag =
+        logging::log_tag_view("num_collect::ode::avf::avf3_formula");
 
     /*!
      * \brief Construct.

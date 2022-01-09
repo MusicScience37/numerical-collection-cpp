@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/formula_base.h"
 #include "num_collect/ode/runge_kutta/impl/rosenbrock_helper.h"
@@ -58,6 +59,10 @@ public:
 
     //! Order of lesser coefficients of this formula.
     static constexpr index_type lesser_order = 2;
+
+    //! Log tag.
+    static constexpr auto log_tag =
+        logging::log_tag_view("num_collect::ode::runge_kutta::ros3w_formula");
 
     /*!
      * \name Coefficients in Rosenbrock method.

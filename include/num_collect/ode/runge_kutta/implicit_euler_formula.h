@@ -20,6 +20,7 @@
 #pragma once
 
 #include "num_collect/constants/one.h"
+#include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/runge_kutta/implicit_formula_base.h"
 #include "num_collect/ode/runge_kutta/semi_implicit_formula_solver.h"
 #include "num_collect/ode/simple_solver.h"
@@ -27,7 +28,7 @@
 namespace num_collect::ode::runge_kutta {
 
 /*!
- * \brief Class of Runge-Kutta-Fehlberg 45 formula.
+ * \brief Class of implicit Euler method.
  *
  * \tparam Problem Type of problem.
  */
@@ -62,6 +63,10 @@ public:
 
     //! Order of this formula.
     static constexpr index_type order = 2;
+
+    //! Log tag.
+    static constexpr auto log_tag = logging::log_tag_view(
+        "num_collect::ode::runge_kutta::implicit_euler_formula");
 
     //! \copydoc runge_kutta::implicit_formula_base::step
     void step(scalar_type time, scalar_type step_size,

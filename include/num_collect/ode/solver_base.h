@@ -58,7 +58,7 @@ public:
      * \param[in] problem Problem.
      */
     explicit solver_base(const problem_type& problem)
-        : formula_(problem), logger_() {}
+        : formula_(problem), logger_(formula_type::log_tag) {}
 
     /*!
      * \brief Initialize.
