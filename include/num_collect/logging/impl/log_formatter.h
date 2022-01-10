@@ -146,7 +146,7 @@ namespace num_collect::logging::impl {
 }
 
 /*!
- * \brief Class to format of logs.
+ * \brief Class to format logs.
  */
 class log_formatter {
 public:
