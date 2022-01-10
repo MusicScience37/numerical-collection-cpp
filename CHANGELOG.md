@@ -15,7 +15,7 @@ Better logging.
   - concepts (new)
     - Added concepts ([Issue #103](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/103)).
   - logging (new)
-    - Implemented logging ([Issue #103](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/103)).
+    - Implemented logging ([Issue #103](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/103), [Issue #116](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/116)).
   - util
     - Source location in exceptions ([Issue #97](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/97)).
     - Logging in assertions ([Issue #103](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/103)).
