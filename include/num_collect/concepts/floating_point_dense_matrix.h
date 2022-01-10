@@ -15,22 +15,24 @@
  */
 /*!
  * \file
- * \brief Definition of dense_matrix concept.
+ * \brief Definition of floating_point_dense_matrix concept.
  */
 #pragma once
 
-#include <type_traits>
-
-#include <Eigen/Core>
+#include "num_collect/concepts/dense_matrix.h"
+#include "num_collect/concepts/floating_point.h"
 
 namespace num_collect::concepts {
 
 /*!
- * \brief Concept of Eigen's dense matrices.
+ * \brief Concept of Eigen's dense matrices with floating-point values.
  *
  * \tparam T Type.
  */
 template <typename T>
-concept dense_matrix = std::is_base_of_v<Eigen::MatrixBase<T>, T>;
+concept floating_point_dense_matrix = dense_matrix<T> && requires {
+    typename T::Scalar;
+    requires floating_point<typename T::Scalar>;
+};
 
 }  // namespace num_collect::concepts
