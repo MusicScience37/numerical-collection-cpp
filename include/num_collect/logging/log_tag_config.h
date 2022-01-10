@@ -23,8 +23,8 @@
 #include <memory>
 #include <utility>
 
+#include "num_collect/logging/colored_console_log_sink.h"
 #include "num_collect/logging/log_sink_base.h"
-#include "num_collect/logging/simple_log_sink.h"
 #include "num_collect/util/exception.h"
 #include "num_collect/util/index_type.h"
 
@@ -39,7 +39,7 @@ namespace impl {
  */
 [[nodiscard]] inline auto get_default_log_sink()
     -> std::shared_ptr<log_sink_base> {
-    static auto sink = std::make_shared<simple_log_sink>(stdout, false);
+    static auto sink = std::make_shared<colored_console_log_sink>(stdout);
     return sink;
 }
 
