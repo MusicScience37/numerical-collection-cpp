@@ -21,7 +21,6 @@
 
 #include <string>
 
-#include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
 
 #include "num_collect/util/index_type.h"

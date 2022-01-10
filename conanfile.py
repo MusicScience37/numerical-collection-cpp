@@ -24,7 +24,7 @@ class NumCollectConan(ConanFile):
     generators = "cmake_find_package"
 
     def requirements(self):
-        self.requires("fmt/8.0.1")
+        self.requires("fmt/8.1.1")
         self.requires("eigen/3.4.0")
 
     def build_requirements(self):
