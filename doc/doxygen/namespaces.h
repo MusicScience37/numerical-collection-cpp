@@ -37,10 +37,10 @@ namespace num_collect {
 
     /*!
      * \dir num_collect/concepts
-     * \brief Directory of concepts.
+     * \brief Directory of C++ concepts for types common in this project.
      */
 
-    //! Namespace of concepts.
+    //! Namespace of C++ concepts for types common in this project.
     namespace concepts {}
 
     /*!

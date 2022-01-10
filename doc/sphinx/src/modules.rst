@@ -69,7 +69,7 @@ except for ``util`` which has no namespace
 and implemented in ``num_collect`` namespace.
 
 concepts
-    C++ concepts for types used in this project.
+    C++ concepts for types common in this project.
 
 util
     Utility common in this project.
