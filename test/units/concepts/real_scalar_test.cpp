@@ -15,19 +15,20 @@
  */
 /*!
  * \file
- * \brief Test of floating_point_dense_matrix class.
+ * \brief Test of real_scalar class.
  */
-#include "num_collect/concepts/floating_point_dense_matrix.h"
+#include "num_collect/concepts/real_scalar.h"
 
+#include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
 
-TEST_CASE("num_collect::concepts::floating_point_dense_matrix") {
-    using num_collect::concepts::floating_point_dense_matrix;
+TEST_CASE("num_collect::concepts::real_scalar") {
+    using num_collect::concepts::real_scalar;
 
     SECTION("check") {
-        STATIC_REQUIRE_FALSE(floating_point_dense_matrix<int>);
-        STATIC_REQUIRE_FALSE(floating_point_dense_matrix<Eigen::ArrayXd>);
-        STATIC_REQUIRE(floating_point_dense_matrix<Eigen::MatrixXd>);
-        STATIC_REQUIRE_FALSE(floating_point_dense_matrix<Eigen::MatrixXi>);
+        STATIC_REQUIRE_FALSE(real_scalar<int>);
+        STATIC_REQUIRE(real_scalar<float>);
+        STATIC_REQUIRE(real_scalar<double>);
+        STATIC_REQUIRE_FALSE(real_scalar<Eigen::MatrixXd>);
     }
 }

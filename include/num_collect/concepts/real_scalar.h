@@ -15,24 +15,41 @@
  */
 /*!
  * \file
- * \brief Definition of floating_point_dense_matrix concept.
+ * \brief Definition of real_scalar concept.
  */
 #pragma once
 
-#include "num_collect/concepts/dense_matrix.h"
-#include "num_collect/concepts/floating_point.h"
+#include <type_traits>
 
 namespace num_collect::concepts {
 
 /*!
- * \brief Concept of Eigen's dense matrices with floating-point values.
+ * \brief Class to check whether a type is a real scalar (a floating-point value
+ * or a type compatible with floating-point values).
+ *
+ * \tparam T Type to be checked.
+ *
+ * \note For user-defined types, write specializations of
+ * this class.
+ */
+template <typename T>
+struct is_real_scalar : public std::is_floating_point<T> {};
+
+/*!
+ * \brief Get whether a type is a real scalar or a type compatible with
+ * real scalars.
+ *
+ * \tparam T Type to be checked.
+ */
+template <typename T>
+constexpr bool is_real_scalar_v = is_real_scalar<T>::value;
+
+/*!
+ * \brief Concept of real scalars.
  *
  * \tparam T Type.
  */
 template <typename T>
-concept floating_point_dense_matrix = dense_matrix<T> && requires {
-    typename T::Scalar;
-    requires floating_point<typename T::Scalar>;
-};
+concept real_scalar = is_real_scalar_v<T>;
 
 }  // namespace num_collect::concepts

@@ -15,41 +15,24 @@
  */
 /*!
  * \file
- * \brief Definition of floating_point concept.
+ * \brief Definition of real_scalar_dense_vector concept.
  */
 #pragma once
 
-#include <type_traits>
+#include "num_collect/concepts/dense_vector.h"
+#include "num_collect/concepts/real_scalar.h"
 
 namespace num_collect::concepts {
 
 /*!
- * \brief Class to check whether a type is a floating-point value or a type
- * compatible with floating-point values.
- *
- * \tparam T Type to be checked.
- *
- * \note For user-defined floating-point-like values, write specializations of
- * this class.
- */
-template <typename T>
-struct is_floating_point : public std::is_floating_point<T> {};
-
-/*!
- * \brief Get whether a type is a floating-point value or a type compatible with
- * floating-point values.
- *
- * \tparam T Type to be checked.
- */
-template <typename T>
-constexpr bool is_floating_point_v = is_floating_point<T>::value;
-
-/*!
- * \brief Concept of floating-point values.
+ * \brief Concept of Eigen's dense vectors with real scalars.
  *
  * \tparam T Type.
  */
 template <typename T>
-concept floating_point = is_floating_point_v<T>;
+concept real_scalar_dense_vector = dense_vector<T> && requires {
+    typename T::Scalar;
+    requires real_scalar<typename T::Scalar>;
+};
 
 }  // namespace num_collect::concepts

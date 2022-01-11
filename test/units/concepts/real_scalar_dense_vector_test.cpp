@@ -15,20 +15,21 @@
  */
 /*!
  * \file
- * \brief Test of floating_point class.
+ * \brief Test of real_scalar_dense_vector class.
  */
-#include "num_collect/concepts/floating_point.h"
+#include "num_collect/concepts/real_scalar_dense_vector.h"
 
-#include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
 
-TEST_CASE("num_collect::concepts::floating_point") {
-    using num_collect::concepts::floating_point;
+TEST_CASE("num_collect::concepts::real_scalar_dense_vector") {
+    using num_collect::concepts::real_scalar_dense_vector;
 
     SECTION("check") {
-        STATIC_REQUIRE_FALSE(floating_point<int>);
-        STATIC_REQUIRE(floating_point<float>);
-        STATIC_REQUIRE(floating_point<double>);
-        STATIC_REQUIRE_FALSE(floating_point<Eigen::MatrixXd>);
+        STATIC_REQUIRE_FALSE(real_scalar_dense_vector<int>);
+        STATIC_REQUIRE_FALSE(real_scalar_dense_vector<Eigen::ArrayXd>);
+        STATIC_REQUIRE_FALSE(real_scalar_dense_vector<Eigen::MatrixXd>);
+        STATIC_REQUIRE(real_scalar_dense_vector<Eigen::VectorXd>);
+        STATIC_REQUIRE_FALSE(real_scalar_dense_vector<Eigen::MatrixXi>);
+        STATIC_REQUIRE_FALSE(real_scalar_dense_vector<Eigen::VectorXi>);
     }
 }

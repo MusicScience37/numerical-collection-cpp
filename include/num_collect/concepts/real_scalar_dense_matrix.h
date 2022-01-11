@@ -15,24 +15,24 @@
  */
 /*!
  * \file
- * \brief Definition of floating_point_dense_vector concept.
+ * \brief Definition of real_scalar_dense_matrix concept.
  */
 #pragma once
 
-#include "num_collect/concepts/dense_vector.h"
-#include "num_collect/concepts/floating_point.h"
+#include "num_collect/concepts/dense_matrix.h"
+#include "num_collect/concepts/real_scalar.h"
 
 namespace num_collect::concepts {
 
 /*!
- * \brief Concept of Eigen's dense vectors with floating-point values.
+ * \brief Concept of Eigen's dense matrices with real scalars.
  *
  * \tparam T Type.
  */
 template <typename T>
-concept floating_point_dense_vector = dense_vector<T> && requires {
+concept real_scalar_dense_matrix = dense_matrix<T> && requires {
     typename T::Scalar;
-    requires floating_point<typename T::Scalar>;
+    requires real_scalar<typename T::Scalar>;
 };
 
 }  // namespace num_collect::concepts

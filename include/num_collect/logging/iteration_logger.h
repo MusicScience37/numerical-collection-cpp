@@ -28,7 +28,7 @@
 
 #include <fmt/format.h>
 
-#include "num_collect/concepts/floating_point.h"
+#include "num_collect/concepts/real_scalar.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/util/exception.h"
@@ -222,7 +222,7 @@ private:
  * \tparam Value Type of the value.
  * \tparam Func Type of the function to get the value.
  */
-template <concepts::floating_point Value,
+template <concepts::real_scalar Value,
     iteration_logger_item_function<Value> Function>
 class iteration_logger_item<Value, Function> final
     : public iteration_logger_item_base {
