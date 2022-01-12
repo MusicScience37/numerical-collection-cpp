@@ -8,12 +8,13 @@ Better logging.
 
 - Changed C++ standard to C++20 ([Issue #105](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/105)).
 - Removed the old version of iteration_logger in util module ([Issue #103](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/103)).
+- Refactor namespaces ([Issue #104](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/104)).
 
 ### Feature
 
 - Modules
-  - concepts (new)
-    - Added concepts ([Issue #103](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/103)).
+  - base (new)
+    - Added concepts ([Issue #103](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/103), ([Issue #104](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/104)).
   - logging (new)
     - Implemented logging ([Issue #103](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/103), [Issue #116](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/116)).
   - util
