@@ -32,16 +32,34 @@
 //! Namespace of num_collect source codes.
 namespace num_collect {
 
-    //! Namespace of internal implementations.
-    namespace impl {}
-
     /*!
-     * \dir num_collect/concepts
-     * \brief Directory of C++ concepts for types common in this project.
+     * \dir num_collect/base
+     * \brief Directory of definitions common in this project.
      */
 
-    //! Namespace of C++ concepts for types common in this project.
-    namespace concepts {}
+    //! Namespace of definitions common in this project.
+    inline namespace base {
+
+        /*!
+         * \dir num_collect/base/concepts
+         * \brief Directory of C++ concepts.
+         */
+
+        //! Namespace of C++ concepts.
+        namespace concepts {}
+
+        //! Namespace of internal implementations.
+        namespace impl {}
+
+    }  // namespace base
+
+    //! Namespace of utilities.
+    namespace util {
+
+        //! Namespace of internal implementations.
+        namespace impl {}
+
+    }  // namespace util
 
     /*!
      * \dir num_collect/logging

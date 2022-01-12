@@ -25,9 +25,9 @@
 
 #include <fmt/core.h>
 
-#include "num_collect/util/exception.h"
+#include "num_collect/base/exception.h"
 
-namespace num_collect {
+namespace num_collect::util {
 
 /*!
  * \brief Class of exception on unsafe casts.
@@ -79,4 +79,4 @@ template <typename To, typename From,
     return static_cast<To>(value);
 }
 
-}  // namespace num_collect
+}  // namespace num_collect::util

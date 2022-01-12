@@ -22,7 +22,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("num_collect::hash_string") {
-    using num_collect::hash_string;
+    using num_collect::util::hash_string;
     SECTION("calculate") {
         STATIC_REQUIRE(hash_string("abc") != hash_string("ab"));
         STATIC_REQUIRE(hash_string("abc") != hash_string("abd"));

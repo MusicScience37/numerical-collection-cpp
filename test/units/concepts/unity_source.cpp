@@ -1,6 +1,0 @@
-#include "dense_matrix_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "dense_vector_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "formattable_test.cpp"   // NOLINT(bugprone-suspicious-include)
-#include "real_scalar_dense_matrix_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "real_scalar_dense_vector_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "real_scalar_test.cpp"  // NOLINT(bugprone-suspicious-include)

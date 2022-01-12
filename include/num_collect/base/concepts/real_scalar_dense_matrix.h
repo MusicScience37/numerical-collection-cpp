@@ -15,22 +15,28 @@
  */
 /*!
  * \file
- * \brief Definition of dense_matrix concept.
+ * \brief Definition of real_scalar_dense_matrix concept.
  */
 #pragma once
 
-#include <type_traits>
+#include "num_collect/base/concepts/dense_matrix.h"
+#include "num_collect/base/concepts/real_scalar.h"
 
-#include <Eigen/Core>
-
-namespace num_collect::concepts {
+namespace num_collect {
+inline namespace base {
+namespace concepts {
 
 /*!
- * \brief Concept of Eigen's dense matrices.
+ * \brief Concept of Eigen's dense matrices with real scalars.
  *
  * \tparam T Type.
  */
 template <typename T>
-concept dense_matrix = std::is_base_of_v<Eigen::MatrixBase<T>, T>;
+concept real_scalar_dense_matrix = dense_matrix<T> && requires {
+    typename T::Scalar;
+    requires real_scalar<typename T::Scalar>;
+};
 
-}  // namespace num_collect::concepts
+}  // namespace concepts
+}  // namespace base
+}  // namespace num_collect

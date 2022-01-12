@@ -22,7 +22,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "mock_log_sink.h"
-#include "num_collect/util/index_type.h"
+#include "num_collect/base/index_type.h"
 
 TEST_CASE("num_collect::logging::log_tag_config") {
     using num_collect::logging::log_tag_config;

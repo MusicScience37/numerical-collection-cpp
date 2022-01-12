@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 MusicScience37 (Kenta Kabashima)
+ * Copyright 2022 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,20 +15,28 @@
  */
 /*!
  * \file
- * \brief Definition of index_type type.
+ * \brief Definition of real_scalar_dense_vector concept.
  */
 #pragma once
 
-#include <cstddef>
+#include "num_collect/base/concepts/dense_vector.h"
+#include "num_collect/base/concepts/real_scalar.h"
 
 namespace num_collect {
+inline namespace base {
+namespace concepts {
 
 /*!
- * \brief Type of indices in this library.
+ * \brief Concept of Eigen's dense vectors with real scalars.
  *
- * This library uses this signed integer type for indices and sizes,
- * as Eigen library does.
+ * \tparam T Type.
  */
-using index_type = std::ptrdiff_t;
+template <typename T>
+concept real_scalar_dense_vector = dense_vector<T> && requires {
+    typename T::Scalar;
+    requires real_scalar<typename T::Scalar>;
+};
 
+}  // namespace concepts
+}  // namespace base
 }  // namespace num_collect

@@ -46,7 +46,7 @@ public:
      * \note Implementations of this function must be thread-safe.
      */
     virtual void write(std::chrono::system_clock::time_point time,
-        std::string_view tag, log_level level, source_info_view source,
+        std::string_view tag, log_level level, util::source_info_view source,
         std::string_view body) noexcept = 0;
 
     log_sink_base(const log_sink_base&) = delete;

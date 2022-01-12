@@ -17,7 +17,7 @@
  * \file
  * \brief Test of norm function.
  */
-#include "num_collect/util/norm.h"
+#include "num_collect/base/norm.h"
 
 #include <cmath>
 #include <complex>

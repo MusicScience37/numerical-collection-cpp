@@ -25,10 +25,10 @@
 
 TEST_CASE("num_collect::logging::simple_log_sink") {
     using num_collect::index_type;
-    using num_collect::source_info_view;
     using num_collect::logging::log_level;
     using num_collect::logging::simple_log_sink;
     using num_collect::logging::impl::log_formatter;
+    using num_collect::util::source_info_view;
 
     const std::string dir_path = "./logging";
     const std::string file_path = "./logging/simple_log_sink_test.log";

@@ -21,8 +21,8 @@
 
 #include <type_traits>
 
-#include "num_collect/util/index_type.h"
-#include "num_collect/util/iterative_solver_base.h"
+#include "num_collect/base/index_type.h"
+#include "num_collect/base/iterative_solver_base.h"
 
 namespace num_collect::roots {
 
@@ -33,7 +33,8 @@ namespace num_collect::roots {
  * \tparam Function Type of the function of equation.
  */
 template <typename Derived, typename Function>
-class function_root_finder_base : public iterative_solver_base<Derived> {
+class function_root_finder_base
+    : public num_collect::base::iterative_solver_base<Derived> {
 public:
     //! Type of function of equation.
     using function_type = Function;
@@ -49,7 +50,8 @@ public:
      */
     explicit function_root_finder_base(logging::log_tag_view tag,
         const function_type& function = function_type())
-        : iterative_solver_base<Derived>(tag), function_(function) {}
+        : num_collect::base::iterative_solver_base<Derived>(tag),
+          function_(function) {}
 
     /*!
      * \brief Get the function of equation.

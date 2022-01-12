@@ -24,10 +24,10 @@
 #include <limits>
 #include <type_traits>
 
+#include "num_collect/base/assert.h"
 #include "num_collect/constants/one.h"
 #include "num_collect/constants/zero.h"
 #include "num_collect/ode/solver_base.h"
-#include "num_collect/util/assert.h"
 #include "num_collect/util/is_eigen_vector.h"
 
 namespace num_collect::ode {

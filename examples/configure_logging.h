@@ -19,9 +19,9 @@
  */
 #pragma once
 
+#include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_config.h"
 #include "num_collect/logging/log_tag_config.h"
-#include "num_collect/util/index_type.h"
 
 /*!
  * \brief Configure logging for examples.

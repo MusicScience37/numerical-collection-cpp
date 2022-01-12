@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 MusicScience37 (Kenta Kabashima)
+ * Copyright 2021 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,24 +15,19 @@
  */
 /*!
  * \file
- * \brief Definition of real_scalar_dense_vector concept.
+ * \brief Test of dense_matrix class.
  */
-#pragma once
+#include "num_collect/base/concepts/dense_matrix.h"
 
-#include "num_collect/concepts/dense_vector.h"
-#include "num_collect/concepts/real_scalar.h"
+#include <catch2/catch_test_macros.hpp>
 
-namespace num_collect::concepts {
+TEST_CASE("num_collect::concepts::dense_matrix") {
+    using num_collect::concepts::dense_matrix;
 
-/*!
- * \brief Concept of Eigen's dense vectors with real scalars.
- *
- * \tparam T Type.
- */
-template <typename T>
-concept real_scalar_dense_vector = dense_vector<T> && requires {
-    typename T::Scalar;
-    requires real_scalar<typename T::Scalar>;
-};
-
-}  // namespace num_collect::concepts
+    SECTION("check") {
+        STATIC_REQUIRE_FALSE(dense_matrix<int>);
+        STATIC_REQUIRE_FALSE(dense_matrix<Eigen::ArrayXd>);
+        STATIC_REQUIRE(dense_matrix<Eigen::MatrixXd>);
+        STATIC_REQUIRE(dense_matrix<Eigen::MatrixXi>);
+    }
+}

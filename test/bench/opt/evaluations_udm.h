@@ -21,7 +21,7 @@
 
 #include <celero/Celero.h>
 
-#include "num_collect/util/index_type.h"
+#include "num_collect/base/index_type.h"
 
 /*!
  * \brief Class of Celero's user defined measurement for the number of

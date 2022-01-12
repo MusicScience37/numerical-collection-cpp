@@ -15,21 +15,21 @@
  */
 /*!
  * \file
- * \brief Test of dense_vector class.
+ * \brief Test of real_scalar_dense_vector class.
  */
-#include "num_collect/concepts/dense_vector.h"
+#include "num_collect/base/concepts/real_scalar_dense_vector.h"
 
 #include <catch2/catch_test_macros.hpp>
 
-TEST_CASE("num_collect::concepts::dense_vector") {
-    using num_collect::concepts::dense_vector;
+TEST_CASE("num_collect::concepts::real_scalar_dense_vector") {
+    using num_collect::concepts::real_scalar_dense_vector;
 
     SECTION("check") {
-        STATIC_REQUIRE_FALSE(dense_vector<int>);
-        STATIC_REQUIRE_FALSE(dense_vector<Eigen::ArrayXd>);
-        STATIC_REQUIRE_FALSE(dense_vector<Eigen::MatrixXd>);
-        STATIC_REQUIRE(dense_vector<Eigen::VectorXd>);
-        STATIC_REQUIRE_FALSE(dense_vector<Eigen::MatrixXi>);
-        STATIC_REQUIRE(dense_vector<Eigen::VectorXi>);
+        STATIC_REQUIRE_FALSE(real_scalar_dense_vector<int>);
+        STATIC_REQUIRE_FALSE(real_scalar_dense_vector<Eigen::ArrayXd>);
+        STATIC_REQUIRE_FALSE(real_scalar_dense_vector<Eigen::MatrixXd>);
+        STATIC_REQUIRE(real_scalar_dense_vector<Eigen::VectorXd>);
+        STATIC_REQUIRE_FALSE(real_scalar_dense_vector<Eigen::MatrixXi>);
+        STATIC_REQUIRE_FALSE(real_scalar_dense_vector<Eigen::VectorXi>);
     }
 }

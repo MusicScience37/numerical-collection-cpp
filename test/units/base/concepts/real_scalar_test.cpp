@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 MusicScience37 (Kenta Kabashima)
+ * Copyright 2021 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,23 +15,20 @@
  */
 /*!
  * \file
- * \brief Test of formattable concept.
+ * \brief Test of real_scalar class.
  */
-#include "num_collect/concepts/formattable.h"
+#include "num_collect/base/concepts/real_scalar.h"
 
-#include <string>
-
+#include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
 
-#include "num_collect/util/index_type.h"
-
-TEST_CASE("num_collect::concepts::formattable") {
-    using num_collect::concepts::formattable;
+TEST_CASE("num_collect::concepts::real_scalar") {
+    using num_collect::concepts::real_scalar;
 
     SECTION("check") {
-        STATIC_REQUIRE(formattable<int>);
-        STATIC_REQUIRE(formattable<double>);
-        STATIC_REQUIRE(formattable<std::string>);
-        STATIC_REQUIRE(formattable<num_collect::index_type>);
+        STATIC_REQUIRE_FALSE(real_scalar<int>);
+        STATIC_REQUIRE(real_scalar<float>);
+        STATIC_REQUIRE(real_scalar<double>);
+        STATIC_REQUIRE_FALSE(real_scalar<Eigen::MatrixXd>);
     }
 }

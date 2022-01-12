@@ -17,7 +17,7 @@
  * \file
  * \brief Test of exceptions.
  */
-#include "num_collect/util/exception.h"
+#include "num_collect/base/exception.h"
 
 #include <type_traits>
 

@@ -26,6 +26,7 @@
 #include "num_collect/util/source_info_view.h"
 
 namespace num_collect {
+inline namespace base {
 
 namespace impl {
 
@@ -36,8 +37,8 @@ namespace impl {
  * \param[in] source_info Information of source codes.
  * \return Formatted string.
  */
-[[nodiscard]] inline auto format_error(
-    std::string_view message, source_info_view source_info) -> std::string {
+[[nodiscard]] inline auto format_error(std::string_view message,
+    util::source_info_view source_info) -> std::string {
     return fmt::format(FMT_STRING("{} ({}:{}:{})"), message,
         source_info.file_path(), source_info.line(), source_info.column());
 }
@@ -56,7 +57,7 @@ public:
      * \param[in] source_info Information of source codes.
      */
     explicit num_collect_exception(std::string_view message,
-        source_info_view source_info = source_info_view())
+        util::source_info_view source_info = util::source_info_view())
         : std::runtime_error(impl::format_error(message, source_info)) {}
 };
 
@@ -84,4 +85,5 @@ public:
     using num_collect_exception::num_collect_exception;
 };
 
+}  // namespace base
 }  // namespace num_collect

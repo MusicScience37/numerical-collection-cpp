@@ -15,19 +15,22 @@
  */
 /*!
  * \file
- * \brief Test of dense_matrix class.
+ * \brief Definition of index_type type.
  */
-#include "num_collect/concepts/dense_matrix.h"
+#pragma once
 
-#include <catch2/catch_test_macros.hpp>
+#include <cstddef>
 
-TEST_CASE("num_collect::concepts::dense_matrix") {
-    using num_collect::concepts::dense_matrix;
+namespace num_collect {
+inline namespace base {
 
-    SECTION("check") {
-        STATIC_REQUIRE_FALSE(dense_matrix<int>);
-        STATIC_REQUIRE_FALSE(dense_matrix<Eigen::ArrayXd>);
-        STATIC_REQUIRE(dense_matrix<Eigen::MatrixXd>);
-        STATIC_REQUIRE(dense_matrix<Eigen::MatrixXi>);
-    }
-}
+/*!
+ * \brief Type of indices in this library.
+ *
+ * This library uses this signed integer type for indices and sizes,
+ * as Eigen library does.
+ */
+using index_type = std::ptrdiff_t;
+
+}  // namespace base
+}  // namespace num_collect

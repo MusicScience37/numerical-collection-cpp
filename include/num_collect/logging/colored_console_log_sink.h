@@ -24,9 +24,9 @@
 #include <iostream>
 #include <mutex>
 
+#include "num_collect/base/exception.h"
 #include "num_collect/logging/impl/colored_log_formatter.h"
 #include "num_collect/logging/log_sink_base.h"
-#include "num_collect/util/exception.h"
 
 namespace num_collect::logging {
 
@@ -67,7 +67,7 @@ public:
      * \param[in] body Log body.
      */
     void write(std::chrono::system_clock::time_point time, std::string_view tag,
-        log_level level, source_info_view source,
+        log_level level, util::source_info_view source,
         std::string_view body) noexcept override {
         try {
             std::unique_lock<std::mutex> lock(mutex_);

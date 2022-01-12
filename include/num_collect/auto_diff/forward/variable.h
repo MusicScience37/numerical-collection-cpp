@@ -25,8 +25,8 @@
 
 #include <Eigen/Core>
 
-#include "num_collect/util/assert.h"
-#include "num_collect/util/index_type.h"
+#include "num_collect/base/assert.h"
+#include "num_collect/base/index_type.h"
 #include "num_collect/util/is_eigen_matrix.h"
 #include "num_collect/util/is_eigen_vector.h"
 

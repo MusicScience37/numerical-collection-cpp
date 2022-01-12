@@ -23,8 +23,8 @@
 #include <limits>
 #include <type_traits>
 
+#include "num_collect/base/index_type.h"
 #include "num_collect/util/bidirectional_vector.h"
-#include "num_collect/util/index_type.h"
 
 namespace num_collect::numbers {
 
@@ -58,7 +58,9 @@ public:
      * \brief Construct zero.
      */
     custom_float()
-        : digits_(typename bidirectional_vector<digit_type>::container_type{0},
+        : digits_(
+              typename util::bidirectional_vector<digit_type>::container_type{
+                  0},
               0) {}
 
     /*!
@@ -146,7 +148,7 @@ public:
 
 private:
     //! Digits.
-    bidirectional_vector<digit_type> digits_;
+    util::bidirectional_vector<digit_type> digits_;
 };
 
 }  // namespace num_collect::numbers

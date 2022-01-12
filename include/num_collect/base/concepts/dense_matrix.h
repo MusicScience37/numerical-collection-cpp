@@ -15,29 +15,26 @@
  */
 /*!
  * \file
- * \brief Definition of log_and_throw function.
+ * \brief Definition of dense_matrix concept.
  */
 #pragma once
 
-#include <string_view>
+#include <type_traits>
 
-#include "num_collect/logging/logger.h"
-#include "num_collect/util/source_info_view.h"
+#include <Eigen/Core>
 
-namespace num_collect::logging {
+namespace num_collect {
+inline namespace base {
+namespace concepts {
 
 /*!
- * \brief Write an error log and throw an exception.
+ * \brief Concept of Eigen's dense matrices.
  *
- * \tparam Exception Type of the exception.
- * \param[in] message Error message.
- * \param[in] source Information of the source code.
+ * \tparam T Type.
  */
-template <typename Exception>
-[[noreturn]] void log_and_throw(std::string_view message,
-    util::source_info_view source = util::source_info_view()) {
-    logger().error(source)(message);
-    throw Exception(message);
-}
+template <typename T>
+concept dense_matrix = std::is_base_of_v<Eigen::MatrixBase<T>, T>;
 
-}  // namespace num_collect::logging
+}  // namespace concepts
+}  // namespace base
+}  // namespace num_collect

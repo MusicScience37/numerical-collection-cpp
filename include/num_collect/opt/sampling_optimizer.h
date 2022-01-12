@@ -23,9 +23,9 @@
 #include <type_traits>
 #include <vector>
 
+#include "num_collect/base/assert.h"
+#include "num_collect/base/index_type.h"
 #include "num_collect/opt/optimizer_base.h"
-#include "num_collect/util/assert.h"
-#include "num_collect/util/index_type.h"
 #include "num_collect/util/safe_cast.h"
 
 namespace num_collect::opt {
@@ -93,7 +93,8 @@ public:
      * \copydoc num_collect::opt::optimizer_base::iterate
      */
     void iterate() {
-        const auto num_samples_size_t = safe_cast<std::size_t>(num_samples_);
+        const auto num_samples_size_t =
+            util::safe_cast<std::size_t>(num_samples_);
         samples_.resize(num_samples_size_t);
         values_.resize(num_samples_size_t);
 
@@ -129,14 +130,14 @@ public:
     }
 
     /*!
-     * \copydoc num_collect::iterative_solver_base::is_stop_criteria_satisfied
+     * \copydoc num_collect::base::iterative_solver_base::is_stop_criteria_satisfied
      */
     [[nodiscard]] auto is_stop_criteria_satisfied() const -> bool {
         return iterations_ >= max_iterations_;
     }
 
     /*!
-     * \copydoc num_collect::iterative_solver_base::configure_iteration_logger
+     * \copydoc num_collect::base::iterative_solver_base::configure_iteration_logger
      */
     void configure_iteration_logger(
         logging::iteration_logger& iteration_logger) const {

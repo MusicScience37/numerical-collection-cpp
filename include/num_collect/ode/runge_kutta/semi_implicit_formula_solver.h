@@ -25,12 +25,12 @@
 
 #include <Eigen/LU>
 
+#include "num_collect/base/assert.h"
+#include "num_collect/base/index_type.h"
 #include "num_collect/constants/one.h"
 #include "num_collect/constants/zero.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/implicit_formula_solver_strategies.h"
-#include "num_collect/util/assert.h"
-#include "num_collect/util/index_type.h"
 #include "num_collect/util/is_eigen_matrix.h"
 #include "num_collect/util/is_eigen_vector.h"
 

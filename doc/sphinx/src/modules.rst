@@ -11,7 +11,9 @@ Modules
     component Eigen
 
     component num_collect {
-        component concepts
+        component base
+        base ..> fmt
+        base ..> Eigen
 
         component util
         util ..> fmt
@@ -19,8 +21,8 @@ Modules
 
         component logging
         logging ..> fmt
-        logging <..> util
-        logging ..> concepts
+        logging <..> base
+        logging ..> util
 
         component auto_diff
         auto_diff ..> util
@@ -68,8 +70,8 @@ Names in this diagram are the names of namespaces,
 except for ``util`` which has no namespace
 and implemented in ``num_collect`` namespace.
 
-concepts
-    C++ concepts for types common in this project.
+base
+    Definitions common in this project.
 
 util
     Utility common in this project.

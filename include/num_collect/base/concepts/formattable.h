@@ -15,23 +15,24 @@
  */
 /*!
  * \file
- * \brief Definition of dense_vector concept.
+ * \brief Definition of formattable concept.
  */
 #pragma once
 
-#include "num_collect/concepts/dense_matrix.h"
+#include <fmt/core.h>
 
-namespace num_collect::concepts {
+namespace num_collect {
+inline namespace base {
+namespace concepts {
 
 /*!
- * \brief Concept of Eigen's dense vectors.
+ * \brief Concept of types formattable using fmt library.
  *
  * \tparam T Type.
  */
 template <typename T>
-concept dense_vector = dense_matrix<T> && requires {
-    T::ColsAtCompileTime;
-    requires T::ColsAtCompileTime == 1;
-};
+concept formattable = fmt::is_formattable<T>::value;
 
-}  // namespace num_collect::concepts
+}  // namespace concepts
+}  // namespace base
+}  // namespace num_collect

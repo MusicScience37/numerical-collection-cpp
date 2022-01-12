@@ -15,24 +15,23 @@
  */
 /*!
  * \file
- * \brief Definition of real_scalar_dense_matrix concept.
+ * \brief Test of formattable concept.
  */
-#pragma once
+#include "num_collect/base/concepts/formattable.h"
 
-#include "num_collect/concepts/dense_matrix.h"
-#include "num_collect/concepts/real_scalar.h"
+#include <string>
 
-namespace num_collect::concepts {
+#include <catch2/catch_test_macros.hpp>
 
-/*!
- * \brief Concept of Eigen's dense matrices with real scalars.
- *
- * \tparam T Type.
- */
-template <typename T>
-concept real_scalar_dense_matrix = dense_matrix<T> && requires {
-    typename T::Scalar;
-    requires real_scalar<typename T::Scalar>;
-};
+#include "num_collect/base/index_type.h"
 
-}  // namespace num_collect::concepts
+TEST_CASE("num_collect::concepts::formattable") {
+    using num_collect::concepts::formattable;
+
+    SECTION("check") {
+        STATIC_REQUIRE(formattable<int>);
+        STATIC_REQUIRE(formattable<double>);
+        STATIC_REQUIRE(formattable<std::string>);
+        STATIC_REQUIRE(formattable<num_collect::index_type>);
+    }
+}

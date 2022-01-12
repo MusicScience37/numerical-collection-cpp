@@ -17,7 +17,7 @@
  * \file
  * \brief Test of real_scalar_dense_matrix class.
  */
-#include "num_collect/concepts/real_scalar_dense_matrix.h"
+#include "num_collect/base/concepts/real_scalar_dense_matrix.h"
 
 #include <catch2/catch_test_macros.hpp>
 

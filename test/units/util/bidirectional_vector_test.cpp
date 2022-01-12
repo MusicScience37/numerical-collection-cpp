@@ -21,8 +21,8 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-TEST_CASE("num_collect::bidirectional_vector") {
-    using num_collect::bidirectional_vector;
+TEST_CASE("num_collect::util::bidirectional_vector") {
+    using num_collect::util::bidirectional_vector;
 
     SECTION("default constructor") {
         const auto vec = bidirectional_vector<int>();

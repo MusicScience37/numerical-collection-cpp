@@ -22,7 +22,7 @@
 #include <cstdint>
 #include <string_view>
 
-namespace num_collect {
+namespace num_collect::util {
 
 /*!
  * \brief Calculate a hash number of a string.
@@ -45,4 +45,4 @@ namespace num_collect {
     return num;
 }
 
-}  // namespace num_collect
+}  // namespace num_collect::util

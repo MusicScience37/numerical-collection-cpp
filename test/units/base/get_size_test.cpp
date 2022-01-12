@@ -17,7 +17,7 @@
  * \file
  * \brief Test of get_size function.
  */
-#include "num_collect/util/get_size.h"
+#include "num_collect/base/get_size.h"
 
 #include <cmath>
 #include <complex>

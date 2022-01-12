@@ -21,7 +21,7 @@
 
 #include <type_traits>
 
-#include "num_collect/util/norm.h"
+#include "num_collect/base/norm.h"
 
 namespace num_collect::interp::kernel {
 
