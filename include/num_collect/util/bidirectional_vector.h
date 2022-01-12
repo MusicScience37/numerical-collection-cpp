@@ -24,11 +24,11 @@
 
 #include <fmt/core.h>
 
-#include "num_collect/util/assert.h"
-#include "num_collect/util/exception.h"
-#include "num_collect/util/index_type.h"
+#include "num_collect/base/assert.h"
+#include "num_collect/base/exception.h"
+#include "num_collect/base/index_type.h"
 
-namespace num_collect {
+namespace num_collect::util {
 
 /*!
  * \brief Class to save data in a sequence which can be extended even toward
@@ -322,4 +322,4 @@ private:
     }
 };
 
-}  // namespace num_collect
+}  // namespace num_collect::util

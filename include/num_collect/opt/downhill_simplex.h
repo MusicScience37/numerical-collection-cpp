@@ -125,8 +125,8 @@ public:
         evaluations_ = 0;
 
         variable_type var = init_var;
-        points_.reserve(safe_cast<std::size_t>(dim_ + 1));
-        values_.reserve(safe_cast<std::size_t>(dim_ + 1));
+        points_.reserve(util::safe_cast<std::size_t>(dim_ + 1));
+        values_.reserve(util::safe_cast<std::size_t>(dim_ + 1));
         points_.push_back(var);
         values_.push_back(evaluate_on(var));
         for (index_type i = 0; i < dim_; ++i) {
@@ -137,8 +137,9 @@ public:
             var[i] = val;
         }
 
-        value_order_.reserve(safe_cast<std::size_t>(dim_ + 1));
-        for (std::size_t i = 0; i < safe_cast<std::size_t>(dim_ + 1); ++i) {
+        value_order_.reserve(util::safe_cast<std::size_t>(dim_ + 1));
+        for (std::size_t i = 0; i < util::safe_cast<std::size_t>(dim_ + 1);
+             ++i) {
             value_order_.push_back(i);
         }
         reorder();
@@ -151,7 +152,7 @@ public:
         const variable_type face_center = calc_face_center();
         const auto min_ind = value_order_.front();
         const auto second_max_ind =
-            value_order_[safe_cast<std::size_t>(dim_ - 1)];
+            value_order_[util::safe_cast<std::size_t>(dim_ - 1)];
         const auto max_ind = value_order_.back();
 
         reflect(face_center);
@@ -171,7 +172,7 @@ public:
     }
 
     /*!
-     * \copydoc num_collect::iterative_solver_base::is_stop_criteria_satisfied
+     * \copydoc num_collect::base::iterative_solver_base::is_stop_criteria_satisfied
      */
     [[nodiscard]] auto is_stop_criteria_satisfied() const -> bool {
         return (simplex_size() < tol_simplex_size_) ||
@@ -179,7 +180,7 @@ public:
     }
 
     /*!
-     * \copydoc num_collect::iterative_solver_base::configure_iteration_logger
+     * \copydoc num_collect::base::iterative_solver_base::configure_iteration_logger
      */
     void configure_iteration_logger(
         logging::iteration_logger& iteration_logger) const {
@@ -292,7 +293,7 @@ private:
      */
     [[nodiscard]] auto calc_face_center() const -> variable_type {
         variable_type face_center = variable_type::Zero(dim_);
-        for (std::size_t i = 0; i < safe_cast<std::size_t>(dim_); ++i) {
+        for (std::size_t i = 0; i < util::safe_cast<std::size_t>(dim_); ++i) {
             face_center += points_[value_order_[i]];
         }
         face_center /= static_cast<variable_scalar_type>(dim_);
@@ -350,7 +351,7 @@ private:
      */
     void multi_contract() {
         const auto& min_point = points_[value_order_.front()];
-        for (std::size_t i = 1; i <= safe_cast<std::size_t>(dim_); ++i) {
+        for (std::size_t i = 1; i <= util::safe_cast<std::size_t>(dim_); ++i) {
             const std::size_t ind_move = value_order_[i];
             points_[ind_move] = half * (points_[ind_move] + min_point);
             values_[ind_move] = evaluate_on(points_[ind_move]);

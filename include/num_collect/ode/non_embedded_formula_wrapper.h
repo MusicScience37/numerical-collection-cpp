@@ -19,12 +19,12 @@
  */
 #pragma once
 
+#include "num_collect/base/index_type.h"
 #include "num_collect/constants/half.h"
 #include "num_collect/constants/two.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/formula_base.h"
-#include "num_collect/util/index_type.h"
 
 namespace num_collect::ode {
 

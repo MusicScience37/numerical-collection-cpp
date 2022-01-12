@@ -50,7 +50,8 @@ public:
      * \param[in] write_log Whether to write log.
      */
     logging_proxy(std::string_view tag, log_level level,
-        source_info_view source, log_sink_base* sink, bool write_log) noexcept
+        util::source_info_view source, log_sink_base* sink,
+        bool write_log) noexcept
         : tag_(tag),
           level_(level),
           source_(source),
@@ -107,7 +108,7 @@ private:
     log_level level_;
 
     //! Information of the source code.
-    source_info_view source_;
+    util::source_info_view source_;
 
     //! Log sink.
     log_sink_base* sink_;
@@ -180,7 +181,7 @@ public:
      * to write logs with the current position.
      */
     [[nodiscard]] auto trace(
-        source_info_view source = source_info_view()) const noexcept
+        util::source_info_view source = util::source_info_view()) const noexcept
         -> logging_proxy {
         return logging_proxy(tag_.name(), log_level::trace, source,
             config_.sink().get(), config_.write_traces());
@@ -197,7 +198,7 @@ public:
      * \note This class don't take configurations of periods into account.
      */
     [[nodiscard]] auto iteration(
-        source_info_view source = source_info_view()) const noexcept
+        util::source_info_view source = util::source_info_view()) const noexcept
         -> logging_proxy {
         return logging_proxy(tag_.name(), log_level::iteration, source,
             config_.sink().get(), config_.write_iterations());
@@ -214,7 +215,7 @@ public:
      * \note This class don't take configurations of periods into account.
      */
     [[nodiscard]] auto iteration_label(
-        source_info_view source = source_info_view()) const noexcept
+        util::source_info_view source = util::source_info_view()) const noexcept
         -> logging_proxy {
         return logging_proxy(tag_.name(), log_level::iteration_label, source,
             config_.sink().get(), config_.write_iterations());
@@ -231,7 +232,7 @@ public:
      * \note This class don't take configurations of periods into account.
      */
     [[nodiscard]] auto summary(
-        source_info_view source = source_info_view()) const noexcept
+        util::source_info_view source = util::source_info_view()) const noexcept
         -> logging_proxy {
         return logging_proxy(tag_.name(), log_level::summary, source,
             config_.sink().get(), config_.write_summary());
@@ -247,7 +248,7 @@ public:
      * to write logs with the current position.
      */
     [[nodiscard]] auto info(
-        source_info_view source = source_info_view()) const noexcept
+        util::source_info_view source = util::source_info_view()) const noexcept
         -> logging_proxy {
         constexpr bool write_log = true;
         return logging_proxy(tag_.name(), log_level::info, source,
@@ -264,7 +265,7 @@ public:
      * to write logs with the current position.
      */
     [[nodiscard]] auto warning(
-        source_info_view source = source_info_view()) const noexcept
+        util::source_info_view source = util::source_info_view()) const noexcept
         -> logging_proxy {
         constexpr bool write_log = true;
         return logging_proxy(tag_.name(), log_level::warning, source,
@@ -281,7 +282,7 @@ public:
      * to write logs with the current position.
      */
     [[nodiscard]] auto error(
-        source_info_view source = source_info_view()) const noexcept
+        util::source_info_view source = util::source_info_view()) const noexcept
         -> logging_proxy {
         constexpr bool write_log = true;
         return logging_proxy(tag_.name(), log_level::error, source,

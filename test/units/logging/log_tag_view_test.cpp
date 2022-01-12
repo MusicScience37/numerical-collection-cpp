@@ -27,9 +27,9 @@
 #include "num_collect/util/hash_string.h"
 
 TEST_CASE("num_collect::logging::log_tag_view") {
-    using num_collect::hash_string;
     using num_collect::logging::log_tag;
     using num_collect::logging::log_tag_view;
+    using num_collect::util::hash_string;
 
     SECTION("check noexcept") {
         STATIC_REQUIRE(

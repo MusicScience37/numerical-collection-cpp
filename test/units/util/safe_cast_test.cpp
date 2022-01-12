@@ -28,28 +28,29 @@
 namespace {
 
 // NOLINTNEXTLINE: I want to use line numbers in test cases.
-#define TEST_SAFE(FROM, TO, VALUE)                                        \
-    [] {                                                                  \
-        using from_type = FROM;                                           \
-        using to_type = TO;                                               \
-        const auto value = static_cast<from_type>(VALUE);                 \
-        to_type casted;                                                   \
-        REQUIRE_NOTHROW(casted = num_collect::safe_cast<to_type>(value)); \
-        REQUIRE(static_cast<from_type>(casted) == value);                 \
+#define TEST_SAFE(FROM, TO, VALUE)                                  \
+    [] {                                                            \
+        using from_type = FROM;                                     \
+        using to_type = TO;                                         \
+        const auto value = static_cast<from_type>(VALUE);           \
+        to_type casted;                                             \
+        REQUIRE_NOTHROW(                                            \
+            casted = num_collect::util::safe_cast<to_type>(value)); \
+        REQUIRE(static_cast<from_type>(casted) == value);           \
     }()
 
 // NOLINTNEXTLINE: I want to use line numbers in test cases.
-#define TEST_UNSAFE(FROM, TO, VALUE)                                  \
-    [] {                                                              \
-        using from_type = FROM;                                       \
-        using to_type = TO;                                           \
-        const auto value = static_cast<from_type>(VALUE);             \
-        REQUIRE_THROWS((void)num_collect::safe_cast<to_type>(value)); \
+#define TEST_UNSAFE(FROM, TO, VALUE)                                        \
+    [] {                                                                    \
+        using from_type = FROM;                                             \
+        using to_type = TO;                                                 \
+        const auto value = static_cast<from_type>(VALUE);                   \
+        REQUIRE_THROWS((void)num_collect::util::safe_cast<to_type>(value)); \
     }()
 
 }  // namespace
 
-TEST_CASE("num_collect::safe_cast (integers)") {
+TEST_CASE("num_collect::util::safe_cast (integers)") {
     SECTION("unsigned to unsigned") {
         TEST_SAFE(std::uint32_t, std::uint16_t, 0);
         TEST_SAFE(std::uint32_t, std::uint16_t, 0xFFFF);

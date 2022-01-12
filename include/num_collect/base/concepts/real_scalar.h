@@ -15,41 +15,45 @@
  */
 /*!
  * \file
- * \brief Definition of floating_point concept.
+ * \brief Definition of real_scalar concept.
  */
 #pragma once
 
 #include <type_traits>
 
-namespace num_collect::concepts {
+namespace num_collect {
+inline namespace base {
+namespace concepts {
 
 /*!
- * \brief Class to check whether a type is a floating-point value or a type
- * compatible with floating-point values.
+ * \brief Class to check whether a type is a real scalar (a floating-point value
+ * or a type compatible with floating-point values).
  *
  * \tparam T Type to be checked.
  *
- * \note For user-defined floating-point-like values, write specializations of
+ * \note For user-defined types, write specializations of
  * this class.
  */
 template <typename T>
-struct is_floating_point : public std::is_floating_point<T> {};
+struct is_real_scalar : public std::is_floating_point<T> {};
 
 /*!
- * \brief Get whether a type is a floating-point value or a type compatible with
- * floating-point values.
+ * \brief Get whether a type is a real scalar or a type compatible with
+ * real scalars.
  *
  * \tparam T Type to be checked.
  */
 template <typename T>
-constexpr bool is_floating_point_v = is_floating_point<T>::value;
+constexpr bool is_real_scalar_v = is_real_scalar<T>::value;
 
 /*!
- * \brief Concept of floating-point values.
+ * \brief Concept of real scalars.
  *
  * \tparam T Type.
  */
 template <typename T>
-concept floating_point = is_floating_point_v<T>;
+concept real_scalar = is_real_scalar_v<T>;
 
-}  // namespace num_collect::concepts
+}  // namespace concepts
+}  // namespace base
+}  // namespace num_collect

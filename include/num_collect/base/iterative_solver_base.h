@@ -22,6 +22,7 @@
 #include "num_collect/logging/iteration_logger.h"
 
 namespace num_collect {
+inline namespace base {
 
 /*!
  * \brief Base class of iterative solvers.
@@ -117,4 +118,5 @@ private:
     logging::logger logger_;
 };
 
+}  // namespace base
 }  // namespace num_collect

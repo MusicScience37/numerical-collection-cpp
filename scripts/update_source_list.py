@@ -10,6 +10,7 @@ SOURCE_PATHS = [
     THIS_DIR.parent / "test" / "units" / module_name
     for module_name in [
         "auto_diff",
+        "base",
         "constants",
         "functions",
         "integration",

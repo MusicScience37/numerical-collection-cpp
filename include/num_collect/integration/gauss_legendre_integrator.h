@@ -23,13 +23,13 @@
 
 #include <Eigen/Core>
 
+#include "num_collect/base/assert.h"
+#include "num_collect/base/index_type.h"
 #include "num_collect/constants/half.h"
 #include "num_collect/constants/one.h"
 #include "num_collect/constants/two.h"
 #include "num_collect/functions/legendre.h"
 #include "num_collect/functions/legendre_roots.h"
-#include "num_collect/util/assert.h"
-#include "num_collect/util/index_type.h"
 
 namespace num_collect::integration {
 

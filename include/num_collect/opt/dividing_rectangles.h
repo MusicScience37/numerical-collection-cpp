@@ -28,12 +28,12 @@
 
 #include <Eigen/Core>
 
+#include "num_collect/base/assert.h"
+#include "num_collect/base/get_size.h"
+#include "num_collect/base/norm.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/opt/optimizer_base.h"
-#include "num_collect/util/assert.h"
-#include "num_collect/util/get_size.h"
 #include "num_collect/util/is_eigen_vector.h"
-#include "num_collect/util/norm.h"
 #include "num_collect/util/safe_cast.h"
 
 namespace num_collect::opt {
@@ -134,14 +134,14 @@ public:
     }
 
     /*!
-     * \copydoc num_collect::iterative_solver_base::is_stop_criteria_satisfied
+     * \copydoc num_collect::base::iterative_solver_base::is_stop_criteria_satisfied
      */
     [[nodiscard]] auto is_stop_criteria_satisfied() const -> bool {
         return evaluations() >= max_evaluations_;
     }
 
     /*!
-     * \copydoc num_collect::iterative_solver_base::configure_iteration_logger
+     * \copydoc num_collect::base::iterative_solver_base::configure_iteration_logger
      */
     void configure_iteration_logger(
         logging::iteration_logger& iteration_logger) const {
@@ -223,7 +223,7 @@ private:
             const value_type& value)
             : lower_(lower),
               upper_(upper),
-              is_divided_(safe_cast<std::size_t>(get_size(lower)), false),
+              is_divided_(util::safe_cast<std::size_t>(get_size(lower)), false),
               dist_(norm(lower - upper) * half),
               value_(value) {}
 
@@ -489,7 +489,7 @@ private:
         value_type dim_lower_value{};
         value_type dim_upper_value{};
         for (index_type i = 0; i < dim_; ++i) {
-            if (rect.is_divided()[safe_cast<std::size_t>(i)]) {
+            if (rect.is_divided()[util::safe_cast<std::size_t>(i)]) {
                 continue;
             }
 

@@ -72,7 +72,7 @@ BASELINE_F(sum_zeta4, ordinary, summation_fixture, 0, 0) {
 
 // NOLINTNEXTLINE: external library
 BENCHMARK_F(sum_zeta4, kahan, summation_fixture, 0, 0) {
-    auto sum = num_collect::kahan_adder<double>();
+    auto sum = num_collect::util::kahan_adder<double>();
     for (std::size_t i = 1; i <= zeta4_terms; ++i) {
         const auto i_d = static_cast<double>(i);
         const double term = 1.0 / (i_d * i_d * i_d * i_d);

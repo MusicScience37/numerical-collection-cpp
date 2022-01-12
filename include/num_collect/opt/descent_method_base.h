@@ -74,7 +74,7 @@ public:
     }
 
     /*!
-     * \copydoc num_collect::iterative_solver_base::is_stop_criteria_satisfied
+     * \copydoc num_collect::base::iterative_solver_base::is_stop_criteria_satisfied
      */
     [[nodiscard]] auto is_stop_criteria_satisfied() const -> bool {
         return gradient_norm() < tol_grad_norm_;

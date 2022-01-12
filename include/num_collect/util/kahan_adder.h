@@ -19,7 +19,7 @@
  */
 #pragma once
 
-namespace num_collect {
+namespace num_collect::util {
 
 /*!
  * \brief Class to add numbers using Kahan summation \cite Kahan1965.
@@ -124,4 +124,4 @@ private:
     T prev_sum_;
 };
 
-}  // namespace num_collect
+}  // namespace num_collect::util

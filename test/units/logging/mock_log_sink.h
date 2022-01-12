@@ -30,7 +30,7 @@ public:
     MAKE_MOCK5(write,
         void(std::chrono::system_clock::time_point time, std::string_view tag,
             num_collect::logging::log_level level,
-            num_collect::source_info_view source, std::string_view body),
+            num_collect::util::source_info_view source, std::string_view body),
         noexcept override);
 
     mock_log_sink() = default;

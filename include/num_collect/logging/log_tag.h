@@ -38,7 +38,7 @@ public:
      * \param[in] name Name of this tag.
      */
     explicit log_tag(std::string_view name)
-        : name_(name), hash_(hash_string(name)) {}
+        : name_(name), hash_(util::hash_string(name)) {}
 
     /*!
      * \brief Get the name of this tag.

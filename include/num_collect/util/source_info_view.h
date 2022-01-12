@@ -21,7 +21,7 @@
 
 #include <string_view>
 
-#include "num_collect/util/index_type.h"
+#include "num_collect/base/index_type.h"
 
 #if defined(NUM_COLLECT_DOCUMENTATION)
 
@@ -65,14 +65,14 @@ using source_location_type = std::source_location;
 
 #include <experimental/source_location>
 
-namespace num_collect::impl {
+namespace num_collect::util::impl {
 
 /*!
  * \brief Type of source_location.
  */
 using source_location_type = std::experimental::source_location;
 
-}  // namespace num_collect::impl
+}  // namespace num_collect::util::impl
 
 #else
 
@@ -81,7 +81,7 @@ using source_location_type = std::experimental::source_location;
 
 #endif
 
-namespace num_collect {
+namespace num_collect::util {
 
 /*!
  * \brief Class to hold information of source codes.
@@ -175,4 +175,4 @@ private:
     std::string_view function_name_;
 };
 
-}  // namespace num_collect
+}  // namespace num_collect::util

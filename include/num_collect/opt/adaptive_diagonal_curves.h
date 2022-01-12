@@ -30,11 +30,11 @@
 
 #include <Eigen/Core>
 
+#include "num_collect/base/assert.h"
+#include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/opt/impl/ternary_vector.h"
 #include "num_collect/opt/optimizer_base.h"
-#include "num_collect/util/assert.h"
-#include "num_collect/util/index_type.h"
 #include "num_collect/util/is_eigen_vector.h"
 #include "num_collect/util/safe_cast.h"
 
@@ -543,14 +543,14 @@ public:
     }
 
     /*!
-     * \copydoc num_collect::iterative_solver_base::is_stop_criteria_satisfied
+     * \copydoc num_collect::base::iterative_solver_base::is_stop_criteria_satisfied
      */
     [[nodiscard]] auto is_stop_criteria_satisfied() const -> bool {
         return evaluations() >= max_evaluations_;
     }
 
     /*!
-     * \copydoc num_collect::iterative_solver_base::configure_iteration_logger
+     * \copydoc num_collect::base::iterative_solver_base::configure_iteration_logger
      */
     void configure_iteration_logger(
         logging::iteration_logger& iteration_logger) const {
@@ -704,8 +704,8 @@ private:
             }
             ++iterations_in_current_phase_;
             if (iterations_in_current_phase_ >
-                safe_cast<index_type>((static_cast<std::size_t>(2)
-                    << safe_cast<std::size_t>(value_dict_.dim())))) {
+                util::safe_cast<index_type>((static_cast<std::size_t>(2)
+                    << util::safe_cast<std::size_t>(value_dict_.dim())))) {
                 state_ = state_type::global_last;
                 return;
             }

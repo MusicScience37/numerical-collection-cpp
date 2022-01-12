@@ -19,6 +19,8 @@
  */
 #pragma once
 
+#include "num_collect/base/index_type.h"
+#include "num_collect/base/norm.h"
 #include "num_collect/constants/one.h"
 #include "num_collect/constants/zero.h"
 #include "num_collect/integration/gauss_legendre_integrator.h"
@@ -26,8 +28,6 @@
 #include "num_collect/ode/avf/impl/avf_integrand.h"
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
 #include "num_collect/ode/simple_solver.h"
-#include "num_collect/util/index_type.h"
-#include "num_collect/util/norm.h"
 
 namespace num_collect::ode::avf {
 

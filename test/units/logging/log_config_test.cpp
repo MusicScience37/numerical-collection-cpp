@@ -21,9 +21,9 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/util/index_type.h"
 
 TEST_CASE("num_collect::logging::log_config") {
     using num_collect::logging::log_config;

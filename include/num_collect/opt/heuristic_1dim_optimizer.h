@@ -23,11 +23,11 @@
 #include <type_traits>
 #include <vector>
 
+#include "num_collect/base/assert.h"
+#include "num_collect/base/index_type.h"
 #include "num_collect/opt/golden_section_search.h"
 #include "num_collect/opt/optimizer_base.h"
 #include "num_collect/opt/sampling_optimizer.h"
-#include "num_collect/util/assert.h"
-#include "num_collect/util/index_type.h"
 
 namespace num_collect::opt {
 
@@ -84,14 +84,14 @@ public:
     void iterate() { opt2_.iterate(); }
 
     /*!
-     * \copydoc num_collect::iterative_solver_base::is_stop_criteria_satisfied
+     * \copydoc num_collect::base::iterative_solver_base::is_stop_criteria_satisfied
      */
     [[nodiscard]] auto is_stop_criteria_satisfied() const -> bool {
         return opt2_.is_stop_criteria_satisfied();
     }
 
     /*!
-     * \copydoc num_collect::iterative_solver_base::configure_iteration_logger
+     * \copydoc num_collect::base::iterative_solver_base::configure_iteration_logger
      */
     void configure_iteration_logger(
         logging::iteration_logger& iteration_logger) const {

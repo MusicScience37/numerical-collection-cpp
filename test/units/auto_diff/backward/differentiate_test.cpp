@@ -24,7 +24,7 @@
 #include <catch2/matchers/catch_matchers_floating.hpp>
 
 #include "eigen_approx.h"
-#include "num_collect/util/index_type.h"
+#include "num_collect/base/index_type.h"
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(

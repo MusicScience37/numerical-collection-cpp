@@ -119,7 +119,7 @@ public:
     }
 
     /*!
-     * \copydoc num_collect::iterative_solver_base::configure_iteration_logger
+     * \copydoc num_collect::base::iterative_solver_base::configure_iteration_logger
      */
     void configure_iteration_logger(
         logging::iteration_logger& iteration_logger) const {

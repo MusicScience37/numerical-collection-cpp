@@ -22,7 +22,7 @@
 #include <cmath>
 #include <utility>
 
-#include "num_collect/util/index_type.h"
+#include "num_collect/base/index_type.h"
 
 namespace num_collect::regularization {
 

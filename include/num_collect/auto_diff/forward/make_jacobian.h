@@ -24,7 +24,7 @@
 #include <Eigen/Core>
 
 #include "num_collect/auto_diff/forward/variable.h"
-#include "num_collect/util/assert.h"
+#include "num_collect/base/assert.h"
 
 namespace num_collect::auto_diff::forward {
 

@@ -95,7 +95,7 @@ public:
      * function for the same object.
      */
     [[nodiscard]] auto format(std::chrono::system_clock::time_point time,
-        std::string_view tag, log_level level, source_info_view source,
+        std::string_view tag, log_level level, util::source_info_view source,
         std::string_view body) -> std::string_view {
         buffer_.clear();
 

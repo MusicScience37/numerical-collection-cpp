@@ -20,6 +20,7 @@ function(add_unit_test_for MODULE_NAME)
     target_check_clang_tidy(num_collect_test_units_${MODULE_NAME}_unity)
 endfunction()
 
+add_subdirectory(base)
 add_subdirectory(util)
 add_subdirectory(logging)
 add_subdirectory(auto_diff)

@@ -25,8 +25,8 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 
+#include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_level.h"
-#include "num_collect/util/index_type.h"
 
 TEST_CASE("num_collect::logging::impl::iso8601_time") {
     using num_collect::logging::impl::iso8601_time;
@@ -62,9 +62,9 @@ TEST_CASE("num_collect::logging::impl::get_output_log_level_str") {
 
 TEST_CASE("num_collect::logging::impl::log_formatter") {
     using num_collect::index_type;
-    using num_collect::source_info_view;
     using num_collect::logging::log_level;
     using num_collect::logging::impl::log_formatter;
+    using num_collect::util::source_info_view;
 
     SECTION("format") {
         const auto time = std::chrono::system_clock::now();

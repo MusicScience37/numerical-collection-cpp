@@ -37,7 +37,7 @@ public:
      * \param[in] name Name of this tag.
      */
     constexpr explicit log_tag_view(std::string_view name) noexcept
-        : name_(name), hash_(hash_string(name)) {}
+        : name_(name), hash_(util::hash_string(name)) {}
 
     /*!
      * \brief Construct (implicit convertion).

@@ -24,11 +24,13 @@
 
 #include <fmt/format.h>
 
+#include "num_collect/base/exception.h"
 #include "num_collect/logging/log_and_throw.h"
-#include "num_collect/util/exception.h"
 #include "num_collect/util/source_info_view.h"
 
-namespace num_collect::impl {
+namespace num_collect {
+inline namespace base {
+namespace impl {
 
 /*!
  * \brief Check whether a condition is satisfied.
@@ -40,7 +42,7 @@ namespace num_collect::impl {
 template <typename ConditionResult>
 void assert_impl(ConditionResult&& condition_result,
     std::string_view condition_str,
-    source_info_view source = source_info_view()) {
+    util::source_info_view source = util::source_info_view()) {
     if (!std::forward<ConditionResult>(condition_result)) {
         fmt::memory_buffer buffer;
         fmt::format_to(std::back_inserter(buffer),
@@ -50,7 +52,9 @@ void assert_impl(ConditionResult&& condition_result,
     }
 }
 
-}  // namespace num_collect::impl
+}  // namespace impl
+}  // namespace base
+}  // namespace num_collect
 
 #ifdef NUM_COLLECT_DOCUMENTATION
 /*!
@@ -59,11 +63,11 @@ void assert_impl(ConditionResult&& condition_result,
  * \param[in] CONDITION Condition.
  */
 #define NUM_COLLECT_ASSERT(CONDITION) \
-    ::num_collect::impl::assert_impl((CONDITION), (#CONDITION))
+    ::num_collect::base::impl::assert_impl((CONDITION), (#CONDITION))
 #else
 // NOLINTNEXTLINE
 #define NUM_COLLECT_ASSERT(CONDITION) \
-    ::num_collect::impl::assert_impl((CONDITION), (#CONDITION))
+    ::num_collect::base::impl::assert_impl((CONDITION), (#CONDITION))
 #endif
 
 #ifdef NUM_COLLECT_DOCUMENTATION

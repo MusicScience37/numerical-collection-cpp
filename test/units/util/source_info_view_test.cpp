@@ -22,19 +22,20 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 
-static auto source_info_view_test1(
-    num_collect::source_info_view info = num_collect::source_info_view())
-    -> num_collect::source_info_view {
+static auto source_info_view_test1(num_collect::util::source_info_view info =
+                                       num_collect::util::source_info_view())
+    -> num_collect::util::source_info_view {
     return info;
 }
 
-static auto source_info_view_test2() -> num_collect::source_info_view {
+static auto source_info_view_test2() -> num_collect::util::source_info_view {
     return source_info_view_test1();
 }
 
 TEST_CASE("num_collect::source_info_view") {
     SECTION("get information") {
-        const num_collect::source_info_view info = source_info_view_test2();
+        const num_collect::util::source_info_view info =
+            source_info_view_test2();
 
 #if NUM_COLLECT_HAS_SOURCE_LOCATION
         CHECK_THAT(std::string(info.file_path()),

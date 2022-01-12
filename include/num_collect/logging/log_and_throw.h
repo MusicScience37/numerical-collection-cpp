@@ -34,8 +34,8 @@ namespace num_collect::logging {
  * \param[in] source Information of the source code.
  */
 template <typename Exception>
-[[noreturn]] void log_and_throw(
-    std::string_view message, source_info_view source = source_info_view()) {
+[[noreturn]] void log_and_throw(std::string_view message,
+    util::source_info_view source = util::source_info_view()) {
     logger().error(source)(message);
     throw Exception(message);
 }

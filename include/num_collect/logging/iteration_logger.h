@@ -28,10 +28,10 @@
 
 #include <fmt/format.h>
 
-#include "num_collect/concepts/floating_point.h"
+#include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/exception.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
-#include "num_collect/util/exception.h"
 #include "num_collect/util/source_info_view.h"
 
 namespace num_collect::logging {
@@ -222,7 +222,7 @@ private:
  * \tparam Value Type of the value.
  * \tparam Func Type of the function to get the value.
  */
-template <concepts::floating_point Value,
+template <concepts::real_scalar Value,
     iteration_logger_item_function<Value> Function>
 class iteration_logger_item<Value, Function> final
     : public iteration_logger_item_base {
@@ -458,8 +458,8 @@ public:
      *
      * \note This will write logs taking period configurations into account.
      */
-    void write_iteration_to(
-        const logger& l, source_info_view source = source_info_view()) {
+    void write_iteration_to(const logger& l,
+        util::source_info_view source = util::source_info_view()) {
         if (!l.config().write_iterations()) {
             return;
         }
@@ -491,8 +491,8 @@ public:
      * \param[in] l Logger.
      * \param[in] source Information of the source code.
      */
-    void write_summary_to(
-        const logger& l, source_info_view source = source_info_view()) {
+    void write_summary_to(const logger& l,
+        util::source_info_view source = util::source_info_view()) {
         if (!l.config().write_summary()) {
             return;
         }
