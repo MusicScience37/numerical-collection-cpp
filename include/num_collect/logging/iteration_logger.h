@@ -28,8 +28,11 @@
 
 #include <fmt/format.h>
 
+#include "num_collect/base/concepts/formattable.h"
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/exception.h"
+#include "num_collect/logging/concepts/formattable_real_scalar.h"
+#include "num_collect/logging/concepts/getter_of.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/util/source_info_view.h"
@@ -100,25 +103,14 @@ protected:
 };
 
 /*!
- * \brief Concept of functions used in
- * num_collect::logging::iteration_logger_item class.
- *
- * \tparam Function
- * \tparam Value
- */
-template <typename Function, typename Value>
-concept iteration_logger_item_function = requires(Function& func) {
-    { func() } -> std::convertible_to<Value>;
-};
-
-/*!
  * \brief Class of logging items in num_collect::logging::iteration_logger
  * class.
  *
  * \tparam Value Type of the value.
  * \tparam Func Type of the function to get the value.
  */
-template <typename Value, iteration_logger_item_function<Value> Function>
+template <base::concepts::formattable Value,
+    concepts::getter_of<Value> Function>
 class iteration_logger_item final : public iteration_logger_item_base {
 public:
     /*!
@@ -128,7 +120,7 @@ public:
      * \param[in] label Label.
      * \param[in] function Function to to get the value.
      */
-    template <iteration_logger_item_function<Value> InputFunction>
+    template <concepts::getter_of<Value> InputFunction>
     iteration_logger_item(std::string label, InputFunction&& function)
         : label_(std::move(label)),
           function_(std::forward<InputFunction>(function)) {}
@@ -222,8 +214,8 @@ private:
  * \tparam Value Type of the value.
  * \tparam Func Type of the function to get the value.
  */
-template <concepts::real_scalar Value,
-    iteration_logger_item_function<Value> Function>
+template <concepts::formattable_real_scalar Value,
+    concepts::getter_of<Value> Function>
 class iteration_logger_item<Value, Function> final
     : public iteration_logger_item_base {
 public:
@@ -234,7 +226,7 @@ public:
      * \param[in] label Label.
      * \param[in] function Function to to get the value.
      */
-    template <iteration_logger_item_function<Value> InputFunction>
+    template <concepts::getter_of<Value> InputFunction>
     iteration_logger_item(std::string label, InputFunction&& function)
         : label_(std::move(label)),
           function_(std::forward<InputFunction>(function)) {}
@@ -381,8 +373,8 @@ public:
      * \param[in] function Function to to get the value.
      * \return Item.
      */
-    template <typename Value,
-        iteration_logger_item_function<Value> InputFunction>
+    template <base::concepts::formattable Value,
+        concepts::getter_of<Value> InputFunction>
     auto append(std::string label, InputFunction&& function) -> std::shared_ptr<
         iteration_logger_item<Value, std::decay_t<InputFunction>>> {
         auto item = std::make_shared<
@@ -402,7 +394,7 @@ public:
      *
      * \note This will hold the reference to the value inside this object.
      */
-    template <typename Value>
+    template <base::concepts::formattable Value>
     auto append(std::string label, const Value& value) -> std::shared_ptr<
         iteration_logger_item<Value, std::function<const Value&()>>> {
         auto item = std::make_shared<

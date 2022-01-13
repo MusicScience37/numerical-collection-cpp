@@ -24,6 +24,7 @@
 
 #include <fmt/format.h>
 
+#include "num_collect/base/concepts/assertion_condition.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/logging/log_and_throw.h"
 #include "num_collect/util/source_info_view.h"
@@ -39,7 +40,7 @@ namespace impl {
  * \param[in] condition_str String expression of the condition.
  * \param[in] source Information of the source code.
  */
-template <typename ConditionResult>
+template <concepts::assertion_condition ConditionResult>
 void assert_impl(ConditionResult&& condition_result,
     std::string_view condition_str,
     util::source_info_view source = util::source_info_view()) {

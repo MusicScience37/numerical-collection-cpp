@@ -1,3 +1,4 @@
+#include "concepts/getter_of_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/log_formatter_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "iteration_logger_test.cpp"    // NOLINT(bugprone-suspicious-include)
 #include "log_config_test.cpp"          // NOLINT(bugprone-suspicious-include)
