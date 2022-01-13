@@ -53,8 +53,21 @@ namespace num_collect {
 
     }  // namespace base
 
+    /*!
+     * \dir num_collect/util
+     * \brief Directory of utility classes.
+     */
+
     //! Namespace of utilities.
     namespace util {
+
+        /*!
+         * \dir num_collect/util/concepts
+         * \brief Directory of C++ concepts.
+         */
+
+        //! Namespace of C++ concepts.
+        namespace concepts {}
 
         //! Namespace of internal implementations.
         namespace impl {}
@@ -68,6 +81,14 @@ namespace num_collect {
 
     //! Namespace of logging.
     namespace logging {
+
+        /*!
+         * \dir num_collect/logging/concepts
+         * \brief Directory of C++ concepts.
+         */
+
+        //! Namespace of C++ concepts.
+        namespace concepts {}
 
         /*!
          * \dir num_collect/logging/impl

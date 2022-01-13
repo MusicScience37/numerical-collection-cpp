@@ -1,4 +1,5 @@
 set(SOURCE_FILES
+    concepts/getter_of_test.cpp
     impl/log_formatter_test.cpp
     iteration_logger_test.cpp
     log_config_test.cpp
