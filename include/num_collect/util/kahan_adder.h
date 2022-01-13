@@ -19,6 +19,8 @@
  */
 #pragma once
 
+#include "num_collect/util/concepts/kahan_addable.h"
+
 namespace num_collect::util {
 
 /*!
@@ -26,7 +28,7 @@ namespace num_collect::util {
  *
  * \tparam T Type of numbers.
  */
-template <typename T>
+template <concepts::kahan_addable T>
 class kahan_adder {
 public:
     /*!
