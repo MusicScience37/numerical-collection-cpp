@@ -25,18 +25,21 @@
 
 #include <Eigen/Core>
 
+#include "num_collect/base/concepts/dense_matrix.h"
+#include "num_collect/base/concepts/real_scalar.h"
+
 namespace num_collect {
 inline namespace base {
 
 /*!
  * \brief Calculate norm of a matrix.
  *
- * \tparam Derived Matrix type.
+ * \tparam Matrix Matrix type.
  * \param[in] matrix Matrix.
  * \return Norm.
  */
-template <typename Derived>
-auto norm(const Eigen::MatrixBase<Derived>& matrix) {
+template <concepts::dense_matrix Matrix>
+auto norm(const Matrix& matrix) {
     return matrix.norm();
 }
 
@@ -47,9 +50,8 @@ auto norm(const Eigen::MatrixBase<Derived>& matrix) {
  * \param[in] val Number.
  * \return Absolute value.
  */
-template <typename T,
-    std::enable_if_t<std::is_floating_point_v<T>, void*> = nullptr>
-auto norm(T val) -> T {
+template <concepts::real_scalar T>
+auto norm(const T& val) -> T {
     using std::abs;
     return abs(val);
 }
@@ -61,7 +63,7 @@ auto norm(T val) -> T {
  * \param[in] val Number.
  * \return Absolute value.
  */
-template <typename T>
+template <concepts::real_scalar T>
 auto norm(const std::complex<T>& val) -> T {
     return std::abs(val);
 }

@@ -25,6 +25,8 @@
 
 #include <Eigen/Core>
 
+#include "num_collect/base/concepts/dense_matrix.h"
+#include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/index_type.h"
 
 namespace num_collect {
@@ -33,12 +35,12 @@ inline namespace base {
 /*!
  * \brief Get the size.
  *
- * \tparam Derived Type of matrix.
+ * \tparam Matrix Type of matrix.
  * \param[in] matrix Matrix.
  * \return Size.
  */
-template <typename Derived>
-auto get_size(const Eigen::MatrixBase<Derived>& matrix) -> index_type {
+template <concepts::dense_matrix Matrix>
+auto get_size(const Matrix& matrix) -> index_type {
     return matrix.size();
 }
 
@@ -49,8 +51,7 @@ auto get_size(const Eigen::MatrixBase<Derived>& matrix) -> index_type {
  * \param[in] val Value.
  * \return Size.
  */
-template <typename T,
-    std::enable_if_t<std::is_floating_point_v<T>, void*> = nullptr>
+template <concepts::real_scalar T>
 auto get_size(const T& val) -> index_type {
     (void)val;
     return 1;
@@ -63,7 +64,7 @@ auto get_size(const T& val) -> index_type {
  * \param[in] val Value.
  * \return Size.
  */
-template <typename T>
+template <concepts::real_scalar T>
 auto get_size(const std::complex<T>& val) -> index_type {
     (void)val;
     return 1;
