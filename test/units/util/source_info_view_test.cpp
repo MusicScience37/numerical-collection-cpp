@@ -37,15 +37,15 @@ TEST_CASE("num_collect::source_info_view") {
         const num_collect::util::source_info_view info =
             source_info_view_test2();
 
-#if NUM_COLLECT_HAS_SOURCE_LOCATION
+#if NUM_COLLECT_HAS_BUILTIN_FILE
         CHECK_THAT(std::string(info.file_path()),
             Catch::Matchers::Contains("source_info_view_test.cpp"));
-        CHECK(info.line() == 32);
+#endif
+        CHECK(info.line() >= 0);
         CHECK(info.column() >= 0);
+#if NUM_COLLECT_HAS_BUILTIN_FUNCTION
         CHECK_THAT(std::string(info.function_name()),
             Catch::Matchers::Contains("source_info_view_test2"));
-#else
-        (void)info;
 #endif
     }
 }
