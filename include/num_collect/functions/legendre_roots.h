@@ -26,6 +26,7 @@
 #include <Eigen/Core>
 
 #include "num_collect/base/assert.h"
+#include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/constants/pi.h"
 #include "num_collect/constants/zero.h"
@@ -42,7 +43,7 @@ namespace impl {
  *
  * \tparam T Type of variable.
  */
-template <typename T>
+template <base::concepts::real_scalar T>
 class legendre_for_newton {
 public:
     //! Type of variables.
@@ -105,7 +106,7 @@ private:
  *
  * \tparam T Type of variables.
  */
-template <typename T>
+template <base::concepts::real_scalar T>
 class legendre_roots {
 public:
     //! Type of variables.

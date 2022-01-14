@@ -39,6 +39,7 @@ Modules
         interp ..> util
 
         component numbers
+        numbers ..> base
         numbers ..> util
 
         component multi_double
@@ -50,7 +51,7 @@ Modules
         roots ..> Eigen
 
         component functions
-        functions ..> util
+        functions ..> base
         functions ..> constants
         functions ..> roots
 
