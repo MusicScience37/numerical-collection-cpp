@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <concepts>
 #include <cstdint>
 #include <limits>
 #include <type_traits>
@@ -35,12 +36,10 @@ namespace num_collect::numbers {
  * \tparam Digit Type of digits.
  * \tparam DigitCalc Type of digits for calculation.
  */
-template <index_type Radix, typename Digit = std::uint8_t,
-    typename DigitCalc = std::int32_t>
+template <index_type Radix, std::integral Digit = std::uint8_t,
+    std::signed_integral DigitCalc = std::int32_t>
 class custom_float {
 public:
-    static_assert(std::is_signed_v<DigitCalc>);
-
     static_assert(std::numeric_limits<Digit>::max() > Radix);
     static_assert(std::numeric_limits<DigitCalc>::max() > Radix * Radix);
     static_assert(std::numeric_limits<DigitCalc>::min() < -Radix * Radix);
