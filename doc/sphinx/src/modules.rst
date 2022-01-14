@@ -56,6 +56,7 @@ Modules
         functions ..> roots
 
         component integration
+        integration ..> base
         integration ..> util
         integration ..> constants
         integration ..> functions
