@@ -10,7 +10,7 @@ class NumCollectConan(ConanFile):
     license = "Apache-2.0"
     author = "Kenta Kabashima (kenta_program37@hotmail.co.jp)"
     topics = ("numerical-analysis")
-    settings = None
+    settings = "os", "compiler", "build_type", "arch"
     options = {
         "requirements_for_tests": [True, False],
         "stack_traces_support": [True, False],
@@ -21,7 +21,7 @@ class NumCollectConan(ConanFile):
     }
     exports_sources = "include/*"
     no_copy_source = True
-    generators = "cmake_find_package"
+    generators = "cmake", "cmake_find_package"
 
     def requirements(self):
         self.requires("fmt/8.1.1")
