@@ -165,7 +165,7 @@ STAT_BENCH_CASE_F(multi_quadratic_function_fixture,
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(multi_quadratic_function_fixture,
-    "opt_multi_quadratic_function", "conjugate_gradient") {
+    "opt_multi_quadratic_function", "dividing_rectangles") {
     STAT_BENCH_MEASURE() {
         auto optimizer = num_collect::opt::dividing_rectangles<
             num_prob_collect::opt::multi_quadratic_function>();
