@@ -38,6 +38,8 @@
     "Kenta",
     "Kronrod",
     "Kutta",
+    "libc",
+    "libc++",
     "libcxx",
     "libstdc",
     "mkdir",
