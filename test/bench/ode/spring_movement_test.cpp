@@ -17,10 +17,9 @@
  * \file
  * \brief Test of solving ODE of spring movement.
  */
-#include <celero/Celero.h>
+#include <stat_bench/bench/invocation_context.h>
+#include <stat_bench/benchmark_macros.h>
 
-#include "log_energy_change.h"
-#include "log_error_udm.h"
 #include "num_collect/ode/avf/avf2_formula.h"
 #include "num_collect/ode/avf/avf3_formula.h"
 #include "num_collect/ode/avf/avf4_formula.h"
@@ -32,12 +31,10 @@
 #include "num_collect/ode/runge_kutta/tanaka1_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka2_formula.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
-#include "steps_udm.h"
 
-// NOLINTNEXTLINE: external library
-CELERO_MAIN
+STAT_BENCH_MAIN
 
-class spring_movement_fixture : public celero::TestFixture {
+class spring_movement_fixture : public stat_bench::FixtureBase {
 public:
     spring_movement_fixture() = default;
 
@@ -57,104 +54,124 @@ public:
         constexpr double end_time = 10.0;
 #endif
         solver.solve_till(end_time);
-        steps_->addValue(solver.steps());
+        steps_ = solver.steps();
 
         const Eigen::Vector2d reference =
             Eigen::Vector2d(std::cos(end_time), std::sin(end_time));
-        log_error_->addValue(
-            std::log10((solver.variable() - reference).norm()));
+        error_ = (solver.variable() - reference).norm();
 
         const double init_energy = calc_energy(init_var);
         const double energy = calc_energy(solver.variable());
-        log_energy_change_->addValue(
-            std::log10(std::abs(energy - init_energy)));
+        energy_change_rate_ = std::abs(energy - init_energy) / init_energy;
     }
 
-    [[nodiscard]] auto getUserDefinedMeasurements() const -> std::vector<
-        std::shared_ptr<celero::UserDefinedMeasurement>> override {
-        return {steps_, log_error_, log_energy_change_};
+    void tear_down(stat_bench::bench::InvocationContext& context) override {
+        context.add_custom_output("steps", static_cast<double>(steps_));
+        context.add_custom_output("error", error_);
+        context.add_custom_output("energy_change_rate", energy_change_rate_);
     }
 
 private:
-    std::shared_ptr<steps_udm> steps_{std::make_shared<steps_udm>()};
-    std::shared_ptr<log_error_udm> log_error_{
-        std::make_shared<log_error_udm>()};
-    std::shared_ptr<log_energy_change> log_energy_change_{
-        std::make_shared<log_energy_change>()};
+    num_collect::index_type steps_{};
+    double error_{};
+    double energy_change_rate_{};
 };
 
 using problem_type = num_prob_collect::ode::spring_movement_problem;
 
-// NOLINTNEXTLINE: external library
-BASELINE_F(ode_rk_spring_movement, rkf45, spring_movement_fixture, 30, 100) {
-    using solver_type =
-        num_collect::ode::runge_kutta::rkf45_solver<problem_type>;
-    auto solver = solver_type(problem_type());
-    perform(solver);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(spring_movement_fixture, "ode_rk_spring_movement", "rkf45") {
+    STAT_BENCH_MEASURE() {
+        using solver_type =
+            num_collect::ode::runge_kutta::rkf45_solver<problem_type>;
+        auto solver = solver_type(problem_type());
+        perform(solver);
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(ode_rk_spring_movement, tanaka1, spring_movement_fixture, 30, 10) {
-    using solver_type =
-        num_collect::ode::runge_kutta::tanaka1_solver<problem_type>;
-    auto solver = solver_type(problem_type());
-    perform(solver);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(
+    spring_movement_fixture, "ode_rk_spring_movement", "tanaka1") {
+    STAT_BENCH_MEASURE() {
+        using solver_type =
+            num_collect::ode::runge_kutta::tanaka1_solver<problem_type>;
+        auto solver = solver_type(problem_type());
+        perform(solver);
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(ode_rk_spring_movement, tanaka2, spring_movement_fixture, 30, 100) {
-    using solver_type =
-        num_collect::ode::runge_kutta::tanaka2_solver<problem_type>;
-    auto solver = solver_type(problem_type());
-    perform(solver);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(
+    spring_movement_fixture, "ode_rk_spring_movement", "tanaka2") {
+    STAT_BENCH_MEASURE() {
+        using solver_type =
+            num_collect::ode::runge_kutta::tanaka2_solver<problem_type>;
+        auto solver = solver_type(problem_type());
+        perform(solver);
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(ode_rk_spring_movement, ros3w, spring_movement_fixture, 30, 100) {
-    using solver_type =
-        num_collect::ode::runge_kutta::ros3w_solver<problem_type>;
-    auto solver = solver_type(problem_type());
-    perform(solver);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(spring_movement_fixture, "ode_rk_spring_movement", "ros3w") {
+    STAT_BENCH_MEASURE() {
+        using solver_type =
+            num_collect::ode::runge_kutta::ros3w_solver<problem_type>;
+        auto solver = solver_type(problem_type());
+        perform(solver);
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(
-    ode_rk_spring_movement, ros34pw3, spring_movement_fixture, 30, 100) {
-    using solver_type =
-        num_collect::ode::runge_kutta::ros34pw3_solver<problem_type>;
-    auto solver = solver_type(problem_type());
-    perform(solver);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(
+    spring_movement_fixture, "ode_rk_spring_movement", "ros34pw3") {
+    STAT_BENCH_MEASURE() {
+        using solver_type =
+            num_collect::ode::runge_kutta::ros34pw3_solver<problem_type>;
+        auto solver = solver_type(problem_type());
+        perform(solver);
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(
-    ode_rk_spring_movement, rk4_auto, spring_movement_fixture, 30, 100) {
-    using solver_type = num_collect::ode::non_embedded_auto_solver<
-        num_collect::ode::runge_kutta::rk4_formula<problem_type>>;
-    auto solver = solver_type(problem_type());
-    perform(solver);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(
+    spring_movement_fixture, "ode_rk_spring_movement", "rk4_auto") {
+    STAT_BENCH_MEASURE() {
+        using solver_type = num_collect::ode::non_embedded_auto_solver<
+            num_collect::ode::runge_kutta::rk4_formula<problem_type>>;
+        auto solver = solver_type(problem_type());
+        perform(solver);
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(
-    ode_rk_spring_movement, avf2_auto, spring_movement_fixture, 30, 100) {
-    using solver_type = num_collect::ode::avf::avf2_auto_solver<problem_type>;
-    auto solver = solver_type(problem_type());
-    perform(solver);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(
+    spring_movement_fixture, "ode_rk_spring_movement", "avf2_auto") {
+    STAT_BENCH_MEASURE() {
+        using solver_type =
+            num_collect::ode::avf::avf2_auto_solver<problem_type>;
+        auto solver = solver_type(problem_type());
+        perform(solver);
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(
-    ode_rk_spring_movement, avf3_auto, spring_movement_fixture, 30, 100) {
-    using solver_type = num_collect::ode::avf::avf3_auto_solver<problem_type>;
-    auto solver = solver_type(problem_type());
-    perform(solver);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(
+    spring_movement_fixture, "ode_rk_spring_movement", "avf3_auto") {
+    STAT_BENCH_MEASURE() {
+        using solver_type =
+            num_collect::ode::avf::avf3_auto_solver<problem_type>;
+        auto solver = solver_type(problem_type());
+        perform(solver);
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(
-    ode_rk_spring_movement, avf4_auto, spring_movement_fixture, 30, 100) {
-    using solver_type = num_collect::ode::avf::avf4_auto_solver<problem_type>;
-    auto solver = solver_type(problem_type());
-    perform(solver);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(
+    spring_movement_fixture, "ode_rk_spring_movement", "avf4_auto") {
+    STAT_BENCH_MEASURE() {
+        using solver_type =
+            num_collect::ode::avf::avf4_auto_solver<problem_type>;
+        auto solver = solver_type(problem_type());
+        perform(solver);
+    };
 }
