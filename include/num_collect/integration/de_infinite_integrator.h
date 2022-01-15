@@ -20,10 +20,10 @@
 #pragma once
 
 #include <cmath>
-#include <concepts>
 #include <type_traits>
 
 #include "num_collect/base/assert.h"
+#include "num_collect/base/concepts/invocable.h"
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/constants/half.h"
@@ -58,7 +58,7 @@ public:
      * \param[in] function Function.
      * \return Result.
      */
-    template <std::invocable<variable_type> Function,
+    template <base::concepts::invocable<variable_type> Function,
         typename Result =
             std::decay_t<std::invoke_result_t<Function, variable_type>>>
     [[nodiscard]] auto integrate(const Function& function) const -> Result {
@@ -91,7 +91,7 @@ public:
      * \param[in] function Function.
      * \return Result.
      */
-    template <std::invocable<variable_type> Function,
+    template <base::concepts::invocable<variable_type> Function,
         typename Result =
             std::decay_t<std::invoke_result_t<Function, variable_type>>>
     [[nodiscard]] auto operator()(const Function& function) const -> Result {

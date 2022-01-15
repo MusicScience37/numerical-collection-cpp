@@ -15,25 +15,44 @@
  */
 /*!
  * \file
- * \brief Definition of assertion_condition concept.
+ * \brief Definition of signed_integral concept.
  */
 #pragma once
 
-#include <utility>
+#include <type_traits>
+
+#include "num_collect/base/concepts/integral.h"
 
 namespace num_collect {
 inline namespace base {
 namespace concepts {
 
 /*!
- * \brief Concept of types usable as conditions in assertions.
+ * \brief Class to check whether a type is signed.
+ *
+ * \tparam T Type to be checked.
+ *
+ * \note For user-defined types, write specializations of
+ * this class.
+ */
+template <typename T>
+struct is_signed : public std::is_signed<T> {};
+
+/*!
+ * \brief Get whether a type is signed.
+ *
+ * \tparam T Type to be checked.
+ */
+template <typename T>
+constexpr bool is_signed_v = is_signed<T>::value;
+
+/*!
+ * \brief Concept of signed ingegers.
  *
  * \tparam T Type.
  */
 template <typename T>
-concept assertion_condition = requires(T&& obj) {
-    {(!std::forward<T>(obj)) ? 0 : 1};
-};
+concept signed_integral = is_integral_v<T> && is_signed_v<T>;
 
 }  // namespace concepts
 }  // namespace base

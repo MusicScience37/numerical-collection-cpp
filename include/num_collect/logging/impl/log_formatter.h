@@ -59,7 +59,7 @@ public:
      * \param[in] out Output iterator.
      * \return Output iterator after formatting.
      */
-    template <std::output_iterator<char> Outputiterator>
+    template <typename Outputiterator>
     [[nodiscard]] auto format_to(Outputiterator out) const -> Outputiterator {
         const auto time_sec =
             std::chrono::time_point_cast<std::chrono::seconds>(time_);
