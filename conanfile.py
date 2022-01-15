@@ -30,10 +30,10 @@ class NumCollectConan(ConanFile):
     def build_requirements(self):
         if self.options.requirements_for_tests:
             self.build_requires(
-                "catch2/3.0.0@MusicScience37+conan-extra-packages/stable")
+                "catch2/3.0.0pre4@MusicScience37+conan-extra-packages/stable")
             self.build_requires("trompeloeil/42")
             self.build_requires("celero/2.8.2")
-            self.build_requires("pybind11/2.7.1")
+            self.build_requires("pybind11/2.8.1")
 
     def package(self):
         self.copy("*.h")

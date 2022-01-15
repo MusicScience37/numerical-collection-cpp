@@ -20,7 +20,7 @@
 // clang-format off
 // These header must be included in this order.
 #include <catch2/interfaces/catch_interfaces_reporter.hpp>
-#include <catch2/catch_reporter_registrars.hpp>
+#include <catch2/reporters/catch_reporter_registrars.hpp>
 // clang-format on
 
 #include <memory>

@@ -36,8 +36,8 @@ TEST_CASE("NUM_COLLECT_BUILTIN_FILE") {
     SECTION("get") {
         const std::string result = call_num_collect_builtin_file();
 #if NUM_COLLECT_HAS_BUILTIN_FILE
-        CHECK_THAT(
-            result, Catch::Matchers::Contains("compiler_builtins_test.cpp"));
+        CHECK_THAT(result,
+            Catch::Matchers::ContainsSubstring("compiler_builtins_test.cpp"));
 #else
         (void)result;
 #endif
