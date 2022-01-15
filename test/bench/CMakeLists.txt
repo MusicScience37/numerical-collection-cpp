@@ -16,7 +16,7 @@ function(target_add_to_benchmark TARGET)
     if(NUM_COLLECT_TEST_BENCHMARKS)
         add_test(
             NAME ${TARGET}
-            COMMAND ${TARGET} -t ${TARGET}.csv
+            COMMAND ${TARGET} --plot "${TARGET}/" --json "${TARGET}/result.json"
             WORKING_DIRECTORY ${NUM_COLLECT_BENCH_DIR})
     endif()
 endfunction()
