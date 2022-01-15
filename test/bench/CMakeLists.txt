@@ -25,8 +25,7 @@ add_subdirectory(util)
 add_subdirectory(auto_diff)
 add_subdirectory(opt)
 add_subdirectory(multi_double)
-
-# add_subdirectory(integration)
+add_subdirectory(integration)
 
 # add_subdirectory(ode)
 
