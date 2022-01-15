@@ -69,6 +69,11 @@ namespace num_collect {
         //! Namespace of C++ concepts.
         namespace concepts {}
 
+        /*!
+         * \dir num_collect/util/impl
+         * \brief Directory of implementation.
+         */
+
         //! Namespace of internal implementations.
         namespace impl {}
 

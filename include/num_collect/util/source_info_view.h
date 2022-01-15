@@ -22,64 +22,7 @@
 #include <string_view>
 
 #include "num_collect/base/index_type.h"
-
-#if defined(NUM_COLLECT_DOCUMENTATION)
-
-/*!
- * \brief Whether the compiler has source_location class in C++ standard
- * library. (Value is compiler-dependent.)
- */
-#define NUM_COLLECT_HAS_SOURCE_LOCATION 1
-
-#include <source_location>
-
-namespace num_collect::impl {
-
-/*!
- * \brief Type of source_location.
- */
-using source_location_type = std::source_location;
-
-}  // namespace num_collect::impl
-
-#elif __has_include(<source_location>)
-
-// NOLINTNEXTLINE
-#define NUM_COLLECT_HAS_SOURCE_LOCATION 1
-
-#include <source_location>
-
-namespace num_collect::impl {
-
-/*!
- * \brief Type of source_location.
- */
-using source_location_type = std::source_location;
-
-}  // namespace num_collect::impl
-
-#elif __has_include(<experimental/source_location>)
-
-// NOLINTNEXTLINE
-#define NUM_COLLECT_HAS_SOURCE_LOCATION 1
-
-#include <experimental/source_location>
-
-namespace num_collect::util::impl {
-
-/*!
- * \brief Type of source_location.
- */
-using source_location_type = std::experimental::source_location;
-
-}  // namespace num_collect::util::impl
-
-#else
-
-// NOLINTNEXTLINE
-#define NUM_COLLECT_HAS_SOURCE_LOCATION 0
-
-#endif
+#include "num_collect/util/impl/compiler_builtins.h"
 
 namespace num_collect::util {
 
@@ -91,27 +34,6 @@ namespace num_collect::util {
  */
 class source_info_view {
 public:
-#if defined(NUM_COLLECT_DOCUMENTATION) || NUM_COLLECT_HAS_SOURCE_LOCATION
-    /*!
-     * \brief Constructor
-     *
-     * \param[in] location source_location object.
-     */
-    explicit constexpr source_info_view(
-        impl::source_location_type location =
-            impl::source_location_type::current())
-        : source_info_view(location.file_name(),
-              static_cast<index_type>(location.line()),
-              static_cast<index_type>(location.column()),
-              location.function_name()) {}
-#else
-    /*!
-     * \brief Constructor
-     */
-    constexpr source_info_view()
-        : source_info_view("unknown", 0, 0, "unknown") {}
-#endif
-
     /*!
      * \brief Construct.
      *
@@ -120,8 +42,11 @@ public:
      * \param[in] column Column number.
      * \param[in] function_name Function name.
      */
-    constexpr source_info_view(std::string_view file_path, index_type line,
-        index_type column, std::string_view function_name)
+    constexpr explicit source_info_view(
+        std::string_view file_path = NUM_COLLECT_BUILTIN_FILE(),
+        index_type line = NUM_COLLECT_BUILTIN_LINE(),
+        index_type column = NUM_COLLECT_BUILTIN_COLUMN(),
+        std::string_view function_name = NUM_COLLECT_BUILTIN_FUNCTION())
         : file_path_(file_path),
           line_(line),
           column_(column),

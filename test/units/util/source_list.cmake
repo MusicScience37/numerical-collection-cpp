@@ -2,6 +2,7 @@ set(SOURCE_FILES
     bidirectional_vector_test.cpp
     concepts/kahan_addable_test.cpp
     hash_string_test.cpp
+    impl/compiler_builtins_test.cpp
     is_eigen_matrix_test.cpp
     is_eigen_vector_test.cpp
     kahan_adder_test.cpp
