@@ -27,5 +27,4 @@ add_subdirectory(opt)
 add_subdirectory(multi_double)
 add_subdirectory(integration)
 add_subdirectory(ode)
-
-# add_subdirectory(regularization)
+add_subdirectory(regularization)
