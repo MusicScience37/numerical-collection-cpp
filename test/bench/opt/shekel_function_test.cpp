@@ -19,39 +19,27 @@
  */
 #include "num_prob_collect/opt/shekel_function.h"
 
-#include <celero/Celero.h>
+#include <stat_bench/bench/invocation_context.h>
+#include <stat_bench/benchmark_macros.h>
 
-#include "evaluations_udm.h"
-#include "iterations_udm.h"
+#include "num_collect/base/exception.h"
 #include "num_collect/opt/adaptive_diagonal_curves.h"
 #include "num_collect/opt/dividing_rectangles.h"
 
-// NOLINTNEXTLINE: external library
-CELERO_MAIN
+STAT_BENCH_MAIN
 
-constexpr std::int64_t samples = 30;
-#ifndef NDEBUG
-constexpr std::int64_t iterations = 1;
-#else
-constexpr std::int64_t iterations = 10;
-#endif
-
-class shekel_function_fixture : public celero::TestFixture {
+class shekel_function_fixture : public stat_bench::FixtureBase {
 public:
-    shekel_function_fixture() = default;
-
-    [[nodiscard]] auto getExperimentValues() const
-        -> std::vector<celero::TestFixture::ExperimentValue> override {
-        std::vector<celero::TestFixture::ExperimentValue> problem_space;
-        problem_space.emplace_back(5, iterations);   // NOLINT
-        problem_space.emplace_back(7, iterations);   // NOLINT
-        problem_space.emplace_back(10, iterations);  // NOLINT
-        return problem_space;
+    shekel_function_fixture() {
+        add_param<int>("num_terms")
+            ->add(5)   // NOLINT
+            ->add(7)   // NOLINT
+            ->add(10)  // NOLINT
+            ;
     }
 
-    void setUp(
-        const celero::TestFixture::ExperimentValue& experiment_value) override {
-        num_terms_ = static_cast<int>(experiment_value.Value);
+    void setup(stat_bench::bench::InvocationContext& context) override {
+        num_terms_ = context.get_param<int>("num_terms");
     }
 
     [[nodiscard]] auto function() const
@@ -78,54 +66,57 @@ public:
     void test_optimizer(Optimizer& optimizer) {
         constexpr double tol_value = 1e-4;
         const auto value_bound = minimum_value() + tol_value;
+#ifndef NDEBUG
+        constexpr num_collect::index_type max_evaluations = 1000;
+#else
         constexpr num_collect::index_type max_evaluations = 100000;
-        if (is_failure_) {
-            return;
-        }
+#endif
         while (optimizer.opt_value() > value_bound) {
             if (optimizer.evaluations() >= max_evaluations) {
-                is_failure_ = true;
+                throw num_collect::algorithm_failure("Failed to converge.");
                 return;
             }
             optimizer.iterate();
         }
-        iterations_->addValue(optimizer.iterations());
-        evaluations_->addValue(optimizer.evaluations());
+        iterations_ = optimizer.iterations();
+        evaluations_ = optimizer.evaluations();
     }
 
-    [[nodiscard]] auto getUserDefinedMeasurements() const -> std::vector<
-        std::shared_ptr<celero::UserDefinedMeasurement>> override {
-        return {iterations_, evaluations_};
+    void tear_down(stat_bench::bench::InvocationContext& context) override {
+        context.add_custom_output(
+            "iterations", static_cast<double>(iterations_));
+        context.add_custom_output(
+            "evaluations", static_cast<double>(evaluations_));
     }
 
 private:
-    std::shared_ptr<iterations_udm> iterations_{
-        std::make_shared<iterations_udm>()};
+    num_collect::index_type iterations_{};
 
-    std::shared_ptr<evaluations_udm> evaluations_{
-        std::make_shared<evaluations_udm>()};
+    num_collect::index_type evaluations_{};
 
     int num_terms_{};
-
-    bool is_failure_{false};
 };
 
-// NOLINTNEXTLINE: external library
-BASELINE_F(opt_shekel_function, dividing_rectangles, shekel_function_fixture,
-    samples, iterations) {
-    auto optimizer = num_collect::opt::dividing_rectangles<
-        num_prob_collect::opt::shekel_function>(this->function());
-    const auto [lower, upper] = shekel_function_fixture::search_region();
-    optimizer.init(lower, upper);
-    this->test_optimizer(optimizer);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(
+    shekel_function_fixture, "opt_shekel_function", "dividing_rectangles") {
+    STAT_BENCH_MEASURE() {
+        auto optimizer = num_collect::opt::dividing_rectangles<
+            num_prob_collect::opt::shekel_function>(this->function());
+        const auto [lower, upper] = shekel_function_fixture::search_region();
+        optimizer.init(lower, upper);
+        this->test_optimizer(optimizer);
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(opt_shekel_function, adaptive_diagonal_curves,
-    shekel_function_fixture, samples, iterations) {
-    auto optimizer = num_collect::opt::adaptive_diagonal_curves<
-        num_prob_collect::opt::shekel_function>(this->function());
-    const auto [lower, upper] = shekel_function_fixture::search_region();
-    optimizer.init(lower, upper);
-    this->test_optimizer(optimizer);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(shekel_function_fixture, "opt_shekel_function",
+    "adaptive_diagonal_curves") {
+    STAT_BENCH_MEASURE() {
+        auto optimizer = num_collect::opt::adaptive_diagonal_curves<
+            num_prob_collect::opt::shekel_function>(this->function());
+        const auto [lower, upper] = shekel_function_fixture::search_region();
+        optimizer.init(lower, upper);
+        this->test_optimizer(optimizer);
+    };
 }

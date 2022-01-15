@@ -2,7 +2,7 @@
 
 ## 0.4.0 (on development)
 
-Better logging.
+Better logging and use of C++ concepts in C++20.
 
 ### Breaking Change
 
@@ -28,6 +28,8 @@ Better logging.
   - Add option to enable OpenMP ([Issue #110](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/110)).
   - Proper configuration of C++ standard libraries ([Issue #127](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/127)).
   - Compatibility with libc++ 12 ([Issue #129](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/129)).
+- Benchmarks
+  - Change benchmark library ([Issue #108](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/108)).
 - Miscellaneous
   - Add GitLab Issue templates ([Issue #109](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/109)).
   - Add .gitmessage for writing Git commit messages ([Issue #109](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/109)).

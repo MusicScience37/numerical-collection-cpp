@@ -20,29 +20,27 @@
 #include <cmath>
 
 #include <Eigen/Core>
-#include <celero/Celero.h>
+#include <stat_bench/bench/invocation_context.h>
+#include <stat_bench/benchmark_macros.h>
 
-#include "error_udm.h"
-
-class auto_diff_fixture : public celero::TestFixture {
+class auto_diff_fixture : public stat_bench::FixtureBase {
 public:
     auto_diff_fixture() = default;
 
     void check_error(double actual, double expected) {
-        log_error_->addValue(std::abs(actual - expected));
+        error_ = std::abs(actual - expected);
     }
 
     template <typename Derived>
     void check_error(const Eigen::MatrixBase<Derived>& actual,
         const Eigen::MatrixBase<Derived>& expected) {
-        log_error_->addValue((actual - expected).norm());
+        error_ = (actual - expected).norm();
     }
 
-    [[nodiscard]] auto getUserDefinedMeasurements() const -> std::vector<
-        std::shared_ptr<celero::UserDefinedMeasurement>> override {
-        return {log_error_};
+    void tear_down(stat_bench::bench::InvocationContext& context) override {
+        context.add_custom_output("error", error_);
     }
 
 private:
-    std::shared_ptr<error_udm> log_error_{std::make_shared<error_udm>()};
+    double error_{};
 };
