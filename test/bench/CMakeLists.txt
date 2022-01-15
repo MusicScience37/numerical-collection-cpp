@@ -23,7 +23,7 @@ endfunction()
 
 add_subdirectory(util)
 
-# add_subdirectory(auto_diff)
+add_subdirectory(auto_diff)
 
 # add_subdirectory(opt)
 
