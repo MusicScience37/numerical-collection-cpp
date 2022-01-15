@@ -20,6 +20,7 @@
 #include <cmath>
 
 #include <Eigen/Core>
+#include <stat_bench/bench/invocation_context.h>
 #include <stat_bench/benchmark_macros.h>
 
 class auto_diff_fixture : public stat_bench::FixtureBase {
@@ -34,6 +35,10 @@ public:
     void check_error(const Eigen::MatrixBase<Derived>& actual,
         const Eigen::MatrixBase<Derived>& expected) {
         error_ = (actual - expected).norm();
+    }
+
+    void tear_down(stat_bench::bench::InvocationContext& context) override {
+        context.add_custom_output("error", error_);
     }
 
 private:

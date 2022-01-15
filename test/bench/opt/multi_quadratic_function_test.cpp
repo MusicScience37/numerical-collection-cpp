@@ -19,10 +19,11 @@
  */
 #include "num_prob_collect/opt/multi_quadratic_function.h"
 
-#include <celero/Celero.h>
+#include <stat_bench/bench/invocation_context.h>
+#include <stat_bench/benchmark_macros.h>
 
-#include "evaluations_udm.h"
-#include "iterations_udm.h"
+#include "num_collect/base/exception.h"
+#include "num_collect/base/index_type.h"
 #include "num_collect/opt/bfgs_optimizer.h"
 #include "num_collect/opt/conjugate_gradient_optimizer.h"
 #include "num_collect/opt/dfp_optimizer.h"
@@ -31,36 +32,25 @@
 #include "num_collect/opt/newton_optimizer.h"
 #include "num_collect/opt/steepest_descent.h"
 
-// NOLINTNEXTLINE: external library
-CELERO_MAIN
+STAT_BENCH_MAIN
 
-class multi_quadratic_function_fixture : public celero::TestFixture {
+class multi_quadratic_function_fixture : public stat_bench::FixtureBase {
 public:
-    multi_quadratic_function_fixture() = default;
-
-    [[nodiscard]] auto getExperimentValues() const
-        -> std::vector<celero::TestFixture::ExperimentValue> override {
-#ifndef NDEBUG
-        constexpr auto dimensions_vector =
-            std::array<std::int64_t, 3>{2, 5, 10};
-        constexpr std::int64_t coeff = 10;
-#else
-        constexpr auto dimensions_vector =
-            std::array<std::int64_t, 6>{2, 5, 10, 20, 50, 100};
-        constexpr std::int64_t coeff = 1000;
+    multi_quadratic_function_fixture() {
+        add_param<num_collect::index_type>("dimension")
+            ->add(2)   // NOLINT
+            ->add(5)   // NOLINT
+            ->add(10)  // NOLINT
+#ifdef NDEBUG
+            ->add(20)   // NOLINT
+            ->add(50)   // NOLINT
+            ->add(100)  // NOLINT
 #endif
-        std::vector<celero::TestFixture::ExperimentValue> problem_space;
-        problem_space.reserve(dimensions_vector.size());
-        for (const auto dimensions : dimensions_vector) {
-            problem_space.emplace_back(dimensions, coeff / dimensions);
-        }
-        return problem_space;
+            ;
     }
 
-    void setUp(
-        const celero::TestFixture::ExperimentValue& experiment_value) override {
-        dimensions_ = experiment_value.Value;
-        is_failure_ = false;
+    void setup(stat_bench::bench::InvocationContext& context) override {
+        dimensions_ = context.get_param<num_collect::index_type>("dimension");
     }
 
     [[nodiscard]] auto init_variable() const -> Eigen::VectorXd {
@@ -81,97 +71,106 @@ public:
     void test_optimizer(Optimizer& optimizer) {
         constexpr double tol_value = 1e-4;
         constexpr num_collect::index_type max_evaluations = 10000;
-        if (is_failure_) {
-            return;
-        }
         while (optimizer.opt_value() > tol_value) {
             if (optimizer.evaluations() >= max_evaluations) {
-                is_failure_ = true;
+                throw num_collect::algorithm_failure("Failed to converge.");
                 return;
             }
             optimizer.iterate();
         }
-        iterations_->addValue(optimizer.iterations());
-        evaluations_->addValue(optimizer.evaluations());
+        iterations_ = optimizer.iterations();
+        evaluations_ = optimizer.evaluations();
     }
 
-    [[nodiscard]] auto getUserDefinedMeasurements() const -> std::vector<
-        std::shared_ptr<celero::UserDefinedMeasurement>> override {
-        return {iterations_, evaluations_};
+    void tear_down(stat_bench::bench::InvocationContext& context) override {
+        context.add_custom_output(
+            "iterations", static_cast<double>(iterations_));
+        context.add_custom_output(
+            "evaluations", static_cast<double>(evaluations_));
     }
 
 private:
-    std::shared_ptr<iterations_udm> iterations_{
-        std::make_shared<iterations_udm>()};
-
-    std::shared_ptr<evaluations_udm> evaluations_{
-        std::make_shared<evaluations_udm>()};
-
     num_collect::index_type dimensions_{1};
 
-    bool is_failure_{false};
+    num_collect::index_type iterations_{};
+
+    num_collect::index_type evaluations_{};
 };
 
-// NOLINTNEXTLINE: external library
-BASELINE_F(opt_multi_quadratic_function, steepest_descent,
-    multi_quadratic_function_fixture, 0, 0) {
-    auto optimizer = num_collect::opt::steepest_descent<
-        num_prob_collect::opt::multi_quadratic_function>();
-    optimizer.init(this->init_variable());
-    this->test_optimizer(optimizer);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(multi_quadratic_function_fixture,
+    "opt_multi_quadratic_function", "steepest_descent") {
+    STAT_BENCH_MEASURE() {
+        auto optimizer = num_collect::opt::steepest_descent<
+            num_prob_collect::opt::multi_quadratic_function>();
+        optimizer.init(this->init_variable());
+        this->test_optimizer(optimizer);
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(opt_multi_quadratic_function, downhill_simplex,
-    multi_quadratic_function_fixture, 0, 0) {
-    auto optimizer = num_collect::opt::downhill_simplex<
-        num_prob_collect::opt::multi_quadratic_function>();
-    optimizer.init(this->init_variable());
-    this->test_optimizer(optimizer);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(multi_quadratic_function_fixture,
+    "opt_multi_quadratic_function", "downhill_simplex") {
+    STAT_BENCH_MEASURE() {
+        auto optimizer = num_collect::opt::downhill_simplex<
+            num_prob_collect::opt::multi_quadratic_function>();
+        optimizer.init(this->init_variable());
+        this->test_optimizer(optimizer);
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(opt_multi_quadratic_function, newton_optimizer,
-    multi_quadratic_function_fixture, 0, 0) {
-    auto optimizer = num_collect::opt::newton_optimizer<
-        num_prob_collect::opt::multi_quadratic_function>();
-    optimizer.init(this->init_variable());
-    this->test_optimizer(optimizer);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(multi_quadratic_function_fixture,
+    "opt_multi_quadratic_function", "newton_optimizer") {
+    STAT_BENCH_MEASURE() {
+        auto optimizer = num_collect::opt::newton_optimizer<
+            num_prob_collect::opt::multi_quadratic_function>();
+        optimizer.init(this->init_variable());
+        this->test_optimizer(optimizer);
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(opt_multi_quadratic_function, dfp_optimizer,
-    multi_quadratic_function_fixture, 0, 0) {
-    auto optimizer = num_collect::opt::dfp_optimizer<
-        num_prob_collect::opt::multi_quadratic_function>();
-    optimizer.init(this->init_variable());
-    this->test_optimizer(optimizer);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(multi_quadratic_function_fixture,
+    "opt_multi_quadratic_function", "dfp_optimizer") {
+    STAT_BENCH_MEASURE() {
+        auto optimizer = num_collect::opt::dfp_optimizer<
+            num_prob_collect::opt::multi_quadratic_function>();
+        optimizer.init(this->init_variable());
+        this->test_optimizer(optimizer);
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(opt_multi_quadratic_function, bfgs_optimizer,
-    multi_quadratic_function_fixture, 0, 0) {
-    auto optimizer = num_collect::opt::bfgs_optimizer<
-        num_prob_collect::opt::multi_quadratic_function>();
-    optimizer.init(this->init_variable());
-    this->test_optimizer(optimizer);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(multi_quadratic_function_fixture,
+    "opt_multi_quadratic_function", "bfgs_optimizer") {
+    STAT_BENCH_MEASURE() {
+        auto optimizer = num_collect::opt::bfgs_optimizer<
+            num_prob_collect::opt::multi_quadratic_function>();
+        optimizer.init(this->init_variable());
+        this->test_optimizer(optimizer);
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(opt_multi_quadratic_function, conjugate_gradient_optimizer,
-    multi_quadratic_function_fixture, 0, 0) {
-    auto optimizer = num_collect::opt::conjugate_gradient_optimizer<
-        num_prob_collect::opt::multi_quadratic_function>();
-    optimizer.init(this->init_variable());
-    this->test_optimizer(optimizer);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(multi_quadratic_function_fixture,
+    "opt_multi_quadratic_function", "conjugate_gradient") {
+    STAT_BENCH_MEASURE() {
+        auto optimizer = num_collect::opt::conjugate_gradient_optimizer<
+            num_prob_collect::opt::multi_quadratic_function>();
+        optimizer.init(this->init_variable());
+        this->test_optimizer(optimizer);
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(opt_multi_quadratic_function, dividing_rectangles,
-    multi_quadratic_function_fixture, 0, 0) {
-    auto optimizer = num_collect::opt::dividing_rectangles<
-        num_prob_collect::opt::multi_quadratic_function>();
-    const auto [lower, upper] = this->search_region();
-    optimizer.init(lower, upper);
-    this->test_optimizer(optimizer);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(multi_quadratic_function_fixture,
+    "opt_multi_quadratic_function", "conjugate_gradient") {
+    STAT_BENCH_MEASURE() {
+        auto optimizer = num_collect::opt::dividing_rectangles<
+            num_prob_collect::opt::multi_quadratic_function>();
+        const auto [lower, upper] = this->search_region();
+        optimizer.init(lower, upper);
+        this->test_optimizer(optimizer);
+    };
 }
