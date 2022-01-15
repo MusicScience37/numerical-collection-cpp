@@ -15,32 +15,27 @@
  */
 /*!
  * \file
- * \brief Definition of getter_of class.
+ * \brief Definition of invocable concept.
  */
 #pragma once
 
-#include <type_traits>
+#include <functional>
 
-namespace num_collect::logging::concepts {
-
-/*!
- * \brief Concept of types decayed to the given type.
- *
- * \tparam From Type decayed from.
- * \tparam To Type decayed to.
- */
-template <typename From, typename To>
-concept decayed_to = std::is_same_v<std::decay_t<From>, To>;
+namespace num_collect {
+inline namespace base {
+namespace concepts {
 
 /*!
- * \brief Concept of getter functions.
+ * \brief Concept of functions invocable with given arguments.
  *
  * \tparam Func Type of the function.
- * \tparam Value Type of returned values.
+ * \tparam Args Type of arguments.
  */
-template <typename Func, typename Value>
-concept getter_of = requires(const Func& func) {
-    { func() } -> decayed_to<Value>;
+template <typename Func, typename... Args>
+concept invocable = requires(Func&& func, Args&&... args) {
+    std::invoke(std::forward<Func>(func), std::forward<Args>(args)...);
 };
 
-}  // namespace num_collect::logging::concepts
+}  // namespace concepts
+}  // namespace base
+}  // namespace num_collect

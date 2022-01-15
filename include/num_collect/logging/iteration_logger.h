@@ -19,7 +19,6 @@
  */
 #pragma once
 
-#include <concepts>
 #include <functional>
 #include <iterator>
 #include <memory>

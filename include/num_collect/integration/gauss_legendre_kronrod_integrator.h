@@ -20,7 +20,6 @@
 #pragma once
 
 #include <cmath>
-#include <concepts>
 #include <limits>
 #include <stack>
 #include <type_traits>
@@ -31,6 +30,7 @@
 #include <Eigen/Eigenvalues>
 
 #include "num_collect/base/assert.h"
+#include "num_collect/base/concepts/invocable.h"
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/norm.h"
@@ -91,7 +91,7 @@ public:
      * \param[in] right Right boundary.
      * \return Result.
      */
-    template <std::invocable<variable_type> Function,
+    template <base::concepts::invocable<variable_type> Function,
         typename Result =
             std::decay_t<std::invoke_result_t<Function, variable_type>>>
     [[nodiscard]] auto integrate_once(
@@ -129,7 +129,7 @@ public:
      * \param[in] right Right boundary.
      * \return Result.
      */
-    template <std::invocable<variable_type> Function,
+    template <base::concepts::invocable<variable_type> Function,
         typename Result =
             std::decay_t<std::invoke_result_t<Function, variable_type>>>
     [[nodiscard]] auto integrate(const Function& function, variable_type left,
@@ -183,7 +183,7 @@ public:
      * \param[in] right Right boundary.
      * \return Result.
      */
-    template <std::invocable<variable_type> Function,
+    template <base::concepts::invocable<variable_type> Function,
         typename Result =
             std::decay_t<std::invoke_result_t<Function, variable_type>>>
     [[nodiscard]] auto operator()(const Function& function, variable_type left,
