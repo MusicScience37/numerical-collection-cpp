@@ -8,8 +8,8 @@ file(MAKE_DIRECTORY ${NUM_COLLECT_BENCH_DIR})
 set(NUM_COLLECT_BENCH_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 function(target_add_to_benchmark TARGET)
-    target_link_libraries(${TARGET} PRIVATE celero::celero num_collect
-                                            num_prob_collect)
+    target_link_libraries(${TARGET} PRIVATE cpp_stat_bench::cpp_stat_bench
+                                            num_collect num_prob_collect)
     target_include_directories(${TARGET}
                                PRIVATE ${NUM_COLLECT_BENCH_INCLUDE_DIR})
 
@@ -22,9 +22,15 @@ function(target_add_to_benchmark TARGET)
 endfunction()
 
 add_subdirectory(util)
-add_subdirectory(auto_diff)
-add_subdirectory(opt)
-add_subdirectory(multi_double)
-add_subdirectory(integration)
-add_subdirectory(ode)
-add_subdirectory(regularization)
+
+# add_subdirectory(auto_diff)
+
+# add_subdirectory(opt)
+
+# add_subdirectory(multi_double)
+
+# add_subdirectory(integration)
+
+# add_subdirectory(ode)
+
+# add_subdirectory(regularization)

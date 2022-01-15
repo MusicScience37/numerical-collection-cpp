@@ -50,7 +50,7 @@ find_package(Eigen3 REQUIRED)
 if(NUM_COLLECT_TESTING)
     find_package(Catch2)
     find_package(trompeloeil)
-    find_package(Celero)
+    find_package(cpp_stat_bench)
 endif()
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
