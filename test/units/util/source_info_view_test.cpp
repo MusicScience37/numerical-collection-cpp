@@ -39,13 +39,13 @@ TEST_CASE("num_collect::source_info_view") {
 
 #if NUM_COLLECT_HAS_BUILTIN_FILE
         CHECK_THAT(std::string(info.file_path()),
-            Catch::Matchers::Contains("source_info_view_test.cpp"));
+            Catch::Matchers::ContainsSubstring("source_info_view_test.cpp"));
 #endif
         CHECK(info.line() >= 0);
         CHECK(info.column() >= 0);
 #if NUM_COLLECT_HAS_BUILTIN_FUNCTION
         CHECK_THAT(std::string(info.function_name()),
-            Catch::Matchers::Contains("source_info_view_test2"));
+            Catch::Matchers::ContainsSubstring("source_info_view_test2"));
 #endif
     }
 }

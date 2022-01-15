@@ -20,7 +20,7 @@
 #include "num_collect/ode/runge_kutta/semi_implicit_formula_solver.h"
 
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_floating.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "eigen_approx.h"
 #include "num_prob_collect/ode/exponential_problem.h"

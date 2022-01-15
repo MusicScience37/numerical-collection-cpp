@@ -20,7 +20,7 @@
 #include "num_collect/opt/function_object_wrapper.h"
 
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_floating.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "eigen_approx.h"
 #include "num_collect/opt/downhill_simplex.h"

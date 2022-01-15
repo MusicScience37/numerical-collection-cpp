@@ -41,9 +41,10 @@ TEMPLATE_TEST_CASE("exceptions", "", num_collect::num_collect_exception,
     SECTION("construct") {
         const auto message = std::string("test message");
         auto e = test_type(message);
-        REQUIRE_THAT(e.what(), Catch::Matchers::Contains(message));
+        REQUIRE_THAT(e.what(), Catch::Matchers::ContainsSubstring(message));
 #if NUM_COLLECT_HAS_SOURCE_LOCATION
-        REQUIRE_THAT(e.what(), Catch::Matchers::Contains("exception_test.cpp"));
+        REQUIRE_THAT(
+            e.what(), Catch::Matchers::ContainsSubstring("exception_test.cpp"));
 #endif
     }
 }
