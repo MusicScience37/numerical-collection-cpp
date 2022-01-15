@@ -237,6 +237,8 @@ clang-12-debug-libcxx:
   variables:
     BUILD_DIR: build_clang12_debug_libcxx
   before_script:
+    - apt update
+    - apt install -y libc++-12-dev libc++abi-12-dev
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --detect default
