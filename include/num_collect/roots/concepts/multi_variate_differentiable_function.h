@@ -15,29 +15,28 @@
  */
 /*!
  * \file
- * \brief Definition of differentiable_function concept.
+ * \brief Definition of multi_variate_differentiable_function concept.
  */
 #pragma once
 
-#include "num_collect/base/concepts/const_reference_of.h"
-#include "num_collect/roots/concepts/function.h"
+#include <type_traits>
+
+#include "num_collect/base/concepts/real_scalar_dense_matrix.h"
+#include "num_collect/base/concepts/real_scalar_dense_vector.h"
+#include "num_collect/roots/concepts/differentiable_function.h"
 
 namespace num_collect::roots::concepts {
 
 /*!
- * \brief Concept of differentiable functions for root-finding.
+ * \brief Concept of multi-variate differentiable functions for root-finding.
  *
  * \tparam T Type.
  */
 template <typename T>
-concept differentiable_function = requires(const T& const_obj, T& obj) {
-    requires function<T>;
-
-    typename T::jacobian_type;
-
-    {
-        const_obj.jacobian()
-        } -> base::concepts::const_reference_of<typename T::jacobian_type>;
-};
+concept multi_variate_differentiable_function = differentiable_function<T> &&
+    base::concepts::real_scalar_dense_vector<typename T::variable_type> &&
+    base::concepts::real_scalar_dense_matrix<typename T::jacobian_type> &&
+    std::is_same_v<typename T::variable_type::Scalar,
+        typename T::jacobian_type::Scalar>;
 
 }  // namespace num_collect::roots::concepts
