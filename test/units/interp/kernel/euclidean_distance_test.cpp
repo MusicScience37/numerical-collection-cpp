@@ -23,8 +23,13 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+#include "num_collect/interp/kernel/concepts/distance.h"
+
 TEST_CASE("num_collect::interp::kernel::euclidean_distance") {
     using num_collect::interp::kernel::euclidean_distance;
+
+    STATIC_REQUIRE(num_collect::interp::kernel::concepts::distance<
+        euclidean_distance<double>>);
 
     SECTION("calculate distance of double") {
         const auto dist = euclidean_distance<double>();
