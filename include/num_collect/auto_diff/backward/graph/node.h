@@ -24,10 +24,11 @@
 #include <vector>
 
 #include "num_collect/base/assert.h"
+#include "num_collect/base/concepts/real_scalar.h"
 
 namespace num_collect::auto_diff::backward::graph {
 
-template <typename Scalar>
+template <base::concepts::real_scalar Scalar>
 class node;
 
 /*!
@@ -35,7 +36,7 @@ class node;
  *
  * \tparam Scalar Type of scalars.
  */
-template <typename Scalar>
+template <base::concepts::real_scalar Scalar>
 using node_ptr = std::shared_ptr<const node<Scalar>>;
 
 /*!
@@ -43,7 +44,7 @@ using node_ptr = std::shared_ptr<const node<Scalar>>;
  *
  * \tparam Scalar Type of scalars.
  */
-template <typename Scalar>
+template <base::concepts::real_scalar Scalar>
 class child_node {
 public:
     //! Type of scalars.
@@ -94,7 +95,7 @@ private:
  *
  * \tparam Scalar Type of scalars.
  */
-template <typename Scalar>
+template <base::concepts::real_scalar Scalar>
 class node {
 public:
     //! Type of scalars.
@@ -133,7 +134,7 @@ namespace impl {
  * \param[in] children Child nodes.
  * \return Created node.
  */
-template <typename Scalar>
+template <base::concepts::real_scalar Scalar>
 [[nodiscard]] inline auto create_node_impl(
     std::vector<child_node<Scalar>>& children) -> node_ptr<Scalar> {
     return std::make_shared<node<Scalar>>(std::move(children));
@@ -151,7 +152,7 @@ template <typename Scalar>
  * \param[in] args Remaining arguments.
  * \return Created node.
  */
-template <typename Scalar, typename... Args>
+template <base::concepts::real_scalar Scalar, typename... Args>
 [[nodiscard]] inline auto create_node_impl(
     std::vector<child_node<Scalar>>& children, node_ptr<Scalar> node,
     const Scalar& sensitivity, Args&&... args) -> node_ptr<Scalar> {
@@ -169,7 +170,7 @@ template <typename Scalar, typename... Args>
  * \param[in] args Arguments.
  * \return Created node.
  */
-template <typename Scalar, typename... Args>
+template <base::concepts::real_scalar Scalar, typename... Args>
 [[nodiscard]] inline auto create_node(Args&&... args) -> node_ptr<Scalar> {
     std::vector<child_node<Scalar>> children;
     return impl::create_node_impl(children, std::forward<Args>(args)...);

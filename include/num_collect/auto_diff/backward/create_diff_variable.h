@@ -20,6 +20,8 @@
 #pragma once
 
 #include "num_collect/auto_diff/backward/variable.h"
+#include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/index_type.h"
 
 namespace num_collect::auto_diff::backward {
@@ -31,7 +33,7 @@ namespace num_collect::auto_diff::backward {
  * \param[in] value Value.
  * \return Variable.
  */
-template <typename Scalar>
+template <base::concepts::real_scalar Scalar>
 [[nodiscard]] inline auto create_diff_variable(const Scalar& value)
     -> variable<Scalar> {
     return variable<Scalar>(value, variable_tag());
@@ -42,7 +44,7 @@ template <typename Scalar>
  *
  * \tparam ValueVector Type of vectors of values.
  */
-template <typename ValueVector>
+template <base::concepts::real_scalar_dense_vector ValueVector>
 using variable_vector_type =
     Eigen::Matrix<variable<typename ValueVector::Scalar>,
         ValueVector::RowsAtCompileTime, 1, Eigen::ColMajor,
@@ -106,7 +108,7 @@ private:
  * \param[in] value_vec Vector of values.
  * \return Vector of variables.
  */
-template <typename ValueVector>
+template <base::concepts::real_scalar_dense_vector ValueVector>
 [[nodiscard]] inline auto create_diff_variable_vector(
     const Eigen::MatrixBase<ValueVector>& value_vec)
     -> Eigen::CwiseNullaryOp<
