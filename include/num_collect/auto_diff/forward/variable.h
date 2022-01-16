@@ -26,6 +26,7 @@
 #include <Eigen/Core>
 
 #include "num_collect/base/assert.h"
+#include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/util/is_eigen_matrix.h"
 #include "num_collect/util/is_eigen_vector.h"
@@ -40,7 +41,7 @@ namespace num_collect::auto_diff::forward {
  * \tparam Diff Type of differential coefficients
  *              (scalars, vectors, or matrices).
  */
-template <typename Value, typename Diff = Value>
+template <base::concepts::real_scalar Value, typename Diff = Value>
 class variable {
 public:
     //! Type of values.
