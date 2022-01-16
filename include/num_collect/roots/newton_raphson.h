@@ -26,6 +26,7 @@
 
 #include "num_collect/base/assert.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/roots/concepts/differentiable_function.h"
 #include "num_collect/roots/function_root_finder_base.h"
 #include "num_collect/util/is_eigen_vector.h"
 
@@ -40,7 +41,7 @@ inline constexpr auto newton_raphson_tag =
  *
  * \tparam Function Type of the function of equation.
  */
-template <typename Function, typename = void>
+template <concepts::differentiable_function Function, typename = void>
 class newton_raphson;
 
 /*!
