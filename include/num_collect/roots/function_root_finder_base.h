@@ -23,6 +23,7 @@
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/iterative_solver_base.h"
+#include "num_collect/roots/concepts/function.h"
 
 namespace num_collect::roots {
 
@@ -32,7 +33,7 @@ namespace num_collect::roots {
  * \tparam Derived Type of derived class.
  * \tparam Function Type of the function of equation.
  */
-template <typename Derived, typename Function>
+template <typename Derived, concepts::function Function>
 class function_root_finder_base
     : public num_collect::base::iterative_solver_base<Derived> {
 public:

@@ -26,6 +26,7 @@
 #include <Eigen/Eigenvalues>
 
 #include "num_collect/base/assert.h"
+#include "num_collect/base/concepts/real_scalar_dense_matrix.h"
 
 namespace num_collect::interp::kernel::impl {
 
@@ -35,7 +36,8 @@ namespace num_collect::interp::kernel::impl {
  * \tparam KernelMatrix Type of kernel matrices.
  * \tparam Data Type of data vectors.
  */
-template <typename KernelMatrix, typename Data>
+template <base::concepts::real_scalar_dense_matrix KernelMatrix,
+    base::concepts::real_scalar_dense_matrix Data>
 class self_adjoint_kernel_solver {
 public:
     //! Type of kernel matrices.

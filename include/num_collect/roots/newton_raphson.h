@@ -26,6 +26,9 @@
 
 #include "num_collect/base/assert.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/roots/concepts/differentiable_function.h"
+#include "num_collect/roots/concepts/multi_variate_differentiable_function.h"
+#include "num_collect/roots/concepts/single_variate_differentiable_function.h"
 #include "num_collect/roots/function_root_finder_base.h"
 #include "num_collect/util/is_eigen_vector.h"
 
@@ -40,7 +43,7 @@ inline constexpr auto newton_raphson_tag =
  *
  * \tparam Function Type of the function of equation.
  */
-template <typename Function, typename = void>
+template <concepts::differentiable_function Function>
 class newton_raphson;
 
 /*!
@@ -50,10 +53,8 @@ class newton_raphson;
  *
  * \tparam Function Type of the function of equation.
  */
-template <typename Function>
-class newton_raphson<Function,
-    std::enable_if_t<
-        std::is_floating_point_v<typename Function::variable_type>>>
+template <concepts::single_variate_differentiable_function Function>
+class newton_raphson<Function>
     : public function_root_finder_base<newton_raphson<Function>, Function> {
 public:
     //! Type of this object.
@@ -279,9 +280,8 @@ private:
  *
  * \tparam Function Type of the function of equation.
  */
-template <typename Function>
-class newton_raphson<Function,
-    std::enable_if_t<is_eigen_vector_v<typename Function::variable_type>>>
+template <concepts::multi_variate_differentiable_function Function>
+class newton_raphson<Function>
     : public function_root_finder_base<newton_raphson<Function>, Function> {
 public:
     //! Type of this object.
