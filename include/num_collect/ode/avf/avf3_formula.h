@@ -26,6 +26,7 @@
 #include "num_collect/integration/gauss_legendre_integrator.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/avf/impl/avf_integrand.h"
+#include "num_collect/ode/concepts/differentiable_problem.h"
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
 #include "num_collect/ode/simple_solver.h"
 
@@ -37,7 +38,7 @@ namespace num_collect::ode::avf {
  *
  * \tparam Problem Type of problem.
  */
-template <typename Problem>
+template <concepts::differentiable_problem Problem>
 class avf3_formula {
 public:
     //! Type of problem.
@@ -162,7 +163,7 @@ private:
  *
  * \tparam Problem Type of problem.
  */
-template <typename Problem>
+template <concepts::differentiable_problem Problem>
 using avf3_solver = simple_solver<avf3_formula<Problem>>;
 
 /*!
@@ -171,7 +172,7 @@ using avf3_solver = simple_solver<avf3_formula<Problem>>;
  *
  * \tparam Problem Type of problem.
  */
-template <typename Problem>
+template <concepts::differentiable_problem Problem>
 using avf3_auto_solver = non_embedded_auto_solver<avf3_formula<Problem>>;
 
 }  // namespace num_collect::ode::avf

@@ -11,6 +11,7 @@
     "CMake",
     "cmakelang",
     "Codecov",
+    "coeff",
     "coeffs",
     "conanfile",
     "constexpr",

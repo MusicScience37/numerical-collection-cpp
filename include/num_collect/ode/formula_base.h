@@ -20,6 +20,7 @@
 #pragma once
 
 #include "num_collect/base/index_type.h"
+#include "num_collect/ode/concepts/problem.h"
 
 namespace num_collect::ode {
 
@@ -29,7 +30,7 @@ namespace num_collect::ode {
  * \tparam Derived Type of derived class.
  * \tparam Problem Type of problem.
  */
-template <typename Derived, typename Problem>
+template <typename Derived, concepts::problem Problem>
 class formula_base {
 public:
     //! Type of problem.

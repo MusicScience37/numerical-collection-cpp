@@ -20,6 +20,7 @@
 #pragma once
 
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/ode/concepts/differentiable_problem.h"
 #include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/formula_base.h"
 #include "num_collect/ode/runge_kutta/impl/rosenbrock_helper.h"
@@ -31,7 +32,7 @@ namespace num_collect::ode::runge_kutta {
  *
  * \tparam Problem Type of problem.
  */
-template <typename Problem>
+template <concepts::differentiable_problem Problem>
 class ros34pw3_formula
     : public formula_base<ros34pw3_formula<Problem>, Problem> {
 public:
@@ -183,7 +184,7 @@ private:
  *
  * \tparam Problem Type of problem.
  */
-template <typename Problem>
+template <concepts::differentiable_problem Problem>
 using ros34pw3_solver = embedded_solver<ros34pw3_formula<Problem>>;
 
 }  // namespace num_collect::ode::runge_kutta

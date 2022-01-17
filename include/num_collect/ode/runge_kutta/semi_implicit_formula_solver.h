@@ -30,6 +30,9 @@
 #include "num_collect/constants/one.h"
 #include "num_collect/constants/zero.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/ode/concepts/differentiable_problem.h"
+#include "num_collect/ode/concepts/multi_variate_differentiable_problem.h"
+#include "num_collect/ode/concepts/single_variate_differentiable_problem.h"
 #include "num_collect/ode/implicit_formula_solver_strategies.h"
 #include "num_collect/util/is_eigen_matrix.h"
 #include "num_collect/util/is_eigen_vector.h"
@@ -47,7 +50,7 @@ inline constexpr auto semi_implicit_formula_solver_tag = logging::log_tag_view(
  * \tparam StrategyTag Type of tag of strategy (in
  * implicit_formula_solver_strategies namespace).
  */
-template <typename Problem, typename StrategyTag, typename = void>
+template <concepts::differentiable_problem Problem, typename StrategyTag>
 class semi_implicit_formula_solver;
 
 /*!
@@ -55,11 +58,9 @@ class semi_implicit_formula_solver;
  *
  * \tparam Problem Type of problem.
  */
-template <typename Problem>
+template <concepts::multi_variate_differentiable_problem Problem>
 class semi_implicit_formula_solver<Problem,
-    implicit_formula_solver_strategies::modified_newton_raphson_tag,
-    std::enable_if_t<is_eigen_vector_v<typename Problem::variable_type> &&
-        is_eigen_matrix_v<typename Problem::jacobian_type>>> {
+    implicit_formula_solver_strategies::modified_newton_raphson_tag> {
 public:
     //! Type of problem.
     using problem_type = Problem;
@@ -192,15 +193,9 @@ private:
  *
  * \tparam Problem Type of problem.
  */
-template <typename Problem>
+template <concepts::single_variate_differentiable_problem Problem>
 class semi_implicit_formula_solver<Problem,
-    implicit_formula_solver_strategies::modified_newton_raphson_tag,
-    std::enable_if_t<
-        std::is_floating_point_v<typename Problem::variable_type> &&
-        std::is_same_v<typename Problem::variable_type,
-            typename Problem::scalar_type> &&
-        std::is_same_v<typename Problem::variable_type,
-            typename Problem::jacobian_type>>> {
+    implicit_formula_solver_strategies::modified_newton_raphson_tag> {
 public:
     //! Type of problem.
     using problem_type = Problem;

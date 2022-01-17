@@ -21,6 +21,7 @@
 
 #include "num_collect/constants/one.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/ode/concepts/differentiable_problem.h"
 #include "num_collect/ode/runge_kutta/implicit_formula_base.h"
 #include "num_collect/ode/runge_kutta/semi_implicit_formula_solver.h"
 #include "num_collect/ode/simple_solver.h"
@@ -32,7 +33,7 @@ namespace num_collect::ode::runge_kutta {
  *
  * \tparam Problem Type of problem.
  */
-template <typename Problem, typename StrategyTag>
+template <concepts::differentiable_problem Problem, typename StrategyTag>
 class implicit_euler_formula
     : public implicit_formula_base<implicit_euler_formula<Problem, StrategyTag>,
           Problem, semi_implicit_formula_solver<Problem, StrategyTag>> {
@@ -84,7 +85,7 @@ public:
  *
  * \tparam Problem Type of problem.
  */
-template <typename Problem>
+template <concepts::differentiable_problem Problem>
 using implicit_euler_solver = simple_solver<implicit_euler_formula<Problem,
     implicit_formula_solver_strategies::modified_newton_raphson_tag>>;
 
