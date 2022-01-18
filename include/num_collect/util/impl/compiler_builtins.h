@@ -20,6 +20,34 @@
 #pragma once
 
 /* ***********************************************************************
+ * NUM_COLLECT_HAS_MSVC_SOURCE_LOCATION macro.
+ * ***********************************************************************/
+
+#if defined(NUM_COLLECT_DOCUMENTATION)
+
+/*!
+ * \brief Whether this environment is MSVC and has source location support.
+ */
+#define NUM_COLLECT_HAS_MSVC_SOURCE_LOCATION 1
+
+#elif defined(_MSC_VER)
+
+// on MSVC
+#if _MSC_VER >= 1929
+// Visual Studio 2019 16.10 and later supports source location.
+#define NUM_COLLECT_HAS_MSVC_SOURCE_LOCATION 1
+#else
+#define NUM_COLLECT_HAS_MSVC_SOURCE_LOCATION 0
+#endif
+
+#else
+
+// Other than MSVC.
+#define NUM_COLLECT_HAS_MSVC_SOURCE_LOCATION 0
+
+#endif
+
+/* ***********************************************************************
  * NUM_COLLECT_HAS_BUILTIN macro.
  * ***********************************************************************/
 
@@ -56,7 +84,8 @@
  */
 #define NUM_COLLECT_BUILTIN_FILE() __builtin_FILE()
 
-#elif NUM_COLLECT_HAS_BUILTIN(__builtin_FILE)
+#elif NUM_COLLECT_HAS_BUILTIN(__builtin_FILE) || \
+    NUM_COLLECT_HAS_MSVC_SOURCE_LOCATION
 #define NUM_COLLECT_HAS_BUILTIN_FILE 1
 #define NUM_COLLECT_BUILTIN_FILE() __builtin_FILE()
 #else
@@ -80,7 +109,8 @@
  */
 #define NUM_COLLECT_BUILTIN_FUNCTION() __builtin_FUNCTION()
 
-#elif NUM_COLLECT_HAS_BUILTIN(__builtin_FUNCTION)
+#elif NUM_COLLECT_HAS_BUILTIN(__builtin_FUNCTION) || \
+    NUM_COLLECT_HAS_MSVC_SOURCE_LOCATION
 #define NUM_COLLECT_HAS_BUILTIN_FUNCTION 1
 #define NUM_COLLECT_BUILTIN_FUNCTION() __builtin_FUNCTION()
 #else
@@ -104,7 +134,8 @@
  */
 #define NUM_COLLECT_BUILTIN_LINE() __builtin_LINE()
 
-#elif NUM_COLLECT_HAS_BUILTIN(__builtin_LINE)
+#elif NUM_COLLECT_HAS_BUILTIN(__builtin_LINE) || \
+    NUM_COLLECT_HAS_MSVC_SOURCE_LOCATION
 #define NUM_COLLECT_HAS_BUILTIN_LINE 1
 #define NUM_COLLECT_BUILTIN_LINE() __builtin_LINE()
 #else
@@ -128,7 +159,8 @@
  */
 #define NUM_COLLECT_BUILTIN_COLUMN() __builtin_COLUMN()
 
-#elif NUM_COLLECT_HAS_BUILTIN(__builtin_COLUMN)
+#elif NUM_COLLECT_HAS_BUILTIN(__builtin_COLUMN) || \
+    NUM_COLLECT_HAS_MSVC_SOURCE_LOCATION
 #define NUM_COLLECT_HAS_BUILTIN_COLUMN 1
 #define NUM_COLLECT_BUILTIN_COLUMN() __builtin_COLUMN()
 #else
