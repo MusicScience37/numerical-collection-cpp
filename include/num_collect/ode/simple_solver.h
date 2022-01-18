@@ -22,6 +22,7 @@
 #include "num_collect/base/assert.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/constants/zero.h"
+#include "num_collect/ode/concepts/formula.h"
 #include "num_collect/ode/solver_base.h"
 
 namespace num_collect::ode {
@@ -31,7 +32,7 @@ namespace num_collect::ode {
  *
  * \tparam Formula Type of formula.
  */
-template <typename Formula>
+template <concepts::formula Formula>
 class simple_solver : public solver_base<simple_solver<Formula>, Formula> {
 public:
     //! This type.

@@ -20,6 +20,7 @@
 #pragma once
 
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/ode/concepts/problem.h"
 #include "num_collect/ode/formula_base.h"
 #include "num_collect/ode/simple_solver.h"
 
@@ -30,7 +31,7 @@ namespace num_collect::ode::runge_kutta {
  *
  * \tparam Problem Type of problem.
  */
-template <typename Problem>
+template <concepts::problem Problem>
 class rk4_formula : public formula_base<rk4_formula<Problem>, Problem> {
 public:
     //! Type of base class.
@@ -124,7 +125,7 @@ private:
  *
  * \tparam Problem Type of problem.
  */
-template <typename Problem>
+template <concepts::problem Problem>
 using rk4_solver = simple_solver<rk4_formula<Problem>>;
 
 }  // namespace num_collect::ode::runge_kutta

@@ -22,6 +22,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/ode/concepts/formula.h"
 
 namespace num_collect::ode {
 
@@ -31,7 +32,7 @@ namespace num_collect::ode {
  * \tparam Derived Type of derived class.
  * \tparam Formula Type of formula.
  */
-template <typename Derived, typename Formula>
+template <typename Derived, concepts::formula Formula>
 class solver_base {
 public:
     //! Type of formula.

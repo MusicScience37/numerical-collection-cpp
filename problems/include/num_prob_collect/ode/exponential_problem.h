@@ -50,7 +50,9 @@ public:
      *
      * \return Differential coefficient.
      */
-    [[nodiscard]] auto diff_coeff() const -> double { return diff_coeff_; }
+    [[nodiscard]] auto diff_coeff() const -> const double& {
+        return diff_coeff_;
+    }
 
     /*!
      * \brief Get the Jacobian.
