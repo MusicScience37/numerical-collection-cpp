@@ -1,5 +1,6 @@
 #include "assert_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "concepts/assertion_condition_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "concepts/comparable_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "concepts/const_reference_of_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "concepts/dense_matrix_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "concepts/dense_vector_test.cpp"  // NOLINT(bugprone-suspicious-include)
