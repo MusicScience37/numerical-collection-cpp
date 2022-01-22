@@ -15,22 +15,24 @@
  */
 /*!
  * \file
- * \brief Test of kahan_adder concept.
+ * \brief Definition of comparator concept.
  */
-#include "num_collect/util/concepts/kahan_addable.h"
+#pragma once
 
-#include <string>
+#include "num_collect/base/concepts/decayed_to.h"
 
-#include <Eigen/Core>
-#include <catch2/catch_test_macros.hpp>
+namespace num_collect::util::concepts {
 
-TEST_CASE("num_collect::util::concepts::kahan_addable") {
-    using num_collect::util::concepts::kahan_addable;
+/*!
+ * \brief Concept of classes to compare two values.
+ *
+ * \tparam C Type of class to compare two values.
+ * \tparam T Type of the first argument.
+ * \tparam U Type of the second argument.
+ */
+template <typename C, typename T, typename U>
+concept comparator = requires(const C& c, const T& t, const U& u) {
+    { c(t, u) } -> base::concepts::decayed_to<bool>;
+};
 
-    SECTION("check") {
-        STATIC_REQUIRE(kahan_addable<float>);
-        STATIC_REQUIRE(kahan_addable<double>);
-        STATIC_REQUIRE(kahan_addable<Eigen::VectorXd>);
-        STATIC_REQUIRE_FALSE(kahan_addable<std::string>);
-    }
-}
+}  // namespace num_collect::util::concepts

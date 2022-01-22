@@ -1,4 +1,5 @@
 #include "bidirectional_vector_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "concepts/comparator_test.cpp"   // NOLINT(bugprone-suspicious-include)
 #include "concepts/kahan_addable_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "hash_string_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/assertion_decomposer_test.cpp"  // NOLINT(bugprone-suspicious-include)
