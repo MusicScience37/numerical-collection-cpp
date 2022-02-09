@@ -93,5 +93,8 @@
   "doxdocgen.c.triggerSequence": "/*!",
   "doxdocgen.cpp.ctorText": "Construct.",
   "doxdocgen.cpp.dtorText": "Destruct.",
-  "cmake.ctest.parallelJobs": 2
+  "cmake.ctest.parallelJobs": 2,
+  "C_Cpp.intelliSenseEngine": "Disabled",
+  "C_Cpp.autocomplete": "Disabled",
+  "C_Cpp.errorSquiggles": "Disabled"
 }
