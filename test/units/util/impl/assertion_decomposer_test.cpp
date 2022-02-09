@@ -20,6 +20,7 @@
 
 #include "num_collect/util/impl/assertion_decomposer.h"
 
+#include <functional>
 #include <optional>
 
 #include <catch2/catch_test_macros.hpp>
@@ -41,5 +42,49 @@ TEST_CASE("num_collect::util::impl::assertion_value") {
     SECTION("format") {
         REQUIRE(fmt::format("{}", assertion_value<bool>(true)) == "true");
         REQUIRE(fmt::format("{}", assertion_value<int>(2)) == "2");
+    }
+}
+
+TEST_CASE("num_collect::util::impl::assertion_comparison") {
+    using num_collect::util::impl::assertion_comparison;
+    using num_collect::util::impl::assertion_value;
+
+    SECTION("evaluate") {
+        SECTION("to true") {
+            const int left_val = 3;
+            const int right_val = 5;
+            const auto left = assertion_value<int>(left_val);
+            const auto right = assertion_value<int>(right_val);
+            constexpr std::string_view operator_str = "<";
+
+            const auto comp = assertion_comparison<int, int, std::less<>>(
+                left, right, operator_str);
+            REQUIRE(comp.evaluate_to_bool());
+        }
+
+        SECTION("to false") {
+            const int left_val = 7;
+            const int right_val = 5;
+            const auto left = assertion_value<int>(left_val);
+            const auto right = assertion_value<int>(right_val);
+            constexpr std::string_view operator_str = "<";
+
+            const auto comp = assertion_comparison<int, int, std::less<>>(
+                left, right, operator_str);
+            REQUIRE_FALSE(comp.evaluate_to_bool());
+        }
+    }
+
+    SECTION("format") {
+        const int left_val = 3;
+        const int right_val = 5;
+        const auto left = assertion_value<int>(left_val);
+        const auto right = assertion_value<int>(right_val);
+        constexpr std::string_view operator_str = "<";
+
+        const auto comp = assertion_comparison<int, int, std::less<>>(
+            left, right, operator_str);
+
+        REQUIRE(fmt::format("{}", comp) == "3 < 5");
     }
 }

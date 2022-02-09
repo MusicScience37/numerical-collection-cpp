@@ -26,6 +26,7 @@
 
 #include "num_collect/base/concepts/convertible_to.h"
 #include "num_collect/base/concepts/formattable.h"
+#include "num_collect/util/concepts/comparator.h"
 
 namespace num_collect::util::impl {
 
@@ -81,7 +82,7 @@ protected:
 /*!
  * \brief Class of values in assertions.
  *
- * \tparam Value Value.
+ * \tparam Value Type of the value.
  */
 template <typename Value>
 class assertion_value
@@ -92,14 +93,16 @@ public:
      *
      * \param[in] value Value.
      */
-    explicit assertion_value(const Value& value) : value_(value) {}
+    explicit assertion_value(const Value& value) : value_(&value) {}
 
     /*!
      * \brief Get the value.
      *
      * \return Value.
      */
-    [[nodiscard]] auto value() const noexcept -> const Value& { return value_; }
+    [[nodiscard]] auto value() const noexcept -> const Value& {
+        return *value_;
+    }
 
     /*!
      * \brief Evaluate and get boolean result.
@@ -108,7 +111,7 @@ public:
      */
     [[nodiscard]] auto evaluate_to_bool() const noexcept -> bool {
         static_assert(base::concepts::convertible_to<Value, bool>);
-        return static_cast<bool>(value_);
+        return static_cast<bool>(*value_);
     }
 
     /*!
@@ -121,7 +124,7 @@ public:
     template <typename OutputIterator>
     [[nodiscard]] auto format_to(OutputIterator out) const -> OutputIterator {
         if constexpr (base::concepts::formattable<Value>) {
-            return fmt::format_to(out, FMT_STRING("{}"), value_);
+            return fmt::format_to(out, FMT_STRING("{}"), *value_);
         } else {
             return fmt::format_to(
                 out, FMT_STRING("{}"), "<unformattable-value>");
@@ -130,7 +133,73 @@ public:
 
 private:
     //! Value.
-    const Value& value_;
+    const Value* value_;
+};
+
+/*!
+ * \brief Class of comparisons in assertions.
+ *
+ * \tparam Left Type of the left-hand-side value.
+ * \tparam Right Type of the right-hand-side value.
+ * \tparam Comparator Type of the function object to compare two values.
+ */
+template <typename Left, typename Right,
+    concepts::comparator<Left, Right> Comparator>
+class assertion_comparison
+    : public assertion_expression_base<
+          assertion_comparison<Left, Right, Comparator>> {
+public:
+    /*!
+     * \brief Construct.
+     *
+     * \param[in] left Left-hand-side value.
+     * \param[in] right Right-hand-side value.
+     * \param[in] operator_str String expression of the operator.
+     * \param[in] comparator Function object to compare two values.
+     */
+    assertion_comparison(const assertion_value<Left>& left,
+        assertion_value<Right> right, std::string_view operator_str,
+        Comparator comparator = Comparator())
+        : left_(left),
+          right_(right),
+          operator_str_(operator_str),
+          comparator_(comparator) {}
+
+    /*!
+     * \brief Evaluate and get boolean result.
+     *
+     * \return Result.
+     */
+    [[nodiscard]] auto evaluate_to_bool() const noexcept -> bool {
+        return comparator_(left_.value(), right_.value());
+    }
+
+    /*!
+     * \brief Format expression.
+     *
+     * \tparam OutputIterator Type of the output iterator.
+     * \param[in] out Output iterator to format to.
+     * \return Output iterator after formatting.
+     */
+    template <typename OutputIterator>
+    [[nodiscard]] auto format_to(OutputIterator out) const -> OutputIterator {
+        out = left_.format_to(out);
+        out = fmt::format_to(out, " {} ", operator_str_);
+        return right_.format_to(out);
+    }
+
+private:
+    //! Left-hand-side value.
+    assertion_value<Left> left_;
+
+    //! Right-hand-side value.
+    assertion_value<Right> right_;
+
+    //! String expression of the operator.
+    std::string_view operator_str_;
+
+    //! Function object to compare two values.
+    Comparator comparator_;
 };
 
 }  // namespace num_collect::util::impl
