@@ -318,7 +318,7 @@ public:
      * \param[in] value Value.
      * \return Value object.
      */
-    template <base::concepts::convertible_to<bool> Value>
+    template <typename Value>
     [[nodiscard]] auto operator<(const Value& value) {
         return assertion_value<Value>(value);
     }
