@@ -302,6 +302,29 @@ template <typename Left, concepts::rhs_not_equal_to_comparable<Left> Right>
         left, assertion_value<Right>(right), "!=");
 }
 
+/*!
+ * \brief Class to decompose comprisons in assertions.
+ */
+class assertion_decomposer {
+public:
+    /*!
+     * \brief Construct.
+     */
+    assertion_decomposer() = default;
+
+    /*!
+     * \brief Create a value in assertions.
+     *
+     * \tparam Value Type of the value.
+     * \param[in] value Value.
+     * \return Value object.
+     */
+    template <base::concepts::convertible_to<bool> Value>
+    [[nodiscard]] auto operator<(const Value& value) {
+        return assertion_value<Value>(value);
+    }
+};
+
 }  // namespace num_collect::util::impl
 
 namespace fmt {
