@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 MusicScience37 (Kenta Kabashima)
+ * Copyright 2022 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
  * \file
  * \brief Test of assertion_decomposer class.
  */
-
 #include "num_collect/util/impl/assertion_decomposer.h"
 
 #include <functional>
@@ -163,70 +162,70 @@ TEST_CASE("num_collect::util::impl::assertion_decomposer") {
     using num_collect::util::impl::assertion_decomposer;
 
     SECTION("simple booleans") {
-        REQUIRE((assertion_decomposer() < true).evaluate_to_bool());
-        REQUIRE_FALSE((assertion_decomposer() < false).evaluate_to_bool());
+        CHECK((assertion_decomposer() < true).evaluate_to_bool());
+        CHECK_FALSE((assertion_decomposer() < false).evaluate_to_bool());
 
-        REQUIRE_FALSE((assertion_decomposer() < std::shared_ptr<int>())
-                          .evaluate_to_bool());
-        REQUIRE_FALSE((assertion_decomposer() < std::shared_ptr<int>())
-                          .evaluate_to_bool());
+        CHECK_FALSE((assertion_decomposer() < std::shared_ptr<int>())
+                        .evaluate_to_bool());
+        CHECK_FALSE((assertion_decomposer() < std::shared_ptr<int>())
+                        .evaluate_to_bool());
 
-        REQUIRE(fmt::format("{}", assertion_decomposer() < true) == "true");
+        CHECK(fmt::format("{}", assertion_decomposer() < true) == "true");
     }
 
     SECTION("smart pointers") {
-        REQUIRE_FALSE((assertion_decomposer() < std::shared_ptr<int>())
-                          .evaluate_to_bool());
-        REQUIRE((assertion_decomposer() < std::make_shared<int>(0))
-                    .evaluate_to_bool());
+        CHECK_FALSE((assertion_decomposer() < std::shared_ptr<int>())
+                        .evaluate_to_bool());
+        CHECK((assertion_decomposer() < std::make_shared<int>(0))
+                  .evaluate_to_bool());
 
-        REQUIRE(fmt::format(
-                    "{}", assertion_decomposer() < std::shared_ptr<int>()) ==
+        CHECK(fmt::format(
+                  "{}", assertion_decomposer() < std::shared_ptr<int>()) ==
             "<unformattable-value>");
-        REQUIRE(fmt::format(
-                    "{}", assertion_decomposer() < std::make_shared<int>(0)) ==
+        CHECK(fmt::format(
+                  "{}", assertion_decomposer() < std::make_shared<int>(0)) ==
             "<unformattable-value>");
     }
 
     SECTION("comparison with single operator<") {
-        REQUIRE((assertion_decomposer() < 1 < 2).evaluate_to_bool());
-        REQUIRE_FALSE((assertion_decomposer() < 1 < 1).evaluate_to_bool());
+        CHECK((assertion_decomposer() < 1 < 2).evaluate_to_bool());
+        CHECK_FALSE((assertion_decomposer() < 1 < 1).evaluate_to_bool());
 
-        REQUIRE(fmt::format("{}", assertion_decomposer() < 1 < 2) == "1 < 2");
+        CHECK(fmt::format("{}", assertion_decomposer() < 1 < 2) == "1 < 2");
     }
 
     SECTION("comparison with single operator<=") {
-        REQUIRE((assertion_decomposer() < 1 <= 2).evaluate_to_bool());
-        REQUIRE_FALSE((assertion_decomposer() < 1 <= 0).evaluate_to_bool());
+        CHECK((assertion_decomposer() < 1 <= 2).evaluate_to_bool());
+        CHECK_FALSE((assertion_decomposer() < 1 <= 0).evaluate_to_bool());
 
-        REQUIRE(fmt::format("{}", assertion_decomposer() < 1 <= 2) == "1 <= 2");
+        CHECK(fmt::format("{}", assertion_decomposer() < 1 <= 2) == "1 <= 2");
     }
 
     SECTION("comparison with single operator>") {
-        REQUIRE((assertion_decomposer() < 3 > 2).evaluate_to_bool());
-        REQUIRE_FALSE((assertion_decomposer() < 1 > 1).evaluate_to_bool());
+        CHECK((assertion_decomposer() < 3 > 2).evaluate_to_bool());
+        CHECK_FALSE((assertion_decomposer() < 1 > 1).evaluate_to_bool());
 
-        REQUIRE(fmt::format("{}", assertion_decomposer() < 3 > 2) == "3 > 2");
+        CHECK(fmt::format("{}", assertion_decomposer() < 3 > 2) == "3 > 2");
     }
 
     SECTION("comparison with single operator>=") {
-        REQUIRE((assertion_decomposer() < 3 >= 2).evaluate_to_bool());
-        REQUIRE_FALSE((assertion_decomposer() < 1 >= 2).evaluate_to_bool());
+        CHECK((assertion_decomposer() < 3 >= 2).evaluate_to_bool());
+        CHECK_FALSE((assertion_decomposer() < 1 >= 2).evaluate_to_bool());
 
-        REQUIRE(fmt::format("{}", assertion_decomposer() < 3 >= 2) == "3 >= 2");
+        CHECK(fmt::format("{}", assertion_decomposer() < 3 >= 2) == "3 >= 2");
     }
 
     SECTION("comparison with single operator==") {
-        REQUIRE((assertion_decomposer() < 2 == 2).evaluate_to_bool());
-        REQUIRE_FALSE((assertion_decomposer() < 1 == 2).evaluate_to_bool());
+        CHECK((assertion_decomposer() < 2 == 2).evaluate_to_bool());
+        CHECK_FALSE((assertion_decomposer() < 1 == 2).evaluate_to_bool());
 
-        REQUIRE(fmt::format("{}", assertion_decomposer() < 2 == 2) == "2 == 2");
+        CHECK(fmt::format("{}", assertion_decomposer() < 2 == 2) == "2 == 2");
     }
 
     SECTION("comparison with single operator!=") {
-        REQUIRE((assertion_decomposer() < 3 != 2).evaluate_to_bool());
-        REQUIRE_FALSE((assertion_decomposer() < 2 != 2).evaluate_to_bool());
+        CHECK((assertion_decomposer() < 3 != 2).evaluate_to_bool());
+        CHECK_FALSE((assertion_decomposer() < 2 != 2).evaluate_to_bool());
 
-        REQUIRE(fmt::format("{}", assertion_decomposer() < 2 != 2) == "2 != 2");
+        CHECK(fmt::format("{}", assertion_decomposer() < 2 != 2) == "2 != 2");
     }
 }
