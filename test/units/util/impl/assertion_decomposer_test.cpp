@@ -22,26 +22,29 @@
 
 #include <functional>
 #include <optional>
+#include <type_traits>
 
 #include <catch2/catch_test_macros.hpp>
 #include <fmt/format.h>
+
+#include "num_collect/util/comparators.h"
 
 TEST_CASE("num_collect::util::impl::assertion_value") {
     using num_collect::util::impl::assertion_value;
 
     SECTION("evaluate") {
-        REQUIRE(assertion_value<bool>(true).evaluate_to_bool());
-        REQUIRE_FALSE(assertion_value<bool>(false).evaluate_to_bool());
+        CHECK(assertion_value<bool>(true).evaluate_to_bool());
+        CHECK_FALSE(assertion_value<bool>(false).evaluate_to_bool());
 
-        REQUIRE(assertion_value<std::optional<int>>(std::optional<int>(0))
-                    .evaluate_to_bool());
-        REQUIRE_FALSE(assertion_value<std::optional<int>>(std::optional<int>())
-                          .evaluate_to_bool());
+        CHECK(assertion_value<std::optional<int>>(std::optional<int>(0))
+                  .evaluate_to_bool());
+        CHECK_FALSE(assertion_value<std::optional<int>>(std::optional<int>())
+                        .evaluate_to_bool());
     }
 
     SECTION("format") {
-        REQUIRE(fmt::format("{}", assertion_value<bool>(true)) == "true");
-        REQUIRE(fmt::format("{}", assertion_value<int>(2)) == "2");
+        CHECK(fmt::format("{}", assertion_value<bool>(true)) == "true");
+        CHECK(fmt::format("{}", assertion_value<int>(2)) == "2");
     }
 }
 
@@ -59,7 +62,7 @@ TEST_CASE("num_collect::util::impl::assertion_comparison") {
 
             const auto comp = assertion_comparison<int, int, std::less<>>(
                 left, right, operator_str);
-            REQUIRE(comp.evaluate_to_bool());
+            CHECK(comp.evaluate_to_bool());
         }
 
         SECTION("to false") {
@@ -71,7 +74,7 @@ TEST_CASE("num_collect::util::impl::assertion_comparison") {
 
             const auto comp = assertion_comparison<int, int, std::less<>>(
                 left, right, operator_str);
-            REQUIRE_FALSE(comp.evaluate_to_bool());
+            CHECK_FALSE(comp.evaluate_to_bool());
         }
     }
 
@@ -85,6 +88,72 @@ TEST_CASE("num_collect::util::impl::assertion_comparison") {
         const auto comp = assertion_comparison<int, int, std::less<>>(
             left, right, operator_str);
 
-        REQUIRE(fmt::format("{}", comp) == "3 < 5");
+        CHECK(fmt::format("{}", comp) == "3 < 5");
+    }
+
+    SECTION("create using operators") {
+        const int left_val = 3;
+        const int right_val = 5;
+        const auto left = assertion_value<int>(left_val);
+
+        SECTION("operator<") {
+            const auto comp = left < right_val;
+
+            STATIC_CHECK(std::is_same_v<decltype(comp),
+                const assertion_comparison<int, int,
+                    num_collect::util::less<int>>>);
+            CHECK(comp.evaluate_to_bool());
+            CHECK(fmt::format("{}", comp) == "3 < 5");
+        }
+
+        SECTION("operator<=") {
+            const auto comp = left <= right_val;
+
+            STATIC_CHECK(std::is_same_v<decltype(comp),
+                const assertion_comparison<int, int,
+                    num_collect::util::less_equal<int>>>);
+            CHECK(comp.evaluate_to_bool());
+            CHECK(fmt::format("{}", comp) == "3 <= 5");
+        }
+
+        SECTION("operator>") {
+            const auto comp = left > right_val;
+
+            STATIC_CHECK(std::is_same_v<decltype(comp),
+                const assertion_comparison<int, int,
+                    num_collect::util::greater<int>>>);
+            CHECK_FALSE(comp.evaluate_to_bool());
+            CHECK(fmt::format("{}", comp) == "3 > 5");
+        }
+
+        SECTION("operator>=") {
+            const auto comp = left >= right_val;
+
+            STATIC_CHECK(std::is_same_v<decltype(comp),
+                const assertion_comparison<int, int,
+                    num_collect::util::greater_equal<int>>>);
+            CHECK_FALSE(comp.evaluate_to_bool());
+            CHECK(fmt::format("{}", comp) == "3 >= 5");
+        }
+
+        SECTION("operator==") {
+            const auto comp = left == right_val;
+
+            STATIC_CHECK(std::is_same_v<decltype(comp),
+                const assertion_comparison<int, int,
+                    num_collect::util::equal<int>>>);
+            CHECK_FALSE(comp.evaluate_to_bool());
+            CHECK(fmt::format("{}", comp) == "3 == 5");
+        }
+
+        SECTION("operator!=") {
+            const auto comp = left != right_val;
+
+            STATIC_CHECK(std::is_same_v<decltype(comp),
+                const assertion_comparison<int, int,
+                    num_collect::util::not_equal<int>>>);
+            CHECK(comp.evaluate_to_bool());
+            CHECK(fmt::format("{}", comp) == "3 != 5");
+        }
     }
 }

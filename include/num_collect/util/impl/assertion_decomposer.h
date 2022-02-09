@@ -26,7 +26,9 @@
 
 #include "num_collect/base/concepts/convertible_to.h"
 #include "num_collect/base/concepts/formattable.h"
+#include "num_collect/util/comparators.h"
 #include "num_collect/util/concepts/comparator.h"
+#include "num_collect/util/concepts/rhs_comparable.h"
 
 namespace num_collect::util::impl {
 
@@ -201,6 +203,104 @@ private:
     //! Function object to compare two values.
     Comparator comparator_;
 };
+
+/*!
+ * \brief Create an object to compare two values.
+ *
+ * \tparam Left Type of the left-hand-side value.
+ * \tparam Right Type of the right-hand-side value.
+ * \param[in] left Left-hand-side value.
+ * \param[in] right Right-hand-side value.
+ * \return Object to compare the two values.
+ */
+template <typename Left, concepts::rhs_less_than_comparable<Left> Right>
+[[nodiscard]] inline auto operator<(
+    const assertion_value<Left>& left, const Right& right) {
+    return assertion_comparison<Left, Right, less<Left, Right>>(
+        left, assertion_value<Right>(right), "<");
+}
+
+/*!
+ * \brief Create an object to compare two values.
+ *
+ * \tparam Left Type of the left-hand-side value.
+ * \tparam Right Type of the right-hand-side value.
+ * \param[in] left Left-hand-side value.
+ * \param[in] right Right-hand-side value.
+ * \return Object to compare the two values.
+ */
+template <typename Left,
+    concepts::rhs_less_than_or_equal_to_comparable<Left> Right>
+[[nodiscard]] inline auto operator<=(
+    const assertion_value<Left>& left, const Right& right) {
+    return assertion_comparison<Left, Right, less_equal<Left, Right>>(
+        left, assertion_value<Right>(right), "<=");
+}
+
+/*!
+ * \brief Create an object to compare two values.
+ *
+ * \tparam Left Type of the left-hand-side value.
+ * \tparam Right Type of the right-hand-side value.
+ * \param[in] left Left-hand-side value.
+ * \param[in] right Right-hand-side value.
+ * \return Object to compare the two values.
+ */
+template <typename Left, concepts::rhs_greater_than_comparable<Left> Right>
+[[nodiscard]] inline auto operator>(
+    const assertion_value<Left>& left, const Right& right) {
+    return assertion_comparison<Left, Right, greater<Left, Right>>(
+        left, assertion_value<Right>(right), ">");
+}
+
+/*!
+ * \brief Create an object to compare two values.
+ *
+ * \tparam Left Type of the left-hand-side value.
+ * \tparam Right Type of the right-hand-side value.
+ * \param[in] left Left-hand-side value.
+ * \param[in] right Right-hand-side value.
+ * \return Object to compare the two values.
+ */
+template <typename Left,
+    concepts::rhs_greater_than_or_equal_to_comparable<Left> Right>
+[[nodiscard]] inline auto operator>=(
+    const assertion_value<Left>& left, const Right& right) {
+    return assertion_comparison<Left, Right, greater_equal<Left, Right>>(
+        left, assertion_value<Right>(right), ">=");
+}
+
+/*!
+ * \brief Create an object to compare two values.
+ *
+ * \tparam Left Type of the left-hand-side value.
+ * \tparam Right Type of the right-hand-side value.
+ * \param[in] left Left-hand-side value.
+ * \param[in] right Right-hand-side value.
+ * \return Object to compare the two values.
+ */
+template <typename Left, concepts::rhs_equal_to_comparable<Left> Right>
+[[nodiscard]] inline auto operator==(
+    const assertion_value<Left>& left, const Right& right) {
+    return assertion_comparison<Left, Right, equal<Left, Right>>(
+        left, assertion_value<Right>(right), "==");
+}
+
+/*!
+ * \brief Create an object to compare two values.
+ *
+ * \tparam Left Type of the left-hand-side value.
+ * \tparam Right Type of the right-hand-side value.
+ * \param[in] left Left-hand-side value.
+ * \param[in] right Right-hand-side value.
+ * \return Object to compare the two values.
+ */
+template <typename Left, concepts::rhs_not_equal_to_comparable<Left> Right>
+[[nodiscard]] inline auto operator!=(
+    const assertion_value<Left>& left, const Right& right) {
+    return assertion_comparison<Left, Right, not_equal<Left, Right>>(
+        left, assertion_value<Right>(right), "!=");
+}
 
 }  // namespace num_collect::util::impl
 
