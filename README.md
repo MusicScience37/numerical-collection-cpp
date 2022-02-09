@@ -15,7 +15,7 @@ A collection of algorithms in numerical analysis implemented in C++.
 
 ## Documentation
 
-- [Documentation built on develop branch](https://musicscience37.gitlab.io/numerical-collection-cpp/)
+- [Documentation built on develop branch](https://numcollect.musicscience37.com/)
 
 ## How to Use
 
