@@ -17,12 +17,12 @@
  * \file
  * \brief Test of rhs_comparable concept.
  */
-#include "num_collect/base/concepts/rhs_comparable.h"
+#include "num_collect/util/concepts/rhs_comparable.h"
 
 #include <catch2/catch_test_macros.hpp>
 
-TEST_CASE("num_collect::base::concepts::rhs_less_than_comparable") {
-    using num_collect::base::concepts::rhs_less_than_comparable;
+TEST_CASE("num_collect::util::concepts::rhs_less_than_comparable") {
+    using num_collect::util::concepts::rhs_less_than_comparable;
 
     SECTION("check") {
         STATIC_REQUIRE(rhs_less_than_comparable<int, int>);
@@ -38,8 +38,8 @@ TEST_CASE("num_collect::base::concepts::rhs_less_than_comparable") {
     }
 }
 
-TEST_CASE("num_collect::base::concepts::rhs_less_than_or_equal_to_comparable") {
-    using num_collect::base::concepts::rhs_less_than_or_equal_to_comparable;
+TEST_CASE("num_collect::util::concepts::rhs_less_than_or_equal_to_comparable") {
+    using num_collect::util::concepts::rhs_less_than_or_equal_to_comparable;
 
     SECTION("check") {
         STATIC_REQUIRE(rhs_less_than_or_equal_to_comparable<int, int>);
@@ -56,8 +56,8 @@ TEST_CASE("num_collect::base::concepts::rhs_less_than_or_equal_to_comparable") {
     }
 }
 
-TEST_CASE("num_collect::base::concepts::rhs_greater_than_comparable") {
-    using num_collect::base::concepts::rhs_greater_than_comparable;
+TEST_CASE("num_collect::util::concepts::rhs_greater_than_comparable") {
+    using num_collect::util::concepts::rhs_greater_than_comparable;
 
     SECTION("check") {
         STATIC_REQUIRE(rhs_greater_than_comparable<int, int>);
@@ -74,8 +74,8 @@ TEST_CASE("num_collect::base::concepts::rhs_greater_than_comparable") {
 }
 
 TEST_CASE(
-    "num_collect::base::concepts::rhs_greater_than_or_equal_to_comparable") {
-    using num_collect::base::concepts::rhs_greater_than_or_equal_to_comparable;
+    "num_collect::util::concepts::rhs_greater_than_or_equal_to_comparable") {
+    using num_collect::util::concepts::rhs_greater_than_or_equal_to_comparable;
 
     SECTION("check") {
         STATIC_REQUIRE(rhs_greater_than_or_equal_to_comparable<int, int>);
@@ -92,8 +92,8 @@ TEST_CASE(
     }
 }
 
-TEST_CASE("num_collect::base::concepts::rhs_equal_to_comparable") {
-    using num_collect::base::concepts::rhs_equal_to_comparable;
+TEST_CASE("num_collect::util::concepts::rhs_equal_to_comparable") {
+    using num_collect::util::concepts::rhs_equal_to_comparable;
 
     SECTION("check") {
         STATIC_REQUIRE(rhs_equal_to_comparable<int, int>);
@@ -109,8 +109,8 @@ TEST_CASE("num_collect::base::concepts::rhs_equal_to_comparable") {
     }
 }
 
-TEST_CASE("num_collect::base::concepts::rhs_not_equal_to_comparable") {
-    using num_collect::base::concepts::rhs_not_equal_to_comparable;
+TEST_CASE("num_collect::util::concepts::rhs_not_equal_to_comparable") {
+    using num_collect::util::concepts::rhs_not_equal_to_comparable;
 
     SECTION("check") {
         STATIC_REQUIRE(rhs_not_equal_to_comparable<int, int>);
@@ -126,8 +126,8 @@ TEST_CASE("num_collect::base::concepts::rhs_not_equal_to_comparable") {
     }
 }
 
-TEST_CASE("num_collect::base::concepts::rhs_comparable") {
-    using num_collect::base::concepts::rhs_comparable;
+TEST_CASE("num_collect::util::concepts::rhs_comparable") {
+    using num_collect::util::concepts::rhs_comparable;
 
     SECTION("check") {
         STATIC_REQUIRE(rhs_comparable<int, int>);

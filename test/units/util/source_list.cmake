@@ -1,7 +1,10 @@
 set(SOURCE_FILES
     bidirectional_vector_test.cpp
+    comparators_test.cpp
+    concepts/comparable_test.cpp
     concepts/comparator_test.cpp
     concepts/kahan_addable_test.cpp
+    concepts/rhs_comparable_test.cpp
     hash_string_test.cpp
     impl/assertion_decomposer_test.cpp
     impl/compiler_builtins_test.cpp

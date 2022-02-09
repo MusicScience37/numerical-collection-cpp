@@ -19,11 +19,9 @@
  */
 #pragma once
 
-#include "num_collect/base/concepts/comparable.h"
+#include "num_collect/util/concepts/comparable.h"
 
-namespace num_collect {
-inline namespace base {
-namespace concepts {
+namespace num_collect::util::concepts {
 
 /*!
  * \brief Concept of types comparable with `operator<` as the right-hand-side
@@ -96,6 +94,4 @@ concept rhs_not_equal_to_comparable = not_equal_to_comparable<U, T>;
 template <typename T, typename U>
 concept rhs_comparable = comparable<U, T>;
 
-}  // namespace concepts
-}  // namespace base
-}  // namespace num_collect
+}  // namespace num_collect::util::concepts
