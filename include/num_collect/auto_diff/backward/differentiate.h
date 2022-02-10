@@ -28,7 +28,7 @@
 #include "num_collect/auto_diff/backward/graph/node.h"
 #include "num_collect/auto_diff/backward/graph/node_differentiator.h"
 #include "num_collect/auto_diff/backward/variable.h"
-#include "num_collect/base/assert.h"
+#include "num_collect/util/assert.h"
 #include "num_collect/util/safe_cast.h"
 
 namespace num_collect::auto_diff::backward {

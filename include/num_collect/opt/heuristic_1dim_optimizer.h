@@ -23,11 +23,11 @@
 #include <type_traits>
 #include <vector>
 
-#include "num_collect/base/assert.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/opt/golden_section_search.h"
 #include "num_collect/opt/optimizer_base.h"
 #include "num_collect/opt/sampling_optimizer.h"
+#include "num_collect/util/assert.h"
 
 namespace num_collect::opt {
 

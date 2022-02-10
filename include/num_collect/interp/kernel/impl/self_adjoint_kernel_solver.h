@@ -25,8 +25,8 @@
 #include <Eigen/Core>
 #include <Eigen/Eigenvalues>
 
-#include "num_collect/base/assert.h"
 #include "num_collect/base/concepts/real_scalar_dense_matrix.h"
+#include "num_collect/util/assert.h"
 
 namespace num_collect::interp::kernel::impl {
 

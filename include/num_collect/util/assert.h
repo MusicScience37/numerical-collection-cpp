@@ -66,3 +66,35 @@ void evaluate_assertion(const assertion_expression_base<Derived>& assertion,
         (::num_collect::util::impl::assertion_decomposer() < \
             CONDITION), /* NOLINT */                         \
         (#CONDITION))
+
+/*!
+ * \brief Macro to check whether a condition is satisfied.
+ *
+ * \param[in] CONDITION Condition.
+ */
+#define NUM_COLLECT_ASSERT(CONDITION) /* NOLINT */ \
+    NUM_COLLECT_ASSERT_IMPL(CONDITION)
+
+#ifdef NUM_COLLECT_DOCUMENTATION
+/*!
+ * \brief Macro to check whether a condition is satisfied in debug build only.
+ *
+ * \param[in] CONDITION Condition.
+ */
+#define NUM_COLLECT_DEBUG_ASSERT(CONDITION) NUM_COLLECT_ASSERT(CONDITION)
+#elif !defined(NDEBUG)
+/*!
+ * \brief Macro to check whether a condition is satisfied in debug build only.
+ *
+ * \param[in] CONDITION Condition.
+ */
+#define NUM_COLLECT_DEBUG_ASSERT(CONDITION) /* NOLINT */ \
+    NUM_COLLECT_ASSERT(CONDITION)
+#else
+/*!
+ * \brief Macro to check whether a condition is satisfied in debug build only.
+ *
+ * \param[in] CONDITION Condition.
+ */
+#define NUM_COLLECT_DEBUG_ASSERT(CONDITION) /* NOLINT */ [] {}()
+#endif
