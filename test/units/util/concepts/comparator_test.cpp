@@ -15,22 +15,19 @@
  */
 /*!
  * \file
- * \brief Test of kahan_adder concept.
+ * \brief Test of comparator concept.
  */
-#include "num_collect/util/concepts/kahan_addable.h"
+#include "num_collect/util/concepts/comparator.h"
 
-#include <string>
+#include <functional>
 
-#include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
 
-TEST_CASE("num_collect::util::concepts::kahan_addable") {
-    using num_collect::util::concepts::kahan_addable;
+TEST_CASE("num_collect::util::concepts::comparator") {
+    using num_collect::util::concepts::comparator;
 
     SECTION("check") {
-        STATIC_REQUIRE(kahan_addable<float>);
-        STATIC_REQUIRE(kahan_addable<double>);
-        STATIC_REQUIRE(kahan_addable<Eigen::VectorXd>);
-        STATIC_REQUIRE_FALSE(kahan_addable<std::string>);
+        STATIC_REQUIRE(comparator<std::less<int>, int, int>);
+        STATIC_REQUIRE(comparator<std::equal_to<int>, int, int>);
     }
 }

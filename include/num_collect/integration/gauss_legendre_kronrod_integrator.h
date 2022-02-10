@@ -29,7 +29,6 @@
 #include <Eigen/Core>
 #include <Eigen/Eigenvalues>
 
-#include "num_collect/base/assert.h"
 #include "num_collect/base/concepts/invocable.h"
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/index_type.h"
@@ -40,6 +39,7 @@
 #include "num_collect/constants/zero.h"
 #include "num_collect/functions/legendre.h"
 #include "num_collect/functions/legendre_roots.h"
+#include "num_collect/util/assert.h"
 #include "num_collect/util/safe_cast.h"
 
 namespace num_collect::integration {

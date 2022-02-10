@@ -19,11 +19,11 @@
  */
 #pragma once
 
-#include "num_collect/base/assert.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/constants/zero.h"
 #include "num_collect/ode/concepts/formula.h"
 #include "num_collect/ode/solver_base.h"
+#include "num_collect/util/assert.h"
 
 namespace num_collect::ode {
 

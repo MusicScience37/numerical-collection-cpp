@@ -21,11 +21,11 @@
 
 #include <algorithm>
 
-#include "num_collect/base/assert.h"
 #include "num_collect/base/norm.h"
 #include "num_collect/constants/zero.h"
 #include "num_collect/ode/concepts/formula_solver.h"
 #include "num_collect/ode/concepts/problem.h"
+#include "num_collect/util/assert.h"
 
 namespace num_collect::ode::runge_kutta {
 

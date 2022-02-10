@@ -24,10 +24,10 @@
 #include <Eigen/Core>
 
 #include "num_collect/auto_diff/forward/variable.h"
-#include "num_collect/base/assert.h"
 #include "num_collect/base/concepts/dense_vector.h"
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/concepts/real_scalar_dense_matrix.h"
+#include "num_collect/util/assert.h"
 
 namespace num_collect::auto_diff::forward {
 

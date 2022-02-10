@@ -15,22 +15,25 @@
  */
 /*!
  * \file
- * \brief Test of kahan_adder concept.
+ * \brief Definition of convertible_to concept.
  */
-#include "num_collect/util/concepts/kahan_addable.h"
+#pragma once
 
-#include <string>
+namespace num_collect {
+inline namespace base {
+namespace concepts {
 
-#include <Eigen/Core>
-#include <catch2/catch_test_macros.hpp>
+/*!
+ * \brief Concept of types convertible from the given type.
+ *
+ * \tparam From Type to convert from.
+ * \tparam To Type to convert to.
+ */
+template <typename From, typename To>
+concept convertible_to = requires(const From& from, To& to) {
+    to = static_cast<To>(from);
+};
 
-TEST_CASE("num_collect::util::concepts::kahan_addable") {
-    using num_collect::util::concepts::kahan_addable;
-
-    SECTION("check") {
-        STATIC_REQUIRE(kahan_addable<float>);
-        STATIC_REQUIRE(kahan_addable<double>);
-        STATIC_REQUIRE(kahan_addable<Eigen::VectorXd>);
-        STATIC_REQUIRE_FALSE(kahan_addable<std::string>);
-    }
-}
+}  // namespace concepts
+}  // namespace base
+}  // namespace num_collect

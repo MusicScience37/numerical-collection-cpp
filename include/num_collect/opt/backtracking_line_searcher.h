@@ -24,9 +24,9 @@
 
 #include <Eigen/Core>
 
-#include "num_collect/base/assert.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/util/assert.h"
 
 namespace num_collect::opt {
 
@@ -182,7 +182,7 @@ public:
      * \return This object.
      */
     auto armijo_coeff(value_type value) -> backtracking_line_searcher& {
-        NUM_COLLECT_ASSERT(value_type(0) < value && value < value_type(1));
+        NUM_COLLECT_ASSERT(value_type(0) < value < value_type(1));
         armijo_coeff_ = value;
         return *this;
     }
@@ -194,7 +194,7 @@ public:
      * \return This object.
      */
     auto step_scale(value_type value) -> backtracking_line_searcher& {
-        NUM_COLLECT_ASSERT(value_type(0) < value && value < value_type(1));
+        NUM_COLLECT_ASSERT(value_type(0) < value < value_type(1));
         step_scale_ = value;
         return *this;
     }

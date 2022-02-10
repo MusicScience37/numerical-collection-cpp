@@ -22,7 +22,6 @@
 #include <cmath>
 #include <type_traits>
 
-#include "num_collect/base/assert.h"
 #include "num_collect/base/concepts/invocable.h"
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/index_type.h"
@@ -31,6 +30,7 @@
 #include "num_collect/constants/pi.h"
 #include "num_collect/constants/two.h"
 #include "num_collect/constants/zero.h"
+#include "num_collect/util/assert.h"
 
 namespace num_collect::integration {
 

@@ -22,9 +22,9 @@
 #include <cmath>
 #include <type_traits>
 
-#include "num_collect/base/assert.h"
 #include "num_collect/interp/kernel/concepts/distance.h"
 #include "num_collect/interp/kernel/concepts/rbf.h"
+#include "num_collect/util/assert.h"
 
 namespace num_collect::interp::kernel {
 

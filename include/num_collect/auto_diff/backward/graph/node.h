@@ -23,8 +23,8 @@
 #include <utility>
 #include <vector>
 
-#include "num_collect/base/assert.h"
 #include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/util/assert.h"
 
 namespace num_collect::auto_diff::backward::graph {
 

@@ -24,9 +24,9 @@
 
 #include <fmt/core.h>
 
-#include "num_collect/base/assert.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/util/assert.h"
 
 namespace num_collect::util {
 

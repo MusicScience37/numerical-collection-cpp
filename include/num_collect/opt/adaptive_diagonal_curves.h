@@ -30,11 +30,11 @@
 
 #include <Eigen/Core>
 
-#include "num_collect/base/assert.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/opt/impl/ternary_vector.h"
 #include "num_collect/opt/optimizer_base.h"
+#include "num_collect/util/assert.h"
 #include "num_collect/util/is_eigen_vector.h"
 #include "num_collect/util/safe_cast.h"
 
