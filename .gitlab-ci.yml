@@ -31,16 +31,21 @@ gemnasium-python-dependency_scanning:
 sync pipenv:
   extends: .retry setting
   stage: Prepare
-  dependencies: []
   image: musicscience37/clang-ci:clang12-v3.4
   script:
     - mkdir -p .venv
-    - pipenv install --dev
+    - pipenv sync --dev
+  cache:
+    key:
+      prefix: pipenv-linux
+      files:
+        - Pipfile.lock
+    paths:
+      - .venv
   artifacts:
     paths:
       - .venv
-      - Pipfile.lock
-    expire_in: "3 mos"
+    expire_in: "1 mos"
 
 line count:
   extends: .retry setting
@@ -347,7 +352,7 @@ msvc-debug:
     - choco install python --version=3.9.9 -y
     - RefreshEnv
     - pip install pipenv
-    - pipenv install
+    - pipenv sync
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --detect default
@@ -385,7 +390,7 @@ msvc-release:
     - choco install python --version=3.9.9 -y
     - RefreshEnv
     - pip install pipenv
-    - pipenv install
+    - pipenv sync
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --detect default
