@@ -37,7 +37,7 @@ TEST_CASE("NUM_COLLECT_ASSERT_IMPL") {
             Catch::Matchers::ContainsSubstring("!std::make_shared<int>(0)"));
     }
 
-    SECTION("comparisons") {
+    SECTION("comparisons using single operator") {
         CHECK_NOTHROW(NUM_COLLECT_ASSERT_IMPL(1 < 2));
         CHECK_NOTHROW(NUM_COLLECT_ASSERT_IMPL(1 + 1 == 2));
 
@@ -45,5 +45,15 @@ TEST_CASE("NUM_COLLECT_ASSERT_IMPL") {
             Catch::Matchers::ContainsSubstring("1 + 1 > 2 (2 > 2)"));
         CHECK_THROWS_WITH(NUM_COLLECT_ASSERT_IMPL(2 + 1 == 2 * 1),
             Catch::Matchers::ContainsSubstring("2 + 1 == 2 * 1 (3 == 2)"));
+    }
+
+    SECTION("comparisons using two operators") {
+        CHECK_NOTHROW(NUM_COLLECT_ASSERT_IMPL(1 < 2 < 3));
+        CHECK_NOTHROW(NUM_COLLECT_ASSERT_IMPL(1 < 2 <= 2));
+
+        CHECK_THROWS_WITH(NUM_COLLECT_ASSERT_IMPL(1 < 2 < 2),
+            Catch::Matchers::ContainsSubstring("1 < 2 < 2 (1 < 2 < 2)"));
+        CHECK_THROWS_WITH(NUM_COLLECT_ASSERT_IMPL(1 < 2 <= 1),
+            Catch::Matchers::ContainsSubstring("1 < 2 <= 1 (1 < 2 <= 1)"));
     }
 }

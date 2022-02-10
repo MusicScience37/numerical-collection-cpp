@@ -384,6 +384,48 @@ private:
 };
 
 /*!
+ * \brief Create an object to compare three values.
+ *
+ * \tparam Left Type of the left-hand-side value.
+ * \tparam Middle Type of the middle value.
+ * \tparam ComparatorLeft Type of the function object to compare left two
+ * values.
+ * \tparam Right Type of the right-hand-side value.
+ * \param[in] left Left-hand-side object.
+ * \param[in] right Right-hand-side value.
+ * \return Object to compare the three values.
+ */
+template <typename Left, typename Middle, typename ComparatorLeft,
+    concepts::rhs_less_than_comparable<Middle> Right>
+[[nodiscard]] inline auto operator<(
+    const assertion_comparison<Left, Middle, ComparatorLeft>& left,
+    const Right& right) {
+    return assertion_comparison2<Left, Middle, Right, ComparatorLeft,
+        less<Left, Right>>(left, assertion_value<Right>(right), "<");
+}
+
+/*!
+ * \brief Create an object to compare three values.
+ *
+ * \tparam Left Type of the left-hand-side value.
+ * \tparam Middle Type of the middle value.
+ * \tparam ComparatorLeft Type of the function object to compare left two
+ * values.
+ * \tparam Right Type of the right-hand-side value.
+ * \param[in] left Left-hand-side object.
+ * \param[in] right Right-hand-side value.
+ * \return Object to compare the three values.
+ */
+template <typename Left, typename Middle, typename ComparatorLeft,
+    concepts::rhs_less_than_or_equal_to_comparable<Middle> Right>
+[[nodiscard]] inline auto operator<=(
+    const assertion_comparison<Left, Middle, ComparatorLeft>& left,
+    const Right& right) {
+    return assertion_comparison2<Left, Middle, Right, ComparatorLeft,
+        less_equal<Left, Right>>(left, assertion_value<Right>(right), "<=");
+}
+
+/*!
  * \brief Class to decompose comprisons in assertions.
  */
 class assertion_decomposer {

@@ -233,6 +233,36 @@ TEST_CASE("num_collect::util::impl::assertion_comparison2") {
 
         CHECK(fmt::format("{}", comp) == "3 < 4 < 5");
     }
+
+    SECTION("create using operators") {
+        const int left_val = 3;
+        const int middle_val = 4;
+        const int right_val = 5;
+        const auto left = assertion_value<int>(left_val);
+        const auto middle = assertion_value<int>(middle_val);
+        const auto comp_left =
+            assertion_comparison<int, int, std::less<>>(left, middle, "<");
+
+        SECTION("operator<") {
+            const auto comp = comp_left < right_val;
+
+            STATIC_CHECK(std::is_same_v<decltype(comp),
+                const assertion_comparison2<int, int, int, std::less<>,
+                    num_collect::util::less<int>>>);
+            CHECK(comp.evaluate_to_bool());
+            CHECK(fmt::format("{}", comp) == "3 < 4 < 5");
+        }
+
+        SECTION("operator<=") {
+            const auto comp = comp_left <= right_val;
+
+            STATIC_CHECK(std::is_same_v<decltype(comp),
+                const assertion_comparison2<int, int, int, std::less<>,
+                    num_collect::util::less_equal<int>>>);
+            CHECK(comp.evaluate_to_bool());
+            CHECK(fmt::format("{}", comp) == "3 < 4 <= 5");
+        }
+    }
 }
 
 TEST_CASE("num_collect::util::impl::assertion_decomposer") {
@@ -304,5 +334,18 @@ TEST_CASE("num_collect::util::impl::assertion_decomposer") {
         CHECK_FALSE((assertion_decomposer() < 2 != 2).evaluate_to_bool());
 
         CHECK(fmt::format("{}", assertion_decomposer() < 2 != 2) == "2 != 2");
+    }
+
+    SECTION("comparison with multiple operators") {
+        CHECK((assertion_decomposer() < 1 < 2 < 3).evaluate_to_bool());
+        CHECK((assertion_decomposer() < 1 < 2 <= 2).evaluate_to_bool());
+        CHECK_FALSE((assertion_decomposer() < 1 < 1 < 2).evaluate_to_bool());
+        CHECK_FALSE((assertion_decomposer() < 1 < 2 < 2).evaluate_to_bool());
+        CHECK_FALSE((assertion_decomposer() < 1 < 2 <= 1).evaluate_to_bool());
+
+        CHECK(fmt::format("{}", assertion_decomposer() < 1 < 2 < 3) ==
+            "1 < 2 < 3");
+        CHECK(fmt::format("{}", assertion_decomposer() < 1 < 2 <= 3) ==
+            "1 < 2 <= 3");
     }
 }
