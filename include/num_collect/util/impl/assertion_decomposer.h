@@ -158,13 +158,22 @@ public:
      * \param[in] operator_str String expression of the operator.
      * \param[in] comparator Function object to compare two values.
      */
-    assertion_comparison(const assertion_value<Left>& left,
+    assertion_comparison(assertion_value<Left> left,
         assertion_value<Right> right, std::string_view operator_str,
         Comparator comparator = Comparator())
         : left_(left),
           right_(right),
           operator_str_(operator_str),
           comparator_(comparator) {}
+
+    /*!
+     * \brief Get the right-hand-side value.
+     *
+     * \return Right-hand-side value.
+     */
+    [[nodiscard]] auto right() const noexcept -> const assertion_value<Right>& {
+        return right_;
+    }
 
     /*!
      * \brief Evaluate and get boolean result.
@@ -300,6 +309,79 @@ template <typename Left, concepts::rhs_not_equal_to_comparable<Left> Right>
     return assertion_comparison<Left, Right, not_equal<Left, Right>>(
         left, assertion_value<Right>(right), "!=");
 }
+
+/*!
+ * \brief Class to compare three values.
+ *
+ * \tparam Left Type of the left-hand-side value.
+ * \tparam Middle Type of the middle value.
+ * \tparam Right Type of the right-hand-side value.
+ * \tparam ComparatorLeft Type of the function object to compare left two
+ * values.
+ * \tparam ComparatorRight Type of the function object to compare right
+ * two values.
+ */
+template <typename Left, typename Middle, typename Right,
+    concepts::comparator<Left, Middle> ComparatorLeft,
+    concepts::comparator<Middle, Right> ComparatorRight>
+class assertion_comparison2
+    : public assertion_expression_base<assertion_comparison2<Left, Middle,
+          Right, ComparatorLeft, ComparatorRight>> {
+public:
+    /*!
+     * \brief Construct.
+     *
+     * \param[in] comp_left Comparison of two values.
+     * \param[in] right Right-hand-side value.
+     * \param[in] operator_str String expression of the operator.
+     * \param[in] comparator Function object to compare two values.
+     */
+    assertion_comparison2(
+        assertion_comparison<Left, Middle, ComparatorLeft> comp_left,
+        assertion_value<Right> right, std::string_view operator_str,
+        ComparatorRight comparator = ComparatorRight())
+        : comp_left_(comp_left),
+          right_(right),
+          operator_str_(operator_str),
+          comparator_(comparator) {}
+
+    /*!
+     * \brief Evaluate and get boolean result.
+     *
+     * \return Result.
+     */
+    [[nodiscard]] auto evaluate_to_bool() const noexcept -> bool {
+        return comp_left_.evaluate_to_bool() &&
+            comparator_(comp_left_.right().value(), right_.value());
+    }
+
+    /*!
+     * \brief Format expression.
+     *
+     * \tparam OutputIterator Type of the output iterator.
+     * \param[in] out Output iterator to format to.
+     * \return Output iterator after formatting.
+     */
+    template <typename OutputIterator>
+    [[nodiscard]] auto format_to(OutputIterator out) const -> OutputIterator {
+        out = comp_left_.format_to(out);
+        out = fmt::format_to(out, " {} ", operator_str_);
+        return right_.format_to(out);
+    }
+
+private:
+    //! Comparison of two values.
+    assertion_comparison<Left, Middle, ComparatorLeft> comp_left_;
+
+    //! Right-hand-side value.
+    assertion_value<Right> right_;
+
+    //! String expression of the operator.
+    std::string_view operator_str_;
+
+    //! Function object to compare two values.
+    ComparatorRight comparator_;
+};
 
 /*!
  * \brief Class to decompose comprisons in assertions.
