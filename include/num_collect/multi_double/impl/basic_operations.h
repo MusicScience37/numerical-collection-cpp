@@ -26,6 +26,10 @@
 #include <immintrin.h>
 #endif
 
+#ifdef __FAST_MATH__
+#warning "Use of -ffast-math is unsafe for multi_double module."
+#endif
+
 namespace num_collect::multi_double::impl {
 
 /*!

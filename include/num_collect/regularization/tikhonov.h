@@ -27,6 +27,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/regularization/explicit_regularized_solver_base.h"
 #include "num_collect/regularization/impl/coeff_param.h"
+#include "num_collect/util/impl/warn_fast_math_for_bdcsvc.h"
 
 namespace num_collect::regularization {
 
