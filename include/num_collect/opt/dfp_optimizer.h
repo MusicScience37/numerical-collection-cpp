@@ -21,6 +21,7 @@
 
 #include <Eigen/Cholesky>
 
+#include "num_collect/base/concepts/real_scalar_dense_matrix.h"
 #include "num_collect/opt/backtracking_line_searcher.h"
 #include "num_collect/opt/concepts/line_searcher.h"
 #include "num_collect/opt/concepts/multi_variate_differentiable_objective_function.h"
@@ -47,7 +48,7 @@ template <
     concepts::multi_variate_differentiable_objective_function ObjectiveFunction,
     concepts::line_searcher LineSearcher =
         backtracking_line_searcher<ObjectiveFunction>,
-    typename Hessian = Eigen::MatrixXd>
+    base::concepts::real_scalar_dense_matrix Hessian = Eigen::MatrixXd>
 class dfp_optimizer
     : public descent_method_base<
           dfp_optimizer<ObjectiveFunction, LineSearcher, Hessian>,

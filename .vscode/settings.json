@@ -21,6 +21,7 @@
     "cppcoreguidelines",
     "ctest",
     "Cwise",
+    "Davidon",
     "DCMAKE",
     "DFMT",
     "DNUM",
