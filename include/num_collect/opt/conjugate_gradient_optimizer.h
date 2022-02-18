@@ -22,6 +22,8 @@
 #include <Eigen/Cholesky>
 
 #include "num_collect/opt/backtracking_line_searcher.h"
+#include "num_collect/opt/concepts/line_searcher.h"
+#include "num_collect/opt/concepts/multi_variate_differentiable_objective_function.h"
 #include "num_collect/opt/descent_method_base.h"
 
 namespace num_collect::opt {
@@ -42,8 +44,10 @@ inline constexpr auto conjugate_gradient_optimizer_tag =
  * \todo Conjugate gradient method for optimization may need to be fixed for
  * faster convergence.
  */
-template <typename ObjectiveFunction,
-    typename LineSearcher = backtracking_line_searcher<ObjectiveFunction>>
+template <
+    concepts::multi_variate_differentiable_objective_function ObjectiveFunction,
+    concepts::line_searcher LineSearcher =
+        backtracking_line_searcher<ObjectiveFunction>>
 class conjugate_gradient_optimizer
     : public descent_method_base<
           conjugate_gradient_optimizer<ObjectiveFunction, LineSearcher>,

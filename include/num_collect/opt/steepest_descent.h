@@ -20,6 +20,8 @@
 #pragma once
 
 #include "num_collect/opt/backtracking_line_searcher.h"
+#include "num_collect/opt/concepts/differentiable_objective_function.h"
+#include "num_collect/opt/concepts/line_searcher.h"
 #include "num_collect/opt/descent_method_base.h"
 
 namespace num_collect::opt {
@@ -34,8 +36,9 @@ inline constexpr auto steepest_descent_tag =
  * \tparam ObjectiveFunction Type of the objective function.
  * \tparam LineSearcher Type of class to perform line search.
  */
-template <typename ObjectiveFunction,
-    typename LineSearcher = backtracking_line_searcher<ObjectiveFunction>>
+template <concepts::differentiable_objective_function ObjectiveFunction,
+    concepts::line_searcher LineSearcher =
+        backtracking_line_searcher<ObjectiveFunction>>
 class steepest_descent
     : public descent_method_base<
           steepest_descent<ObjectiveFunction, LineSearcher>, LineSearcher> {

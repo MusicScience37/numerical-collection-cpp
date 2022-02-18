@@ -22,6 +22,8 @@
 #include <Eigen/Cholesky>
 
 #include "num_collect/opt/backtracking_line_searcher.h"
+#include "num_collect/opt/concepts/line_searcher.h"
+#include "num_collect/opt/concepts/multi_variate_differentiable_objective_function.h"
 #include "num_collect/opt/descent_method_base.h"
 
 namespace num_collect::opt {
@@ -41,8 +43,10 @@ inline constexpr auto bfgs_optimizer_tag =
  * \tparam LineSearcher Type of class to perform line search.
  * \tparam HessianSolver Type of solvers of linear equation of Hessian.
  */
-template <typename ObjectiveFunction,
-    typename LineSearcher = backtracking_line_searcher<ObjectiveFunction>,
+template <
+    concepts::multi_variate_differentiable_objective_function ObjectiveFunction,
+    concepts::line_searcher LineSearcher =
+        backtracking_line_searcher<ObjectiveFunction>,
     typename HessianSolver = Eigen::LLT<Eigen::MatrixXd>>
 class bfgs_optimizer
     : public descent_method_base<

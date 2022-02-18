@@ -26,6 +26,8 @@
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/opt/concepts/differentiable_objective_function.h"
+#include "num_collect/opt/concepts/multi_variate_differentiable_objective_function.h"
 #include "num_collect/util/assert.h"
 
 namespace num_collect::opt {
@@ -35,7 +37,7 @@ namespace num_collect::opt {
  *
  * \tparam ObjectiveFunction Type of the objective function.
  */
-template <typename ObjectiveFunction, typename = void>
+template <concepts::differentiable_objective_function ObjectiveFunction>
 class backtracking_line_searcher;
 
 /*!
@@ -43,11 +45,9 @@ class backtracking_line_searcher;
  *
  * \tparam ObjectiveFunction Type of the objective function.
  */
-template <typename ObjectiveFunction>
-class backtracking_line_searcher<ObjectiveFunction,
-    std::enable_if_t<std::is_base_of_v<
-        Eigen::MatrixBase<typename ObjectiveFunction::variable_type>,
-        typename ObjectiveFunction::variable_type>>> {
+template <
+    concepts::multi_variate_differentiable_objective_function ObjectiveFunction>
+class backtracking_line_searcher<ObjectiveFunction> {
 public:
     //! Type of the objective function.
     using objective_function_type = ObjectiveFunction;
@@ -142,9 +142,7 @@ public:
      *
      * \return Current optimal value.
      */
-    [[nodiscard]] auto opt_value() const
-        -> std::invoke_result_t<decltype(&objective_function_type::value),
-            const objective_function_type> {
+    [[nodiscard]] auto opt_value() const -> const value_type& {
         return obj_fun_.value();
     }
 
@@ -153,9 +151,7 @@ public:
      *
      * \return Gradient for current optimal variable.
      */
-    [[nodiscard]] auto gradient() const
-        -> std::invoke_result_t<decltype(&objective_function_type::gradient),
-            const objective_function_type> {
+    [[nodiscard]] auto gradient() const -> const variable_type& {
         return obj_fun_.gradient();
     }
 

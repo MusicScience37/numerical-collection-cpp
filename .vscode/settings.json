@@ -1,5 +1,6 @@
 {
   "cSpell.words": [
+    "Armijo",
     "asan",
     "BDCSVD",
     "bfgs",
@@ -67,8 +68,10 @@
     "Rosenbrock",
     "Runge",
     "Scheuerer",
+    "Sergeyev",
     "Shanno",
     "Struct",
+    "swappable",
     "Tikhonov",
     "trompeloeil",
     "tsan",
