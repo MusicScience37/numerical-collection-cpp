@@ -366,7 +366,7 @@ msvc-debug:
   before_script:
     - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
     - choco install cmake -y --installargs 'ADD_CMAKE_TO_PATH=System'
-    - choco install python --version=3.9.9 -y
+    - choco install python --version=3.9.10 -y
     - RefreshEnv
     - pip install pipenv
     - pipenv sync
@@ -387,7 +387,7 @@ msvc-debug:
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
       "-DCMAKE_CXX_FLAGS=/DFMT_USE_NONTYPE_TEMPLATE_PARAMETERS=0"
     - cd $BUILD_DIR
-    - cmake --build . --config Debug --parallel 2
+    - cmake --build . --config Debug --parallel 3
     - ctest -V --build-config Debug
 
 msvc-release:
@@ -404,7 +404,7 @@ msvc-release:
   before_script:
     - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
     - choco install cmake -y --installargs 'ADD_CMAKE_TO_PATH=System'
-    - choco install python --version=3.9.9 -y
+    - choco install python --version=3.9.10 -y
     - RefreshEnv
     - pip install pipenv
     - pipenv sync
@@ -425,7 +425,7 @@ msvc-release:
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
       "-DCMAKE_CXX_FLAGS=/DFMT_USE_NONTYPE_TEMPLATE_PARAMETERS=0"
     - cd $BUILD_DIR
-    - cmake --build . --config Release --parallel 2
+    - cmake --build . --config Release --parallel 3
     - ctest -V --build-config Release
 
 doc:
