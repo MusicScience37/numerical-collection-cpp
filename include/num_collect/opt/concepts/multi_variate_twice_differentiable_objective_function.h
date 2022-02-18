@@ -37,6 +37,8 @@ template <typename T>
 concept multi_variate_twice_differentiable_objective_function =
     twice_differentiable_objective_function<T> &&
     base::concepts::real_scalar_dense_vector<typename T::variable_type> &&
-    base::concepts::real_scalar_dense_matrix<typename T::hessian_type>;
+    std::is_same_v<typename T::variable_type::Scalar, typename T::value_type> &&
+    base::concepts::real_scalar_dense_matrix<typename T::hessian_type> &&
+    std::is_same_v<typename T::hessian_type::Scalar, typename T::value_type>;
 
 }  // namespace num_collect::opt::concepts
