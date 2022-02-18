@@ -16,7 +16,7 @@ you will require following dependencies:
 - C++ 20 Compiler
   - Following compilers are tested in CI:
     - GCC 10
-    - Clang 12
+    - Clang 12, 13
     - MSVC 19
 
 Additionally, you will require following dependencies
