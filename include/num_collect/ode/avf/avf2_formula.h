@@ -134,8 +134,8 @@ private:
     static constexpr index_type integrator_order = 5;
 
     //! Integrator.
-    integration::gauss_legendre_integrator<scalar_type> integrator_{
-        integrator_order};
+    integration::gauss_legendre_integrator<variable_type(scalar_type)>
+        integrator_{integrator_order};
 
     //! Default tolerance of residual norm.
     static constexpr auto default_tol_residual_norm =
