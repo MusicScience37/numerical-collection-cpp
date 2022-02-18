@@ -7,6 +7,7 @@ set(SOURCE_FILES
     concepts/formattable_test.cpp
     concepts/implicitly_convertible_to_test.cpp
     concepts/integral_test.cpp
+    concepts/invocable_as_test.cpp
     concepts/real_scalar_dense_matrix_test.cpp
     concepts/real_scalar_dense_vector_test.cpp
     concepts/real_scalar_test.cpp
