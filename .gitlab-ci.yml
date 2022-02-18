@@ -389,6 +389,7 @@ msvc-debug:
     - cd $BUILD_DIR
     - cmake --build . --config Debug --parallel 3
     - ctest -V --build-config Debug
+  allow_failure: true
 
 msvc-release:
   extends: .release-test-base
@@ -427,6 +428,7 @@ msvc-release:
     - cd $BUILD_DIR
     - cmake --build . --config Release --parallel 3
     - ctest -V --build-config Release
+  allow_failure: true
 
 doc:
   extends: .retry setting

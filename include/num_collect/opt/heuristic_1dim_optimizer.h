@@ -24,6 +24,7 @@
 #include <vector>
 
 #include "num_collect/base/index_type.h"
+#include "num_collect/opt/concepts/single_variate_objective_function.h"
 #include "num_collect/opt/golden_section_search.h"
 #include "num_collect/opt/optimizer_base.h"
 #include "num_collect/opt/sampling_optimizer.h"
@@ -40,7 +41,7 @@ inline constexpr auto heuristic_1dim_optimizer_tag =
  *
  * \tparam ObjectiveFunction Type of the objective function.
  */
-template <typename ObjectiveFunction>
+template <concepts::single_variate_objective_function ObjectiveFunction>
 class heuristic_1dim_optimizer
     : public optimizer_base<heuristic_1dim_optimizer<ObjectiveFunction>> {
 public:

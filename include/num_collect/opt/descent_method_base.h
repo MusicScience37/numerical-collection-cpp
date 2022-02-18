@@ -20,6 +20,7 @@
 #pragma once
 
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/opt/concepts/line_searcher.h"
 #include "num_collect/opt/optimizer_base.h"
 
 namespace num_collect::opt {
@@ -30,7 +31,7 @@ namespace num_collect::opt {
  * \tparam Derived Type of derived class.
  * \tparam LineSearcher Type of class to perform line search.
  */
-template <typename Derived, typename LineSearcher>
+template <typename Derived, concepts::line_searcher LineSearcher>
 class descent_method_base : public optimizer_base<Derived> {
 public:
     //! Type of class to perform line search.

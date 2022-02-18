@@ -24,6 +24,8 @@
 #include <vector>
 
 #include "num_collect/base/index_type.h"
+#include "num_collect/opt/concepts/objective_function.h"
+#include "num_collect/opt/concepts/single_variate_objective_function.h"
 #include "num_collect/opt/optimizer_base.h"
 #include "num_collect/util/assert.h"
 #include "num_collect/util/safe_cast.h"
@@ -39,7 +41,7 @@ inline constexpr auto sampling_optimizer_tag =
  *
  * \tparam ObjectiveFunction Type of the objective function.
  */
-template <typename ObjectiveFunction, typename = void>
+template <concepts::objective_function ObjectiveFunction>
 class sampling_optimizer;
 
 /*!
@@ -47,10 +49,8 @@ class sampling_optimizer;
  *
  * \tparam ObjectiveFunction Type of the objective function.
  */
-template <typename ObjectiveFunction>
-class sampling_optimizer<ObjectiveFunction,
-    std::enable_if_t<std::is_same_v<typename ObjectiveFunction::variable_type,
-        typename ObjectiveFunction::value_type>>>
+template <concepts::single_variate_objective_function ObjectiveFunction>
+class sampling_optimizer<ObjectiveFunction>
     : public optimizer_base<sampling_optimizer<ObjectiveFunction>> {
 public:
     //! Type of the objective function.

@@ -27,6 +27,8 @@
 #include <Eigen/Core>
 
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/opt/concepts/multi_variate_objective_function.h"
+#include "num_collect/opt/concepts/objective_function.h"
 #include "num_collect/opt/optimizer_base.h"
 #include "num_collect/util/safe_cast.h"
 
@@ -41,7 +43,7 @@ inline constexpr auto downhill_simplex_tag =
  *
  * \tparam ObjectiveFunction Type of the objective function.
  */
-template <typename ObjectiveFunction, typename = void>
+template <concepts::objective_function ObjectiveFunction>
 class downhill_simplex;
 
 /*!
@@ -49,11 +51,8 @@ class downhill_simplex;
  *
  * \tparam ObjectiveFunction Type of the objective function.
  */
-template <typename ObjectiveFunction>
-class downhill_simplex<ObjectiveFunction,
-    std::enable_if_t<std::is_base_of_v<
-        Eigen::MatrixBase<typename ObjectiveFunction::variable_type>,
-        typename ObjectiveFunction::variable_type>>>
+template <concepts::multi_variate_objective_function ObjectiveFunction>
+class downhill_simplex<ObjectiveFunction>
     : public optimizer_base<downhill_simplex<ObjectiveFunction>> {
 public:
     //! Type of the objective function.

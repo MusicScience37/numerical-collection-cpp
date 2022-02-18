@@ -1,5 +1,6 @@
 {
   "cSpell.words": [
+    "Armijo",
     "asan",
     "BDCSVD",
     "bfgs",
@@ -20,6 +21,7 @@
     "cppcoreguidelines",
     "ctest",
     "Cwise",
+    "Davidon",
     "DCMAKE",
     "DFMT",
     "DNUM",
@@ -67,8 +69,10 @@
     "Rosenbrock",
     "Runge",
     "Scheuerer",
+    "Sergeyev",
     "Shanno",
     "Struct",
+    "swappable",
     "Tikhonov",
     "trompeloeil",
     "tsan",

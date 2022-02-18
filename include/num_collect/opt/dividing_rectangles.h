@@ -31,6 +31,7 @@
 #include "num_collect/base/get_size.h"
 #include "num_collect/base/norm.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/opt/concepts/objective_function.h"
 #include "num_collect/opt/optimizer_base.h"
 #include "num_collect/util/assert.h"
 #include "num_collect/util/is_eigen_vector.h"
@@ -48,20 +49,8 @@ inline constexpr auto dividing_rectangles_tag =
  *
  * \tparam ObjectiveFunction Type of the objective function.
  */
-template <typename ObjectiveFunction, typename = void>
-class dividing_rectangles;
-
-/*!
- * \brief Class of dividing rectangles (DIRECT) method \cite Jones1993 for
- * optimization.
- *
- * \tparam ObjectiveFunction Type of the objective function.
- */
-template <typename ObjectiveFunction>
-class dividing_rectangles<ObjectiveFunction,
-    std::enable_if_t<
-        is_eigen_vector_v<typename ObjectiveFunction::variable_type> ||
-        std::is_floating_point_v<typename ObjectiveFunction::variable_type>>>
+template <concepts::objective_function ObjectiveFunction>
+class dividing_rectangles
     : public optimizer_base<dividing_rectangles<ObjectiveFunction>> {
 public:
     //! Type of the objective function.

@@ -22,6 +22,7 @@
 #include <cmath>
 #include <utility>
 
+#include "num_collect/opt/concepts/single_variate_objective_function.h"
 #include "num_collect/opt/optimizer_base.h"
 
 namespace num_collect::opt {
@@ -35,7 +36,7 @@ inline constexpr auto golden_section_search_tag =
  *
  * \tparam ObjectiveFunction Type of the objective function.
  */
-template <typename ObjectiveFunction>
+template <concepts::single_variate_objective_function ObjectiveFunction>
 class golden_section_search
     : public optimizer_base<golden_section_search<ObjectiveFunction>> {
 public:
