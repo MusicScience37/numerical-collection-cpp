@@ -29,7 +29,7 @@
 #include <Eigen/Core>
 #include <Eigen/Eigenvalues>
 
-#include "num_collect/base/concepts/invocable.h"
+#include "num_collect/base/concepts/invocable_as.h"
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/norm.h"
@@ -48,13 +48,26 @@ namespace num_collect::integration {
  * \brief Class to perform numerical adaptive integration with
  * Gauss-Legendre-Kronrod formula in \cite Laurie1997.
  *
- * \tparam T Type of variables.
+ * \tparam Signature Function signature.
  */
-template <base::concepts::real_scalar T>
-class gauss_legendre_kronrod_integrator {
+template <typename Signature>
+class gauss_legendre_kronrod_integrator;
+
+/*!
+ * \brief Class to perform numerical adaptive integration with
+ * Gauss-Legendre-Kronrod formula in \cite Laurie1997.
+ *
+ * \tparam Result Type of results.
+ * \tparam Variable Type of variables.
+ */
+template <typename Result, base::concepts::real_scalar Variable>
+class gauss_legendre_kronrod_integrator<Result(Variable)> {
 public:
     //! Type of variables.
-    using variable_type = T;
+    using variable_type = std::decay_t<Variable>;
+
+    //! Type of results.
+    using result_type = std::decay_t<Result>;
 
     //! Default order.
     static constexpr index_type default_order = 5;
@@ -85,32 +98,30 @@ public:
      * \brief Integrate a function and return two estimates.
      *
      * \tparam Function Type of function.
-     * \tparam Result Type of result.
      * \param[in] function Function.
      * \param[in] left Left boundary.
      * \param[in] right Right boundary.
      * \return Result.
      */
-    template <base::concepts::invocable<variable_type> Function,
-        typename Result =
-            std::decay_t<std::invoke_result_t<Function, variable_type>>>
+    template <base::concepts::invocable_as<result_type(variable_type)> Function>
     [[nodiscard]] auto integrate_once(
         const Function& function, variable_type left, variable_type right) const
-        -> std::pair<Result, Result> {
+        -> std::pair<result_type, result_type> {
         const auto center = constants::half<variable_type> * (left + right);
         const auto half_width = constants::half<variable_type> * (right - left);
 
-        Result sum_gauss = function(center) * constants::zero<variable_type>;
-        Result sum_kronrod = sum_gauss;
+        result_type sum_gauss =
+            function(center) * constants::zero<variable_type>;
+        result_type sum_kronrod = sum_gauss;
         for (index_type i = 0; i < nodes_gauss_.size(); ++i) {
             const variable_type x = center + half_width * nodes_gauss_[i];
-            const Result val = function(x);
+            const result_type val = function(x);
             sum_gauss += val * weights_gauss_[i];
             sum_kronrod += val * weights_gauss_for_kronrod_[i];
         }
         for (index_type i = 0; i < nodes_kronrod_.size(); ++i) {
             const variable_type x = center + half_width * nodes_kronrod_[i];
-            const Result val = function(x);
+            const result_type val = function(x);
             sum_kronrod += val * weights_kronrod_[i];
         }
 
@@ -123,23 +134,21 @@ public:
      * \brief Integrate a function adaptiveply.
      *
      * \tparam Function Type of function.
-     * \tparam Result Type of result.
      * \param[in] function Function.
      * \param[in] left Left boundary.
      * \param[in] right Right boundary.
      * \return Result.
      */
-    template <base::concepts::invocable<variable_type> Function,
-        typename Result =
-            std::decay_t<std::invoke_result_t<Function, variable_type>>>
+    template <base::concepts::invocable_as<result_type(variable_type)> Function>
     [[nodiscard]] auto integrate(const Function& function, variable_type left,
-        variable_type right) const -> Result {
+        variable_type right) const -> result_type {
         NUM_COLLECT_ASSERT(left < right);
 
         const variable_type inv_width =
             constants::one<variable_type> / (right - left);
 
-        Result sum = function(constants::half<variable_type> * (left + right)) *
+        result_type sum =
+            function(constants::half<variable_type> * (left + right)) *
             constants::zero<variable_type>;
 
         std::stack<variable_type> remaining_right;
@@ -177,17 +186,14 @@ public:
      * \brief Integrate a function.
      *
      * \tparam Function Type of function.
-     * \tparam Result Type of result.
      * \param[in] function Function.
      * \param[in] left Left boundary.
      * \param[in] right Right boundary.
      * \return Result.
      */
-    template <base::concepts::invocable<variable_type> Function,
-        typename Result =
-            std::decay_t<std::invoke_result_t<Function, variable_type>>>
+    template <base::concepts::invocable_as<result_type(variable_type)> Function>
     [[nodiscard]] auto operator()(const Function& function, variable_type left,
-        variable_type right) const -> Result {
+        variable_type right) const -> result_type {
         return integrate(function, left, right);
     }
 
