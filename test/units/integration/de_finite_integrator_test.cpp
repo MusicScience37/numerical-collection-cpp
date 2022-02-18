@@ -36,7 +36,8 @@ TEMPLATE_TEST_CASE(
     "num_collect::integration::de_finite_integrator", "", float, double) {
     SECTION("integrate cos") {
         const auto integrator =
-            num_collect::integration::de_finite_integrator<TestType>();
+            num_collect::integration::de_finite_integrator<TestType(
+                TestType)>();
 
         constexpr auto left = static_cast<TestType>(0);
         constexpr auto right =
@@ -52,7 +53,8 @@ TEMPLATE_TEST_CASE(
 
     SECTION("integrate exp") {
         const auto integrator =
-            num_collect::integration::de_finite_integrator<TestType>();
+            num_collect::integration::de_finite_integrator<TestType(
+                TestType)>();
 
         constexpr auto left = static_cast<TestType>(0);
         constexpr auto right = static_cast<TestType>(1);
@@ -68,7 +70,8 @@ TEMPLATE_TEST_CASE(
 
     SECTION("integrate x^(3/2)") {
         const auto integrator =
-            num_collect::integration::de_finite_integrator<TestType>();
+            num_collect::integration::de_finite_integrator<TestType(
+                TestType)>();
 
         constexpr auto left = static_cast<TestType>(0);
         constexpr auto right = static_cast<TestType>(1);
@@ -87,7 +90,8 @@ TEMPLATE_TEST_CASE(
 
     SECTION("integrate half circle") {
         auto integrator =
-            num_collect::integration::de_finite_integrator<TestType>();
+            num_collect::integration::de_finite_integrator<TestType(
+                TestType)>();
 
         constexpr auto left = static_cast<TestType>(-1);
         constexpr auto right = static_cast<TestType>(1);
@@ -105,8 +109,8 @@ TEMPLATE_TEST_CASE(
     }
 
     SECTION("integrate exp(ix)") {
-        auto integrator =
-            num_collect::integration::de_finite_integrator<TestType>();
+        auto integrator = num_collect::integration::de_finite_integrator<
+            std::complex<TestType>(TestType)>();
         constexpr num_collect::index_type points = 30;
         integrator.points(points);
 
@@ -130,7 +134,8 @@ TEMPLATE_TEST_CASE(
 
     SECTION("integrate 1/sqrt(1-x^2)") {
         auto integrator =
-            num_collect::integration::de_finite_integrator<TestType>();
+            num_collect::integration::de_finite_integrator<TestType(
+                TestType)>();
 
         constexpr auto left = static_cast<TestType>(-1);
         constexpr auto right = static_cast<TestType>(1);
