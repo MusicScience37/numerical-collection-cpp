@@ -36,7 +36,8 @@ TEMPLATE_TEST_CASE(
     "num_collect::integration::de_infinite_integrator", "", float, double) {
     SECTION("integrate exp(-x^2)") {
         const auto integrator =
-            num_collect::integration::de_infinite_integrator<TestType>();
+            num_collect::integration::de_infinite_integrator<TestType(
+                TestType)>();
 
         const auto val =
             integrator([](TestType x) { return std::exp(-x * x); });
@@ -48,7 +49,8 @@ TEMPLATE_TEST_CASE(
 
     SECTION("integrate 1/(1 + x^2)") {
         const auto integrator =
-            num_collect::integration::de_infinite_integrator<TestType>();
+            num_collect::integration::de_infinite_integrator<TestType(
+                TestType)>();
 
         const auto val = integrator([](TestType x) {
             return num_collect::constants::one<TestType> /

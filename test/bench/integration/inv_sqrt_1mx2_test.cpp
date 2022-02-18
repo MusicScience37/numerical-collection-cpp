@@ -45,83 +45,91 @@ void perform(stat_bench::bench::InvocationContext& STAT_BENCH_CONTEXT_NAME,
 // NOLINTNEXTLINE
 STAT_BENCH_CASE("integ_inv_sqrt_1mx2", "gauss_legendre_5") {
     const auto integrator =
-        num_collect::integration::gauss_legendre_integrator<double>(5);
+        num_collect::integration::gauss_legendre_integrator<double(double)>(5);
     perform(STAT_BENCH_CONTEXT_NAME, integrator);
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE("integ_inv_sqrt_1mx2", "gauss_legendre_10") {
     const auto integrator =
-        num_collect::integration::gauss_legendre_integrator<double>(10);
+        num_collect::integration::gauss_legendre_integrator<double(double)>(10);
     perform(STAT_BENCH_CONTEXT_NAME, integrator);
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE("integ_inv_sqrt_1mx2", "gauss_legendre_20") {
     const auto integrator =
-        num_collect::integration::gauss_legendre_integrator<double>(20);
+        num_collect::integration::gauss_legendre_integrator<double(double)>(20);
     perform(STAT_BENCH_CONTEXT_NAME, integrator);
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE("integ_inv_sqrt_1mx2", "gauss_legendre_50") {
     const auto integrator =
-        num_collect::integration::gauss_legendre_integrator<double>(50);
+        num_collect::integration::gauss_legendre_integrator<double(double)>(50);
     perform(STAT_BENCH_CONTEXT_NAME, integrator);
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE("integ_inv_sqrt_1mx2", "gauss_legendre_kronrod_3") {
     const auto integrator =
-        num_collect::integration::gauss_legendre_kronrod_integrator<double>(3);
+        num_collect::integration::gauss_legendre_kronrod_integrator<double(
+            double)>(3);
     perform(STAT_BENCH_CONTEXT_NAME, integrator);
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE("integ_inv_sqrt_1mx2", "gauss_legendre_kronrod_5") {
     const auto integrator =
-        num_collect::integration::gauss_legendre_kronrod_integrator<double>(5);
+        num_collect::integration::gauss_legendre_kronrod_integrator<double(
+            double)>(5);
     perform(STAT_BENCH_CONTEXT_NAME, integrator);
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE("integ_inv_sqrt_1mx2", "gauss_legendre_kronrod_7") {
     const auto integrator =
-        num_collect::integration::gauss_legendre_kronrod_integrator<double>(7);
+        num_collect::integration::gauss_legendre_kronrod_integrator<double(
+            double)>(7);
     perform(STAT_BENCH_CONTEXT_NAME, integrator);
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE("integ_inv_sqrt_1mx2", "gauss_legendre_kronrod_10") {
     const auto integrator =
-        num_collect::integration::gauss_legendre_kronrod_integrator<double>(10);
+        num_collect::integration::gauss_legendre_kronrod_integrator<double(
+            double)>(10);
     perform(STAT_BENCH_CONTEXT_NAME, integrator);
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE("integ_inv_sqrt_1mx2", "de_finite_5") {
     const auto integrator =
-        num_collect::integration::de_finite_integrator<double>().points(5);
+        num_collect::integration::de_finite_integrator<double(double)>().points(
+            5);
     perform(STAT_BENCH_CONTEXT_NAME, integrator);
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE("integ_inv_sqrt_1mx2", "de_finite_10") {
     const auto integrator =
-        num_collect::integration::de_finite_integrator<double>().points(10);
+        num_collect::integration::de_finite_integrator<double(double)>().points(
+            10);
     perform(STAT_BENCH_CONTEXT_NAME, integrator);
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE("integ_inv_sqrt_1mx2", "de_finite_20") {
     const auto integrator =
-        num_collect::integration::de_finite_integrator<double>().points(20);
+        num_collect::integration::de_finite_integrator<double(double)>().points(
+            20);
     perform(STAT_BENCH_CONTEXT_NAME, integrator);
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE("integ_inv_sqrt_1mx2", "de_finite_50") {
     const auto integrator =
-        num_collect::integration::de_finite_integrator<double>().points(50);
+        num_collect::integration::de_finite_integrator<double(double)>().points(
+            50);
     perform(STAT_BENCH_CONTEXT_NAME, integrator);
 }

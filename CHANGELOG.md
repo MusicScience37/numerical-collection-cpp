@@ -10,6 +10,7 @@ Better logging and use of C++ concepts in C++20.
 - Removed the old version of iteration_logger in util module ([Issue #103](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/103)).
 - Refactor namespaces ([Issue #104](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/104)).
 - Use of C++ 20 concepts ([Issue #104](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/104), [Issue #119](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/119), [Issue #120](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/120)).
+- Change API of integrators ([Issue 130](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/130)).
 
 ### Feature
 
