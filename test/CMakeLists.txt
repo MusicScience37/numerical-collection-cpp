@@ -34,7 +34,12 @@ macro(target_add_catch2 TARGET)
         WORKING_DIRECTORY ${NUM_COLLECT_TEMP_TEST_DIR})
 endmacro()
 
-add_subdirectory(units)
+option(NUM_COLLECT_ENABLE_UNIT_TESTS
+       "enable unit tests of numeric-collection-cpp" ON)
+if(NUM_COLLECT_ENABLE_UNIT_TESTS)
+    add_subdirectory(units)
+endif()
+
 option(NUM_COLLECT_ENABLE_BENCH "enable benchmarks of numeric-collection-cpp"
        OFF)
 if(NUM_COLLECT_ENABLE_BENCH)

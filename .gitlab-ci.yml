@@ -145,10 +145,11 @@ static analysis:
     - cmake -S ./ -B $BUILD_DIR
       -DCMAKE_BUILD_TYPE=Release
       -DNUM_COLLECT_TESTING:BOOL=ON
-      -DNUM_COLLECT_ENABLE_BENCH=ON
-      -DNUM_COLLECT_TEST_BENCHMARKS=ON
-      -DNUM_COLLECT_BUILD_EXAMPLES=ON
-      -DNUM_COLLECT_TEST_EXAMPLES=ON
+      -DNUM_COLLECT_ENABLE_UNIT_TESTS=ON
+      -DNUM_COLLECT_ENABLE_BENCH=OFF
+      -DNUM_COLLECT_TEST_BENCHMARKS=OFF
+      -DNUM_COLLECT_BUILD_EXAMPLES=OFF
+      -DNUM_COLLECT_TEST_EXAMPLES=OFF
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
     - cd $BUILD_DIR
     - cmake --build .
@@ -164,12 +165,31 @@ static analysis:
     when: always
     expire_in: "1 mos"
 
+.bench-base:
+  extends: .release-test-base
+  script:
+    - cmake -S ./ -B $BUILD_DIR
+      -DCMAKE_BUILD_TYPE=Release
+      -DNUM_COLLECT_TESTING:BOOL=ON
+      -DNUM_COLLECT_ENABLE_UNIT_TESTS=OFF
+      -DNUM_COLLECT_ENABLE_BENCH=ON
+      -DNUM_COLLECT_TEST_BENCHMARKS=ON
+      -DNUM_COLLECT_BUILD_EXAMPLES=ON
+      -DNUM_COLLECT_TEST_EXAMPLES=ON
+      -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
+    - cd $BUILD_DIR
+    - cmake --build .
+    - ctest -V
+
 .debug-test-base:
   extends: .release-test-base
   script:
     - cmake -S ./ -B $BUILD_DIR
       -DCMAKE_BUILD_TYPE=Debug
       -DNUM_COLLECT_TESTING:BOOL=ON
+      -DNUM_COLLECT_ENABLE_UNIT_TESTS=ON
+      -DNUM_COLLECT_ENABLE_BENCH=OFF
+      -DNUM_COLLECT_TEST_BENCHMARKS=OFF
       -DNUM_COLLECT_BUILD_EXAMPLES=ON
       -DNUM_COLLECT_TEST_EXAMPLES=ON
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
@@ -179,6 +199,17 @@ static analysis:
 
 .clang-release-test-base:
   extends: .release-test-base
+  before_script:
+    - mkdir $BUILD_DIR
+    - cd $BUILD_DIR
+    - pipenv run conan profile new --detect default
+    - pipenv run conan profile update settings.compiler.libcxx=libc++ default
+    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan install --build=missing -s build_type=Release ..
+    - cd ../
+
+.clang-bench-base:
+  extends: .bench-base
   before_script:
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
@@ -255,6 +286,13 @@ gcc-10-release:
   variables:
     BUILD_DIR: build_gcc10_release
 
+gcc-10-bench:
+  extends: .bench-base
+  stage: Test with GCC
+  image: musicscience37/gcc-ci:gcc10-v4.0
+  variables:
+    BUILD_DIR: build_gcc10_bench
+
 clang-12-debug:
   extends: .clang-debug-test-base
   stage: Test with Clang
@@ -269,6 +307,13 @@ clang-12-release:
   variables:
     BUILD_DIR: build_clang12_release
 
+clang-12-bench:
+  extends: .clang-bench-base
+  stage: Test with Clang
+  image: musicscience37/clang-ci:clang12-v4.1
+  variables:
+    BUILD_DIR: build_clang12_bench
+
 clang-13-debug:
   extends: .clang-debug-test-base
   stage: Test with Clang
@@ -282,6 +327,13 @@ clang-13-release:
   image: musicscience37/clang-ci:clang13-v4.1
   variables:
     BUILD_DIR: build_clang12_release
+
+clang-13-bench:
+  extends: .clang-bench-base
+  stage: Test with Clang
+  image: musicscience37/clang-ci:clang13-v4.1
+  variables:
+    BUILD_DIR: build_clang13_bench
 
 clang-12-asan-ubsan:
   extends: .clang-debug-test-base
@@ -352,7 +404,8 @@ clang-12-conan-release:
   only:
     - develop
 
-msvc-debug:
+# TODO: Fix build.
+.msvc-debug:
   extends: .debug-test-base
   tags:
     - shared-windows
@@ -391,7 +444,8 @@ msvc-debug:
     - ctest -V --build-config Debug
   allow_failure: true
 
-msvc-release:
+# TODO: Fix build.
+.msvc-release:
   extends: .release-test-base
   tags:
     - shared-windows
