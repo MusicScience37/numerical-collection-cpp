@@ -24,5 +24,8 @@
     "hbenl.vscode-test-explorer",
     "ms-azuretools.vscode-docker"
   ],
-  "postCreateCommand": "bash ./.devcontainer/setup.bash"
+  "postCreateCommand": "bash ./.devcontainer/setup.bash",
+  "settings": {
+    "cmakeFormat.exePath": "/workspaces/numerical-collection-cpp/.venv/bin/cmake-format"
+  }
 }
