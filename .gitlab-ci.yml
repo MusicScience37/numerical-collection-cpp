@@ -404,8 +404,7 @@ clang-12-conan-release:
   only:
     - develop
 
-# TODO: Fix build.
-.msvc-debug:
+msvc-debug:
   extends: .debug-test-base
   tags:
     - shared-windows
@@ -433,9 +432,10 @@ clang-12-conan-release:
     - cmake -S ./ -B $BUILD_DIR
       -DCMAKE_BUILD_TYPE=Debug
       -DNUM_COLLECT_TESTING:BOOL=ON
-      -DNUM_COLLECT_ENABLE_BENCH=ON
+      -DNUM_COLLECT_ENABLE_UNIT_TESTS=ON
+      -DNUM_COLLECT_ENABLE_BENCH=OFF
       -DNUM_COLLECT_TEST_BENCHMARKS=OFF
-      -DNUM_COLLECT_BUILD_EXAMPLES=ON
+      -DNUM_COLLECT_BUILD_EXAMPLES=OFF
       -DNUM_COLLECT_TEST_EXAMPLES=OFF
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
       "-DCMAKE_CXX_FLAGS=/DFMT_USE_NONTYPE_TEMPLATE_PARAMETERS=0"
@@ -444,8 +444,7 @@ clang-12-conan-release:
     - ctest -V --build-config Debug
   allow_failure: true
 
-# TODO: Fix build.
-.msvc-release:
+msvc-release:
   extends: .release-test-base
   tags:
     - shared-windows
@@ -473,9 +472,10 @@ clang-12-conan-release:
     - cmake -S ./ -B $BUILD_DIR
       -DCMAKE_BUILD_TYPE=Release
       -DNUM_COLLECT_TESTING:BOOL=ON
-      -DNUM_COLLECT_ENABLE_BENCH=ON
+      -DNUM_COLLECT_ENABLE_UNIT_TESTS=ON
+      -DNUM_COLLECT_ENABLE_BENCH=OFF
       -DNUM_COLLECT_TEST_BENCHMARKS=OFF
-      -DNUM_COLLECT_BUILD_EXAMPLES=ON
+      -DNUM_COLLECT_BUILD_EXAMPLES=OFF
       -DNUM_COLLECT_TEST_EXAMPLES=OFF
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
       "-DCMAKE_CXX_FLAGS=/DFMT_USE_NONTYPE_TEMPLATE_PARAMETERS=0"
