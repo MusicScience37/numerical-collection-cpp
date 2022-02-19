@@ -647,4 +647,6 @@ FodyWeavers.xsd
 *.html
 *.png
 
+*.received.*
+
 /.conan/
