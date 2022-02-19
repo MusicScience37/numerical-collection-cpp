@@ -15,13 +15,14 @@
  */
 /*!
  * \file
- * \brief Definition of format_dense_matrix function.
+ * \brief Definition of format_sparse_matrix function.
  */
 #pragma once
 
-#include <Eigen/Core>
+#include <Eigen/SparseCore>
 #include <fmt/format.h>
 
+#include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/logging/log_and_throw.h"
 
@@ -30,7 +31,7 @@ namespace num_collect::util {
 /*!
  * \brief Enumeration of matrix format types.
  */
-enum class dense_matrix_format_type {
+enum class sparse_matrix_format_type {
     //! One line.
     one_line,
 
@@ -41,12 +42,12 @@ enum class dense_matrix_format_type {
 namespace impl {
 
 /*!
- * \brief Class of expressions to format dense matrices.
+ * \brief Class of expressions to format sparse matrices.
  *
  * \tparam Matrix Type of the matrix.
  */
-template <typename Matrix>
-class dense_matrix_format_view {
+template <base::concepts::sparse_matrix Matrix>
+class sparse_matrix_format_view {
 public:
     /*!
      * \brief Construct.
@@ -54,7 +55,7 @@ public:
      * \param[in] mat Matrix.
      * \param[in] type Type.
      */
-    dense_matrix_format_view(const Matrix& mat, dense_matrix_format_type type)
+    sparse_matrix_format_view(const Matrix& mat, sparse_matrix_format_type type)
         : mat_(&mat), type_(type) {}
 
     /*!
@@ -69,7 +70,7 @@ public:
      *
      * \return Type.
      */
-    [[nodiscard]] auto type() const noexcept -> dense_matrix_format_type {
+    [[nodiscard]] auto type() const noexcept -> sparse_matrix_format_type {
         return type_;
     }
 
@@ -78,13 +79,13 @@ private:
     const Matrix* mat_;
 
     //! Type.
-    dense_matrix_format_type type_;
+    sparse_matrix_format_type type_;
 };
 
 }  // namespace impl
 
 /*!
- * \brief Format a dense matrix.
+ * \brief Format a sparse matrix.
  *
  * \tparam Matrix Type of the matrix.
  * \param[in] mat Matrix.
@@ -93,11 +94,10 @@ private:
  *
  * \note Format of each element can be specified in fmt's formatt strings.
  */
-template <typename Matrix>
-[[nodiscard]] inline auto format_dense_matrix(
-    const Eigen::DenseBase<Matrix>& mat,
-    dense_matrix_format_type type = dense_matrix_format_type::one_line) {
-    return impl::dense_matrix_format_view<Matrix>(mat.derived(), type);
+template <base::concepts::sparse_matrix Matrix>
+[[nodiscard]] inline auto format_sparse_matrix(const Matrix& mat,
+    sparse_matrix_format_type type = sparse_matrix_format_type::one_line) {
+    return impl::sparse_matrix_format_view<Matrix>(mat, type);
 }
 
 }  // namespace num_collect::util
@@ -105,12 +105,12 @@ template <typename Matrix>
 namespace fmt {
 
 /*!
- * \brief fmt::formatter for num_collect::util::impl::dense_matrix_format_view.
+ * \brief fmt::formatter for num_collect::util::impl::sparse_matrix_format_view.
  *
  * \tparam Matrix Type of the matrix.
  */
-template <typename Matrix>
-struct formatter<num_collect::util::impl::dense_matrix_format_view<Matrix>>
+template <num_collect::base::concepts::sparse_matrix Matrix>
+struct formatter<num_collect::util::impl::sparse_matrix_format_view<Matrix>>
     : public formatter<typename Matrix::Scalar> {
 public:
     /*!
@@ -123,13 +123,13 @@ public:
      */
     template <typename FormatContext>
     auto format(
-        const num_collect::util::impl::dense_matrix_format_view<Matrix>& val,
+        const num_collect::util::impl::sparse_matrix_format_view<Matrix>& val,
         FormatContext& context) -> decltype(context.out()) {
         const auto& mat = val.mat();
         switch (val.type()) {
-        case num_collect::util::dense_matrix_format_type::one_line:
+        case num_collect::util::sparse_matrix_format_type::one_line:
             return format_one_line(mat, context);
-        case num_collect::util::dense_matrix_format_type::multi_line:
+        case num_collect::util::sparse_matrix_format_type::multi_line:
             return format_multi_line(mat, context);
         }
         num_collect::logging::log_and_throw<num_collect::assertion_failure>(
@@ -165,7 +165,7 @@ private:
                 }
                 context.advance_to(out);
                 out = formatter<typename Matrix::Scalar>::format(
-                    mat(row, col), context);
+                    mat.coeff(row, col), context);
             }
             *out = ']';
             ++out;
@@ -212,7 +212,7 @@ private:
                 }
                 context.advance_to(out);
                 out = formatter<typename Matrix::Scalar>::format(
-                    mat(row, col), context);
+                    mat.coeff(row, col), context);
             }
             *out = ']';
             ++out;
