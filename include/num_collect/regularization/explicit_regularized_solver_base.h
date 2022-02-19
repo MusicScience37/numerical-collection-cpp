@@ -40,7 +40,8 @@ public:
     using data_type = Data;
 
     //! Type of scalars.
-    using scalar_type = typename data_type::Scalar;
+    using scalar_type =
+        typename Eigen::NumTraits<typename data_type::Scalar>::Real;
 
     /*!
      * \brief Solve for a regularization parameter.

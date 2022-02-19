@@ -56,8 +56,8 @@ public:
     //! Type of coefficient matrices.
     using coeff_type = Coeff;
 
-    static_assert(std::is_same_v<typename coeff_type::Scalar, scalar_type>);
-    static_assert(std::is_same_v<typename data_type::Scalar, scalar_type>);
+    static_assert(std::is_same_v<typename coeff_type::Scalar,
+        typename data_type::Scalar>);
     static_assert(data_type::RowsAtCompileTime == Eigen::Dynamic);
 
     /*!

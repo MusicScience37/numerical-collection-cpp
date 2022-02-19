@@ -23,6 +23,7 @@
 
 #include "num_collect/opt/function_object_wrapper.h"
 #include "num_collect/opt/heuristic_1dim_optimizer.h"
+#include "num_collect/regularization/concepts/explicit_regularized_solver.h"
 #include "num_collect/regularization/explicit_param_searcher_base.h"
 
 namespace num_collect::regularization {
@@ -34,7 +35,7 @@ namespace num_collect::regularization {
  *
  * \tparam Solver Type of solvers.
  */
-template <typename Solver>
+template <concepts::explicit_regularized_solver Solver>
 class explicit_gcv_objective_function {
 public:
     //! Type of solvers.
@@ -76,7 +77,7 @@ private:
  * \tparam Solver Type of solvers.
  * \tparam Optimizer Type of optimizers.
  */
-template <typename Solver,
+template <concepts::explicit_regularized_solver Solver,
     template <typename> typename Optimizer = opt::heuristic_1dim_optimizer>
 class explicit_gcv
     : public explicit_param_searcher_base<explicit_gcv<Solver, Optimizer>,

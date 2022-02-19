@@ -28,6 +28,7 @@
     "DontAlign",
     "doxygen",
     "Eigen",
+    "Elden",
     "fcoverage",
     "Fehlberg",
     "fprofile",

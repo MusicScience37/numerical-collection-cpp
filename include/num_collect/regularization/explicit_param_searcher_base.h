@@ -19,6 +19,8 @@
  */
 #pragma once
 
+#include "num_collect/regularization/concepts/explicit_regularized_solver.h"
+
 namespace num_collect::regularization {
 
 /*!
@@ -28,7 +30,7 @@ namespace num_collect::regularization {
  * \tparam Derived Type of the derived class.
  * \tparam Solver Type of solvers.
  */
-template <typename Derived, typename Solver>
+template <typename Derived, concepts::explicit_regularized_solver Solver>
 class explicit_param_searcher_base {
 public:
     //! Type of solvers.
