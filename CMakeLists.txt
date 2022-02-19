@@ -8,7 +8,7 @@ endif()
 
 project(
     num_collect
-    VERSION 0.4.0
+    VERSION 0.4.1
     DESCRIPTION
         "A collection of algorithms in numerical analysis implemented in C++"
     LANGUAGES CXX)
@@ -50,6 +50,7 @@ find_package(Eigen3 REQUIRED)
 if(NUM_COLLECT_TESTING)
     find_package(Catch2)
     find_package(trompeloeil)
+    find_package(ApprovalTests REQUIRED)
     find_package(cpp_stat_bench)
 endif()
 

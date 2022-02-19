@@ -16,8 +16,9 @@ set(NUM_COLLECT_TEST_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 macro(target_add_catch2 TARGET)
     target_link_libraries(
-        ${TARGET} PRIVATE Catch2::Catch2WithMain trompeloeil::trompeloeil
-                          num_collect num_prob_collect)
+        ${TARGET}
+        PRIVATE Catch2::Catch2WithMain trompeloeil::trompeloeil
+                ApprovalTests::ApprovalTests num_collect num_prob_collect)
     target_include_directories(${TARGET}
                                PRIVATE ${NUM_COLLECT_TEST_INCLUDE_DIR})
 

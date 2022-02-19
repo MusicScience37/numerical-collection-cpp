@@ -3,7 +3,7 @@ set(NUM_COLLECT_TEST_UNITS_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 function(add_unit_test_for MODULE_NAME)
     include(${NUM_COLLECT_TEST_UNITS_DIR}/${MODULE_NAME}/source_list.cmake)
     add_executable(num_collect_test_units_${MODULE_NAME}
-                   ${SOURCE_FILES} ../catch_event_listner.cpp)
+                   ${SOURCE_FILES} ../catch_event_listner.cpp ../test_main.cpp)
     target_compile_definitions(
         num_collect_test_units_${MODULE_NAME}
         PRIVATE NUM_COLLECT_TEST_MODULE_NAME=${MODULE_NAME})
@@ -13,8 +13,8 @@ function(add_unit_test_for MODULE_NAME)
                    unity_source.cpp)
     target_link_libraries(
         num_collect_test_units_${MODULE_NAME}_unity
-        PRIVATE Catch2::Catch2WithMain trompeloeil::trompeloeil num_collect
-                num_prob_collect)
+        PRIVATE Catch2::Catch2WithMain trompeloeil::trompeloeil
+                ApprovalTests::ApprovalTests num_collect num_prob_collect)
     target_include_directories(num_collect_test_units_${MODULE_NAME}_unity
                                PRIVATE ${NUM_COLLECT_TEST_INCLUDE_DIR})
     target_check_clang_tidy(num_collect_test_units_${MODULE_NAME}_unity)

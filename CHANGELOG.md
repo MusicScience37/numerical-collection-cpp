@@ -1,5 +1,19 @@
 # Change Log
 
+## 0.5.0 (on development)
+
+### Feature
+
+- Format Eigen's dense matrices, dense vectors, and sparse matrices ([Issue #142](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/142)).
+
+### Miscellaneous
+
+- Introduced [Approval Tests](https://approvaltests.com/) for tests ([Issue #139](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/139)).
+
+## 0.4.1 (2022/2/19)
+
+Correct upload of Conan packages and some improvements in CI ([Issue #146](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/146)).
+
 ## 0.4.0 (2022/2/19)
 
 Better logging and use of C++ concepts in C++20.

@@ -11,6 +11,7 @@ set(SOURCE_FILES
     concepts/real_scalar_dense_matrix_test.cpp
     concepts/real_scalar_dense_vector_test.cpp
     concepts/real_scalar_test.cpp
+    concepts/sparse_matrix_test.cpp
     exception_test.cpp
     get_size_test.cpp
     norm_test.cpp
