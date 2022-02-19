@@ -19,6 +19,8 @@
  */
 #pragma once
 
+#include "num_collect/logging/log_tag_view.h"
+#include "num_collect/ode/concepts/differentiable_problem.h"
 #include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/runge_kutta/implicit_formula_base.h"
 #include "num_collect/ode/runge_kutta/semi_implicit_formula_solver.h"
@@ -30,7 +32,7 @@ namespace num_collect::ode::runge_kutta {
  *
  * \tparam Problem Type of problem.
  */
-template <typename Problem, typename StrategyTag>
+template <concepts::differentiable_problem Problem, typename StrategyTag>
 class tanaka1_formula
     : public implicit_formula_base<tanaka1_formula<Problem, StrategyTag>,
           Problem, semi_implicit_formula_solver<Problem, StrategyTag>> {
@@ -64,6 +66,10 @@ public:
 
     //! Order of lesser coefficients of this formula.
     static constexpr index_type lesser_order = 1;
+
+    //! Log tag.
+    static constexpr auto log_tag =
+        logging::log_tag_view("num_collect::ode::runge_kutta::tanaka1_formula");
 
     /*!
      * \name Coefficients in Butcher array.
@@ -142,7 +148,7 @@ private:
  *
  * \tparam Problem Type of problem.
  */
-template <typename Problem>
+template <concepts::differentiable_problem Problem>
 using tanaka1_solver = embedded_solver<tanaka1_formula<Problem,
     implicit_formula_solver_strategies::modified_newton_raphson_tag>>;
 

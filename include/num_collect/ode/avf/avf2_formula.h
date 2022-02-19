@@ -19,14 +19,16 @@
  */
 #pragma once
 
+#include "num_collect/base/index_type.h"
+#include "num_collect/base/norm.h"
 #include "num_collect/constants/one.h"
 #include "num_collect/constants/zero.h"
 #include "num_collect/integration/gauss_legendre_integrator.h"
+#include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/avf/impl/avf_integrand.h"
+#include "num_collect/ode/concepts/problem.h"
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
 #include "num_collect/ode/simple_solver.h"
-#include "num_collect/util/index_type.h"
-#include "num_collect/util/norm.h"
 
 namespace num_collect::ode::avf {
 
@@ -36,7 +38,7 @@ namespace num_collect::ode::avf {
  *
  * \tparam Problem Type of problem.
  */
-template <typename Problem>
+template <concepts::problem Problem>
 class avf2_formula {
 public:
     //! Type of problem.
@@ -48,8 +50,15 @@ public:
     //! Type of scalars.
     using scalar_type = typename problem_type::scalar_type;
 
+    //! Number of stages of this formula.
+    static constexpr index_type stages = 1;
+
     //! Order of this formula.
     static constexpr index_type order = 2;
+
+    //! Log tag.
+    static constexpr auto log_tag =
+        logging::log_tag_view("num_collect::ode::avf::avf2_formula");
 
     /*!
      * \brief Construct.
@@ -125,8 +134,8 @@ private:
     static constexpr index_type integrator_order = 5;
 
     //! Integrator.
-    integration::gauss_legendre_integrator<scalar_type> integrator_{
-        integrator_order};
+    integration::gauss_legendre_integrator<variable_type(scalar_type)>
+        integrator_{integrator_order};
 
     //! Default tolerance of residual norm.
     static constexpr auto default_tol_residual_norm =
@@ -142,7 +151,7 @@ private:
  *
  * \tparam Problem Type of problem.
  */
-template <typename Problem>
+template <concepts::problem Problem>
 using avf2_solver = simple_solver<avf2_formula<Problem>>;
 
 /*!
@@ -151,7 +160,7 @@ using avf2_solver = simple_solver<avf2_formula<Problem>>;
  *
  * \tparam Problem Type of problem.
  */
-template <typename Problem>
+template <concepts::problem Problem>
 using avf2_auto_solver = non_embedded_auto_solver<avf2_formula<Problem>>;
 
 }  // namespace num_collect::ode::avf

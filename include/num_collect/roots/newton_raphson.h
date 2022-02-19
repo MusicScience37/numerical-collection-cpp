@@ -19,22 +19,31 @@
  */
 #pragma once
 
-#include <Eigen/LU>
 #include <limits>
 #include <type_traits>
 
+#include <Eigen/LU>
+
+#include "num_collect/logging/log_tag_view.h"
+#include "num_collect/roots/concepts/differentiable_function.h"
+#include "num_collect/roots/concepts/multi_variate_differentiable_function.h"
+#include "num_collect/roots/concepts/single_variate_differentiable_function.h"
 #include "num_collect/roots/function_root_finder_base.h"
 #include "num_collect/util/assert.h"
 #include "num_collect/util/is_eigen_vector.h"
 
 namespace num_collect::roots {
 
+//! Tag of newton_raphson.
+inline constexpr auto newton_raphson_tag =
+    logging::log_tag_view("num_collect::roots::newton_raphson");
+
 /*!
  * \brief Class of Newton-Raphson method.
  *
  * \tparam Function Type of the function of equation.
  */
-template <typename Function, typename = void>
+template <concepts::differentiable_function Function>
 class newton_raphson;
 
 /*!
@@ -44,10 +53,8 @@ class newton_raphson;
  *
  * \tparam Function Type of the function of equation.
  */
-template <typename Function>
-class newton_raphson<Function,
-    std::enable_if_t<
-        std::is_floating_point_v<typename Function::variable_type>>>
+template <concepts::single_variate_differentiable_function Function>
+class newton_raphson<Function>
     : public function_root_finder_base<newton_raphson<Function>, Function> {
 public:
     //! Type of this object.
@@ -69,7 +76,7 @@ public:
      * \param[in] function Function of equation.
      */
     explicit newton_raphson(const function_type& function = function_type())
-        : base_type(function) {}
+        : base_type(newton_raphson_tag, function) {}
 
     /*!
      * \brief Initialize.
@@ -101,19 +108,24 @@ public:
         value_norm_ = abs(function().value());
     }
 
-    //! \copydoc iterative_solver_base::is_stop_criteria_satisfied
+    //! \copydoc num_collect::base::iterative_solver_base::is_stop_criteria_satisfied
     [[nodiscard]] auto is_stop_criteria_satisfied() const -> bool {
         return (iterations() > max_iterations_) ||
             (last_change() < tol_last_change_) ||
             (value_norm() < tol_value_norm_);
     }
 
-    //! \copydoc iterative_solver_base::set_info_to
-    void set_info_to(iteration_logger& logger) const {
-        logger["Iter."] = iterations();
-        logger["Eval."] = evaluations();
-        logger["Value"] = value_norm();
-        logger["Change"] = last_change();
+    //! \copydoc num_collect::base::iterative_solver_base::configure_iteration_logger
+    void configure_iteration_logger(
+        logging::iteration_logger& iteration_logger) const {
+        iteration_logger.append<index_type>(
+            "Iter.", [this] { return iterations(); });
+        iteration_logger.append<index_type>(
+            "Eval.", [this] { return evaluations(); });
+        iteration_logger.append<variable_type>(
+            "Value", [this] { return value_norm(); });
+        iteration_logger.append<variable_type>(
+            "Change", [this] { return last_change(); });
     }
 
     using base_type::function;
@@ -268,9 +280,8 @@ private:
  *
  * \tparam Function Type of the function of equation.
  */
-template <typename Function>
-class newton_raphson<Function,
-    std::enable_if_t<is_eigen_vector_v<typename Function::variable_type>>>
+template <concepts::multi_variate_differentiable_function Function>
+class newton_raphson<Function>
     : public function_root_finder_base<newton_raphson<Function>, Function> {
 public:
     //! Type of this object.
@@ -299,7 +310,7 @@ public:
      * \param[in] function Function of equation.
      */
     explicit newton_raphson(const function_type& function = function_type())
-        : base_type(function) {}
+        : base_type(newton_raphson_tag, function) {}
 
     /*!
      * \brief Initialize.
@@ -337,12 +348,17 @@ public:
             (value_norm() < tol_value_norm_);
     }
 
-    //! \copydoc function_root_finder_base::set_info_to
-    void set_info_to(iteration_logger& logger) const {
-        logger["Iter."] = iterations();
-        logger["Eval."] = evaluations();
-        logger["Value"] = value_norm();
-        logger["Change"] = last_change();
+    //! \copydoc num_collect::base::iterative_solver_base::configure_iteration_logger
+    void configure_iteration_logger(
+        logging::iteration_logger& iteration_logger) const {
+        iteration_logger.append<index_type>(
+            "Iter.", [this] { return iterations(); });
+        iteration_logger.append<index_type>(
+            "Eval.", [this] { return evaluations(); });
+        iteration_logger.append<scalar_type>(
+            "Value", [this] { return value_norm(); });
+        iteration_logger.append<scalar_type>(
+            "Change", [this] { return last_change(); });
     }
 
     using base_type::function;

@@ -8,7 +8,7 @@ endif()
 
 project(
     num_collect
-    VERSION 0.3.0
+    VERSION 0.4.0
     DESCRIPTION
         "A collection of algorithms in numerical analysis implemented in C++"
     LANGUAGES CXX)
@@ -29,12 +29,18 @@ option(NUM_COLLECT_BUILD_EXAMPLES "build examples of numerical-collection-cpp"
        OFF)
 
 set(CMAKE_CXX_STANDARD
-    17
+    20
     CACHE STRING "C++ standard")
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY $<1:${CMAKE_BINARY_DIR}/lib>)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY $<1:${CMAKE_BINARY_DIR}/lib>)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY $<1:${CMAKE_BINARY_DIR}/bin>)
+
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+set(CONAN_COMPILER ${CONAN_SETTINGS_COMPILER})
+set(CONAN_COMPILER_VERSION ${CONAN_SETTINGS_COMPILER_VERSION})
+set(CONAN_LIBCXX ${CONAN_SETTINGS_COMPILER_LIBCXX})
+conan_basic_setup()
 
 # find packages installed with Conan
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
@@ -43,7 +49,8 @@ find_package(fmt REQUIRED)
 find_package(Eigen3 REQUIRED)
 if(NUM_COLLECT_TESTING)
     find_package(Catch2)
-    find_package(Celero)
+    find_package(trompeloeil)
+    find_package(cpp_stat_bench)
 endif()
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
@@ -61,12 +68,6 @@ target_include_directories(num_collect
 target_link_libraries(
     num_collect INTERFACE fmt::fmt Eigen3::Eigen num_collect_cpp_warnings
                           num_collect_cpp_flags)
-if(Backward_FOUND)
-    option(NUM_COLLECT_STACK_TRACES_SUPPORT "enable support of stack traces" ON)
-    if(NUM_COLLECT_STACK_TRACES_SUPPORT)
-        target_link_libraries(num_collect INTERFACE Backward::Backward)
-    endif()
-endif()
 
 if(NUM_COLLECT_BUILD_DOC)
     add_subdirectory(doc)

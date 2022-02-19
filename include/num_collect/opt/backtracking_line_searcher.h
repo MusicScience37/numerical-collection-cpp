@@ -19,13 +19,16 @@
  */
 #pragma once
 
-#include <Eigen/Core>
 #include <cstddef>
 #include <type_traits>
 
+#include <Eigen/Core>
+
+#include "num_collect/base/exception.h"
+#include "num_collect/base/index_type.h"
+#include "num_collect/opt/concepts/differentiable_objective_function.h"
+#include "num_collect/opt/concepts/multi_variate_differentiable_objective_function.h"
 #include "num_collect/util/assert.h"
-#include "num_collect/util/exception.h"
-#include "num_collect/util/index_type.h"
 
 namespace num_collect::opt {
 
@@ -34,7 +37,7 @@ namespace num_collect::opt {
  *
  * \tparam ObjectiveFunction Type of the objective function.
  */
-template <typename ObjectiveFunction, typename = void>
+template <concepts::differentiable_objective_function ObjectiveFunction>
 class backtracking_line_searcher;
 
 /*!
@@ -42,11 +45,9 @@ class backtracking_line_searcher;
  *
  * \tparam ObjectiveFunction Type of the objective function.
  */
-template <typename ObjectiveFunction>
-class backtracking_line_searcher<ObjectiveFunction,
-    std::enable_if_t<std::is_base_of_v<
-        Eigen::MatrixBase<typename ObjectiveFunction::variable_type>,
-        typename ObjectiveFunction::variable_type>>> {
+template <
+    concepts::multi_variate_differentiable_objective_function ObjectiveFunction>
+class backtracking_line_searcher<ObjectiveFunction> {
 public:
     //! Type of the objective function.
     using objective_function_type = ObjectiveFunction;
@@ -141,9 +142,7 @@ public:
      *
      * \return Current optimal value.
      */
-    [[nodiscard]] auto opt_value() const
-        -> std::invoke_result_t<decltype(&objective_function_type::value),
-            const objective_function_type> {
+    [[nodiscard]] auto opt_value() const -> const value_type& {
         return obj_fun_.value();
     }
 
@@ -152,9 +151,7 @@ public:
      *
      * \return Gradient for current optimal variable.
      */
-    [[nodiscard]] auto gradient() const
-        -> std::invoke_result_t<decltype(&objective_function_type::gradient),
-            const objective_function_type> {
+    [[nodiscard]] auto gradient() const -> const variable_type& {
         return obj_fun_.gradient();
     }
 
@@ -181,7 +178,7 @@ public:
      * \return This object.
      */
     auto armijo_coeff(value_type value) -> backtracking_line_searcher& {
-        NUM_COLLECT_ASSERT(value_type(0) < value && value < value_type(1));
+        NUM_COLLECT_ASSERT(value_type(0) < value < value_type(1));
         armijo_coeff_ = value;
         return *this;
     }
@@ -193,7 +190,7 @@ public:
      * \return This object.
      */
     auto step_scale(value_type value) -> backtracking_line_searcher& {
-        NUM_COLLECT_ASSERT(value_type(0) < value && value < value_type(1));
+        NUM_COLLECT_ASSERT(value_type(0) < value < value_type(1));
         step_scale_ = value;
         return *this;
     }

@@ -19,13 +19,16 @@
  */
 #pragma once
 
-#include <Eigen/Core>
-#include <Eigen/SVD>
 #include <type_traits>
 
+#include <Eigen/Core>
+#include <Eigen/SVD>
+
+#include "num_collect/base/concepts/dense_matrix.h"
+#include "num_collect/base/index_type.h"
 #include "num_collect/regularization/explicit_regularized_solver_base.h"
 #include "num_collect/regularization/impl/coeff_param.h"
-#include "num_collect/util/index_type.h"
+#include "num_collect/util/impl/warn_fast_math_for_bdcsvc.h"
 
 namespace num_collect::regularization {
 
@@ -35,7 +38,7 @@ namespace num_collect::regularization {
  * \tparam Coeff Type of coefficient matrices.
  * \tparam Data Type of data vectors.
  */
-template <typename Coeff, typename Data>
+template <base::concepts::dense_matrix Coeff, base::concepts::dense_matrix Data>
 class tikhonov
     : public explicit_regularized_solver_base<tikhonov<Coeff, Data>, Data> {
 public:
@@ -49,8 +52,8 @@ public:
     //! Type of coefficient matrices.
     using coeff_type = Coeff;
 
-    static_assert(std::is_same_v<typename coeff_type::Scalar, scalar_type>);
-    static_assert(std::is_same_v<typename data_type::Scalar, scalar_type>);
+    static_assert(std::is_same_v<typename coeff_type::Scalar,
+        typename data_type::Scalar>);
     static_assert(data_type::RowsAtCompileTime == Eigen::Dynamic);
 
     /*!

@@ -19,62 +19,54 @@
  */
 #include "num_prob_collect/regularization/blur_sine.h"
 
-#include <Eigen/Core>
 #include <cmath>
 #include <random>
 
-#include <celero/Celero.h>
+#include <Eigen/Core>
+#include <stat_bench/bench/invocation_context.h>
+#include <stat_bench/benchmark_macros.h>
 
-#include "log_error_udm.h"
-#include "log_param_udm.h"
 #include "num_collect/regularization/explicit_gcv.h"
 #include "num_collect/regularization/explicit_l_curve.h"
 #include "num_collect/regularization/full_gen_tikhonov.h"
 #include "num_collect/regularization/tikhonov.h"
 #include "num_prob_collect/regularization/dense_diff_matrix.h"
 
-// NOLINTNEXTLINE: external library
-CELERO_MAIN
+STAT_BENCH_MAIN
 
-class blur_sine_fixture : public celero::TestFixture {
+class blur_sine_fixture : public stat_bench::FixtureBase {
 public:
-    blur_sine_fixture() = default;
-
-    [[nodiscard]] auto getExperimentValues() const
-        -> std::vector<celero::TestFixture::ExperimentValue> override {
-        std::vector<celero::TestFixture::ExperimentValue> problem_space;
-        problem_space.emplace_back(-100);  // NOLINT
-        problem_space.emplace_back(-4);    // NOLINT
-        problem_space.emplace_back(-2);    // NOLINT
-        problem_space.emplace_back(0);     // NOLINT
-        return problem_space;
+    blur_sine_fixture() {
+        add_param<double>("noise_rate")
+            ->add(1e-100)  // NOLINT
+            ->add(1e-4)    // NOLINT
+            ->add(1e-2)    // NOLINT
+            ->add(1.0)     // NOLINT
+            ;
     }
 
-    void setUp(
-        const celero::TestFixture::ExperimentValue& experiment_value) override {
-        error_rate_ = std::pow(10.0,  // NOLINT
-            static_cast<int>(experiment_value.Value));
+    void setup(stat_bench::bench::InvocationContext& context) override {
+        noise_rate_ = context.get_param<double>("noise_rate");
         std::mt19937 engine;  // NOLINT
-        std::normal_distribution<double> dist{0.0,
-            std::sqrt(prob_.data().squaredNorm() /
-                static_cast<double>(prob_.data().size()) * error_rate_)};
-        data_with_error_ = prob_.data();
-        for (num_collect::index_type i = 0; i < data_with_error_.size(); ++i) {
-            data_with_error_(i) += dist(engine);
+        const double sigma = std::sqrt(prob_.data().squaredNorm() /
+            static_cast<double>(prob_.data().size()) * noise_rate_);
+        std::normal_distribution<double> dist{0.0, sigma};
+        data_with_noise_ = prob_.data();
+        for (num_collect::index_type i = 0; i < data_with_noise_.size(); ++i) {
+            data_with_noise_(i) += dist(engine);
         }
     }
 
     void set_error(const Eigen::VectorXd& solution) {
-        log_error_->addValue(
-            std::log10((solution - prob_.solution()).squaredNorm() /
-                prob_.solution().squaredNorm()));
+        error_rate_ = (solution - prob_.solution()).squaredNorm() /
+            prob_.solution().squaredNorm();
     }
 
-    void set_param(double val) { log_param_->addValue(std::log10(val)); }
+    void set_param(double val) { reg_param_ = val; }
 
-    [[nodiscard]] auto getUserDefinedMeasurements() const -> std::vector<
-        std::shared_ptr<celero::UserDefinedMeasurement>> override {
-        return {log_error_, log_param_};
+    void tear_down(stat_bench::bench::InvocationContext& context) override {
+        context.add_custom_output("error_rate", error_rate_);
+        context.add_custom_output("reg_param", reg_param_);
     }
 
     [[nodiscard]] auto prob() const
@@ -82,8 +74,8 @@ public:
         return prob_;
     }
 
-    [[nodiscard]] auto data_with_error() const -> const Eigen::VectorXd& {
-        return data_with_error_;
+    [[nodiscard]] auto data_with_noise() const -> const Eigen::VectorXd& {
+        return data_with_noise_;
     }
 
     [[nodiscard]] auto dense_diff_matrix() const -> const Eigen::MatrixXd& {
@@ -91,7 +83,9 @@ public:
     }
 
 private:
+    double noise_rate_{};
     double error_rate_{};
+    double reg_param_{};
 
 #ifndef NDEBUG
     static constexpr num_collect::index_type solution_size = 30;
@@ -100,19 +94,13 @@ private:
     static constexpr num_collect::index_type solution_size = 60;
     static constexpr num_collect::index_type data_size = solution_size;
 #endif
-    const num_prob_collect::regularization::blur_sine prob_{
-        data_size, solution_size};
+    num_prob_collect::regularization::blur_sine prob_{data_size, solution_size};
 
-    Eigen::VectorXd data_with_error_{};
+    Eigen::VectorXd data_with_noise_{};
 
-    const Eigen::MatrixXd dense_diff_matrix_{
+    Eigen::MatrixXd dense_diff_matrix_{
         num_prob_collect::regularization::dense_diff_matrix<Eigen::MatrixXd>(
             solution_size)};
-
-    std::shared_ptr<log_error_udm> log_error_{
-        std::make_shared<log_error_udm>()};
-    std::shared_ptr<log_param_udm> log_param_{
-        std::make_shared<log_param_udm>()};
 };
 
 constexpr std::int64_t samples = 30;
@@ -127,82 +115,88 @@ using coeff_type =
 using data_type =
     typename num_prob_collect::regularization::blur_sine::data_type;
 
-// NOLINTNEXTLINE: external library
-BASELINE_F(
-    reg_blur_sine, tikhonov_l_curve, blur_sine_fixture, samples, iterations) {
-    using solver_type =
-        num_collect::regularization::tikhonov<coeff_type, data_type>;
-    using searcher_type =
-        num_collect::regularization::explicit_l_curve<solver_type>;
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(blur_sine_fixture, "reg_blur_sine", "tikhonov_l_curve") {
+    STAT_BENCH_MEASURE() {
+        using solver_type =
+            num_collect::regularization::tikhonov<coeff_type, data_type>;
+        using searcher_type =
+            num_collect::regularization::explicit_l_curve<solver_type>;
 
-    solver_type solver;
-    solver.compute(prob().coeff(), data_with_error());
+        solver_type solver;
+        solver.compute(prob().coeff(), data_with_noise());
 
-    searcher_type searcher{solver};
-    searcher.search();
-    Eigen::VectorXd solution;
-    searcher.solve(solution);
+        searcher_type searcher{solver};
+        searcher.search();
+        Eigen::VectorXd solution;
+        searcher.solve(solution);
 
-    set_error(solution);
-    set_param(searcher.opt_param());
+        set_error(solution);
+        set_param(searcher.opt_param());
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(
-    reg_blur_sine, tikhonov_gcv, blur_sine_fixture, samples, iterations) {
-    using solver_type =
-        num_collect::regularization::tikhonov<coeff_type, data_type>;
-    using searcher_type =
-        num_collect::regularization::explicit_gcv<solver_type>;
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(blur_sine_fixture, "reg_blur_sine", "tikhonov_gcv") {
+    STAT_BENCH_MEASURE() {
+        using solver_type =
+            num_collect::regularization::tikhonov<coeff_type, data_type>;
+        using searcher_type =
+            num_collect::regularization::explicit_gcv<solver_type>;
 
-    solver_type solver;
-    solver.compute(prob().coeff(), data_with_error());
+        solver_type solver;
+        solver.compute(prob().coeff(), data_with_noise());
 
-    searcher_type searcher{solver};
-    searcher.search();
-    Eigen::VectorXd solution;
-    searcher.solve(solution);
+        searcher_type searcher{solver};
+        searcher.search();
+        Eigen::VectorXd solution;
+        searcher.solve(solution);
 
-    set_error(solution);
-    set_param(searcher.opt_param());
+        set_error(solution);
+        set_param(searcher.opt_param());
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(reg_blur_sine, full_gen_tik_l_curve, blur_sine_fixture, samples,
-    iterations) {
-    using solver_type =
-        num_collect::regularization::full_gen_tikhonov<coeff_type, data_type>;
-    using searcher_type =
-        num_collect::regularization::explicit_l_curve<solver_type>;
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(blur_sine_fixture, "reg_blur_sine", "full_gen_tik_l_curve") {
+    STAT_BENCH_MEASURE() {
+        using solver_type =
+            num_collect::regularization::full_gen_tikhonov<coeff_type,
+                data_type>;
+        using searcher_type =
+            num_collect::regularization::explicit_l_curve<solver_type>;
 
-    solver_type solver;
-    solver.compute(prob().coeff(), data_with_error(), dense_diff_matrix());
+        solver_type solver;
+        solver.compute(prob().coeff(), data_with_noise(), dense_diff_matrix());
 
-    searcher_type searcher{solver};
-    searcher.search();
-    Eigen::VectorXd solution;
-    searcher.solve(solution);
+        searcher_type searcher{solver};
+        searcher.search();
+        Eigen::VectorXd solution;
+        searcher.solve(solution);
 
-    set_error(solution);
-    set_param(searcher.opt_param());
+        set_error(solution);
+        set_param(searcher.opt_param());
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(
-    reg_blur_sine, full_gen_tik_gcv, blur_sine_fixture, samples, iterations) {
-    using solver_type =
-        num_collect::regularization::full_gen_tikhonov<coeff_type, data_type>;
-    using searcher_type =
-        num_collect::regularization::explicit_gcv<solver_type>;
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(blur_sine_fixture, "reg_blur_sine", "full_gen_tik_gcv") {
+    STAT_BENCH_MEASURE() {
+        using solver_type =
+            num_collect::regularization::full_gen_tikhonov<coeff_type,
+                data_type>;
+        using searcher_type =
+            num_collect::regularization::explicit_gcv<solver_type>;
 
-    solver_type solver;
-    solver.compute(prob().coeff(), data_with_error(), dense_diff_matrix());
+        solver_type solver;
+        solver.compute(prob().coeff(), data_with_noise(), dense_diff_matrix());
 
-    searcher_type searcher{solver};
-    searcher.search();
-    Eigen::VectorXd solution;
-    searcher.solve(solution);
+        searcher_type searcher{solver};
+        searcher.search();
+        Eigen::VectorXd solution;
+        searcher.solve(solution);
 
-    set_error(solution);
-    set_param(searcher.opt_param());
+        set_error(solution);
+        set_param(searcher.opt_param());
+    };
 }

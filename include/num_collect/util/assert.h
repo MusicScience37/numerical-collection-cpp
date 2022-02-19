@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 MusicScience37 (Kenta Kabashima)
+ * Copyright 2022 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,63 +19,61 @@
  */
 #pragma once
 
-#include <fmt/core.h>
+#include <iterator>
 
-#include "num_collect/util/exception.h"
+#include <fmt/format.h>
 
-namespace num_collect::impl {
+#include "num_collect/base/exception.h"
+#include "num_collect/logging/log_and_throw.h"
+#include "num_collect/util/impl/assertion_decomposer.h"
+#include "num_collect/util/source_info_view.h"
+
+namespace num_collect::util::impl {
 
 /*!
- * \brief Check whether a condition is satisfied.
+ * \brief Evaluate assertion.
  *
- * \param[in] condition_result Result of the condition.
- * \param[in] condition_str String expression of the condition.
- * \param[in] function Function name.
+ * \tparam Derived Type of the derived class of assertion_expression_base.
+ * \param[in] assertion Assertion expression.
+ * \param[in] condition_str Raw string expression of the condition.
+ * \param[in] source Information of the source code.
  */
-template <typename ConditionResult, typename ConditionStr, typename Function>
-void assert_impl(ConditionResult&& condition_result,
-    ConditionStr&& condition_str, Function&& function) {
-    if (!std::forward<ConditionResult>(condition_result)) {
-        throw ::num_collect::assertion_failure(
-            fmt::format("assertion failure: {} (at {})",
-                std::forward<ConditionStr>(condition_str),
-                std::forward<Function>(function)));
+template <typename Derived>
+void evaluate_assertion(const assertion_expression_base<Derived>& assertion,
+    std::string_view condition_str,
+    source_info_view source = source_info_view()) {
+    if (assertion.evaluate_to_bool()) {
+        return;
     }
+
+    fmt::memory_buffer buffer;
+    fmt::format_to(std::back_inserter(buffer),
+        FMT_STRING("Assertion failure: {} ({})."), condition_str,
+        assertion.derived());
+    logging::log_and_throw<assertion_failure>(
+        std::string_view(buffer.data(), buffer.size()), source);
 }
 
-}  // namespace num_collect::impl
+}  // namespace num_collect::util::impl
 
-#ifdef NUM_COLLECT_DOCUMENTATION
-/*!
- * \brief macro to get function name
- *
- * This macro will be expanded to implementation-defined macros or variables.
- */
-#define NUM_COLLECT_FUNCTION <implementation defined strings>
-#elif __GNUC__                                    // GCC and Clang
-#define NUM_COLLECT_FUNCTION __PRETTY_FUNCTION__  // NOLINT
-#elif _MSC_VER                                    // MSVC
-#define NUM_COLLECT_FUNCTION __FUNCSIG__          // NOLINT
-#else                                             // fallback (C++ standard)
-#define NUM_COLLECT_FUNCTION __func__             // NOLINT
-#endif
-
-#ifdef NUM_COLLECT_DOCUMENTATION
 /*!
  * \brief Macro to check whether a condition is satisfied.
  *
  * \param[in] CONDITION Condition.
  */
-#define NUM_COLLECT_ASSERT(CONDITION)             \
-    ::num_collect::impl::assert_impl((CONDITION), \
-        static_cast<const char*>(#CONDITION),     \
-        static_cast<const char*>(NUM_COLLECT_FUNCTION))
-#else
-// NOLINTNEXTLINE
-#define NUM_COLLECT_ASSERT(CONDITION) \
-    ::num_collect::impl::assert_impl( \
-        (CONDITION), (#CONDITION), (NUM_COLLECT_FUNCTION))
-#endif
+#define NUM_COLLECT_ASSERT_IMPL(CONDITION) /* NOLINT */      \
+    ::num_collect::util::impl::evaluate_assertion(           \
+        (::num_collect::util::impl::assertion_decomposer() < \
+            CONDITION), /* NOLINT */                         \
+        (#CONDITION))
+
+/*!
+ * \brief Macro to check whether a condition is satisfied.
+ *
+ * \param[in] CONDITION Condition.
+ */
+#define NUM_COLLECT_ASSERT(CONDITION) /* NOLINT */ \
+    NUM_COLLECT_ASSERT_IMPL(CONDITION)
 
 #ifdef NUM_COLLECT_DOCUMENTATION
 /*!
@@ -85,9 +83,18 @@ void assert_impl(ConditionResult&& condition_result,
  */
 #define NUM_COLLECT_DEBUG_ASSERT(CONDITION) NUM_COLLECT_ASSERT(CONDITION)
 #elif !defined(NDEBUG)
-// NOLINTNEXTLINE
-#define NUM_COLLECT_DEBUG_ASSERT(CONDITION) NUM_COLLECT_ASSERT(CONDITION)
+/*!
+ * \brief Macro to check whether a condition is satisfied in debug build only.
+ *
+ * \param[in] CONDITION Condition.
+ */
+#define NUM_COLLECT_DEBUG_ASSERT(CONDITION) /* NOLINT */ \
+    NUM_COLLECT_ASSERT(CONDITION)
 #else
-// NOLINTNEXTLINE
-#define NUM_COLLECT_DEBUG_ASSERT(CONDITION) [] {}()
+/*!
+ * \brief Macro to check whether a condition is satisfied in debug build only.
+ *
+ * \param[in] CONDITION Condition.
+ */
+#define NUM_COLLECT_DEBUG_ASSERT(CONDITION) /* NOLINT */ [] {}()
 #endif

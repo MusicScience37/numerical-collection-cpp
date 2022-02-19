@@ -19,9 +19,11 @@
  */
 #pragma once
 
-#include <Eigen/Core>
 #include <memory>
 
+#include <Eigen/Core>
+
+#include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/interp/kernel/calc_kernel_mat.h"
 #include "num_collect/interp/kernel/impl/auto_regularizer.h"
 #include "num_collect/interp/kernel/impl/self_adjoint_kernel_solver.h"
@@ -34,7 +36,7 @@ namespace num_collect::interp::kernel::impl {
  *
  * \tparam Scalar Type of scalars.
  */
-template <typename Scalar>
+template <base::concepts::real_scalar Scalar>
 class auto_regularizer_wrapper {
 public:
     //! Type of scalars.

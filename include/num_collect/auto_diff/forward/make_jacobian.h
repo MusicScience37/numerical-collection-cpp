@@ -19,10 +19,14 @@
  */
 #pragma once
 
-#include <Eigen/Core>
 #include <type_traits>
 
+#include <Eigen/Core>
+
 #include "num_collect/auto_diff/forward/variable.h"
+#include "num_collect/base/concepts/dense_vector.h"
+#include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/concepts/real_scalar_dense_matrix.h"
 #include "num_collect/util/assert.h"
 
 namespace num_collect::auto_diff::forward {
@@ -34,7 +38,7 @@ namespace impl {
  *
  * \tparam VectorType Type of vectors of variables.
  */
-template <typename VectorType>
+template <base::concepts::dense_vector VectorType>
 class make_jacobian_functor {
 public:
     //! Type of vectors of variables.
@@ -91,7 +95,7 @@ private:
  * \param[in] vector Vector of variables.
  * \return Jacobian.
  */
-template <typename VectorType>
+template <base::concepts::dense_vector VectorType>
 [[nodiscard]] inline auto make_jacobian(
     const Eigen::MatrixBase<VectorType>& vector)
     -> Eigen::CwiseNullaryOp<impl::make_jacobian_functor<VectorType>,

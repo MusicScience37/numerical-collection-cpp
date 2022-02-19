@@ -23,6 +23,8 @@
 #include <type_traits>
 #include <utility>
 
+#include "num_collect/base/concepts/integral.h"
+#include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/constants/half.h"
 #include "num_collect/constants/one.h"
 #include "num_collect/constants/two.h"
@@ -39,9 +41,7 @@ namespace num_collect::functions {
  * \param[in] n Order of the Legendre function.
  * \return Value of n-thLegendre function of x.
  */
-template <typename F, typename I,
-    std::enable_if_t<std::is_floating_point_v<F> && std::is_integral_v<I>,
-        void*> = nullptr>
+template <base::concepts::real_scalar F, base::concepts::integral I>
 constexpr auto legendre(F x, I n) -> F {
     if constexpr (std::is_signed_v<I>) {
         if (n < constants::zero<I>) {
@@ -77,9 +77,7 @@ constexpr auto legendre(F x, I n) -> F {
  * \param[in] n Order of the Legendre function.
  * \return n-thLegendre function and its differential coefficient of x.
  */
-template <typename F, typename I,
-    std::enable_if_t<std::is_floating_point_v<F> && std::is_integral_v<I>,
-        void*> = nullptr>
+template <base::concepts::real_scalar F, base::concepts::integral I>
 constexpr auto legendre_with_diff(F x, I n) -> std::pair<F, F> {
     if constexpr (std::is_signed_v<I>) {
         if (n < constants::zero<I>) {

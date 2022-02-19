@@ -22,6 +22,7 @@
 #include <Eigen/Core>
 
 #include "num_collect/auto_diff/backward/graph/node.h"
+#include "num_collect/base/concepts/real_scalar.h"
 
 namespace num_collect::auto_diff::backward {
 
@@ -41,7 +42,7 @@ struct variable_tag {};
  *
  * \tparam Scalar Type of scalars.
  */
-template <typename Scalar>
+template <base::concepts::real_scalar Scalar>
 class variable {
 public:
     //! Type of scalars.

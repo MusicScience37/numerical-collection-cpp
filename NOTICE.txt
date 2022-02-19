@@ -7,7 +7,10 @@ This project uses Eigen library, which is available under a
 "Mozilla Public License, Version 2.0." For details, https://gitlab.com/libeigen/eigen.
 
 This project uses Catch2 library in tests, which is available under a
-"Boost Software License, Version 1.0." For details, see extern/Catch2.
+"Boost Software License, Version 1.0." For details, see https://github.com/catchorg/Catch2.
 
 This project uses Celero library in benchmarks, which is available under a
-"Apache License, Version 2.0." For details, see extern/Celero.
+"Apache License, Version 2.0." For details, see https://github.com/DigitalInBlue/Celero.
+
+This project uses Pybind11 library in benchmarks, which is available under a
+BSD-style License. For details, see https://github.com/pybind/pybind11.

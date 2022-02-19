@@ -20,7 +20,7 @@
 #include "num_collect/auto_diff/backward/graph/node_differentiator.h"
 
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_floating.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 TEST_CASE("num_collect::auto_diff::backward::graph::node_differentiator") {
     using num_collect::auto_diff::backward::graph::child_node;

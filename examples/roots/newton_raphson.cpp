@@ -22,21 +22,24 @@
 #include <iomanip>
 #include <iostream>
 
+#include "../configure_logging.h"
+#include "num_collect/logging/logger.h"
 #include "num_prob_collect/roots/cubic_root_test_function.h"
 
 auto main() -> int {
+    configure_logging();
+
     constexpr double target = 3.0;
     auto finder = num_collect::roots::newton_raphson<
         num_prob_collect::roots::cubic_root_test_function>(
         num_prob_collect::roots::cubic_root_test_function(target));
     finder.init(target);
-    finder.solve(std::cout);
+    finder.solve();
 
-    constexpr int prec = 15;
-    std::cout << std::setprecision(prec);
-    std::cout << "solver:   " << finder.variable() << "\n";
+    const auto logger = num_collect::logging::logger();
+    logger.info()("solver:   {:15}", finder.variable());
     const double reference = std::pow(target, 1.0 / 3.0);
-    std::cout << "std::pow: " << reference << std::endl;
+    logger.info()("std::pow: {:15}", reference);
 
     return 0;
 }

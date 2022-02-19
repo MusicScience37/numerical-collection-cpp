@@ -1,0 +1,12 @@
+set(SOURCE_FILES
+    concepts/getter_of_test.cpp
+    impl/log_formatter_test.cpp
+    iteration_logger_test.cpp
+    log_config_test.cpp
+    log_level_test.cpp
+    log_tag_config_test.cpp
+    log_tag_test.cpp
+    log_tag_view_test.cpp
+    logger_test.cpp
+    simple_log_sink_test.cpp
+)

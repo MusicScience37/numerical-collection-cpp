@@ -19,20 +19,18 @@
  */
 #include "num_prob_collect/opt/powell4_function.h"
 
-#include <celero/Celero.h>
+#include <stat_bench/bench/invocation_context.h>
+#include <stat_bench/benchmark_macros.h>
 
-#include "evaluations_udm.h"
-#include "iterations_udm.h"
 #include "num_collect/opt/bfgs_optimizer.h"
 #include "num_collect/opt/dfp_optimizer.h"
 #include "num_collect/opt/dividing_rectangles.h"
 #include "num_collect/opt/downhill_simplex.h"
 #include "num_collect/opt/steepest_descent.h"
 
-// NOLINTNEXTLINE: external library
-CELERO_MAIN
+STAT_BENCH_MAIN
 
-class powell4_function_fixture : public celero::TestFixture {
+class powell4_function_fixture : public stat_bench::FixtureBase {
 public:
     powell4_function_fixture() = default;
 
@@ -42,21 +40,21 @@ public:
         while (optimizer.opt_value() > tol_value) {
             optimizer.iterate();
         }
-        iterations_->addValue(optimizer.iterations());
-        evaluations_->addValue(optimizer.evaluations());
+        iterations_ = optimizer.iterations();
+        evaluations_ = optimizer.evaluations();
     }
 
-    [[nodiscard]] auto getUserDefinedMeasurements() const -> std::vector<
-        std::shared_ptr<celero::UserDefinedMeasurement>> override {
-        return {iterations_, evaluations_};
+    void tear_down(stat_bench::bench::InvocationContext& context) override {
+        context.add_custom_output(
+            "iterations", static_cast<double>(iterations_));
+        context.add_custom_output(
+            "evaluations", static_cast<double>(evaluations_));
     }
 
 private:
-    std::shared_ptr<iterations_udm> iterations_{
-        std::make_shared<iterations_udm>()};
+    num_collect::index_type iterations_{};
 
-    std::shared_ptr<evaluations_udm> evaluations_{
-        std::make_shared<evaluations_udm>()};
+    num_collect::index_type evaluations_{};
 };
 
 [[nodiscard]] auto init_var() -> Eigen::Vector4d {
@@ -72,48 +70,58 @@ private:
         Eigen::Vector4d::Constant(max_value)};
 }
 
-// NOLINTNEXTLINE: external library
-BASELINE_F(
-    opt_powell4_function, steepest_descent, powell4_function_fixture, 0, 0) {
-    auto optimizer = num_collect::opt::steepest_descent<
-        num_prob_collect::opt::powell4_function>();
-    optimizer.init(init_var());
-    this->test_optimizer(optimizer);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(
+    powell4_function_fixture, "opt_powell4_function", "steepest_descent") {
+    STAT_BENCH_MEASURE() {
+        auto optimizer = num_collect::opt::steepest_descent<
+            num_prob_collect::opt::powell4_function>();
+        optimizer.init(init_var());
+        this->test_optimizer(optimizer);
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(
-    opt_powell4_function, downhill_simplex, powell4_function_fixture, 0, 0) {
-    auto optimizer = num_collect::opt::downhill_simplex<
-        num_prob_collect::opt::powell4_function>();
-    optimizer.init(init_var());
-    this->test_optimizer(optimizer);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(
+    powell4_function_fixture, "opt_powell4_function", "downhill_simplex") {
+    STAT_BENCH_MEASURE() {
+        auto optimizer = num_collect::opt::downhill_simplex<
+            num_prob_collect::opt::powell4_function>();
+        optimizer.init(init_var());
+        this->test_optimizer(optimizer);
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(
-    opt_powell4_function, dfp_optimizer, powell4_function_fixture, 0, 0) {
-    auto optimizer = num_collect::opt::dfp_optimizer<
-        num_prob_collect::opt::powell4_function>();
-    optimizer.init(init_var());
-    this->test_optimizer(optimizer);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(
+    powell4_function_fixture, "opt_powell4_function", "dfp_optimizer") {
+    STAT_BENCH_MEASURE() {
+        auto optimizer = num_collect::opt::dfp_optimizer<
+            num_prob_collect::opt::powell4_function>();
+        optimizer.init(init_var());
+        this->test_optimizer(optimizer);
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(
-    opt_powell4_function, bfgs_optimizer, powell4_function_fixture, 0, 0) {
-    auto optimizer = num_collect::opt::bfgs_optimizer<
-        num_prob_collect::opt::powell4_function>();
-    optimizer.init(init_var());
-    this->test_optimizer(optimizer);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(
+    powell4_function_fixture, "opt_powell4_function", "bfgs_optimizer") {
+    STAT_BENCH_MEASURE() {
+        auto optimizer = num_collect::opt::bfgs_optimizer<
+            num_prob_collect::opt::powell4_function>();
+        optimizer.init(init_var());
+        this->test_optimizer(optimizer);
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(
-    opt_powell4_function, dividing_rectangles, powell4_function_fixture, 0, 0) {
-    auto optimizer = num_collect::opt::dividing_rectangles<
-        num_prob_collect::opt::powell4_function>();
-    const auto [lower, upper] = search_region();
-    optimizer.init(lower, upper);
-    this->test_optimizer(optimizer);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(
+    powell4_function_fixture, "opt_powell4_function", "dividing_rectangles") {
+    STAT_BENCH_MEASURE() {
+        auto optimizer = num_collect::opt::dividing_rectangles<
+            num_prob_collect::opt::powell4_function>();
+        const auto [lower, upper] = search_region();
+        optimizer.init(lower, upper);
+        this->test_optimizer(optimizer);
+    };
 }

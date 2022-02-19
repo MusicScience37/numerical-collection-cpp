@@ -19,20 +19,29 @@
  */
 #pragma once
 
-#include <Eigen/LU>
 #include <cmath>
 #include <limits>
 #include <type_traits>
 
+#include <Eigen/LU>
+
+#include "num_collect/base/index_type.h"
 #include "num_collect/constants/one.h"
 #include "num_collect/constants/zero.h"
+#include "num_collect/logging/log_tag_view.h"
+#include "num_collect/ode/concepts/differentiable_problem.h"
+#include "num_collect/ode/concepts/multi_variate_differentiable_problem.h"
+#include "num_collect/ode/concepts/single_variate_differentiable_problem.h"
 #include "num_collect/ode/implicit_formula_solver_strategies.h"
 #include "num_collect/util/assert.h"
-#include "num_collect/util/index_type.h"
 #include "num_collect/util/is_eigen_matrix.h"
 #include "num_collect/util/is_eigen_vector.h"
 
 namespace num_collect::ode::runge_kutta {
+
+//! Tag of semi_implicit_formula_solver.
+inline constexpr auto semi_implicit_formula_solver_tag = logging::log_tag_view(
+    "num_collect::ode::runge_kutta::semi_implicit_formula_solver");
 
 /*!
  * \brief Class of solvers of semi-implicit formulas.
@@ -41,7 +50,7 @@ namespace num_collect::ode::runge_kutta {
  * \tparam StrategyTag Type of tag of strategy (in
  * implicit_formula_solver_strategies namespace).
  */
-template <typename Problem, typename StrategyTag, typename = void>
+template <concepts::differentiable_problem Problem, typename StrategyTag>
 class semi_implicit_formula_solver;
 
 /*!
@@ -49,11 +58,9 @@ class semi_implicit_formula_solver;
  *
  * \tparam Problem Type of problem.
  */
-template <typename Problem>
+template <concepts::multi_variate_differentiable_problem Problem>
 class semi_implicit_formula_solver<Problem,
-    implicit_formula_solver_strategies::modified_newton_raphson_tag,
-    std::enable_if_t<is_eigen_vector_v<typename Problem::variable_type> &&
-        is_eigen_matrix_v<typename Problem::jacobian_type>>> {
+    implicit_formula_solver_strategies::modified_newton_raphson_tag> {
 public:
     //! Type of problem.
     using problem_type = Problem;
@@ -93,16 +100,23 @@ public:
         k_ = problem_.diff_coeff();
 
         constexpr index_type max_iterations = 1000;  // safe guard
-        for (index_type i = 0; i <= max_iterations; ++i) {
+        index_type iterations = 0;
+        for (; iterations <= max_iterations; ++iterations) {
             problem_.evaluate_on(
                 time, variable + step_size * k_coeff * k_, false);
             residual_ = k_ - problem_.diff_coeff();
             residual_norm_ = residual_.norm();
             if (residual_norm_ < tol_residual_norm_) {
+                ++iterations;
                 break;
             }
             k_ -= lu_.solve(residual_);
         }
+
+        logger_.trace()(
+            FMT_STRING("Solved an implicit formula: step_size={:.3e}, "
+                       "iterations={}, residual={:.3e}"),
+            step_size, iterations, residual_norm_);
     }
 
     /*!
@@ -169,6 +183,9 @@ private:
 
     //! Tolerance of residual norm.
     scalar_type tol_residual_norm_{default_tol_residual_norm};
+
+    //! Logger.
+    logging::logger logger_{semi_implicit_formula_solver_tag};
 };
 
 /*!
@@ -176,15 +193,9 @@ private:
  *
  * \tparam Problem Type of problem.
  */
-template <typename Problem>
+template <concepts::single_variate_differentiable_problem Problem>
 class semi_implicit_formula_solver<Problem,
-    implicit_formula_solver_strategies::modified_newton_raphson_tag,
-    std::enable_if_t<
-        std::is_floating_point_v<typename Problem::variable_type> &&
-        std::is_same_v<typename Problem::variable_type,
-            typename Problem::scalar_type> &&
-        std::is_same_v<typename Problem::variable_type,
-            typename Problem::jacobian_type>>> {
+    implicit_formula_solver_strategies::modified_newton_raphson_tag> {
 public:
     //! Type of problem.
     using problem_type = Problem;
@@ -225,16 +236,23 @@ public:
         k_ = problem_.diff_coeff();
 
         constexpr index_type max_iterations = 1000;  // safe guard
-        for (index_type i = 0; i <= max_iterations; ++i) {
+        index_type iterations = 0;
+        using std::abs;
+        for (; iterations <= max_iterations; ++iterations) {
             problem_.evaluate_on(
                 time, variable + step_size * k_coeff * k_, false);
             residual_ = k_ - problem_.diff_coeff();
-            using std::abs;
             if (abs(residual_) < tol_residual_norm_) {
+                ++iterations;
                 break;
             }
             k_ -= inv_jacobian * residual_;
         }
+
+        logger_.trace()(
+            FMT_STRING("Solved an implicit formula: step_size={:.3e}, "
+                       "iterations={}, residual={:.3e}"),
+            step_size, iterations, abs(residual_));
     }
 
     /*!
@@ -296,6 +314,9 @@ private:
 
     //! Tolerance of residual norm.
     scalar_type tol_residual_norm_{default_tol_residual_norm};
+
+    //! Logger.
+    logging::logger logger_{semi_implicit_formula_solver_tag};
 };
 
 }  // namespace num_collect::ode::runge_kutta

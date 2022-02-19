@@ -19,8 +19,6 @@
  */
 #pragma once
 
-#include <Eigen/Core>
-#include <Eigen/Eigenvalues>
 #include <cmath>
 #include <limits>
 #include <stack>
@@ -28,6 +26,13 @@
 #include <unordered_set>
 #include <utility>
 
+#include <Eigen/Core>
+#include <Eigen/Eigenvalues>
+
+#include "num_collect/base/concepts/invocable_as.h"
+#include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/index_type.h"
+#include "num_collect/base/norm.h"
 #include "num_collect/constants/half.h"
 #include "num_collect/constants/one.h"
 #include "num_collect/constants/two.h"
@@ -35,8 +40,6 @@
 #include "num_collect/functions/legendre.h"
 #include "num_collect/functions/legendre_roots.h"
 #include "num_collect/util/assert.h"
-#include "num_collect/util/index_type.h"
-#include "num_collect/util/norm.h"
 #include "num_collect/util/safe_cast.h"
 
 namespace num_collect::integration {
@@ -45,13 +48,26 @@ namespace num_collect::integration {
  * \brief Class to perform numerical adaptive integration with
  * Gauss-Legendre-Kronrod formula in \cite Laurie1997.
  *
- * \tparam T Type of variables.
+ * \tparam Signature Function signature.
  */
-template <typename T>
-class gauss_legendre_kronrod_integrator {
+template <typename Signature>
+class gauss_legendre_kronrod_integrator;
+
+/*!
+ * \brief Class to perform numerical adaptive integration with
+ * Gauss-Legendre-Kronrod formula in \cite Laurie1997.
+ *
+ * \tparam Result Type of results.
+ * \tparam Variable Type of variables.
+ */
+template <typename Result, base::concepts::real_scalar Variable>
+class gauss_legendre_kronrod_integrator<Result(Variable)> {
 public:
     //! Type of variables.
-    using variable_type = T;
+    using variable_type = std::decay_t<Variable>;
+
+    //! Type of results.
+    using result_type = std::decay_t<Result>;
 
     //! Default order.
     static constexpr index_type default_order = 5;
@@ -82,32 +98,30 @@ public:
      * \brief Integrate a function and return two estimates.
      *
      * \tparam Function Type of function.
-     * \tparam Result Type of result.
      * \param[in] function Function.
      * \param[in] left Left boundary.
      * \param[in] right Right boundary.
      * \return Result.
      */
-    template <typename Function,
-        typename Result =
-            std::decay_t<std::invoke_result_t<Function, variable_type>>>
+    template <base::concepts::invocable_as<result_type(variable_type)> Function>
     [[nodiscard]] auto integrate_once(
         const Function& function, variable_type left, variable_type right) const
-        -> std::pair<Result, Result> {
+        -> std::pair<result_type, result_type> {
         const auto center = constants::half<variable_type> * (left + right);
         const auto half_width = constants::half<variable_type> * (right - left);
 
-        Result sum_gauss = function(center) * constants::zero<variable_type>;
-        Result sum_kronrod = sum_gauss;
+        result_type sum_gauss =
+            function(center) * constants::zero<variable_type>;
+        result_type sum_kronrod = sum_gauss;
         for (index_type i = 0; i < nodes_gauss_.size(); ++i) {
             const variable_type x = center + half_width * nodes_gauss_[i];
-            const Result val = function(x);
+            const result_type val = function(x);
             sum_gauss += val * weights_gauss_[i];
             sum_kronrod += val * weights_gauss_for_kronrod_[i];
         }
         for (index_type i = 0; i < nodes_kronrod_.size(); ++i) {
             const variable_type x = center + half_width * nodes_kronrod_[i];
-            const Result val = function(x);
+            const result_type val = function(x);
             sum_kronrod += val * weights_kronrod_[i];
         }
 
@@ -120,23 +134,21 @@ public:
      * \brief Integrate a function adaptiveply.
      *
      * \tparam Function Type of function.
-     * \tparam Result Type of result.
      * \param[in] function Function.
      * \param[in] left Left boundary.
      * \param[in] right Right boundary.
      * \return Result.
      */
-    template <typename Function,
-        typename Result =
-            std::decay_t<std::invoke_result_t<Function, variable_type>>>
+    template <base::concepts::invocable_as<result_type(variable_type)> Function>
     [[nodiscard]] auto integrate(const Function& function, variable_type left,
-        variable_type right) const -> Result {
+        variable_type right) const -> result_type {
         NUM_COLLECT_ASSERT(left < right);
 
         const variable_type inv_width =
             constants::one<variable_type> / (right - left);
 
-        Result sum = function(constants::half<variable_type> * (left + right)) *
+        result_type sum =
+            function(constants::half<variable_type> * (left + right)) *
             constants::zero<variable_type>;
 
         std::stack<variable_type> remaining_right;
@@ -174,17 +186,14 @@ public:
      * \brief Integrate a function.
      *
      * \tparam Function Type of function.
-     * \tparam Result Type of result.
      * \param[in] function Function.
      * \param[in] left Left boundary.
      * \param[in] right Right boundary.
      * \return Result.
      */
-    template <typename Function,
-        typename Result =
-            std::decay_t<std::invoke_result_t<Function, variable_type>>>
+    template <base::concepts::invocable_as<result_type(variable_type)> Function>
     [[nodiscard]] auto operator()(const Function& function, variable_type left,
-        variable_type right) const -> Result {
+        variable_type right) const -> result_type {
         return integrate(function, left, right);
     }
 
@@ -265,7 +274,8 @@ private:
         NUM_COLLECT_ASSERT(weights_all.allFinite());
 
         std::unordered_set<index_type> additional_nodes_index;
-        additional_nodes_index.reserve(safe_cast<std::size_t>(extended_size));
+        additional_nodes_index.reserve(
+            util::safe_cast<std::size_t>(extended_size));
         for (index_type i = 0; i < extended_size; ++i) {
             additional_nodes_index.insert(i);
         }
@@ -290,9 +300,9 @@ private:
         const auto additional_nodes_vec = std::vector<index_type>(
             additional_nodes_index.begin(), additional_nodes_index.end());
         for (std::size_t i = 0; i < additional_nodes_vec.size(); ++i) {
-            nodes_kronrod_[safe_cast<index_type>(i)] =
+            nodes_kronrod_[util::safe_cast<index_type>(i)] =
                 nodes_all[additional_nodes_vec[i]];
-            weights_kronrod_[safe_cast<index_type>(i)] =
+            weights_kronrod_[util::safe_cast<index_type>(i)] =
                 weights_all[additional_nodes_vec[i]];
         }
         NUM_COLLECT_ASSERT(nodes_kronrod_.allFinite());

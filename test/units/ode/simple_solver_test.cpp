@@ -23,7 +23,7 @@
 #include <sstream>
 
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_floating.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 
 #include "eigen_approx.h"
@@ -93,23 +93,6 @@ TEST_CASE(
             solver.variable(), Catch::Matchers::WithinRel(reference, tol));
         REQUIRE(solver.steps() > 1);
     }
-
-    SECTION("solve_till with logging") {
-        auto solver = solver_type(problem_type());
-
-        constexpr double init_time = 1.234;
-        constexpr double init_var = 1.0;
-        solver.init(init_time, init_var);
-
-        constexpr double duration = 2.345;
-        constexpr double end_time = init_time + duration;
-        std::ostringstream stream;
-        REQUIRE_NOTHROW(solver.solve_till(end_time, stream));
-
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Steps"));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Time"));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("StepSize"));
-    }
 }
 
 TEST_CASE(
@@ -172,22 +155,5 @@ TEST_CASE(
         constexpr double tol = 1e-10;
         REQUIRE_THAT(solver.variable(), eigen_approx(reference, tol));
         REQUIRE(solver.steps() > 1);
-    }
-
-    SECTION("solve_till with logging") {
-        auto solver = solver_type(problem_type());
-
-        constexpr double init_time = 0.0;
-        const Eigen::Vector2d init_var = Eigen::Vector2d(1.0, 0.0);
-        solver.init(init_time, init_var);
-
-        constexpr double duration = 2.345;
-        constexpr double end_time = init_time + duration;
-        std::ostringstream stream;
-        REQUIRE_NOTHROW(solver.solve_till(end_time, stream));
-
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Steps"));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Time"));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("StepSize"));
     }
 }

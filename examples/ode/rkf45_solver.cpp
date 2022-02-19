@@ -21,10 +21,13 @@
 #include <iomanip>
 #include <iostream>
 
+#include "../configure_logging.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
 #include "num_prob_collect/ode/exponential_problem.h"
 
 auto main() -> int {
+    configure_logging();
+
     using problem_type = num_prob_collect::ode::exponential_problem;
     using solver_type =
         num_collect::ode::runge_kutta::rkf45_solver<problem_type>;
@@ -34,7 +37,7 @@ auto main() -> int {
     constexpr double init_var = 1.0;
     constexpr double end_time = 1.0;
     solver.init(init_time, init_var);
-    solver.solve_till(end_time, std::cout);
+    solver.solve_till(end_time);
 
     constexpr int precision = 15;
     std::cout << std::setprecision(precision);

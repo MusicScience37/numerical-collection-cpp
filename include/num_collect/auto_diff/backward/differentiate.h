@@ -19,10 +19,11 @@
  */
 #pragma once
 
-#include <Eigen/Core>
 #include <memory>
 #include <type_traits>
 #include <utility>
+
+#include <Eigen/Core>
 
 #include "num_collect/auto_diff/backward/graph/node.h"
 #include "num_collect/auto_diff/backward/graph/node_differentiator.h"
@@ -177,7 +178,7 @@ public:
      * \return Differential coefficient.
      */
     auto operator()(index_type row, index_type col) const -> scalar_type {
-        return diff_->at(safe_cast<std::size_t>(row))
+        return diff_->at(util::safe_cast<std::size_t>(row))
             .coeff(arg_(col, 0).node());
     }
 
@@ -216,9 +217,9 @@ template <typename FuncValType, typename ArgType>
 
     auto diff = std::make_shared<
         std::vector<graph::node_differentiator<scalar_type>>>();
-    diff->resize(safe_cast<std::size_t>(func_value.size()));
+    diff->resize(util::safe_cast<std::size_t>(func_value.size()));
     for (index_type i = 0; i < func_value.size(); ++i) {
-        diff->operator[](safe_cast<std::size_t>(i))
+        diff->operator[](util::safe_cast<std::size_t>(i))
             .compute(func_value(i, 0).node());
     }
 

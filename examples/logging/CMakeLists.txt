@@ -1,0 +1,1 @@
+add_example(num_collect_ex_write_logs write_logs.cpp)

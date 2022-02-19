@@ -78,7 +78,7 @@ public:
      *
      * \return Function value.
      */
-    [[nodiscard]] auto value() const -> value_type { return value_; }
+    [[nodiscard]] auto value() const -> const value_type& { return value_; }
 
 private:
     //! Function.

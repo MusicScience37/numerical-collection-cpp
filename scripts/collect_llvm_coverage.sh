@@ -8,18 +8,14 @@ DIR=$1
 
 # make a file for codecov
 llvm-profdata merge -o $DIR/coverage/coverage.profdata $DIR/coverage/coverage_*.profraw
-for a in $(find $DIR/bin/num_collect_test_units); do
+for a in $(find $DIR/bin/num_collect_test_units_*); do
     opts="$opts -object $a"
 done
-llvm-cov show -ignore-filename-regex='(extern|test|include/num_collect/constants)/*' -instr-profile=$DIR/coverage/coverage.profdata $opts \
+llvm-cov show -ignore-filename-regex='(problems|test|include/num_collect/constants)/*' -instr-profile=$DIR/coverage/coverage.profdata $opts \
     >$DIR/coverage/coverage.txt
-llvm-cov show -ignore-filename-regex='(extern|test|include/num_collect/constants)/*' -instr-profile=$DIR/coverage/coverage.profdata $opts \
+llvm-cov show -ignore-filename-regex='(problems|test|include/num_collect/constants)/*' -instr-profile=$DIR/coverage/coverage.profdata $opts \
     -format=html -output-dir=$DIR/coverage/html
 
 # output summary to stdout
-llvm-cov report -ignore-filename-regex='(extern|test|include/num_collect/constants)/*' -instr-profile=$DIR/coverage/coverage.profdata $opts |
+llvm-cov report -ignore-filename-regex='(problems|test|include/num_collect/constants)/*' -instr-profile=$DIR/coverage/coverage.profdata $opts |
     tee $DIR/coverage/coverage_summary.txt
-
-# output line coverage for Gitlab CI to get the coverage value
-line_cov=$(cat $DIR/coverage/coverage_summary.txt | awk '{ if (NF > 0) { last = $NF } } END { print last }')
-echo "Line Coverage: $line_cov"

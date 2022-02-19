@@ -19,11 +19,13 @@
  */
 #pragma once
 
-#include <Eigen/Core>
-#include <Eigen/Eigenvalues>
 #include <limits>
 #include <type_traits>
 
+#include <Eigen/Core>
+#include <Eigen/Eigenvalues>
+
+#include "num_collect/base/concepts/real_scalar_dense_matrix.h"
 #include "num_collect/util/assert.h"
 
 namespace num_collect::interp::kernel::impl {
@@ -34,7 +36,8 @@ namespace num_collect::interp::kernel::impl {
  * \tparam KernelMatrix Type of kernel matrices.
  * \tparam Data Type of data vectors.
  */
-template <typename KernelMatrix, typename Data>
+template <base::concepts::real_scalar_dense_matrix KernelMatrix,
+    base::concepts::real_scalar_dense_matrix Data>
 class self_adjoint_kernel_solver {
 public:
     //! Type of kernel matrices.

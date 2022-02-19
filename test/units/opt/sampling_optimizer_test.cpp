@@ -22,7 +22,7 @@
 #include <sstream>
 
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_floating.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 
 #include "num_prob_collect/opt/quadratic_function.h"
@@ -82,17 +82,5 @@ TEST_CASE("num_collect::opt::sampling_optimizer") {
         constexpr double tol = 1e-2;
         REQUIRE_THAT(opt.opt_variable(), Catch::Matchers::WithinAbs(0.0, tol));
         REQUIRE_THAT(opt.opt_value(), Catch::Matchers::WithinAbs(0.0, tol));
-    }
-
-    SECTION("solve with logs") {
-        auto opt = sampling_optimizer<quadratic_function>();
-        std::ostringstream stream;
-        constexpr double left = -1.0;
-        constexpr double right = 2.0;
-        opt.init(left, right);
-        REQUIRE_NOTHROW(opt.solve(stream));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Iter."));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Eval."));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Value"));
     }
 }

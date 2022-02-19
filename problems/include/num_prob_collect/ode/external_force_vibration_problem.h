@@ -19,8 +19,9 @@
  */
 #pragma once
 
-#include <Eigen/Core>
 #include <cmath>
+
+#include <Eigen/Core>
 
 namespace num_prob_collect::ode {
 

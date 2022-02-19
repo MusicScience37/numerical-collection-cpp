@@ -21,8 +21,9 @@
 
 #include <Eigen/Core>
 
+#include "num_collect/base/index_type.h"
+#include "num_collect/interp/kernel/concepts/kernel.h"
 #include "num_collect/util/assert.h"
-#include "num_collect/util/index_type.h"
 
 namespace num_collect::interp::kernel {
 
@@ -91,7 +92,7 @@ private:
  * \param[in] list List of variables.
  * \return Expression of kernel matrix.
  */
-template <typename Kernel, typename Container>
+template <concepts::kernel Kernel, typename Container>
 [[nodiscard]] inline auto calc_kernel_mat(
     const Kernel& kernel, const Container& list)
     -> Eigen::CwiseNullaryOp<impl::calc_kernel_mat_functor<Kernel, Container>,

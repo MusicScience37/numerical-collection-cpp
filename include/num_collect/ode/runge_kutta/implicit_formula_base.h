@@ -19,9 +19,13 @@
  */
 #pragma once
 
+#include <algorithm>
+
+#include "num_collect/base/norm.h"
 #include "num_collect/constants/zero.h"
+#include "num_collect/ode/concepts/formula_solver.h"
+#include "num_collect/ode/concepts/problem.h"
 #include "num_collect/util/assert.h"
-#include "num_collect/util/norm.h"
 
 namespace num_collect::ode::runge_kutta {
 
@@ -32,7 +36,8 @@ namespace num_collect::ode::runge_kutta {
  * \tparam Problem Type of problem.
  * \tparam FormulaSolver Type of solver of formula.
  */
-template <typename Derived, typename Problem, typename FormulaSolver>
+template <typename Derived, concepts::problem Problem,
+    concepts::formula_solver FormulaSolver>
 class implicit_formula_base {
 public:
     //! Type of problem.

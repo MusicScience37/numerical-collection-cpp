@@ -19,6 +19,8 @@
  */
 #pragma once
 
+#include "num_collect/logging/log_tag_view.h"
+#include "num_collect/ode/concepts/problem.h"
 #include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/formula_base.h"
 
@@ -29,7 +31,7 @@ namespace num_collect::ode::runge_kutta {
  *
  * \tparam Problem Type of problem.
  */
-template <typename Problem>
+template <concepts::problem Problem>
 class rkf45_formula : public formula_base<rkf45_formula<Problem>, Problem> {
 public:
     //! Type of base class.
@@ -51,6 +53,10 @@ public:
 
     //! Order of this formula.
     static constexpr index_type order = 5;
+
+    //! Log tag.
+    static constexpr auto log_tag =
+        logging::log_tag_view("num_collect::ode::runge_kutta::rkf45_formula");
 
     //! Order of lesser coefficients of this formula.
     static constexpr index_type lesser_order = 4;
@@ -179,7 +185,7 @@ private:
  *
  * \tparam Problem Type of problem.
  */
-template <typename Problem>
+template <concepts::problem Problem>
 using rkf45_solver = embedded_solver<rkf45_formula<Problem>>;
 
 }  // namespace num_collect::ode::runge_kutta

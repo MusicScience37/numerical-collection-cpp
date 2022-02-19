@@ -23,8 +23,9 @@
 #include <unordered_map>
 
 #include "num_collect/auto_diff/backward/graph/node.h"
+#include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/index_type.h"
 #include "num_collect/util/assert.h"
-#include "num_collect/util/index_type.h"
 
 namespace num_collect::auto_diff::backward::graph {
 
@@ -34,7 +35,7 @@ namespace num_collect::auto_diff::backward::graph {
  *
  * \tparam Scalar Type of scalars.
  */
-template <typename Scalar>
+template <base::concepts::real_scalar Scalar>
 class node_differentiator {
 public:
     //! Type of scalars.

@@ -19,6 +19,8 @@
  */
 #pragma once
 
+#include "num_collect/logging/log_tag_view.h"
+#include "num_collect/opt/concepts/line_searcher.h"
 #include "num_collect/opt/optimizer_base.h"
 
 namespace num_collect::opt {
@@ -29,7 +31,7 @@ namespace num_collect::opt {
  * \tparam Derived Type of derived class.
  * \tparam LineSearcher Type of class to perform line search.
  */
-template <typename Derived, typename LineSearcher>
+template <typename Derived, concepts::line_searcher LineSearcher>
 class descent_method_base : public optimizer_base<Derived> {
 public:
     //! Type of class to perform line search.
@@ -73,7 +75,7 @@ public:
     }
 
     /*!
-     * \copydoc num_collect::iterative_solver_base::is_stop_criteria_satisfied
+     * \copydoc num_collect::base::iterative_solver_base::is_stop_criteria_satisfied
      */
     [[nodiscard]] auto is_stop_criteria_satisfied() const -> bool {
         return gradient_norm() < tol_grad_norm_;
@@ -165,11 +167,12 @@ protected:
     /*!
      * \brief Construct.
      *
+     * \param[in] tag Log tag.
      * \param[in] obj_fun Objective function.
      */
-    explicit descent_method_base(
+    explicit descent_method_base(logging::log_tag_view tag,
         const objective_function_type& obj_fun = objective_function_type())
-        : line_searcher_(obj_fun) {}
+        : optimizer_base<Derived>(tag), line_searcher_(obj_fun) {}
 
 private:
     //! Object to perform line search.

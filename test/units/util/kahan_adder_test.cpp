@@ -24,14 +24,14 @@
 
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_floating.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "num_collect/constants/pi.h"
 
 // NOLINTNEXTLINE
-TEMPLATE_TEST_CASE(
-    "num_collect::kahan_adder (floating-point number)", "", float, double) {
-    using adder_type = num_collect::kahan_adder<TestType>;
+TEMPLATE_TEST_CASE("num_collect::util::kahan_adder (floating-point number)", "",
+    float, double) {
+    using adder_type = num_collect::util::kahan_adder<TestType>;
 
     SECTION("default constructor") {
         auto adder = adder_type();

@@ -17,43 +17,51 @@
  * \file
  * \brief Test of automatic differentiation of quadratic function.
  */
-#include <celero/Celero.h>
+#include <stat_bench/bench/invocation_context.h>
+#include <stat_bench/benchmark_macros.h>
 
 #include "auto_diff_fixture.h"
 #include "num_collect/auto_diff/backward/differentiate.h"
 #include "num_collect/auto_diff/forward/create_diff_variable.h"
 
-// NOLINTNEXTLINE: external library
-CELERO_MAIN
-
-// NOLINTNEXTLINE: external library
-BASELINE_F(quadratic, forward, auto_diff_fixture, 0, 0) {
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(auto_diff_fixture, "quadratic", "forward") {
     using scalar_type = double;
     using variable_type =
         num_collect::auto_diff::forward::variable<scalar_type>;
     using num_collect::auto_diff::forward::create_diff_variable;
 
-    const auto var = create_diff_variable(static_cast<scalar_type>(1.234));
-    const variable_type val = static_cast<scalar_type>(0.5) * var * var - var;
-    const scalar_type coeff = val.diff();
+    STAT_BENCH_MEASURE() {
+        const auto var = create_diff_variable(static_cast<scalar_type>(1.234));
+        const variable_type val =
+            static_cast<scalar_type>(0.5) * var * var - var;
+        const scalar_type coeff = val.diff();
 
-    const scalar_type true_coeff = var.value() - static_cast<scalar_type>(1);
-    check_error(coeff, true_coeff);
+        const scalar_type true_coeff =
+            var.value() - static_cast<scalar_type>(1);
+        check_error(coeff, true_coeff);
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(quadratic, backward, auto_diff_fixture, 0, 0) {
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(auto_diff_fixture, "quadratic", "backward") {
     using scalar_type = double;
     using variable_type =
         num_collect::auto_diff::backward::variable<scalar_type>;
     using num_collect::auto_diff::backward::differentiate;
     using num_collect::auto_diff::backward::variable_tag;
 
-    const auto var =
-        variable_type(static_cast<scalar_type>(1.234), variable_tag());
-    const variable_type val = static_cast<scalar_type>(0.5) * var * var - var;
-    const scalar_type coeff = differentiate(val, var);
+    STAT_BENCH_MEASURE() {
+        const auto var =
+            variable_type(static_cast<scalar_type>(1.234), variable_tag());
+        const variable_type val =
+            static_cast<scalar_type>(0.5) * var * var - var;
+        const scalar_type coeff = differentiate(val, var);
 
-    const scalar_type true_coeff = var.value() - static_cast<scalar_type>(1);
-    check_error(coeff, true_coeff);
+        const scalar_type true_coeff =
+            var.value() - static_cast<scalar_type>(1);
+        check_error(coeff, true_coeff);
+    };
 }
+
+STAT_BENCH_MAIN

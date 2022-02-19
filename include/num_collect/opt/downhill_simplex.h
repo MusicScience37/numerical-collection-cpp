@@ -19,23 +19,31 @@
  */
 #pragma once
 
-#include <Eigen/Core>
 #include <algorithm>
 #include <string>
 #include <type_traits>
 #include <vector>
 
+#include <Eigen/Core>
+
+#include "num_collect/logging/log_tag_view.h"
+#include "num_collect/opt/concepts/multi_variate_objective_function.h"
+#include "num_collect/opt/concepts/objective_function.h"
 #include "num_collect/opt/optimizer_base.h"
 #include "num_collect/util/safe_cast.h"
 
 namespace num_collect::opt {
+
+//! Tag of downhill_simplex.
+inline constexpr auto downhill_simplex_tag =
+    logging::log_tag_view("num_collect::opt::downhill_simplex");
 
 /*!
  * \brief Class of downhill simplex method.
  *
  * \tparam ObjectiveFunction Type of the objective function.
  */
-template <typename ObjectiveFunction, typename = void>
+template <concepts::objective_function ObjectiveFunction>
 class downhill_simplex;
 
 /*!
@@ -43,11 +51,8 @@ class downhill_simplex;
  *
  * \tparam ObjectiveFunction Type of the objective function.
  */
-template <typename ObjectiveFunction>
-class downhill_simplex<ObjectiveFunction,
-    std::enable_if_t<std::is_base_of_v<
-        Eigen::MatrixBase<typename ObjectiveFunction::variable_type>,
-        typename ObjectiveFunction::variable_type>>>
+template <concepts::multi_variate_objective_function ObjectiveFunction>
+class downhill_simplex<ObjectiveFunction>
     : public optimizer_base<downhill_simplex<ObjectiveFunction>> {
 public:
     //! Type of the objective function.
@@ -102,7 +107,9 @@ public:
      */
     explicit downhill_simplex(
         const objective_function_type& obj_fun = objective_function_type())
-        : obj_fun_(obj_fun) {}
+        : optimizer_base<downhill_simplex<ObjectiveFunction>>(
+              downhill_simplex_tag),
+          obj_fun_(obj_fun) {}
 
     /*!
      * \brief Initialize the algorithm.
@@ -117,8 +124,8 @@ public:
         evaluations_ = 0;
 
         variable_type var = init_var;
-        points_.reserve(safe_cast<std::size_t>(dim_ + 1));
-        values_.reserve(safe_cast<std::size_t>(dim_ + 1));
+        points_.reserve(util::safe_cast<std::size_t>(dim_ + 1));
+        values_.reserve(util::safe_cast<std::size_t>(dim_ + 1));
         points_.push_back(var);
         values_.push_back(evaluate_on(var));
         for (index_type i = 0; i < dim_; ++i) {
@@ -129,8 +136,9 @@ public:
             var[i] = val;
         }
 
-        value_order_.reserve(safe_cast<std::size_t>(dim_ + 1));
-        for (std::size_t i = 0; i < safe_cast<std::size_t>(dim_ + 1); ++i) {
+        value_order_.reserve(util::safe_cast<std::size_t>(dim_ + 1));
+        for (std::size_t i = 0; i < util::safe_cast<std::size_t>(dim_ + 1);
+             ++i) {
             value_order_.push_back(i);
         }
         reorder();
@@ -143,7 +151,7 @@ public:
         const variable_type face_center = calc_face_center();
         const auto min_ind = value_order_.front();
         const auto second_max_ind =
-            value_order_[safe_cast<std::size_t>(dim_ - 1)];
+            value_order_[util::safe_cast<std::size_t>(dim_ - 1)];
         const auto max_ind = value_order_.back();
 
         reflect(face_center);
@@ -163,7 +171,7 @@ public:
     }
 
     /*!
-     * \copydoc num_collect::iterative_solver_base::is_stop_criteria_satisfied
+     * \copydoc num_collect::base::iterative_solver_base::is_stop_criteria_satisfied
      */
     [[nodiscard]] auto is_stop_criteria_satisfied() const -> bool {
         return (simplex_size() < tol_simplex_size_) ||
@@ -171,16 +179,23 @@ public:
     }
 
     /*!
-     * \copydoc num_collect::iterative_solver_base::set_info_to
+     * \copydoc num_collect::base::iterative_solver_base::configure_iteration_logger
      */
-    void set_info_to(iteration_logger& logger) const {
-        logger["Iter."] = iterations();
-        logger["Eval."] = evaluations();
-        logger["Value"] = static_cast<double>(opt_value());
-        logger["SimplexSize"] = static_cast<double>(simplex_size());
-        logger["Process"] = process_name(last_process());
+    void configure_iteration_logger(
+        logging::iteration_logger& iteration_logger) const {
+        iteration_logger.append<index_type>(
+            "Iter.", [this] { return iterations(); });
+        iteration_logger.append<index_type>(
+            "Eval.", [this] { return evaluations(); });
+        iteration_logger.append<value_type>(
+            "Value", [this] { return opt_value(); });
+        iteration_logger.append<variable_scalar_type>(
+            "SimplexSize", [this] { return simplex_size(); });
         constexpr index_type process_width = 26;
-        logger["Process"].width(process_width);
+        iteration_logger
+            .append<std::string>(
+                "Process", [this] { return process_name(last_process()); })
+            ->width(process_width);
     }
 
     /*!
@@ -277,7 +292,7 @@ private:
      */
     [[nodiscard]] auto calc_face_center() const -> variable_type {
         variable_type face_center = variable_type::Zero(dim_);
-        for (std::size_t i = 0; i < safe_cast<std::size_t>(dim_); ++i) {
+        for (std::size_t i = 0; i < util::safe_cast<std::size_t>(dim_); ++i) {
             face_center += points_[value_order_[i]];
         }
         face_center /= static_cast<variable_scalar_type>(dim_);
@@ -335,7 +350,7 @@ private:
      */
     void multi_contract() {
         const auto& min_point = points_[value_order_.front()];
-        for (std::size_t i = 1; i <= safe_cast<std::size_t>(dim_); ++i) {
+        for (std::size_t i = 1; i <= util::safe_cast<std::size_t>(dim_); ++i) {
             const std::size_t ind_move = value_order_[i];
             points_[ind_move] = half * (points_[ind_move] + min_point);
             values_[ind_move] = evaluate_on(points_[ind_move]);

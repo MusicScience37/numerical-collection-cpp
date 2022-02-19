@@ -17,7 +17,8 @@
  * \file
  * \brief Test of automatic differentiation to calculate a simple Jacobian.
  */
-#include <celero/Celero.h>
+#include <stat_bench/bench/invocation_context.h>
+#include <stat_bench/benchmark_macros.h>
 
 #include "auto_diff_fixture.h"
 #include "num_collect/auto_diff/backward/create_diff_variable.h"
@@ -25,8 +26,8 @@
 #include "num_collect/auto_diff/forward/create_diff_variable.h"
 #include "num_collect/auto_diff/forward/make_jacobian.h"
 
-// NOLINTNEXTLINE: external library
-BASELINE_F(simple_jacobian, forward, auto_diff_fixture, 0, 0) {
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(auto_diff_fixture, "simple_jacobian", "forward") {
     using arg_type =
         num_collect::auto_diff::forward::variable_vector_type<Eigen::Vector2d>;
     using value_type = Eigen::Matrix<typename arg_type::Scalar, 3, 1>;
@@ -34,22 +35,25 @@ BASELINE_F(simple_jacobian, forward, auto_diff_fixture, 0, 0) {
     using num_collect::auto_diff::forward::create_diff_variable_vector;
     using num_collect::auto_diff::forward::make_jacobian;
 
-    const arg_type vec =
-        create_diff_variable_vector(Eigen::Vector2d(1.234, 2.345));
-    const auto val = value_type(vec(0) * 2.0, vec(0) + vec(1), vec(0) * vec(1));
-    const jacobian_type coeff = make_jacobian(val);
+    STAT_BENCH_MEASURE() {
+        const arg_type vec =
+            create_diff_variable_vector(Eigen::Vector2d(1.234, 2.345));
+        const auto val =
+            value_type(vec(0) * 2.0, vec(0) + vec(1), vec(0) * vec(1));
+        const jacobian_type coeff = make_jacobian(val);
 
-    jacobian_type true_coeff = jacobian_type::Zero();
-    true_coeff(0, 0) = 2.0;  // NOLINT
-    true_coeff(1, 0) = 1.0;
-    true_coeff(1, 1) = 1.0;
-    true_coeff(2, 0) = vec(1).value();
-    true_coeff(2, 1) = vec(0).value();
-    check_error(coeff, true_coeff);
+        jacobian_type true_coeff = jacobian_type::Zero();
+        true_coeff(0, 0) = 2.0;  // NOLINT
+        true_coeff(1, 0) = 1.0;
+        true_coeff(1, 1) = 1.0;
+        true_coeff(2, 0) = vec(1).value();
+        true_coeff(2, 1) = vec(0).value();
+        check_error(coeff, true_coeff);
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(simple_jacobian, backward, auto_diff_fixture, 0, 0) {
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(auto_diff_fixture, "simple_jacobian", "backward") {
     using arg_type =
         num_collect::auto_diff::backward::variable_vector_type<Eigen::Vector2d>;
     using value_type = Eigen::Matrix<typename arg_type::Scalar, 3, 1>;
@@ -57,16 +61,19 @@ BENCHMARK_F(simple_jacobian, backward, auto_diff_fixture, 0, 0) {
     using num_collect::auto_diff::backward::create_diff_variable_vector;
     using num_collect::auto_diff::backward::differentiate;
 
-    const arg_type vec =
-        create_diff_variable_vector(Eigen::Vector2d(1.234, 2.345));
-    const auto val = value_type(vec(0) * 2.0, vec(0) + vec(1), vec(0) * vec(1));
-    const jacobian_type coeff = differentiate(val, vec);
+    STAT_BENCH_MEASURE() {
+        const arg_type vec =
+            create_diff_variable_vector(Eigen::Vector2d(1.234, 2.345));
+        const auto val =
+            value_type(vec(0) * 2.0, vec(0) + vec(1), vec(0) * vec(1));
+        const jacobian_type coeff = differentiate(val, vec);
 
-    jacobian_type true_coeff = jacobian_type::Zero();
-    true_coeff(0, 0) = 2.0;  // NOLINT
-    true_coeff(1, 0) = 1.0;
-    true_coeff(1, 1) = 1.0;
-    true_coeff(2, 0) = vec(1).value();
-    true_coeff(2, 1) = vec(0).value();
-    check_error(coeff, true_coeff);
+        jacobian_type true_coeff = jacobian_type::Zero();
+        true_coeff(0, 0) = 2.0;  // NOLINT
+        true_coeff(1, 0) = 1.0;
+        true_coeff(1, 1) = 1.0;
+        true_coeff(2, 0) = vec(1).value();
+        true_coeff(2, 1) = vec(0).value();
+        check_error(coeff, true_coeff);
+    };
 }

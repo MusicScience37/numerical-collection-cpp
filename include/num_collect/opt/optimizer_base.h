@@ -19,8 +19,8 @@
  */
 #pragma once
 
-#include "num_collect/util/index_type.h"
-#include "num_collect/util/iterative_solver_base.h"
+#include "num_collect/base/index_type.h"
+#include "num_collect/base/iterative_solver_base.h"
 
 namespace num_collect::opt {
 
@@ -30,11 +30,20 @@ namespace num_collect::opt {
  * \tparam Derived Type of derived class.
  */
 template <typename Derived>
-class optimizer_base : public iterative_solver_base<Derived> {
+class optimizer_base
+    : public num_collect::base::iterative_solver_base<Derived> {
 protected:
-    using iterative_solver_base<Derived>::derived;
+    using num_collect::base::iterative_solver_base<Derived>::derived;
 
 public:
+    /*!
+     * \brief Construct.
+     *
+     * \param[in] tag Log tag.
+     */
+    explicit optimizer_base(logging::log_tag_view tag)
+        : num_collect::base::iterative_solver_base<Derived>(tag) {}
+
     /*!
      * \brief Get current optimal variable.
      *

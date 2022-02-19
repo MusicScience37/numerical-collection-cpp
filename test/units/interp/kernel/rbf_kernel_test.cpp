@@ -20,10 +20,10 @@
 #include "num_collect/interp/kernel/rbf_kernel.h"
 
 #include <Eigen/Core>
-
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_floating.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+#include "num_collect/interp/kernel/concepts/kernel.h"
 #include "num_collect/interp/kernel/euclidean_distance.h"
 #include "num_collect/interp/kernel/gaussian_rbf.h"
 
@@ -31,6 +31,9 @@ TEST_CASE("num_collect::interp::kernel::rbf_kernel") {
     using num_collect::interp::kernel::euclidean_distance;
     using num_collect::interp::kernel::gaussian_rbf;
     using num_collect::interp::kernel::rbf_kernel;
+
+    STATIC_REQUIRE(num_collect::interp::kernel::concepts::kernel<
+        rbf_kernel<euclidean_distance<Eigen::Vector3d>, gaussian_rbf<double>>>);
 
     SECTION("calculate kernel") {
         const auto kernel = rbf_kernel<euclidean_distance<Eigen::Vector3d>,

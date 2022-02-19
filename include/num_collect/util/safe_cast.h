@@ -25,9 +25,10 @@
 
 #include <fmt/core.h>
 
-#include "num_collect/util/exception.h"
+#include "num_collect/base/concepts/integral.h"
+#include "num_collect/base/exception.h"
 
-namespace num_collect {
+namespace num_collect::util {
 
 /*!
  * \brief Class of exception on unsafe casts.
@@ -45,9 +46,7 @@ public:
  * \param[in] value Value.
  * \return Casted value.
  */
-template <typename To, typename From,
-    std::enable_if_t<std::is_integral_v<To> && std::is_integral_v<From>,
-        void*> = nullptr>
+template <base::concepts::integral To, base::concepts::integral From>
 [[nodiscard]] inline auto safe_cast(const From& value) -> To {
     // Check upper bound.
     if constexpr (std::numeric_limits<To>::digits <
@@ -79,4 +78,4 @@ template <typename To, typename From,
     return static_cast<To>(value);
 }
 
-}  // namespace num_collect
+}  // namespace num_collect::util

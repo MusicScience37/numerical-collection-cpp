@@ -22,16 +22,21 @@
 #include <cmath>
 #include <utility>
 
+#include "num_collect/opt/concepts/single_variate_objective_function.h"
 #include "num_collect/opt/optimizer_base.h"
 
 namespace num_collect::opt {
+
+//! Tag of golden_section_search.
+inline constexpr auto golden_section_search_tag =
+    logging::log_tag_view("num_collect::opt::golden_section_search");
 
 /*!
  * \brief Class of golden section search method.
  *
  * \tparam ObjectiveFunction Type of the objective function.
  */
-template <typename ObjectiveFunction>
+template <concepts::single_variate_objective_function ObjectiveFunction>
 class golden_section_search
     : public optimizer_base<golden_section_search<ObjectiveFunction>> {
 public:
@@ -51,7 +56,9 @@ public:
      */
     explicit golden_section_search(
         const objective_function_type& obj_fun = objective_function_type())
-        : obj_fun_(obj_fun) {}
+        : optimizer_base<golden_section_search<ObjectiveFunction>>(
+              golden_section_search_tag),
+          obj_fun_(obj_fun) {}
 
     /*!
      * \brief Initialize the algorithm.
@@ -102,18 +109,23 @@ public:
     }
 
     /*!
-     * \copydoc num_collect::iterative_solver_base::is_stop_criteria_satisfied
+     * \copydoc num_collect::base::iterative_solver_base::is_stop_criteria_satisfied
      */
     [[nodiscard]] auto is_stop_criteria_satisfied() const -> bool {
         return section_len() < tol_section_len_;
     }
 
     /*!
-     * \copydoc num_collect::iterative_solver_base::set_info_to
+     * \copydoc num_collect::base::iterative_solver_base::configure_iteration_logger
      */
-    void set_info_to(iteration_logger& logger) const {
-        logger["Iter."] = iterations();
-        logger["Value"] = static_cast<double>(opt_value());
+    void configure_iteration_logger(
+        logging::iteration_logger& iteration_logger) const {
+        iteration_logger.append<index_type>(
+            "Iter.", [this] { return iterations(); });
+        iteration_logger.append<index_type>(
+            "Eval.", [this] { return evaluations(); });
+        iteration_logger.append<value_type>(
+            "Value", [this] { return opt_value(); });
     }
 
     /*!

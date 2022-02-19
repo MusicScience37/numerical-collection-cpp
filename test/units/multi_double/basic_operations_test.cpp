@@ -15,12 +15,12 @@
  */
 /*!
  * \file
- * \brief test of basic operations in multi-double calculations
+ * \brief Test of basic operations in multi-double calculations
  */
 #include "num_collect/multi_double/impl/basic_operations.h"
 
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_floating.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 TEST_CASE("num_collect::multi_double::impl::quick_two_sum") {
     using num_collect::multi_double::impl::quick_two_sum;
