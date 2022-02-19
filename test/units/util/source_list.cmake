@@ -7,6 +7,7 @@ set(SOURCE_FILES
     concepts/kahan_addable_test.cpp
     concepts/rhs_comparable_test.cpp
     format_dense_matrix_test.cpp
+    format_dense_vector_test.cpp
     hash_string_test.cpp
     impl/assertion_decomposer_test.cpp
     impl/compiler_builtins_test.cpp
