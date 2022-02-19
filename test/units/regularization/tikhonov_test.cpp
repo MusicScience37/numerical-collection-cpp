@@ -20,16 +20,29 @@
 #include "num_collect/regularization/tikhonov.h"
 
 #include <Eigen/Core>
-
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_floating.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "eigen_approx.h"
+#include "num_collect/regularization/concepts/explicit_regularized_solver.h"
 #include "num_prob_collect/regularization/blur_sine.h"
 
 TEST_CASE("num_collect::regularization::tikhonov") {
     using coeff_type = Eigen::MatrixXd;
     using data_type = Eigen::VectorXd;
+
+    SECTION("check concept") {
+        using num_collect::regularization::tikhonov;
+        using num_collect::regularization::concepts::
+            explicit_regularized_solver;
+
+        STATIC_CHECK(explicit_regularized_solver<
+            tikhonov<Eigen::MatrixXd, Eigen::VectorXd>>);
+        STATIC_CHECK(explicit_regularized_solver<
+            tikhonov<Eigen::MatrixXd, Eigen::MatrixXd>>);
+        STATIC_CHECK(explicit_regularized_solver<
+            tikhonov<Eigen::MatrixXcd, Eigen::VectorXcd>>);
+    }
 
     SECTION("solve") {
         constexpr num_collect::index_type solution_size = 15;

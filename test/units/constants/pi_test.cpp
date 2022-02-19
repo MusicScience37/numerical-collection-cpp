@@ -15,14 +15,14 @@
  */
 /*!
  * \file
- * \brief test of pi
+ * \brief Test of pi
  */
 #include "num_collect/constants/pi.h"
 
 #include <cmath>
 
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_floating.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 TEST_CASE("num_collect::constants::pi") {
     SECTION("double") {

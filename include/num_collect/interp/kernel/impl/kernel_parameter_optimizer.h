@@ -19,10 +19,12 @@
  */
 #pragma once
 
-#include <Eigen/Core>
 #include <functional>
 #include <memory>
 
+#include <Eigen/Core>
+
+#include "num_collect/interp/kernel/concepts/kernel.h"
 #include "num_collect/interp/kernel/impl/auto_regularizer_wrapper.h"
 #include "num_collect/opt/dividing_rectangles.h"
 #include "num_collect/opt/function_object_wrapper.h"
@@ -34,7 +36,7 @@ namespace num_collect::interp::kernel::impl {
  *
  * \tparam Kernel Type of the kernel.
  */
-template <typename Kernel>
+template <concepts::kernel Kernel>
 class kernel_parameter_optimizer {
 public:
     //! Type of the kernel.

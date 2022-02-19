@@ -22,13 +22,15 @@
 #include <cmath>
 #include <type_traits>
 
+#include "num_collect/base/concepts/invocable_as.h"
+#include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/index_type.h"
 #include "num_collect/constants/half.h"
 #include "num_collect/constants/one.h"
 #include "num_collect/constants/pi.h"
 #include "num_collect/constants/two.h"
 #include "num_collect/constants/zero.h"
 #include "num_collect/util/assert.h"
-#include "num_collect/util/index_type.h"
 
 namespace num_collect::integration {
 
@@ -69,13 +71,26 @@ public:
  * \brief Class to perform numerical integration on semi-infinite range \f$(0,
  * \infty)\f$ using double exponential rule.
  *
+ * \tparam Signature Function signature.
+ */
+template <typename Signature>
+class de_semi_infinite_integrator;
+
+/*!
+ * \brief Class to perform numerical integration on semi-infinite range \f$(0,
+ * \infty)\f$ using double exponential rule.
+ *
+ * \tparam Result Type of results.
  * \tparam Variable Type of variables.
  */
-template <typename Variable>
-class de_semi_infinite_integrator {
+template <typename Result, base::concepts::real_scalar Variable>
+class de_semi_infinite_integrator<Result(Variable)> {
 public:
     //! Type of variables.
-    using variable_type = Variable;
+    using variable_type = std::decay_t<Variable>;
+
+    //! Type of results.
+    using result_type = std::decay_t<Result>;
 
     /*!
      * \brief Construct.
@@ -86,20 +101,18 @@ public:
      * \brief Integrate a function.
      *
      * \tparam Function Type of function.
-     * \tparam Result Type of result.
      * \param[in] function Function.
      * \return Result.
      */
-    template <typename Function,
-        typename Result =
-            std::decay_t<std::invoke_result_t<Function, variable_type>>>
-    [[nodiscard]] auto integrate(const Function& function) const -> Result {
+    template <base::concepts::invocable_as<result_type(variable_type)> Function>
+    [[nodiscard]] auto integrate(const Function& function) const
+        -> result_type {
         const variable_type interval =
             max_point_ / static_cast<variable_type>(points_);
 
         constexpr variable_type diff_coeff_center =
             constants::pi<variable_type>;
-        Result sum =
+        result_type sum =
             function(constants::one<variable_type>) * diff_coeff_center;
 
         for (index_type i = 1; i < points_; ++i) {
@@ -125,14 +138,12 @@ public:
      * \brief Integrate a function.
      *
      * \tparam Function Type of function.
-     * \tparam Result Type of result.
      * \param[in] function Function.
      * \return Result.
      */
-    template <typename Function,
-        typename Result =
-            std::decay_t<std::invoke_result_t<Function, variable_type>>>
-    [[nodiscard]] auto operator()(const Function& function) const -> Result {
+    template <base::concepts::invocable_as<result_type(variable_type)> Function>
+    [[nodiscard]] auto operator()(const Function& function) const
+        -> result_type {
         return integrate(function);
     }
 

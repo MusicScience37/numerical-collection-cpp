@@ -22,7 +22,7 @@
 #include <sstream>
 
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_floating.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 
 #include "eigen_approx.h"
@@ -256,30 +256,16 @@ TEST_CASE("num_collect::opt::adaptive_diagonal_curves") {
         REQUIRE_THAT(opt.opt_value(), Catch::Matchers::WithinAbs(0.0, sol_tol));
     }
 
-    SECTION("solve with logs") {
-        auto opt = adaptive_diagonal_curves<multi_quadratic_function>();
-        std::ostringstream stream;
-        opt.init(Eigen::VectorXd::Constant(3, -1.0),  // NOLINT
-            Eigen::VectorXd::Constant(3, 2.0));       // NOLINT
-        opt.max_evaluations(1000);                    // NOLINT
-        REQUIRE_NOTHROW(opt.solve(stream));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Iter."));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Eval."));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("Value"));
-    }
-
     SECTION("check global phase execution") {
         auto opt = adaptive_diagonal_curves<multi_quadratic_function>();
-        std::ostringstream stream;
         opt.init(Eigen::VectorXd::Constant(3, -2.0),  // NOLINT
             Eigen::VectorXd::Constant(3, 2.0));       // NOLINT
         constexpr double sol_tol = 1e-2;
         opt.max_evaluations(1000);     // NOLINT
         opt.decrease_rate_bound(1.0);  // NOLINT
-        REQUIRE_NOTHROW(opt.solve(stream));
+        REQUIRE_NOTHROW(opt.solve());
         REQUIRE_THAT(opt.opt_variable(),
             eigen_approx(Eigen::VectorXd::Zero(3), sol_tol));
         REQUIRE_THAT(opt.opt_value(), Catch::Matchers::WithinAbs(0.0, sol_tol));
-        REQUIRE_THAT(stream.str(), Catch::Matchers::Contains("global (last)"));
     }
 }

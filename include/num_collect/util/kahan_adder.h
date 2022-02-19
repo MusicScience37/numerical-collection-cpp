@@ -19,14 +19,16 @@
  */
 #pragma once
 
-namespace num_collect {
+#include "num_collect/util/concepts/kahan_addable.h"
+
+namespace num_collect::util {
 
 /*!
  * \brief Class to add numbers using Kahan summation \cite Kahan1965.
  *
  * \tparam T Type of numbers.
  */
-template <typename T>
+template <concepts::kahan_addable T>
 class kahan_adder {
 public:
     /*!
@@ -124,4 +126,4 @@ private:
     T prev_sum_;
 };
 
-}  // namespace num_collect
+}  // namespace num_collect::util

@@ -1,0 +1,2 @@
+add_executable(num_collect_bench_logging_iteration_logger iteration_logger.cpp)
+target_add_to_benchmark(num_collect_bench_logging_iteration_logger)

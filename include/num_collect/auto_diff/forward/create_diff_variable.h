@@ -20,6 +20,8 @@
 #pragma once
 
 #include "num_collect/auto_diff/forward/variable.h"
+#include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/concepts/real_scalar_dense_vector.h"
 
 namespace num_collect::auto_diff::forward {
 
@@ -34,7 +36,7 @@ namespace num_collect::auto_diff::forward {
  * \param[in] value Value.
  * \return Variable.
  */
-template <typename Value>
+template <base::concepts::real_scalar Value>
 [[nodiscard]] inline auto create_diff_variable(const Value& value)
     -> variable<Value> {
     return variable<Value>(value, static_cast<Value>(1));
@@ -51,8 +53,8 @@ template <typename Value>
  * \param[in] index Index of the variable.
  * \return Variable.
  */
-template <typename Value, typename Diff,
-    std::enable_if_t<is_eigen_vector_v<Diff>, void*> = nullptr>
+template <base::concepts::real_scalar Value,
+    base::concepts::real_scalar_dense_vector Diff>
 [[nodiscard]] inline auto create_diff_variable(const Value& value,
     index_type size, index_type index) -> variable<Value, Diff> {
     return variable<Value, Diff>(value, Diff::Unit(size, index));
@@ -63,7 +65,7 @@ template <typename Value, typename Diff,
  *
  * \tparam ValueVector Type of vectors of values.
  */
-template <typename ValueVector>
+template <base::concepts::real_scalar_dense_vector ValueVector>
 using variable_vector_type =
     Eigen::Matrix<variable<typename ValueVector::Scalar, ValueVector>,
         ValueVector::RowsAtCompileTime, 1, Eigen::ColMajor,
@@ -78,7 +80,7 @@ namespace impl {
  * \tparam Value
  * \tparam Diff
  */
-template <typename ValueVector>
+template <base::concepts::real_scalar_dense_vector ValueVector>
 class create_diff_variable_vector_functor {
 public:
     //! Type of values.
@@ -131,7 +133,7 @@ private:
  * \param[in] value_vec Vector of values.
  * \return Vector of variables.
  */
-template <typename ValueVector>
+template <base::concepts::real_scalar_dense_vector ValueVector>
 [[nodiscard]] inline auto create_diff_variable_vector(
     const Eigen::MatrixBase<ValueVector>& value_vec)
     -> Eigen::CwiseNullaryOp<

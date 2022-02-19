@@ -20,6 +20,7 @@
 #pragma once
 
 #include "num_collect/constants/one.h"
+#include "num_collect/ode/concepts/problem.h"
 
 namespace num_collect::ode::avf::impl {
 
@@ -29,7 +30,7 @@ namespace num_collect::ode::avf::impl {
  *
  * \tparam Problem Type of problem.
  */
-template <typename Problem>
+template <concepts::problem Problem>
 class avf_integrand {
 public:
     //! Type of problem.

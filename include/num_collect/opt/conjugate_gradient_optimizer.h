@@ -22,9 +22,15 @@
 #include <Eigen/Cholesky>
 
 #include "num_collect/opt/backtracking_line_searcher.h"
+#include "num_collect/opt/concepts/line_searcher.h"
+#include "num_collect/opt/concepts/multi_variate_differentiable_objective_function.h"
 #include "num_collect/opt/descent_method_base.h"
 
 namespace num_collect::opt {
+
+//! Tag of conjugate_gradient_optimizer.
+inline constexpr auto conjugate_gradient_optimizer_tag =
+    logging::log_tag_view("num_collect::opt::conjugate_gradient_optimizer");
 
 /*!
  * \brief Class of conjugate gradient method for optimization.
@@ -38,8 +44,10 @@ namespace num_collect::opt {
  * \todo Conjugate gradient method for optimization may need to be fixed for
  * faster convergence.
  */
-template <typename ObjectiveFunction,
-    typename LineSearcher = backtracking_line_searcher<ObjectiveFunction>>
+template <
+    concepts::multi_variate_differentiable_objective_function ObjectiveFunction,
+    concepts::line_searcher LineSearcher =
+        backtracking_line_searcher<ObjectiveFunction>>
 class conjugate_gradient_optimizer
     : public descent_method_base<
           conjugate_gradient_optimizer<ObjectiveFunction, LineSearcher>,
@@ -63,7 +71,7 @@ public:
      */
     explicit conjugate_gradient_optimizer(
         const objective_function_type& obj_fun = objective_function_type())
-        : base_type(obj_fun) {}
+        : base_type(conjugate_gradient_optimizer_tag, obj_fun) {}
 
     using base_type::evaluations;
     using base_type::gradient;
@@ -72,6 +80,7 @@ public:
     using base_type::line_searcher;
     using base_type::opt_value;
     using base_type::opt_variable;
+    using typename base_type::value_type;
 
     /*!
      * \brief Initialize.
@@ -105,13 +114,18 @@ public:
     }
 
     /*!
-     * \copydoc num_collect::iterative_solver_base::set_info_to
+     * \copydoc num_collect::base::iterative_solver_base::configure_iteration_logger
      */
-    void set_info_to(iteration_logger& logger) const {
-        logger["Iter."] = iterations();
-        logger["Eval."] = evaluations();
-        logger["Value"] = static_cast<double>(opt_value());
-        logger["Grad."] = static_cast<double>(gradient_norm());
+    void configure_iteration_logger(
+        logging::iteration_logger& iteration_logger) const {
+        iteration_logger.append<index_type>(
+            "Iter.", [this] { return iterations(); });
+        iteration_logger.append<index_type>(
+            "Eval.", [this] { return evaluations(); });
+        iteration_logger.append<value_type>(
+            "Value", [this] { return opt_value(); });
+        iteration_logger.append<value_type>(
+            "Grad.", [this] { return gradient_norm(); });
     }
 
 private:

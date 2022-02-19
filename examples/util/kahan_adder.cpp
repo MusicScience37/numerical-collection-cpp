@@ -27,7 +27,7 @@
 
 auto main() -> int {
     // calculate zeta(4) using kahan_adder
-    auto sum = num_collect::kahan_adder<double>();
+    auto sum = num_collect::util::kahan_adder<double>();
     constexpr std::size_t terms = 100000;
     for (std::size_t i = 1; i <= terms; ++i) {
         const auto i_d = static_cast<double>(i);

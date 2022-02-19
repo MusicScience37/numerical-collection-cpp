@@ -21,14 +21,16 @@
 
 #include <iostream>
 
+#include "../configure_logging.h"
 #include "num_prob_collect/opt/multi_quadratic_function.h"
 
 auto main() -> int {
+    configure_logging();
     num_collect::opt::downhill_simplex<
         num_prob_collect::opt::multi_quadratic_function>
         optimizer;
     const Eigen::VectorXd init_var =
         (Eigen::VectorXd(3) << 0.0, 1.0, 2.0).finished();
     optimizer.init(init_var);
-    optimizer.solve(std::cout);
+    optimizer.solve();
 }

@@ -22,6 +22,8 @@
 #include <cmath>
 #include <type_traits>
 
+#include "num_collect/interp/kernel/concepts/distance.h"
+#include "num_collect/interp/kernel/concepts/rbf.h"
 #include "num_collect/util/assert.h"
 
 namespace num_collect::interp::kernel {
@@ -32,7 +34,7 @@ namespace num_collect::interp::kernel {
  * \tparam Distance Type of calculators of distances.
  * \tparam Rbf Type of RBF.
  */
-template <typename Distance, typename Rbf>
+template <concepts::distance Distance, concepts::rbf Rbf>
 class rbf_kernel {
 public:
     //! Type of calculators of distances.

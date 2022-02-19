@@ -23,7 +23,7 @@
 #include <sstream>
 
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_floating.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "eigen_approx.h"
 #include "num_collect/ode/embedded_solver.h"

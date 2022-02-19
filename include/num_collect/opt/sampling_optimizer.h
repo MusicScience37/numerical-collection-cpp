@@ -23,19 +23,25 @@
 #include <type_traits>
 #include <vector>
 
+#include "num_collect/base/index_type.h"
+#include "num_collect/opt/concepts/objective_function.h"
+#include "num_collect/opt/concepts/single_variate_objective_function.h"
 #include "num_collect/opt/optimizer_base.h"
 #include "num_collect/util/assert.h"
-#include "num_collect/util/index_type.h"
 #include "num_collect/util/safe_cast.h"
 
 namespace num_collect::opt {
+
+//! Tag of golden_section_search.
+inline constexpr auto sampling_optimizer_tag =
+    logging::log_tag_view("num_collect::opt::sampling_optimizer");
 
 /*!
  * \brief Class to perform optimization using samples of objective functions.
  *
  * \tparam ObjectiveFunction Type of the objective function.
  */
-template <typename ObjectiveFunction, typename = void>
+template <concepts::objective_function ObjectiveFunction>
 class sampling_optimizer;
 
 /*!
@@ -43,10 +49,8 @@ class sampling_optimizer;
  *
  * \tparam ObjectiveFunction Type of the objective function.
  */
-template <typename ObjectiveFunction>
-class sampling_optimizer<ObjectiveFunction,
-    std::enable_if_t<std::is_same_v<typename ObjectiveFunction::variable_type,
-        typename ObjectiveFunction::value_type>>>
+template <concepts::single_variate_objective_function ObjectiveFunction>
+class sampling_optimizer<ObjectiveFunction>
     : public optimizer_base<sampling_optimizer<ObjectiveFunction>> {
 public:
     //! Type of the objective function.
@@ -65,7 +69,9 @@ public:
      */
     explicit sampling_optimizer(
         const objective_function_type& obj_fun = objective_function_type())
-        : obj_fun_(obj_fun) {}
+        : optimizer_base<sampling_optimizer<ObjectiveFunction>>(
+              sampling_optimizer_tag),
+          obj_fun_(obj_fun) {}
 
     /*!
      * \brief Initialize the algorithm.
@@ -87,7 +93,8 @@ public:
      * \copydoc num_collect::opt::optimizer_base::iterate
      */
     void iterate() {
-        const auto num_samples_size_t = safe_cast<std::size_t>(num_samples_);
+        const auto num_samples_size_t =
+            util::safe_cast<std::size_t>(num_samples_);
         samples_.resize(num_samples_size_t);
         values_.resize(num_samples_size_t);
 
@@ -123,19 +130,23 @@ public:
     }
 
     /*!
-     * \copydoc num_collect::iterative_solver_base::is_stop_criteria_satisfied
+     * \copydoc num_collect::base::iterative_solver_base::is_stop_criteria_satisfied
      */
     [[nodiscard]] auto is_stop_criteria_satisfied() const -> bool {
         return iterations_ >= max_iterations_;
     }
 
     /*!
-     * \copydoc num_collect::iterative_solver_base::set_info_to
+     * \copydoc num_collect::base::iterative_solver_base::configure_iteration_logger
      */
-    void set_info_to(iteration_logger& logger) const {
-        logger["Iter."] = iterations();
-        logger["Eval."] = evaluations();
-        logger["Value"] = static_cast<double>(opt_value());
+    void configure_iteration_logger(
+        logging::iteration_logger& iteration_logger) const {
+        iteration_logger.append<index_type>(
+            "Iter.", [this] { return iterations(); });
+        iteration_logger.append<index_type>(
+            "Eval.", [this] { return evaluations(); });
+        iteration_logger.append<value_type>(
+            "Value", [this] { return opt_value(); });
     }
 
     /*!

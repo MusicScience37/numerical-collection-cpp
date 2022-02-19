@@ -17,36 +17,24 @@
  * \file
  * \brief Test of automatic differentiation of sum.
  */
-#include <celero/Celero.h>
+#include <stat_bench/bench/invocation_context.h>
+#include <stat_bench/benchmark_macros.h>
 
 #include "auto_diff_fixture.h"
 #include "num_collect/auto_diff/backward/create_diff_variable.h"
 #include "num_collect/auto_diff/backward/differentiate.h"
 #include "num_collect/auto_diff/forward/create_diff_variable.h"
-
-constexpr int samples = 30;
-#ifdef NDEBUG
-constexpr int iterations = 10000;
-#else
-constexpr int iterations = 100;
-#endif
+#include "num_collect/base/index_type.h"
 
 class sum_fixture : public auto_diff_fixture {
 public:
-    sum_fixture() = default;
-
-    [[nodiscard]] auto getExperimentValues() const
-        -> std::vector<celero::TestFixture::ExperimentValue> override {
-        std::vector<celero::TestFixture::ExperimentValue> problem_space;
-        problem_space.emplace_back(2);   // NOLINT
-        problem_space.emplace_back(5);   // NOLINT
-        problem_space.emplace_back(10);  // NOLINT
-        return problem_space;
+    sum_fixture() {
+        // NOLINTNEXTLINE
+        add_param<num_collect::index_type>("size")->add(2)->add(5)->add(10);
     }
 
-    void setUp(
-        const celero::TestFixture::ExperimentValue& experiment_value) override {
-        size_ = static_cast<num_collect::index_type>(experiment_value.Value);
+    void setup(stat_bench::bench::InvocationContext& context) override {
+        size_ = context.get_param<num_collect::index_type>("size");
     }
 
     [[nodiscard]] auto get_size() const -> num_collect::index_type {
@@ -57,26 +45,28 @@ private:
     num_collect::index_type size_{};
 };
 
-// NOLINTNEXTLINE: external library
-BASELINE_F(sum, forward, sum_fixture, samples, iterations) {
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(sum_fixture, "sum", "forward") {
     using scalar_type = double;
     using diff_type = Eigen::VectorXd;
     using vector_type =
         num_collect::auto_diff::forward::variable_vector_type<Eigen::VectorXd>;
     using num_collect::auto_diff::forward::create_diff_variable_vector;
 
-    const num_collect::index_type size = get_size();
-    const vector_type vec =
-        create_diff_variable_vector(Eigen::VectorXd::Ones(size));
-    const auto val = vec.sum();
-    const diff_type& coeff = val.diff();
+    STAT_BENCH_MEASURE() {
+        const num_collect::index_type size = get_size();
+        const vector_type vec =
+            create_diff_variable_vector(Eigen::VectorXd::Ones(size));
+        const auto val = vec.sum();
+        const diff_type& coeff = val.diff();
 
-    const diff_type true_coeff = diff_type::Ones(size);
-    check_error(coeff, true_coeff);
+        const diff_type true_coeff = diff_type::Ones(size);
+        check_error(coeff, true_coeff);
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(sum, backward, sum_fixture, samples, iterations) {
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(sum_fixture, "sum", "backward") {
     using scalar_type = double;
     using diff_type = Eigen::VectorXd;
     using vector_type =
@@ -84,12 +74,14 @@ BENCHMARK_F(sum, backward, sum_fixture, samples, iterations) {
     using num_collect::auto_diff::backward::create_diff_variable_vector;
     using num_collect::auto_diff::backward::differentiate;
 
-    const num_collect::index_type size = get_size();
-    const vector_type vec =
-        create_diff_variable_vector(Eigen::VectorXd::Ones(size));
-    const auto val = vec.sum();
-    const diff_type coeff = differentiate(val, vec);
+    STAT_BENCH_MEASURE() {
+        const num_collect::index_type size = get_size();
+        const vector_type vec =
+            create_diff_variable_vector(Eigen::VectorXd::Ones(size));
+        const auto val = vec.sum();
+        const diff_type coeff = differentiate(val, vec);
 
-    const diff_type true_coeff = diff_type::Ones(size);
-    check_error(coeff, true_coeff);
+        const diff_type true_coeff = diff_type::Ones(size);
+        check_error(coeff, true_coeff);
+    };
 }

@@ -22,13 +22,15 @@
 #include <cmath>
 #include <type_traits>
 
+#include "num_collect/base/concepts/invocable_as.h"
+#include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/index_type.h"
 #include "num_collect/constants/half.h"
 #include "num_collect/constants/one.h"
 #include "num_collect/constants/pi.h"
 #include "num_collect/constants/two.h"
 #include "num_collect/constants/zero.h"
 #include "num_collect/util/assert.h"
-#include "num_collect/util/index_type.h"
 
 namespace num_collect::integration {
 
@@ -68,13 +70,26 @@ public:
  * \brief Class to perform numerical integration on finite range using double
  * exponential rule.
  *
+ * \tparam Signature Function signature.
+ */
+template <typename Signature>
+class de_finite_integrator;
+
+/*!
+ * \brief Class to perform numerical integration on finite range using double
+ * exponential rule.
+ *
+ * \tparam Result Type of results.
  * \tparam Variable Type of variables.
  */
-template <typename Variable>
-class de_finite_integrator {
+template <typename Result, base::concepts::real_scalar Variable>
+class de_finite_integrator<Result(Variable)> {
 public:
     //! Type of variables.
-    using variable_type = Variable;
+    using variable_type = std::decay_t<Variable>;
+
+    //! Type of results.
+    using result_type = std::decay_t<Result>;
 
     /*!
      * \brief Construct.
@@ -85,17 +100,14 @@ public:
      * \brief Integrate a function.
      *
      * \tparam Function Type of function.
-     * \tparam Result Type of result.
      * \param[in] function Function.
      * \param[in] left Left boundary.
      * \param[in] right Right boundary.
      * \return Result.
      */
-    template <typename Function,
-        typename Result =
-            std::decay_t<std::invoke_result_t<Function, variable_type>>>
+    template <base::concepts::invocable_as<result_type(variable_type)> Function>
     [[nodiscard]] auto integrate(const Function& function, variable_type left,
-        variable_type right) const -> Result {
+        variable_type right) const -> result_type {
         const variable_type center =
             constants::half<variable_type> * (left + right);
         const variable_type half_width =
@@ -106,7 +118,7 @@ public:
             constants::half<variable_type> * constants::pi<variable_type>;
 
         const variable_type diff_coeff_center = half_pi * half_width;
-        Result sum = function(center) * diff_coeff_center;
+        result_type sum = function(center) * diff_coeff_center;
 
         for (index_type i = 1; i <= points_; ++i) {
             const variable_type changed_var =
@@ -130,17 +142,14 @@ public:
      * \brief Integrate a function.
      *
      * \tparam Function Type of function.
-     * \tparam Result Type of result.
      * \param[in] function Function.
      * \param[in] left Left boundary.
      * \param[in] right Right boundary.
      * \return Result.
      */
-    template <typename Function,
-        typename Result =
-            std::decay_t<std::invoke_result_t<Function, variable_type>>>
+    template <base::concepts::invocable_as<result_type(variable_type)> Function>
     [[nodiscard]] auto operator()(const Function& function, variable_type left,
-        variable_type right) const -> Result {
+        variable_type right) const -> result_type {
         return integrate(function, left, right);
     }
 

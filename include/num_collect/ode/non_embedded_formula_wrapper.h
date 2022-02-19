@@ -19,11 +19,13 @@
  */
 #pragma once
 
+#include "num_collect/base/index_type.h"
 #include "num_collect/constants/half.h"
 #include "num_collect/constants/two.h"
+#include "num_collect/logging/log_tag_view.h"
+#include "num_collect/ode/concepts/formula.h"
 #include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/formula_base.h"
-#include "num_collect/util/index_type.h"
 
 namespace num_collect::ode {
 
@@ -32,7 +34,7 @@ namespace num_collect::ode {
  *
  * \tparam BaseFormula Type of formula to use.
  */
-template <typename BaseFormula>
+template <concepts::formula BaseFormula>
 class non_embedded_formula_wrapper {
 public:
     //! Type of formula to use in this class.
@@ -55,6 +57,9 @@ public:
 
     //! Order of lesser coefficients of this formula.
     static constexpr index_type lesser_order = base_formula_type::order;
+
+    //! Log tag.
+    static constexpr logging::log_tag_view log_tag = base_formula_type::log_tag;
 
     /*!
      * \brief Construct.

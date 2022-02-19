@@ -1,6 +1,8 @@
 Modules
 ===============
 
+.. This must be consistent with doc/doxygen/namespaces.h
+
 .. uml::
 
     title Module Relation
@@ -9,9 +11,18 @@ Modules
     component Eigen
 
     component num_collect {
+        component base
+        base ..> fmt
+        base ..> Eigen
+
         component util
         util ..> fmt
         util ..> Eigen
+
+        component logging
+        logging ..> fmt
+        logging <..> base
+        logging ..> util
 
         component auto_diff
         auto_diff ..> util
@@ -28,6 +39,7 @@ Modules
         interp ..> util
 
         component numbers
+        numbers ..> base
         numbers ..> util
 
         component multi_double
@@ -39,11 +51,12 @@ Modules
         roots ..> Eigen
 
         component functions
-        functions ..> util
+        functions ..> base
         functions ..> constants
         functions ..> roots
 
         component integration
+        integration ..> base
         integration ..> util
         integration ..> constants
         integration ..> functions
@@ -59,8 +72,14 @@ Names in this diagram are the names of namespaces,
 except for ``util`` which has no namespace
 and implemented in ``num_collect`` namespace.
 
+base
+    Definitions common in this project.
+
 util
     Utility common in this project.
+
+logging
+    Logging.
 
 auto_diff
     Automatic differentiation.

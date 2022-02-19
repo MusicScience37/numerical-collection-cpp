@@ -17,26 +17,30 @@
  * \file
  * \brief Test of basic operations in multi-double calculations.
  */
-#include <celero/Celero.h>
+#include <stat_bench/benchmark_macros.h>
+#include <stat_bench/util/do_not_optimize.h>
 
 #include "num_collect/multi_double/impl/basic_operations.h"
 
-// NOLINTNEXTLINE: external library
-CELERO_MAIN
+STAT_BENCH_MAIN
 
 constexpr double a = 0x1.0000001p+1;
 constexpr double b = 0x1.0000008p-2;
 
-// NOLINTNEXTLINE: external library
-BASELINE(multi_double_two_prod, two_prod_no_fma, 0, 0) {
+// NOLINTNEXTLINE
+STAT_BENCH_CASE("multi_double_two_prod", "two_prod_no_fma") {
     using num_collect::multi_double::impl::two_prod_no_fma;
-    celero::DoNotOptimizeAway(two_prod_no_fma(a, b));
+    STAT_BENCH_MEASURE() {
+        stat_bench::util::do_not_optimize(two_prod_no_fma(a, b));
+    };
 }
 
 #ifdef __AVX2__
-// NOLINTNEXTLINE: external library
-BENCHMARK(multi_double_two_prod, two_prod_fma, 0, 0) {
+// NOLINTNEXTLINE
+STAT_BENCH_CASE("multi_double_two_prod", "two_prod_fma") {
     using num_collect::multi_double::impl::two_prod_fma;
-    celero::DoNotOptimizeAway(two_prod_fma(a, b));
+    STAT_BENCH_MEASURE() {
+        stat_bench::util::do_not_optimize(two_prod_fma(a, b));
+    };
 }
 #endif

@@ -19,8 +19,10 @@
  */
 #pragma once
 
+#include <algorithm>
 #include <vector>
 
+#include "num_collect/interp/kernel/concepts/kernel.h"
 #include "num_collect/interp/kernel/impl/kernel_coeff_solver.h"
 
 namespace num_collect::interp::kernel {
@@ -35,7 +37,7 @@ namespace num_collect::interp::kernel {
  *
  * \tparam Kernel Type of the kernel.
  */
-template <typename Kernel>
+template <concepts::kernel Kernel>
 class kernel_interpolator {
 public:
     //! Type of the kernel.

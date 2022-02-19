@@ -19,7 +19,6 @@
  */
 #pragma once
 
-#include <Eigen/Core>
 #include <algorithm>
 #include <limits>
 #include <queue>
@@ -27,23 +26,22 @@
 #include <type_traits>
 #include <vector>
 
+#include <Eigen/Core>
+
+#include "num_collect/base/get_size.h"
+#include "num_collect/base/norm.h"
+#include "num_collect/logging/log_tag_view.h"
+#include "num_collect/opt/concepts/objective_function.h"
 #include "num_collect/opt/optimizer_base.h"
 #include "num_collect/util/assert.h"
-#include "num_collect/util/get_size.h"
 #include "num_collect/util/is_eigen_vector.h"
-#include "num_collect/util/norm.h"
 #include "num_collect/util/safe_cast.h"
 
 namespace num_collect::opt {
 
-/*!
- * \brief Class of dividing rectangles (DIRECT) method \cite Jones1993 for
- * optimization.
- *
- * \tparam ObjectiveFunction Type of the objective function.
- */
-template <typename ObjectiveFunction, typename = void>
-class dividing_rectangles;
+//! Tag of dividing_rectangles.
+inline constexpr auto dividing_rectangles_tag =
+    logging::log_tag_view("num_collect::opt::dividing_rectangles");
 
 /*!
  * \brief Class of dividing rectangles (DIRECT) method \cite Jones1993 for
@@ -51,11 +49,8 @@ class dividing_rectangles;
  *
  * \tparam ObjectiveFunction Type of the objective function.
  */
-template <typename ObjectiveFunction>
-class dividing_rectangles<ObjectiveFunction,
-    std::enable_if_t<
-        is_eigen_vector_v<typename ObjectiveFunction::variable_type> ||
-        std::is_floating_point_v<typename ObjectiveFunction::variable_type>>>
+template <concepts::objective_function ObjectiveFunction>
+class dividing_rectangles
     : public optimizer_base<dividing_rectangles<ObjectiveFunction>> {
 public:
     //! Type of the objective function.
@@ -74,7 +69,9 @@ public:
      */
     explicit dividing_rectangles(
         const objective_function_type& obj_fun = objective_function_type())
-        : obj_fun_(obj_fun) {}
+        : optimizer_base<dividing_rectangles<ObjectiveFunction>>(
+              dividing_rectangles_tag),
+          obj_fun_(obj_fun) {}
 
     /*!
      * \brief Initialize the algorithm.
@@ -126,19 +123,23 @@ public:
     }
 
     /*!
-     * \copydoc num_collect::iterative_solver_base::is_stop_criteria_satisfied
+     * \copydoc num_collect::base::iterative_solver_base::is_stop_criteria_satisfied
      */
     [[nodiscard]] auto is_stop_criteria_satisfied() const -> bool {
         return evaluations() >= max_evaluations_;
     }
 
     /*!
-     * \copydoc num_collect::iterative_solver_base::set_info_to
+     * \copydoc num_collect::base::iterative_solver_base::configure_iteration_logger
      */
-    void set_info_to(iteration_logger& logger) const {
-        logger["Iter."] = iterations();
-        logger["Eval."] = evaluations();
-        logger["Value"] = static_cast<double>(opt_value());
+    void configure_iteration_logger(
+        logging::iteration_logger& iteration_logger) const {
+        iteration_logger.append<index_type>(
+            "Iter.", [this] { return iterations(); });
+        iteration_logger.append<index_type>(
+            "Eval.", [this] { return evaluations(); });
+        iteration_logger.append<value_type>(
+            "Value", [this] { return opt_value(); });
     }
 
     /*!
@@ -211,7 +212,7 @@ private:
             const value_type& value)
             : lower_(lower),
               upper_(upper),
-              is_divided_(safe_cast<std::size_t>(get_size(lower)), false),
+              is_divided_(util::safe_cast<std::size_t>(get_size(lower)), false),
               dist_(norm(lower - upper) * half),
               value_(value) {}
 
@@ -477,7 +478,7 @@ private:
         value_type dim_lower_value{};
         value_type dim_upper_value{};
         for (index_type i = 0; i < dim_; ++i) {
-            if (rect.is_divided()[safe_cast<std::size_t>(i)]) {
+            if (rect.is_divided()[util::safe_cast<std::size_t>(i)]) {
                 continue;
             }
 

@@ -19,116 +19,117 @@
  */
 #include <cmath>
 
-#include <celero/Celero.h>
+#include <stat_bench/bench/invocation_context.h>
+#include <stat_bench/benchmark_macros.h>
 
-#include "log_error_udm.h"
 #include "num_collect/constants/pi.h"
 #include "num_collect/integration/de_finite_integrator.h"
 #include "num_collect/integration/gauss_legendre_integrator.h"
 #include "num_collect/integration/gauss_legendre_kronrod_integrator.h"
 
-// NOLINTNEXTLINE: external library
-CELERO_MAIN
+STAT_BENCH_MAIN
 
-class inv_sqrt_1mx2_fixture : public celero::TestFixture {
-public:
-    inv_sqrt_1mx2_fixture() = default;
-
-    template <typename Integrator>
-    void perform(const Integrator& integrator) {
-        const double val = integrator(
+template <typename Integrator>
+void perform(stat_bench::bench::InvocationContext& STAT_BENCH_CONTEXT_NAME,
+    const Integrator& integrator) {
+    double val{};
+    STAT_BENCH_MEASURE() {
+        val = integrator(
             [](double x) { return 1.0 / std::sqrt(1.0 - x * x); }, -1.0, 1.0);
-        const double true_val = num_collect::constants::pi<double>;
-        log_error_->addValue(std::log10(std::abs(val - true_val)));
-    }
-
-    [[nodiscard]] auto getUserDefinedMeasurements() const -> std::vector<
-        std::shared_ptr<celero::UserDefinedMeasurement>> override {
-        return {log_error_};
-    }
-
-private:
-    std::shared_ptr<log_error_udm> log_error_{
-        std::make_shared<log_error_udm>()};
-};
-
-// NOLINTNEXTLINE: initialization is required before benchmark.
-static const auto gl_5_integrator =
-    num_collect::integration::gauss_legendre_integrator<double>(5);
-
-// NOLINTNEXTLINE: external library
-BASELINE_F(integ_inv_sqrt_1mx2, gl_5, inv_sqrt_1mx2_fixture, 0, 0) {
-    perform(gl_5_integrator);
+    };
+    const double true_val = num_collect::constants::pi<double>;
+    STAT_BENCH_CONTEXT_NAME.add_custom_output(
+        "error", std::abs(val - true_val));
 }
 
-// NOLINTNEXTLINE: initialization is required before benchmark.
-static const auto gl_10_integrator =
-    num_collect::integration::gauss_legendre_integrator<double>(10);
-
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(integ_inv_sqrt_1mx2, gl_10, inv_sqrt_1mx2_fixture, 0, 0) {
-    perform(gl_10_integrator);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE("integ_inv_sqrt_1mx2", "gauss_legendre_5") {
+    const auto integrator =
+        num_collect::integration::gauss_legendre_integrator<double(double)>(5);
+    perform(STAT_BENCH_CONTEXT_NAME, integrator);
 }
 
-// NOLINTNEXTLINE: initialization is required before benchmark.
-static const auto gl_20_integrator =
-    num_collect::integration::gauss_legendre_integrator<double>(20);
-
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(integ_inv_sqrt_1mx2, gl_20, inv_sqrt_1mx2_fixture, 0, 0) {
-    perform(gl_20_integrator);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE("integ_inv_sqrt_1mx2", "gauss_legendre_10") {
+    const auto integrator =
+        num_collect::integration::gauss_legendre_integrator<double(double)>(10);
+    perform(STAT_BENCH_CONTEXT_NAME, integrator);
 }
 
-// NOLINTNEXTLINE: initialization is required before benchmark.
-static const auto gl_50_integrator =
-    num_collect::integration::gauss_legendre_integrator<double>(50);
-
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(integ_inv_sqrt_1mx2, gl_50, inv_sqrt_1mx2_fixture, 0, 0) {
-    perform(gl_50_integrator);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE("integ_inv_sqrt_1mx2", "gauss_legendre_20") {
+    const auto integrator =
+        num_collect::integration::gauss_legendre_integrator<double(double)>(20);
+    perform(STAT_BENCH_CONTEXT_NAME, integrator);
 }
 
-// NOLINTNEXTLINE: initialization is required before benchmark.
-static const auto glk_5_integrator =
-    num_collect::integration::gauss_legendre_kronrod_integrator<double>(5);
-
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(integ_inv_sqrt_1mx2, glk_5, inv_sqrt_1mx2_fixture, 0, 0) {
-    perform(glk_5_integrator);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE("integ_inv_sqrt_1mx2", "gauss_legendre_50") {
+    const auto integrator =
+        num_collect::integration::gauss_legendre_integrator<double(double)>(50);
+    perform(STAT_BENCH_CONTEXT_NAME, integrator);
 }
 
-// NOLINTNEXTLINE: initialization is required before benchmark.
-static const auto de_5_integrator =
-    num_collect::integration::de_finite_integrator<double>().points(5);
-
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(integ_inv_sqrt_1mx2, de_5, inv_sqrt_1mx2_fixture, 0, 0) {
-    perform(de_5_integrator);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE("integ_inv_sqrt_1mx2", "gauss_legendre_kronrod_3") {
+    const auto integrator =
+        num_collect::integration::gauss_legendre_kronrod_integrator<double(
+            double)>(3);
+    perform(STAT_BENCH_CONTEXT_NAME, integrator);
 }
 
-// NOLINTNEXTLINE: initialization is required before benchmark.
-static const auto de_10_integrator =
-    num_collect::integration::de_finite_integrator<double>().points(10);
-
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(integ_inv_sqrt_1mx2, de_10, inv_sqrt_1mx2_fixture, 0, 0) {
-    perform(de_10_integrator);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE("integ_inv_sqrt_1mx2", "gauss_legendre_kronrod_5") {
+    const auto integrator =
+        num_collect::integration::gauss_legendre_kronrod_integrator<double(
+            double)>(5);
+    perform(STAT_BENCH_CONTEXT_NAME, integrator);
 }
 
-// NOLINTNEXTLINE: initialization is required before benchmark.
-static const auto de_20_integrator =
-    num_collect::integration::de_finite_integrator<double>().points(20);
-
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(integ_inv_sqrt_1mx2, de_20, inv_sqrt_1mx2_fixture, 0, 0) {
-    perform(de_20_integrator);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE("integ_inv_sqrt_1mx2", "gauss_legendre_kronrod_7") {
+    const auto integrator =
+        num_collect::integration::gauss_legendre_kronrod_integrator<double(
+            double)>(7);
+    perform(STAT_BENCH_CONTEXT_NAME, integrator);
 }
 
-// NOLINTNEXTLINE: initialization is required before benchmark.
-static const auto de_50_integrator =
-    num_collect::integration::de_finite_integrator<double>().points(50);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE("integ_inv_sqrt_1mx2", "gauss_legendre_kronrod_10") {
+    const auto integrator =
+        num_collect::integration::gauss_legendre_kronrod_integrator<double(
+            double)>(10);
+    perform(STAT_BENCH_CONTEXT_NAME, integrator);
+}
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(integ_inv_sqrt_1mx2, de_50, inv_sqrt_1mx2_fixture, 0, 0) {
-    perform(de_50_integrator);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE("integ_inv_sqrt_1mx2", "de_finite_5") {
+    const auto integrator =
+        num_collect::integration::de_finite_integrator<double(double)>().points(
+            5);
+    perform(STAT_BENCH_CONTEXT_NAME, integrator);
+}
+
+// NOLINTNEXTLINE
+STAT_BENCH_CASE("integ_inv_sqrt_1mx2", "de_finite_10") {
+    const auto integrator =
+        num_collect::integration::de_finite_integrator<double(double)>().points(
+            10);
+    perform(STAT_BENCH_CONTEXT_NAME, integrator);
+}
+
+// NOLINTNEXTLINE
+STAT_BENCH_CASE("integ_inv_sqrt_1mx2", "de_finite_20") {
+    const auto integrator =
+        num_collect::integration::de_finite_integrator<double(double)>().points(
+            20);
+    perform(STAT_BENCH_CONTEXT_NAME, integrator);
+}
+
+// NOLINTNEXTLINE
+STAT_BENCH_CASE("integ_inv_sqrt_1mx2", "de_finite_50") {
+    const auto integrator =
+        num_collect::integration::de_finite_integrator<double(double)>().points(
+            50);
+    perform(STAT_BENCH_CONTEXT_NAME, integrator);
 }

@@ -19,9 +19,12 @@
  */
 #pragma once
 
-#include <Eigen/LU>
 #include <type_traits>
 
+#include <Eigen/LU>
+
+#include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/concepts/real_scalar_dense_matrix.h"
 #include "num_collect/constants/one.h"
 #include "num_collect/util/is_eigen_matrix.h"
 
@@ -32,7 +35,7 @@ namespace num_collect::ode::runge_kutta::impl {
  *
  * \tparam Jacobian Type of Jacobian.
  */
-template <typename Jacobian, typename = void>
+template <typename Jacobian>
 class rosenbrock_helper;
 
 /*!
@@ -40,9 +43,8 @@ class rosenbrock_helper;
  *
  * \tparam Jacobian Type of Jacobian.
  */
-template <typename Jacobian>
-class rosenbrock_helper<Jacobian,
-    std::enable_if_t<is_eigen_matrix_v<Jacobian>>> {
+template <base::concepts::real_scalar_dense_matrix Jacobian>
+class rosenbrock_helper<Jacobian> {
 public:
     /*!
      * \brief Compute LU decomposition.
@@ -78,9 +80,8 @@ private:
  *
  * \tparam Jacobian Type of Jacobian.
  */
-template <typename Jacobian>
-class rosenbrock_helper<Jacobian,
-    std::enable_if_t<std::is_floating_point_v<Jacobian>>> {
+template <base::concepts::real_scalar Jacobian>
+class rosenbrock_helper<Jacobian> {
 public:
     /*!
      * \brief Compute the inverse of the Jacobian.

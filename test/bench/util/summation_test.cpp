@@ -19,17 +19,14 @@
  */
 #include <cmath>
 
-#include <celero/Celero.h>
+#include <stat_bench/bench/invocation_context.h>
+#include <stat_bench/benchmark_macros.h>
 
-#include "log_error_udm.h"
 #include "num_collect/constants/pi.h"
 #include "num_collect/multi_double/quad.h"
 #include "num_collect/util/kahan_adder.h"
 
-// NOLINTNEXTLINE: external library
-CELERO_MAIN
-
-class summation_fixture : public celero::TestFixture {
+class summation_fixture : public stat_bench::FixtureBase {
 public:
     summation_fixture() = default;
 
@@ -38,17 +35,15 @@ public:
         if (error < std::numeric_limits<double>::min()) {
             error = std::numeric_limits<double>::epsilon();
         }
-        log_error_->addValue(std::log10(error));
+        error_ = error;
     }
 
-    [[nodiscard]] auto getUserDefinedMeasurements() const -> std::vector<
-        std::shared_ptr<celero::UserDefinedMeasurement>> override {
-        return {log_error_};
+    void tear_down(stat_bench::bench::InvocationContext& context) override {
+        context.add_custom_output("error", error_);
     }
 
 private:
-    std::shared_ptr<log_error_udm> log_error_{
-        std::make_shared<log_error_udm>()};
+    double error_{};
 };
 
 #ifndef NDEBUG
@@ -59,35 +54,49 @@ constexpr std::size_t zeta4_terms = 100000;
 // NOLINTNEXTLINE: won't throw
 const double zeta4_reference = std::pow(num_collect::constants::pid, 4) / 90.0;
 
-// NOLINTNEXTLINE: external library
-BASELINE_F(sum_zeta4, ordinary, summation_fixture, 0, 0) {
-    double sum = 0.0;
-    for (std::size_t i = 1; i <= zeta4_terms; ++i) {
-        const auto i_d = static_cast<double>(i);
-        const double term = 1.0 / (i_d * i_d * i_d * i_d);
-        sum += term;
-    }
-    set_error(sum, zeta4_reference);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(summation_fixture, "sum_zeta4", "ordinary") {
+    double result = 0.0;
+    STAT_BENCH_MEASURE() {
+        double sum = 0.0;
+        for (std::size_t i = 1; i <= zeta4_terms; ++i) {
+            const auto i_d = static_cast<double>(i);
+            const double term = 1.0 / (i_d * i_d * i_d * i_d);
+            sum += term;
+        }
+        result = sum;
+    };
+    set_error(result, zeta4_reference);
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(sum_zeta4, kahan, summation_fixture, 0, 0) {
-    auto sum = num_collect::kahan_adder<double>();
-    for (std::size_t i = 1; i <= zeta4_terms; ++i) {
-        const auto i_d = static_cast<double>(i);
-        const double term = 1.0 / (i_d * i_d * i_d * i_d);
-        sum += term;
-    }
-    set_error(sum, zeta4_reference);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(summation_fixture, "sum_zeta4", "kahan") {
+    double result = 0.0;
+    STAT_BENCH_MEASURE() {
+        auto sum = num_collect::util::kahan_adder<double>();
+        for (std::size_t i = 1; i <= zeta4_terms; ++i) {
+            const auto i_d = static_cast<double>(i);
+            const double term = 1.0 / (i_d * i_d * i_d * i_d);
+            sum += term;
+        }
+        result = sum.sum();
+    };
+    set_error(result, zeta4_reference);
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(sum_zeta4, quad, summation_fixture, 0, 0) {
-    auto sum = num_collect::multi_double::quad();
-    for (std::size_t i = 1; i <= zeta4_terms; ++i) {
-        const auto i_d = static_cast<double>(i);
-        const double term = 1.0 / (i_d * i_d * i_d * i_d);
-        sum += term;
-    }
-    set_error(sum.high(), zeta4_reference);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(summation_fixture, "sum_zeta4", "quad") {
+    double result = 0.0;
+    STAT_BENCH_MEASURE() {
+        auto sum = num_collect::multi_double::quad();
+        for (std::size_t i = 1; i <= zeta4_terms; ++i) {
+            const auto i_d = static_cast<double>(i);
+            const double term = 1.0 / (i_d * i_d * i_d * i_d);
+            sum += term;
+        }
+        result = sum.high();
+    };
+    set_error(result, zeta4_reference);
 }
+
+STAT_BENCH_MAIN

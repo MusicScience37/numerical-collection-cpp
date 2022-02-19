@@ -20,12 +20,16 @@
 #include "num_collect/interp/kernel/gaussian_rbf.h"
 
 #include <Eigen/Core>
-
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_floating.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
+
+#include "num_collect/interp/kernel/concepts/rbf.h"
 
 TEST_CASE("num_collect::interp::kernel::gaussian_rbf") {
     using num_collect::interp::kernel::gaussian_rbf;
+
+    STATIC_REQUIRE(
+        num_collect::interp::kernel::concepts::rbf<gaussian_rbf<double>>);
 
     SECTION("calculate") {
         const auto rbf = gaussian_rbf<double>();

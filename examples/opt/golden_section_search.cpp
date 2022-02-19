@@ -21,14 +21,16 @@
 
 #include <iostream>
 
+#include "../configure_logging.h"
 #include "num_prob_collect/opt/quadratic_function.h"
 
 auto main() -> int {
+    configure_logging();
     num_collect::opt::golden_section_search<
         num_prob_collect::opt::quadratic_function>
         optimizer;
     constexpr double left = -1.0;
     constexpr double right = 2.0;
     optimizer.init(left, right);
-    optimizer.solve(std::cout);
+    optimizer.solve();
 }

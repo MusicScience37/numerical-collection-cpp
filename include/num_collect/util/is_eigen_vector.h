@@ -19,8 +19,9 @@
  */
 #pragma once
 
-#include <Eigen/Core>
 #include <type_traits>
+
+#include <Eigen/Core>
 
 namespace num_collect {
 

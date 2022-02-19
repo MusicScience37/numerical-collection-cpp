@@ -22,6 +22,7 @@
 #include <type_traits>
 #include <vector>
 
+#include "num_collect/interp/kernel/concepts/kernel.h"
 #include "num_collect/interp/kernel/impl/auto_regularizer_wrapper.h"
 #include "num_collect/interp/kernel/impl/kernel_parameter_optimizer.h"
 
@@ -32,7 +33,7 @@ namespace num_collect::interp::kernel::impl {
  *
  * \tparam Kernel Type of the kernel.
  */
-template <typename Kernel>
+template <concepts::kernel Kernel>
 class kernel_coeff_solver {
 public:
     //! Type of the kernel.

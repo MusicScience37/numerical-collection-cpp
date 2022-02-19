@@ -19,13 +19,15 @@
  */
 #pragma once
 
-#include <Eigen/Core>
+#include <algorithm>
 #include <cstdint>
 #include <functional>  // std::hash
 #include <limits>
 
+#include <Eigen/Core>
+
+#include "num_collect/base/index_type.h"
 #include "num_collect/util/assert.h"
-#include "num_collect/util/index_type.h"
 
 namespace num_collect::opt::impl {
 

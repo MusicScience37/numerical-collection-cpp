@@ -17,9 +17,10 @@
  * \file
  * \brief Test of solving ODE of vibration with external force.
  */
-#include <celero/Celero.h>
+#include <stat_bench/bench/invocation_context.h>
+#include <stat_bench/benchmark_macros.h>
 
-#include "log_error_udm.h"
+#include "num_collect/base/index_type.h"
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
 #include "num_collect/ode/runge_kutta/rk4_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
@@ -28,12 +29,10 @@
 #include "num_collect/ode/runge_kutta/tanaka1_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka2_formula.h"
 #include "num_prob_collect/ode/external_force_vibration_problem.h"
-#include "steps_udm.h"
 
-// NOLINTNEXTLINE: external library
-CELERO_MAIN
+STAT_BENCH_MAIN
 
-class external_force_vibration_fixture : public celero::TestFixture {
+class external_force_vibration_fixture : public stat_bench::FixtureBase {
 public:
     external_force_vibration_fixture() = default;
 
@@ -48,77 +47,87 @@ public:
         constexpr double end_time = 10.0;
 #endif
         solver.solve_till(end_time);
-        steps_->addValue(solver.steps());
+        steps_ = solver.steps();
 
         const Eigen::Vector2d reference =
             Eigen::Vector2d(-std::cos(end_time), -std::sin(end_time));
-        log_error_->addValue(
-            std::log10((solver.variable() - reference).norm()));
+        error_ = (solver.variable() - reference).norm();
     }
 
-    [[nodiscard]] auto getUserDefinedMeasurements() const -> std::vector<
-        std::shared_ptr<celero::UserDefinedMeasurement>> override {
-        return {steps_, log_error_};
+    void tear_down(stat_bench::bench::InvocationContext& context) override {
+        context.add_custom_output("steps", static_cast<double>(steps_));
+        context.add_custom_output("error", error_);
     }
 
 private:
-    std::shared_ptr<steps_udm> steps_{std::make_shared<steps_udm>()};
-    std::shared_ptr<log_error_udm> log_error_{
-        std::make_shared<log_error_udm>()};
+    num_collect::index_type steps_{};
+    double error_{};
 };
 
 using problem_type = num_prob_collect::ode::external_force_vibration_problem;
 
-// NOLINTNEXTLINE: external library
-BASELINE_F(ode_rk_external_force_vibration, rkf45,
-    external_force_vibration_fixture, 30, 100) {
-    using solver_type =
-        num_collect::ode::runge_kutta::rkf45_solver<problem_type>;
-    auto solver = solver_type(problem_type());
-    perform(solver);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(external_force_vibration_fixture,
+    "ode_rk_external_force_vibration", "rkf45") {
+    STAT_BENCH_MEASURE() {
+        using solver_type =
+            num_collect::ode::runge_kutta::rkf45_solver<problem_type>;
+        auto solver = solver_type(problem_type());
+        perform(solver);
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(ode_rk_external_force_vibration, tanaka1,
-    external_force_vibration_fixture, 30, 10) {
-    using solver_type =
-        num_collect::ode::runge_kutta::tanaka1_solver<problem_type>;
-    auto solver = solver_type(problem_type());
-    perform(solver);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(external_force_vibration_fixture,
+    "ode_rk_external_force_vibration", "tanaka1") {
+    STAT_BENCH_MEASURE() {
+        using solver_type =
+            num_collect::ode::runge_kutta::tanaka1_solver<problem_type>;
+        auto solver = solver_type(problem_type());
+        perform(solver);
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(ode_rk_external_force_vibration, tanaka2,
-    external_force_vibration_fixture, 30, 100) {
-    using solver_type =
-        num_collect::ode::runge_kutta::tanaka2_solver<problem_type>;
-    auto solver = solver_type(problem_type());
-    perform(solver);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(external_force_vibration_fixture,
+    "ode_rk_external_force_vibration", "tanaka2") {
+    STAT_BENCH_MEASURE() {
+        using solver_type =
+            num_collect::ode::runge_kutta::tanaka2_solver<problem_type>;
+        auto solver = solver_type(problem_type());
+        perform(solver);
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(ode_rk_external_force_vibration, ros3w,
-    external_force_vibration_fixture, 30, 100) {
-    using solver_type =
-        num_collect::ode::runge_kutta::ros3w_solver<problem_type>;
-    auto solver = solver_type(problem_type());
-    perform(solver);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(external_force_vibration_fixture,
+    "ode_rk_external_force_vibration", "ros3w") {
+    STAT_BENCH_MEASURE() {
+        using solver_type =
+            num_collect::ode::runge_kutta::ros3w_solver<problem_type>;
+        auto solver = solver_type(problem_type());
+        perform(solver);
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(ode_rk_external_force_vibration, ros34pw3,
-    external_force_vibration_fixture, 30, 100) {
-    using solver_type =
-        num_collect::ode::runge_kutta::ros34pw3_solver<problem_type>;
-    auto solver = solver_type(problem_type());
-    perform(solver);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(external_force_vibration_fixture,
+    "ode_rk_external_force_vibration", "ros34pw3") {
+    STAT_BENCH_MEASURE() {
+        using solver_type =
+            num_collect::ode::runge_kutta::ros34pw3_solver<problem_type>;
+        auto solver = solver_type(problem_type());
+        perform(solver);
+    };
 }
 
-// NOLINTNEXTLINE: external library
-BENCHMARK_F(ode_rk_external_force_vibration, rk4_auto,
-    external_force_vibration_fixture, 30, 100) {
-    using solver_type = num_collect::ode::non_embedded_auto_solver<
-        num_collect::ode::runge_kutta::rk4_formula<problem_type>>;
-    auto solver = solver_type(problem_type());
-    perform(solver);
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(external_force_vibration_fixture,
+    "ode_rk_external_force_vibration", "rk4_auto") {
+    STAT_BENCH_MEASURE() {
+        using solver_type = num_collect::ode::non_embedded_auto_solver<
+            num_collect::ode::runge_kutta::rk4_formula<problem_type>>;
+        auto solver = solver_type(problem_type());
+        perform(solver);
+    };
 }

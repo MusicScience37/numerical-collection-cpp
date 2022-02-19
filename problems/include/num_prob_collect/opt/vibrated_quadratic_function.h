@@ -52,21 +52,21 @@ public:
      *
      * \return Function value.
      */
-    [[nodiscard]] auto value() const -> double { return value_; }
+    [[nodiscard]] auto value() const -> const double& { return value_; }
 
     /*!
      * \brief Get gradient.
      *
      * \return Gradient.
      */
-    [[nodiscard]] auto gradient() const -> double { return grad_; }
+    [[nodiscard]] auto gradient() const -> const double& { return grad_; }
 
     /*!
      * \brief Get Hessian.
      *
      * \return Hessian.
      */
-    [[nodiscard]] auto hessian() const -> double { return hessian_; }
+    [[nodiscard]] auto hessian() const -> const double& { return hessian_; }
 
 private:
     //! Coefficient.

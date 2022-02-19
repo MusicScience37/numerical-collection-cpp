@@ -25,7 +25,7 @@
 
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_floating.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "num_collect/constants/napier.h"
 #include "num_collect/constants/one.h"
@@ -36,7 +36,8 @@ TEMPLATE_TEST_CASE("num_collect::integration::de_semi_infinite_integrator", "",
     float, double) {
     SECTION("integrate exp(-x)") {
         const auto integrator =
-            num_collect::integration::de_semi_infinite_integrator<TestType>();
+            num_collect::integration::de_semi_infinite_integrator<TestType(
+                TestType)>();
 
         const auto val = integrator([](TestType x) { return std::exp(-x); });
 
@@ -47,7 +48,8 @@ TEMPLATE_TEST_CASE("num_collect::integration::de_semi_infinite_integrator", "",
 
     SECTION("compute gamma(1/2)") {
         const auto integrator =
-            num_collect::integration::de_semi_infinite_integrator<TestType>();
+            num_collect::integration::de_semi_infinite_integrator<TestType(
+                TestType)>();
 
         const auto val =
             integrator([](TestType x) { return std::exp(-x) / std::sqrt(x); });

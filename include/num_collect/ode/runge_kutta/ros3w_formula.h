@@ -19,6 +19,8 @@
  */
 #pragma once
 
+#include "num_collect/logging/log_tag_view.h"
+#include "num_collect/ode/concepts/differentiable_problem.h"
 #include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/formula_base.h"
 #include "num_collect/ode/runge_kutta/impl/rosenbrock_helper.h"
@@ -30,7 +32,7 @@ namespace num_collect::ode::runge_kutta {
  *
  * \tparam Problem Type of problem.
  */
-template <typename Problem>
+template <concepts::differentiable_problem Problem>
 class ros3w_formula : public formula_base<ros3w_formula<Problem>, Problem> {
 public:
     //! Type of base class.
@@ -58,6 +60,10 @@ public:
 
     //! Order of lesser coefficients of this formula.
     static constexpr index_type lesser_order = 2;
+
+    //! Log tag.
+    static constexpr auto log_tag =
+        logging::log_tag_view("num_collect::ode::runge_kutta::ros3w_formula");
 
     /*!
      * \name Coefficients in Rosenbrock method.
@@ -161,7 +167,7 @@ private:
  *
  * \tparam Problem Type of problem.
  */
-template <typename Problem>
+template <concepts::differentiable_problem Problem>
 using ros3w_solver = embedded_solver<ros3w_formula<Problem>>;
 
 }  // namespace num_collect::ode::runge_kutta

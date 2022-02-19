@@ -19,15 +19,17 @@
  */
 #pragma once
 
-#include <Eigen/Core>
-#include <Eigen/Householder>
 #include <type_traits>
 
+#include <Eigen/Core>
+#include <Eigen/Householder>
+
+#include "num_collect/base/concepts/dense_matrix.h"
+#include "num_collect/base/exception.h"
+#include "num_collect/base/index_type.h"
 #include "num_collect/regularization/explicit_regularized_solver_base.h"
 #include "num_collect/regularization/tikhonov.h"
 #include "num_collect/util/assert.h"
-#include "num_collect/util/exception.h"
-#include "num_collect/util/index_type.h"
 
 namespace num_collect::regularization {
 
@@ -39,7 +41,7 @@ namespace num_collect::regularization {
  * \tparam Coeff Type of coefficient matrices.
  * \tparam Data Type of data vectors.
  */
-template <typename Coeff, typename Data>
+template <base::concepts::dense_matrix Coeff, base::concepts::dense_matrix Data>
 class full_gen_tikhonov
     : public explicit_regularized_solver_base<full_gen_tikhonov<Coeff, Data>,
           Data> {
@@ -54,8 +56,8 @@ public:
     //! Type of coefficient matrices.
     using coeff_type = Coeff;
 
-    static_assert(std::is_same_v<typename coeff_type::Scalar, scalar_type>);
-    static_assert(std::is_same_v<typename data_type::Scalar, scalar_type>);
+    static_assert(std::is_same_v<typename coeff_type::Scalar,
+        typename data_type::Scalar>);
     static_assert(data_type::RowsAtCompileTime == Eigen::Dynamic);
 
     /*!
@@ -88,9 +90,7 @@ public:
         Eigen::ColPivHouseholderQR<coeff_type> qr_reg_adj;
         qr_reg_adj.compute(reg_coeff.adjoint());
         if (qr_reg_adj.rank() < qr_reg_adj.cols()) {
-            throw assertion_failure(
-                fmt::format("reg_coeff must have full row rank (at {})",
-                    NUM_COLLECT_FUNCTION));
+            throw assertion_failure("reg_coeff must have full row rank.");
         }
         const coeff_type v = qr_reg_adj.householderQ();
 
@@ -98,9 +98,8 @@ public:
         qr_coeff_v2.compute(coeff * v.rightCols(n - p));
         if (qr_coeff_v2.rank() < qr_coeff_v2.cols()) {
             throw assertion_failure(
-                fmt::format("reg_coeff and coeff must not have common elements "
-                            "other than zero in their kernel (at {})",
-                    NUM_COLLECT_FUNCTION));
+                "reg_coeff and coeff must not have common elements "
+                "other than zero in their kernel.");
         }
         const coeff_type q = qr_coeff_v2.householderQ();
 

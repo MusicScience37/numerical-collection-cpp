@@ -64,7 +64,7 @@ public:
      *
      * \return Function value.
      */
-    [[nodiscard]] auto value() const -> double { return value_; }
+    [[nodiscard]] auto value() const -> const double& { return value_; }
 
     /*!
      * \brief Get gradient.
