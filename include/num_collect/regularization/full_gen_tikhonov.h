@@ -24,6 +24,7 @@
 #include <Eigen/Core>
 #include <Eigen/Householder>
 
+#include "num_collect/base/concepts/dense_matrix.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/regularization/explicit_regularized_solver_base.h"
@@ -40,7 +41,7 @@ namespace num_collect::regularization {
  * \tparam Coeff Type of coefficient matrices.
  * \tparam Data Type of data vectors.
  */
-template <typename Coeff, typename Data>
+template <base::concepts::dense_matrix Coeff, base::concepts::dense_matrix Data>
 class full_gen_tikhonov
     : public explicit_regularized_solver_base<full_gen_tikhonov<Coeff, Data>,
           Data> {
@@ -55,8 +56,8 @@ public:
     //! Type of coefficient matrices.
     using coeff_type = Coeff;
 
-    static_assert(std::is_same_v<typename coeff_type::Scalar, scalar_type>);
-    static_assert(std::is_same_v<typename data_type::Scalar, scalar_type>);
+    static_assert(std::is_same_v<typename coeff_type::Scalar,
+        typename data_type::Scalar>);
     static_assert(data_type::RowsAtCompileTime == Eigen::Dynamic);
 
     /*!
