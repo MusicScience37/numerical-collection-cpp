@@ -22,6 +22,7 @@
 #include <cmath>
 #include <utility>
 
+#include "num_collect/base/concepts/dense_matrix.h"
 #include "num_collect/base/index_type.h"
 
 namespace num_collect::regularization {
@@ -32,7 +33,7 @@ namespace num_collect::regularization {
  * \tparam Derived Type of derived class.
  * \tparam Data Type of data.
  */
-template <typename Derived, typename Data>
+template <typename Derived, base::concepts::dense_matrix Data>
 class explicit_regularized_solver_base {
 public:
     //! Type of data.
