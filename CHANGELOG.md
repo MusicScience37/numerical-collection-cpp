@@ -9,6 +9,7 @@
 ### Miscellaneous
 
 - Introduced [Approval Tests](https://approvaltests.com/) for tests ([Issue #139](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/139)).
+- Update issue templates ([Issue #157](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/157)).
 
 ## 0.4.1 (2022/2/19)
 
