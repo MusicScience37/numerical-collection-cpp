@@ -50,7 +50,7 @@ public:
      * \param[in] param Regularization parameter.
      * \param[in,out] solution Solution. (Assumed to be the initial solution.)
      */
-    void solve(const scalar_type& param, data_type& solution) const {
+    void solve(const scalar_type& param, data_type& solution) {
         return derived().solve(param, solution);
     }
 

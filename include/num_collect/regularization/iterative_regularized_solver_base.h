@@ -57,7 +57,7 @@ public:
      * \brief Iterate the algorithm once.
      *
      * \param[in] param Regularization parameter.
-     * \param[in,out] solution Solution.
+     * \param[in,out] solution Solution. (Assumed to be the last solution.)
      *
      * \warning Any required initializations (with `init` functions) are assumed
      * to have been done.
@@ -87,8 +87,16 @@ public:
         derived().configure_iteration_logger(iteration_logger);
     }
 
-    //! \copydoc num_collect::regularization::implicit_regularized_solver_base::solve
-    void solve(const scalar_type& param, data_type& solution) const {
+    /*!
+     * \brief Solve for a regularization parameter.
+     *
+     * \param[in] param Regularization parameter.
+     * \param[in,out] solution Solution. (Assumed to be the initial solution.)
+     *
+     * \warning Any required initializations (with `compute` functions) are
+     * assumed to have been done.
+     */
+    void solve(const scalar_type& param, data_type& solution) {
         logging::iteration_logger iter_logger;
         configure_iteration_logger(iter_logger);
         iter_logger.write_iteration_to(logger());

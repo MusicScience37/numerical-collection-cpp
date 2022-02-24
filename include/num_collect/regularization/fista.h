@@ -89,22 +89,23 @@ public:
     //! \copydoc num_collect::regularization::iterative_regularized_solver_base::iterate
     void iterate(const scalar_type& param, data_type& solution) {
         const scalar_type t_before = t_;
-        t_ = static_cast<scalar_type>(0.5) *             // NOLINT
-            (static_cast<scalar_type>(1) +               // NOLINT
-                std::sqrt(static_cast<scalar_type>(1) +  // NOLINT
-                    static_cast<scalar_type>(4)          // NOLINT
+        using std::sqrt;
+        t_ = static_cast<scalar_type>(0.5) *        // NOLINT
+            (static_cast<scalar_type>(1) +          // NOLINT
+                sqrt(static_cast<scalar_type>(1) +  // NOLINT
+                    static_cast<scalar_type>(4)     // NOLINT
                         * t_before * t_before));
         const scalar_type coeff_update =
             (t_before - static_cast<scalar_type>(1)) / t_;
 
-        const scalar_type step = static_cast<scalar_type>(0.5) * inv_max_eigen_;
-        const scalar_type twice_step = static_cast<scalar_type>(2) * step;
+        const scalar_type twice_step = inv_max_eigen_;
+        const scalar_type step = static_cast<scalar_type>(0.5) * twice_step;
         const scalar_type trunc_thresh = param * step;
 
         residual_ = -(*data_);
         auto update_sum2 = static_cast<scalar_type>(0);
         // TODO(kenta): Fix this warning.
-        // NOLINTNEXTLINE(openmp-use-default-none): Fix later.
+        // NOLINTNEXTLINE(openmp-use-default-none): Difficult to resolve.
 #pragma omp parallel default(shared)
         {
             const index_type size = solution.size();
@@ -141,7 +142,6 @@ public:
             }
         }
 
-        using std::sqrt;
         update_ = sqrt(update_sum2);
         ++iterations_;
     }
