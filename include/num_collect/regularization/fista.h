@@ -250,7 +250,7 @@ public:
      * \brief Calculate the maximum eigenvalue of \f$ AA^T \f$ for coefficient
      * matrix \f$ A \f$.
      *
-     * \param[in] A Coefficient matrix.
+     * \param[in] coeff Coefficient matrix.
      * \return Eigenvalue.
      */
     static auto max_eigen_aat(const Coeff& coeff) -> scalar_type {
