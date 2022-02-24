@@ -46,7 +46,12 @@ namespace num_collect {
          */
 
         //! Namespace of C++ concepts.
-        namespace concepts {}
+        namespace concepts {
+
+            //! Namespace of internal implementations.
+            namespace impl {}
+
+        }  // namespace concepts
 
         //! Namespace of internal implementations.
         namespace impl {}
@@ -165,6 +170,14 @@ namespace num_collect {
     namespace opt {
 
         /*!
+         * \dir num_collect/opt/concepts
+         * \brief Directory of C++ concepts.
+         */
+
+        //! Namespace of C++ concepts.
+        namespace concepts {}
+
+        /*!
          * \dir num_collect/opt/impl
          * \brief Directory of implementation.
          */
@@ -181,6 +194,14 @@ namespace num_collect {
 
     //! Namespace of regularization algorithms.
     namespace regularization {
+
+        /*!
+         * \dir num_collect/regularization/concepts
+         * \brief Directory of C++ concepts.
+         */
+
+        //! Namespace of C++ concepts.
+        namespace concepts {}
 
         /*!
          * \dir num_collect/regularization/impl
@@ -207,6 +228,14 @@ namespace num_collect {
 
         //! namespace of interpolation using kernels.
         namespace kernel {
+
+            /*!
+             * \dir num_collect/interp/kernel/concepts
+             * \brief Directory of C++ concepts.
+             */
+
+            //! Namespace of C++ concepts.
+            namespace concepts {}
 
             /*!
              * \dir num_collect/interp/kernel/impl
@@ -276,6 +305,14 @@ namespace num_collect {
     //! Namespace of root-finding algorithms.
     namespace roots {
 
+        /*!
+         * \dir num_collect/roots/concepts
+         * \brief Directory of C++ concepts.
+         */
+
+        //! Namespace of C++ concepts.
+        namespace concepts {}
+
         //! Namespace of internal implementations.
         namespace impl {}
 
@@ -314,6 +351,14 @@ namespace num_collect {
 
     //! Namespace of solvers of ordinary differential equations (ODE).
     namespace ode {
+
+        /*!
+         * \dir num_collect/ode/concepts
+         * \brief Directory of C++ concepts.
+         */
+
+        //! Namespace of C++ concepts.
+        namespace concepts {}
 
         /*!
          * \dir num_collect/ode/runge_kutta

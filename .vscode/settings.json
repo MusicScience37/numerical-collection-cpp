@@ -27,6 +27,7 @@
     "DNUM",
     "DontAlign",
     "doxygen",
+    "FISTA",
     "Eigen",
     "Elden",
     "fcoverage",
