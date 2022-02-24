@@ -23,12 +23,16 @@
 #include <catch2/reporters/catch_reporter_registrars.hpp>
 // clang-format on
 
+#include <algorithm>
 #include <memory>
 #include <optional>
 
 #include <catch2/catch_test_case_info.hpp>
 #include <catch2/reporters/catch_reporter_event_listener.hpp>
 #include <fmt/format.h>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 #include "num_collect/logging/log_config.h"
 #include "num_collect/logging/log_tag.h"
@@ -72,6 +76,16 @@ public:
         logger_ = num_collect::logging::logger();
         logger_.value().info()(std::string(line_length, '='));
         logger_.value().info()("Start test.");
+
+#ifdef _OPENMP
+        const int num_procs = omp_get_num_procs();
+        constexpr double threads_rate = 0.25;
+        const auto num_threads =
+            std::max(static_cast<int>(num_procs * threads_rate), 2);
+        omp_set_num_threads(num_threads);
+        logger_.value().info()(
+            "Use {} threads in {} processors.", num_threads, num_procs);
+#endif
     }
 
     void testCaseStarting(const Catch::TestCaseInfo& test_info) override {
