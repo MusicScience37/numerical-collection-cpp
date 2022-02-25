@@ -76,10 +76,15 @@ public:
         coeff_ = &coeff;
         data_ = &data;
         inv_max_eigen_ = scalar_type(1) / max_eigen_aat(coeff);
+        this->logger().trace()("inv_max_eigen={}", inv_max_eigen_);
     }
 
     //! \copydoc num_collect::regularization::iterative_regularized_solver_base::init
     void init(const scalar_type& param, data_type& solution) {
+        NUM_COLLECT_ASSERT(coeff_->rows() == data_->rows());
+        NUM_COLLECT_ASSERT(coeff_->cols() == solution.rows());
+        NUM_COLLECT_ASSERT(data_->cols() == solution.cols());
+
         iterations_ = 0;
         t_ = static_cast<scalar_type>(1);
         y_ = solution;
@@ -149,7 +154,7 @@ public:
     //! \copydoc num_collect::regularization::iterative_regularized_solver_base::is_stop_criteria_satisfied
     [[nodiscard]] auto is_stop_criteria_satisfied(
         const data_type& solution) const -> bool {
-        return (iterations() < max_iterations()) ||
+        return (iterations() > max_iterations()) ||
             (update() < tol_update_rate() * solution.norm());
     }
 
@@ -182,8 +187,9 @@ public:
         -> std::pair<scalar_type, scalar_type> {
         const scalar_type max_sol_est =
             (coeff_->transpose() * (*data_)).cwiseAbs().maxCoeff();
-        return (max_sol_est * impl::coeff_min_param<scalar_type>,
-            max_sol_est * impl::coeff_max_param<scalar_type>);
+        this->logger().trace()("max_sol_est={}", max_sol_est);
+        return {max_sol_est * impl::coeff_min_param<scalar_type>,
+            max_sol_est * impl::coeff_max_param<scalar_type>};
     }
 
     /*!
@@ -311,7 +317,7 @@ private:
     index_type max_iterations_{default_max_iterations};
 
     //! Default tolerance of update rate of the solution.
-    static constexpr scalar_type default_tol_update_rate = 1e-3;
+    static constexpr scalar_type default_tol_update_rate = 1e-4;
 
     //! Tolerance of update rate of the solution.
     scalar_type tol_update_rate_{default_tol_update_rate};

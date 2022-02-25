@@ -74,7 +74,7 @@ public:
      */
     [[nodiscard]] auto is_stop_criteria_satisfied(
         const data_type& solution) const -> bool {
-        return derived().is_stop_criteria_satisfied();
+        return derived().is_stop_criteria_satisfied(solution);
     }
 
     /*!
@@ -97,11 +97,12 @@ public:
      * assumed to have been done.
      */
     void solve(const scalar_type& param, data_type& solution) {
+        init(param, solution);
         logging::iteration_logger iter_logger;
         configure_iteration_logger(iter_logger);
         iter_logger.write_iteration_to(logger());
-        while (!is_stop_criteria_satisfied()) {
-            iterate();
+        while (!is_stop_criteria_satisfied(solution)) {
+            iterate(param, solution);
             iter_logger.write_iteration_to(logger());
         }
         iter_logger.write_summary_to(logger());
