@@ -54,7 +54,7 @@ TEST_CASE("num_collect::regularization::fista") {
         solver_type solver;
         REQUIRE_NOTHROW(solver.compute(coeff, data));
 
-        const auto [min_param, max_param] = solver.param_search_region();
+        REQUIRE_NOTHROW((void)solver.param_search_region());
 
         constexpr scalar_type param = 1e-2;
         data_type solution = data_type::Zero(solution_size);
