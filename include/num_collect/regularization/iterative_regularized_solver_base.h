@@ -81,10 +81,11 @@ public:
      * \brief Configure an iteration logger.
      *
      * \param[in] iteration_logger Iteration logger.
+     * \param[in] solution Solution.
      */
-    void configure_iteration_logger(
-        logging::iteration_logger& iteration_logger) const {
-        derived().configure_iteration_logger(iteration_logger);
+    void configure_iteration_logger(logging::iteration_logger& iteration_logger,
+        const data_type& solution) const {
+        derived().configure_iteration_logger(iteration_logger, solution);
     }
 
     /*!
@@ -98,13 +99,16 @@ public:
      */
     void solve(const scalar_type& param, data_type& solution) {
         init(param, solution);
+
         logging::iteration_logger iter_logger;
-        configure_iteration_logger(iter_logger);
+        configure_iteration_logger(iter_logger, solution);
         iter_logger.write_iteration_to(logger());
+
         while (!is_stop_criteria_satisfied(solution)) {
             iterate(param, solution);
             iter_logger.write_iteration_to(logger());
         }
+
         iter_logger.write_summary_to(logger());
     }
 

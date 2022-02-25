@@ -57,25 +57,23 @@ public:
     /*!
      * \brief Calculate the squared norm of the residual.
      *
-     * \param[in] param Regularization parameter.
      * \param[in] solution Solution.
      * \return Result.
      */
-    [[nodiscard]] auto residual_norm(const scalar_type& param,
-        const data_type& solution) const -> scalar_type {
-        return derived().residual_norm(param, solution);
+    [[nodiscard]] auto residual_norm(const data_type& solution) const
+        -> scalar_type {
+        return derived().residual_norm(solution);
     }
 
     /*!
      * \brief Calculate the regularization term.
      *
-     * \param[in] param Regularization parameter.
      * \param[in] solution Solution.
      * \return Result.
      */
-    [[nodiscard]] auto regularization_term(const scalar_type& param,
-        const data_type& solution) const -> scalar_type {
-        return derived().regularization_term(param, solution);
+    [[nodiscard]] auto regularization_term(const data_type& solution) const
+        -> scalar_type {
+        return derived().regularization_term(solution);
     }
 
     /*!

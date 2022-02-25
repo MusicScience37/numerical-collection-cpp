@@ -159,23 +159,26 @@ public:
     }
 
     //! \copydoc num_collect::regularization::iterative_regularized_solver_base::configure_iteration_logger
-    void configure_iteration_logger(
-        logging::iteration_logger& iteration_logger) const {
+    void configure_iteration_logger(logging::iteration_logger& iteration_logger,
+        const data_type& solution) const {
         iteration_logger.append<index_type>(
             "Iter.", [this] { return iterations(); });
         iteration_logger.append<scalar_type>(
             "Update", [this] { return update(); });
+        iteration_logger.append<scalar_type>("Res.Rate", [this, &solution] {
+            return residual_norm(solution) / data_->squaredNorm();
+        });
     }
 
     //! \copydoc num_collect::regularization::implicit_regularized_solver_base::residual_norm
-    [[nodiscard]] auto residual_norm(const scalar_type& param,
-        const data_type& solution) const -> scalar_type {
+    [[nodiscard]] auto residual_norm(const data_type& solution) const
+        -> scalar_type {
         return ((*coeff_) * solution - (*data_)).squaredNorm();
     }
 
     //! \copydoc num_collect::regularization::implicit_regularized_solver_base::regularization_term
-    [[nodiscard]] auto regularization_term(const scalar_type& param,
-        const data_type& solution) const -> scalar_type {
+    [[nodiscard]] auto regularization_term(const data_type& solution) const
+        -> scalar_type {
         return solution.template lpNorm<1>();
     }
 
