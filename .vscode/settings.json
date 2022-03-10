@@ -103,5 +103,7 @@
   "cmake.ctest.parallelJobs": 2,
   "C_Cpp.intelliSenseEngine": "Disabled",
   "C_Cpp.autocomplete": "Disabled",
-  "C_Cpp.errorSquiggles": "Disabled"
+  "C_Cpp.errorSquiggles": "Disabled",
+  "esbonio.server.enabled": false,
+  "esbonio.sphinx.confDir": "${workspaceFolder}/doc/sphinx/src"
 }

@@ -2,13 +2,6 @@ buildType:
   default: debug
   description: Debug
   choices:
-    clang-asan-ubsan:
-      short: ClangAUSan
-      long: ASan and USan in Clang
-      buildType: Debug
-      settings:
-        CMAKE_CXX_FLAGS: "-fsanitize=address,undefined"
-        CMAKE_MODULE_LINKER_FLAGS: "-fsanitize=address,undefined"
     debug:
       short: Debug
       long: Debug build
