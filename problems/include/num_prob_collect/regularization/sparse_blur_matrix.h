@@ -58,7 +58,8 @@ inline void sparse_blur_matrix(
                 std::max(std::exp(-factor * diff * diff) - thresh,
                     static_cast<scalar_type>(0));
             if (coeff > static_cast<scalar_type>(0)) {
-                triplets.emplace_back(i, j, coeff);
+                triplets.emplace_back(static_cast<storage_index_type>(i),
+                    static_cast<storage_index_type>(j), coeff);
             }
         }
     }

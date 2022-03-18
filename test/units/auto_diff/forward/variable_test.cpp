@@ -61,8 +61,10 @@ TEMPLATE_TEST_CASE(
     }
 
     SECTION("add a variable") {
-        const auto var1 = variable_type(1.234, 2.345);
-        const auto var2 = variable_type(3.456, -4.567);
+        const auto var1 = variable_type(
+            static_cast<TestType>(1.234), static_cast<TestType>(2.345));
+        const auto var2 = variable_type(
+            static_cast<TestType>(3.456), static_cast<TestType>(-4.567));
         variable_type var = var1;
         var += var2;
         REQUIRE_THAT(var.value(),
@@ -72,7 +74,8 @@ TEMPLATE_TEST_CASE(
     }
 
     SECTION("add a value") {
-        const auto var1 = variable_type(1.234, 2.345);
+        const auto var1 = variable_type(
+            static_cast<TestType>(1.234), static_cast<TestType>(2.345));
         const auto var2 = static_cast<TestType>(3.456);
         variable_type var = var1;
         var += var2;
@@ -82,8 +85,10 @@ TEMPLATE_TEST_CASE(
     }
 
     SECTION("subtract a variable") {
-        const auto var1 = variable_type(1.234, 2.345);
-        const auto var2 = variable_type(3.456, -4.567);
+        const auto var1 = variable_type(
+            static_cast<TestType>(1.234), static_cast<TestType>(2.345));
+        const auto var2 = variable_type(
+            static_cast<TestType>(3.456), static_cast<TestType>(-4.567));
         variable_type var = var1;
         var -= var2;
         REQUIRE_THAT(var.value(),
@@ -93,7 +98,8 @@ TEMPLATE_TEST_CASE(
     }
 
     SECTION("subtract a value") {
-        const auto var1 = variable_type(1.234, 2.345);
+        const auto var1 = variable_type(
+            static_cast<TestType>(1.234), static_cast<TestType>(2.345));
         const auto var2 = static_cast<TestType>(3.456);
         variable_type var = var1;
         var -= var2;
@@ -103,8 +109,10 @@ TEMPLATE_TEST_CASE(
     }
 
     SECTION("multiply a variable") {
-        const auto var1 = variable_type(1.234, 2.345);
-        const auto var2 = variable_type(3.456, -4.567);
+        const auto var1 = variable_type(
+            static_cast<TestType>(1.234), static_cast<TestType>(2.345));
+        const auto var2 = variable_type(
+            static_cast<TestType>(3.456), static_cast<TestType>(-4.567));
         variable_type var = var1;
         var *= var2;
         REQUIRE_THAT(var.value(),
@@ -115,7 +123,8 @@ TEMPLATE_TEST_CASE(
     }
 
     SECTION("multiply a value") {
-        const auto var1 = variable_type(1.234, 2.345);
+        const auto var1 = variable_type(
+            static_cast<TestType>(1.234), static_cast<TestType>(2.345));
         const auto var2 = static_cast<TestType>(3.456);
         variable_type var = var1;
         var *= var2;
@@ -126,8 +135,10 @@ TEMPLATE_TEST_CASE(
     }
 
     SECTION("divide by a variable") {
-        const auto var1 = variable_type(1.234, 2.345);
-        const auto var2 = variable_type(3.456, -4.567);
+        const auto var1 = variable_type(
+            static_cast<TestType>(1.234), static_cast<TestType>(2.345));
+        const auto var2 = variable_type(
+            static_cast<TestType>(3.456), static_cast<TestType>(-4.567));
         variable_type var = var1;
         var /= var2;
         REQUIRE_THAT(var.value(),
@@ -139,7 +150,8 @@ TEMPLATE_TEST_CASE(
     }
 
     SECTION("divide by a value") {
-        const auto var1 = variable_type(1.234, 2.345);
+        const auto var1 = variable_type(
+            static_cast<TestType>(1.234), static_cast<TestType>(2.345));
         const auto var2 = static_cast<TestType>(3.456);
         variable_type var = var1;
         var /= var2;
@@ -157,8 +169,10 @@ TEMPLATE_TEST_CASE(
     using variable_type = num_collect::auto_diff::forward::variable<TestType>;
 
     SECTION("variable + variable") {
-        const auto var1 = variable_type(1.234, 2.345);
-        const auto var2 = variable_type(3.456, -4.567);
+        const auto var1 = variable_type(
+            static_cast<TestType>(1.234), static_cast<TestType>(2.345));
+        const auto var2 = variable_type(
+            static_cast<TestType>(3.456), static_cast<TestType>(-4.567));
         const auto var = var1 + var2;
         REQUIRE_THAT(var.value(),
             Catch::Matchers::WithinRel(var1.value() + var2.value()));
@@ -168,7 +182,8 @@ TEMPLATE_TEST_CASE(
 
     SECTION("value + variable") {
         const auto var1 = static_cast<TestType>(1.234);
-        const auto var2 = variable_type(3.456, -4.567);
+        const auto var2 = variable_type(
+            static_cast<TestType>(3.456), static_cast<TestType>(-4.567));
         const auto var = var1 + var2;
         REQUIRE_THAT(
             var.value(), Catch::Matchers::WithinRel(var1 + var2.value()));
@@ -176,7 +191,8 @@ TEMPLATE_TEST_CASE(
     }
 
     SECTION("variable + value") {
-        const auto var1 = variable_type(1.234, 2.345);
+        const auto var1 = variable_type(
+            static_cast<TestType>(1.234), static_cast<TestType>(2.345));
         const auto var2 = static_cast<TestType>(3.456);
         const auto var = var1 + var2;
         REQUIRE_THAT(
@@ -185,8 +201,10 @@ TEMPLATE_TEST_CASE(
     }
 
     SECTION("variable - variable") {
-        const auto var1 = variable_type(1.234, 2.345);
-        const auto var2 = variable_type(3.456, -4.567);
+        const auto var1 = variable_type(
+            static_cast<TestType>(1.234), static_cast<TestType>(2.345));
+        const auto var2 = variable_type(
+            static_cast<TestType>(3.456), static_cast<TestType>(-4.567));
         const auto var = var1 - var2;
         REQUIRE_THAT(var.value(),
             Catch::Matchers::WithinRel(var1.value() - var2.value()));
@@ -196,7 +214,8 @@ TEMPLATE_TEST_CASE(
 
     SECTION("value - variable") {
         const auto var1 = static_cast<TestType>(1.234);
-        const auto var2 = variable_type(3.456, -4.567);
+        const auto var2 = variable_type(
+            static_cast<TestType>(3.456), static_cast<TestType>(-4.567));
         const auto var = var1 - var2;
         REQUIRE_THAT(
             var.value(), Catch::Matchers::WithinRel(var1 - var2.value()));
@@ -204,7 +223,8 @@ TEMPLATE_TEST_CASE(
     }
 
     SECTION("variable - value") {
-        const auto var1 = variable_type(1.234, 2.345);
+        const auto var1 = variable_type(
+            static_cast<TestType>(1.234), static_cast<TestType>(2.345));
         const auto var2 = static_cast<TestType>(3.456);
         const auto var = var1 - var2;
         REQUIRE_THAT(
@@ -213,8 +233,10 @@ TEMPLATE_TEST_CASE(
     }
 
     SECTION("variable * variable") {
-        const auto var1 = variable_type(1.234, 2.345);
-        const auto var2 = variable_type(3.456, -4.567);
+        const auto var1 = variable_type(
+            static_cast<TestType>(1.234), static_cast<TestType>(2.345));
+        const auto var2 = variable_type(
+            static_cast<TestType>(3.456), static_cast<TestType>(-4.567));
         const auto var = var1 * var2;
         REQUIRE_THAT(var.value(),
             Catch::Matchers::WithinRel(var1.value() * var2.value()));
@@ -225,7 +247,8 @@ TEMPLATE_TEST_CASE(
 
     SECTION("value * variable") {
         const auto var1 = static_cast<TestType>(1.234);
-        const auto var2 = variable_type(3.456, -4.567);
+        const auto var2 = variable_type(
+            static_cast<TestType>(3.456), static_cast<TestType>(-4.567));
         const auto var = var1 * var2;
         REQUIRE_THAT(
             var.value(), Catch::Matchers::WithinRel(var1 * var2.value()));
@@ -234,7 +257,8 @@ TEMPLATE_TEST_CASE(
     }
 
     SECTION("variable * value") {
-        const auto var1 = variable_type(1.234, 2.345);
+        const auto var1 = variable_type(
+            static_cast<TestType>(1.234), static_cast<TestType>(2.345));
         const auto var2 = static_cast<TestType>(3.456);
         const auto var = var1 * var2;
         REQUIRE_THAT(
@@ -244,8 +268,10 @@ TEMPLATE_TEST_CASE(
     }
 
     SECTION("variable / variable") {
-        const auto var1 = variable_type(1.234, 2.345);
-        const auto var2 = variable_type(3.456, -4.567);
+        const auto var1 = variable_type(
+            static_cast<TestType>(1.234), static_cast<TestType>(2.345));
+        const auto var2 = variable_type(
+            static_cast<TestType>(3.456), static_cast<TestType>(-4.567));
         const auto var = var1 / var2;
         REQUIRE_THAT(var.value(),
             Catch::Matchers::WithinRel(var1.value() / var2.value()));
@@ -257,7 +283,8 @@ TEMPLATE_TEST_CASE(
 
     SECTION("value / variable") {
         const auto var1 = static_cast<TestType>(1.234);
-        const auto var2 = variable_type(3.456, -4.567);
+        const auto var2 = variable_type(
+            static_cast<TestType>(3.456), static_cast<TestType>(-4.567));
         const auto var = var1 / var2;
         REQUIRE_THAT(
             var.value(), Catch::Matchers::WithinRel(var1 / var2.value()));
@@ -267,7 +294,8 @@ TEMPLATE_TEST_CASE(
     }
 
     SECTION("variable / variable") {
-        const auto var1 = variable_type(1.234, 2.345);
+        const auto var1 = variable_type(
+            static_cast<TestType>(1.234), static_cast<TestType>(2.345));
         const auto var2 = static_cast<TestType>(3.456);
         const auto var = var1 / var2;
         REQUIRE_THAT(
@@ -287,10 +315,10 @@ TEMPLATE_TEST_CASE(
 
     const variable_type left =
         num_collect::auto_diff::forward::create_diff_variable<TestType,
-            diff_type>(1.234, 2, 0);
+            diff_type>(static_cast<TestType>(1.234), 2, 0);
     const variable_type right =
         num_collect::auto_diff::forward::create_diff_variable<TestType,
-            diff_type>(2.345, 2, 1);
+            diff_type>(static_cast<TestType>(2.345), 2, 1);
 
     SECTION("addition") {
         const variable_type res = left + right;
