@@ -35,7 +35,7 @@ class NumCollectConan(ConanFile):
             self.build_requires(
                 "cpp_stat_bench/0.4.1@MusicScience37+cpp-stat-bench/stable")
             self.build_requires("pybind11/2.9.1")
-            self.build_requires("approvaltests.cpp/10.12.1")
+            self.build_requires("approvaltests.cpp/10.12.2")
 
     def package(self):
         self.copy("*.h")
