@@ -346,8 +346,7 @@ clang-12-asan-ubsan:
       -DCMAKE_BUILD_TYPE=Debug
       -DNUM_COLLECT_TESTING:BOOL=ON
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
-      -DCMAKE_CXX_FLAGS=-fsanitize=address,undefined
-      -DCMAKE_MODULE_LINKER_FLAGS=-fsanitize=address,undefined
+      -DNUM_COLLECT_ENABLE_AUSAN:BOOL=ON
     - cd $BUILD_DIR
     - cmake --build .
     - ctest -V

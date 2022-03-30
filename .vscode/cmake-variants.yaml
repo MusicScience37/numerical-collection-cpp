@@ -7,29 +7,25 @@ buildType:
       long: ASan and USan in Clang
       buildType: Debug
       settings:
-        CMAKE_CXX_FLAGS: "-fsanitize=address,undefined"
-        CMAKE_MODULE_LINKER_FLAGS: "-fsanitize=address,undefined"
+        NUM_COLLECT_ENABLE_AUSAN: ON
     debug:
       short: Debug
       long: Debug build
       buildType: Debug
       settings:
-        CMAKE_CXX_FLAGS: ""
-        CMAKE_MODULE_LINKER_FLAGS: ""
+        NUM_COLLECT_ENABLE_AUSAN: OFF
     release with debug info:
       short: RelWithDebInfo
       long: Release build with debug info
       buildType: RelWithDebInfo
       settings:
-        CMAKE_CXX_FLAGS: ""
-        CMAKE_MODULE_LINKER_FLAGS: ""
+        NUM_COLLECT_ENABLE_AUSAN: OFF
     release:
       short: Release
       long: Release build
       buildType: Release
       settings:
-        CMAKE_CXX_FLAGS: ""
-        CMAKE_MODULE_LINKER_FLAGS: ""
+        NUM_COLLECT_ENABLE_AUSAN: OFF
 
 tests:
   default: unit only
