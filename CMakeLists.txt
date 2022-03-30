@@ -60,6 +60,7 @@ include(ConfigureClangTidy)
 include(CppWarningFlags)
 include(CppFlags)
 include(pipenv)
+include(ConfigureSanitizer)
 
 set(NUM_COLLECT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 

@@ -8,6 +8,7 @@ function(add_unit_test_for MODULE_NAME)
         num_collect_test_units_${MODULE_NAME}
         PRIVATE NUM_COLLECT_TEST_MODULE_NAME=${MODULE_NAME})
     target_add_catch2(num_collect_test_units_${MODULE_NAME})
+    target_add_ausan(num_collect_test_units_${MODULE_NAME})
 
     add_executable(num_collect_test_units_${MODULE_NAME}_unity EXCLUDE_FROM_ALL
                    unity_source.cpp)
