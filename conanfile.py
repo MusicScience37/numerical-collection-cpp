@@ -13,11 +13,9 @@ class NumCollectConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     options = {
         "requirements_for_tests": [True, False],
-        "stack_traces_support": [True, False],
     }
     default_options = {
-        "requirements_for_tests": True,
-        "stack_traces_support": True,
+        "requirements_for_tests": False,
     }
     exports_sources = "include/*"
     no_copy_source = True
