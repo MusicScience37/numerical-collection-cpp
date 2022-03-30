@@ -5,11 +5,14 @@
 ### Feature
 
 - Format Eigen's dense matrices, dense vectors, and sparse matrices ([Issue #142](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/142)).
+- Implemented FISTA for L1 regularization ([Issue #147](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/147)).
 
 ### Miscellaneous
 
 - Introduced [Approval Tests](https://approvaltests.com/) for tests ([Issue #139](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/139)).
 - Update issue templates ([Issue #157](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/157)).
+- Fixed warnings on MSVC ([Issue #134](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/134)).
+- Set the default value of requirements_for_tests in conanfile.py to False ([Issue #159](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/159)).
 
 ## 0.4.1 (2022/2/19)
 
