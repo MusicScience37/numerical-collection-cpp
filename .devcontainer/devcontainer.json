@@ -3,6 +3,7 @@
   "containerEnv": {
     "CONAN_USER_HOME": "${containerWorkspaceFolder}",
     "PIPENV_VENV_IN_PROJECT": "1",
+    "PIPENV_IGNORE_VIRTUALENVS": "1",
     "ASAN_OPTIONS": "alloc_dealloc_mismatch=0"
   },
   "extensions": [
@@ -22,7 +23,8 @@
     "trond-snekvik.simple-rst",
     "fredericbonnet.cmake-test-adapter",
     "hbenl.vscode-test-explorer",
-    "ms-azuretools.vscode-docker"
+    "ms-azuretools.vscode-docker",
+    "tomoki1207.pdf"
   ],
   "postCreateCommand": "bash ./.devcontainer/setup.bash",
   "settings": {

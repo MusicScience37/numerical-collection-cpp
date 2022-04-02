@@ -25,6 +25,6 @@ WORKDIR /root
 RUN git clone https://github.com/gperftools/gperftools.git -b gperftools-2.9.1 && \
     cd gperftools && \
     ./autogen.sh && \
-    ./configure && \
-    make && \
+    ./configure --disable-libunwind --enable-frame-pointers && \
+    make -j && \
     make install
