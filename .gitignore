@@ -658,3 +658,4 @@ FodyWeavers.xsd
 # Output of profiler in gperftools
 /*.prof
 /*.pdf
+/profiling/results/

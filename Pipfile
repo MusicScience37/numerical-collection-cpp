@@ -21,6 +21,7 @@ sphinx = "*"
 sphinx-autobuild = "*"
 sphinx-rtd-theme = "*"
 sphinxcontrib-plantuml = "*"
+click = "*"
 
 [requires]
 python_version = "3.9"

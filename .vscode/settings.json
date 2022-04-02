@@ -65,6 +65,7 @@
     "pipenv",
     "Pipfile",
     "PlantUML",
+    "pprof",
     "profraw",
     "Pybind11",
     "pyenv",
