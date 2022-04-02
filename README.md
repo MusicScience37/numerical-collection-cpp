@@ -123,3 +123,10 @@ execute the following commands:
    ```bash
    ctest
    ```
+
+## Profiling
+
+This project uses gperftools for profiling.
+See
+[documentation of profiler in gperftools](http://gperftools.github.io/gperftools/cpuprofile.html)
+for usage of the profiler.

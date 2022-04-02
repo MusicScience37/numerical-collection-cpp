@@ -642,11 +642,19 @@ FodyWeavers.xsd
 
 # End of https://www.toptal.com/developers/gitignore/api/c++,visualstudiocode,cmake,conan,python,visualstudio
 
-!.vscode/cmake-variants.yaml
+# Configuration of VSCode shared between environments
+!/.vscode/cmake-variants.yaml
 
-*.html
-*.png
+# Output of examples
+/*.html
+/*.png
 
+# Temporary output of ApprovalTests
 *.received.*
 
+# Data of Conan package manager
 /.conan/
+
+# Output of profiler in gperftools
+/*.prof
+/*.pdf
