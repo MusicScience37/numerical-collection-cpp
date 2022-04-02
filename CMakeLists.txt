@@ -27,6 +27,7 @@ option(NUM_COLLECT_BUILD_DOC "build documentation of numerical-collection-cpp"
 option(NUM_COLLECT_TESTING "enable tests of numerical-collection-cpp" OFF)
 option(NUM_COLLECT_BUILD_EXAMPLES "build examples of numerical-collection-cpp"
        OFF)
+option(NUM_COLLECT_ENABLE_PROFILING "enable profiling" OFF)
 
 set(CMAKE_CXX_STANDARD
     20
@@ -86,4 +87,8 @@ endif()
 if(NUM_COLLECT_BUILD_EXAMPLES)
     find_package(pngpp REQUIRED)
     add_subdirectory(examples)
+endif()
+
+if(NUM_COLLECT_ENABLE_PROFILING)
+    add_subdirectory(profiling)
 endif()

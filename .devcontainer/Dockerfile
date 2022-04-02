@@ -20,3 +20,11 @@ RUN git clone https://github.com/include-what-you-use/include-what-you-use.git -
     cmake -G Ninja -DCMAKE_PREFIX_PATH=/usr/lib/llvm-13 .. && \
     cmake --build . && \
     cmake --build . --target install
+
+WORKDIR /root
+RUN git clone https://github.com/gperftools/gperftools.git -b gperftools-2.9.1 && \
+    cd gperftools && \
+    ./autogen.sh && \
+    ./configure --disable-libunwind --enable-frame-pointers && \
+    make -j && \
+    make install
