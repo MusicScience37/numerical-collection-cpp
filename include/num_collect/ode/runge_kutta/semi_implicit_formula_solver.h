@@ -29,6 +29,7 @@
 #include "num_collect/constants/one.h"
 #include "num_collect/constants/zero.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_mixin.h"
 #include "num_collect/ode/concepts/differentiable_problem.h"
 #include "num_collect/ode/concepts/multi_variate_differentiable_problem.h"
 #include "num_collect/ode/concepts/single_variate_differentiable_problem.h"
@@ -60,7 +61,8 @@ class semi_implicit_formula_solver;
  */
 template <concepts::multi_variate_differentiable_problem Problem>
 class semi_implicit_formula_solver<Problem,
-    implicit_formula_solver_strategies::modified_newton_raphson_tag> {
+    implicit_formula_solver_strategies::modified_newton_raphson_tag>
+    : public logging::logging_mixin {
 public:
     //! Type of problem.
     using problem_type = Problem;
@@ -80,7 +82,8 @@ public:
      * \param[in] problem Problem.
      */
     explicit semi_implicit_formula_solver(const problem_type& problem)
-        : problem_{problem} {}
+        : problem_{problem},
+          logging::logging_mixin(semi_implicit_formula_solver_tag) {}
 
     /*!
      * \brief Solve.
@@ -113,7 +116,7 @@ public:
             k_ -= lu_.solve(residual_);
         }
 
-        logger_.trace()(
+        this->logger().trace()(
             FMT_STRING("Solved an implicit formula: step_size={:.3e}, "
                        "iterations={}, residual={:.3e}"),
             step_size, iterations, residual_norm_);
@@ -183,9 +186,6 @@ private:
 
     //! Tolerance of residual norm.
     scalar_type tol_residual_norm_{default_tol_residual_norm};
-
-    //! Logger.
-    logging::logger logger_{semi_implicit_formula_solver_tag};
 };
 
 /*!
@@ -195,7 +195,8 @@ private:
  */
 template <concepts::single_variate_differentiable_problem Problem>
 class semi_implicit_formula_solver<Problem,
-    implicit_formula_solver_strategies::modified_newton_raphson_tag> {
+    implicit_formula_solver_strategies::modified_newton_raphson_tag>
+    : public logging::logging_mixin {
 public:
     //! Type of problem.
     using problem_type = Problem;
@@ -215,7 +216,8 @@ public:
      * \param[in] problem Problem.
      */
     explicit semi_implicit_formula_solver(const problem_type& problem)
-        : problem_{problem} {}
+        : problem_{problem},
+          logging::logging_mixin(semi_implicit_formula_solver_tag) {}
 
     /*!
      * \brief Solve.
@@ -249,7 +251,7 @@ public:
             k_ -= inv_jacobian * residual_;
         }
 
-        logger_.trace()(
+        this->logger().trace()(
             FMT_STRING("Solved an implicit formula: step_size={:.3e}, "
                        "iterations={}, residual={:.3e}"),
             step_size, iterations, abs(residual_));
@@ -314,9 +316,6 @@ private:
 
     //! Tolerance of residual norm.
     scalar_type tol_residual_norm_{default_tol_residual_norm};
-
-    //! Logger.
-    logging::logger logger_{semi_implicit_formula_solver_tag};
 };
 
 }  // namespace num_collect::ode::runge_kutta
