@@ -26,8 +26,8 @@
 
 #include "num_collect/interp/kernel/concepts/kernel.h"
 #include "num_collect/interp/kernel/impl/auto_regularizer_wrapper.h"
-#include "num_collect/opt/dividing_rectangles.h"
 #include "num_collect/opt/function_object_wrapper.h"
+#include "num_collect/opt/heuristic_global_optimizer.h"
 
 namespace num_collect::interp::kernel::impl {
 
@@ -60,8 +60,13 @@ public:
     kernel_parameter_optimizer(
         auto_regularizer_wrapper<value_type>& interpolator, kernel_type& kernel)
         : interpolator_(&interpolator), kernel_(&kernel) {
-        constexpr index_type default_max_evaluations = 10;
-        optimizer_.max_evaluations(default_max_evaluations);
+        if constexpr (opt::concepts::multi_variate_objective_function<
+                          opt::function_object_wrapper<
+                              objective_function_signature,
+                              std::function<objective_function_signature>>>) {
+            constexpr index_type default_max_evaluations = 10;
+            optimizer_.opt1_max_evaluations(default_max_evaluations);
+        }
     }
 
     /*!
@@ -75,7 +80,7 @@ public:
     template <typename Container, typename Data>
     void compute(
         const Container& variable_list, const Eigen::MatrixBase<Data>& data) {
-        optimizer_ = opt::dividing_rectangles<
+        optimizer_ = opt::heuristic_global_optimizer<
             opt::function_object_wrapper<objective_function_signature,
                 std::function<objective_function_signature>>>(
             opt::make_function_object_wrapper<objective_function_signature>(
@@ -99,7 +104,7 @@ public:
      *
      * \return Optimal parameter.
      */
-    [[nodiscard]] auto opt_param() const -> const kernel_param_type& {
+    [[nodiscard]] auto opt_param() const -> kernel_param_type {
         return optimizer_.opt_variable();
     }
 
@@ -111,7 +116,7 @@ private:
     kernel_type* kernel_;
 
     //! Optimizer.
-    opt::dividing_rectangles<
+    opt::heuristic_global_optimizer<
         opt::function_object_wrapper<objective_function_signature,
             std::function<objective_function_signature>>>
         optimizer_{
