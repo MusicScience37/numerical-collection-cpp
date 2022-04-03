@@ -23,7 +23,7 @@
 #include <utility>
 
 #include "num_collect/opt/function_object_wrapper.h"
-#include "num_collect/opt/heuristic_1dim_optimizer.h"
+#include "num_collect/opt/heuristic_global_optimizer.h"
 #include "num_collect/regularization/impl/coeff_param.h"
 
 namespace num_collect::interp::kernel::impl {
@@ -151,7 +151,7 @@ private:
     const solver_type* solver_;
 
     //! Optimizer.
-    opt::heuristic_1dim_optimizer<opt::function_object_wrapper<
+    opt::heuristic_global_optimizer<opt::function_object_wrapper<
         scalar_type(scalar_type), objective_function_type>>
         optimizer_;
 };

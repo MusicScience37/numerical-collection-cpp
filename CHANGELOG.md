@@ -2,10 +2,15 @@
 
 ## 0.5.0 (on development)
 
+### Breaking Change
+
+- Changed the name of class `heuristic_1dim_optimizer` to `heuristic_global_optimizer` ([Issue #151](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/merge_requests/151)).
+
 ### Feature
 
 - Format Eigen's dense matrices, dense vectors, and sparse matrices ([Issue #142](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/142)).
 - Implemented FISTA for L1 regularization ([Issue #147](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/147)).
+- Heuristic global optimizer for multi-variate problems ([Issue #151](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/merge_requests/151)).
 
 ### Miscellaneous
 
@@ -13,6 +18,7 @@
 - Update issue templates ([Issue #157](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/157)).
 - Fixed warnings on MSVC ([Issue #134](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/134)).
 - Set the default value of requirements_for_tests in conanfile.py to False ([Issue #159](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/159)).
+- Introduced profiling ([Issue #168](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/168)).
 
 ## 0.4.1 (2022/2/19)
 

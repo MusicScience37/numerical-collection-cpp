@@ -23,7 +23,7 @@
 #include <stat_bench/benchmark_macros.h>
 
 #include "num_collect/opt/dividing_rectangles.h"
-#include "num_collect/opt/heuristic_1dim_optimizer.h"
+#include "num_collect/opt/heuristic_global_optimizer.h"
 #include "num_collect/opt/sampling_optimizer.h"
 
 STAT_BENCH_MAIN
@@ -87,9 +87,9 @@ STAT_BENCH_CASE_F(vibrated_quadratic_function_fixture,
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(vibrated_quadratic_function_fixture,
-    "opt_vibrated_quadratic_function", "heuristic_1dim_optimizer") {
+    "opt_vibrated_quadratic_function", "heuristic_global_optimizer") {
     STAT_BENCH_MEASURE() {
-        auto optimizer = num_collect::opt::heuristic_1dim_optimizer<
+        auto optimizer = num_collect::opt::heuristic_global_optimizer<
             num_prob_collect::opt::vibrated_quadratic_function>();
         const auto [lower, upper] = search_region();
         optimizer.init(lower, upper);

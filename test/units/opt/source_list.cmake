@@ -8,7 +8,7 @@ set(SOURCE_FILES
     downhill_simplex_test.cpp
     function_object_wrapper_test.cpp
     golden_section_search_test.cpp
-    heuristic_1dim_optimizer_test.cpp
+    heuristic_global_optimizer_test.cpp
     impl/ternary_vector_test.cpp
     newton_optimizer_test.cpp
     sampling_optimizer_test.cpp
