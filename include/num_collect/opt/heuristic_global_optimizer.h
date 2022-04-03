@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of heuristic_1dim_optimizer class.
+ * \brief Definition of heuristic_global_optimizer class.
  */
 #pragma once
 
@@ -33,8 +33,8 @@
 namespace num_collect::opt {
 
 //! Tag of dividing_rectangles.
-inline constexpr auto heuristic_1dim_optimizer_tag =
-    logging::log_tag_view("num_collect::opt::heuristic_1dim_optimizer");
+inline constexpr auto heuristic_global_optimizer_tag =
+    logging::log_tag_view("num_collect::opt::heuristic_global_optimizer");
 
 /*!
  * \brief Class to perform global optimization in 1 dimension using heuristics.
@@ -42,8 +42,8 @@ inline constexpr auto heuristic_1dim_optimizer_tag =
  * \tparam ObjectiveFunction Type of the objective function.
  */
 template <concepts::single_variate_objective_function ObjectiveFunction>
-class heuristic_1dim_optimizer
-    : public optimizer_base<heuristic_1dim_optimizer<ObjectiveFunction>> {
+class heuristic_global_optimizer
+    : public optimizer_base<heuristic_global_optimizer<ObjectiveFunction>> {
 public:
     //! Type of the objective function.
     using objective_function_type = ObjectiveFunction;
@@ -61,10 +61,10 @@ public:
      *
      * \param[in] obj_fun Objective function.
      */
-    explicit heuristic_1dim_optimizer(
+    explicit heuristic_global_optimizer(
         const objective_function_type& obj_fun = objective_function_type())
-        : optimizer_base<heuristic_1dim_optimizer<ObjectiveFunction>>(
-              heuristic_1dim_optimizer_tag),
+        : optimizer_base<heuristic_global_optimizer<ObjectiveFunction>>(
+              heuristic_global_optimizer_tag),
           opt1_(obj_fun),
           opt2_(obj_fun) {}
 

@@ -15,9 +15,9 @@
  */
 /*!
  * \file
- * \brief Test of heuristic_1dim_optimizer class.
+ * \brief Test of heuristic_global_optimizer class.
  */
-#include "num_collect/opt/heuristic_1dim_optimizer.h"
+#include "num_collect/opt/heuristic_global_optimizer.h"
 
 #include <sstream>
 
@@ -27,12 +27,12 @@
 
 #include "num_prob_collect/opt/quadratic_function.h"
 
-TEST_CASE("num_collect::opt::heuristic_1dim_optimizer") {
-    using num_collect::opt::heuristic_1dim_optimizer;
+TEST_CASE("num_collect::opt::heuristic_global_optimizer") {
+    using num_collect::opt::heuristic_global_optimizer;
     using num_prob_collect::opt::quadratic_function;
 
     SECTION("solve") {
-        auto opt = heuristic_1dim_optimizer<quadratic_function>();
+        auto opt = heuristic_global_optimizer<quadratic_function>();
         constexpr double left = -1.0;
         constexpr double right = 2.0;
         opt.init(left, right);
