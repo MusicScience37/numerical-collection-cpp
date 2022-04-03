@@ -25,6 +25,6 @@ WORKDIR /root
 RUN git clone https://github.com/gperftools/gperftools.git -b gperftools-2.9.1 && \
     cd gperftools && \
     ./autogen.sh && \
-    ./configure --disable-libunwind --enable-frame-pointers && \
+    ./configure CC=clang CXX=clang++ CXXFLAGS=-stdlib=libc++ --disable-libunwind --enable-frame-pointers && \
     make -j && \
     make install
