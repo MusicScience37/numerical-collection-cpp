@@ -7,4 +7,5 @@
 #include "log_tag_test.cpp"             // NOLINT(bugprone-suspicious-include)
 #include "log_tag_view_test.cpp"        // NOLINT(bugprone-suspicious-include)
 #include "logger_test.cpp"              // NOLINT(bugprone-suspicious-include)
+#include "logging_mixin_test.cpp"       // NOLINT(bugprone-suspicious-include)
 #include "simple_log_sink_test.cpp"     // NOLINT(bugprone-suspicious-include)
