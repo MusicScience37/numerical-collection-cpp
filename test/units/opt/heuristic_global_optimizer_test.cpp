@@ -66,4 +66,11 @@ TEST_CASE("num_collect::opt::heuristic_global_optimizer(multi_variate)") {
             eigen_approx(Eigen::VectorXd::Zero(3), sol_tol));
         REQUIRE_THAT(opt.opt_value(), Catch::Matchers::WithinAbs(0.0, sol_tol));
     }
+
+    SECTION("change mode") {
+        auto opt = heuristic_global_optimizer<multi_quadratic_function>();
+        REQUIRE_NOTHROW(opt.light_mode());
+        REQUIRE_NOTHROW(opt.middle_mode());
+        REQUIRE_NOTHROW(opt.heavy_mode());
+    }
 }
