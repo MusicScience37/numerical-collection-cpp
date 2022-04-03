@@ -25,6 +25,7 @@
 #include "num_collect/base/concepts/dense_matrix.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/logger.h"
+#include "num_collect/logging/logging_mixin.h"
 
 namespace num_collect::regularization {
 
@@ -35,7 +36,7 @@ namespace num_collect::regularization {
  * \tparam Data Type of data.
  */
 template <typename Derived, base::concepts::dense_matrix Data>
-class implicit_regularized_solver_base {
+class implicit_regularized_solver_base : public logging::logging_mixin {
 public:
     //! Type of data.
     using data_type = Data;
@@ -103,7 +104,7 @@ protected:
      * \param[in] tag Log tag.
      */
     explicit implicit_regularized_solver_base(logging::log_tag_view tag)
-        : logger_(tag) {}
+        : logging::logging_mixin(tag) {}
 
     /*!
      * \brief Access derived object.
@@ -122,19 +123,6 @@ protected:
     [[nodiscard]] auto derived() const noexcept -> const Derived& {
         return *static_cast<const Derived*>(this);
     }
-
-    /*!
-     * \brief Access the logger.
-     *
-     * \return Logger.
-     */
-    [[nodiscard]] auto logger() const noexcept -> const logging::logger& {
-        return logger_;
-    }
-
-private:
-    //! Logger.
-    logging::logger logger_;
 };
 
 }  // namespace num_collect::regularization

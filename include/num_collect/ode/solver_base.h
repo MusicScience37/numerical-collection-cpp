@@ -22,6 +22,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_mixin.h"
 #include "num_collect/ode/concepts/formula.h"
 
 namespace num_collect::ode {
@@ -33,7 +34,7 @@ namespace num_collect::ode {
  * \tparam Formula Type of formula.
  */
 template <typename Derived, concepts::formula Formula>
-class solver_base {
+class solver_base : public logging::logging_mixin {
 public:
     //! Type of formula.
     using formula_type = Formula;
@@ -59,7 +60,7 @@ public:
      * \param[in] problem Problem.
      */
     explicit solver_base(const problem_type& problem)
-        : formula_(problem), logger_(formula_type::log_tag) {}
+        : formula_(problem), logging::logging_mixin(formula_type::log_tag) {}
 
     /*!
      * \brief Initialize.
@@ -88,18 +89,18 @@ public:
      * \param[in] end_time Time to compute the variable at.
      */
     void solve_till(scalar_type end_time) {
-        logging::iteration_logger logger;
-        configure_iteration_logger(logger);
-        logger.write_iteration_to(logger_);
+        logging::iteration_logger iter_logger;
+        configure_iteration_logger(iter_logger);
+        iter_logger.write_iteration_to(this->logger());
         while (time() < end_time) {
             const scalar_type max_step_size = end_time - time();
             if (step_size() > max_step_size) {
                 step_size(max_step_size);
             }
             step();
-            logger.write_iteration_to(logger_);
+            iter_logger.write_iteration_to(this->logger());
         }
-        logger.write_summary_to(logger_);
+        iter_logger.write_summary_to(this->logger());
     }
 
     /*!
@@ -208,9 +209,6 @@ protected:
 private:
     //! Formula.
     formula_type formula_;
-
-    //! Logger.
-    logging::logger logger_;
 };
 
 }  // namespace num_collect::ode
