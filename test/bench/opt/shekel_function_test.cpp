@@ -133,3 +133,29 @@ STAT_BENCH_CASE_F(shekel_function_fixture, "opt_shekel_function",
         this->test_optimizer(optimizer);
     };
 }
+
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(shekel_function_fixture, "opt_shekel_function",
+    "heuristic_global_optimizer_light") {
+    STAT_BENCH_MEASURE() {
+        auto optimizer = num_collect::opt::heuristic_global_optimizer<
+            num_prob_collect::opt::shekel_function>(this->function());
+        const auto [lower, upper] = shekel_function_fixture::search_region();
+        optimizer.light_mode();
+        optimizer.init(lower, upper);
+        this->test_optimizer(optimizer);
+    };
+}
+
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(shekel_function_fixture, "opt_shekel_function",
+    "heuristic_global_optimizer_heavy") {
+    STAT_BENCH_MEASURE() {
+        auto optimizer = num_collect::opt::heuristic_global_optimizer<
+            num_prob_collect::opt::shekel_function>(this->function());
+        const auto [lower, upper] = shekel_function_fixture::search_region();
+        optimizer.heavy_mode();
+        optimizer.init(lower, upper);
+        this->test_optimizer(optimizer);
+    };
+}

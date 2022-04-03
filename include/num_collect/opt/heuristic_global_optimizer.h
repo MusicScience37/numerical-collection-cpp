@@ -303,6 +303,39 @@ public:
         return *this;
     }
 
+    /*!
+     * \brief Configure this optimizer for easy problems.
+     *
+     * \return This object.
+     */
+    auto light_mode() -> heuristic_global_optimizer& {
+        constexpr index_type max_evaluations = 20;
+        opt1_max_evaluations(max_evaluations);
+        return *this;
+    }
+
+    /*!
+     * \brief Configure this optimizer for middle problems.
+     *
+     * \return This object.
+     */
+    auto middle_mode() -> heuristic_global_optimizer& {
+        constexpr index_type max_evaluations = default_opt1_max_evaluations;
+        opt1_max_evaluations(max_evaluations);
+        return *this;
+    }
+
+    /*!
+     * \brief Configure this optimizer for difficult problems.
+     *
+     * \return This object.
+     */
+    auto heavy_mode() -> heuristic_global_optimizer& {
+        constexpr index_type max_evaluations = 10000;
+        opt1_max_evaluations(max_evaluations);
+        return *this;
+    }
+
 private:
     //! First optimizer.
     dividing_rectangles<ObjectiveFunction> opt1_;

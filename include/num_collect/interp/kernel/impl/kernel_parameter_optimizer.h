@@ -64,8 +64,7 @@ public:
                           opt::function_object_wrapper<
                               objective_function_signature,
                               std::function<objective_function_signature>>>) {
-            constexpr index_type default_max_evaluations = 10;
-            optimizer_.opt1_max_evaluations(default_max_evaluations);
+            optimizer_.light_mode();
         }
     }
 
