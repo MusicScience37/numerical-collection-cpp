@@ -13,6 +13,7 @@
 - Update issue templates ([Issue #157](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/157)).
 - Fixed warnings on MSVC ([Issue #134](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/134)).
 - Set the default value of requirements_for_tests in conanfile.py to False ([Issue #159](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/159)).
+- Introduced profiling ([Issue #168](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/168)).
 
 ## 0.4.1 (2022/2/19)
 
