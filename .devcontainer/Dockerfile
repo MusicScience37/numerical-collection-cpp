@@ -1,4 +1,4 @@
-FROM musicscience37/sphinx-doxygen:clang13-v4.2
+FROM musicscience37/sphinx-doxygen:clang14-v4.3
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -8,16 +8,16 @@ RUN apt-get update && \
     nano=4.8-1ubuntu1 && \
     apt-get autoremove && \
     apt-get autoclean && \
-    ln -s "$(command -v clangd-13)" /usr/local/bin/clangd
+    ln -s "$(command -v clangd-14)" /usr/local/bin/clangd
 
 WORKDIR /root
-RUN git clone https://github.com/include-what-you-use/include-what-you-use.git -b clang_13 && \
+RUN git clone https://github.com/include-what-you-use/include-what-you-use.git -b clang_14 && \
     cd include-what-you-use && \
     mkdir build && \
     cd build && \
     # Needed for configuration.
     pyenv global 3.9.10 && \
-    cmake -G Ninja -DCMAKE_PREFIX_PATH=/usr/lib/llvm-13 .. && \
+    cmake -G Ninja -DCMAKE_PREFIX_PATH=/usr/lib/llvm-14 .. && \
     cmake --build . && \
     cmake --build . --target install
 
