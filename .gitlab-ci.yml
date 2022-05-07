@@ -320,6 +320,7 @@ clang-14-asan-ubsan:
   image: musicscience37/clang-ci:clang14-v4.3
   variables:
     BUILD_DIR: build_clang_asan_ubsan
+    ASAN_OPTIONS: "alloc_dealloc_mismatch=0"
   script:
     - cmake -S ./ -B $BUILD_DIR
       -DCMAKE_BUILD_TYPE=Debug
