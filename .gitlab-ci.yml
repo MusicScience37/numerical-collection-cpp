@@ -31,7 +31,7 @@ gemnasium-python-dependency_scanning:
 sync pipenv:
   extends: .retry setting
   stage: Prepare
-  image: musicscience37/clang-ci:clang12-v4.2
+  image: musicscience37/clang-ci:clang14-v4.3
   script:
     - mkdir -p .venv
     - pipenv sync --dev
@@ -73,7 +73,7 @@ pre-commit:
     - sync pipenv
   dependencies:
     - sync pipenv
-  image: musicscience37/clang-ci:clang12-v4.2
+  image: musicscience37/clang-ci:clang14-v4.3
   script:
     - pipenv run pre-commit run --all-files
 
@@ -84,7 +84,7 @@ static analysis:
     - sync pipenv
   dependencies:
     - sync pipenv
-  image: musicscience37/clang-ci:clang12-v4.2
+  image: musicscience37/clang-ci:clang14-v4.3
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   before_script:
@@ -233,7 +233,7 @@ static analysis:
 clang coverage:
   extends: .clang-debug-test-base
   stage: Test with Clang
-  image: musicscience37/clang-ci:clang12-v4.2
+  image: musicscience37/clang-ci:clang14-v4.3
   variables:
     BUILD_DIR: build_clang_coverage
   script:
@@ -293,54 +293,34 @@ gcc-10-bench:
   variables:
     BUILD_DIR: build_gcc10_bench
 
-clang-12-debug:
+clang-14-debug:
   extends: .clang-debug-test-base
   stage: Test with Clang
-  image: musicscience37/clang-ci:clang12-v4.2
+  image: musicscience37/clang-ci:clang14-v4.3
   variables:
-    BUILD_DIR: build_clang12_debug
+    BUILD_DIR: build_clang14_debug
 
-clang-12-release:
+clang-14-release:
   extends: .clang-release-test-base
   stage: Test with Clang
-  image: musicscience37/clang-ci:clang12-v4.2
+  image: musicscience37/clang-ci:clang14-v4.3
   variables:
-    BUILD_DIR: build_clang12_release
+    BUILD_DIR: build_clang14_release
 
-clang-12-bench:
+clang-14-bench:
   extends: .clang-bench-base
   stage: Test with Clang
-  image: musicscience37/clang-ci:clang12-v4.2
+  image: musicscience37/clang-ci:clang14-v4.3
   variables:
-    BUILD_DIR: build_clang12_bench
+    BUILD_DIR: build_clang14_bench
 
-clang-13-debug:
+clang-14-asan-ubsan:
   extends: .clang-debug-test-base
   stage: Test with Clang
-  image: musicscience37/clang-ci:clang13-v4.2
-  variables:
-    BUILD_DIR: build_clang12_debug
-
-clang-13-release:
-  extends: .clang-release-test-base
-  stage: Test with Clang
-  image: musicscience37/clang-ci:clang13-v4.2
-  variables:
-    BUILD_DIR: build_clang12_release
-
-clang-13-bench:
-  extends: .clang-bench-base
-  stage: Test with Clang
-  image: musicscience37/clang-ci:clang13-v4.2
-  variables:
-    BUILD_DIR: build_clang13_bench
-
-clang-12-asan-ubsan:
-  extends: .clang-debug-test-base
-  stage: Test with Clang
-  image: musicscience37/clang-ci:clang12-v4.2
+  image: musicscience37/clang-ci:clang14-v4.3
   variables:
     BUILD_DIR: build_clang_asan_ubsan
+    ASAN_OPTIONS: "alloc_dealloc_mismatch=0"
   script:
     - cmake -S ./ -B $BUILD_DIR
       -DCMAKE_BUILD_TYPE=Debug
@@ -351,14 +331,14 @@ clang-12-asan-ubsan:
     - cmake --build .
     - ctest -V
 
-clang-12-conan:
+clang-14-conan:
   extends: .retry setting
   stage: Test with Clang
   needs:
     - sync pipenv
   dependencies:
     - sync pipenv
-  image: musicscience37/clang-ci:clang12-v4.2
+  image: musicscience37/clang-ci:clang14-v4.3
   variables:
     CONAN_CHANNEL: "testing"
   script:
@@ -367,14 +347,14 @@ clang-12-conan:
     - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan create --build missing --test-folder test/conan_package . ${CONAN_USER}/${CONAN_CHANNEL}
 
-clang-12-conan-release:
+clang-14-conan-release:
   extends: .retry setting
   stage: Publish
   needs:
     - sync pipenv
   dependencies:
     - sync pipenv
-  image: musicscience37/clang-ci:clang12-v4.2
+  image: musicscience37/clang-ci:clang14-v4.3
   variables:
     CONAN_CHANNEL: "stable"
   script:
@@ -473,7 +453,7 @@ doc:
     - sync pipenv
   dependencies:
     - sync pipenv
-  image: musicscience37/sphinx-doxygen:clang12-v4.2
+  image: musicscience37/sphinx-doxygen:clang14-v4.3
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   script:
