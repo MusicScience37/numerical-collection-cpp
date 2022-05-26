@@ -46,8 +46,9 @@
 
 class catch_event_listener : public Catch::EventListenerBase {
 public:
-    explicit catch_event_listener(const Catch::ReporterConfig& config)
-        : EventListenerBase(config) {}
+    template <typename... Args>
+    explicit catch_event_listener(Args&&... args)
+        : EventListenerBase(std::forward<Args>(args)...) {}
 
     void testRunStarting(const Catch::TestRunInfo& /*testRunInfo*/) override {
         const auto file_path = fmt::format("num_collect_test_units_{}.log",
