@@ -246,6 +246,7 @@ TEST_CASE("num_collect::logging::iteration_logger") {
         iteration_logger.write_summary_to(logger);
 
         CHECK(logs.size() == 1);  // NOLINT
-        CHECK(logs.at(0) == "Last state: val1=12345, val2=3.14, val3=abc, ");
+        CHECK(logs.at(0) ==
+            "Finished iterations: val1=12345, val2=3.14, val3=abc");
     }
 }
