@@ -132,7 +132,7 @@ namespace num_collect::logging::impl {
         return "trace";
     case log_level::iteration:
     case log_level::iteration_label:
-        return "iter";
+        return "iteration";
     case log_level::summary:
         return "summary";
     case log_level::info:

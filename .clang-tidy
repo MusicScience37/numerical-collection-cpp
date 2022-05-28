@@ -17,6 +17,7 @@ Checks: >
     -readability-function-cognitive-complexity,
   modernize-*,
     -modernize-pass-by-value,
+    -modernize-return-braced-init-list,
   hicpp-*,
   cert-*,
     -cert-err58-cpp,
