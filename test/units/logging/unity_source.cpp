@@ -1,4 +1,5 @@
 #include "concepts/getter_of_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "impl/iteration_layer_handler_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/log_formatter_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/log_tag_config_tree_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/log_tag_element_test.cpp"  // NOLINT(bugprone-suspicious-include)

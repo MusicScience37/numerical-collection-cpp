@@ -1,5 +1,6 @@
 set(SOURCE_FILES
     concepts/getter_of_test.cpp
+    impl/iteration_layer_handler_test.cpp
     impl/log_formatter_test.cpp
     impl/log_tag_config_tree_test.cpp
     impl/log_tag_element_test.cpp
