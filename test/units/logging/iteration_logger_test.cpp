@@ -127,6 +127,8 @@ TEST_CASE("num_collect::logging::iteration_logger") {
     const auto config =
         num_collect::logging::log_tag_config()
             .output_log_level(num_collect::logging::log_level::trace)
+            .output_log_level_in_child_iterations(
+                num_collect::logging::log_level::summary)
             .iteration_output_period(iteration_output_period)
             .iteration_label_period(iteration_label_period)
             .sink(sink);
@@ -248,5 +250,28 @@ TEST_CASE("num_collect::logging::iteration_logger") {
         CHECK(logs.size() == 1);  // NOLINT
         CHECK(logs.at(0) ==
             "Finished iterations: val1=12345, val2=3.14, val3=abc");
+    }
+
+    SECTION("limit child iteration logs") {
+        constexpr auto child_tag = num_collect::logging::log_tag_view(
+            "num_collect::logging::iteration_logger_test::child");
+        auto child_logger = num_collect::logging::logger(tag, config);
+        logger.initialize_child_algorithm_logger(child_logger);
+        auto child_iteration_logger =
+            num_collect::logging::iteration_logger(child_logger);
+
+        int val1 = 0;
+        child_iteration_logger.append("val1", val1);
+
+        std::vector<std::string> logs;
+        ALLOW_CALL(*sink, write(_, _, _, _, _))
+            // NOLINTNEXTLINE
+            .LR_SIDE_EFFECT(logs.emplace_back(_5));
+
+        child_iteration_logger.write_iteration_to();
+        CHECK(logs.size() == 0);  // NOLINT
+
+        child_iteration_logger.write_summary_to();
+        CHECK(logs.size() == 1);  // NOLINT
     }
 }

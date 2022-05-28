@@ -19,13 +19,18 @@
  */
 #pragma once
 
+#include <chrono>
 #include <iterator>
 #include <string_view>
 #include <utility>
 
 #include <fmt/format.h>
 
+#include "num_collect/logging/impl/iteration_layer_handler.h"
 #include "num_collect/logging/log_config.h"
+#include "num_collect/logging/log_level.h"
+#include "num_collect/logging/log_sink_base.h"
+#include "num_collect/logging/log_tag.h"
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/util/source_info_view.h"
@@ -125,9 +130,9 @@ inline constexpr auto default_tag = log_tag_view("");
 /*!
  * \brief Class of loggers.
  *
- * \note Member functions in this class except for constructors are thread safe
- * thanks to thread safety in log sinks (objects derived from
- * num_collect::logging::log_sink_base class).
+ * \thread_safety All `const` member functions (member functions except for
+ * initialize_child_algorithm_logger function, constructors, destructor, and
+ * assignment operators) are thread safe even for the same object.
  */
 class logger {
 public:
@@ -179,6 +184,32 @@ public:
     }
 
     /*!
+     * \brief Set the state of iterating.
+     */
+    void start_iteration() const noexcept {
+        iteration_layer_handler_.start_iteration();
+    }
+
+    /*!
+     * \brief Set the state of not iterating.
+     */
+    void finish_iteration() const noexcept {
+        iteration_layer_handler_.finish_iteration();
+    }
+
+    /*!
+     * \brief Initialize a logger as the logger of the algorithm called from the
+     * algorithm of this logger.
+     *
+     * \param[in] child Logger of the algorithm called from the algorithm of
+     * this logger.
+     */
+    void initialize_child_algorithm_logger(logger& child) noexcept {
+        iteration_layer_handler_.initialize_lower_layer(
+            child.iteration_layer_handler_);
+    }
+
+    /*!
      * \brief Check whether to write logs with a log level.
      *
      * \param[in] level Log level.
@@ -186,6 +217,9 @@ public:
      * \retval false Should not write logs.
      */
     [[nodiscard]] auto should_log(log_level level) const noexcept -> bool {
+        if (iteration_layer_handler_.is_upper_layer_iterating()) {
+            return level >= config_.output_log_level_in_child_iterations();
+        }
         return level >= config_.output_log_level();
     }
 
@@ -320,6 +354,9 @@ private:
 
     //! Configuration.
     log_tag_config config_;
+
+    //! Handler of layers of iterations.
+    impl::iteration_layer_handler iteration_layer_handler_{};
 };
 
 }  // namespace num_collect::logging

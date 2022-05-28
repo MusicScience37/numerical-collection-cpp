@@ -62,7 +62,7 @@ public:
      *
      * This actually doesn nothing.
      */
-    [[nodiscard]] auto operator=(  // NOLINT
+    auto operator=(  // NOLINT
         const iteration_layer_handler& /*obj*/) noexcept
         -> iteration_layer_handler& {
         // No operation.
@@ -76,7 +76,7 @@ public:
      *
      * This actually doesn nothing.
      */
-    [[nodiscard]] auto operator=(iteration_layer_handler&& /*obj*/) noexcept
+    auto operator=(iteration_layer_handler&& /*obj*/) noexcept
         -> iteration_layer_handler& {
         // No operation.
         return *this;
@@ -102,8 +102,7 @@ public:
      *
      * \param[in] lower_layer Handler of the lower layer.
      */
-    void initialize_lower_layer(
-        const iteration_layer_handler& lower_layer) const noexcept {
+    void initialize_lower_layer(iteration_layer_handler& lower_layer) noexcept {
         lower_layer.node_->set_parent(node_);
     }
 

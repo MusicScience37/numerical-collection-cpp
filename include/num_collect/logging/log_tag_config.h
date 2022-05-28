@@ -115,6 +115,41 @@ public:
     }
 
     /*!
+     * \brief Get the minimum log level to output in child iterations.
+     *
+     * \return Value.
+     */
+    [[nodiscard]] auto output_log_level_in_child_iterations() const noexcept
+        -> log_level {
+        return output_log_level_in_child_iterations_;
+    }
+
+    /*!
+     * \brief Set the minimum log level to output in child iterations.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto output_log_level_in_child_iterations(log_level val)
+        -> log_tag_config& {
+        switch (val) {
+        case log_level::trace:
+        case log_level::iteration:
+        case log_level::iteration_label:
+        case log_level::summary:
+        case log_level::info:
+        case log_level::warning:
+        case log_level::error:
+        case log_level::off:
+            break;
+        default:
+            throw assertion_failure("Invalid log level.");
+        }
+        output_log_level_in_child_iterations_ = val;
+        return *this;
+    }
+
+    /*!
      * \brief Get the period to write iteration logs.
      *
      * \return value.
@@ -168,6 +203,9 @@ private:
 
     //! Minimum log level to output.
     log_level output_log_level_{log_level::info};
+
+    //! Minimum log level to output in child iterations.
+    log_level output_log_level_in_child_iterations_{log_level::info};
 
     //! Default period to write iteration logs.
     static constexpr index_type default_iteration_output_period = 10;

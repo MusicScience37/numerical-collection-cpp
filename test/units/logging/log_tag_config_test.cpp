@@ -55,6 +55,12 @@ TEST_CASE("num_collect::logging::log_tag_config") {
             CHECK(config.output_log_level(val).output_log_level() == val);
         }
 
+        SECTION("output_log_level_in_child_iterations") {
+            constexpr auto val = log_level::summary;
+            CHECK(config.output_log_level_in_child_iterations(val)
+                      .output_log_level_in_child_iterations() == val);
+        }
+
         SECTION("iteration_output_period") {
             CHECK_THROWS(config.iteration_output_period(0));
 
