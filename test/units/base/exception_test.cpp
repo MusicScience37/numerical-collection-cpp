@@ -27,8 +27,8 @@
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("exceptions", "", num_collect::num_collect_exception,
-    num_collect::assertion_failure, num_collect::algorithm_failure,
-    num_collect::file_error) {
+    num_collect::assertion_failure, num_collect::invalid_argument,
+    num_collect::algorithm_failure, num_collect::file_error) {
     using test_type = TestType;
 
     SECTION("basic functions") {
@@ -42,7 +42,7 @@ TEMPLATE_TEST_CASE("exceptions", "", num_collect::num_collect_exception,
         const auto message = std::string("test message");
         auto e = test_type(message);
         REQUIRE_THAT(e.what(), Catch::Matchers::ContainsSubstring(message));
-#if NUM_COLLECT_HAS_SOURCE_LOCATION
+#if NUM_COLLECT_HAS_BUILTIN_FUNCTION
         REQUIRE_THAT(
             e.what(), Catch::Matchers::ContainsSubstring("exception_test.cpp"));
 #endif

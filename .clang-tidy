@@ -14,6 +14,7 @@ Checks: >
   portability-*,
   readability-*,
     readability-identifier-naming,
+    -readability-identifier-length,
     -readability-function-cognitive-complexity,
   modernize-*,
     -modernize-pass-by-value,
@@ -40,6 +41,7 @@ Checks: >
 # - bugprone-easily-swappable-parameters is difficult to fix.
 # - cert-err58-cpp produces warnings in all tests due to Catch2 library.
 # - cppcoreguidelines-avoid-non-const-global-variables produces warnings in all tests due to Catch2 library.
+# - readability-identifier-length prevent traditional codes.
 
 CheckOptions:
   # Naming Conventions
