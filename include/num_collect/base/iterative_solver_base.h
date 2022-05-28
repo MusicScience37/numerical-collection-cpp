@@ -67,14 +67,14 @@ public:
      * to have been done.
      */
     void solve() {
-        logging::iteration_logger iter_logger;
+        logging::iteration_logger iter_logger{this->logger()};
         configure_iteration_logger(iter_logger);
-        iter_logger.write_iteration_to(this->logger());
+        iter_logger.write_iteration_to();
         while (!is_stop_criteria_satisfied()) {
             iterate();
-            iter_logger.write_iteration_to(this->logger());
+            iter_logger.write_iteration_to();
         }
-        iter_logger.write_summary_to(this->logger());
+        iter_logger.write_summary_to();
     }
 
     /*!

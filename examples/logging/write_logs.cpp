@@ -74,10 +74,10 @@ static void write_iterations() {
     num_collect::logging::log_config::instance().set_config_of(my_tag, config);
 
     // Logger.
-    const auto logger = num_collect::logging::logger(my_tag);
+    auto logger = num_collect::logging::logger(my_tag);
 
     // Configure.
-    auto iteration_logger = num_collect::logging::iteration_logger();
+    auto iteration_logger = num_collect::logging::iteration_logger(logger);
     int val1 = 0;
     iteration_logger.append("val1", val1);  // Reference is hold here.
     std::string val2;
@@ -90,18 +90,18 @@ static void write_iterations() {
     // Set and write values.
     val1 = 3;  // NOLINT
     val2 = "abc";
-    iteration_logger.write_iteration_to(logger);
+    iteration_logger.write_iteration_to();
 
     // Iteratively set and write values.
     constexpr int repetition = 20;
     iteration_logger.reset_count();
     for (int i = 0; i < repetition; ++i) {
         val1 = i;
-        iteration_logger.write_iteration_to(logger);
+        iteration_logger.write_iteration_to();
     }
 
     // Last state.
-    iteration_logger.write_summary_to(logger);
+    iteration_logger.write_summary_to();
 }
 
 auto main(int argc, char** argv) -> int {

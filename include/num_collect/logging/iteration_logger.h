@@ -346,8 +346,14 @@ class iteration_logger {
 public:
     /*!
      * \brief Construct.
+     *
+     * \param[in] logger Logger.
      */
-    iteration_logger() = default;
+    explicit iteration_logger(num_collect::logging::logger& logger) {
+        if (logger.should_log(log_level::summary)) {
+            logger_ = &logger;
+        }
+    }
 
     /*!
      * \brief Reset the iteration count.
@@ -449,34 +455,34 @@ public:
     /*!
      * \brief Write an iteration to a logger.
      *
-     * \param[in] l Logger.
      * \param[in] source Information of the source code.
      *
      * \note This will write logs taking period configurations into account.
      */
-    void write_iteration_to(const logger& l,
+    void write_iteration_to(
         util::source_info_view source = util::source_info_view()) {
-        if (!l.should_log(log_level::iteration)) {
+        if (logger_ == nullptr || !logger_->should_log(log_level::iteration)) {
             return;
         }
 
-        if ((iterations_ % l.config().iteration_output_period()) != 0) {
+        if ((iterations_ % logger_->config().iteration_output_period()) != 0) {
             ++iterations_;
             return;
         }
 
         if ((iterations_ %
-                (l.config().iteration_label_period() *
-                    l.config().iteration_output_period())) == 0) {
+                (logger_->config().iteration_label_period() *
+                    logger_->config().iteration_output_period())) == 0) {
             buffer_.clear();
             format_labels_to(buffer_);
-            l.iteration_label(source)(
+            logger_->iteration_label(source)(
                 std::string_view(buffer_.data(), buffer_.size()));
         }
 
         buffer_.clear();
         format_values_to(buffer_);
-        l.iteration(source)(std::string_view(buffer_.data(), buffer_.size()));
+        logger_->iteration(source)(
+            std::string_view(buffer_.data(), buffer_.size()));
 
         ++iterations_;
     }
@@ -484,21 +490,24 @@ public:
     /*!
      * \brief Write a summary to a logger.
      *
-     * \param[in] l Logger.
      * \param[in] source Information of the source code.
      */
-    void write_summary_to(const logger& l,
+    void write_summary_to(
         util::source_info_view source = util::source_info_view()) {
-        if (!l.should_log(log_level::summary)) {
+        if (logger_ == nullptr || !logger_->should_log(log_level::summary)) {
             return;
         }
 
         buffer_.clear();
         format_summary_to(buffer_);
-        l.summary(source)(std::string_view(buffer_.data(), buffer_.size()));
+        logger_->summary(source)(
+            std::string_view(buffer_.data(), buffer_.size()));
     }
 
 private:
+    //! Logger to write outputs. (Null for no outputs.)
+    logger* logger_{nullptr};
+
     //! Log items.
     std::vector<std::shared_ptr<iteration_logger_item_base>> items_{};
 

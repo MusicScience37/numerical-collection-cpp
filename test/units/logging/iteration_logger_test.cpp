@@ -130,8 +130,8 @@ TEST_CASE("num_collect::logging::iteration_logger") {
             .iteration_output_period(iteration_output_period)
             .iteration_label_period(iteration_label_period)
             .sink(sink);
-    const auto logger = num_collect::logging::logger(tag, config);
-    auto iteration_logger = num_collect::logging::iteration_logger();
+    auto logger = num_collect::logging::logger(tag, config);
+    auto iteration_logger = num_collect::logging::iteration_logger(logger);
 
     SECTION("set items") {
         constexpr num_collect::index_type width = 7;
@@ -152,7 +152,7 @@ TEST_CASE("num_collect::logging::iteration_logger") {
         val1 = 12345;  // NOLINT
         val2 = 3.14;   // NOLINT
         val3 = "abc";
-        iteration_logger.write_iteration_to(logger);
+        iteration_logger.write_iteration_to();
 
         REQUIRE(logs.size() == 2);
         CHECK(logs.at(0) == "    val1    val2    val3");
@@ -179,7 +179,7 @@ TEST_CASE("num_collect::logging::iteration_logger") {
         constexpr int repetition = 10;
         for (int i = 0; i < repetition; ++i) {
             val1 = i;
-            iteration_logger.write_iteration_to(logger);
+            iteration_logger.write_iteration_to();
         }
 
         CHECK(logs.size() == 7);                          // NOLINT
@@ -213,7 +213,7 @@ TEST_CASE("num_collect::logging::iteration_logger") {
         for (int i = 0; i < repetition; ++i) {
             iteration_logger.reset_count();
             val1 = i;
-            iteration_logger.write_iteration_to(logger);
+            iteration_logger.write_iteration_to();
         }
 
         CHECK(logs.size() == 6);                          // NOLINT
@@ -243,7 +243,7 @@ TEST_CASE("num_collect::logging::iteration_logger") {
         val2 = 3.14;   // NOLINT
         val3 = "abc";
 
-        iteration_logger.write_summary_to(logger);
+        iteration_logger.write_summary_to();
 
         CHECK(logs.size() == 1);  // NOLINT
         CHECK(logs.at(0) ==

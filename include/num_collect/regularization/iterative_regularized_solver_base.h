@@ -100,16 +100,16 @@ public:
     void solve(const scalar_type& param, data_type& solution) {
         init(param, solution);
 
-        logging::iteration_logger iter_logger;
+        logging::iteration_logger iter_logger{this->logger()};
         configure_iteration_logger(iter_logger, solution);
-        iter_logger.write_iteration_to(logger());
+        iter_logger.write_iteration_to();
 
         while (!is_stop_criteria_satisfied(solution)) {
             iterate(param, solution);
-            iter_logger.write_iteration_to(logger());
+            iter_logger.write_iteration_to();
         }
 
-        iter_logger.write_summary_to(logger());
+        iter_logger.write_summary_to();
     }
 
 protected:
