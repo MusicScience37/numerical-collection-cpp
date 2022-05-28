@@ -349,11 +349,13 @@ public:
      *
      * \param[in] logger Logger.
      */
-    explicit iteration_logger(num_collect::logging::logger& logger) {
-        if (logger.should_log(log_level::summary)) {
-            logger_ = &logger;
-        }
-    }
+    explicit iteration_logger(num_collect::logging::logger& logger)
+        : tag_(logger.tag()),
+          write_iterations_(logger.should_log(log_level::iteration)),
+          write_summaries_(logger.should_log(log_level::summary)),
+          sink_(logger.config().sink()),
+          iteration_output_period_(logger.config().iteration_output_period()),
+          iteration_label_period_(logger.config().iteration_label_period()) {}
 
     /*!
      * \brief Reset the iteration count.
@@ -461,27 +463,28 @@ public:
      */
     void write_iteration_to(
         util::source_info_view source = util::source_info_view()) {
-        if (logger_ == nullptr || !logger_->should_log(log_level::iteration)) {
+        if (!write_iterations_) {
             return;
         }
 
-        if ((iterations_ % logger_->config().iteration_output_period()) != 0) {
+        if ((iterations_ % iteration_output_period_) != 0) {
             ++iterations_;
             return;
         }
 
         if ((iterations_ %
-                (logger_->config().iteration_label_period() *
-                    logger_->config().iteration_output_period())) == 0) {
+                (iteration_label_period_ * iteration_output_period_)) == 0) {
             buffer_.clear();
             format_labels_to(buffer_);
-            logger_->iteration_label(source)(
+            sink_->write(std::chrono::system_clock::now(), tag_.name(),
+                log_level::iteration_label, source,
                 std::string_view(buffer_.data(), buffer_.size()));
         }
 
         buffer_.clear();
         format_values_to(buffer_);
-        logger_->iteration(source)(
+        sink_->write(std::chrono::system_clock::now(), tag_.name(),
+            log_level::iteration, source,
             std::string_view(buffer_.data(), buffer_.size()));
 
         ++iterations_;
@@ -494,19 +497,35 @@ public:
      */
     void write_summary_to(
         util::source_info_view source = util::source_info_view()) {
-        if (logger_ == nullptr || !logger_->should_log(log_level::summary)) {
+        if (!write_summaries_) {
             return;
         }
 
         buffer_.clear();
         format_summary_to(buffer_);
-        logger_->summary(source)(
+        sink_->write(std::chrono::system_clock::now(), tag_.name(),
+            log_level::summary, source,
             std::string_view(buffer_.data(), buffer_.size()));
     }
 
 private:
-    //! Logger to write outputs. (Null for no outputs.)
-    logger* logger_{nullptr};
+    //! Log tag.
+    log_tag tag_;
+
+    //! Whether to write iteration logs.
+    bool write_iterations_;
+
+    //! Whether to write summary logs.
+    bool write_summaries_;
+
+    //! Log sink.
+    std::shared_ptr<log_sink_base> sink_;
+
+    //! Period to write iteration logs.
+    index_type iteration_output_period_;
+
+    //! Period to write labels of iteration logs.
+    index_type iteration_label_period_;
 
     //! Log items.
     std::vector<std::shared_ptr<iteration_logger_item_base>> items_{};

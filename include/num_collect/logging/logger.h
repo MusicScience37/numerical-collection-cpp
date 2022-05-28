@@ -163,6 +163,13 @@ public:
         : tag_(std::move(tag)), config_(std::move(config)) {}
 
     /*!
+     * \brief Get the log tag.
+     *
+     * \return Log tag.
+     */
+    [[nodiscard]] auto tag() const noexcept -> const log_tag& { return tag_; }
+
+    /*!
      * \brief Get the configuration.
      *
      * \return Configuration.
