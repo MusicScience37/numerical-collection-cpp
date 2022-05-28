@@ -47,6 +47,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
 find_package(fmt REQUIRED)
 find_package(Eigen3 REQUIRED)
+find_package(cpp_hash_tables REQUIRED)
 if(NUM_COLLECT_TESTING)
     find_package(Catch2 REQUIRED)
     find_package(trompeloeil REQUIRED)
@@ -70,8 +71,9 @@ add_library(num_collect INTERFACE)
 target_include_directories(num_collect
                            INTERFACE ${NUM_COLLECT_SOURCE_DIR}/include)
 target_link_libraries(
-    num_collect INTERFACE fmt::fmt Eigen3::Eigen num_collect_cpp_warnings
-                          num_collect_cpp_flags)
+    num_collect
+    INTERFACE fmt::fmt Eigen3::Eigen cpp_hash_tables::cpp_hash_tables
+              num_collect_cpp_warnings num_collect_cpp_flags)
 
 if(NUM_COLLECT_BUILD_DOC)
     add_subdirectory(doc)
