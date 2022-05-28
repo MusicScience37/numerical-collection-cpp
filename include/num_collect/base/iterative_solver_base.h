@@ -39,7 +39,9 @@ public:
      * \param[in] tag Log tag.
      */
     explicit iterative_solver_base(logging::log_tag_view tag)
-        : logging::logging_mixin(tag) {}
+        : logging::logging_mixin(tag) {
+        this->logger().set_iterative();
+    }
 
     /*!
      * \brief Iterate the algorithm once.
@@ -67,14 +69,14 @@ public:
      * to have been done.
      */
     void solve() {
-        logging::iteration_logger iter_logger;
+        logging::iteration_logger iter_logger{this->logger()};
         configure_iteration_logger(iter_logger);
-        iter_logger.write_iteration_to(this->logger());
+        iter_logger.write_iteration();
         while (!is_stop_criteria_satisfied()) {
             iterate();
-            iter_logger.write_iteration_to(this->logger());
+            iter_logger.write_iteration();
         }
-        iter_logger.write_summary_to(this->logger());
+        iter_logger.write_summary();
     }
 
     /*!

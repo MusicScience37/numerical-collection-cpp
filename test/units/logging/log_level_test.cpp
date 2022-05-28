@@ -33,7 +33,8 @@ TEST_CASE("num_collect::logging::log_level") {
             {log_level::iteration_label, "iteration_label"},
             {log_level::summary, "summary"}, {log_level::info, "info"},
             {log_level::warning, "warning"}, {log_level::error, "error"},
-            {static_cast<log_level>(static_cast<int>(log_level::error) + 1),
+            {log_level::off, "off"},
+            {static_cast<log_level>(static_cast<int>(log_level::off) + 1),
                 "unknown"}};
 
         for (const auto& [level, str] : dict) {

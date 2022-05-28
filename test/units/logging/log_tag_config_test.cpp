@@ -23,17 +23,17 @@
 
 #include "mock_log_sink.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/logging/log_level.h"
 
 TEST_CASE("num_collect::logging::log_tag_config") {
+    using num_collect::logging::log_level;
     using num_collect::logging::log_tag_config;
 
     SECTION("default config") {
         const auto config = log_tag_config();
 
         CHECK(config.sink() != nullptr);
-        CHECK(!config.write_traces());
-        CHECK(!config.write_iterations());
-        CHECK(!config.write_summary());
+        CHECK(config.output_log_level() == log_level::info);
         CHECK(config.iteration_output_period() > 0);
         CHECK(config.iteration_label_period() > 0);
     }
@@ -50,16 +50,15 @@ TEST_CASE("num_collect::logging::log_tag_config") {
             CHECK(config.sink(sink).sink() == sink);
         }
 
-        SECTION("write_traces") {
-            CHECK(config.write_traces(true).write_traces());
+        SECTION("output_log_level") {
+            constexpr auto val = log_level::iteration;
+            CHECK(config.output_log_level(val).output_log_level() == val);
         }
 
-        SECTION("write_iterations") {
-            CHECK(config.write_iterations(true).write_iterations());
-        }
-
-        SECTION("write_summary") {
-            CHECK(config.write_summary(true).write_summary());
+        SECTION("output_log_level_in_child_iterations") {
+            constexpr auto val = log_level::summary;
+            CHECK(config.output_log_level_in_child_iterations(val)
+                      .output_log_level_in_child_iterations() == val);
         }
 
         SECTION("iteration_output_period") {

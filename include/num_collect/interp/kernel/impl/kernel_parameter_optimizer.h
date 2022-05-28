@@ -107,6 +107,15 @@ public:
         return optimizer_.opt_variable();
     }
 
+    /*!
+     * \brief Access to the logger.
+     *
+     * \return Logger.
+     */
+    [[nodiscard]] auto logger() noexcept -> logging::logger& {
+        return optimizer_.logger();
+    }
+
 private:
     //! Interpolator.
     auto_regularizer_wrapper<value_type>* interpolator_;

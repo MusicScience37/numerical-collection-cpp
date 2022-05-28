@@ -48,6 +48,15 @@ public:
         return logger_;
     }
 
+    /*!
+     * \brief Access to the logger.
+     *
+     * \return Logger.
+     */
+    [[nodiscard]] auto logger() noexcept -> num_collect::logging::logger& {
+        return logger_;
+    }
+
 private:
     //! Logger.
     num_collect::logging::logger logger_;

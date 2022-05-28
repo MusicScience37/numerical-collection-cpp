@@ -104,7 +104,9 @@ protected:
      * \param[in] tag Log tag.
      */
     explicit implicit_regularized_solver_base(logging::log_tag_view tag)
-        : logging::logging_mixin(tag) {}
+        : logging::logging_mixin(tag) {
+        this->logger().set_iterative();
+    }
 
     /*!
      * \brief Access derived object.

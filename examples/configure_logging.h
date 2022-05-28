@@ -21,6 +21,7 @@
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_config.h"
+#include "num_collect/logging/log_level.h"
 #include "num_collect/logging/log_tag_config.h"
 
 /*!
@@ -28,9 +29,9 @@
  */
 inline void configure_logging(
     num_collect::index_type iteration_output_period = 1) {
-    const auto config = num_collect::logging::log_tag_config()
-                            .write_iterations(true)
-                            .write_summary(true)
-                            .iteration_output_period(iteration_output_period);
+    const auto config =
+        num_collect::logging::log_tag_config()
+            .output_log_level(num_collect::logging::log_level::iteration)
+            .iteration_output_period(iteration_output_period);
     num_collect::logging::log_config::instance().set_default_tag_config(config);
 }
