@@ -12,7 +12,8 @@ project(
     DESCRIPTION
         "A collection of algorithms in numerical analysis implemented in C++"
     LANGUAGES CXX)
-message(STATUS "numerical-collection-cpp version ${PROJECT_VERSION}")
+set(FULL_PROJECT_NAME "numerical-collection-cpp")
+message(STATUS "${FULL_PROJECT_NAME} version ${PROJECT_VERSION}")
 message(STATUS "build type: ${CMAKE_BUILD_TYPE}")
 
 set(BUILDNAME
@@ -22,11 +23,9 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CTestCustom.cmake
                ${CMAKE_BINARY_DIR}/CTestCustom.cmake)
 include(CTest)
 
-option(NUM_COLLECT_BUILD_DOC "build documentation of numerical-collection-cpp"
-       OFF)
-option(NUM_COLLECT_TESTING "enable tests of numerical-collection-cpp" OFF)
-option(NUM_COLLECT_BUILD_EXAMPLES "build examples of numerical-collection-cpp"
-       OFF)
+option(NUM_COLLECT_BUILD_DOC "build documentation of ${FULL_PROJECT_NAME}" OFF)
+option(NUM_COLLECT_TESTING "enable tests of ${FULL_PROJECT_NAME}" OFF)
+option(NUM_COLLECT_BUILD_EXAMPLES "build examples of ${FULL_PROJECT_NAME}" OFF)
 option(NUM_COLLECT_ENABLE_PROFILING "enable profiling" OFF)
 
 set(CMAKE_CXX_STANDARD
@@ -53,6 +52,8 @@ if(NUM_COLLECT_TESTING)
     find_package(trompeloeil REQUIRED)
     find_package(ApprovalTests REQUIRED)
     find_package(cpp_stat_bench REQUIRED)
+    find_package(lyra REQUIRED)
+    find_package(Boost REQUIRED)
 endif()
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
