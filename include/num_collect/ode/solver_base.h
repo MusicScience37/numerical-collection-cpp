@@ -93,16 +93,16 @@ public:
     void solve_till(scalar_type end_time) {
         logging::iteration_logger iter_logger{this->logger()};
         configure_iteration_logger(iter_logger);
-        iter_logger.write_iteration_to();
+        iter_logger.write_iteration();
         while (time() < end_time) {
             const scalar_type max_step_size = end_time - time();
             if (step_size() > max_step_size) {
                 step_size(max_step_size);
             }
             step();
-            iter_logger.write_iteration_to();
+            iter_logger.write_iteration();
         }
-        iter_logger.write_summary_to();
+        iter_logger.write_summary();
     }
 
     /*!

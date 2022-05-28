@@ -90,10 +90,7 @@ public:
     /*!
      * \brief Set this node to an iterative algorithm.
      */
-    void set_iterative() const noexcept {
-        node_->set_iterative();
-        ;
-    }
+    void set_iterative() const noexcept { node_->set_iterative(); }
 
     /*!
      * \brief Initialize the lower layer.

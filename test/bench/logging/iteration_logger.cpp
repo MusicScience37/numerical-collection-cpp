@@ -52,7 +52,7 @@ static void perform(
     };
     iteration_logger.append<num_collect::index_type>("val2", val3_func);
 
-    STAT_BENCH_MEASURE() { iteration_logger.write_iteration_to(); };
+    STAT_BENCH_MEASURE() { iteration_logger.write_iteration(); };
 }
 
 // NOLINTNEXTLINE

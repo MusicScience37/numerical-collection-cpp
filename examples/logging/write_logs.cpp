@@ -90,18 +90,18 @@ static void write_iterations() {
     // Set and write values.
     val1 = 3;  // NOLINT
     val2 = "abc";
-    iteration_logger.write_iteration_to();
+    iteration_logger.write_iteration();
 
     // Iteratively set and write values.
     constexpr int repetition = 20;
     iteration_logger.reset_count();
     for (int i = 0; i < repetition; ++i) {
         val1 = i;
-        iteration_logger.write_iteration_to();
+        iteration_logger.write_iteration();
     }
 
     // Last state.
-    iteration_logger.write_summary_to();
+    iteration_logger.write_summary();
 }
 
 auto main(int argc, char** argv) -> int {

@@ -462,7 +462,7 @@ public:
      *
      * \note This will write logs taking period configurations into account.
      */
-    void write_iteration_to(
+    void write_iteration(
         util::source_info_view source = util::source_info_view()) {
         if (!write_iterations_) {
             return;
@@ -496,7 +496,7 @@ public:
      *
      * \param[in] source Information of the source code.
      */
-    void write_summary_to(
+    void write_summary(
         util::source_info_view source = util::source_info_view()) {
         if (!write_summaries_) {
             return;
