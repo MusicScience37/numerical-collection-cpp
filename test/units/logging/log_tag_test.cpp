@@ -24,11 +24,8 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-#include "num_collect/util/hash_string.h"
-
 TEST_CASE("num_collect::logging::log_tag") {
     using num_collect::logging::log_tag;
-    using num_collect::util::hash_string;
 
     SECTION("check noexcept") {
         STATIC_REQUIRE(std::is_copy_constructible_v<log_tag>);
@@ -44,7 +41,6 @@ TEST_CASE("num_collect::logging::log_tag") {
         const auto tag = log_tag(name);
 
         REQUIRE(tag.name() == std::string(name));
-        REQUIRE(tag.hash() == hash_string(name));
     }
 
     SECTION("compare") {

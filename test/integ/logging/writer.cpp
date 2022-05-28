@@ -24,6 +24,7 @@
 
 #include "num_collect/logging/iteration_logger.h"
 #include "num_collect/logging/log_config.h"
+#include "num_collect/logging/log_level.h"
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
@@ -38,11 +39,10 @@ static void write_logs() {
         "/test/logging.cpp", 1, 0, "write_logs");
 
     // Configuration.
-    const auto config = num_collect::logging::log_config::instance()
-                            .get_default_tag_config()
-                            .write_traces(true)
-                            .write_iterations(true)
-                            .write_summary(true);
+    const auto config =
+        num_collect::logging::log_config::instance()
+            .get_default_tag_config()
+            .output_log_level(num_collect::logging::log_level::trace);
     num_collect::logging::log_config::instance().set_config_of(my_tag, config);
 
     // Create a logger with a tag.
@@ -81,13 +81,12 @@ static void write_iterations() {
         "/test/logging.cpp", 3, 0, "write_iterations");
 
     // Configuration.
-    const auto config = num_collect::logging::log_config::instance()
-                            .get_default_tag_config()
-                            .write_traces(true)
-                            .write_iterations(true)
-                            .write_summary(true)
-                            .iteration_output_period(2)  // NOLINT
-                            .iteration_label_period(5);  // NOLINT
+    const auto config =
+        num_collect::logging::log_config::instance()
+            .get_default_tag_config()
+            .output_log_level(num_collect::logging::log_level::trace)
+            .iteration_output_period(2)  // NOLINT
+            .iteration_label_period(5);  // NOLINT
     num_collect::logging::log_config::instance().set_config_of(my_tag, config);
 
     // Logger.

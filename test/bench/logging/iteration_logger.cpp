@@ -28,6 +28,7 @@
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_config.h"
+#include "num_collect/logging/log_level.h"
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
@@ -73,7 +74,7 @@ STAT_BENCH_CASE("iteration_logger", "write log") {
         num_collect::logging::log_tag_config()
             .sink(std::make_shared<num_collect::logging::simple_log_sink>(
                 log_file_path))
-            .write_iterations(true);
+            .output_log_level(num_collect::logging::log_level::trace);
     num_collect::logging::log_config::instance().set_config_of(tag, config);
 
     perform(STAT_BENCH_CONTEXT_NAME);

@@ -27,6 +27,7 @@
 #include "mock_log_sink.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_config.h"
+#include "num_collect/logging/log_level.h"
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
@@ -123,13 +124,12 @@ TEST_CASE("num_collect::logging::iteration_logger") {
         "num_collect::logging::iteration_logger_test");
     const auto sink =
         std::make_shared<num_collect_test::logging::mock_log_sink>();
-    const auto config = num_collect::logging::log_tag_config()
-                            .write_traces(true)
-                            .write_iterations(true)
-                            .write_summary(true)
-                            .iteration_output_period(iteration_output_period)
-                            .iteration_label_period(iteration_label_period)
-                            .sink(sink);
+    const auto config =
+        num_collect::logging::log_tag_config()
+            .output_log_level(num_collect::logging::log_level::trace)
+            .iteration_output_period(iteration_output_period)
+            .iteration_label_period(iteration_label_period)
+            .sink(sink);
     const auto logger = num_collect::logging::logger(tag, config);
     auto iteration_logger = num_collect::logging::iteration_logger();
 

@@ -24,12 +24,9 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-#include "num_collect/util/hash_string.h"
-
 TEST_CASE("num_collect::logging::log_tag_view") {
     using num_collect::logging::log_tag;
     using num_collect::logging::log_tag_view;
-    using num_collect::util::hash_string;
 
     SECTION("check noexcept") {
         STATIC_REQUIRE(
@@ -47,7 +44,6 @@ TEST_CASE("num_collect::logging::log_tag_view") {
         constexpr auto tag = log_tag_view(name);
 
         STATIC_REQUIRE(tag.name().data() == name.data());
-        STATIC_REQUIRE(tag.hash() == hash_string(name));
     }
 
     SECTION("construct not in constexpr") {
@@ -56,7 +52,6 @@ TEST_CASE("num_collect::logging::log_tag_view") {
         const auto tag = log_tag_view(name);
 
         REQUIRE(std::string(tag.name()) == name);
-        REQUIRE(tag.hash() == hash_string(name));
     }
 
     SECTION("convert from log_tag") {
@@ -66,23 +61,21 @@ TEST_CASE("num_collect::logging::log_tag_view") {
         const log_tag_view tag_view = tag;
 
         REQUIRE(std::string(tag_view.name()) == name);
-        REQUIRE(tag_view.hash() == tag.hash());
     }
 
     SECTION("convert to log_tag") {
         constexpr std::string_view name = "Tag";
         constexpr auto tag_view = log_tag_view(name);
 
-        const auto tag = log_tag(tag_view);
+        const auto tag = static_cast<log_tag>(tag_view);
 
         REQUIRE(tag.name() == std::string(name));
-        REQUIRE(tag.hash() == tag_view.hash());
     }
 
     SECTION("compare") {
         constexpr auto tag1 = log_tag_view("Tag1");
         constexpr auto tag2 = log_tag_view("Tag2");
-        const auto tag3 = log_tag(tag1);
+        const auto tag3 = static_cast<log_tag>(tag1);
 
         REQUIRE(tag1 == tag1);
         REQUIRE(tag1 != tag2);

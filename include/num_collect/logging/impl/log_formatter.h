@@ -55,12 +55,12 @@ public:
     /*!
      * \brief Format time.
      *
-     * \tparam Outputiterator Type of the output iterator.
+     * \tparam OutputIterator Type of the output iterator.
      * \param[in] out Output iterator.
      * \return Output iterator after formatting.
      */
-    template <typename Outputiterator>
-    [[nodiscard]] auto format_to(Outputiterator out) const -> Outputiterator {
+    template <typename OutputIterator>
+    [[nodiscard]] auto format_to(OutputIterator out) const -> OutputIterator {
         const auto time_sec =
             std::chrono::time_point_cast<std::chrono::seconds>(time_);
         const auto time_tm =
@@ -141,8 +141,9 @@ namespace num_collect::logging::impl {
         return "warning";
     case log_level::error:
         return "error";
+    default:
+        return "unknown";
     }
-    return "unknown";
 }
 
 /*!

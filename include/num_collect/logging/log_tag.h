@@ -23,8 +23,6 @@
 #include <string>
 #include <string_view>
 
-#include "num_collect/util/hash_string.h"
-
 namespace num_collect::logging {
 
 /*!
@@ -37,8 +35,7 @@ public:
      *
      * \param[in] name Name of this tag.
      */
-    explicit log_tag(std::string_view name)
-        : name_(name), hash_(util::hash_string(name)) {}
+    explicit log_tag(std::string_view name) : name_(name) {}
 
     /*!
      * \brief Get the name of this tag.
@@ -48,13 +45,6 @@ public:
     [[nodiscard]] auto name() const noexcept -> const std::string& {
         return name_;
     }
-
-    /*!
-     * \brief Get the hash number of this tag.
-     *
-     * \return Hash number.
-     */
-    [[nodiscard]] auto hash() const noexcept -> std::size_t { return hash_; }
 
     /*!
      * \brief Compare two tags.
@@ -74,9 +64,6 @@ public:
      * \return Result.
      */
     auto operator==(const log_tag& right) const noexcept -> bool {
-        if (this->hash() != right.hash()) {
-            return false;
-        }
         return this->name() == right.name();
     }
 
@@ -91,9 +78,6 @@ public:
 private:
     //! Name.
     std::string name_;
-
-    //! Hash number.
-    std::size_t hash_;
 };
 
 }  // namespace num_collect::logging

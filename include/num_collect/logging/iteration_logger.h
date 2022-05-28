@@ -456,7 +456,7 @@ public:
      */
     void write_iteration_to(const logger& l,
         util::source_info_view source = util::source_info_view()) {
-        if (!l.config().write_iterations()) {
+        if (!l.should_log(log_level::iteration)) {
             return;
         }
 
@@ -489,7 +489,7 @@ public:
      */
     void write_summary_to(const logger& l,
         util::source_info_view source = util::source_info_view()) {
-        if (!l.config().write_summary()) {
+        if (!l.should_log(log_level::summary)) {
             return;
         }
 

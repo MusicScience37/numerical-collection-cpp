@@ -48,11 +48,8 @@ TEST_CASE("num_collect::logging::logger") {
     SECTION("write logs with various log levels") {
         constexpr auto tag = log_tag_view("num_collect::logging::logger_test2");
         const auto sink = std::make_shared<mock_log_sink>();
-        const auto config = log_tag_config()
-                                .write_traces(true)
-                                .write_iterations(true)
-                                .write_summary(true)
-                                .sink(sink);
+        const auto config =
+            log_tag_config().output_log_level(log_level::trace).sink(sink);
         CHECK_NOTHROW(log_config::instance().set_config_of(tag, config));
 
         REQUIRE_CALL(*sink, write(_, _, _, _, _)).TIMES(7);

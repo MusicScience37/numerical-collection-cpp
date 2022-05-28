@@ -30,6 +30,8 @@
 #include <catch2/catch_test_case_info.hpp>
 #include <catch2/reporters/catch_reporter_event_listener.hpp>
 #include <fmt/format.h>
+
+#include "num_collect/logging/log_level.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -55,23 +57,19 @@ public:
             STRING(NUM_COLLECT_TEST_MODULE_NAME));
         const auto sink =
             std::make_shared<num_collect::logging::simple_log_sink>(file_path);
-        const auto config = num_collect::logging::log_tag_config()
-                                .sink(sink)
-                                .write_traces(true)
-                                .write_iterations(true)
-                                .write_summary(true);
+        const auto config =
+            num_collect::logging::log_tag_config().sink(sink).output_log_level(
+                num_collect::logging::log_level::trace);
         num_collect::logging::log_config::instance().set_default_tag_config(
             config);
 
         // Heuristic configuration to prevent massive logging.
         if (std::string(STRING(NUM_COLLECT_TEST_MODULE_NAME)) == "interp") {
-            auto config =
-                num_collect::logging::log_config::instance().get_config_of(
-                    num_collect::opt::heuristic_global_optimizer_tag);
-            config.write_iterations(false);
-            config.write_summary(true);
+            auto config = num_collect::logging::log_config::instance()
+                              .get_default_tag_config();
+            config.output_log_level(num_collect::logging::log_level::summary);
             num_collect::logging::log_config::instance().set_config_of(
-                num_collect::opt::heuristic_global_optimizer_tag, config);
+                num_collect::logging::log_tag_view("num_collect::opt"), config);
         }
 
         logger_ = num_collect::logging::logger();

@@ -151,7 +151,7 @@ public:
      * \param[in] config Configuration.
      */
     logger(log_tag_view tag, log_tag_config config)
-        : logger(log_tag(tag), std::move(config)) {}
+        : logger(static_cast<log_tag>(tag), std::move(config)) {}
 
     /*!
      * \brief Construct.
@@ -172,7 +172,35 @@ public:
     }
 
     /*!
-     * \brief Write a tarace log.
+     * \brief Check whether to write logs with a log level.
+     *
+     * \param[in] level Log level.
+     * \retval true Should write logs.
+     * \retval false Should not write logs.
+     */
+    [[nodiscard]] auto should_log(log_level level) const noexcept -> bool {
+        return level >= config_.output_log_level();
+    }
+
+    /*!
+     * \brief Write a log.
+     *
+     * \param[in] level Log level.
+     * \param[in] source Information of the source code.
+     * \return Proxy object to write log.
+     *
+     * \note Argument source should be left to be the default value if you want
+     * to write logs with the current position.
+     */
+    [[nodiscard]] auto log(log_level level,
+        util::source_info_view source = util::source_info_view()) const noexcept
+        -> logging_proxy {
+        return logging_proxy(tag_.name(), level, source, config_.sink().get(),
+            should_log(level));
+    }
+
+    /*!
+     * \brief Write a trace log.
      *
      * \param[in] source Information of the source code.
      * \return Proxy object to write log.
@@ -183,8 +211,7 @@ public:
     [[nodiscard]] auto trace(
         util::source_info_view source = util::source_info_view()) const noexcept
         -> logging_proxy {
-        return logging_proxy(tag_.name(), log_level::trace, source,
-            config_.sink().get(), config_.write_traces());
+        return log(log_level::trace, source);
     }
 
     /*!
@@ -200,8 +227,7 @@ public:
     [[nodiscard]] auto iteration(
         util::source_info_view source = util::source_info_view()) const noexcept
         -> logging_proxy {
-        return logging_proxy(tag_.name(), log_level::iteration, source,
-            config_.sink().get(), config_.write_iterations());
+        return log(log_level::iteration, source);
     }
 
     /*!
@@ -217,8 +243,7 @@ public:
     [[nodiscard]] auto iteration_label(
         util::source_info_view source = util::source_info_view()) const noexcept
         -> logging_proxy {
-        return logging_proxy(tag_.name(), log_level::iteration_label, source,
-            config_.sink().get(), config_.write_iterations());
+        return log(log_level::iteration_label, source);
     }
 
     /*!
@@ -234,8 +259,7 @@ public:
     [[nodiscard]] auto summary(
         util::source_info_view source = util::source_info_view()) const noexcept
         -> logging_proxy {
-        return logging_proxy(tag_.name(), log_level::summary, source,
-            config_.sink().get(), config_.write_summary());
+        return log(log_level::summary, source);
     }
 
     /*!
@@ -250,9 +274,7 @@ public:
     [[nodiscard]] auto info(
         util::source_info_view source = util::source_info_view()) const noexcept
         -> logging_proxy {
-        constexpr bool write_log = true;
-        return logging_proxy(tag_.name(), log_level::info, source,
-            config_.sink().get(), write_log);
+        return log(log_level::info, source);
     }
 
     /*!
@@ -267,9 +289,7 @@ public:
     [[nodiscard]] auto warning(
         util::source_info_view source = util::source_info_view()) const noexcept
         -> logging_proxy {
-        constexpr bool write_log = true;
-        return logging_proxy(tag_.name(), log_level::warning, source,
-            config_.sink().get(), write_log);
+        return log(log_level::warning, source);
     }
 
     /*!
@@ -284,9 +304,7 @@ public:
     [[nodiscard]] auto error(
         util::source_info_view source = util::source_info_view()) const noexcept
         -> logging_proxy {
-        constexpr bool write_log = true;
-        return logging_proxy(tag_.name(), log_level::error, source,
-            config_.sink().get(), write_log);
+        return log(log_level::error, source);
     }
 
 private:

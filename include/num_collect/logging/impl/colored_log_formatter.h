@@ -55,8 +55,9 @@ namespace num_collect::logging::impl {
         return fmt::fg(fmt::color::orange_red);
     case log_level::error:
         return fmt::fg(fmt::color::red) | fmt::emphasis::bold;
+    default:
+        return fmt::text_style();
     }
-    return fmt::text_style();
 }
 
 /*!
