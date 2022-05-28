@@ -1,0 +1,25 @@
+[<time-stamp>] [38;2;128;128;128m[trace][0m [example tag] trace[38;2;128;128;128m (/test/logging.cpp:1:0, write_logs)[0m
+[<time-stamp>] [38;2;000;139;139m[summary][0m [example tag] summary[38;2;128;128;128m (/test/logging.cpp:1:0, write_logs)[0m
+[<time-stamp>] [38;2;000;128;000m[info][0m [example tag] info[38;2;128;128;128m (/test/logging.cpp:1:0, write_logs)[0m
+[<time-stamp>] [38;2;255;069;000m[warning][0m [example tag] warning[38;2;128;128;128m (/test/logging.cpp:1:0, write_logs)[0m
+[<time-stamp>] [1m[38;2;255;000;000m[error][0m [example tag] [1m[38;2;255;000;000merror[0m[38;2;128;128;128m (/test/logging.cpp:1:0, write_logs)[0m
+[<time-stamp>] [iteration] [example tag] iteration[38;2;128;128;128m (/test/logging.cpp:1:0, write_logs)[0m
+[<time-stamp>] [iteration] [example tag] [1m[38;2;128;128;128miteration_label[0m[38;2;128;128;128m (/test/logging.cpp:1:0, write_logs)[0m
+[<time-stamp>] [38;2;255;069;000m[warning][0m [] warning[38;2;128;128;128m (/test/logging.cpp:2:0, write_to_default_tag)[0m
+[<time-stamp>] [1m[38;2;255;000;000m[error][0m [] [1m[38;2;255;000;000merror[0m[38;2;128;128;128m (/test/logging.cpp:2:0, write_to_default_tag)[0m
+[<time-stamp>] [iteration] [example tag] [1m[38;2;128;128;128m        val1        val2        val3[0m[38;2;128;128;128m (/test/logging.cpp:3:0, write_iterations)[0m
+[<time-stamp>] [iteration] [example tag]            3         abc       1.235[38;2;128;128;128m (/test/logging.cpp:3:0, write_iterations)[0m
+[<time-stamp>] [iteration] [example tag] [1m[38;2;128;128;128m        val1        val2        val3[0m[38;2;128;128;128m (/test/logging.cpp:3:0, write_iterations)[0m
+[<time-stamp>] [iteration] [example tag]            0         abc       1.235[38;2;128;128;128m (/test/logging.cpp:3:0, write_iterations)[0m
+[<time-stamp>] [iteration] [example tag]            2         abc       1.235[38;2;128;128;128m (/test/logging.cpp:3:0, write_iterations)[0m
+[<time-stamp>] [iteration] [example tag]            4         abc       1.235[38;2;128;128;128m (/test/logging.cpp:3:0, write_iterations)[0m
+[<time-stamp>] [iteration] [example tag]            6         abc       1.235[38;2;128;128;128m (/test/logging.cpp:3:0, write_iterations)[0m
+[<time-stamp>] [iteration] [example tag]            8         abc       1.235[38;2;128;128;128m (/test/logging.cpp:3:0, write_iterations)[0m
+[<time-stamp>] [iteration] [example tag] [1m[38;2;128;128;128m        val1        val2        val3[0m[38;2;128;128;128m (/test/logging.cpp:3:0, write_iterations)[0m
+[<time-stamp>] [iteration] [example tag]           10         abc       1.235[38;2;128;128;128m (/test/logging.cpp:3:0, write_iterations)[0m
+[<time-stamp>] [iteration] [example tag]           12         abc       1.235[38;2;128;128;128m (/test/logging.cpp:3:0, write_iterations)[0m
+[<time-stamp>] [iteration] [example tag]           14         abc       1.235[38;2;128;128;128m (/test/logging.cpp:3:0, write_iterations)[0m
+[<time-stamp>] [iteration] [example tag]           16         abc       1.235[38;2;128;128;128m (/test/logging.cpp:3:0, write_iterations)[0m
+[<time-stamp>] [iteration] [example tag]           18         abc       1.235[38;2;128;128;128m (/test/logging.cpp:3:0, write_iterations)[0m
+[<time-stamp>] [38;2;000;139;139m[summary][0m [example tag] Finished iterations: val1=19, val2=abc, val3=1.235[38;2;128;128;128m (/test/logging.cpp:3:0, write_iterations)[0m
+

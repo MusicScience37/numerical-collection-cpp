@@ -16,6 +16,7 @@ class NumCollectConan(ConanFile):
     }
     default_options = {
         "requirements_for_tests": False,
+        "boost:header_only": True,
     }
     exports_sources = "include/*"
     no_copy_source = True
@@ -37,6 +38,8 @@ class NumCollectConan(ConanFile):
             self.build_requires("pybind11/2.9.1")
             self.build_requires("approvaltests.cpp/10.12.2")
             self.build_requires("pngpp/0.2.10")
+            self.build_requires("lyra/1.6.0")
+            self.build_requires("boost/1.79.0")
 
     def package(self):
         self.copy("*.h")
