@@ -39,7 +39,9 @@ public:
      * \param[in] tag Log tag.
      */
     explicit iterative_solver_base(logging::log_tag_view tag)
-        : logging::logging_mixin(tag) {}
+        : logging::logging_mixin(tag) {
+        this->logger().set_iterative();
+    }
 
     /*!
      * \brief Iterate the algorithm once.

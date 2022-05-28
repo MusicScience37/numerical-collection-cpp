@@ -184,17 +184,10 @@ public:
     }
 
     /*!
-     * \brief Set the state of iterating.
+     * \brief Set this node to an iterative algorithm.
      */
-    void start_iteration() const noexcept {
-        iteration_layer_handler_.start_iteration();
-    }
-
-    /*!
-     * \brief Set the state of not iterating.
-     */
-    void finish_iteration() const noexcept {
-        iteration_layer_handler_.finish_iteration();
+    void set_iterative() const noexcept {
+        iteration_layer_handler_.set_iterative();
     }
 
     /*!
@@ -217,7 +210,7 @@ public:
      * \retval false Should not write logs.
      */
     [[nodiscard]] auto should_log(log_level level) const noexcept -> bool {
-        if (iteration_layer_handler_.is_upper_layer_iterating()) {
+        if (iteration_layer_handler_.is_upper_layer_iterative()) {
             return level >= config_.output_log_level_in_child_iterations();
         }
         return level >= config_.output_log_level();

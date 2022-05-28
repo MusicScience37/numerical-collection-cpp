@@ -146,6 +146,18 @@ public:
         return solver_.calc_reg_term(reg_param_, data);
     }
 
+    /*!
+     * \brief Access to the logger.
+     *
+     * \return Logger.
+     */
+    [[nodiscard]] auto logger() noexcept -> logging::logger* {
+        if (!regularizer_) {
+            return nullptr;
+        }
+        return &regularizer_->logger();
+    }
+
 private:
     //! Kernel matrix.
     kernel_mat_type kernel_mat_{};

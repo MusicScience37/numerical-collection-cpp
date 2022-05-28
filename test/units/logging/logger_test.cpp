@@ -106,7 +106,7 @@ TEST_CASE("num_collect::logging::logger") {
         auto lp = logger(tag, config);
         lp.initialize_child_algorithm_logger(l);
 
-        l.start_iteration();
+        l.set_iterative();
         {
             REQUIRE_CALL(*sink,
                 write(_, std::string_view(tag.name()), log_level::summary, _,
@@ -118,11 +118,8 @@ TEST_CASE("num_collect::logging::logger") {
             l.iteration_label()("Test iteration_label log.");
             l.summary()("Test summary log.");
         }
-        l.finish_iteration();
 
-        lp.start_iteration();
-
-        l.start_iteration();
+        lp.set_iterative();
         {
             FORBID_CALL(*sink, write(_, _, _, _, _));
 
@@ -131,22 +128,5 @@ TEST_CASE("num_collect::logging::logger") {
             l.iteration_label()("Test iteration_label log.");
             l.summary()("Test summary log.");
         }
-        l.finish_iteration();
-
-        lp.finish_iteration();
-
-        l.start_iteration();
-        {
-            REQUIRE_CALL(*sink,
-                write(_, std::string_view(tag.name()), log_level::summary, _,
-                    std::string_view("Test summary log.")))
-                .TIMES(1);
-
-            l.trace()("Test trace log.");
-            l.iteration()("Test iteration log.");
-            l.iteration_label()("Test iteration_label log.");
-            l.summary()("Test summary log.");
-        }
-        l.finish_iteration();
     }
 }

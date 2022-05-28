@@ -351,39 +351,12 @@ public:
      * \param[in] logger Logger.
      */
     explicit iteration_logger(num_collect::logging::logger& logger)
-        : logger_(&logger),
-          tag_(logger.tag()),
+        : tag_(logger.tag()),
           write_iterations_(logger.should_log(log_level::iteration)),
           write_summaries_(logger.should_log(log_level::summary)),
           sink_(logger.config().sink()),
           iteration_output_period_(logger.config().iteration_output_period()),
-          iteration_label_period_(logger.config().iteration_label_period()) {
-        logger.start_iteration();
-    }
-
-    iteration_logger(const iteration_logger&) = delete;
-    auto operator=(const iteration_logger&) = delete;
-
-    /*!
-     * \brief Move constructor.
-     */
-    iteration_logger(iteration_logger&&) noexcept = default;
-
-    /*!
-     * \brief Move assignment operator.
-     *
-     * \return This.
-     */
-    auto operator=(iteration_logger&&) -> iteration_logger& = default;
-
-    /*!
-     * \brief Destructor.
-     */
-    ~iteration_logger() noexcept {
-        if (logger_ != nullptr) {
-            logger_->finish_iteration();
-        }
-    }
+          iteration_label_period_(logger.config().iteration_label_period()) {}
 
     /*!
      * \brief Reset the iteration count.
@@ -537,9 +510,6 @@ public:
     }
 
 private:
-    //! Logger.
-    logger* logger_;
-
     //! Log tag.
     log_tag_view tag_;
 

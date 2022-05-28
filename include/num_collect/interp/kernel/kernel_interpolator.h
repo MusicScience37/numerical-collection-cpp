@@ -230,6 +230,24 @@ public:
         return solver_.calc_reg_term(data);
     }
 
+    /*!
+     * \brief Access to the logger.
+     *
+     * \return Logger.
+     */
+    [[nodiscard]] auto logger() const noexcept -> const logging::logger& {
+        return solver_.logger();
+    }
+
+    /*!
+     * \brief Access to the logger.
+     *
+     * \return Logger.
+     */
+    [[nodiscard]] auto logger() noexcept -> logging::logger& {
+        return solver_.logger();
+    }
+
 private:
     //! Solver.
     impl::kernel_coeff_solver<kernel_type> solver_;

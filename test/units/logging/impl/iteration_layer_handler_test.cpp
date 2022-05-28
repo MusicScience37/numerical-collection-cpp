@@ -26,7 +26,7 @@ TEST_CASE("num_collect::logging::impl::iteration_layer_handler") {
 
     SECTION("create an object") {
         iteration_layer_handler handler;
-        CHECK_FALSE(handler.is_upper_layer_iterating());
+        CHECK_FALSE(handler.is_upper_layer_iterative());
     }
 
     SECTION("handle iterations of ancestor nodes") {
@@ -36,29 +36,14 @@ TEST_CASE("num_collect::logging::impl::iteration_layer_handler") {
 
         handler1.initialize_lower_layer(handler2);
         handler2.initialize_lower_layer(handler3);
-        CHECK_FALSE(handler1.is_upper_layer_iterating());
-        CHECK_FALSE(handler2.is_upper_layer_iterating());
-        CHECK_FALSE(handler3.is_upper_layer_iterating());
+        CHECK_FALSE(handler1.is_upper_layer_iterative());
+        CHECK_FALSE(handler2.is_upper_layer_iterative());
+        CHECK_FALSE(handler3.is_upper_layer_iterative());
 
-        handler1.start_iteration();
-        CHECK_FALSE(handler1.is_upper_layer_iterating());
-        CHECK(handler2.is_upper_layer_iterating());
-        CHECK(handler3.is_upper_layer_iterating());
-
-        handler2.start_iteration();
-        CHECK_FALSE(handler1.is_upper_layer_iterating());
-        CHECK(handler2.is_upper_layer_iterating());
-        CHECK(handler3.is_upper_layer_iterating());
-
-        handler1.finish_iteration();
-        CHECK_FALSE(handler1.is_upper_layer_iterating());
-        CHECK_FALSE(handler2.is_upper_layer_iterating());
-        CHECK(handler3.is_upper_layer_iterating());
-
-        handler2.finish_iteration();
-        CHECK_FALSE(handler1.is_upper_layer_iterating());
-        CHECK_FALSE(handler2.is_upper_layer_iterating());
-        CHECK_FALSE(handler3.is_upper_layer_iterating());
+        handler1.set_iterative();
+        CHECK_FALSE(handler1.is_upper_layer_iterative());
+        CHECK(handler2.is_upper_layer_iterative());
+        CHECK(handler3.is_upper_layer_iterative());
     }
 
     SECTION("handle iterations of parent node in multiple child nodes") {
@@ -68,18 +53,13 @@ TEST_CASE("num_collect::logging::impl::iteration_layer_handler") {
 
         handler1.initialize_lower_layer(handler21);
         handler1.initialize_lower_layer(handler22);
-        CHECK_FALSE(handler1.is_upper_layer_iterating());
-        CHECK_FALSE(handler21.is_upper_layer_iterating());
-        CHECK_FALSE(handler22.is_upper_layer_iterating());
+        CHECK_FALSE(handler1.is_upper_layer_iterative());
+        CHECK_FALSE(handler21.is_upper_layer_iterative());
+        CHECK_FALSE(handler22.is_upper_layer_iterative());
 
-        handler1.start_iteration();
-        CHECK_FALSE(handler1.is_upper_layer_iterating());
-        CHECK(handler21.is_upper_layer_iterating());
-        CHECK(handler22.is_upper_layer_iterating());
-
-        handler1.finish_iteration();
-        CHECK_FALSE(handler1.is_upper_layer_iterating());
-        CHECK_FALSE(handler21.is_upper_layer_iterating());
-        CHECK_FALSE(handler22.is_upper_layer_iterating());
+        handler1.set_iterative();
+        CHECK_FALSE(handler1.is_upper_layer_iterative());
+        CHECK(handler21.is_upper_layer_iterative());
+        CHECK(handler22.is_upper_layer_iterative());
     }
 }

@@ -60,7 +60,9 @@ public:
      * \param[in] problem Problem.
      */
     explicit solver_base(const problem_type& problem)
-        : formula_(problem), logging::logging_mixin(formula_type::log_tag) {}
+        : formula_(problem), logging::logging_mixin(formula_type::log_tag) {
+        this->logger().set_iterative();
+    }
 
     /*!
      * \brief Initialize.

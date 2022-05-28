@@ -22,6 +22,7 @@
 #include <cmath>
 #include <utility>
 
+#include "num_collect/logging/logger.h"
 #include "num_collect/opt/function_object_wrapper.h"
 #include "num_collect/opt/heuristic_global_optimizer.h"
 #include "num_collect/regularization/impl/coeff_param.h"
@@ -128,6 +129,15 @@ public:
      */
     [[nodiscard]] auto opt_value() const -> scalar_type {
         return optimizer_.opt_value();
+    }
+
+    /*!
+     * \brief Access to the logger.
+     *
+     * \return Logger.
+     */
+    [[nodiscard]] auto logger() noexcept -> logging::logger& {
+        return optimizer_.logger();
     }
 
 private:

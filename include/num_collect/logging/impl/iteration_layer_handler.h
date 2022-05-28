@@ -88,14 +88,12 @@ public:
     ~iteration_layer_handler() noexcept = default;
 
     /*!
-     * \brief Set to the state of iterating.
+     * \brief Set this node to an iterative algorithm.
      */
-    void start_iteration() const noexcept { node_->start_iteration(); }
-
-    /*!
-     * \brief Set to the state of not iterating.
-     */
-    void finish_iteration() const noexcept { node_->finish_iteration(); }
+    void set_iterative() const noexcept {
+        node_->set_iterative();
+        ;
+    }
 
     /*!
      * \brief Initialize the lower layer.
@@ -107,13 +105,13 @@ public:
     }
 
     /*!
-     * \brief Check whether one of upper layers is iterating.
+     * \brief Check whether one of upper layers is iterative.
      *
-     * \retval true One of upper layers is iterating.
-     * \retval false None of upper layers is iterating.
+     * \retval true One of upper layers is iterative.
+     * \retval false None of upper layers is iterative.
      */
-    [[nodiscard]] auto is_upper_layer_iterating() const noexcept -> bool {
-        return node_->is_ancestor_node_iterating();
+    [[nodiscard]] auto is_upper_layer_iterative() const noexcept -> bool {
+        return node_->is_ancestor_node_iterative();
     }
 
 private:
@@ -121,14 +119,9 @@ private:
     class node {
     public:
         /*!
-         * \brief Set to the state of iterating.
+         * \brief Set this node to an iterative algorithm.
          */
-        void start_iteration() noexcept { is_iterating_ = true; }
-
-        /*!
-         * \brief Set to the state of not iterating.
-         */
-        void finish_iteration() noexcept { is_iterating_ = false; }
+        void set_iterative() noexcept { is_iterative_ = true; }
 
         /*!
          * \brief Set the parent node.
@@ -140,51 +133,51 @@ private:
         }
 
         /*!
-         * \brief Check whether one of ancestor nodes is iterating.
+         * \brief Check whether one of ancestor nodes is iterative.
          *
-         * \retval true At least one of ancestor nodes is iterating.
-         * \retval false None of ancestor nodes is iterating.
+         * \retval true At least one of ancestor nodes is iterative.
+         * \retval false None of ancestor nodes is iterative.
          */
-        [[nodiscard]] auto is_ancestor_node_iterating() const noexcept -> bool {
+        [[nodiscard]] auto is_ancestor_node_iterative() const noexcept -> bool {
             const auto locked = parent_.lock();
             if (!locked) {
                 return false;
             }
-            return locked->is_this_or_ancestor_node_iterating();
+            return locked->is_this_or_ancestor_node_iterative();
         }
 
         /*!
          * \brief Reset the internal state.
          */
         void reset() noexcept {
-            is_iterating_ = false;
+            is_iterative_ = false;
             parent_.reset();
         }
 
     private:
         /*!
-         * \brief Check whether this node or one of ancestor nodes is iterating.
+         * \brief Check whether this node or one of ancestor nodes is iterative.
          *
          * \retval true This node or at least one of ancestor nodes is
-         * iterating.
-         * \retval false None of this node nor ancestor nodes is iterating.
+         * iterative.
+         * \retval false None of this node nor ancestor nodes is iterative.
          */
-        [[nodiscard]] auto is_this_or_ancestor_node_iterating() const noexcept
+        [[nodiscard]] auto is_this_or_ancestor_node_iterative() const noexcept
             -> bool {
-            if (is_iterating_) {
+            if (is_iterative_) {
                 return true;
             }
-            return is_ancestor_node_iterating();
+            return is_ancestor_node_iterative();
         }
 
-        //! Whether this layer is iterating.
-        std::atomic<bool> is_iterating_{false};
+        //! Whether this layer is iterative.
+        std::atomic<bool> is_iterative_{false};
 
         //! Parent node.
         std::weak_ptr<node> parent_{};
     };
 
-    //! Whether this layer is iterating.
+    //! This node.
     std::shared_ptr<node> node_{std::make_shared<node>()};
 };
 

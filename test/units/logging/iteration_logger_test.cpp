@@ -256,6 +256,7 @@ TEST_CASE("num_collect::logging::iteration_logger") {
         constexpr auto child_tag = num_collect::logging::log_tag_view(
             "num_collect::logging::iteration_logger_test::child");
         auto child_logger = num_collect::logging::logger(tag, config);
+        logger.set_iterative();
         logger.initialize_child_algorithm_logger(child_logger);
         auto child_iteration_logger =
             num_collect::logging::iteration_logger(child_logger);
