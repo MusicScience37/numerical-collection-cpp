@@ -25,12 +25,20 @@
 #include <boost/asio/io_context.hpp>
 #include <boost/process.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_string.hpp>
 
 constexpr auto writer_filepath =
     std::string_view("../bin/num_collect_test_integ_logging_write_log_writer");
 
-TEST_CASE("logging to console") {
-    SECTION("write") {
+static auto read_file(const std::string& filepath) -> std::string {
+    std::ifstream stream(filepath);
+    REQUIRE(stream);
+    return std::string(std::istreambuf_iterator<char>(stream),
+        std::istreambuf_iterator<char>());
+}
+
+TEST_CASE("write_logs") {
+    SECTION("to console") {
         boost::asio::io_context context;
         std::future<std::string> std_out_future;
         std::future<std::string> std_err_future;
@@ -44,6 +52,36 @@ TEST_CASE("logging to console") {
         const auto std_err = std_err_future.get();
 
         ApprovalTests::Approvals::verify(std_out,
+            ApprovalTests::Options(
+                [sc1 = ApprovalTests::Scrubbers::createRegexScrubber(
+                     R"(\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d\d\d\d\d(\+|-)\d\d\d\d)",
+                     "<time-stamp>")](
+                    const std::string& str) { return sc1(str); })
+                .fileOptions()
+                .withFileExtension(".txt"));
+
+        CHECK(std_err == "");  // NOLINT
+    }
+
+    SECTION("to file") {
+        const auto log_filepath =
+            std::string("num_collect_test_integ_logging_write_log");
+        boost::asio::io_context context;
+        std::future<std::string> std_out_future;
+        std::future<std::string> std_err_future;
+        boost::process::child writer_process{std::string(writer_filepath), "-o",
+            log_filepath, boost::process::std_in.close(),
+            boost::process::std_out > std_out_future,
+            boost::process::std_err > std_err_future, context};
+
+        context.run();
+        const auto std_out = std_out_future.get();
+        const auto std_err = std_err_future.get();
+
+        CHECK(std_out == "");  // NOLINT
+        CHECK(std_err == "");  // NOLINT
+
+        ApprovalTests::Approvals::verify(read_file(log_filepath),
             ApprovalTests::Options(
                 [sc1 = ApprovalTests::Scrubbers::createRegexScrubber(
                      R"(\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d\d\d\d\d(\+|-)\d\d\d\d)",
