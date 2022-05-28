@@ -433,11 +433,16 @@ public:
      * \param[in] buffer Buffer to format to.
      */
     void format_summary_to(fmt::memory_buffer& buffer) const {
-        buffer.append(std::string_view("Last state: "));
+        buffer.append(std::string_view("Finished iterations: "));
+        bool is_first = true;
         for (const auto& item : items_) {
+            if (is_first) {
+                is_first = false;
+            } else {
+                buffer.push_back(',');
+                buffer.push_back(' ');
+            }
             item->format_summary_to(buffer);
-            buffer.push_back(',');
-            buffer.push_back(' ');
         }
     }
 
