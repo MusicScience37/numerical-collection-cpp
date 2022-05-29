@@ -1,5 +1,6 @@
 {
   "cSpell.words": [
+    "approvaltests",
     "Armijo",
     "asan",
     "AUSAN",
@@ -18,6 +19,7 @@
     "coeff",
     "coeffs",
     "conanfile",
+    "conans",
     "constexpr",
     "copydoc",
     "cppcoreguidelines",
@@ -67,6 +69,7 @@
     "pipenv",
     "Pipfile",
     "PlantUML",
+    "pngpp",
     "pprof",
     "profraw",
     "Pybind11",
@@ -81,6 +84,7 @@
     "Struct",
     "swappable",
     "Tikhonov",
+    "tomlplusplus",
     "trompeloeil",
     "tsan",
     "ubsan",

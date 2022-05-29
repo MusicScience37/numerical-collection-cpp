@@ -26,6 +26,7 @@ class NumCollectConan(ConanFile):
         self.requires("fmt/8.1.1")
         self.requires("eigen/3.4.0")
         self.requires("cpp_hash_tables/0.2.0@MusicScience37+cpp-hash-tables/stable")
+        self.requires("tomlplusplus/3.1.0")
 
     def build_requirements(self):
         if self.options.requirements_for_tests:
