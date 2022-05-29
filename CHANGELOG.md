@@ -5,6 +5,7 @@
 ### Breaking Change
 
 - Changed the name of class `heuristic_1dim_optimizer` to `heuristic_global_optimizer` ([Issue #151](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/merge_requests/151)).
+- Refactored logging ([#178](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/178), [#179](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/179), [#164](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/164)).
 
 ### Feature
 
