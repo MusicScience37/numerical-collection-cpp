@@ -97,9 +97,9 @@ static analysis:
     - cd ../
   script:
     - cd build_static_analysis
-    - pipenv run conan profile new --detect default
+    - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libstdc++11 default
-    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build missing -o num_collect:requirements_for_tests=True ..
     - cd ../
     - cmake -S ./ -B build_static_analysis
@@ -140,9 +140,9 @@ static analysis:
     - apt-get update && apt-get install -y ccache
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
-    - pipenv run conan profile new --detect default
+    - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libstdc++11 default
-    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build missing -o num_collect:requirements_for_tests=True ..
     - cd ../
   script:
@@ -218,9 +218,9 @@ static analysis:
     - apt-get update && apt-get install -y ccache
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
-    - pipenv run conan profile new --detect default
+    - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libc++ default
-    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build missing -o num_collect:requirements_for_tests=True -s build_type=Release ..
     - cd ../
 
@@ -230,9 +230,9 @@ static analysis:
     - apt-get update && apt-get install -y ccache
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
-    - pipenv run conan profile new --detect default
+    - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libc++ default
-    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build missing -o num_collect:requirements_for_tests=True -s build_type=Release ..
     - cd ../
 
@@ -242,9 +242,9 @@ static analysis:
     - apt-get update && apt-get install -y ccache
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
-    - pipenv run conan profile new --detect default
+    - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libc++ default
-    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build missing -o num_collect:requirements_for_tests=True -s build_type=Debug ..
     - cd ../
 
@@ -362,9 +362,9 @@ clang-14-conan:
   variables:
     CONAN_CHANNEL: "testing"
   script:
-    - pipenv run conan profile new --detect default
+    - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libc++ default
-    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan create --build missing --test-folder test/conan_package . ${CONAN_USER}/${CONAN_CHANNEL}
 
 clang-14-conan-release:
@@ -378,9 +378,9 @@ clang-14-conan-release:
   variables:
     CONAN_CHANNEL: "stable"
   script:
-    - pipenv run conan profile new --detect default
+    - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libc++ default
-    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan create --build missing --test-folder test/conan_package . ${CONAN_USER}/${CONAN_CHANNEL}
     - CONAN_LOGIN_USERNAME=ci_user CONAN_PASSWORD=${CI_JOB_TOKEN} pipenv run conan upload -r gitlab num_collect/${NUM_COLLECT_VERSION}@${CONAN_USER}/${CONAN_CHANNEL} --all
   only:
@@ -406,8 +406,8 @@ msvc-debug:
     - pipenv sync
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
-    - pipenv run conan profile new --detect default
-    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan profile new --force --detect default
+    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build missing -o num_collect:requirements_for_tests=True -s build_type=Debug ..
     - cd ../
   script:
@@ -447,8 +447,8 @@ msvc-release:
     - pipenv sync
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
-    - pipenv run conan profile new --detect default
-    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan profile new --force --detect default
+    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build missing -o num_collect:requirements_for_tests=True -s build_type=Release ..
     - cd ../
   script:
@@ -481,9 +481,9 @@ doc:
   script:
     - mkdir build_doc
     - cd build_doc
-    - pipenv run conan profile new --detect default
+    - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libstdc++11 default
-    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build missing -o num_collect:requirements_for_tests=True ..
     - cd ../
     - cmake -S ./ -B build_doc
