@@ -17,4 +17,5 @@ function(add_profiling TARGET)
                                             num_prob_collect)
 endfunction()
 
+add_subdirectory(logging)
 add_subdirectory(opt)
