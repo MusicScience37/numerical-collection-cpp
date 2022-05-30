@@ -9,6 +9,7 @@
     "Brochu",
     "Broyden",
     "bugprone",
+    "ccache",
     "Celero",
     "choco",
     "chrono",
@@ -118,6 +119,7 @@
   "esbonio.server.enabled": false,
   "files.watcherExclude": {
     "**/.conan/**": true,
+    "**/.ccache/**": true,
     "**/.venv/**": true
   },
   "python.formatting.provider": "black"

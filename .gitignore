@@ -659,3 +659,6 @@ FodyWeavers.xsd
 /*.prof
 /*.pdf
 /profiling/results/
+
+# Ccache
+/.ccache/

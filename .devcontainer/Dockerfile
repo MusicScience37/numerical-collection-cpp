@@ -3,7 +3,8 @@ FROM musicscience37/sphinx-doxygen:clang14-v5.0
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     openssh-client gnupg2 \
-    vim nano && \
+    vim nano \
+    ccache && \
     apt-get autoremove && \
     apt-get autoclean && \
     ln -s "$(command -v clangd-14)" /usr/local/bin/clangd
