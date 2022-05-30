@@ -347,6 +347,7 @@ clang-14-asan-ubsan:
       -DNUM_COLLECT_TESTING:BOOL=ON
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
       -DNUM_COLLECT_ENABLE_AUSAN:BOOL=ON
+      -DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON
     - cd $BUILD_DIR
     - cmake --build .
     - ctest -V
