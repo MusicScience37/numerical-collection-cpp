@@ -17,6 +17,7 @@ buildType:
         NUM_COLLECT_BUILD_EXAMPLES: ON
         NUM_COLLECT_BUILD_DOC: OFF
         NUM_COLLECT_ENABLE_PROFILING: OFF
+        NUM_COLLECT_ENABLE_CCACHE: ON
     clang-asan-ubsan-unit-dox:
       short: ClangAUSan-Unit-Dox
       long: ASan and USan in Clang + Unit Tests + Doxygen
@@ -31,6 +32,7 @@ buildType:
         NUM_COLLECT_BUILD_DOC: ON
         NUM_COLLECT_BUILD_DOC_SPHINX: OFF
         NUM_COLLECT_ENABLE_PROFILING: OFF
+        NUM_COLLECT_ENABLE_CCACHE: ON
     clang-asan-ubsan-unit-docs:
       short: ClangAUSan-Unit-Documents
       long: ASan and USan in Clang + Unit Tests + All documents
@@ -45,6 +47,7 @@ buildType:
         NUM_COLLECT_BUILD_DOC: ON
         NUM_COLLECT_BUILD_DOC_SPHINX: ON
         NUM_COLLECT_ENABLE_PROFILING: OFF
+        NUM_COLLECT_ENABLE_CCACHE: ON
     debug-unit:
       short: Debug-Unit
       long: Debug build + Unit Tests
@@ -58,6 +61,7 @@ buildType:
         NUM_COLLECT_BUILD_EXAMPLES: ON
         NUM_COLLECT_BUILD_DOC: OFF
         NUM_COLLECT_ENABLE_PROFILING: OFF
+        NUM_COLLECT_ENABLE_CCACHE: ON
     relwithdebinfo-unit:
       short: RelWithDebInfo-Unit
       long: Release build with debug info + Unit Tests
@@ -71,6 +75,7 @@ buildType:
         NUM_COLLECT_BUILD_EXAMPLES: ON
         NUM_COLLECT_BUILD_DOC: OFF
         NUM_COLLECT_ENABLE_PROFILING: OFF
+        NUM_COLLECT_ENABLE_CCACHE: ON
     relwithdebinfo-unit-profiling:
       short: RelWithDebInfo-Unit-Prof
       long: Release build with debug info + Unit Tests + Profiling
@@ -84,6 +89,7 @@ buildType:
         NUM_COLLECT_BUILD_EXAMPLES: ON
         NUM_COLLECT_BUILD_DOC: OFF
         NUM_COLLECT_ENABLE_PROFILING: ON
+        NUM_COLLECT_ENABLE_CCACHE: ON
     release-unit:
       short: Release-Unit
       long: Release build + Unit Tests
@@ -97,6 +103,7 @@ buildType:
         NUM_COLLECT_BUILD_EXAMPLES: ON
         NUM_COLLECT_BUILD_DOC: OFF
         NUM_COLLECT_ENABLE_PROFILING: OFF
+        NUM_COLLECT_ENABLE_CCACHE: ON
     release-bench:
       short: Release-Bench
       long: Release build + Benchmarks execution
@@ -110,3 +117,4 @@ buildType:
         NUM_COLLECT_BUILD_EXAMPLES: ON
         NUM_COLLECT_BUILD_DOC: OFF
         NUM_COLLECT_ENABLE_PROFILING: OFF
+        NUM_COLLECT_ENABLE_CCACHE: ON

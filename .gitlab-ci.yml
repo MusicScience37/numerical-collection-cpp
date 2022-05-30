@@ -97,9 +97,9 @@ static analysis:
     - cd ../
   script:
     - cd build_static_analysis
-    - pipenv run conan profile new --detect default
+    - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libstdc++11 default
-    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build missing -o num_collect:requirements_for_tests=True ..
     - cd ../
     - cmake -S ./ -B build_static_analysis
@@ -133,12 +133,16 @@ static analysis:
     - sync pipenv
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
+    CCACHE_DIR: ${CI_PROJECT_DIR}/.cache
+    CCACHE_COMPILERCHECK: content
+    CONAN_USER_HOME: ${CI_PROJECT_DIR}
   before_script:
+    - apt-get update && apt-get install -y ccache
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
-    - pipenv run conan profile new --detect default
+    - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libstdc++11 default
-    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build missing -o num_collect:requirements_for_tests=True ..
     - cd ../
   script:
@@ -152,9 +156,15 @@ static analysis:
       -DNUM_COLLECT_BUILD_EXAMPLES=OFF
       -DNUM_COLLECT_TEST_EXAMPLES=OFF
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
+      -DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON
     - cd $BUILD_DIR
     - cmake --build .
     - ctest -V
+  cache:
+    key: cache-${CI_JOB_NAME}
+    paths:
+      - .cache
+      - .conan
   artifacts:
     paths:
       - $BUILD_DIR
@@ -179,6 +189,7 @@ static analysis:
       -DNUM_COLLECT_BUILD_EXAMPLES=ON
       -DNUM_COLLECT_TEST_EXAMPLES=ON
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
+      -DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON
     - cd $BUILD_DIR
     - cmake --build .
     - ctest -V
@@ -196,6 +207,7 @@ static analysis:
       -DNUM_COLLECT_BUILD_EXAMPLES=ON
       -DNUM_COLLECT_TEST_EXAMPLES=ON
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
+      -DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON
     - cd $BUILD_DIR
     - cmake --build .
     - ctest -V
@@ -203,33 +215,36 @@ static analysis:
 .clang-release-test-base:
   extends: .release-test-base
   before_script:
+    - apt-get update && apt-get install -y ccache
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
-    - pipenv run conan profile new --detect default
+    - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libc++ default
-    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build missing -o num_collect:requirements_for_tests=True -s build_type=Release ..
     - cd ../
 
 .clang-bench-base:
   extends: .bench-base
   before_script:
+    - apt-get update && apt-get install -y ccache
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
-    - pipenv run conan profile new --detect default
+    - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libc++ default
-    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build missing -o num_collect:requirements_for_tests=True -s build_type=Release ..
     - cd ../
 
 .clang-debug-test-base:
   extends: .debug-test-base
   before_script:
+    - apt-get update && apt-get install -y ccache
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
-    - pipenv run conan profile new --detect default
+    - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libc++ default
-    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build missing -o num_collect:requirements_for_tests=True -s build_type=Debug ..
     - cd ../
 
@@ -246,6 +261,7 @@ clang coverage:
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
       "-DCMAKE_CXX_FLAGS=-fprofile-instr-generate -fcoverage-mapping"
       "-DCMAKE_MODULE_LINKER_FLAGS=-fprofile-instr-generate -fcoverage-mapping"
+      -DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON
     - cd $BUILD_DIR
     - mkdir coverage
     - export LLVM_PROFILE_FILE=$(pwd)/coverage/coverage_%p.profraw
@@ -268,6 +284,7 @@ gcc coverage:
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
       "-DCMAKE_CXX_FLAGS=--coverage"
       "-DCMAKE_MODULE_LINKER_FLAGS=--coverage"
+      -DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON
     - cd $BUILD_DIR
     - cmake --build .
     - ctest -V
@@ -330,6 +347,7 @@ clang-14-asan-ubsan:
       -DNUM_COLLECT_TESTING:BOOL=ON
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
       -DNUM_COLLECT_ENABLE_AUSAN:BOOL=ON
+      -DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON
     - cd $BUILD_DIR
     - cmake --build .
     - ctest -V
@@ -345,9 +363,9 @@ clang-14-conan:
   variables:
     CONAN_CHANNEL: "testing"
   script:
-    - pipenv run conan profile new --detect default
+    - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libc++ default
-    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan create --build missing --test-folder test/conan_package . ${CONAN_USER}/${CONAN_CHANNEL}
 
 clang-14-conan-release:
@@ -361,9 +379,9 @@ clang-14-conan-release:
   variables:
     CONAN_CHANNEL: "stable"
   script:
-    - pipenv run conan profile new --detect default
+    - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libc++ default
-    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan create --build missing --test-folder test/conan_package . ${CONAN_USER}/${CONAN_CHANNEL}
     - CONAN_LOGIN_USERNAME=ci_user CONAN_PASSWORD=${CI_JOB_TOKEN} pipenv run conan upload -r gitlab num_collect/${NUM_COLLECT_VERSION}@${CONAN_USER}/${CONAN_CHANNEL} --all
   only:
@@ -389,8 +407,8 @@ msvc-debug:
     - pipenv sync
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
-    - pipenv run conan profile new --detect default
-    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan profile new --force --detect default
+    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build missing -o num_collect:requirements_for_tests=True -s build_type=Debug ..
     - cd ../
   script:
@@ -430,8 +448,8 @@ msvc-release:
     - pipenv sync
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
-    - pipenv run conan profile new --detect default
-    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan profile new --force --detect default
+    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build missing -o num_collect:requirements_for_tests=True -s build_type=Release ..
     - cd ../
   script:
@@ -464,9 +482,9 @@ doc:
   script:
     - mkdir build_doc
     - cd build_doc
-    - pipenv run conan profile new --detect default
+    - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libstdc++11 default
-    - pipenv run conan remote add gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build missing -o num_collect:requirements_for_tests=True ..
     - cd ../
     - cmake -S ./ -B build_doc

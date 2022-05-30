@@ -65,6 +65,7 @@ include(CppWarningFlags)
 include(CppFlags)
 include(pipenv)
 include(ConfigureSanitizer)
+include(ConfigureCcache)
 
 set(NUM_COLLECT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 

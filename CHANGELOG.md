@@ -5,7 +5,7 @@
 ### Breaking Change
 
 - Changed the name of class `heuristic_1dim_optimizer` to `heuristic_global_optimizer` ([Issue #151](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/merge_requests/151)).
-- Refactored logging ([#178](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/178), [#179](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/179), [#164](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/164), [#166](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/166)).
+- Refactored logging ([Issue #178](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/178), [Issue #179](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/179), [Issue #164](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/164), [Issue #166](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/166)).
 
 ### Feature
 
@@ -13,7 +13,7 @@
   - util
     - Format Eigen's dense matrices, dense vectors, and sparse matrices ([Issue #142](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/142)).
   - logging
-    - Function to load logging configuration from files ([#166](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/166)).
+    - Function to load logging configuration from files ([Issue #166](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/166)).
   - regularization
     - Implemented FISTA for L1 regularization ([Issue #147](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/147)).
   - opt
@@ -26,6 +26,7 @@
 - Fixed warnings on MSVC ([Issue #134](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/134)).
 - Set the default value of requirements_for_tests in conanfile.py to False ([Issue #159](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/159)).
 - Introduced profiling ([Issue #168](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/168)).
+- Introduced ccache ([Issue #177](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/177)).
 
 ## 0.4.1 (2022/2/19)
 

@@ -4,7 +4,10 @@
     "CONAN_USER_HOME": "${containerWorkspaceFolder}",
     "PIPENV_VENV_IN_PROJECT": "1",
     "PIPENV_IGNORE_VIRTUALENVS": "1",
-    "ASAN_OPTIONS": "alloc_dealloc_mismatch=0"
+    "ASAN_OPTIONS": "alloc_dealloc_mismatch=0",
+    "CCACHE_DIR": "${containerWorkspaceFolder}/.ccache",
+    "CCACHE_COMPILERCHECK": "content",
+    "CCACHE_MAXSIZE": "10G"
   },
   "extensions": [
     "ms-vscode.cpptools",
