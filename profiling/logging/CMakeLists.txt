@@ -1,0 +1,1 @@
+add_profiling(num_collect_prof_write_trace_logs write_trace_logs.cpp)
