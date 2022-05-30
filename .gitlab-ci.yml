@@ -133,7 +133,11 @@ static analysis:
     - sync pipenv
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
+    CCACHE_DIR: ${CI_PROJECT_DIR}/.cache
+    CCACHE_COMPILERCHECK: content
+    CONAN_USER_HOME: ${CI_PROJECT_DIR}
   before_script:
+    - apt-get update && apt-get install -y ccache
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --detect default
@@ -152,9 +156,15 @@ static analysis:
       -DNUM_COLLECT_BUILD_EXAMPLES=OFF
       -DNUM_COLLECT_TEST_EXAMPLES=OFF
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
+      -DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON
     - cd $BUILD_DIR
     - cmake --build .
     - ctest -V
+  cache:
+    key: cache-${CI_JOB_NAME}
+    paths:
+      - .cache
+      - .conan
   artifacts:
     paths:
       - $BUILD_DIR
@@ -179,6 +189,7 @@ static analysis:
       -DNUM_COLLECT_BUILD_EXAMPLES=ON
       -DNUM_COLLECT_TEST_EXAMPLES=ON
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
+      -DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON
     - cd $BUILD_DIR
     - cmake --build .
     - ctest -V
@@ -196,6 +207,7 @@ static analysis:
       -DNUM_COLLECT_BUILD_EXAMPLES=ON
       -DNUM_COLLECT_TEST_EXAMPLES=ON
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
+      -DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON
     - cd $BUILD_DIR
     - cmake --build .
     - ctest -V
@@ -203,6 +215,7 @@ static analysis:
 .clang-release-test-base:
   extends: .release-test-base
   before_script:
+    - apt-get update && apt-get install -y ccache
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --detect default
@@ -214,6 +227,7 @@ static analysis:
 .clang-bench-base:
   extends: .bench-base
   before_script:
+    - apt-get update && apt-get install -y ccache
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --detect default
@@ -225,6 +239,7 @@ static analysis:
 .clang-debug-test-base:
   extends: .debug-test-base
   before_script:
+    - apt-get update && apt-get install -y ccache
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --detect default
@@ -246,6 +261,7 @@ clang coverage:
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
       "-DCMAKE_CXX_FLAGS=-fprofile-instr-generate -fcoverage-mapping"
       "-DCMAKE_MODULE_LINKER_FLAGS=-fprofile-instr-generate -fcoverage-mapping"
+      -DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON
     - cd $BUILD_DIR
     - mkdir coverage
     - export LLVM_PROFILE_FILE=$(pwd)/coverage/coverage_%p.profraw
@@ -268,6 +284,7 @@ gcc coverage:
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
       "-DCMAKE_CXX_FLAGS=--coverage"
       "-DCMAKE_MODULE_LINKER_FLAGS=--coverage"
+      -DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON
     - cd $BUILD_DIR
     - cmake --build .
     - ctest -V
