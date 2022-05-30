@@ -5,12 +5,19 @@
 ### Breaking Change
 
 - Changed the name of class `heuristic_1dim_optimizer` to `heuristic_global_optimizer` ([Issue #151](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/merge_requests/151)).
+- Refactored logging ([#178](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/178), [#179](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/179), [#164](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/164), [#166](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/166)).
 
 ### Feature
 
-- Format Eigen's dense matrices, dense vectors, and sparse matrices ([Issue #142](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/142)).
-- Implemented FISTA for L1 regularization ([Issue #147](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/147)).
-- Heuristic global optimizer for multi-variate problems ([Issue #151](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/merge_requests/151)).
+- Modules
+  - util
+    - Format Eigen's dense matrices, dense vectors, and sparse matrices ([Issue #142](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/142)).
+  - logging
+    - Function to load logging configuration from files ([#166](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/166)).
+  - regularization
+    - Implemented FISTA for L1 regularization ([Issue #147](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/147)).
+  - opt
+    - Heuristic global optimizer for multi-variate problems ([Issue #151](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/merge_requests/151)).
 
 ### Miscellaneous
 

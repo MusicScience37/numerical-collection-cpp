@@ -62,7 +62,7 @@ public:
      */
     ~simple_log_sink() noexcept override {
         if (file_ != nullptr && close_on_destruction_) {
-            std::fclose(file_);
+            (void)std::fclose(file_);
         }
     }
 
@@ -82,9 +82,9 @@ public:
             std::unique_lock<std::mutex> lock(mutex_);
             const auto formatted =
                 formatter_.format(time, tag, level, source, body);
-            std::fwrite(formatted.data(), 1, formatted.size(), file_);
-            std::fputc('\n', file_);
-            std::fflush(file_);
+            (void)std::fwrite(formatted.data(), 1, formatted.size(), file_);
+            (void)std::fputc('\n', file_);
+            (void)std::fflush(file_);
         } catch (const std::exception& e) {
             std::cerr << "ERROR IN LOGGING: " << e.what() << std::endl;
         }
