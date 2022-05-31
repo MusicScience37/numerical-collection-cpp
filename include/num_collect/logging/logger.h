@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <algorithm>
 #include <chrono>
 #include <iterator>
 #include <string_view>
@@ -165,7 +166,12 @@ public:
      * \param[in] config Configuration.
      */
     logger(log_tag tag, log_tag_config config) noexcept
-        : tag_(std::move(tag)), config_(std::move(config)) {}
+        : tag_(std::move(tag)),
+          config_(std::move(config)),
+          always_output_log_level_(std::max(config_.output_log_level(),
+              config_.output_log_level_in_child_iterations())),
+          lowest_output_log_level_(std::min(config_.output_log_level(),
+              config_.output_log_level_in_child_iterations())) {}
 
     /*!
      * \brief Get the log tag.
@@ -210,6 +216,12 @@ public:
      * \retval false Should not write logs.
      */
     [[nodiscard]] auto should_log(log_level level) const noexcept -> bool {
+        if (level < lowest_output_log_level_) {
+            return false;
+        }
+        if (level >= always_output_log_level_) {
+            return true;
+        }
         if (iteration_layer_handler_.is_upper_layer_iterative()) {
             return level >= config_.output_log_level_in_child_iterations();
         }
@@ -347,6 +359,12 @@ private:
 
     //! Configuration.
     log_tag_config config_;
+
+    //! Minimum log level to output always.
+    log_level always_output_log_level_;
+
+    //! Lowest log level to output.
+    log_level lowest_output_log_level_;
 
     //! Handler of layers of iterations.
     impl::iteration_layer_handler iteration_layer_handler_{};
