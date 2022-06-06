@@ -22,7 +22,7 @@
 #include <mutex>
 #include <string>
 
-#include <hash_tables/maps/open_address_map_st.h>
+#include <hash_tables/maps/separate_shared_chain_map_mt.h>
 
 #include "num_collect/logging/impl/log_tag_element.h"
 #include "num_collect/logging/impl/separate_top_log_tag_element.h"
@@ -89,21 +89,17 @@ private:
      */
     [[nodiscard]] auto get_or_create_child_node(const log_tag_element& element)
         -> std::shared_ptr<log_tag_config_tree_node> {
-        std::unique_lock<std::mutex> lock(mutex_);
-        auto* ptr = child_nodes_.try_get(element);
-        if (ptr != nullptr) {
-            return *ptr;
-        }
-        auto new_node = std::make_shared<log_tag_config_tree_node>(config_);
-        child_nodes_.emplace(element, new_node);
-        return new_node;
+        return child_nodes_.get_or_create_with_factory(element, [this] {
+            std::unique_lock<std::mutex> lock(mutex_);
+            return std::make_shared<log_tag_config_tree_node>(config_);
+        });
     }
 
     //! Configuration for this node.
     log_tag_config config_;
 
     //! Child nodes.
-    hash_tables::maps::open_address_map_st<log_tag_element,
+    hash_tables::maps::separate_shared_chain_map_mt<log_tag_element,
         std::shared_ptr<log_tag_config_tree_node>>
         child_nodes_{};
 
