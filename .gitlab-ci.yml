@@ -387,7 +387,7 @@ clang-14-conan-release:
   only:
     - tags
 
-msvc-debug:
+.msvc-base:
   extends: .debug-test-base
   tags:
     - shared-windows
@@ -397,21 +397,33 @@ msvc-debug:
   needs: []
   dependencies: []
   variables:
-    BUILD_DIR: build_msvc_debug
+    CONAN_USER_HOME: C:\Users\gitlab_runner
   before_script:
+    - (mv ${CI_PROJECT_DIR}/.conan C:\Users\gitlab_runner -Force)
     - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
     - choco install cmake -y --installargs 'ADD_CMAKE_TO_PATH=System'
     - choco install python --version=3.9.12 -y
     - RefreshEnv
     - pip install pipenv
     - pipenv sync
+  script:
+    # Changed in below.
+    - ls
+  after_script:
+    - (mv C:\Users\gitlab_runner\.conan ${CI_PROJECT_DIR} -Force)
+  allow_failure: true
+
+msvc-debug:
+  extends: .msvc-base
+  variables:
+    BUILD_DIR: build_msvc_debug
+  script:
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --force --detect default
     - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build missing -o num_collect:requirements_for_tests=True -s build_type=Debug ..
     - cd ../
-  script:
     - cmake -S ./ -B $BUILD_DIR
       -DCMAKE_BUILD_TYPE=Debug
       -DNUM_COLLECT_TESTING:BOOL=ON
@@ -429,30 +441,16 @@ msvc-debug:
   allow_failure: true
 
 msvc-release:
-  extends: .release-test-base
-  tags:
-    - shared-windows
-    - windows
-    - windows-1809
-  stage: Test with MSVC
-  needs: []
-  dependencies: []
+  extends: .msvc-base
   variables:
     BUILD_DIR: build_msvc
-  before_script:
-    - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
-    - choco install cmake -y --installargs 'ADD_CMAKE_TO_PATH=System'
-    - choco install python --version=3.9.12 -y
-    - RefreshEnv
-    - pip install pipenv
-    - pipenv sync
+  script:
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --force --detect default
     - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build missing -o num_collect:requirements_for_tests=True -s build_type=Release ..
     - cd ../
-  script:
     - cmake -S ./ -B $BUILD_DIR
       -DCMAKE_BUILD_TYPE=Release
       -DNUM_COLLECT_TESTING:BOOL=ON
