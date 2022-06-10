@@ -399,7 +399,7 @@ clang-14-conan-release:
   variables:
     CONAN_USER_HOME: C:\Users\gitlab_runner
   before_script:
-    - mv ${CI_PROJECT_DIR}/.conan C:\Users\gitlab_runner -Force -ErrorAction SilentlyContinue
+    - (mv ${CI_PROJECT_DIR}/.conan C:\Users\gitlab_runner -Force)
     - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
     - choco install cmake -y --installargs 'ADD_CMAKE_TO_PATH=System'
     - choco install python --version=3.9.12 -y
@@ -410,7 +410,7 @@ clang-14-conan-release:
     # Changed in below.
     - ls
   after_script:
-    - mv C:\Users\gitlab_runner\.conan ${CI_PROJECT_DIR} -Force -ErrorAction SilentlyContinue
+    - (mv C:\Users\gitlab_runner\.conan ${CI_PROJECT_DIR} -Force)
   allow_failure: true
 
 msvc-debug:
