@@ -403,7 +403,9 @@ clang-14-conan-release:
     - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
     - choco install cmake -y --installargs 'ADD_CMAKE_TO_PATH=System'
     - choco install python --version=3.9.12 -y
+    - choco install ccache -y
     - RefreshEnv
+    - ccache --version
     - pip install pipenv
     - pipenv sync
   script:
