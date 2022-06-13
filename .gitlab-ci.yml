@@ -413,12 +413,6 @@ clang-14-conan-release:
     - ls
   after_script:
     - (mv C:\Users\gitlab_runner\.conan ${CI_PROJECT_DIR} -Force)
-  cache:
-    key: cache-${CI_JOB_NAME}
-    paths:
-      - .cache
-      - build
-      - .conan
   allow_failure: true
 
 msvc-debug:
