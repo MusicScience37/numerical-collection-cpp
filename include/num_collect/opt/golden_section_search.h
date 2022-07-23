@@ -131,12 +131,16 @@ public:
     /*!
      * \copydoc num_collect::opt::optimizer_base::opt_variable
      */
-    [[nodiscard]] auto opt_variable() const { return mid1_; }
+    [[nodiscard]] auto opt_variable() const -> const variable_type& {
+        return mid1_;
+    }
 
     /*!
      * \copydoc num_collect::opt::optimizer_base::opt_value
      */
-    [[nodiscard]] auto opt_value() const { return value1_; }
+    [[nodiscard]] auto opt_value() const -> const value_type& {
+        return value1_;
+    }
 
     /*!
      * \copydoc num_collect::opt::optimizer_base::iterations

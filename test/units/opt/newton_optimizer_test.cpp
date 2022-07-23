@@ -26,11 +26,20 @@
 #include <catch2/matchers/catch_matchers_string.hpp>
 
 #include "eigen_approx.h"
+#include "num_collect/opt/concepts/descent_method.h"
+#include "num_collect/opt/concepts/optimizer.h"
 #include "num_prob_collect/opt/multi_quadratic_function.h"
 
 TEST_CASE("num_collect::opt::newton_optimizer") {
     using num_collect::opt::newton_optimizer;
     using num_prob_collect::opt::multi_quadratic_function;
+
+    SECTION("concepts") {
+        STATIC_REQUIRE(num_collect::opt::concepts::optimizer<
+            newton_optimizer<multi_quadratic_function>>);
+        STATIC_REQUIRE(num_collect::opt::concepts::descent_method<
+            newton_optimizer<multi_quadratic_function>>);
+    }
 
     SECTION("init") {
         auto opt = newton_optimizer<multi_quadratic_function>();
