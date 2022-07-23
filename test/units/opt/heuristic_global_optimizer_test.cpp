@@ -27,6 +27,7 @@
 
 #include "eigen_approx.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/opt/concepts/box_constrained_optimizer.h"
 #include "num_collect/opt/concepts/optimizer.h"
 #include "num_prob_collect/opt/multi_quadratic_function.h"
 #include "num_prob_collect/opt/quadratic_function.h"
@@ -37,6 +38,8 @@ TEST_CASE("num_collect::opt::heuristic_global_optimizer(single_variate)") {
 
     SECTION("concepts") {
         STATIC_REQUIRE(num_collect::opt::concepts::optimizer<
+            heuristic_global_optimizer<quadratic_function>>);
+        STATIC_REQUIRE(num_collect::opt::concepts::box_constrained_optimizer<
             heuristic_global_optimizer<quadratic_function>>);
     }
 
@@ -59,6 +62,8 @@ TEST_CASE("num_collect::opt::heuristic_global_optimizer(multi_variate)") {
 
     SECTION("concepts") {
         STATIC_REQUIRE(num_collect::opt::concepts::optimizer<
+            heuristic_global_optimizer<multi_quadratic_function>>);
+        STATIC_REQUIRE(num_collect::opt::concepts::box_constrained_optimizer<
             heuristic_global_optimizer<multi_quadratic_function>>);
     }
 

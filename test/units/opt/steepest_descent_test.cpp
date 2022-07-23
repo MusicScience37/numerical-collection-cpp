@@ -26,6 +26,7 @@
 #include <catch2/matchers/catch_matchers_string.hpp>
 
 #include "eigen_approx.h"
+#include "num_collect/opt/concepts/descent_method.h"
 #include "num_collect/opt/concepts/optimizer.h"
 #include "num_prob_collect/opt/multi_quadratic_function.h"
 
@@ -35,6 +36,8 @@ TEST_CASE("num_collect::opt::steepest_descent") {
 
     SECTION("concepts") {
         STATIC_REQUIRE(num_collect::opt::concepts::optimizer<
+            steepest_descent<multi_quadratic_function>>);
+        STATIC_REQUIRE(num_collect::opt::concepts::descent_method<
             steepest_descent<multi_quadratic_function>>);
     }
 

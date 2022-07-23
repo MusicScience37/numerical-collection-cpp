@@ -26,6 +26,7 @@
 #include <catch2/matchers/catch_matchers_string.hpp>
 
 #include "eigen_approx.h"
+#include "num_collect/opt/concepts/box_constrained_optimizer.h"
 #include "num_collect/opt/concepts/optimizer.h"
 #include "num_prob_collect/opt/multi_quadratic_function.h"
 #include "num_prob_collect/opt/vibrated_quadratic_function.h"
@@ -36,6 +37,8 @@ TEST_CASE("num_collect::opt::dividing_rectangles (multi variables)") {
 
     SECTION("concepts") {
         STATIC_REQUIRE(num_collect::opt::concepts::optimizer<
+            dividing_rectangles<multi_quadratic_function>>);
+        STATIC_REQUIRE(num_collect::opt::concepts::box_constrained_optimizer<
             dividing_rectangles<multi_quadratic_function>>);
     }
 
@@ -80,6 +83,8 @@ TEST_CASE("num_collect::opt::dividing_rectangles (one variable)") {
 
     SECTION("concepts") {
         STATIC_REQUIRE(num_collect::opt::concepts::optimizer<
+            dividing_rectangles<vibrated_quadratic_function>>);
+        STATIC_REQUIRE(num_collect::opt::concepts::box_constrained_optimizer<
             dividing_rectangles<vibrated_quadratic_function>>);
     }
 

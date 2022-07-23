@@ -47,6 +47,10 @@ concept optimizer = base::concepts::iterative_solver<T> && requires() {
         typename T::objective_function_type::value_type,
         typename T::value_type>;
 
+    requires requires(const typename T::objective_function_type& obj_fun) {
+        {T{obj_fun}};
+    };
+
     requires requires(const T& obj) {
         {
             obj.opt_variable()
