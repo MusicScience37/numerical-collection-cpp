@@ -415,7 +415,8 @@ clang-14-conan-release:
     - (mv C:\Users\gitlab_runner\.conan ${CI_PROJECT_DIR} -Force)
   allow_failure: true
 
-msvc-debug:
+# TODO
+.msvc-debug:
   extends: .msvc-base
   variables:
     BUILD_DIR: build_msvc_debug
@@ -442,7 +443,8 @@ msvc-debug:
     - cmake --build . --config Debug --parallel 3
     - ctest -V --build-config Debug
 
-msvc-release:
+# TODO
+.msvc-release:
   extends: .msvc-base
   variables:
     BUILD_DIR: build_msvc
