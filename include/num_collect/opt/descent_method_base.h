@@ -102,16 +102,14 @@ public:
     /*!
      * \copydoc num_collect::opt::optimizer_base::opt_variable
      */
-    [[nodiscard]] auto opt_variable() const {
+    [[nodiscard]] auto opt_variable() const -> const variable_type& {
         return line_searcher().opt_variable();
     }
 
     /*!
      * \copydoc num_collect::opt::optimizer_base::opt_value
      */
-    [[nodiscard]] auto opt_value() const
-        -> std::invoke_result_t<decltype(&line_searcher_type::opt_value),
-            const line_searcher_type> {
+    [[nodiscard]] auto opt_value() const -> const value_type& {
         return line_searcher().opt_value();
     }
 

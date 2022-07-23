@@ -119,14 +119,14 @@ public:
     /*!
      * \copydoc num_collect::opt::optimizer_base::opt_variable
      */
-    [[nodiscard]] auto opt_variable() const -> variable_type {
+    [[nodiscard]] auto opt_variable() const -> const variable_type& {
         return opt2_.opt_variable();
     }
 
     /*!
      * \copydoc num_collect::opt::optimizer_base::opt_value
      */
-    [[nodiscard]] auto opt_value() const -> value_type {
+    [[nodiscard]] auto opt_value() const -> const value_type& {
         return opt2_.opt_value();
     }
 
@@ -242,7 +242,7 @@ public:
     /*!
      * \copydoc num_collect::opt::optimizer_base::opt_variable
      */
-    [[nodiscard]] auto opt_variable() const -> variable_type {
+    [[nodiscard]] auto opt_variable() const -> const variable_type& {
         if (current_optimizer_index_ == 1) {
             return opt1_.opt_variable();
         }
@@ -252,7 +252,7 @@ public:
     /*!
      * \copydoc num_collect::opt::optimizer_base::opt_value
      */
-    [[nodiscard]] auto opt_value() const -> value_type {
+    [[nodiscard]] auto opt_value() const -> const value_type& {
         if (current_optimizer_index_ == 1) {
             return opt1_.opt_value();
         }

@@ -138,7 +138,7 @@ public:
     }
 
 private:
-    //! Approxymate Hessian.
+    //! Approximate Hessian.
     hessian_type approx_hessian_{};
 
     //! Previous variable.
