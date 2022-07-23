@@ -75,7 +75,7 @@ TEST_CASE(
         constexpr double init_var = 1.0;
         solver.init(init_time, init_var);
 
-        constexpr double duration = 2.345;
+        constexpr double duration = 0.234;
         constexpr double end_time = init_time + duration;
         REQUIRE_NOTHROW(solver.solve_till(end_time));
 
@@ -106,7 +106,7 @@ TEST_CASE(
         const Eigen::Vector2d init_var = Eigen::Vector2d(-1.0, 0.0);
         solver.init(init_time, init_var);
 
-        constexpr double duration = 2.345;
+        constexpr double duration = 0.234;
         constexpr double end_time = init_time + duration;
         REQUIRE_NOTHROW(solver.solve_till(end_time));
 
