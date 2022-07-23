@@ -19,6 +19,7 @@
  */
 #include "num_collect/functions/legendre.h"
 
+#include <cmath>
 #include <limits>
 
 #include <catch2/catch_template_test_macros.hpp>
