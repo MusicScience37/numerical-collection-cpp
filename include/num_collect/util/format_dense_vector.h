@@ -22,8 +22,6 @@
 #include <Eigen/Core>
 #include <fmt/format.h>
 
-#include "num_collect/base/exception.h"
-#include "num_collect/logging/log_and_throw.h"
 #include "num_collect/util/assert.h"
 
 namespace num_collect::util {

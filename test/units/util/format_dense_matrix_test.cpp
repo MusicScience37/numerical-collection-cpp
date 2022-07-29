@@ -19,6 +19,8 @@
  */
 #include "num_collect/util/format_dense_matrix.h"
 
+#include <string>
+
 #include <ApprovalTests.hpp>
 #include <catch2/catch_test_macros.hpp>
 

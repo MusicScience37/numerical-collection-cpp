@@ -19,6 +19,8 @@
  */
 #include "num_collect/util/hash_string.h"
 
+#include <string>
+
 #include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("num_collect::hash_string") {

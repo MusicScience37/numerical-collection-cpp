@@ -47,7 +47,7 @@ template <typename T>
 constexpr bool is_signed_v = is_signed<T>::value;
 
 /*!
- * \brief Concept of signed ingegers.
+ * \brief Concept of signed integers.
  *
  * \tparam T Type.
  */

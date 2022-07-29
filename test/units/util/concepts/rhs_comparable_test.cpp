@@ -19,6 +19,8 @@
  */
 #include "num_collect/util/concepts/rhs_comparable.h"
 
+#include <string>
+
 #include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("num_collect::util::concepts::rhs_less_than_comparable") {

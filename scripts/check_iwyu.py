@@ -9,7 +9,8 @@ import tqdm
 
 CLANG_INCLUDE_OPTION = ["-isystem", "/usr/lib/llvm-14/include/c++/v1/"]
 
-# iwyu_tool.py -p . ../../test/units/constants/half_test.cpp ../../test/units/base/assert_test.cpp -- -isystem /usr/lib/llvm-14/include/c++/v1/ -Xiwyu --error
+ROOT_DIR = pathlib.Path(__file__).absolute().parent.parent
+IWYU_MAPPING_PATH = ROOT_DIR / "iwyu_mappings.imp"
 
 
 class IwyuProcessError(RuntimeError):
@@ -28,24 +29,28 @@ async def apply_iwyu_to_file(
         result = await trio.run_process(
             ["iwyu_tool.py", "-p", ".", filepath, "--"]
             + CLANG_INCLUDE_OPTION
-            + ["-Xiwyu", "--error"],
+            + ["-Xiwyu", "--error"]
+            + ["-Xiwyu", f"--mapping_file={str(IWYU_MAPPING_PATH)}"]
+            + ["-Xiwyu", "--no_fwd_decls"],
             capture_stdout=True,
             capture_stderr=True,
             check=False,
             cwd=build_dir,
         )
         if result.returncode == 0:
-            tqdm_obj.write(f"> {filepath}: OK")
+            tqdm_obj.write(click.style(f"> {filepath}: OK", fg="green"))
             tqdm_obj.update()
         else:
             tqdm_obj.write(
-                f"""> {filepath}: NG
-{result.stdout.decode("utf8")}
-{result.stderr.decode("utf8")}"""
+                click.style(f"> {filepath}: NG", fg="red")
+                + "\n"
+                + result.stdout.decode("utf8")
+                + "\n"
+                + result.stderr.decode("utf8")
             )
-            tqdm_obj.update()
             if stop_on_error:
                 raise IwyuProcessError(f"Error in {filepath}.")
+            tqdm_obj.update()
 
 
 def filter_iwyu_process_error(exc):

@@ -19,7 +19,11 @@
  */
 #include "num_collect/util/format_sparse_matrix.h"
 
+#include <string>
+#include <vector>
+
 #include <ApprovalTests.hpp>
+#include <Eigen/SparseCore>
 #include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("num_collect::util::format_sparse_matrix") {

@@ -19,6 +19,9 @@
  */
 #include "num_collect/base/concepts/dense_vector.h"
 
+#include <string>
+
+#include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("num_collect::concepts::dense_vector") {

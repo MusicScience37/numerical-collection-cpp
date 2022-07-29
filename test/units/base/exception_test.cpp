@@ -19,11 +19,15 @@
  */
 #include "num_collect/base/exception.h"
 
-#include <type_traits>
+#include <ostream>
+#include <type_traits>  // IWYU pragma: keep
 
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
+
+#include "num_collect/util/impl/compiler_builtins.h"
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("exceptions", "", num_collect::num_collect_exception,

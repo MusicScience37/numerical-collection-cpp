@@ -20,13 +20,15 @@
 #pragma once
 
 #include <limits>
-#include <type_traits>
+#include <string_view>
+#include <type_traits>  // IWYU pragma: keep
 #include <typeinfo>
 
-#include <fmt/core.h>
+#include <fmt/format.h>
 
-#include "num_collect/base/concepts/integral.h"
+#include "num_collect/base/concepts/integral.h"  // IWYU pragma: keep
 #include "num_collect/base/exception.h"
+#include "num_collect/util/source_info_view.h"
 
 namespace num_collect::util {
 

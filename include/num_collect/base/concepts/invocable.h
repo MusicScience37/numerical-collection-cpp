@@ -20,6 +20,7 @@
 #pragma once
 
 #include <functional>
+#include <utility>
 
 namespace num_collect {
 inline namespace base {

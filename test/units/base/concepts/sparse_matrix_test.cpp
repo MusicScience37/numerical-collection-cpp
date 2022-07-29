@@ -19,7 +19,10 @@
  */
 #include "num_collect/base/concepts/sparse_matrix.h"
 
+#include <string>
+
 #include <Eigen/Core>
+#include <Eigen/SparseCore>
 #include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("num_collect::concepts::sparse_matrix") {
