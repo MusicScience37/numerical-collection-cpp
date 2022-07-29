@@ -48,6 +48,8 @@
     "htmlreport",
     "installargs",
     "interp",
+    "isystem",
+    "iwyu",
     "Kabashima",
     "Kahan",
     "Kenta",
@@ -86,10 +88,12 @@
     "swappable",
     "Tikhonov",
     "tomlplusplus",
+    "tqdm",
     "trompeloeil",
     "tsan",
     "ubsan",
-    "venv"
+    "venv",
+    "Xiwyu"
   ],
   "clangd.arguments": [
     "--compile-commands-dir=${workspaceFolder}/build/Debug",
