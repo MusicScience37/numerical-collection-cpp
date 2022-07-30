@@ -19,7 +19,7 @@
  */
 #pragma once
 
-#include "num_collect/opt/concepts/optimizer.h"
+#include "num_collect/opt/concepts/optimizer.h"  // IWYU pragma: keep
 
 namespace num_collect::opt::concepts {
 

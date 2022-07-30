@@ -19,7 +19,7 @@
  */
 #pragma once
 
-#include <type_traits>
+#include <type_traits>  // IWYU pragma: keep
 
 namespace num_collect {
 inline namespace base {
