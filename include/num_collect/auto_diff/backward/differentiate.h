@@ -21,7 +21,7 @@
 
 #include <cstddef>
 #include <memory>
-#include <utility>
+#include <utility>  // IWYU pragma: keep
 #include <vector>
 
 #include <Eigen/Core>

@@ -19,16 +19,17 @@
  */
 #pragma once
 
+// IWYU pragma: no_include <string_view>
+// IWYU pragma: no_include "num_collect/util/source_info_view.h"
+
 #include <limits>
-#include <string_view>
 #include <type_traits>  // IWYU pragma: keep
 #include <typeinfo>
 
-#include <fmt/format.h>
+#include <fmt/format.h>  // IWYU pragma: keep
 
 #include "num_collect/base/concepts/integral.h"  // IWYU pragma: keep
 #include "num_collect/base/exception.h"
-#include "num_collect/util/source_info_view.h"
 
 namespace num_collect::util {
 
