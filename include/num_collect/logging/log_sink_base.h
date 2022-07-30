@@ -22,8 +22,6 @@
 #include <chrono>
 #include <string_view>
 
-#include <fmt/format.h>
-
 #include "num_collect/logging/log_level.h"
 #include "num_collect/util/source_info_view.h"
 

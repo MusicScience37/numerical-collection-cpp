@@ -19,7 +19,8 @@
  */
 #pragma once
 
-#include <functional>
+// IWYU pragma: no_include <functional>
+
 #include <string_view>
 #include <type_traits>
 

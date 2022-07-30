@@ -19,15 +19,16 @@
  */
 #pragma once
 
+// IWYU pragma: no_include <memory>
+// IWYU pragma: no_include "num_collect/util/comparators.h"
+
 #include <iterator>
-#include <memory>
 #include <string_view>
 
 #include <fmt/format.h>
 
 #include "num_collect/base/exception.h"
 #include "num_collect/logging/log_and_throw.h"
-#include "num_collect/util/comparators.h"
 #include "num_collect/util/impl/assertion_decomposer.h"  // IWYU pragma: export
 #include "num_collect/util/source_info_view.h"
 

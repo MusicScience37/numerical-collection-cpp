@@ -23,7 +23,6 @@
 #include <iterator>
 #include <string_view>
 
-#include <fmt/chrono.h>
 #include <fmt/color.h>
 #include <fmt/format.h>
 
