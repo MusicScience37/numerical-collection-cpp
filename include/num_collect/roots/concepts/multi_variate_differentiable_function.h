@@ -19,11 +19,11 @@
  */
 #pragma once
 
-#include <type_traits>
+#include <type_traits>  // IWYU pragma: keep
 
-#include "num_collect/base/concepts/real_scalar_dense_matrix.h"
-#include "num_collect/base/concepts/real_scalar_dense_vector.h"
-#include "num_collect/roots/concepts/differentiable_function.h"
+#include "num_collect/base/concepts/real_scalar_dense_matrix.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/real_scalar_dense_vector.h"  // IWYU pragma: keep
+#include "num_collect/roots/concepts/differentiable_function.h"  // IWYU pragma: keep
 
 namespace num_collect::roots::concepts {
 

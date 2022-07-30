@@ -52,6 +52,7 @@
   { include: ["@<Eigen/src/Eigenvalues/.*>", private, "<Eigen/Eigenvalues>", public ] },
   { include: ["@<Eigen/src/Householder/.*>", private, "<Eigen/Householder>", public ] },
   { include: ["@<Eigen/src/SparseCore/.*>", private, "<Eigen/SparseCore>", public ] },
+  { include: ["@<Eigen/src/LU/.*>", private, "<Eigen/LU>", public ] },
   # Custom (toml++)
   { include: ["@<toml\\+\\+/impl/.*>", private, "<toml++/toml.h>", public ] },
   # Custom (trompeloeil)

@@ -19,8 +19,6 @@
  */
 #pragma once
 
-#include <cmath>
-
 namespace num_prob_collect::roots {
 
 /*!
