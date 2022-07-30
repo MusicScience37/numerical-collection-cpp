@@ -22,6 +22,7 @@
 #include <chrono>
 #include <iterator>
 #include <string_view>
+#include <type_traits>
 
 #include <fmt/chrono.h>
 #include <fmt/format.h>

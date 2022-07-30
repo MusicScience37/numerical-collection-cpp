@@ -19,6 +19,9 @@
  */
 #include "num_collect/logging/log_tag_config.h"
 
+#include <ostream>
+#include <string>
+
 #include <catch2/catch_test_macros.hpp>
 
 #include "mock_log_sink.h"

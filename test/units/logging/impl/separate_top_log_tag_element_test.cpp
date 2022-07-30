@@ -20,10 +20,10 @@
 #include "num_collect/logging/impl/separate_top_log_tag_element.h"
 
 #include <string_view>
+#include <type_traits>
+#include <utility>
 
 #include <catch2/catch_test_macros.hpp>
-
-#include "num_collect/logging/impl/log_tag_element.h"
 
 TEST_CASE("num_collect::logging::impl::separate_top_log_tag_element") {
     using num_collect::logging::impl::separate_top_log_tag_element;

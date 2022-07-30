@@ -19,6 +19,9 @@
  */
 #include "num_collect/logging/log_config.h"
 
+#include <string>
+#include <string_view>
+
 #include <catch2/catch_test_macros.hpp>
 
 #include "num_collect/base/index_type.h"

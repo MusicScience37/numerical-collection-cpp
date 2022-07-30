@@ -20,10 +20,13 @@
 #include "num_collect/logging/logger.h"
 
 #include <memory>
+#include <type_traits>
 
 #include <catch2/catch_test_macros.hpp>
 
 #include "mock_log_sink.h"
+#include "num_collect/base/index_type.h"
+#include "trompeloeil_catch2.h"
 
 TEST_CASE("num_collect::logging::logger") {
     using num_collect::logging::log_config;

@@ -20,6 +20,7 @@
 #pragma once
 
 #include <cstdio>
+#include <functional>
 #include <memory>
 #include <optional>
 #include <string>
@@ -34,6 +35,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/colored_console_log_sink.h"
 #include "num_collect/logging/log_config.h"
+#include "num_collect/logging/log_level.h"
 #include "num_collect/logging/log_sink_base.h"
 #include "num_collect/logging/log_tag.h"
 #include "num_collect/logging/log_tag_config.h"

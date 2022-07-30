@@ -20,9 +20,13 @@
 #include "num_collect/logging/impl/load_logging_config_toml.h"
 
 #include <cstdint>
+#include <ostream>
 #include <string_view>
+#include <tuple>
 
+#include <catch2/catch_message.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 
 #include "num_collect/logging/colored_console_log_sink.h"

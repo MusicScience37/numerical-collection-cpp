@@ -22,6 +22,8 @@
 #include <algorithm>
 #include <chrono>
 #include <iterator>
+#include <memory>
+#include <string>
 #include <string_view>
 #include <utility>
 

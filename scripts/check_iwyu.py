@@ -14,6 +14,8 @@ CLANG_INCLUDE_OPTION = ["-isystem", "/usr/lib/llvm-14/include/c++/v1/"]
 ROOT_DIR = pathlib.Path(__file__).absolute().parent.parent
 IWYU_MAPPING_PATH = ROOT_DIR / "iwyu_mappings.imp"
 
+IS_SUCCESS = True
+
 
 class IwyuProcessError(RuntimeError):
     pass
@@ -26,6 +28,8 @@ async def apply_iwyu_to_file(
     limiter: trio.CapacityLimiter,
     stop_on_error: bool,
 ):
+
+    global IS_SUCCESS
 
     async with limiter:
         result = await trio.run_process(
@@ -50,6 +54,7 @@ async def apply_iwyu_to_file(
                 + "\n"
                 + result.stderr.decode("utf8")
             )
+            IS_SUCCESS = False
             if stop_on_error:
                 raise IwyuProcessError(f"Error in {filepath}.")
             tqdm_obj.update()
@@ -68,6 +73,7 @@ async def apply_iwyu_to_files(
     num_jobs: int,
     stop_on_error: bool,
 ):
+    global IS_SUCCESS
 
     tqdm_obj = tqdm.tqdm(total=len(filepaths), unit="file")
     limiter = trio.CapacityLimiter(num_jobs)
@@ -83,8 +89,10 @@ async def apply_iwyu_to_files(
                     stop_on_error,
                 )
     except IwyuProcessError:
+        IS_SUCCESS = False
         pass
     except trio.MultiError as e:
+        IS_SUCCESS = False
         e = trio.MultiError.filter(filter_iwyu_process_error, e)
         if e is not None:
             raise e
@@ -111,6 +119,8 @@ def get_files_in(path: pathlib.Path) -> list[str]:
 def check_iwyu(file_or_directory_paths: list[str], build_dir: str, num_jobs: int):
     """Check source codes with include-what-you-use."""
 
+    global IS_SUCCESS
+
     filepaths: list[str] = []
     for file_or_directory_path in file_or_directory_paths:
         path = pathlib.Path(file_or_directory_path).absolute()
@@ -133,6 +143,9 @@ def check_iwyu(file_or_directory_paths: list[str], build_dir: str, num_jobs: int
     stop_on_error = True
 
     trio.run(apply_iwyu_to_files, filepaths, build_dir, num_jobs, stop_on_error)
+
+    if not IS_SUCCESS:
+        click.echo(click.style("Some errors occurred.", fg="red"))
 
 
 if __name__ == "__main__":

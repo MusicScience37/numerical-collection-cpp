@@ -21,6 +21,7 @@
 
 #include <cstdio>
 #include <memory>
+#include <string_view>
 #include <utility>
 
 #include "num_collect/base/exception.h"
