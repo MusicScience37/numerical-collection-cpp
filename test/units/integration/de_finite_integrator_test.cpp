@@ -22,14 +22,17 @@
 #include <cmath>
 #include <complex>
 #include <limits>
+#include <ostream>
+#include <string>
 
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include "num_collect/constants/napier.h"
-#include "num_collect/constants/one.h"
-#include "num_collect/constants/pi.h"
+#include "num_collect/constants/napier.h"  // IWYU pragma: keep
+#include "num_collect/constants/one.h"     // IWYU pragma: keep
+#include "num_collect/constants/pi.h"      // IWYU pragma: keep
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(

@@ -19,16 +19,19 @@
  */
 #pragma once
 
+// IWYU pragma: no_include <complex>
+
+#include <cmath>
 #include <type_traits>
 
 #include <Eigen/Core>
 
-#include "num_collect/base/concepts/invocable_as.h"
-#include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/concepts/invocable_as.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/real_scalar.h"   // IWYU pragma: keep
 #include "num_collect/base/index_type.h"
-#include "num_collect/constants/half.h"
-#include "num_collect/constants/one.h"
-#include "num_collect/constants/two.h"
+#include "num_collect/constants/half.h"  // IWYU pragma: keep
+#include "num_collect/constants/one.h"   // IWYU pragma: keep
+#include "num_collect/constants/two.h"   // IWYU pragma: keep
 #include "num_collect/functions/legendre.h"
 #include "num_collect/functions/legendre_roots.h"
 #include "num_collect/util/assert.h"
