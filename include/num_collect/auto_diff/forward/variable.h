@@ -19,17 +19,13 @@
  */
 #pragma once
 
-#include <limits>
 #include <optional>
-#include <type_traits>
+#include <utility>
 
 #include <Eigen/Core>
 
-#include "num_collect/base/concepts/real_scalar.h"
-#include "num_collect/base/index_type.h"
+#include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
 #include "num_collect/util/assert.h"
-#include "num_collect/util/is_eigen_matrix.h"
-#include "num_collect/util/is_eigen_vector.h"
 
 namespace num_collect::auto_diff::forward {
 
@@ -65,7 +61,7 @@ public:
      *
      * \param[in] value Value.
      */
-    variable(const value_type& value)  // NOLINT: implicit convertion required
+    variable(const value_type& value)  // NOLINT: implicit conversion required
         : value_(value) {}
 
     /*!

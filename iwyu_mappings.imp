@@ -16,6 +16,9 @@
   { symbol: [ "std::uint64_t", private, "<cstddef>", public ] },
   { symbol: [ "std::abs", private, "<cmath>", public ] },
   { symbol: [ "abs", private, "<cmath>", public ] },
+  { symbol: [ "std::exp", private, "<cmath>", public ] },
+  { symbol: [ "std::log", private, "<cmath>", public ] },
+  { symbol: [ "std::sqrt", private, "<cmath>", public ] },
   { symbol: [ "std::hash", private, "<functional>", public ] },
   { symbol: [ "std::FILE", private, "<cstdio>", public ] },
   { include: ["@<__memory/.*>", private, "<memory>", public ] },
@@ -33,6 +36,9 @@
   { include: ["<fmt/core.h>", private, "<fmt/format.h>", public ] },
   # Custom (Eigen)
   { include: ["@<Eigen/src/Core/.*>", private, "<Eigen/Core>", public ] },
+  { include: ["@\"src/Core/.*\"", private, "<Eigen/Core>", public ] },
+  { include: ["\"src/Core/DenseBase.h\"", private, "<Eigen/Core>", public ] },
+  { include: ["\"src/Core/MatrixBase.h\"", private, "<Eigen/Core>", public ] },
   { include: ["@<Eigen/src/SparseCore/.*>", private, "<Eigen/SparseCore>", public ] },
   # Custom (toml++)
   { include: ["@<toml\\+\\+/impl/.*>", private, "<toml++/toml.h>", public ] },

@@ -68,6 +68,7 @@
     "NOLINT",
     "NOLINTNEXTLINE",
     "NONTYPE",
+    "Nullary",
     "openmp",
     "optin",
     "pipenv",

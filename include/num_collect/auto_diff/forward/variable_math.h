@@ -15,11 +15,11 @@
  */
 /*!
  * \file
- * \brief Definition of mathemttical functions for variable class.
+ * \brief Definition of mathematical functions for variable class.
  */
 #pragma once
 
-#include <cmath>
+#include <cmath>  // IWYU pragma: keep
 
 #include "num_collect/auto_diff/forward/variable.h"
 

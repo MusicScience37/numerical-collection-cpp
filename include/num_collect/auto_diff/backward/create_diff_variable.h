@@ -19,10 +19,13 @@
  */
 #pragma once
 
+#include <Eigen/Core>
+
 #include "num_collect/auto_diff/backward/variable.h"
-#include "num_collect/base/concepts/real_scalar.h"
-#include "num_collect/base/concepts/real_scalar_dense_vector.h"
+#include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/real_scalar_dense_vector.h"  // IWYU pragma: keep
 #include "num_collect/base/index_type.h"
+#include "num_collect/util/assert.h"
 
 namespace num_collect::auto_diff::backward {
 

@@ -4,6 +4,7 @@
 
 import pathlib
 import random
+import time
 
 import click
 import trio
