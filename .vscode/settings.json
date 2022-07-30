@@ -60,6 +60,7 @@
     "libc++",
     "libcxx",
     "libstdc",
+    "maclaurin",
     "mkdir",
     "MSVC",
     "MusicScience37",

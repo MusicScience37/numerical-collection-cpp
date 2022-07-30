@@ -23,8 +23,8 @@
 
 #include "num_collect/constants/exp.h"
 #include "num_collect/constants/impl/expm1_maclaurin.h"
-#include "num_collect/constants/one.h"
-#include "num_collect/constants/zero.h"
+#include "num_collect/constants/one.h"   // IWYU pragma: keep
+#include "num_collect/constants/zero.h"  // IWYU pragma: keep
 
 namespace num_collect::constants {
 

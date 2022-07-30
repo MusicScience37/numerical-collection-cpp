@@ -19,6 +19,7 @@
   { include: ["@<__memory/.*>", private, "<memory>", public ] },
   { include: ["@<__functional/.*>", private, "<functional>", public ] },
   { include: ["@<__iterator/.*>", private, "<iterator>", public ] },
+  { include: ["@<__utility/.*>", private, "<utility>", public ] },
   # Custom (fmt)
   { include: ["<fmt/core.h>", private, "<fmt/format.h>", public ] },
   # Custom (Eigen)

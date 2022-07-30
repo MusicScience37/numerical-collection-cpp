@@ -22,7 +22,7 @@
 #include <cstdint>
 #include <limits>
 
-#include "num_collect/constants/zero.h"
+#include "num_collect/constants/zero.h"  // IWYU pragma: keep
 
 namespace num_collect::constants {
 

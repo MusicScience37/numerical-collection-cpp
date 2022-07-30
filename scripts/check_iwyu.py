@@ -2,8 +2,10 @@
 """Check source codes with include-what-you-use.
 """
 
-import click
 import pathlib
+import random
+
+import click
 import trio
 import tqdm
 
@@ -122,6 +124,10 @@ def check_iwyu(file_or_directory_paths: list[str], build_dir: str, num_jobs: int
         for filepath in filepaths
         if filepath.endswith(".cpp") and not filepath.endswith("unity_source.cpp")
     ]
+
+    # Check different files first.
+    random.seed()
+    random.shuffle(filepaths)
 
     # Currently, stop on error always.
     stop_on_error = True

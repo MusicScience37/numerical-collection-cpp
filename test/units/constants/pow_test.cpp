@@ -20,10 +20,13 @@
 #include "num_collect/constants/pow.h"
 
 #include <cmath>
+#include <ostream>
+#include <string>
 #include <utility>
 
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 // NOLINTNEXTLINE
