@@ -19,14 +19,19 @@
  */
 #pragma once
 
+// IWYU pragma: no_include <Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h>
+// IWYU pragma: no_include <Eigen/src/Householder/Householder.h>
+// IWYU pragma: no_include <Eigen/src/Jacobi/Jacobi.h>
+// IWYU pragma: no_include <Eigen/src/plugins/ArrayCwiseUnaryOps.h>
+
+#include <cmath>
 #include <limits>
-#include <type_traits>
+#include <type_traits>  // IWYU pragma: keep
 
 #include <Eigen/Core>
 #include <Eigen/Eigenvalues>
 
-#include "num_collect/base/concepts/real_scalar_dense_matrix.h"
-#include "num_collect/util/assert.h"
+#include "num_collect/base/concepts/real_scalar_dense_matrix.h"  // IWYU pragma: keep
 
 namespace num_collect::interp::kernel::impl {
 

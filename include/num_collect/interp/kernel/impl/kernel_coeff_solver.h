@@ -19,15 +19,19 @@
  */
 #pragma once
 
-#include <type_traits>
-#include <vector>
+#include <cstddef>
+#include <memory>
+#include <string_view>
 
-#include "num_collect/interp/kernel/concepts/kernel.h"
+#include <Eigen/Core>
+
+#include "num_collect/interp/kernel/concepts/kernel.h"  // IWYU pragma: keep
 #include "num_collect/interp/kernel/impl/auto_regularizer_wrapper.h"
 #include "num_collect/interp/kernel/impl/kernel_parameter_optimizer.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/logging/logging_mixin.h"
+#include "num_collect/util/assert.h"
 
 namespace num_collect::interp::kernel {
 

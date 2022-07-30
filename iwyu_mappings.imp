@@ -21,6 +21,7 @@
   { symbol: [ "std::log", private, "<cmath>", public ] },
   { symbol: [ "std::sqrt", private, "<cmath>", public ] },
   { symbol: [ "std::pow", private, "<cmath>", public ] },
+  { symbol: [ "std::log10", private, "<cmath>", public ] },
   # Custom (STL - Internal headers)
   { include: ["@<__memory/.*>", private, "<memory>", public ] },
   { include: ["@<__functional/.*>", private, "<functional>", public ] },
@@ -46,7 +47,10 @@
   { include: ["\"src/Core/DenseBase.h\"", private, "<Eigen/Core>", public ] },
   { include: ["\"src/Core/MatrixBase.h\"", private, "<Eigen/Core>", public ] },
   { include: ["\"src/Core/ArrayBase.h\"", private, "<Eigen/Core>", public ] },
+  { include: ["<Eigen/src/plugins/ArrayCwiseUnaryOps.h>", private, "<Eigen/Core>", public ] },
   { include: ["@<Eigen/src/Cholesky/.*>", private, "<Eigen/Cholesky>", public ] },
+  { include: ["@<Eigen/src/Eigenvalues/.*>", private, "<Eigen/Eigenvalues>", public ] },
+  { include: ["@<Eigen/src/Householder/.*>", private, "<Eigen/Householder>", public ] },
   { include: ["@<Eigen/src/SparseCore/.*>", private, "<Eigen/SparseCore>", public ] },
   # Custom (toml++)
   { include: ["@<toml\\+\\+/impl/.*>", private, "<toml++/toml.h>", public ] },

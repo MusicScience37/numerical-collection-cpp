@@ -19,17 +19,20 @@
  */
 #include "num_collect/interp/kernel/impl/kernel_parameter_optimizer.h"
 
+#include <string>
+#include <vector>
+
 #include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_floating_point.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 
 #include "eigen_approx.h"
-#include "is_finite.h"
 #include "num_collect/interp/kernel/calc_kernel_mat.h"
 #include "num_collect/interp/kernel/euclidean_distance.h"
 #include "num_collect/interp/kernel/gaussian_rbf.h"
 #include "num_collect/interp/kernel/impl/auto_regularizer_wrapper.h"
 #include "num_collect/interp/kernel/rbf_kernel.h"
+#include "num_collect/opt/sampling_optimizer.h"
 
 TEST_CASE("num_collect::interp::kernel::impl::kernel_parameter_optimizer") {
     using num_collect::interp::kernel::euclidean_distance;

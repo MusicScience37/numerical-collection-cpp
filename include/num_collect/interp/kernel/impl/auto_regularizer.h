@@ -25,7 +25,7 @@
 #include "num_collect/logging/logger.h"
 #include "num_collect/opt/function_object_wrapper.h"
 #include "num_collect/opt/heuristic_global_optimizer.h"
-#include "num_collect/regularization/impl/coeff_param.h"
+#include "num_collect/regularization/impl/coeff_param.h"  // IWYU pragma: keep
 
 namespace num_collect::interp::kernel::impl {
 

@@ -4,7 +4,7 @@
 
 import pathlib
 import random
-import time
+import signal
 
 import click
 import trio
@@ -20,6 +20,12 @@ IS_SUCCESS = True
 
 class IwyuProcessError(RuntimeError):
     pass
+
+
+async def cancel_process(process: trio.Process):
+    process.send_signal(signal.SIGTERM)
+    await trio.sleep(1)
+    process.send_signal(signal.SIGKILL)
 
 
 async def apply_iwyu_to_file(
@@ -45,6 +51,7 @@ async def apply_iwyu_to_file(
             capture_stderr=True,
             check=False,
             cwd=build_dir,
+            deliver_cancel=cancel_process,
         )
         if result.returncode == 0:
             tqdm_obj.write(click.style(f"> {filepath}: OK", fg="green"))

@@ -20,12 +20,12 @@
 #pragma once
 
 #include <functional>
-#include <memory>
 
 #include <Eigen/Core>
 
-#include "num_collect/interp/kernel/concepts/kernel.h"
+#include "num_collect/interp/kernel/concepts/kernel.h"  // IWYU pragma: keep
 #include "num_collect/interp/kernel/impl/auto_regularizer_wrapper.h"
+#include "num_collect/logging/logger.h"
 #include "num_collect/opt/function_object_wrapper.h"
 #include "num_collect/opt/heuristic_global_optimizer.h"
 

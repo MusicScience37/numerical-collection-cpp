@@ -19,11 +19,15 @@
  */
 #include "num_collect/interp/kernel/rbf_kernel.h"
 
+#include <string>
+#include <vector>
+
 #include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include "num_collect/interp/kernel/concepts/kernel.h"
+#include "num_collect/interp/kernel/concepts/kernel.h"  // IWYU pragma: keep
 #include "num_collect/interp/kernel/euclidean_distance.h"
 #include "num_collect/interp/kernel/gaussian_rbf.h"
 

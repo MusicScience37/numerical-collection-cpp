@@ -19,11 +19,13 @@
  */
 #include "num_collect/interp/kernel/gaussian_rbf.h"
 
-#include <Eigen/Core>
+#include <string>
+
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include "num_collect/interp/kernel/concepts/rbf.h"
+#include "num_collect/interp/kernel/concepts/rbf.h"  // IWYU pragma: keep
 
 TEST_CASE("num_collect::interp::kernel::gaussian_rbf") {
     using num_collect::interp::kernel::gaussian_rbf;

@@ -19,10 +19,12 @@
  */
 #pragma once
 
+#include <cstddef>
+
 #include <Eigen/Core>
 
 #include "num_collect/base/index_type.h"
-#include "num_collect/interp/kernel/concepts/kernel.h"
+#include "num_collect/interp/kernel/concepts/kernel.h"  // IWYU pragma: keep
 #include "num_collect/util/assert.h"
 
 namespace num_collect::interp::kernel {
