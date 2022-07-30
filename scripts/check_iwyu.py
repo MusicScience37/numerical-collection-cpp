@@ -38,7 +38,9 @@ async def apply_iwyu_to_file(
             + CLANG_INCLUDE_OPTION
             + ["-Xiwyu", "--error"]
             + ["-Xiwyu", f"--mapping_file={str(IWYU_MAPPING_PATH)}"]
-            + ["-Xiwyu", "--no_fwd_decls"],
+            + ["-Xiwyu", "--no_fwd_decls"]
+            + ["-Xiwyu", "--check_also=**/num_collect/**/*.h"]
+            + ["-Xiwyu", "--check_also=**/num_prob_collect/**/*.h"],
             capture_stdout=True,
             capture_stderr=True,
             check=False,
