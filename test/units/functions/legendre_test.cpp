@@ -20,10 +20,12 @@
 #include "num_collect/functions/legendre.h"
 
 #include <cmath>
-#include <limits>
+#include <ostream>
+#include <string>
 
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 // NOLINTNEXTLINE

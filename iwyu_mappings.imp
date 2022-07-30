@@ -22,6 +22,7 @@
   { symbol: [ "std::sqrt", private, "<cmath>", public ] },
   { symbol: [ "std::pow", private, "<cmath>", public ] },
   { symbol: [ "std::log10", private, "<cmath>", public ] },
+  { symbol: [ "std::cos", private, "<cmath>", public ] },
   # Custom (STL - Internal headers)
   { include: ["@<__memory/.*>", private, "<memory>", public ] },
   { include: ["@<__functional/.*>", private, "<functional>", public ] },
