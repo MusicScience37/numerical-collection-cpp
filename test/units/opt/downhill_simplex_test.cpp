@@ -19,14 +19,12 @@
  */
 #include "num_collect/opt/downhill_simplex.h"
 
-#include <sstream>
-
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
-#include <catch2/matchers/catch_matchers_string.hpp>
 
 #include "eigen_approx.h"
-#include "num_collect/opt/concepts/optimizer.h"
+#include "num_collect/opt/concepts/optimizer.h"  // IWYU pragma: keep
 #include "num_prob_collect/opt/multi_quadratic_function.h"
 
 TEST_CASE("num_collect::opt::downhill_simplex") {

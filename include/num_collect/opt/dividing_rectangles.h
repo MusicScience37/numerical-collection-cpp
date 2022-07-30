@@ -20,21 +20,26 @@
 #pragma once
 
 #include <algorithm>
+#include <cmath>
+#include <cstddef>
+#include <iterator>
 #include <limits>
+#include <memory>
 #include <queue>
+#include <string_view>
 #include <tuple>
-#include <type_traits>
+#include <utility>
 #include <vector>
 
-#include <Eigen/Core>
-
 #include "num_collect/base/get_size.h"
+#include "num_collect/base/index_type.h"
 #include "num_collect/base/norm.h"
+#include "num_collect/logging/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/opt/concepts/objective_function.h"
+#include "num_collect/opt/concepts/objective_function.h"  // IWYU pragma: keep
 #include "num_collect/opt/optimizer_base.h"
 #include "num_collect/util/assert.h"
-#include "num_collect/util/is_eigen_vector.h"
+#include "num_collect/util/is_eigen_vector.h"  // IWYU pragma: keep
 #include "num_collect/util/safe_cast.h"
 
 namespace num_collect::opt {

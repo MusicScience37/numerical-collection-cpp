@@ -19,12 +19,17 @@
  */
 #pragma once
 
-#include <Eigen/Cholesky>
+#include <string_view>
 
-#include "num_collect/base/concepts/real_scalar_dense_matrix.h"
+#include <Eigen/Core>
+
+#include "num_collect/base/concepts/real_scalar_dense_matrix.h"  // IWYU pragma: keep
+#include "num_collect/base/index_type.h"
+#include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/log_tag_view.h"
 #include "num_collect/opt/backtracking_line_searcher.h"
-#include "num_collect/opt/concepts/line_searcher.h"
-#include "num_collect/opt/concepts/multi_variate_differentiable_objective_function.h"
+#include "num_collect/opt/concepts/line_searcher.h"  // IWYU pragma: keep
+#include "num_collect/opt/concepts/multi_variate_differentiable_objective_function.h"  // IWYU pragma: keep
 #include "num_collect/opt/descent_method_base.h"
 
 namespace num_collect::opt {
@@ -134,7 +139,7 @@ public:
     }
 
 private:
-    //! Approxymate Hessian.
+    //! Approximate Hessian.
     hessian_type approx_hessian_{};
 
     //! Previous variable.

@@ -19,13 +19,16 @@
  */
 #pragma once
 
+#include <cstddef>
 #include <limits>
-#include <type_traits>
+#include <string_view>
 #include <vector>
 
 #include "num_collect/base/index_type.h"
-#include "num_collect/opt/concepts/objective_function.h"
-#include "num_collect/opt/concepts/single_variate_objective_function.h"
+#include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/log_tag_view.h"
+#include "num_collect/opt/concepts/objective_function.h"  // IWYU pragma: keep
+#include "num_collect/opt/concepts/single_variate_objective_function.h"  // IWYU pragma: keep
 #include "num_collect/opt/optimizer_base.h"
 #include "num_collect/util/assert.h"
 #include "num_collect/util/safe_cast.h"

@@ -19,11 +19,16 @@
  */
 #pragma once
 
+#include <string_view>
+
 #include <Eigen/Cholesky>
 
+#include "num_collect/base/index_type.h"
+#include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/log_tag_view.h"
 #include "num_collect/opt/backtracking_line_searcher.h"
-#include "num_collect/opt/concepts/line_searcher.h"
-#include "num_collect/opt/concepts/multi_variate_twice_differentiable_objective_function.h"
+#include "num_collect/opt/concepts/line_searcher.h"  // IWYU pragma: keep
+#include "num_collect/opt/concepts/multi_variate_twice_differentiable_objective_function.h"  // IWYU pragma: keep
 #include "num_collect/opt/descent_method_base.h"
 
 namespace num_collect::opt {
@@ -86,9 +91,7 @@ public:
      *
      * \return Hessian for current optimal variable.
      */
-    [[nodiscard]] auto hessian() const
-        -> std::invoke_result_t<decltype(&objective_function_type::hessian),
-            const objective_function_type> {
+    [[nodiscard]] auto hessian() const -> const hessian_type& {
         return line_searcher().obj_fun().hessian();
     }
 

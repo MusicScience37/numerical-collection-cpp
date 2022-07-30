@@ -20,9 +20,11 @@
 #pragma once
 
 #include <algorithm>
+#include <cstddef>
 #include <cstdint>
-#include <functional>  // std::hash
+#include <functional>
 #include <limits>
+#include <utility>
 
 #include <Eigen/Core>
 

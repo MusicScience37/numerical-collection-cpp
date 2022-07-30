@@ -21,24 +21,28 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstddef>
+#include <cstdint>
+#include <iterator>
 #include <limits>
+#include <memory>
 #include <queue>
-#include <type_traits>
+#include <string>
+#include <string_view>
 #include <unordered_map>
 #include <utility>
 #include <vector>
 
-#include <Eigen/Core>
-
-#include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
+#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/logging/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/opt/concepts/multi_variate_objective_function.h"
-#include "num_collect/opt/concepts/objective_function.h"
+#include "num_collect/opt/concepts/multi_variate_objective_function.h"  // IWYU pragma: keep
+#include "num_collect/opt/concepts/objective_function.h"  // IWYU pragma: keep
 #include "num_collect/opt/impl/ternary_vector.h"
 #include "num_collect/opt/optimizer_base.h"
 #include "num_collect/util/assert.h"
-#include "num_collect/util/is_eigen_vector.h"
 #include "num_collect/util/safe_cast.h"
 
 namespace num_collect::opt {
@@ -279,7 +283,7 @@ public:
             NUM_COLLECT_DEBUG_ASSERT(digits > 0);
             std::uint_fast32_t one_count = 0;
             for (index_type j = 0; j < digits; ++j) {
-                if (lowest_vertex(i, j) == ternary_vector::digit_type(1)) {
+                if (lowest_vertex(i, j) == ternary_vector::digit_type{1}) {
                     ++one_count;
                 }
             }
@@ -310,7 +314,7 @@ private:
     static void normalize_point(ternary_vector& point) {
         for (index_type i = 0; i < point.dim(); ++i) {
             for (index_type j = point.digits(i) - 1; j > 0; --j) {
-                if (point(i, j) == ternary_vector::digit_type(3)) {
+                if (point(i, j) == ternary_vector::digit_type{3}) {
                     point(i, j) = 0;
                     std::int_fast32_t temp =
                         point(i, j - 1);  // NOLINT: false positive
@@ -658,7 +662,7 @@ private:
      */
     void create_first_rectangle() {
         const index_type dim = value_dict_.dim();
-        auto point = impl::ternary_vector(dim);
+        auto point = impl::ternary_vector{dim};
         for (index_type i = 0; i < dim; ++i) {
             point.push_back(i, 0);
         }
