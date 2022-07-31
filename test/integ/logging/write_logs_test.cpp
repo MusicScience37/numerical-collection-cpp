@@ -17,15 +17,27 @@
  * \file
  * \brief Test to write logs.
  */
+// IWYU pragma: no_include "boost/asio/detail/impl/scheduler.ipp"
+// IWYU pragma: no_include "boost/asio/impl/any_io_executor.ipp"
+// IWYU pragma: no_include "boost/asio/impl/io_context.ipp"
+// IWYU pragma: no_include "boost/process/child.hpp"
+// IWYU pragma: no_include "boost/process/detail/child_decl.hpp"
+// IWYU pragma: no_include "boost/process/io.hpp"
+
+#include <functional>
 #include <future>
+#include <istream>
+#include <iterator>
+#include <memory>
 #include <string>
 #include <string_view>
+#include <utility>
+#include <vector>
 
 #include <ApprovalTests.hpp>
-#include <boost/asio/io_context.hpp>
-#include <boost/process.hpp>
+#include <boost/asio/io_context.hpp>  // IWYU pragma: keep
+#include <boost/process.hpp>          // IWYU pragma: keep
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_string.hpp>
 
 constexpr auto writer_filepath =
     std::string_view("../bin/num_collect_test_integ_logging_write_log_writer");

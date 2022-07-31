@@ -17,10 +17,16 @@
  * \file
  * \brief Test to write logs.
  */
+#include <exception>
+#include <functional>
 #include <iostream>
 #include <memory>
+#include <string>
+#include <string_view>
 
-#include <lyra/lyra.hpp>
+#include <lyra/cli.hpp>
+#include <lyra/opt.hpp>
+#include <lyra/parser.hpp>
 
 #include "num_collect/logging/iteration_logger.h"
 #include "num_collect/logging/log_config.h"
