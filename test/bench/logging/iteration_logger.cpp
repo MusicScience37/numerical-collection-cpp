@@ -24,7 +24,6 @@
 
 #include <stat_bench/bench/invocation_context.h>
 #include <stat_bench/benchmark_macros.h>
-#include <stat_bench/util/do_not_optimize.h>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_config.h"

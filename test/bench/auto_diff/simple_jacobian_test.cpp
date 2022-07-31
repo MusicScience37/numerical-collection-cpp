@@ -17,14 +17,18 @@
  * \file
  * \brief Test of automatic differentiation to calculate a simple Jacobian.
  */
-#include <stat_bench/bench/invocation_context.h>
+#include <vector>
+
+#include <Eigen/Core>
 #include <stat_bench/benchmark_macros.h>
 
 #include "auto_diff_fixture.h"
 #include "num_collect/auto_diff/backward/create_diff_variable.h"
 #include "num_collect/auto_diff/backward/differentiate.h"
+#include "num_collect/auto_diff/backward/variable.h"
 #include "num_collect/auto_diff/forward/create_diff_variable.h"
 #include "num_collect/auto_diff/forward/make_jacobian.h"
+#include "num_collect/auto_diff/forward/variable.h"
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(auto_diff_fixture, "simple_jacobian", "forward") {
