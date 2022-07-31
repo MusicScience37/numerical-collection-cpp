@@ -21,7 +21,6 @@
 
 // IWYU pragma: no_include <complex>
 
-#include <cmath>
 #include <type_traits>
 
 #include <Eigen/Core>

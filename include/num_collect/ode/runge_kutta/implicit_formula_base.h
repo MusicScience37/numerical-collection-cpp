@@ -22,9 +22,9 @@
 #include <algorithm>
 
 #include "num_collect/base/norm.h"
-#include "num_collect/constants/zero.h"
-#include "num_collect/ode/concepts/formula_solver.h"
-#include "num_collect/ode/concepts/problem.h"
+#include "num_collect/constants/zero.h"               // IWYU pragma: keep
+#include "num_collect/ode/concepts/formula_solver.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/problem.h"         // IWYU pragma: keep
 #include "num_collect/util/assert.h"
 
 namespace num_collect::ode::runge_kutta {

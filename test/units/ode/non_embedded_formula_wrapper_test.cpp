@@ -15,20 +15,19 @@
  */
 /*!
  * \file
- * \brief Test of simple_solver_test class.
+ * \brief Test of non_embedded_formula_wrapper class.
  */
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
 
 #include <cmath>
-#include <sstream>
+#include <string>
 
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include "eigen_approx.h"
 #include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/runge_kutta/rk4_formula.h"
-#include "num_collect/ode/simple_solver.h"
 #include "num_prob_collect/ode/exponential_problem.h"
 
 TEST_CASE(

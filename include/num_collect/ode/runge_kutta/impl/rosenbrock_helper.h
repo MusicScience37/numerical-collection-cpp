@@ -19,14 +19,11 @@
  */
 #pragma once
 
-#include <type_traits>
-
 #include <Eigen/LU>
 
-#include "num_collect/base/concepts/real_scalar.h"
-#include "num_collect/base/concepts/real_scalar_dense_matrix.h"
-#include "num_collect/constants/one.h"
-#include "num_collect/util/is_eigen_matrix.h"
+#include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/real_scalar_dense_matrix.h"  // IWYU pragma: keep
+#include "num_collect/constants/one.h"  // IWYU pragma: keep
 
 namespace num_collect::ode::runge_kutta::impl {
 

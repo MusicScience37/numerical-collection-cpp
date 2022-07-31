@@ -19,12 +19,9 @@
  */
 #pragma once
 
-#include <type_traits>
-
-#include "num_collect/base/concepts/real_scalar.h"
-#include "num_collect/base/concepts/real_scalar_dense_matrix.h"
-#include "num_collect/base/concepts/real_scalar_dense_vector.h"
-#include "num_collect/ode/concepts/differentiable_problem.h"
+#include "num_collect/base/concepts/real_scalar_dense_matrix.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/real_scalar_dense_vector.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/differentiable_problem.h"  // IWYU pragma: keep
 
 namespace num_collect::ode::concepts {
 
