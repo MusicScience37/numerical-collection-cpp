@@ -20,10 +20,11 @@
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <vector>
 
 #include "num_collect/auto_diff/backward/differentiate.h"
 #include "num_collect/auto_diff/backward/variable.h"
-#include "num_collect/auto_diff/backward/variable_math.h"
+#include "num_collect/auto_diff/backward/variable_math.h"  // IWYU pragma: keep
 #include "xexp.h"
 
 auto main() -> int {

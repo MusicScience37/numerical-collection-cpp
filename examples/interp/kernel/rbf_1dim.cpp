@@ -17,12 +17,18 @@
  * \file
  * \brief Example of 1-dimensional RBF interpolation.
  */
+#include <array>
+#include <cmath>
+#include <functional>
+#include <vector>
+
 #include <Eigen/Core>
-#include <pybind11/eigen.h>
+#include <pybind11/eigen.h>  // IWYU pragma: keep
 #include <pybind11/embed.h>
 #include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
+#include <pybind11/stl.h>  // IWYU pragma: keep
 
+#include "num_collect/base/index_type.h"
 #include "num_collect/interp/kernel/euclidean_distance.h"
 #include "num_collect/interp/kernel/gaussian_rbf.h"
 #include "num_collect/interp/kernel/kernel_interpolator.h"

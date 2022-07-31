@@ -58,4 +58,7 @@
   { include: ["@<toml\\+\\+/impl/.*>", private, "<toml++/toml.h>", public ] },
   # Custom (trompeloeil)
   { include: ["<trompeloeil.hpp>", private, "\"trompeloeil_catch2.h\"", public ] },
+  # Custom (Pybind11)
+  { include: ["<cast.h>", private, "<pybind11/pybind11.h>", public ] },
+  { include: ["<pytypes.h>", private, "<pybind11/pybind11.h>", public ] },
 ]
