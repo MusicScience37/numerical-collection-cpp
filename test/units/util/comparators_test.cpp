@@ -19,6 +19,8 @@
  */
 #include "num_collect/util/comparators.h"
 
+#include <string>
+
 #include <catch2/catch_test_macros.hpp>
 
 #include "num_collect/util/concepts/comparator.h"

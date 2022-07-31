@@ -19,15 +19,17 @@
  */
 #include "num_collect/opt/adaptive_diagonal_curves.h"
 
-#include <sstream>
+#include <functional>
+#include <type_traits>
 
+#include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
-#include <catch2/matchers/catch_matchers_string.hpp>
 
 #include "eigen_approx.h"
-#include "num_collect/opt/concepts/box_constrained_optimizer.h"
-#include "num_collect/opt/concepts/optimizer.h"
+#include "num_collect/opt/concepts/box_constrained_optimizer.h"  // IWYU pragma: keep
+#include "num_collect/opt/concepts/optimizer.h"  // IWYU pragma: keep
 #include "num_prob_collect/opt/multi_quadratic_function.h"
 
 TEST_CASE("num_collect::opt::impl::adc_sample_dict") {

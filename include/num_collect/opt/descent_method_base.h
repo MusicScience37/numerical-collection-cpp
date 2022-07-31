@@ -19,8 +19,9 @@
  */
 #pragma once
 
+#include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/opt/concepts/line_searcher.h"
+#include "num_collect/opt/concepts/line_searcher.h"  // IWYU pragma: keep
 #include "num_collect/opt/optimizer_base.h"
 
 namespace num_collect::opt {
@@ -132,9 +133,7 @@ public:
      *
      * \return Gradient for current optimal variable.
      */
-    [[nodiscard]] auto gradient() const
-        -> std::invoke_result_t<decltype(&line_searcher_type::gradient),
-            const line_searcher_type> {
+    [[nodiscard]] auto gradient() const -> const variable_type& {
         return line_searcher().gradient();
     }
 

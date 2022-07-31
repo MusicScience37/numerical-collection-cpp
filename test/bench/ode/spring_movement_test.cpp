@@ -17,12 +17,17 @@
  * \file
  * \brief Test of solving ODE of spring movement.
  */
+#include <cmath>
+
+#include <Eigen/Core>
 #include <stat_bench/bench/invocation_context.h>
 #include <stat_bench/benchmark_macros.h>
 
+#include "num_collect/base/index_type.h"
 #include "num_collect/ode/avf/avf2_formula.h"
 #include "num_collect/ode/avf/avf3_formula.h"
 #include "num_collect/ode/avf/avf4_formula.h"
+#include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
 #include "num_collect/ode/runge_kutta/rk4_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"

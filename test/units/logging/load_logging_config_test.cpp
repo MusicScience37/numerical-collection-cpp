@@ -20,12 +20,15 @@
 #include "num_collect/logging/load_logging_config.h"
 
 #include <fstream>
+#include <string_view>
 
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 
 #include "num_collect/logging/log_config.h"
 #include "num_collect/logging/log_level.h"
+#include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
 
 TEST_CASE("num_collect::logging::load_logging_config") {

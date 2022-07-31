@@ -19,20 +19,20 @@
  */
 #pragma once
 
-#include <limits>
-#include <type_traits>
-#include <vector>
+#include <string_view>
+#include <type_traits>  // IWYU pragma: keep
 
 #include "num_collect/base/index_type.h"
-#include "num_collect/opt/concepts/multi_variate_objective_function.h"
-#include "num_collect/opt/concepts/objective_function.h"
-#include "num_collect/opt/concepts/single_variate_objective_function.h"
+#include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/log_tag_view.h"
+#include "num_collect/opt/concepts/multi_variate_objective_function.h"  // IWYU pragma: keep
+#include "num_collect/opt/concepts/objective_function.h"  // IWYU pragma: keep
+#include "num_collect/opt/concepts/single_variate_objective_function.h"  // IWYU pragma: keep
 #include "num_collect/opt/dividing_rectangles.h"
 #include "num_collect/opt/downhill_simplex.h"
 #include "num_collect/opt/golden_section_search.h"
 #include "num_collect/opt/optimizer_base.h"
 #include "num_collect/opt/sampling_optimizer.h"
-#include "num_collect/util/assert.h"
 
 namespace num_collect::opt {
 

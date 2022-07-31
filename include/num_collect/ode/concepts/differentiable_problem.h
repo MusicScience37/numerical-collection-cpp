@@ -19,7 +19,9 @@
  */
 #pragma once
 
-#include "num_collect/ode/concepts/problem.h"
+#include <utility>
+
+#include "num_collect/ode/concepts/problem.h"  // IWYU pragma: keep
 
 namespace num_collect::ode::concepts {
 

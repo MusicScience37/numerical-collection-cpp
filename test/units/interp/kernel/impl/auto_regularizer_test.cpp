@@ -19,9 +19,14 @@
  */
 #include "num_collect/interp/kernel/impl/auto_regularizer.h"
 
+// IWYU pragma: no_include <Eigen/src/Householder/BlockHouseholder.h>
+
+#include <string>
+#include <vector>
+
 #include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_floating_point.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 
 #include "eigen_approx.h"
 #include "is_finite.h"

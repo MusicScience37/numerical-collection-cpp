@@ -23,6 +23,7 @@
 #include <tuple>
 
 #ifdef __AVX2__
+#include <emmintrin.h>
 #include <immintrin.h>
 #endif
 

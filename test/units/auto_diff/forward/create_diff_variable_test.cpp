@@ -19,9 +19,14 @@
  */
 #include "num_collect/auto_diff/forward/create_diff_variable.h"
 
+#include <ostream>
+#include <string>
+
 #include <Eigen/Core>
+#include <catch2/catch_message.hpp>
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 // NOLINTNEXTLINE

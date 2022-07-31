@@ -19,8 +19,14 @@
  */
 #include "num_prob_collect/opt/multi_quadratic_function.h"
 
+#include <memory>
+#include <string_view>
+#include <type_traits>
+#include <utility>
+
 #include <stat_bench/bench/invocation_context.h>
 #include <stat_bench/benchmark_macros.h>
+#include <stat_bench/param/parameter_value_vector.h>
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"

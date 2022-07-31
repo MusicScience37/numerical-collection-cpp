@@ -17,6 +17,8 @@
  * \file
  * \brief Test of basic operations in multi-double calculations.
  */
+#include <tuple>
+
 #include <stat_bench/benchmark_macros.h>
 #include <stat_bench/util/do_not_optimize.h>
 

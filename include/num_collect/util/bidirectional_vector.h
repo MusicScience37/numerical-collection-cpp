@@ -19,10 +19,12 @@
  */
 #pragma once
 
+#include <cstddef>
 #include <deque>
 #include <limits>
+#include <utility>
 
-#include <fmt/core.h>
+#include <fmt/format.h>  // IWYU pragma: keep
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"

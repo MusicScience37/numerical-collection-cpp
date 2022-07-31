@@ -19,6 +19,10 @@
  */
 #include "num_collect/auto_diff/backward/graph/node.h"
 
+#include <ostream>
+#include <string>
+#include <type_traits>
+
 #include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("num_collect::auto_diff::backward::graph::node") {

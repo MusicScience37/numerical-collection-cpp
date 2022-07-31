@@ -20,6 +20,7 @@
 #pragma once
 
 #include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_mixin.h"
 
 namespace num_collect {

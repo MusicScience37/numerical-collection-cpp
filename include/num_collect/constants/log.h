@@ -24,7 +24,7 @@
 
 #include "num_collect/constants/exp.h"
 #include "num_collect/constants/impl/log1m_maclaurin.h"
-#include "num_collect/constants/one.h"
+#include "num_collect/constants/one.h"  // IWYU pragma: keep
 
 namespace num_collect::constants {
 

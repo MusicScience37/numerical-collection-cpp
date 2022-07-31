@@ -19,6 +19,8 @@
  */
 #pragma once
 
+#include <compare>
+#include <string>
 #include <string_view>
 
 #include "num_collect/logging/log_tag.h"

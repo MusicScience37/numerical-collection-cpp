@@ -19,7 +19,7 @@
  */
 #pragma once
 
-#include "num_collect/util/concepts/rhs_comparable.h"
+#include "num_collect/util/concepts/rhs_comparable.h"  // IWYU pragma: keep
 
 namespace num_collect::util {
 

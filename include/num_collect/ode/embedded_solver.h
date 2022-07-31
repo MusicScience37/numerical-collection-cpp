@@ -22,14 +22,15 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
-#include <type_traits>
 
-#include "num_collect/constants/one.h"
-#include "num_collect/constants/zero.h"
-#include "num_collect/ode/concepts/embedded_formula.h"
+#include "num_collect/base/index_type.h"
+#include "num_collect/constants/one.h"   // IWYU pragma: keep
+#include "num_collect/constants/zero.h"  // IWYU pragma: keep
+#include "num_collect/logging/iteration_logger.h"
+#include "num_collect/ode/concepts/embedded_formula.h"  // IWYU pragma: keep
 #include "num_collect/ode/solver_base.h"
 #include "num_collect/util/assert.h"
-#include "num_collect/util/is_eigen_vector.h"
+#include "num_collect/util/is_eigen_vector.h"  // IWYU pragma: keep
 
 namespace num_collect::ode {
 

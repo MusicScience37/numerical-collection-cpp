@@ -20,12 +20,15 @@
 #include "num_collect/ode/avf/avf3_formula.h"
 
 #include <cmath>
+#include <string>
 
+#include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "eigen_approx.h"
-#include "num_prob_collect/ode/exponential_problem.h"
+#include "num_collect/ode/embedded_solver.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
 
 TEST_CASE("num_collect::ode::avf::avf3_formula") {

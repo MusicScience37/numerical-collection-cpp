@@ -19,14 +19,17 @@
  */
 #pragma once
 
+#include <chrono>
 #include <cstdio>
-#include <filesystem>
+#include <exception>
 #include <iostream>
 #include <mutex>
+#include <string_view>
 
-#include "num_collect/base/exception.h"
 #include "num_collect/logging/impl/colored_log_formatter.h"
+#include "num_collect/logging/log_level.h"
 #include "num_collect/logging/log_sink_base.h"
+#include "num_collect/util/source_info_view.h"
 
 namespace num_collect::logging {
 

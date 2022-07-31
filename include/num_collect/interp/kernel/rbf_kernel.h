@@ -20,10 +20,13 @@
 #pragma once
 
 #include <cmath>
-#include <type_traits>
+#include <cstddef>
+#include <limits>
+#include <type_traits>  // IWYU pragma: keep
+#include <utility>
 
-#include "num_collect/interp/kernel/concepts/distance.h"
-#include "num_collect/interp/kernel/concepts/rbf.h"
+#include "num_collect/interp/kernel/concepts/distance.h"  // IWYU pragma: keep
+#include "num_collect/interp/kernel/concepts/rbf.h"       // IWYU pragma: keep
 #include "num_collect/util/assert.h"
 
 namespace num_collect::interp::kernel {

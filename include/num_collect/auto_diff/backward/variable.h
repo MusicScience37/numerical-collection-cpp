@@ -19,10 +19,12 @@
  */
 #pragma once
 
+#include <utility>
+
 #include <Eigen/Core>
 
 #include "num_collect/auto_diff/backward/graph/node.h"
-#include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
 
 namespace num_collect::auto_diff::backward {
 

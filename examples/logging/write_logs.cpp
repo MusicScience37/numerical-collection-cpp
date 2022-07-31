@@ -17,8 +17,12 @@
  * \file
  * \brief Example to write logs.
  */
+#include <exception>
+#include <functional>
 #include <iostream>
 #include <memory>
+#include <string>
+#include <string_view>
 
 #include "num_collect/logging/iteration_logger.h"
 #include "num_collect/logging/log_config.h"

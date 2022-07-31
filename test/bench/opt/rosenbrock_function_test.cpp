@@ -19,9 +19,12 @@
  */
 #include "num_prob_collect/opt/rosenbrock_function.h"
 
+#include <utility>
+
 #include <stat_bench/bench/invocation_context.h>
 #include <stat_bench/benchmark_macros.h>
 
+#include "num_collect/base/index_type.h"
 #include "num_collect/opt/bfgs_optimizer.h"
 #include "num_collect/opt/dfp_optimizer.h"
 #include "num_collect/opt/dividing_rectangles.h"

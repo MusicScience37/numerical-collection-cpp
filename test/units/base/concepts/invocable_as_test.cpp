@@ -20,6 +20,7 @@
 #include "num_collect/base/concepts/invocable_as.h"
 
 #include <cstdint>
+#include <string>
 
 #include <catch2/catch_test_macros.hpp>
 

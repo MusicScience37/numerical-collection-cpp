@@ -19,10 +19,13 @@
  */
 #include "num_collect/logging/impl/log_formatter.h"
 
+#include <string>
 #include <string_view>
 #include <unordered_map>
 
+#include <catch2/catch_message.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 
 #include "num_collect/base/index_type.h"

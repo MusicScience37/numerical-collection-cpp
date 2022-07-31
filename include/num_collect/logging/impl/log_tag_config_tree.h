@@ -19,10 +19,15 @@
  */
 #pragma once
 
+#include <memory>
 #include <mutex>
-#include <string>
+#include <string_view>
+#include <type_traits>
+#include <utility>
 
+#include <hash_tables/hashes/std_hash.h>
 #include <hash_tables/maps/separate_shared_chain_map_mt.h>
+#include <hash_tables/tables/separate_shared_chain_table_mt.h>
 
 #include "num_collect/logging/impl/log_tag_element.h"
 #include "num_collect/logging/impl/separate_top_log_tag_element.h"

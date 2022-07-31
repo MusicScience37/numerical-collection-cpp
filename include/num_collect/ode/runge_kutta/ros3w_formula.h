@@ -19,8 +19,11 @@
  */
 #pragma once
 
+#include <string_view>
+
+#include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/ode/concepts/differentiable_problem.h"
+#include "num_collect/ode/concepts/differentiable_problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/formula_base.h"
 #include "num_collect/ode/runge_kutta/impl/rosenbrock_helper.h"

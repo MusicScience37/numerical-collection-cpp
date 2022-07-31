@@ -19,7 +19,7 @@
  */
 #include "num_collect/opt/dividing_rectangles.h"
 
-#include <iostream>
+#include <Eigen/Core>
 
 #include "../configure_logging.h"
 #include "num_prob_collect/opt/shekel_function.h"

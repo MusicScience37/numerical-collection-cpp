@@ -19,6 +19,8 @@
  */
 #include "num_collect/logging/impl/log_tag_config_tree.h"
 
+#include <string>
+
 #include <catch2/catch_test_macros.hpp>
 
 #include "num_collect/logging/log_tag_config.h"

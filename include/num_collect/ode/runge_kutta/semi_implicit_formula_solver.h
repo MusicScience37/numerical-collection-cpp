@@ -21,22 +21,22 @@
 
 #include <cmath>
 #include <limits>
-#include <type_traits>
+#include <string_view>
 
+#include <Eigen/Core>  // IWYU pragma: keep
 #include <Eigen/LU>
+#include <fmt/format.h>
 
 #include "num_collect/base/index_type.h"
-#include "num_collect/constants/one.h"
-#include "num_collect/constants/zero.h"
+#include "num_collect/constants/one.h"   // IWYU pragma: keep
+#include "num_collect/constants/zero.h"  // IWYU pragma: keep
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_mixin.h"
-#include "num_collect/ode/concepts/differentiable_problem.h"
-#include "num_collect/ode/concepts/multi_variate_differentiable_problem.h"
-#include "num_collect/ode/concepts/single_variate_differentiable_problem.h"
+#include "num_collect/ode/concepts/differentiable_problem.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/multi_variate_differentiable_problem.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/single_variate_differentiable_problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/implicit_formula_solver_strategies.h"
 #include "num_collect/util/assert.h"
-#include "num_collect/util/is_eigen_matrix.h"
-#include "num_collect/util/is_eigen_vector.h"
 
 namespace num_collect::ode::runge_kutta {
 

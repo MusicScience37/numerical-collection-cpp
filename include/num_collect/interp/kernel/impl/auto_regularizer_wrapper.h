@@ -23,10 +23,11 @@
 
 #include <Eigen/Core>
 
-#include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
 #include "num_collect/interp/kernel/calc_kernel_mat.h"
 #include "num_collect/interp/kernel/impl/auto_regularizer.h"
 #include "num_collect/interp/kernel/impl/self_adjoint_kernel_solver.h"
+#include "num_collect/logging/logger.h"
 #include "num_collect/util/assert.h"
 
 namespace num_collect::interp::kernel::impl {

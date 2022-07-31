@@ -19,8 +19,8 @@
  */
 #include "num_collect/base/get_size.h"
 
-#include <cmath>
 #include <complex>
+#include <string>
 
 #include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
