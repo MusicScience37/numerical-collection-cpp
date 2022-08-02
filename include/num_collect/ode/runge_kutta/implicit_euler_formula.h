@@ -54,6 +54,9 @@ public:
     using typename base_type::scalar_type;
     using typename base_type::variable_type;
 
+    static_assert(!problem_type::allowed_evaluations.mass,
+        "Mass matrix is not supported.");
+
     using base_type::base_type;
     using base_type::problem;
 

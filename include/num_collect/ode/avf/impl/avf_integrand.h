@@ -21,6 +21,7 @@
 
 #include "num_collect/constants/one.h"         // IWYU pragma: keep
 #include "num_collect/ode/concepts/problem.h"  // IWYU pragma: keep
+#include "num_collect/ode/evaluation_type.h"
 
 namespace num_collect::ode::avf::impl {
 
@@ -42,6 +43,9 @@ public:
     //! Type of scalars.
     using scalar_type = typename problem_type::scalar_type;
 
+    static_assert(!problem_type::allowed_evaluations.mass,
+        "Mass matrix is not supported.");
+
     /*!
      * \brief Construct.
      *
@@ -58,8 +62,8 @@ public:
      */
     [[nodiscard]] auto operator()(scalar_type rate) const -> variable_type {
         problem_.evaluate_on(time_,
-            (constants::one<scalar_type> - rate) * prev_var_ +
-                rate * next_var_);
+            (constants::one<scalar_type> - rate) * prev_var_ + rate * next_var_,
+            evaluation_type{.diff_coeff = true});
         return problem_.diff_coeff();
     }
 

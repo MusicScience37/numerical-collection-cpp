@@ -19,10 +19,10 @@
  */
 #pragma once
 
-#include <utility>
-
 #include "num_collect/base/concepts/const_reference_of.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/decayed_to.h"          // IWYU pragma: keep
 #include "num_collect/base/concepts/real_scalar.h"         // IWYU pragma: keep
+#include "num_collect/ode/evaluation_type.h"
 
 namespace num_collect::ode::concepts {
 
@@ -42,8 +42,14 @@ concept problem = requires(T& obj, const T& const_obj) {
         var = var + coeff * var;
     };
 
-    {obj.evaluate_on(std::declval<typename T::scalar_type>(),
-        std::declval<typename T::variable_type>())};
+    { T::allowed_evaluations } -> base::concepts::decayed_to<evaluation_type>;
+    requires T::allowed_evaluations.allows(evaluation_type{.diff_coeff = true});
+
+    requires requires(const typename T::scalar_type& time,
+        const typename T::variable_type& var, evaluation_type evaluations) {
+        obj.evaluate_on(time, var, evaluations);
+    };
+
     {
         const_obj.diff_coeff()
         } -> base::concepts::const_reference_of<typename T::variable_type>;

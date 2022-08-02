@@ -52,6 +52,9 @@ public:
     //! Type of scalars.
     using scalar_type = typename problem_type::scalar_type;
 
+    static_assert(!problem_type::allowed_evaluations.mass,
+        "Mass matrix is not supported.");
+
     /*!
      * \brief Construct.
      *

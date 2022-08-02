@@ -29,6 +29,7 @@
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/avf/impl/avf_integrand.h"
 #include "num_collect/ode/concepts/problem.h"  // IWYU pragma: keep
+#include "num_collect/ode/evaluation_type.h"
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
 #include "num_collect/ode/simple_solver.h"
 #include "num_collect/util/assert.h"
@@ -81,7 +82,8 @@ public:
      */
     void step(scalar_type time, scalar_type step_size,
         const variable_type& current, variable_type& estimate) {
-        problem().evaluate_on(time, current);
+        problem().evaluate_on(
+            time, current, evaluation_type{.diff_coeff = true});
         estimate = current + step_size * problem().diff_coeff();
 
         integrand_.time(time);

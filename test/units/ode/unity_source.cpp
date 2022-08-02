@@ -2,6 +2,7 @@
 #include "avf/avf3_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "avf/avf4_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "embedded_solver_test.cpp"   // NOLINT(bugprone-suspicious-include)
+#include "evaluation_type_test.cpp"   // NOLINT(bugprone-suspicious-include)
 #include "non_embedded_formula_wrapper_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "runge_kutta/implicit_euler_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "runge_kutta/rk4_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)

@@ -17,13 +17,23 @@ Here solves the following explicit initial-value problem:
 
     title Abstract Model of Explicit Runge-Kutta Method
 
+    package runge_kutta {
+        struct evaluation_type {
+            diff_coeff: bool
+            jacobian: bool
+            mass: bool
+        }
+    }
+
     package problems {
         class problem {
             + using variable_type = xxx
             + using scalar_type = xxx
-            + evaluate_on(time: scalar_type, variable: variable_type)
+            {static} + allowed_evaluations: evaluation_type
+            + evaluate_on(time: scalar_type, variable: variable_type,\n\tevaluations: evaluation_type)
             + diff_coeff() : variable_type
         }
+        problem ..> evaluation_type
     }
 
     package runge_kutta {
@@ -73,9 +83,10 @@ Here solves the following explicit initial-value problem:
             + using variable_type = xxx
             + using scalar_type = xxx
             + using jacobian_type = xxx
-            + evaluate_on(time: scalar_type, variable: variable_type,\n\tupdate_jacobian: bool = false)
+            {static} + allowed_evaluations: evaluation_type
+            + evaluate_on(time: scalar_type, variable: variable_type,\n\tevaluations: evaluation_type)
             + diff_coeff() : variable_type
-            + jacobian() : variable_type
+            + jacobian() : jacobian_type
         }
     }
 
@@ -141,4 +152,20 @@ Here solves the following explicit initial-value problem:
         implicit_formula_solver_selection_note .. semi_implicit_formula_solver
         implicit_formula_solver_selection_note .. full_implicit_formula_solver
         implicit_formula_solver_selection_note .up. implicit_formula
+    }
+
+.. uml::
+
+    title Abstract Model of Problems with Mass
+
+    package problems {
+        class mass_problem {
+            + using variable_type = xxx
+            + using scalar_type = xxx
+            + using mass_matrix_type = xxx
+            {static} + allowed_evaluations: evaluation_type
+            + evaluate_on(time: scalar_type, variable: variable_type,\n\tevaluations: evaluation_type)
+            + diff_coeff() : variable_type
+            + mass() : mass_matrix_type
+        }
     }
