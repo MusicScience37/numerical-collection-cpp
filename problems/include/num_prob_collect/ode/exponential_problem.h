@@ -19,6 +19,8 @@
  */
 #pragma once
 
+#include "num_collect/ode/evaluation_type.h"
+
 namespace num_prob_collect::ode {
 
 /*!
@@ -35,13 +37,17 @@ public:
     //! Type of Jacobian.
     using jacobian_type = double;
 
+    //! Allowed evaluations.
+    static constexpr auto allowed_evaluations =
+        num_collect::ode::evaluation_type{.diff_coeff = true, .jacobian = true};
+
     /*!
      * \brief Evaluate on a (time, variable) pair.
      *
      * \param[in] variable Variable.
      */
-    void evaluate_on(
-        double /*time*/, double variable, bool /*needs_jacobian*/ = false) {
+    void evaluate_on(double /*time*/, double variable,
+        num_collect::ode::evaluation_type /*evaluations*/) {
         diff_coeff_ = variable;
     }
 

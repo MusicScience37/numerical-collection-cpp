@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Test of embedded_solver_test class.
+ * \brief Test of embedded_solver class.
  */
 #include "num_collect/ode/embedded_solver.h"
 

@@ -35,6 +35,7 @@
 #include "num_collect/ode/concepts/differentiable_problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/concepts/multi_variate_differentiable_problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/concepts/single_variate_differentiable_problem.h"  // IWYU pragma: keep
+#include "num_collect/ode/evaluation_type.h"
 #include "num_collect/ode/implicit_formula_solver_strategies.h"
 #include "num_collect/util/assert.h"
 
@@ -76,6 +77,9 @@ public:
     //! Type of Jacobian.
     using jacobian_type = typename problem_type::jacobian_type;
 
+    static_assert(!problem_type::allowed_evaluations.mass,
+        "Mass matrix is not supported.");
+
     /*!
      * \brief Construct.
      *
@@ -97,7 +101,8 @@ public:
         const variable_type& variable, scalar_type k_coeff) {
         const index_type dim = variable.size();
 
-        problem_.evaluate_on(time, variable, true);
+        problem_.evaluate_on(time, variable,
+            evaluation_type{.diff_coeff = true, .jacobian = true});
         lu_.compute(jacobian_type::Identity(dim, dim) -
             step_size * k_coeff * problem_.jacobian());
         k_ = problem_.diff_coeff();
@@ -105,8 +110,8 @@ public:
         constexpr index_type max_iterations = 1000;  // safe guard
         index_type iterations = 0;
         for (; iterations <= max_iterations; ++iterations) {
-            problem_.evaluate_on(
-                time, variable + step_size * k_coeff * k_, false);
+            problem_.evaluate_on(time, variable + step_size * k_coeff * k_,
+                evaluation_type{.diff_coeff = true, .jacobian = false});
             residual_ = k_ - problem_.diff_coeff();
             residual_norm_ = residual_.norm();
             if (residual_norm_ < tol_residual_norm_) {
@@ -210,6 +215,9 @@ public:
     //! Type of Jacobian.
     using jacobian_type = typename problem_type::jacobian_type;
 
+    static_assert(!problem_type::allowed_evaluations.mass,
+        "Mass matrix is not supported.");
+
     /*!
      * \brief Construct.
      *
@@ -229,7 +237,8 @@ public:
      */
     void solve(scalar_type time, scalar_type step_size,
         const variable_type& variable, scalar_type k_coeff) {
-        problem_.evaluate_on(time, variable, true);
+        problem_.evaluate_on(time, variable,
+            evaluation_type{.diff_coeff = true, .jacobian = true});
         NUM_COLLECT_DEBUG_ASSERT(step_size * k_coeff * problem_.jacobian() <
             constants::one<scalar_type>);
         scalar_type inv_jacobian = constants::one<scalar_type> /
@@ -241,8 +250,8 @@ public:
         index_type iterations = 0;
         using std::abs;
         for (; iterations <= max_iterations; ++iterations) {
-            problem_.evaluate_on(
-                time, variable + step_size * k_coeff * k_, false);
+            problem_.evaluate_on(time, variable + step_size * k_coeff * k_,
+                evaluation_type{.diff_coeff = true, .jacobian = false});
             residual_ = k_ - problem_.diff_coeff();
             if (abs(residual_) < tol_residual_norm_) {
                 ++iterations;

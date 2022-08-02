@@ -23,6 +23,8 @@
 
 #include <Eigen/Core>
 
+#include "num_collect/ode/evaluation_type.h"
+
 namespace num_prob_collect::ode {
 
 /*!
@@ -50,17 +52,21 @@ public:
     //! Type of Jacobian.
     using jacobian_type = Eigen::Matrix2d;
 
+    //! Allowed evaluations.
+    static constexpr auto allowed_evaluations =
+        num_collect::ode::evaluation_type{.diff_coeff = true, .jacobian = true};
+
     /*!
      * \brief Evaluate on a (time, variable) pair.
      *
      * \param[in] variable Variable.
-     * \param[in] update_jacobian Whether to update Jacobian.
+     * \param[in] evaluations Evaluations.
      */
     void evaluate_on(scalar_type /*time*/, const variable_type& variable,
-        bool update_jacobian = false) {
+        num_collect::ode::evaluation_type evaluations) {
         diff_coeff_[0] = -std::sin(variable[1]);
         diff_coeff_[1] = variable[0];
-        if (update_jacobian) {
+        if (evaluations.jacobian) {
             jacobian_(0, 0) = 0.0;
             jacobian_(0, 1) = -std::cos(variable[1]);
             jacobian_(1, 0) = 1.0;

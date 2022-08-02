@@ -3,6 +3,7 @@ set(SOURCE_FILES
     avf/avf3_formula_test.cpp
     avf/avf4_formula_test.cpp
     embedded_solver_test.cpp
+    evaluation_type_test.cpp
     non_embedded_formula_wrapper_test.cpp
     runge_kutta/implicit_euler_formula_test.cpp
     runge_kutta/rk4_formula_test.cpp

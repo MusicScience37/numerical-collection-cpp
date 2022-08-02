@@ -24,6 +24,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/concepts/problem.h"  // IWYU pragma: keep
+#include "num_collect/ode/evaluation_type.h"
 #include "num_collect/ode/formula_base.h"
 #include "num_collect/ode/simple_solver.h"
 
@@ -46,6 +47,9 @@ public:
 
     using base_type::base_type;
     using base_type::problem;
+
+    static_assert(!problem_type::allowed_evaluations.mass,
+        "Mass matrix is not supported.");
 
 protected:
     using base_type::coeff;
@@ -90,19 +94,21 @@ public:
     //! \copydoc ode::formula_base::step
     void step(scalar_type time, scalar_type step_size,
         const variable_type& current, variable_type& estimate) {
-        problem().evaluate_on(time, current);
+        constexpr auto evaluations = evaluation_type{.diff_coeff = true};
+
+        problem().evaluate_on(time, current, evaluations);
         k1_ = problem().diff_coeff();
 
-        problem().evaluate_on(
-            time + b2 * step_size, current + step_size * a21 * k1_);
+        problem().evaluate_on(time + b2 * step_size,
+            current + step_size * a21 * k1_, evaluations);
         k2_ = problem().diff_coeff();
 
-        problem().evaluate_on(
-            time + b3 * step_size, current + step_size * a32 * k2_);
+        problem().evaluate_on(time + b3 * step_size,
+            current + step_size * a32 * k2_, evaluations);
         k3_ = problem().diff_coeff();
 
         problem().evaluate_on(
-            time + step_size, current + step_size * a43 * k3_);
+            time + step_size, current + step_size * a43 * k3_, evaluations);
         k4_ = problem().diff_coeff();
 
         estimate =

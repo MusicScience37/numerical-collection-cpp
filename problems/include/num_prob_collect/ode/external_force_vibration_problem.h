@@ -23,6 +23,8 @@
 
 #include <Eigen/Core>
 
+#include "num_collect/ode/evaluation_type.h"
+
 namespace num_prob_collect::ode {
 
 /*!
@@ -58,6 +60,10 @@ public:
      */
     external_force_vibration_problem() { jacobian_ << 0.0, 0.0, 1.0, 0.0; }
 
+    //! Allowed evaluations.
+    static constexpr auto allowed_evaluations =
+        num_collect::ode::evaluation_type{.diff_coeff = true, .jacobian = true};
+
     /*!
      * \brief Evaluate on a (time, variable) pair.
      *
@@ -65,7 +71,7 @@ public:
      * \param[in] variable Variable.
      */
     void evaluate_on(scalar_type time, const variable_type& variable,
-        bool /*needs_jacobian*/ = false) {
+        num_collect::ode::evaluation_type /*evaluations*/) {
         diff_coeff_[0] = std::sin(time);
         diff_coeff_[1] = variable[0];
     }

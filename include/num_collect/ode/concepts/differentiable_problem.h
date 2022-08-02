@@ -40,8 +40,8 @@ concept differentiable_problem = problem<T> &&
         var = var + coeff * var;
     };
 
-    {obj.evaluate_on(std::declval<typename T::scalar_type>(),
-        std::declval<typename T::variable_type>(), std::declval<bool>())};
+    requires T::allowed_evaluations.allows(evaluation_type{.jacobian = true});
+
     {
         const_obj.jacobian()
         } -> base::concepts::const_reference_of<typename T::jacobian_type>;

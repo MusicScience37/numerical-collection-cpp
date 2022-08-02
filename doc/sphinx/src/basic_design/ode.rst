@@ -18,10 +18,10 @@ Here solves the following explicit initial-value problem:
     title Abstract Model of Explicit Runge-Kutta Method
 
     package runge_kutta {
-        enum evaluation_type {
-            diff_coeff = 0x1
-            jacobian = 0x2
-            mass = 0x4
+        struct evaluation_type {
+            diff_coeff: bool
+            jacobian: bool
+            mass: bool
         }
     }
 

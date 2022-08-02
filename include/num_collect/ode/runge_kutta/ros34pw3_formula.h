@@ -25,6 +25,7 @@
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/concepts/differentiable_problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/embedded_solver.h"
+#include "num_collect/ode/evaluation_type.h"
 #include "num_collect/ode/formula_base.h"
 #include "num_collect/ode/runge_kutta/impl/rosenbrock_helper.h"
 
@@ -48,6 +49,9 @@ public:
 
     //! Type of Jacobian.
     using jacobian_type = typename problem_type::jacobian_type;
+
+    static_assert(!problem_type::allowed_evaluations.mass,
+        "Mass matrix is not supported.");
 
     using base_type::base_type;
     using base_type::problem;
@@ -137,24 +141,28 @@ public:
     void step_embedded(scalar_type time, scalar_type step_size,
         const variable_type& current, variable_type& estimate,
         variable_type& error) {
-        problem().evaluate_on(time, current, true);
+        problem().evaluate_on(time, current,
+            evaluation_type{.diff_coeff = true, .jacobian = true});
         jacobian_ = problem().jacobian();
         lu_solver_.compute(step_size * g * jacobian_);
 
         k1_ = lu_solver_.solve(problem().diff_coeff());
 
-        problem().evaluate_on(
-            time + b2 * step_size, current + step_size * (a21 * k1_));
+        problem().evaluate_on(time + b2 * step_size,
+            current + step_size * (a21 * k1_),
+            evaluation_type{.diff_coeff = true});
         k2_ = lu_solver_.solve(
             problem().diff_coeff() + step_size * jacobian_ * (g21 * k1_));
 
         problem().evaluate_on(time + b3 * step_size,
-            current + step_size * (a31 * k1_ + a32 * k2_));
+            current + step_size * (a31 * k1_ + a32 * k2_),
+            evaluation_type{.diff_coeff = true});
         k3_ = lu_solver_.solve(problem().diff_coeff() +
             step_size * jacobian_ * (g31 * k1_ + g32 * k2_));
 
         problem().evaluate_on(time + b4 * step_size,
-            current + step_size * (a41 * k1_ + a42 * k2_ + a43 * k3_));
+            current + step_size * (a41 * k1_ + a42 * k2_ + a43 * k3_),
+            evaluation_type{.diff_coeff = true});
         k4_ = lu_solver_.solve(problem().diff_coeff() +
             step_size * jacobian_ * (g41 * k1_ + g42 * k2_ + g43 * k3_));
 
