@@ -1,0 +1,63 @@
+@startuml formula_and_problems
+
+title Abstract Model of Formulas and Problems in Runge-Kutta Method
+
+package runge_kutta {
+    struct evaluation_type {
+        + diff_coeff: bool
+        + jacobian: bool
+        + mass: bool
+    }
+}
+
+package problems {
+    class problem {
+        + using variable_type = xxx
+        + using scalar_type = xxx
+        {static} + allowed_evaluations: evaluation_type
+        + evaluate_on(time: scalar_type, variable: variable_type,\n\tevaluations: evaluation_type)
+        + diff_coeff() : variable_type
+    }
+    problem ..> evaluation_type
+
+    class differentiable_problem {
+        + using jacobian_type = xxx
+        + jacobian() : jacobian_type
+    }
+    problem <|-- differentiable_problem
+
+    class mass_problem {
+        + using mass_matrix_type = xxx
+        + mass() : mass_matrix_type
+    }
+    problem <|-- mass_problem
+}
+
+package runge_kutta {
+    !startsub formula
+    class formula<Problem> {
+        + using problem_type = Problem
+        {static} + stages : index_type
+        {static} + order : index_type
+        + step(time: scalar_type, step_size: scalar_type,\n\tcurrent: const variable_type&, estimate: variable_type&)
+        + problem() : problem_type&
+    }
+    !endsub
+    formula o-- problem
+
+    !startsub solver
+    class solver<Formula> {
+        + init(time: scalar_type, variable: variable_type)
+        + step()
+        + solve_till(end_time: scalar_type)
+        + time() : scalar_type
+        + variable() : const variable_type&
+        + step_size() : scalar_type
+        + steps() : index_type
+        + step_size(val : scalar_type)
+    }
+    solver o-- formula
+    !endsub
+}
+
+@enduml

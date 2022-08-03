@@ -32,6 +32,7 @@
   ],
   "postCreateCommand": "bash ./.devcontainer/setup.bash",
   "settings": {
-    "cmakeFormat.exePath": "/workspaces/numerical-collection-cpp/.venv/bin/cmake-format"
+    "cmakeFormat.exePath": "/workspaces/numerical-collection-cpp/.venv/bin/cmake-format",
+    "plantuml.jar": "/usr/local/plantuml/plantuml.jar"
   }
 }
