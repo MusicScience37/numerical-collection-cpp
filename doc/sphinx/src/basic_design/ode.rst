@@ -15,13 +15,13 @@ Here solves the following explicit initial-value problem:
 
 .. uml::
 
-    title Abstract Model of Explicit Runge-Kutta Method
+    title Abstract Model of Runge-Kutta Method
 
     package runge_kutta {
         struct evaluation_type {
-            diff_coeff: bool
-            jacobian: bool
-            mass: bool
+            + diff_coeff: bool
+            + jacobian: bool
+            + mass: bool
         }
     }
 
@@ -35,6 +35,74 @@ Here solves the following explicit initial-value problem:
         }
         problem ..> evaluation_type
     }
+
+    package runge_kutta {
+        class formula<Problem> {
+            + using problem_type = Problem
+            {static} + stages : index_type
+            {static} + order : index_type
+            + step(time: scalar_type, step_size: scalar_type,\n\tcurrent: const variable_type&, estimate: variable_type&)
+            + problem() : problem_type&
+        }
+        formula o-- problem
+
+        class embedded_formula<Problem> {
+            {static} + lesser_order : index_type
+            + step_embedded(time: scalar_type, step_size: scalar_type,\n\tcurrent: const variable_type&, estimate: variable_type&, error: variable_type&)
+        }
+        formula <|-- embedded_formula
+
+        note as lesser_order_note
+            lesser_order can be omitted if its information can't be found.
+        end note
+        lesser_order_note .up. embedded_formula
+
+        class solver<Formula> {
+            + init(time: scalar_type, variable: variable_type)
+            + step()
+            + solve_till(end_time: scalar_type)
+            + time() : scalar_type
+            + variable() : const variable_type&
+            + step_size() : scalar_type
+            + steps() : index_type
+            + step_size(val : scalar_type)
+        }
+        solver o-- formula
+
+        class step_size_limits<Scalar> {
+            + upper_limit() : scalar_type
+            + lower_limit() : scalar_type
+            + upper_limit(val: scalar_type)
+            + lower_limit(val: scalar_type)
+            + limit(val: scalar_type) : scalar_type
+        }
+
+        class error_tolerances<Variable> {
+            + check(var: variable_type, err: variable_type) : bool
+            + calc_norm_of(var: variable_type, err: variable_type) : scalar_type
+            + tol_rel_error(val: variable_type)
+            + tol_abs_error(val: variable_type)
+        }
+
+        class step_size_controller<Formula> {
+            + check_and_calc_next(step_size: scalar_type&, var: variable_type, err: variable_type) : bool
+            + limits() : step_size_limits
+            + tolerances() : error_tolerances
+            + step_size_reduction_rate(val: scalar_type)
+        }
+        step_size_controller o-- step_size_limits
+        step_size_controller o-- error_tolerances
+
+        class embedded_solver<Formula> {
+        }
+        solver <|-- embedded_solver
+        embedded_solver o-- embedded_formula
+        embedded_solver o-- step_size_controller
+    }
+
+.. uml::
+
+    title Abstract Model of Explicit Runge-Kutta Method
 
     package runge_kutta {
         class explicit_formula<Problem> {
@@ -51,27 +119,6 @@ Here solves the following explicit initial-value problem:
             + step_embedded(time: scalar_type, step_size: scalar_type,\n\tcurrent: const variable_type&, estimate: variable_type&, error: variable_type&)
         }
         explicit_formula <|- explicit_embedded_formula
-
-        class solver<Formula> {
-            + init(time: scalar_type, variable: variable_type)
-            + step()
-            + solve_till(end_time: scalar_type)
-            + time() : scalar_type
-            + variable() : const variable_type&
-            + step_size() : scalar_type
-            + steps() : index_type
-            + step_size(val : scalar_type)
-        }
-        solver o-- explicit_formula
-
-        class embedded_solver<Formula> {
-            + tol_rel_error(val: scalar_type)
-            + tol_abs_error(val: scalar_type)
-            + step_size_reduction_rate(val: scalar_type)
-            + max_step_size(val: scalar_type)
-        }
-        solver <|- embedded_solver
-        embedded_solver o-- explicit_embedded_formula
     }
 
 .. uml::
