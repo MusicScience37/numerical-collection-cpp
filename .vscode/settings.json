@@ -84,6 +84,7 @@
     "Raphson",
     "Rosenbrock",
     "Runge",
+    "SAST",
     "Scheuerer",
     "Sergeyev",
     "Shanno",

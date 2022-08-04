@@ -1,13 +1,9 @@
 image: ubuntu:focal
 
 stages:
-  - Prepare
-  - Check
-  - Test with Clang
-  - Test with GCC
-  - Test with MSVC
-  - Build Documentation
-  - Publish
+  - prepare
+  - test
+  - deploy
 
 variables:
   NUM_COLLECT_VERSION: "0.4.1"
@@ -16,12 +12,14 @@ variables:
 
 include:
   - template: Dependency-Scanning.gitlab-ci.yml
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/License-Scanning.gitlab-ci.yml
 dependency_scanning:
-  stage: Check
   needs: []
-gemnasium-python-dependency_scanning:
-  image:
-    name: registry.gitlab.com/gitlab-org/security-products/analyzers/gemnasium-python:2-python-3.9
+sast:
+  needs: []
+license_scanning:
+  needs: []
 
 .retry setting:
   retry:
@@ -30,7 +28,8 @@ gemnasium-python-dependency_scanning:
 
 sync pipenv:
   extends: .retry setting
-  stage: Prepare
+  stage: prepare
+  needs: []
   image: musicscience37/clang-ci:clang14
   script:
     - mkdir -p .venv
@@ -49,8 +48,8 @@ sync pipenv:
 
 line count:
   extends: .retry setting
-  stage: Prepare
-  dependencies: []
+  stage: test
+  needs: []
   image: registry.gitlab.com/musicscience37/cloc-docker
   script:
     - mkdir -p line_count
@@ -68,7 +67,7 @@ line count:
     expire_in: "1 mos"
 
 pre-commit:
-  stage: Check
+  stage: test
   needs:
     - sync pipenv
   dependencies:
@@ -79,7 +78,7 @@ pre-commit:
 
 static analysis:
   extends: .retry setting
-  stage: Check
+  stage: test
   needs:
     - sync pipenv
   dependencies:
@@ -127,6 +126,7 @@ static analysis:
 
 .release-test-base:
   extends: .retry setting
+  stage: test
   needs:
     - sync pipenv
   dependencies:
@@ -250,7 +250,6 @@ static analysis:
 
 clang coverage:
   extends: .clang-debug-test-base
-  stage: Test with Clang
   image: musicscience37/clang-ci:clang14
   variables:
     BUILD_DIR: build_clang_coverage
@@ -273,7 +272,6 @@ clang coverage:
 
 gcc coverage:
   extends: .release-test-base
-  stage: Test with GCC
   image: musicscience37/gcc-ci:gcc10
   variables:
     BUILD_DIR: build_gcc_coverage
@@ -309,49 +307,42 @@ gcc coverage:
 
 gcc-10-debug:
   extends: .debug-test-base
-  stage: Test with GCC
   image: musicscience37/gcc-ci:gcc10
   variables:
     BUILD_DIR: build_gcc10_debug
 
 gcc-10-release:
   extends: .release-test-base
-  stage: Test with GCC
   image: musicscience37/gcc-ci:gcc10
   variables:
     BUILD_DIR: build_gcc10_release
 
 gcc-10-bench:
   extends: .bench-base
-  stage: Test with GCC
   image: musicscience37/gcc-ci:gcc10
   variables:
     BUILD_DIR: build_gcc10_bench
 
 clang-14-debug:
   extends: .clang-debug-test-base
-  stage: Test with Clang
   image: musicscience37/clang-ci:clang14
   variables:
     BUILD_DIR: build_clang14_debug
 
 clang-14-release:
   extends: .clang-release-test-base
-  stage: Test with Clang
   image: musicscience37/clang-ci:clang14
   variables:
     BUILD_DIR: build_clang14_release
 
 clang-14-bench:
   extends: .clang-bench-base
-  stage: Test with Clang
   image: musicscience37/clang-ci:clang14
   variables:
     BUILD_DIR: build_clang14_bench
 
 clang-14-asan-ubsan:
   extends: .clang-debug-test-base
-  stage: Test with Clang
   image: musicscience37/clang-ci:clang14
   variables:
     BUILD_DIR: build_clang_asan_ubsan
@@ -369,7 +360,6 @@ clang-14-asan-ubsan:
 
 clang-14-conan:
   extends: .retry setting
-  stage: Test with Clang
   needs:
     - sync pipenv
   dependencies:
@@ -385,7 +375,7 @@ clang-14-conan:
 
 clang-14-conan-release:
   extends: .retry setting
-  stage: Publish
+  stage: deploy
   needs:
     - sync pipenv
   dependencies:
@@ -408,7 +398,7 @@ clang-14-conan-release:
     - shared-windows
     - windows
     - windows-1809
-  stage: Test with MSVC
+  stage: test
   needs: []
   dependencies: []
   variables:
@@ -488,7 +478,7 @@ clang-14-conan-release:
 
 doc:
   extends: .retry setting
-  stage: Build Documentation
+  stage: test
   needs:
     - sync pipenv
   dependencies:
@@ -515,7 +505,7 @@ doc:
 
 pages:
   extends: .retry setting
-  stage: Publish
+  stage: deploy
   only:
     - develop
   needs:
