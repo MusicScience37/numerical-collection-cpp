@@ -17,14 +17,14 @@
  * \file
  * \brief Test of error_tolerances class.
  */
-#include "num_collect/ode/runge_kutta/error_tolerances.h"
+#include "num_collect/ode/error_tolerances.h"
 
 #include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-TEST_CASE("num_collect::ode::runge_kutta::error_tolerances<vector>") {
-    using num_collect::ode::runge_kutta::error_tolerances;
+TEST_CASE("num_collect::ode::error_tolerances<vector>") {
+    using num_collect::ode::error_tolerances;
 
     SECTION("default constructor") {
         using variable_type = Eigen::Vector2d;
