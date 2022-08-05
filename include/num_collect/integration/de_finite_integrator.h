@@ -92,7 +92,7 @@ public:
     using result_type = std::decay_t<Result>;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      */
     de_finite_integrator() = default;
 

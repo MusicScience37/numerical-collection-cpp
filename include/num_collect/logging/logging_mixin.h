@@ -32,7 +32,7 @@ namespace num_collect::logging {
 class logging_mixin {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] tag Tag.
      */

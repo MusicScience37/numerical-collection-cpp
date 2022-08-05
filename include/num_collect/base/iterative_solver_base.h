@@ -35,7 +35,7 @@ template <typename Derived>
 class iterative_solver_base : public logging::logging_mixin {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] tag Log tag.
      */

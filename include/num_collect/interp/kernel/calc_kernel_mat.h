@@ -53,7 +53,7 @@ public:
     using result_type = Eigen::MatrixX<value_type>;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] kernel Kernel.
      * \param[in] list List of variables.

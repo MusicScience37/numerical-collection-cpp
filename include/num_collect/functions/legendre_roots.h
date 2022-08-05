@@ -53,7 +53,7 @@ public:
     using jacobian_type = T;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] order Order of Legendre function.
      */
@@ -113,7 +113,7 @@ public:
     using variable_type = T;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] order Order of Legendre function.
      */

@@ -61,7 +61,7 @@ public:
     static_assert(data_type::RowsAtCompileTime == Eigen::Dynamic);
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      */
     full_gen_tikhonov() = default;
 

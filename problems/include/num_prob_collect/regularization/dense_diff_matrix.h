@@ -40,7 +40,7 @@ public:
     using scalar_type = typename Matrix::Scalar;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      */
     dense_diff_matrix_functor() = default;
 

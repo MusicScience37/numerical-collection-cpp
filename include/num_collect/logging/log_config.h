@@ -84,13 +84,13 @@ public:
     auto operator=(log_config&&) -> log_config& = delete;
 
     /*!
-     * \brief Destruct.
+     * \brief Destructor.
      */
     ~log_config() = default;
 
 private:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      */
     log_config() = default;
 

@@ -74,7 +74,7 @@ public:
         ArgType::MaxRowsAtCompileTime, ArgType::MaxColsAtCompileTime>;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] arg Matrix of variable.
      * \param[in] diff Differentiator.
@@ -161,7 +161,7 @@ public:
             FuncValType::MaxRowsAtCompileTime, ArgType::MaxRowsAtCompileTime>;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] arg Matrix of variable.
      * \param[in] diff Differentiators.

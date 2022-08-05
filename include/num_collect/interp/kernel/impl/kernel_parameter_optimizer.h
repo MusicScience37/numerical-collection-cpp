@@ -52,7 +52,7 @@ public:
     using objective_function_signature = value_type(kernel_param_type);
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] interpolator Interpolator.
      * \param[in] kernel Kernel.

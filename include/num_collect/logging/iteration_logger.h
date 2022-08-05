@@ -98,13 +98,13 @@ public:
         -> iteration_logger_item_base& = delete;
 
     /*!
-     * \brief Destruct.
+     * \brief Destructor.
      */
     virtual ~iteration_logger_item_base() noexcept = default;
 
 protected:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      */
     iteration_logger_item_base() noexcept = default;
 };
@@ -121,7 +121,7 @@ template <base::concepts::formattable Value,
 class iteration_logger_item final : public iteration_logger_item_base {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \tparam InputFunction Type of the input function.
      * \param[in] label Label.
@@ -199,7 +199,7 @@ public:
     auto operator=(iteration_logger_item&&) -> iteration_logger_item& = delete;
 
     /*!
-     * \brief Destruct.
+     * \brief Destructor.
      */
     ~iteration_logger_item() noexcept override = default;
 
@@ -227,7 +227,7 @@ class iteration_logger_item<Value, Function> final
     : public iteration_logger_item_base {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \tparam InputFunction Type of the input function.
      * \param[in] label Label.
@@ -326,7 +326,7 @@ public:
     auto operator=(iteration_logger_item&&) -> iteration_logger_item& = delete;
 
     /*!
-     * \brief Destruct.
+     * \brief Destructor.
      */
     ~iteration_logger_item() noexcept override = default;
 
@@ -353,7 +353,7 @@ private:
 class iteration_logger {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] logger Logger.
      */

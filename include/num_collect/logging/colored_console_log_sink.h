@@ -39,7 +39,7 @@ namespace num_collect::logging {
 class colored_console_log_sink final : public log_sink_base {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] file File pointer.
      *
@@ -56,7 +56,7 @@ public:
         -> colored_console_log_sink& = delete;
 
     /*!
-     * \brief Destruct.
+     * \brief Destructor.
      */
     ~colored_console_log_sink() noexcept override = default;
 

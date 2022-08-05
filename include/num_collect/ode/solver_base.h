@@ -54,7 +54,7 @@ public:
     static constexpr index_type order = formula_type::order;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] problem Problem.
      */

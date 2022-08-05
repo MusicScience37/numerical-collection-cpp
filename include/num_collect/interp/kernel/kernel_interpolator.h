@@ -59,7 +59,7 @@ public:
     using kernel_param_type = typename kernel_type::kernel_param_type;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] kernel Kernel.
      */

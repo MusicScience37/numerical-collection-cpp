@@ -42,7 +42,7 @@ namespace num_collect::logging::impl {
 class log_tag_config_tree_node {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] config Configuration for this node.
      */
@@ -118,7 +118,7 @@ private:
 class log_tag_config_tree {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      */
     log_tag_config_tree() = default;
 

@@ -34,7 +34,7 @@ namespace num_collect::logging::impl {
 class log_tag_element {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] name Name.
      */

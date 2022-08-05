@@ -53,7 +53,7 @@ namespace impl {
 class num_collect_exception : public std::runtime_error {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] message Error message.
      * \param[in] source_info Information of source codes.

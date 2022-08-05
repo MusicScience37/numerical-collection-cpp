@@ -63,7 +63,7 @@ public:
     using coeff_type = Coeff;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      */
     fista() : base_type(fista_tag) {}
 

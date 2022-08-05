@@ -56,7 +56,7 @@ public:
     using jacobian_type = Eigen::Matrix2d;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      */
     external_force_vibration_problem() { jacobian_ << 0.0, 0.0, 1.0, 0.0; }
 

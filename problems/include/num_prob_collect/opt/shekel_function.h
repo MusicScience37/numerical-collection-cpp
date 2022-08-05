@@ -40,7 +40,7 @@ public:
     using value_type = double;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] m Number of terms.
      */

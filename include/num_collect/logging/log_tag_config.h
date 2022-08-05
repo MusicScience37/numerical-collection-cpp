@@ -53,7 +53,7 @@ namespace impl {
 class log_tag_config {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] sink Log sink.
      */

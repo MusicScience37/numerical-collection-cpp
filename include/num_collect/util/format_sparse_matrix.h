@@ -51,7 +51,7 @@ template <base::concepts::sparse_matrix Matrix>
 class sparse_matrix_format_view {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] mat Matrix.
      * \param[in] type Type.

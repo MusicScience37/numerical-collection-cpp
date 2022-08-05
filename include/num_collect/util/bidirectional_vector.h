@@ -53,12 +53,12 @@ public:
     using container_type = Container;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      */
     bidirectional_vector() = default;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] container Internal container.
      * \param[in] origin_index Index of origin.

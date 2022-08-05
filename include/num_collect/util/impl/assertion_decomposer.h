@@ -92,7 +92,7 @@ class assertion_value
     : public assertion_expression_base<assertion_value<Value>> {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] value Value.
      */
@@ -153,7 +153,7 @@ class assertion_comparison
           assertion_comparison<Left, Right, Comparator>> {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] left Left-hand-side value.
      * \param[in] right Right-hand-side value.
@@ -331,7 +331,7 @@ class assertion_comparison2
           Right, ComparatorLeft, ComparatorRight>> {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] comp_left Comparison of two values.
      * \param[in] right Right-hand-side value.
@@ -433,7 +433,7 @@ template <typename Left, typename Middle, typename ComparatorLeft,
 class assertion_decomposer {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      */
     assertion_decomposer() = default;
 

@@ -62,7 +62,7 @@ public:
     using kernel_param_type = len_param_type;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] dist Calculator of distances.
      * \param[in] rbf RBF.

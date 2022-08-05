@@ -47,7 +47,7 @@ public:
     using diff_type = Diff;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] value Value.
      * \param[in] diff Differential coefficients.
@@ -57,7 +57,7 @@ public:
         : value_(value), diff_(std::forward<DiffArg>(diff)) {}
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] value Value.
      */
@@ -65,7 +65,7 @@ public:
         : value_(value) {}
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      */
     variable() : variable(static_cast<value_type>(0)) {}
 
