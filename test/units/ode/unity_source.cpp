@@ -1,6 +1,7 @@
 #include "avf/avf2_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "avf/avf3_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "avf/avf4_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "basic_step_size_controller_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "embedded_solver_test.cpp"   // NOLINT(bugprone-suspicious-include)
 #include "error_tolerances_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "evaluation_type_test.cpp"   // NOLINT(bugprone-suspicious-include)

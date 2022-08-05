@@ -2,6 +2,7 @@ set(SOURCE_FILES
     avf/avf2_formula_test.cpp
     avf/avf3_formula_test.cpp
     avf/avf4_formula_test.cpp
+    basic_step_size_controller_test.cpp
     embedded_solver_test.cpp
     error_tolerances_test.cpp
     evaluation_type_test.cpp

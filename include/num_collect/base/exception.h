@@ -72,6 +72,14 @@ public:
 };
 
 /*!
+ * \brief Class of exception on not satisfying a precondition.
+ */
+class precondition_not_satisfied : public num_collect_exception {
+public:
+    using num_collect_exception::num_collect_exception;
+};
+
+/*!
  * \brief Class of exception on invalid arguments.
  */
 class invalid_argument : public num_collect_exception {

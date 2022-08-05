@@ -33,8 +33,6 @@ namespace num_collect::ode::concepts {
  */
 template <typename T>
 concept embedded_formula = formula<T> && requires(T& obj) {
-    { T::lesser_order } -> base::concepts::decayed_to<index_type>;
-
     {obj.step_embedded(std::declval<typename T::scalar_type>() /*time*/,
         std::declval<typename T::scalar_type>() /*step_size*/,
         std::declval<typename T::variable_type>() /*current*/,

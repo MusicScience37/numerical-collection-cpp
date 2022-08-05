@@ -53,6 +53,8 @@ concept step_size_controller = requires() {
     requires std::is_same_v<typename T::problem_type::scalar_type,
         typename T::scalar_type>;
 
+    requires requires() { T(); };
+
     requires requires(T & obj, const typename T::variable_type& reference) {
         obj.init(reference);
     };
