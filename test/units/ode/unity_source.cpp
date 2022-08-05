@@ -13,4 +13,5 @@
 #include "runge_kutta/semi_implicit_formula_solver_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "runge_kutta/tanaka1_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "runge_kutta/tanaka2_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "simple_solver_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "simple_solver_test.cpp"     // NOLINT(bugprone-suspicious-include)
+#include "step_size_limits_test.cpp"  // NOLINT(bugprone-suspicious-include)

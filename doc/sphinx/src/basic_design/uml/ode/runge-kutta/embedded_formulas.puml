@@ -24,7 +24,7 @@ package runge_kutta {
         + lower_limit() : scalar_type
         + upper_limit(val: scalar_type)
         + lower_limit(val: scalar_type)
-        + limit(val: scalar_type) : scalar_type
+        + apply(val: scalar_type) : scalar_type
     }
 
     class error_tolerances<Variable> {

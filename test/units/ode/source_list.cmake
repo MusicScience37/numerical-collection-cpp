@@ -15,4 +15,5 @@ set(SOURCE_FILES
     runge_kutta/tanaka1_formula_test.cpp
     runge_kutta/tanaka2_formula_test.cpp
     simple_solver_test.cpp
+    step_size_limits_test.cpp
 )
