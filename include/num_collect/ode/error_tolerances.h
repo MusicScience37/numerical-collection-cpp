@@ -20,9 +20,10 @@
 #pragma once
 
 #include <cmath>
+#include <valarray>
 
-#include "num_collect/base/concepts/dense_vector.h"
 #include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/util/assert.h"
 
 namespace num_collect::ode {
@@ -60,7 +61,7 @@ class error_tolerances;
  *
  * \tparam Variable Type of variables.
  */
-template <base::concepts::dense_vector Variable>
+template <base::concepts::real_scalar_dense_vector Variable>
 class error_tolerances<Variable> {
 public:
     //! Type of variables.
@@ -147,6 +148,88 @@ private:
 
     //! Weight for error norm.
     scalar_type norm_weight_;
+};
+
+/*!
+ * \brief Class of error tolerances \cite Hairer1993.
+ *
+ * \tparam Variable Type of variables.
+ */
+template <base::concepts::real_scalar Variable>
+class error_tolerances<Variable> {
+public:
+    //! Type of variables.
+    using variable_type = Variable;
+
+    //! Type of scalars.
+    using scalar_type = variable_type;
+
+    /*!
+     * \brief Constructor.
+     *
+     * Argument is ignored in this implementation.
+     */
+    explicit error_tolerances(variable_type /*reference*/ = variable_type())
+        : tol_rel_error_(impl::default_tol_rel_error<scalar_type>),
+          tol_abs_error_(impl::default_tol_abs_error<scalar_type>) {}
+
+    /*!
+     * \brief Check whether the given error satisfies tolerances.
+     *
+     * \param[in] variable Variable used for the relative error.
+     * \param[in] error Error.
+     * \retval true Given error satisfies tolerances.
+     * \retval false Given error doesn't satisfy tolerances.
+     */
+    [[nodiscard]] auto check(const variable_type& variable,
+        const variable_type& error) const -> bool {
+        using std::abs;
+        return abs(error) <= tol_rel_error_ * abs(variable) + tol_abs_error_;
+    }
+
+    /*!
+     * \brief Calculate the norm of the error determined by tolerances.
+     *
+     * \param[in] variable Variable used for the relative error.
+     * \param[in] error Error.
+     * \return Norm value.
+     */
+    [[nodiscard]] auto calc_norm(const variable_type& variable,
+        const variable_type& error) const -> scalar_type {
+        using std::abs;
+        return abs(error / (tol_rel_error_ * abs(variable) + tol_abs_error_));
+    }
+
+    /*!
+     * \brief Set the tolerance of relative error.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto tol_rel_error(const variable_type& val) -> error_tolerances& {
+        NUM_COLLECT_ASSERT(val >= static_cast<scalar_type>(0));
+        tol_rel_error_ = val;
+        return *this;
+    }
+
+    /*!
+     * \brief Set the tolerance of absolute error.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto tol_abs_error(const variable_type& val) -> error_tolerances& {
+        NUM_COLLECT_ASSERT(val >= static_cast<scalar_type>(0));
+        tol_abs_error_ = val;
+        return *this;
+    }
+
+private:
+    //! Tolerance of relative error.
+    variable_type tol_rel_error_;
+
+    //! Tolerance of absolute error.
+    variable_type tol_abs_error_;
 };
 
 }  // namespace num_collect::ode
