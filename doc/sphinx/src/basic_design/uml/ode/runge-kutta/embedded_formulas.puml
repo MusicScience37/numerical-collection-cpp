@@ -36,10 +36,9 @@ package runge_kutta {
 
     class step_size_controller<Formula> {
         + init()
-        + check_and_calc_next(step_size: scalar_type&,\n\tvar: variable_type,err: variable_type) : bool
+        + check_and_calc_next(step_size: scalar_type&,\n\tvar: variable_type, err: variable_type) : bool
         + limits() : step_size_limits
         + tolerances() : error_tolerances
-        + step_size_reduction_rate(val: scalar_type)
     }
     step_size_controller o-- step_size_limits
     step_size_controller o-- error_tolerances
