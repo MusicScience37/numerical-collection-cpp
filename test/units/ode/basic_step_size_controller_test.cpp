@@ -162,6 +162,13 @@ TEST_CASE("num_collect::ode::basic_step_size_controller") {
             CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.5));  // NOLINT}
         }
 
+        SECTION("no error resulting in invalid factor") {
+            double step_size = 0.1;  // NOLINT
+            const double error = 0.0;
+            CHECK(controller.check_and_calc_next(step_size, variable, error));
+            CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.5));  // NOLINT}
+        }
+
         SECTION("step size too large") {
             double step_size = 0.5;  // NOLINT
             const double error = 2e-3 / std::pow(10.0, 5);

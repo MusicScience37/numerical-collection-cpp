@@ -122,8 +122,9 @@ public:
         scalar_type factor = pow(error_norm, exponent);
 
         // Secondly, change the factor for safety.
+        using std::isfinite;
         factor *= step_size_factor_safety_coeff_;
-        if (factor > max_step_size_factor_) {
+        if (factor > max_step_size_factor_ || !isfinite(factor)) {
             factor = max_step_size_factor_;
         }
 
