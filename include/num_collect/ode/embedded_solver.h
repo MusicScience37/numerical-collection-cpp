@@ -22,12 +22,15 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#include <type_traits>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/constants/one.h"   // IWYU pragma: keep
 #include "num_collect/constants/zero.h"  // IWYU pragma: keep
 #include "num_collect/logging/iteration_logger.h"
-#include "num_collect/ode/concepts/embedded_formula.h"  // IWYU pragma: keep
+#include "num_collect/ode/basic_step_size_controller.h"
+#include "num_collect/ode/concepts/embedded_formula.h"      // IWYU pragma: keep
+#include "num_collect/ode/concepts/step_size_controller.h"  // IWYU pragma: keep
 #include "num_collect/ode/solver_base.h"
 #include "num_collect/util/assert.h"
 #include "num_collect/util/is_eigen_vector.h"  // IWYU pragma: keep
@@ -38,20 +41,32 @@ namespace num_collect::ode {
  * \brief Class of solvers of ODEs using embedded formulas.
  *
  * \tparam Formula Type of formula.
+ * \tparam StepSizeController Type of the controller of step sizes.
  */
-template <concepts::embedded_formula Formula>
-class embedded_solver : public solver_base<embedded_solver<Formula>, Formula> {
+template <concepts::embedded_formula Formula,
+    concepts::step_size_controller StepSizeController =
+        basic_step_size_controller<Formula>>
+class embedded_solver
+    : public solver_base<embedded_solver<Formula, StepSizeController>,
+          Formula> {
 public:
     //! This type.
-    using this_type = embedded_solver<Formula>;
+    using this_type = embedded_solver<Formula, StepSizeController>;
 
     //! Type of base class.
-    using base_type = solver_base<embedded_solver<Formula>, Formula>;
+    using base_type =
+        solver_base<embedded_solver<Formula, StepSizeController>, Formula>;
 
     using typename base_type::formula_type;
     using typename base_type::problem_type;
     using typename base_type::scalar_type;
     using typename base_type::variable_type;
+
+    //! Type of the controller of step sizes.
+    using step_size_controller_type = StepSizeController;
+
+    static_assert(std::is_same_v<formula_type,
+        typename step_size_controller_type::formula_type>);
 
     //! Order of lesser coefficients of this formula.
     static constexpr index_type lesser_order = formula_type::lesser_order;
@@ -65,41 +80,28 @@ public:
         time_ = time;
         variable_ = variable;
         steps_ = 0;
+        step_size_controller_.init(variable_);
     }
 
     //! \copydoc ode::solver_base::step
     void step() {
         prev_variable_ = variable_;
-        const scalar_type tol_error =
-            std::max(tol_abs_error_, tol_rel_error_ * norm(variable_));
 
         formula().step_embedded(
             time_, step_size_, prev_variable_, variable_, error_);
         constexpr index_type max_retry = 10000;  // safe guard
         for (index_type i = 0; i < max_retry; ++i) {
-            if (norm(error_) < tol_error) {
-                break;
+            const scalar_type last_step_size = step_size_;
+            if (step_size_controller_.check_and_calc_next(
+                    step_size_, variable_, error_)) {
+                time_ += last_step_size;
+                ++steps_;
+                last_step_size_ = last_step_size;
+                return;
             }
-            step_size_ *= step_size_reduction_rate_;
             formula().step_embedded(
                 time_, step_size_, prev_variable_, variable_, error_);
         }
-        time_ += step_size_;
-        last_step_size_ = step_size_;
-
-        const scalar_type error_norm = norm(error_);
-        constexpr scalar_type exponent = static_cast<scalar_type>(1) /
-            static_cast<scalar_type>(lesser_order + 1);
-        step_size_ *= std::pow(tol_error / error_norm, exponent);
-        if (step_size_ > max_step_size_) {
-            step_size_ = max_step_size_;
-        }
-        using std::isfinite;
-        if (!isfinite(step_size_)) {
-            step_size_ = max_step_size_;
-        }
-
-        ++steps_;
     }
 
     //! \copydoc ode::solver_base::configure_iteration_logger
@@ -154,52 +156,21 @@ public:
     }
 
     /*!
-     * \brief Set tolerance of relative error.
+     * \brief Access the controller of step sizes.
      *
-     * \param[in] val Value.
-     * \return This.
+     * \return Reference of the controller.
      */
-    auto tol_rel_error(scalar_type val) {
-        NUM_COLLECT_ASSERT(val > constants::zero<scalar_type>);
-        tol_rel_error_ = val;
-        return *this;
+    auto step_size_controller() -> step_size_controller_type& {
+        return step_size_controller_;
     }
 
     /*!
-     * \brief Set tolerance of absolute error.
+     * \brief Access the controller of step sizes.
      *
-     * \param[in] val Value.
-     * \return This.
+     * \return Reference of the controller.
      */
-    auto tol_abs_error(scalar_type val) {
-        NUM_COLLECT_ASSERT(val > constants::zero<scalar_type>);
-        tol_abs_error_ = val;
-        return *this;
-    }
-
-    /*!
-     * \brief Set rate of reduction of step size.
-     *
-     * \param[in] val Value.
-     * \return This.
-     */
-    auto step_size_reduction_rate(scalar_type val) {
-        NUM_COLLECT_ASSERT(val > constants::zero<scalar_type>);
-        NUM_COLLECT_ASSERT(val < constants::one<scalar_type>);
-        step_size_reduction_rate_ = val;
-        return *this;
-    }
-
-    /*!
-     * \brief Set maximum step size.
-     *
-     * \param[in] val Value.
-     * \return This.
-     */
-    auto max_step_size(scalar_type val) {
-        NUM_COLLECT_ASSERT(val > constants::zero<scalar_type>);
-        max_step_size_ = val;
-        return *this;
+    auto step_size_controller() const -> const step_size_controller_type& {
+        return step_size_controller_;
     }
 
 private:
@@ -236,36 +207,8 @@ private:
     //! Estimate of error.
     variable_type error_{};
 
-    //! Norm of the estimate of error.
-    scalar_type error_norm_{};
-
-    //! Default tolerance of relative error.
-    static constexpr auto default_tol_rel_error =
-        static_cast<scalar_type>(1e-6);
-
-    //! Tolerance of relative error.
-    scalar_type tol_rel_error_{default_tol_rel_error};
-
-    //! Default tolerance of absolute error.
-    static constexpr auto default_tol_abs_error =
-        static_cast<scalar_type>(1e-6);
-
-    //! Tolerance of absolute error.
-    scalar_type tol_abs_error_{default_tol_abs_error};
-
-    //! Default rate of reduction of step size.
-    static constexpr auto default_step_size_reduction_rate =
-        static_cast<scalar_type>(0.5);
-
-    //! Rate of reduction of step size.
-    scalar_type step_size_reduction_rate_{default_step_size_reduction_rate};
-
-    //! Default maximum step size.
-    static constexpr auto default_max_step_size =
-        static_cast<scalar_type>(1e-2);
-
-    //! Maximum step size.
-    scalar_type max_step_size_{default_max_step_size};
+    //! Controller of step sizes.
+    step_size_controller_type step_size_controller_{};
 
     //! Time.
     scalar_type time_{};

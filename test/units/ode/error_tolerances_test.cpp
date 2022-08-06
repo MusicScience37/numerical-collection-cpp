@@ -32,12 +32,12 @@ TEST_CASE("num_collect::ode::error_tolerances<vector>") {
         const variable_type variable{{0.0, -3.0}};
         const auto tolerances = error_tolerances<variable_type>(variable);
 
-        const auto error1 = variable_type{{1e-4, 0.0}};
+        const auto error1 = variable_type{{1e-6, 0.0}};
         const double expected_norm1 = std::sqrt(0.5);
         CHECK_THAT(tolerances.calc_norm(variable, error1),
             Catch::Matchers::WithinRel(expected_norm1));
 
-        const auto error2 = variable_type{{0.0, 1e-4}};
+        const auto error2 = variable_type{{0.0, 1e-6}};
         const double expected_norm2 = std::sqrt(1.0 / 32.0);
         CHECK_THAT(tolerances.calc_norm(variable, error2),
             Catch::Matchers::WithinRel(expected_norm2));
@@ -89,10 +89,10 @@ TEST_CASE("num_collect::ode::error_tolerances<scalar>") {
     SECTION("default constructor") {
         const auto tolerances = error_tolerances<double>();
 
-        CHECK_THAT(tolerances.calc_norm(0.0, 1e-4),  // NOLINT
+        CHECK_THAT(tolerances.calc_norm(0.0, 1e-6),  // NOLINT
             Catch::Matchers::WithinRel(1.0));        // NOLINT
 
-        CHECK_THAT(tolerances.calc_norm(1.5, 1e-4),  // NOLINT
+        CHECK_THAT(tolerances.calc_norm(1.5, 1e-6),  // NOLINT
             Catch::Matchers::WithinRel(0.4));        // NOLINT
     }
 

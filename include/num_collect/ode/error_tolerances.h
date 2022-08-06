@@ -36,7 +36,7 @@ namespace impl {
  * \tparam Scalar Type of scalars.
  */
 template <base::concepts::real_scalar Scalar>
-constexpr Scalar default_tol_rel_error = static_cast<Scalar>(1e-4);
+constexpr Scalar default_tol_rel_error = static_cast<Scalar>(1e-6);
 
 /*!
  * \brief Default tolerance of absolute errors.
@@ -44,7 +44,7 @@ constexpr Scalar default_tol_rel_error = static_cast<Scalar>(1e-4);
  * \tparam Scalar Type of scalars.
  */
 template <base::concepts::real_scalar Scalar>
-constexpr Scalar default_tol_abs_error = static_cast<Scalar>(1e-4);
+constexpr Scalar default_tol_abs_error = static_cast<Scalar>(1e-6);
 
 }  // namespace impl
 
