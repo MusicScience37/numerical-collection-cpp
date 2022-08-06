@@ -21,8 +21,10 @@
 
 #include <cmath>
 #include <limits>
+#include <optional>
 #include <type_traits>  // IWYU pragma: keep
 
+#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/constants/one.h"   // IWYU pragma: keep
 #include "num_collect/constants/zero.h"  // IWYU pragma: keep
@@ -30,6 +32,7 @@
 #include "num_collect/ode/basic_step_size_controller.h"
 #include "num_collect/ode/concepts/embedded_formula.h"      // IWYU pragma: keep
 #include "num_collect/ode/concepts/step_size_controller.h"  // IWYU pragma: keep
+#include "num_collect/ode/initial_step_size_calculator.h"
 #include "num_collect/ode/solver_base.h"
 #include "num_collect/util/assert.h"
 #include "num_collect/util/is_eigen_vector.h"  // IWYU pragma: keep
@@ -79,27 +82,48 @@ public:
         time_ = time;
         variable_ = variable;
         steps_ = 0;
+
         step_size_controller_.init(variable_);
+
+        if (step_size_) {
+            this->logger().trace()(
+                "Using user-specified initial step size {}.", *step_size_);
+        } else {
+            this->logger().trace()(
+                "Automatically calculate initial step size.");
+            step_size_ = initial_step_size_calculator<formula_type>().calculate(
+                this->problem(), time_, variable_,
+                step_size_controller_.limits(),
+                step_size_controller_.tolerances());
+            this->logger().trace()(
+                "Automatically selected initial step size {}.", *step_size_);
+        }
     }
 
     //! \copydoc ode::solver_base::step
     void step() {
+        if (!step_size_) {
+            throw precondition_not_satisfied(
+                "Step size is not set yet. You may forget to call init "
+                "function.");
+        }
+
         prev_variable_ = variable_;
 
         formula().step_embedded(
-            time_, step_size_, prev_variable_, variable_, error_);
+            time_, *step_size_, prev_variable_, variable_, error_);
         constexpr index_type max_retry = 10000;  // safe guard
         for (index_type i = 0; i < max_retry; ++i) {
-            const scalar_type last_step_size = step_size_;
+            const scalar_type last_step_size = *step_size_;
             if (step_size_controller_.check_and_calc_next(
-                    step_size_, variable_, error_)) {
+                    *step_size_, variable_, error_)) {
                 time_ += last_step_size;
                 ++steps_;
                 last_step_size_ = last_step_size;
                 return;
             }
             formula().step_embedded(
-                time_, step_size_, prev_variable_, variable_, error_);
+                time_, *step_size_, prev_variable_, variable_, error_);
         }
     }
 
@@ -124,7 +148,12 @@ public:
     }
 
     //! \copydoc ode::solver_base::step_size()
-    [[nodiscard]] auto step_size() const -> scalar_type { return step_size_; }
+    [[nodiscard]] auto step_size() const -> scalar_type {
+        if (!step_size_) {
+            return std::numeric_limits<scalar_type>::quiet_NaN();
+        }
+        return step_size_.value();
+    }
 
     /*!
      * \brief Get the step size used in the last step.
@@ -194,11 +223,8 @@ private:
     //! Variable.
     variable_type variable_{};
 
-    //! Default step size.
-    static constexpr auto default_step_size = static_cast<scalar_type>(1e-2);
-
     //! Step size used in the next step.
-    scalar_type step_size_{default_step_size};
+    std::optional<scalar_type> step_size_{};
 
     //! Step size used in the last step.
     scalar_type last_step_size_{std::numeric_limits<scalar_type>::quiet_NaN()};
