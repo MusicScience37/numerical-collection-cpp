@@ -137,7 +137,6 @@ static analysis:
     CCACHE_COMPILERCHECK: content
     CONAN_USER_HOME: ${CI_PROJECT_DIR}
   before_script:
-    - apt-get update && apt-get install -y ccache
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --force --detect default
@@ -217,7 +216,6 @@ static analysis:
 .clang-release-test-base:
   extends: .release-test-base
   before_script:
-    - apt-get update && apt-get install -y ccache
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --force --detect default
@@ -229,7 +227,6 @@ static analysis:
 .clang-bench-base:
   extends: .bench-base
   before_script:
-    - apt-get update && apt-get install -y ccache
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --force --detect default
@@ -241,7 +238,6 @@ static analysis:
 .clang-debug-test-base:
   extends: .debug-test-base
   before_script:
-    - apt-get update && apt-get install -y ccache
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --force --detect default
@@ -270,7 +266,10 @@ clang coverage:
     - ctest -V
     - cd ../
     - scripts/collect_llvm_coverage.sh build_clang_coverage
+    - pip3 install lcov_cobertura
+    - lcov_cobertura $BUILD_DIR/coverage/coverage --output $BUILD_DIR/coverage.xml
     - bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
+  coverage: '/[^\s]+%\s+\d+\s+\d+\s+\s[^\s]+%/'
   artifacts:
     paths:
       - $BUILD_DIR/bench
@@ -282,6 +281,9 @@ clang coverage:
     reports:
       junit:
         - $BUILD_DIR/junit/*.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: $BUILD_DIR/coverage.xml
     when: always
     expire_in: "1 mos"
 
