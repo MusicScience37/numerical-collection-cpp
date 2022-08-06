@@ -99,7 +99,7 @@ TEST_CASE(
 
         REQUIRE_THAT(solver.time(), Catch::Matchers::WithinRel(end_time));
         const double reference = std::exp(duration);
-        constexpr double tol = 1e-6;
+        constexpr double tol = 1e-4;
         REQUIRE_THAT(
             solver.variable(), Catch::Matchers::WithinRel(reference, tol));
         REQUIRE(solver.steps() > 1);

@@ -361,6 +361,14 @@ namespace num_collect {
         namespace concepts {}
 
         /*!
+         * \dir num_collect/ode/impl
+         * \brief Directory of internal implementations.
+         */
+
+        //! Namespace of internal implementations.
+        namespace impl {}
+
+        /*!
          * \dir num_collect/ode/runge_kutta
          * \brief Directory of Runge-Kutta method.
          */

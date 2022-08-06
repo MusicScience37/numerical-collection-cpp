@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of basic_step_size_controller class.
+ * \brief Definition of pi_step_size_controller class.
  */
 #pragma once
 
@@ -34,33 +34,54 @@
 namespace num_collect::ode {
 
 //! Log tag.
-constexpr auto basic_step_size_controller_log_tag =
-    logging::log_tag_view("num_collect::ode::basic_step_size_controller");
+constexpr auto pi_step_size_controller_log_tag =
+    logging::log_tag_view("num_collect::ode::pi_step_size_controller");
 
 /*!
- * \brief Class to control step sizes using well-known method \cite Hairer1993.
+ * \brief Class to control step sizes using PI controller \cite Gustafsson1991.
  *
  * \tparam Formula Type of the formula.
  */
 template <concepts::formula Formula>
-class basic_step_size_controller
-    : public step_size_controller_base<basic_step_size_controller<Formula>,
+class pi_step_size_controller
+    : public step_size_controller_base<pi_step_size_controller<Formula>,
           Formula> {
 public:
     //! Base class.
     using base_type =
-        step_size_controller_base<basic_step_size_controller<Formula>, Formula>;
+        step_size_controller_base<pi_step_size_controller<Formula>, Formula>;
 
     using typename base_type::formula_type;
     using typename base_type::problem_type;
     using typename base_type::scalar_type;
     using typename base_type::variable_type;
 
+    //! Order of the formula used in exponents.
+    static constexpr index_type formula_order_for_exponent =
+        impl::get_least_known_order<formula_type>();
+
+    /*!
+     * \brief Default exponent of the error of the current time step.
+     *
+     * This is a value proposed by \cite Gustafsson1991.
+     */
+    static constexpr scalar_type default_current_step_error_exponent =
+        static_cast<scalar_type>(0.7) /
+        static_cast<scalar_type>(formula_order_for_exponent + 1);
+
+    /*!
+     * \brief Default exponent of the error of the previous time step.
+     *
+     * This is a value proposed by \cite Gustafsson1991.
+     */
+    static constexpr scalar_type default_previous_step_error_exponent =
+        static_cast<scalar_type>(0.4) /
+        static_cast<scalar_type>(formula_order_for_exponent + 1);
+
     /*!
      * \brief Constructor.
      */
-    basic_step_size_controller()
-        : base_type(basic_step_size_controller_log_tag) {}
+    pi_step_size_controller() : base_type(pi_step_size_controller_log_tag) {}
 
     /*!
      * \brief Check the error estimate and calculate the next step size.
@@ -81,13 +102,40 @@ public:
     }
 
     /*!
+     * \brief Set the exponent of the error of the current time step.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto current_step_error_exponent(const scalar_type& val)
+        -> pi_step_size_controller& {
+        NUM_COLLECT_ASSERT(val >= previous_step_error_exponent_);
+        current_step_error_exponent_ = val;
+        return *this;
+    }
+
+    /*!
+     * \brief Set the exponent of the error of the previous time step.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto previous_step_error_exponent(const scalar_type& val)
+        -> pi_step_size_controller& {
+        NUM_COLLECT_ASSERT(
+            static_cast<scalar_type>(0) <= val <= current_step_error_exponent_);
+        previous_step_error_exponent_ = val;
+        return *this;
+    }
+
+    /*!
      * \brief Set the safety coefficient for factors of step sizes.
      *
      * \param[in] val Value.
      * \return This.
      */
     auto step_size_factor_safety_coeff(const scalar_type& val)
-        -> basic_step_size_controller& {
+        -> pi_step_size_controller& {
         NUM_COLLECT_ASSERT(val > static_cast<scalar_type>(0));
         step_size_factor_safety_coeff_ = val;
         return *this;
@@ -100,9 +148,23 @@ public:
      * \return This.
      */
     auto max_step_size_factor(const scalar_type& val)
-        -> basic_step_size_controller& {
-        NUM_COLLECT_ASSERT(val > static_cast<scalar_type>(0));
+        -> pi_step_size_controller& {
+        NUM_COLLECT_ASSERT(val > min_step_size_factor_);
         max_step_size_factor_ = val;
+        return *this;
+    }
+
+    /*!
+     * \brief Set the minimum factor of step sizes.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto min_step_size_factor(const scalar_type& val)
+        -> pi_step_size_controller& {
+        NUM_COLLECT_ASSERT(
+            static_cast<scalar_type>(0) < val < max_step_size_factor_);
+        min_step_size_factor_ = val;
         return *this;
     }
 
@@ -120,28 +182,43 @@ private:
         // reference.
         const scalar_type error_norm =
             this->tolerances().calc_norm(variable, error);
-        constexpr index_type order_for_exponent =
-            impl::get_least_known_order<Formula>();
-        constexpr scalar_type exponent = -static_cast<scalar_type>(1) /
-            static_cast<scalar_type>(order_for_exponent + 1);
-        using std::pow;
-        scalar_type factor = pow(error_norm, exponent);
+        scalar_type factor = pow(error_norm, -current_step_error_exponent_) *
+            pow(previous_step_error_, previous_step_error_exponent_);
 
         // Secondly, change the factor for safety.
         using std::isfinite;
         factor *= step_size_factor_safety_coeff_;
-        if (factor > max_step_size_factor_ || !isfinite(factor)) {
+        if (!isfinite(factor)) {
+            factor = static_cast<scalar_type>(1);
+        }
+        if (factor > max_step_size_factor_) {
             factor = max_step_size_factor_;
+        } else if (factor < min_step_size_factor_) {
+            factor = min_step_size_factor_;
         }
 
         // Finally, multiply the factor to the step size.
         step_size *= factor;
         step_size = this->limits().apply(step_size);
+
+        // Prepare for the next step.
+        previous_step_error_ = error_norm;
     }
+
+    //! Error of the previous time step.
+    scalar_type previous_step_error_{static_cast<scalar_type>(1)};
+
+    //! Exponent of the error of the current time step.
+    scalar_type current_step_error_exponent_{
+        default_current_step_error_exponent};
+
+    //! Exponent of the error of the previous time step.
+    scalar_type previous_step_error_exponent_{
+        default_previous_step_error_exponent};
 
     //! Default safety coefficient for factors of step sizes.
     static constexpr auto default_step_size_factor_safety_coeff =
-        static_cast<scalar_type>(0.8);
+        static_cast<scalar_type>(0.9);
 
     //! Safety coefficient for factors of step sizes.
     scalar_type step_size_factor_safety_coeff_{
@@ -153,6 +230,13 @@ private:
 
     //! Maximum factor of step sizes.
     scalar_type max_step_size_factor_{default_max_step_size_factor};
+
+    //! Default minimum factor of step sizes.
+    static constexpr auto default_min_step_size_factor =
+        static_cast<scalar_type>(0.1);
+
+    //! Minimum factor of step sizes.
+    scalar_type min_step_size_factor_{default_min_step_size_factor};
 };
 
 }  // namespace num_collect::ode

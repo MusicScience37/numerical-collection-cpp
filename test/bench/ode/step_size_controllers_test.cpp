@@ -27,14 +27,12 @@
 #include <stat_bench/param/parameter_value_vector.h>
 
 #include "num_collect/base/index_type.h"
+#include "num_collect/ode/basic_step_size_controller.h"
 #include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
-#include "num_collect/ode/runge_kutta/rk4_formula.h"
+#include "num_collect/ode/pi_step_size_controller.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
-#include "num_collect/ode/runge_kutta/ros34pw3_formula.h"
 #include "num_collect/ode/runge_kutta/ros3w_formula.h"
-#include "num_collect/ode/runge_kutta/tanaka1_formula.h"
-#include "num_collect/ode/runge_kutta/tanaka2_formula.h"
 #include "num_prob_collect/ode/free_fall_in_resistance_problem.h"
 
 STAT_BENCH_MAIN
@@ -89,10 +87,12 @@ private:
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(free_fall_in_resistance_fixture,
-    "ode_rk_free_fall_in_resistance", "rkf45") {
+    "ode_rk_free_fall_in_resistance", "rkf45_basic") {
     STAT_BENCH_MEASURE() {
-        using solver_type =
-            num_collect::ode::runge_kutta::rkf45_solver<problem_type>;
+        using formula_type =
+            num_collect::ode::runge_kutta::rkf45_formula<problem_type>;
+        using solver_type = num_collect::ode::embedded_solver<formula_type,
+            num_collect::ode::basic_step_size_controller<formula_type>>;
         auto solver = solver_type(problem());
         perform(solver);
     };
@@ -100,10 +100,46 @@ STAT_BENCH_CASE_F(free_fall_in_resistance_fixture,
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(free_fall_in_resistance_fixture,
-    "ode_rk_free_fall_in_resistance", "tanaka1") {
+    "ode_rk_free_fall_in_resistance", "rkf45_pi_gustafsson") {
     STAT_BENCH_MEASURE() {
-        using solver_type =
-            num_collect::ode::runge_kutta::tanaka1_solver<problem_type>;
+        using formula_type =
+            num_collect::ode::runge_kutta::rkf45_formula<problem_type>;
+        using solver_type = num_collect::ode::embedded_solver<formula_type,
+            num_collect::ode::pi_step_size_controller<formula_type>>;
+        auto solver = solver_type(problem());
+        solver.step_size_controller().current_step_error_exponent(
+            0.7 / (formula_type::lesser_order + 1));  // NOLINT
+        solver.step_size_controller().previous_step_error_exponent(
+            0.4 / (formula_type::lesser_order + 1));  // NOLINT
+        perform(solver);
+    };
+}
+
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(free_fall_in_resistance_fixture,
+    "ode_rk_free_fall_in_resistance", "rkf45_pi_hairer") {
+    STAT_BENCH_MEASURE() {
+        using formula_type =
+            num_collect::ode::runge_kutta::rkf45_formula<problem_type>;
+        using solver_type = num_collect::ode::embedded_solver<formula_type,
+            num_collect::ode::pi_step_size_controller<formula_type>>;
+        auto solver = solver_type(problem());
+        solver.step_size_controller().current_step_error_exponent(
+            1.0 / (formula_type::lesser_order + 1));  // NOLINT
+        solver.step_size_controller().previous_step_error_exponent(
+            0.08);  // NOLINT
+        perform(solver);
+    };
+}
+
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(free_fall_in_resistance_fixture,
+    "ode_rk_free_fall_in_resistance", "ros3w_basic") {
+    STAT_BENCH_MEASURE() {
+        using formula_type =
+            num_collect::ode::runge_kutta::ros3w_formula<problem_type>;
+        using solver_type = num_collect::ode::embedded_solver<formula_type,
+            num_collect::ode::basic_step_size_controller<formula_type>>;
         auto solver = solver_type(problem());
         perform(solver);
     };
@@ -111,44 +147,34 @@ STAT_BENCH_CASE_F(free_fall_in_resistance_fixture,
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(free_fall_in_resistance_fixture,
-    "ode_rk_free_fall_in_resistance", "tanaka2") {
+    "ode_rk_free_fall_in_resistance", "ros3w_pi_gustafsson") {
     STAT_BENCH_MEASURE() {
-        using solver_type =
-            num_collect::ode::runge_kutta::tanaka2_solver<problem_type>;
+        using formula_type =
+            num_collect::ode::runge_kutta::ros3w_formula<problem_type>;
+        using solver_type = num_collect::ode::embedded_solver<formula_type,
+            num_collect::ode::pi_step_size_controller<formula_type>>;
         auto solver = solver_type(problem());
+        solver.step_size_controller().current_step_error_exponent(
+            0.7 / (formula_type::lesser_order + 1));  // NOLINT
+        solver.step_size_controller().previous_step_error_exponent(
+            0.4 / (formula_type::lesser_order + 1));  // NOLINT
         perform(solver);
     };
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(free_fall_in_resistance_fixture,
-    "ode_rk_free_fall_in_resistance", "ros3w") {
+    "ode_rk_free_fall_in_resistance", "ros3w_pi_hairer") {
     STAT_BENCH_MEASURE() {
-        using solver_type =
-            num_collect::ode::runge_kutta::ros3w_solver<problem_type>;
+        using formula_type =
+            num_collect::ode::runge_kutta::ros3w_formula<problem_type>;
+        using solver_type = num_collect::ode::embedded_solver<formula_type,
+            num_collect::ode::pi_step_size_controller<formula_type>>;
         auto solver = solver_type(problem());
-        perform(solver);
-    };
-}
-
-// NOLINTNEXTLINE
-STAT_BENCH_CASE_F(free_fall_in_resistance_fixture,
-    "ode_rk_free_fall_in_resistance", "ros34pw3") {
-    STAT_BENCH_MEASURE() {
-        using solver_type =
-            num_collect::ode::runge_kutta::ros34pw3_solver<problem_type>;
-        auto solver = solver_type(problem());
-        perform(solver);
-    };
-}
-
-// NOLINTNEXTLINE
-STAT_BENCH_CASE_F(free_fall_in_resistance_fixture,
-    "ode_rk_free_fall_in_resistance", "rk4_auto") {
-    STAT_BENCH_MEASURE() {
-        using solver_type = num_collect::ode::non_embedded_auto_solver<
-            num_collect::ode::runge_kutta::rk4_formula<problem_type>>;
-        auto solver = solver_type(problem());
+        solver.step_size_controller().current_step_error_exponent(
+            1.0 / (formula_type::lesser_order + 1));  // NOLINT
+        solver.step_size_controller().previous_step_error_exponent(
+            0.08);  // NOLINT
         perform(solver);
     };
 }

@@ -122,7 +122,6 @@ TEST_CASE(
         constexpr double tol = 1e-6;
         REQUIRE_THAT(
             solver.variable(), Catch::Matchers::WithinRel(reference, tol));
-        REQUIRE(solver.step_size() != step_size);
         REQUIRE(solver.steps() == 1);
     }
 
