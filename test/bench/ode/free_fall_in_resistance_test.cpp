@@ -44,7 +44,7 @@ using problem_type = num_prob_collect::ode::free_fall_in_resistance_problem;
 class free_fall_in_resistance_fixture : public stat_bench::FixtureBase {
 public:
     free_fall_in_resistance_fixture() {
-        add_param<double>("k")->add(1.0)->add(1e+3);  // NOLINT
+        add_param<double>("k")->add(1.0)->add(1e+2)->add(1e+4);  // NOLINT
     }
 
     void setup(stat_bench::bench::InvocationContext& context) override {
