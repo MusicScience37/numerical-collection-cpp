@@ -6,6 +6,8 @@ set(SOURCE_FILES
     embedded_solver_test.cpp
     error_tolerances_test.cpp
     evaluation_type_test.cpp
+    impl/get_least_known_order_test.cpp
+    initial_step_size_calculator_test.cpp
     non_embedded_formula_wrapper_test.cpp
     runge_kutta/implicit_euler_formula_test.cpp
     runge_kutta/rk4_formula_test.cpp

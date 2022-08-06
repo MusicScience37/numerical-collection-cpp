@@ -28,35 +28,10 @@
 
 #include "num_collect/ode/concepts/step_size_controller.h"  // IWYU pragma: keep
 #include "num_collect/ode/error_tolerances.h"
-#include "num_collect/ode/runge_kutta/rk4_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
 #include "num_collect/ode/step_size_limits.h"
 #include "num_prob_collect/ode/exponential_problem.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
-
-TEST_CASE("num_collect::ode::impl::get_least_known_order") {
-    using num_collect::ode::impl::get_least_known_order;
-    using num_collect::ode::runge_kutta::rk4_formula;
-    using num_collect::ode::runge_kutta::rkf45_formula;
-    using num_prob_collect::ode::exponential_problem;
-    using num_prob_collect::ode::spring_movement_problem;
-
-    SECTION("get") {
-        SECTION("when the lesser order is known") {
-            using problem_type = spring_movement_problem;
-            using formula_type = rkf45_formula<problem_type>;
-            STATIC_CHECK(get_least_known_order<formula_type>() == 4);
-            CHECK(get_least_known_order<formula_type>() == 4);
-        }
-
-        SECTION("when the lesser order is not known") {
-            using problem_type = spring_movement_problem;
-            using formula_type = rk4_formula<problem_type>;
-            STATIC_CHECK(get_least_known_order<formula_type>() == 4);
-            CHECK(get_least_known_order<formula_type>() == 4);
-        }
-    }
-}
 
 TEST_CASE("num_collect::ode::basic_step_size_controller") {
     using num_collect::ode::basic_step_size_controller;

@@ -28,8 +28,8 @@
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_mixin.h"
 #include "num_collect/ode/concepts/embedded_formula.h"  // IWYU pragma: keep
-#include "num_collect/ode/concepts/formula.h"           // IWYU pragma: keep
 #include "num_collect/ode/error_tolerances.h"
+#include "num_collect/ode/impl/get_least_known_order.h"
 #include "num_collect/ode/step_size_limits.h"
 #include "num_collect/util/assert.h"
 
@@ -38,29 +38,6 @@ namespace num_collect::ode {
 //! Log tag.
 constexpr auto basic_step_size_controller_log_tag =
     logging::log_tag_view("num_collect::ode::basic_step_size_controller");
-
-namespace impl {
-
-/*!
- * \brief Get the least known order of a formula.
- *
- * \tparam Formula Type of the formula.
- * \return Order.
- */
-template <concepts::formula Formula>
-constexpr auto get_least_known_order() {
-    if constexpr (requires() {
-                      {
-                          Formula::lesser_order
-                          } -> base::concepts::decayed_to<index_type>;
-                  }) {
-        return Formula::lesser_order;
-    } else {
-        return Formula::order;
-    }
-}
-
-}  // namespace impl
 
 /*!
  * \brief Class to control step sizes using well-known method \cite Hairer1993.

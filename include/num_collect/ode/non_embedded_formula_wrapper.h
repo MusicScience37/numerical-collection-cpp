@@ -109,7 +109,7 @@ public:
      *
      * \return Problem.
      */
-    [[nodiscard]] auto problem() -> problem_type& { return formula_.problem_; }
+    [[nodiscard]] auto problem() -> problem_type& { return formula_.problem(); }
 
     /*!
      * \brief Get the problem.
@@ -117,7 +117,7 @@ public:
      * \return Problem.
      */
     [[nodiscard]] auto problem() const -> const problem_type& {
-        return formula_.problem_;
+        return formula_.problem();
     }
 
 private:
