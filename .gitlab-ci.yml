@@ -269,7 +269,7 @@ clang coverage:
     - pip3 install lcov_cobertura
     - lcov_cobertura $BUILD_DIR/coverage/coverage --output $BUILD_DIR/coverage.xml
     - bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
-  coverage: '[^ ]+% +\d+ +\d+ + [^ ]+%'
+  coverage: '[^\s]+%\s+\d+\s+\d+\s+\s[^\s]+%'
   artifacts:
     paths:
       - $BUILD_DIR/bench
