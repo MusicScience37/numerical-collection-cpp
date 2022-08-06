@@ -121,6 +121,7 @@ public:
      * \return This.
      */
     auto tol_rel_error(const variable_type& val) -> error_tolerances& {
+        NUM_COLLECT_ASSERT(val.size() == tol_rel_error_.size());
         NUM_COLLECT_ASSERT((val.array() >= static_cast<scalar_type>(0)).all());
         tol_rel_error_ = val;
         return *this;
@@ -133,6 +134,7 @@ public:
      * \return This.
      */
     auto tol_abs_error(const variable_type& val) -> error_tolerances& {
+        NUM_COLLECT_ASSERT(val.size() == tol_abs_error_.size());
         NUM_COLLECT_ASSERT((val.array() >= static_cast<scalar_type>(0)).all());
         tol_abs_error_ = val;
         return *this;
