@@ -133,7 +133,7 @@ public:
         case num_collect::util::sparse_matrix_format_type::multi_line:
             return format_multi_line(mat, context);
         }
-        num_collect::logging::log_and_throw<num_collect::assertion_failure>(
+        num_collect::logging::log_and_throw<num_collect::invalid_argument>(
             "Invalid format type.");
     }
 

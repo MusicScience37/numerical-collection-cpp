@@ -179,7 +179,7 @@ public:
      */
     auto width(index_type value) -> iteration_logger_item* {
         if (value <= 0) {
-            throw assertion_failure("Width must be a positive number.");
+            throw invalid_argument("Width must be a positive number.");
         }
         width_ = value;
         return this;
@@ -285,7 +285,7 @@ public:
      */
     auto width(index_type value) -> iteration_logger_item* {
         if (value <= 0) {
-            throw assertion_failure("Width must be a positive number.");
+            throw invalid_argument("Width must be a positive number.");
         }
         width_ = value;
         return this;
@@ -306,7 +306,7 @@ public:
      */
     auto precision(index_type value) -> iteration_logger_item* {
         if (value <= 0) {
-            throw assertion_failure("Precision must be a positive number.");
+            throw invalid_argument("Precision must be a positive number.");
         }
         precision_ = value;
         return this;

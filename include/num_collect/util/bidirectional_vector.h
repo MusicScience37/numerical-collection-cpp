@@ -275,7 +275,7 @@ private:
      * \param[in] index Index.
      */
     [[noreturn]] void throw_out_of_range(index_type index) const {
-        throw assertion_failure(
+        throw invalid_argument(
             fmt::format("Index out of range (index: {}, range: [{}, {}])",
                 index, min_index(), max_index()));
     }

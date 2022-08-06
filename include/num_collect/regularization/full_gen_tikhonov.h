@@ -90,14 +90,15 @@ public:
         Eigen::ColPivHouseholderQR<coeff_type> qr_reg_adj;
         qr_reg_adj.compute(reg_coeff.adjoint());
         if (qr_reg_adj.rank() < qr_reg_adj.cols()) {
-            throw assertion_failure("reg_coeff must have full row rank.");
+            throw precondition_not_satisfied(
+                "reg_coeff must have full row rank.");
         }
         const coeff_type v = qr_reg_adj.householderQ();
 
         Eigen::ColPivHouseholderQR<coeff_type> qr_coeff_v2;
         qr_coeff_v2.compute(coeff * v.rightCols(n - p));
         if (qr_coeff_v2.rank() < qr_coeff_v2.cols()) {
-            throw assertion_failure(
+            throw precondition_not_satisfied(
                 "reg_coeff and coeff must not have common elements "
                 "other than zero in their kernel.");
         }

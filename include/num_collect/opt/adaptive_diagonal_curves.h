@@ -818,7 +818,7 @@ private:
                 return i;
             }
         }
-        throw assertion_failure(
+        throw precondition_not_satisfied(
             "adaptive_diagonal_curves::init is not called.");
     }
 
