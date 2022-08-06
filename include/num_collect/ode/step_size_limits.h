@@ -72,11 +72,10 @@ public:
      */
     [[nodiscard]] auto apply(scalar_type val) const -> scalar_type {
         if (val < lower_limit_) {
-            val = lower_limit_;
-        } else if (val > upper_limit_) {
-            val = upper_limit_;
-        } else {
-            // no operation.
+            return lower_limit_;
+        }
+        if (val > upper_limit_) {
+            return upper_limit_;
         }
         return val;
     }
