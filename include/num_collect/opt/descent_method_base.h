@@ -162,7 +162,7 @@ protected:
     using optimizer_base<Derived>::derived;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] tag Log tag.
      * \param[in] obj_fun Objective function.

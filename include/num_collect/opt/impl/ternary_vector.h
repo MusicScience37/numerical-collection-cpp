@@ -46,12 +46,12 @@ public:
         static_cast<index_type>(std::numeric_limits<digit_type>::max());
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      */
     ternary_vector() = default;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] dim Number of digits.
      */

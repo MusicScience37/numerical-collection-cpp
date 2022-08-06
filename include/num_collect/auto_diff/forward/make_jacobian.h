@@ -62,7 +62,7 @@ public:
         diff_type::MaxRowsAtCompileTime>;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] vector Vector of variables.
      */

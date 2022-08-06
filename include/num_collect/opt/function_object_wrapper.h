@@ -57,7 +57,7 @@ public:
     using function_type = std::decay_t<Function>;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] function Function.
      */

@@ -100,7 +100,7 @@ public:
 
 protected:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] tag Log tag.
      */

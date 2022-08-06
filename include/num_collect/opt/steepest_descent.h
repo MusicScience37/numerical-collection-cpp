@@ -63,7 +63,7 @@ public:
     using typename base_type::variable_type;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] obj_fun Objective function.
      */

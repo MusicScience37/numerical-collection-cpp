@@ -42,7 +42,7 @@ public:
     using scalar_type = typename problem_type::scalar_type;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] problem Problem.
      */

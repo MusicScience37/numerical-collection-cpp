@@ -60,7 +60,7 @@ public:
     static constexpr logging::log_tag_view log_tag = base_formula_type::log_tag;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] problem Problem.
      */

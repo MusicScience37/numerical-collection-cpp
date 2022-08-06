@@ -56,7 +56,7 @@ public:
         "Mass matrix is not supported.");
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] problem Problem.
      */

@@ -49,7 +49,7 @@ namespace num_collect::logging {
 class logging_proxy {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] tag Tag.
      * \param[in] level Log level.
@@ -140,12 +140,12 @@ inline constexpr auto default_tag = log_tag_view("");
 class logger {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      */
     logger() : logger(default_tag) {}
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] tag Tag.
      */
@@ -153,7 +153,7 @@ public:
         : logger(tag, log_config::instance().get_config_of(tag)) {}
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] tag Tag.
      * \param[in] config Configuration.
@@ -162,7 +162,7 @@ public:
         : logger(static_cast<log_tag>(tag), std::move(config)) {}
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] tag Tag.
      * \param[in] config Configuration.

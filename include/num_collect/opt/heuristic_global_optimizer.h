@@ -69,7 +69,7 @@ public:
     static_assert(std::is_same_v<variable_type, value_type>);
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] obj_fun Objective function.
      */
@@ -175,7 +175,7 @@ public:
     using value_type = typename objective_function_type::value_type;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] obj_fun Objective function.
      */

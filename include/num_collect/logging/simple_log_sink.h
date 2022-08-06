@@ -44,7 +44,7 @@ namespace num_collect::logging {
 class simple_log_sink final : public log_sink_base {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] file File pointer.
      * \param[in] close_on_destruction Whether to close file on destruction.
@@ -53,7 +53,7 @@ public:
         : file_(file), close_on_destruction_(close_on_destruction) {}
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] file_path File path to write logs.
      */
@@ -66,7 +66,7 @@ public:
     auto operator=(simple_log_sink&&) -> simple_log_sink& = delete;
 
     /*!
-     * \brief Destruct.
+     * \brief Destructor.
      */
     ~simple_log_sink() noexcept override {
         if (file_ != nullptr && close_on_destruction_) {

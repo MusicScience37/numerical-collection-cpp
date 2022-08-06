@@ -68,7 +68,7 @@ public:
     using value_type = typename objective_function_type::value_type;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] obj_fun Objective function.
      */
@@ -207,7 +207,7 @@ private:
     class rectangle {
     public:
         /*!
-         * \brief Construct.
+         * \brief Constructor.
          *
          * \param[in] lower Element-wise lower limit.
          * \param[in] upper Element-wise upper limit.

@@ -45,7 +45,7 @@ public:
     using scalar_type = typename solver_type::scalar_type;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] solver Solver.
      */
@@ -98,7 +98,7 @@ public:
             explicit_l_curve_objective_function<solver_type>>>;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] solver Solver.
      */

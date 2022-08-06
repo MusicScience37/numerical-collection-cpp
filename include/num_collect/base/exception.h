@@ -53,7 +53,7 @@ namespace impl {
 class num_collect_exception : public std::runtime_error {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] message Error message.
      * \param[in] source_info Information of source codes.
@@ -67,6 +67,14 @@ public:
  * \brief Class of exception on assertion failure.
  */
 class assertion_failure : public num_collect_exception {
+public:
+    using num_collect_exception::num_collect_exception;
+};
+
+/*!
+ * \brief Class of exception on not satisfying a precondition.
+ */
+class precondition_not_satisfied : public num_collect_exception {
 public:
     using num_collect_exception::num_collect_exception;
 };

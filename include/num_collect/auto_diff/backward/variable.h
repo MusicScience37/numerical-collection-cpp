@@ -51,7 +51,7 @@ public:
     using scalar_type = Scalar;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] value Value.
      * \param[in] node Node.
@@ -84,7 +84,7 @@ public:
         : variable(value, constant_tag()) {}
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      */
     variable() : variable(static_cast<scalar_type>(0)) {}
 

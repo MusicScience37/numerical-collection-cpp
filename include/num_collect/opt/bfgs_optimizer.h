@@ -77,7 +77,7 @@ public:
     using hessian_type = typename hessian_solver_type::MatrixType;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] obj_fun Objective function.
      */

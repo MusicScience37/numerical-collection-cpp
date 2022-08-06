@@ -51,7 +51,7 @@ public:
     using scalar_type = Scalar;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] node Child node.
      * \param[in] sensitivity Partial differential coefficient of the parent
@@ -102,7 +102,7 @@ public:
     using scalar_type = Scalar;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] children Child nodes.
      */

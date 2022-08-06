@@ -42,7 +42,7 @@ public:
     using variable_type = typename function_type::variable_type;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] tag Log tag.
      * \param[in] function Function of equation.

@@ -73,7 +73,7 @@ public:
     using hessian_type = Hessian;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] obj_fun Objective function.
      */

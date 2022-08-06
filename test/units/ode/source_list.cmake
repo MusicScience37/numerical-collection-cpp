@@ -2,7 +2,9 @@ set(SOURCE_FILES
     avf/avf2_formula_test.cpp
     avf/avf3_formula_test.cpp
     avf/avf4_formula_test.cpp
+    basic_step_size_controller_test.cpp
     embedded_solver_test.cpp
+    error_tolerances_test.cpp
     evaluation_type_test.cpp
     non_embedded_formula_wrapper_test.cpp
     runge_kutta/implicit_euler_formula_test.cpp
@@ -14,4 +16,5 @@ set(SOURCE_FILES
     runge_kutta/tanaka1_formula_test.cpp
     runge_kutta/tanaka2_formula_test.cpp
     simple_solver_test.cpp
+    step_size_limits_test.cpp
 )

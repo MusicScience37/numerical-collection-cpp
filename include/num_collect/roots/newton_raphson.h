@@ -74,7 +74,7 @@ public:
         std::is_same_v<variable_type, typename function_type::jacobian_type>);
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] function Function of equation.
      */
@@ -308,7 +308,7 @@ public:
         Eigen::PartialPivLU<typename Function::jacobian_type>;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] function Function of equation.
      */

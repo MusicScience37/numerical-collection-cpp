@@ -53,7 +53,7 @@ namespace impl {
 class log_tag_config {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] sink Log sink.
      */
@@ -76,7 +76,7 @@ public:
      */
     auto sink(std::shared_ptr<log_sink_base> val) -> log_tag_config& {
         if (!val) {
-            throw assertion_failure("Null sink.");
+            throw invalid_argument("Null sink.");
         }
         sink_ = std::move(val);
         return *this;
@@ -109,7 +109,7 @@ public:
         case log_level::off:
             break;
         default:
-            throw assertion_failure("Invalid log level.");
+            throw invalid_argument("Invalid log level.");
         }
         output_log_level_ = val;
         return *this;
@@ -144,7 +144,7 @@ public:
         case log_level::off:
             break;
         default:
-            throw assertion_failure("Invalid log level.");
+            throw invalid_argument("Invalid log level.");
         }
         output_log_level_in_child_iterations_ = val;
         return *this;
@@ -167,7 +167,7 @@ public:
      */
     auto iteration_output_period(index_type val) -> log_tag_config& {
         if (val <= 0) {
-            throw assertion_failure(
+            throw invalid_argument(
                 "iteration_output_period must be a positive integer.");
         }
         iteration_output_period_ = val;
@@ -191,7 +191,7 @@ public:
      */
     auto iteration_label_period(index_type val) -> log_tag_config& {
         if (val <= 0) {
-            throw assertion_failure(
+            throw invalid_argument(
                 "iteration_label_period must be a positive integer.");
         }
         iteration_label_period_ = val;

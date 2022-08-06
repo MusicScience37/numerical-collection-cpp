@@ -118,7 +118,7 @@ protected:
     using implicit_regularized_solver_base<Derived, Data>::logger;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] tag Log tag.
      */

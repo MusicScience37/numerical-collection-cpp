@@ -76,7 +76,7 @@ public:
     static constexpr index_type default_order = 5;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] order Order.
      */

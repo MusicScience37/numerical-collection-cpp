@@ -68,7 +68,7 @@ public:
         logging::log_tag_view("num_collect::ode::avf::avf3_formula");
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] problem Problem.
      */

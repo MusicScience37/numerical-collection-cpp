@@ -57,7 +57,7 @@ public:
     static_assert(data_type::RowsAtCompileTime == Eigen::Dynamic);
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      */
     tikhonov() = default;
 

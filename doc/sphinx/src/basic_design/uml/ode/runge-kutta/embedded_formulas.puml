@@ -1,0 +1,59 @@
+@startuml embedded_formulas
+
+title Abstract Model of Embedded Formulas in Runge-Kutta Method
+
+package runge_kutta {
+    !includesub ./formula_and_problems.puml!formula
+    !includesub ./formula_and_problems.puml!solver
+
+    !startsub embedded_formula
+    class embedded_formula<Problem> {
+        {static} + lesser_order : index_type
+        + step_embedded(time: scalar_type, step_size: scalar_type,\n\tcurrent: const variable_type&, estimate: variable_type&, error: variable_type&)
+    }
+    !endsub
+    formula <|-- embedded_formula
+
+    note as lesser_order_note
+        lesser_order can be omitted if its information can't be found.
+    end note
+    lesser_order_note .up. embedded_formula
+
+    class step_size_limits<Scalar> {
+        + upper_limit() : scalar_type
+        + lower_limit() : scalar_type
+        + upper_limit(val: scalar_type)
+        + lower_limit(val: scalar_type)
+        + apply(val: scalar_type) : scalar_type
+    }
+
+    class error_tolerances<Variable> {
+        + check(var: variable_type, err: variable_type) : bool
+        + calc_norm(var: variable_type, err: variable_type) : scalar_type
+        + tol_rel_error(val: variable_type)
+        + tol_abs_error(val: variable_type)
+    }
+
+    class step_size_controller<Formula> {
+        + init()
+        + check_and_calc_next(step_size: scalar_type&,\n\tvar: variable_type, err: variable_type) : bool
+        + limits() : step_size_limits
+        + tolerances() : error_tolerances
+    }
+    step_size_controller o-- step_size_limits
+    step_size_controller o-- error_tolerances
+
+    class initial_step_size_calculator<Formula> {
+        + calculate(time: scalar_type, variable: variable_type,\n\tlimits: step_size_limits) : scalar_type
+    }
+
+    class embedded_solver<Formula, StepSizeController> {
+        + unset_step_size()
+    }
+    solver <|-- embedded_solver
+    embedded_solver o-- embedded_formula
+    embedded_solver o-- step_size_controller
+    embedded_solver ..> initial_step_size_calculator
+}
+
+@enduml

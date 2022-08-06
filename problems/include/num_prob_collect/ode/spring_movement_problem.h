@@ -55,7 +55,7 @@ public:
         num_collect::ode::evaluation_type{.diff_coeff = true, .jacobian = true};
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      */
     spring_movement_problem() { jacobian_ << 0.0, -1.0, 1.0, 0.0; }
 

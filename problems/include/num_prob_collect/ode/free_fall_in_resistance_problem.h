@@ -66,7 +66,7 @@ public:
         num_collect::ode::evaluation_type{.diff_coeff = true, .jacobian = true};
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] k Coefficient of resistance.
      * \param[in] g Gravity.

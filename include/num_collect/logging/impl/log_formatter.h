@@ -39,7 +39,7 @@ namespace num_collect::logging::impl {
 class iso8601_time {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] time Time.
      */

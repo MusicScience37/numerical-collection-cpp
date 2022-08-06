@@ -81,7 +81,7 @@ public:
     using value_type = typename objective_function_type::value_type;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] obj_fun Objective function.
      */
@@ -213,7 +213,7 @@ public:
     using value_type = Value;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] vertex A vertex with lower components.
      * \param[in] ave_value Average function value.
@@ -352,7 +352,7 @@ public:
     using rectangle_pointer_type = std::shared_ptr<rectangle_type>;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] dist Distance between center point and vertex.
      */
@@ -491,7 +491,7 @@ public:
     }
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] obj_fun Objective function.
      */
@@ -818,7 +818,7 @@ private:
                 return i;
             }
         }
-        throw assertion_failure(
+        throw precondition_not_satisfied(
             "adaptive_diagonal_curves::init is not called.");
     }
 

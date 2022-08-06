@@ -37,7 +37,7 @@ template <typename Vector>
 class dense_vector_format_view {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] vec Vector.
      */

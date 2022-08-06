@@ -61,12 +61,12 @@ inline auto require_value(const toml::table& table, std::string_view path,
     std::string_view config_name, std::string_view type_name) -> T {
     const auto child_node = table.at_path(path);
     if (!child_node) {
-        throw assertion_failure(
+        throw invalid_argument(
             fmt::format("Configuration {} is required.", config_name));
     }
     const std::optional<T> value = child_node.value<T>();
     if (!value) {
-        throw assertion_failure(fmt::format(
+        throw invalid_argument(fmt::format(
             "Configuration {} must be {}.", config_name, type_name));
     }
     return *value;
@@ -108,7 +108,7 @@ inline auto require_log_level(const toml::table& table, std::string_view path,
     if (str == "off") {
         return log_level::off;
     }
-    throw assertion_failure(fmt::format("Invalid log level {}.", str));
+    throw invalid_argument(fmt::format("Invalid log level {}.", str));
 }
 
 /*!
@@ -122,7 +122,7 @@ inline auto parse_log_sink_config(const toml::table& table)
     const auto name = require_value<std::string>(
         table, "name", "name in num_collect.logging.sinks element", "a string");
     if (name == default_log_sink_name) {
-        throw assertion_failure(fmt::format(
+        throw invalid_argument(fmt::format(
             "Log sink name {} is reserved.", default_log_sink_name));
     }
 
@@ -140,7 +140,7 @@ inline auto parse_log_sink_config(const toml::table& table)
         return {name, std::make_shared<simple_log_sink>(filepath)};
     }
 
-    throw assertion_failure(fmt::format("Invalid log sink type {}.", type));
+    throw invalid_argument(fmt::format("Invalid log sink type {}.", type));
 }
 
 /*!
@@ -164,7 +164,7 @@ inline auto parse_log_tag_config(const toml::table& table,
             "sink in num_collect.logging.tag_configs element", "a string");
         const auto iter = sinks.find(sink_name);
         if (iter == sinks.end()) {
-            throw assertion_failure(
+            throw invalid_argument(
                 fmt::format("Log sink {} not found", sink_name));
         }
         config.sink(iter->second);
@@ -217,7 +217,7 @@ inline auto parse_log_sinks(const toml::array& array)
     for (const auto& elem_node : array) {
         const auto* elem_table = elem_node.as_table();
         if (elem_table == nullptr) {
-            throw assertion_failure(
+            throw invalid_argument(
                 "Each element in configuration num_collect.logging.sinks "
                 "must be a table.");
         }
@@ -238,7 +238,7 @@ inline void load_log_tag_configs(const toml::array& array,
     for (const auto& elem_node : array) {
         const auto* elem_table = elem_node.as_table();
         if (elem_table == nullptr) {
-            throw assertion_failure(
+            throw invalid_argument(
                 "Each element in configuration num_collect.logging.tag_configs "
                 "must be a table.");
         }
@@ -261,7 +261,7 @@ inline void load_logging_config_toml(const toml::table& table) {
     if (log_sink_configs_node) {
         const auto* log_sink_configs_array = log_sink_configs_node.as_array();
         if (log_sink_configs_array == nullptr) {
-            throw assertion_failure(
+            throw invalid_argument(
                 "Configuration num_collect.logging.sinks must be an "
                 "array.");
         }
@@ -276,7 +276,7 @@ inline void load_logging_config_toml(const toml::table& table) {
     if (log_tag_configs_node) {
         const auto* log_tag_configs_array = log_tag_configs_node.as_array();
         if (log_tag_configs_array == nullptr) {
-            throw assertion_failure(
+            throw invalid_argument(
                 "Configuration num_collect.logging.tag_configs must be an "
                 "array.");
         }

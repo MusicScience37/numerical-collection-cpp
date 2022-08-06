@@ -1,0 +1,60 @@
+@startuml implicit_formulas
+
+title Abstract Model of Implicit Runge-Kutta Method
+
+package runge_kutta {
+    !includesub ./formula_and_problems.puml!formula
+    !includesub ./embedded_formulas.puml!embedded_formula
+    formula <|-- embedded_formula
+
+    package implicit_formula_solver_strategy {
+        class newton_raphson_tag
+        class modified_newton_raphson_tag
+    }
+
+    class semi_implicit_formula_solver<Problem, StrategyTag> {
+        + solve(time: scalar_type, step_size: scalar_type,\n\tvariable: const variable_type&, k_coeff: scalar_type)
+        + problem() : problem_type&
+        + k() : const variable_type&
+        + tol_residual_norm(val: scalar_type)
+    }
+    semi_implicit_formula_solver ..> implicit_formula_solver_strategy
+
+    class implicit_formula_solver_coeffs {
+        {static} + stages: index_type
+        {static} + a: array<array<scalar_type, stages>, stages>
+        {static} + b: array<scalar_type, stages>
+    }
+
+    class full_implicit_formula_solver<Problem, Coeffs, StrategyTag> {
+        + solve(time: scalar_type, step_size: scalar_type,\n\tvariable: const variable_type&)
+        + problem() : problem_type&
+        + k(index: index_type) : const variable_type&
+        + tol_residual_norm(val: scalar_type)
+    }
+    full_implicit_formula_solver ..> implicit_formula_solver_coeffs
+    full_implicit_formula_solver ..> implicit_formula_solver_strategy
+
+    class implicit_formula<Problem, StrategyTag> {
+        + tol_rel_residual_norm(val: scalar_type)
+        + tol_abs_residual_norm(val: scalar_type)
+    }
+    formula <|-- implicit_formula
+    implicit_formula o-- semi_implicit_formula_solver
+    implicit_formula o-- full_implicit_formula_solver
+
+    class implicit_embedded_formula<Problem, StrategyTag> {
+    }
+    implicit_formula <|-- implicit_embedded_formula
+    embedded_formula <|-- implicit_embedded_formula
+
+    note as implicit_formula_solver_selection_note
+        Actually one of these are used in implicit_formula
+        depending on formulas.
+    end note
+    implicit_formula_solver_selection_note .. semi_implicit_formula_solver
+    implicit_formula_solver_selection_note .. full_implicit_formula_solver
+    implicit_formula_solver_selection_note .up. implicit_formula
+}
+
+@enduml

@@ -42,7 +42,7 @@ public:
     using scalar_type = Scalar;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      */
     node_differentiator() = default;
 

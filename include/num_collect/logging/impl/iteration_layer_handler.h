@@ -34,7 +34,7 @@ namespace num_collect::logging::impl {
 class iteration_layer_handler {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      */
     iteration_layer_handler() = default;
 
@@ -85,7 +85,7 @@ public:
     }
 
     /*!
-     * \brief Destruct.
+     * \brief Destructor.
      */
     ~iteration_layer_handler() noexcept = default;
 

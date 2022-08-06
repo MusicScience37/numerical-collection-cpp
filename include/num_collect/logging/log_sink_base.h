@@ -53,13 +53,13 @@ public:
     auto operator=(log_sink_base&&) -> log_sink_base& = delete;
 
     /*!
-     * \brief Destruct.
+     * \brief Destructor.
      */
     virtual ~log_sink_base() noexcept = default;
 
 protected:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      */
     log_sink_base() noexcept = default;
 };

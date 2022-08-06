@@ -38,7 +38,7 @@ public:
     using Scalar = typename Derived::Scalar;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] expected Expected matrix.
      * \param[in] precision Precision.

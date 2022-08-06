@@ -68,7 +68,7 @@ public:
     using variable_scalar_type = typename variable_type::Scalar;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] obj_fun Objective function.
      */
