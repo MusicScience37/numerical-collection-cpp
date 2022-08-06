@@ -170,7 +170,7 @@ private:
 
         problem.evaluate_on(initial_time + step_size_from_diff,
             euler_updated_variable, evaluation_type{.diff_coeff = true});
-        const variable_type euler_updated_diff = problem.diff_coeff();
+        const variable_type& euler_updated_diff = problem.diff_coeff();
 
         // d2 in Hairer1993 (Evaluation of second derivative)
         const scalar_type second_diff_norm =
