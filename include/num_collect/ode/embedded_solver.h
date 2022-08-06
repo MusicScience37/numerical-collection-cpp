@@ -19,10 +19,9 @@
  */
 #pragma once
 
-#include <algorithm>
 #include <cmath>
 #include <limits>
-#include <type_traits>
+#include <type_traits>  // IWYU pragma: keep
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/constants/one.h"   // IWYU pragma: keep

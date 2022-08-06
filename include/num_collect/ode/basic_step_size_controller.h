@@ -21,9 +21,12 @@
 
 #include <cmath>
 #include <optional>
+#include <string_view>
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_mixin.h"
 #include "num_collect/ode/concepts/embedded_formula.h"  // IWYU pragma: keep
 #include "num_collect/ode/concepts/formula.h"           // IWYU pragma: keep
 #include "num_collect/ode/error_tolerances.h"
@@ -31,6 +34,10 @@
 #include "num_collect/util/assert.h"
 
 namespace num_collect::ode {
+
+//! Log tag.
+constexpr auto basic_step_size_controller_log_tag =
+    logging::log_tag_view("num_collect::ode::basic_step_size_controller");
 
 namespace impl {
 
@@ -61,7 +68,7 @@ constexpr auto get_least_known_order() {
  * \tparam Formula Type of the formula.
  */
 template <concepts::embedded_formula Formula>
-class basic_step_size_controller {
+class basic_step_size_controller : public logging::logging_mixin {
 public:
     //! Type of formula.
     using formula_type = Formula;
@@ -78,7 +85,8 @@ public:
     /*!
      * \brief Constructor.
      */
-    basic_step_size_controller() = default;
+    basic_step_size_controller()
+        : logging::logging_mixin(basic_step_size_controller_log_tag) {}
 
     /*!
      * \brief Initialize.
@@ -103,11 +111,20 @@ public:
      */
     [[nodiscard]] auto check_and_calc_next(scalar_type& step_size,
         const variable_type& variable, const variable_type& error) -> bool {
-        if (!tolerances().check(variable, error) &&
-            step_size > limits_.lower_limit()) {
-            step_size *= reduction_rate_;
-            step_size = limits_.apply(step_size);
-            return false;
+        const bool tolerance_satisfied = tolerances().check(variable, error);
+        if (!tolerance_satisfied) {
+            if (step_size > limits_.lower_limit()) {
+                this->logger().trace()(
+                    "Error tolerance not satisfied with step size {}.",
+                    step_size);
+                step_size *= reduction_rate_;
+                step_size = limits_.apply(step_size);
+                return false;
+            }
+            this->logger().warning()(
+                "Error tolerance not satisfied even with the lowest step size "
+                "{}.",
+                step_size);
         }
 
         // Select next step size from here.
