@@ -20,7 +20,8 @@
 #pragma once
 
 #include <algorithm>
-#include <cmath>
+#include <cmath>  // IWYU pragma: keep
+#include <string_view>
 #include <tuple>
 
 #include "num_collect/logging/log_tag_view.h"

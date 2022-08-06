@@ -28,7 +28,6 @@
 
 #include "num_collect/ode/concepts/step_size_controller.h"  // IWYU pragma: keep
 #include "num_collect/ode/error_tolerances.h"
-#include "num_collect/ode/runge_kutta/rk4_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
 #include "num_collect/ode/step_size_limits.h"
 #include "num_prob_collect/ode/exponential_problem.h"

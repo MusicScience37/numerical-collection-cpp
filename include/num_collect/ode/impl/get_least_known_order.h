@@ -19,8 +19,9 @@
  */
 #pragma once
 
-#include "num_collect/base/concepts/decayed_to.h"  // IWYU pragma : keep
-#include "num_collect/ode/concepts/formula.h"      // IWYU pragma: keep
+#include "num_collect/base/concepts/decayed_to.h"  // IWYU pragma: keep
+#include "num_collect/base/index_type.h"
+#include "num_collect/ode/concepts/formula.h"  // IWYU pragma: keep
 
 namespace num_collect::ode::impl {
 
@@ -31,7 +32,7 @@ namespace num_collect::ode::impl {
  * \return Order.
  */
 template <concepts::formula Formula>
-constexpr auto get_least_known_order() {
+constexpr auto get_least_known_order() -> index_type {
     if constexpr (requires() {
                       {
                           Formula::lesser_order
