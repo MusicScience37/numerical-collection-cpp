@@ -111,44 +111,10 @@ public:
      */
     [[nodiscard]] auto check_and_calc_next(scalar_type& step_size,
         const variable_type& variable, const variable_type& error) -> bool {
-        const bool tolerance_satisfied = tolerances().check(variable, error);
-        if (!tolerance_satisfied) {
-            if (step_size > limits_.lower_limit()) {
-                this->logger().trace()(
-                    "Error tolerance not satisfied with step size {}.",
-                    step_size);
-                step_size *= reduction_rate_;
-                step_size = limits_.apply(step_size);
-                return false;
-            }
-            this->logger().warning()(
-                "Error tolerance not satisfied even with the lowest step size "
-                "{}.",
-                step_size);
+        if (reduce_if_needed(step_size, variable, error)) {
+            return false;
         }
-
-        // Select next step size from here.
-        // First, calculate factor of step size using a formula in the
-        // reference.
-        const scalar_type error_norm = tolerances_->calc_norm(variable, error);
-        constexpr index_type order_for_exponent =
-            impl::get_least_known_order<Formula>();
-        constexpr scalar_type exponent = -static_cast<scalar_type>(1) /
-            static_cast<scalar_type>(order_for_exponent + 1);
-        using std::pow;
-        scalar_type factor = pow(error_norm, exponent);
-
-        // Secondly, change the factor for safety.
-        using std::isfinite;
-        factor *= step_size_factor_safety_coeff_;
-        if (factor > max_step_size_factor_ || !isfinite(factor)) {
-            factor = max_step_size_factor_;
-        }
-
-        // Finally, multiply the factor to the step size.
-        step_size *= factor;
-        step_size = limits_.apply(step_size);
-
+        calc_next(step_size, variable, error);
         return true;
     }
 
@@ -237,6 +203,66 @@ public:
     }
 
 private:
+    /*!
+     * \brief Reduce step size if needed.
+     *
+     * \param[in,out] step_size Step size.
+     * \param[in] variable Variable.
+     * \param[in] error Error estimate.
+     * \retval true Step size was reduced.
+     * \retval false Otherwise.
+     */
+    [[nodiscard]] auto reduce_if_needed(scalar_type& step_size,
+        const variable_type& variable, const variable_type& error) -> bool {
+        const bool tolerance_satisfied = tolerances().check(variable, error);
+        if (!tolerance_satisfied) {
+            if (step_size > limits_.lower_limit()) {
+                this->logger().trace()(
+                    "Error tolerance not satisfied with step size {}.",
+                    step_size);
+                step_size *= reduction_rate_;
+                step_size = limits_.apply(step_size);
+                return true;
+            }
+            this->logger().warning()(
+                "Error tolerance not satisfied even with the lowest step size "
+                "{}.",
+                step_size);
+        }
+        return false;
+    }
+
+    /*!
+     * \brief Calculate the next step size.
+     *
+     * \param[in,out] step_size Step size.
+     * \param[in] variable Variable.
+     * \param[in] error Error estimate.
+     */
+    void calc_next(scalar_type& step_size, const variable_type& variable,
+        const variable_type& error) {
+        // First, calculate factor of step size using a formula in the
+        // reference.
+        const scalar_type error_norm = tolerances_->calc_norm(variable, error);
+        constexpr index_type order_for_exponent =
+            impl::get_least_known_order<Formula>();
+        constexpr scalar_type exponent = -static_cast<scalar_type>(1) /
+            static_cast<scalar_type>(order_for_exponent + 1);
+        using std::pow;
+        scalar_type factor = pow(error_norm, exponent);
+
+        // Secondly, change the factor for safety.
+        using std::isfinite;
+        factor *= step_size_factor_safety_coeff_;
+        if (factor > max_step_size_factor_ || !isfinite(factor)) {
+            factor = max_step_size_factor_;
+        }
+
+        // Finally, multiply the factor to the step size.
+        step_size *= factor;
+        step_size = limits_.apply(step_size);
+    }
+
     //! Limits of step sizes.
     step_size_limits<scalar_type> limits_{};
 
