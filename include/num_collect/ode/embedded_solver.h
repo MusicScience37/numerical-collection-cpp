@@ -30,10 +30,10 @@
 #include "num_collect/constants/one.h"   // IWYU pragma: keep
 #include "num_collect/constants/zero.h"  // IWYU pragma: keep
 #include "num_collect/logging/iteration_logger.h"
-#include "num_collect/ode/basic_step_size_controller.h"
 #include "num_collect/ode/concepts/embedded_formula.h"      // IWYU pragma: keep
 #include "num_collect/ode/concepts/step_size_controller.h"  // IWYU pragma: keep
 #include "num_collect/ode/initial_step_size_calculator.h"
+#include "num_collect/ode/pi_step_size_controller.h"
 #include "num_collect/ode/solver_base.h"
 #include "num_collect/util/assert.h"
 #include "num_collect/util/is_eigen_vector.h"  // IWYU pragma: keep
@@ -48,7 +48,7 @@ namespace num_collect::ode {
  */
 template <concepts::embedded_formula Formula,
     concepts::step_size_controller StepSizeController =
-        basic_step_size_controller<Formula>>
+        pi_step_size_controller<Formula>>
 class embedded_solver
     : public solver_base<embedded_solver<Formula, StepSizeController>,
           Formula> {
