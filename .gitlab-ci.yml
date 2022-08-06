@@ -137,7 +137,6 @@ static analysis:
     CCACHE_COMPILERCHECK: content
     CONAN_USER_HOME: ${CI_PROJECT_DIR}
   before_script:
-    - apt-get update && apt-get install -y ccache
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --force --detect default
@@ -217,7 +216,6 @@ static analysis:
 .clang-release-test-base:
   extends: .release-test-base
   before_script:
-    - apt-get update && apt-get install -y ccache
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --force --detect default
@@ -229,7 +227,6 @@ static analysis:
 .clang-bench-base:
   extends: .bench-base
   before_script:
-    - apt-get update && apt-get install -y ccache
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --force --detect default
@@ -241,7 +238,6 @@ static analysis:
 .clang-debug-test-base:
   extends: .debug-test-base
   before_script:
-    - apt-get update && apt-get install -y ccache
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --force --detect default
