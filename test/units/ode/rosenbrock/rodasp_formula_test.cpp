@@ -22,6 +22,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+#include "comparison_approvals.h"
 #include "num_prob_collect/ode/exponential_problem.h"
 
 TEST_CASE("num_collect::ode::rosenbrock::rodasp_formula") {
@@ -55,5 +56,51 @@ TEST_CASE("num_collect::ode::rosenbrock::rodasp_formula") {
         CHECK_THAT(formula_type::ce1 + formula_type::ce2 + formula_type::ce3 +
                 formula_type::ce4 + formula_type::ce5 + formula_type::ce6,
             Catch::Matchers::WithinAbs(0.0, 1e-10));  // NOLINT
+    }
+
+    SECTION("initialize") {
+        auto formula = formula_type(problem_type());
+        (void)formula;
+    }
+
+    SECTION("step") {
+        auto formula = formula_type(problem_type());
+
+        constexpr double time = 0.0;
+        constexpr double step_size = 1e-4;
+        constexpr double prev_var = 1.0;
+        double next_var = 0.0;
+        formula.step(time, step_size, prev_var, next_var);
+
+        const double reference = std::exp(step_size);
+        comparison_approvals::verify_with_reference(next_var, reference);
+    }
+
+    SECTION("step") {
+        auto formula = formula_type(problem_type());
+
+        constexpr double time = 0.0;
+        constexpr double step_size = 1e-4;
+        constexpr double prev_var = 1.0;
+        double next_var = 0.0;
+        formula.step(time, step_size, prev_var, next_var);
+
+        const double reference = std::exp(step_size);
+        comparison_approvals::verify_with_reference(next_var, reference);
+    }
+
+    SECTION("step_embedded") {
+        auto formula = formula_type(problem_type());
+
+        constexpr double time = 0.0;
+        constexpr double step_size = 1e-2;
+        constexpr double prev_var = 1.0;
+        double next_var = 0.0;
+        double error = 0.0;
+        formula.step_embedded(time, step_size, prev_var, next_var, error);
+
+        const double reference = std::exp(step_size);
+        comparison_approvals::verify_with_reference_and_error(
+            next_var, error, reference);
     }
 }

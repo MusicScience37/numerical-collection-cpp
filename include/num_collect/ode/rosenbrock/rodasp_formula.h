@@ -150,6 +150,105 @@ public:
     static constexpr scalar_type ce5 = c5 - cw5;
     static constexpr scalar_type ce6 = c6;
     ///@}
+
+    //! \copydoc ode::formula_base::step
+    void step(scalar_type time, scalar_type step_size,
+        const variable_type& current, variable_type& estimate) {
+        variable_type unused;
+        step_embedded(time, step_size, current, estimate, unused);
+    }
+
+    /*!
+     * \brief Compute the next variable and weak estimate of it with embedded
+     * formula.
+     *
+     * \param[in] time Current time.
+     * \param[in] step_size Step size.
+     * \param[in] current Current variable.
+     * \param[out] estimate Estimate of the next variable.
+     * \param[out] error Estimate of error.
+     */
+    void step_embedded(scalar_type time, scalar_type step_size,
+        const variable_type& current, variable_type& estimate,
+        variable_type& error) {
+        solver_.update_jacobian(problem(), time, step_size, current);
+
+        solver_.solve(problem().diff_coeff(), k1_);
+
+        problem().evaluate_on(time + b2 * step_size,
+            current + step_size * (a21 * k1_),
+            evaluation_type{.diff_coeff = true});
+        solver_.solve(problem().diff_coeff() +
+                step_size * solver_.jacobian() * (g21 * k1_),
+            k2_);
+
+        problem().evaluate_on(time + b3 * step_size,
+            current + step_size * (a31 * k1_ + a32 * k2_),
+            evaluation_type{.diff_coeff = true});
+        solver_.solve(problem().diff_coeff() +
+                step_size * solver_.jacobian() * (g31 * k1_ + g32 * k2_),
+            k3_);
+
+        problem().evaluate_on(time + b4 * step_size,
+            current + step_size * (a41 * k1_ + a42 * k2_ + a43 * k3_),
+            evaluation_type{.diff_coeff = true});
+        solver_.solve(problem().diff_coeff() +
+                step_size * solver_.jacobian() *
+                    (g41 * k1_ + g42 * k2_ + g43 * k3_),
+            k4_);
+
+        problem().evaluate_on(time + b5 * step_size,
+            current +
+                step_size * (a51 * k1_ + a52 * k2_ + a53 * k3_ + a54 * k4_),
+            evaluation_type{.diff_coeff = true});
+        solver_.solve(problem().diff_coeff() +
+                step_size * solver_.jacobian() *
+                    (g51 * k1_ + g52 * k2_ + g53 * k3_ + g54 * k4_),
+            k5_);
+
+        problem().evaluate_on(time + b6 * step_size,
+            current +
+                step_size *
+                    (a61 * k1_ + a62 * k2_ + a63 * k3_ + a64 * k4_ + a65 * k5_),
+            evaluation_type{.diff_coeff = true});
+        solver_.solve(problem().diff_coeff() +
+                step_size * solver_.jacobian() *
+                    (g61 * k1_ + g62 * k2_ + g63 * k3_ + g64 * k4_ + g65 * k5_),
+            k6_);
+
+        estimate = current +
+            step_size *
+                (c1 * k1_ + c2 * k2_ + c3 * k3_ + c4 * k4_ + c5 * k5_ +
+                    c6 * k6_);
+        error = step_size *
+            (ce1 * k1_ + ce2 * k2_ + ce3 * k3_ + ce4 * k4_ + ce5 * k5_ +
+                ce6 * k6_);
+    }
+
+private:
+    /*!
+     * \name Intermediate variables.
+     */
+    ///@{
+    //! Intermediate variable.
+    variable_type k1_{};
+    variable_type k2_{};
+    variable_type k3_{};
+    variable_type k4_{};
+    variable_type k5_{};
+    variable_type k6_{};
+    ///@}
+
+    //! Solver.
+    equation_solver_type solver_{g};
 };
+
+/*!
+ * \brief Class of solver using RODASP formula.
+ *
+ * \tparam Problem Type of problem.
+ */
+template <concepts::differentiable_problem Problem>
+using rodasp_solver = embedded_solver<rodasp_formula<Problem>>;
 
 }  // namespace num_collect::ode::rosenbrock
