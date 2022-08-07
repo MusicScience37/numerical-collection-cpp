@@ -51,10 +51,10 @@ TEST_CASE("num_collect::ode::rosenbrock::rodasp_formula") {
             Catch::Matchers::WithinRel(formula_type::b6));
         CHECK_THAT(formula_type::c1 + formula_type::c2 + formula_type::c3 +
                 formula_type::c4 + formula_type::c5 + formula_type::c6,
-            Catch::Matchers::WithinRel(1.0, 1e-10));  // NOLINT
+            Catch::Matchers::WithinRel(1.0));
         CHECK_THAT(formula_type::cw1 + formula_type::cw2 + formula_type::cw3 +
                 formula_type::cw4 + formula_type::cw5,
-            Catch::Matchers::WithinRel(1.0, 1e-10));  // NOLINT
+            Catch::Matchers::WithinRel(1.0));
         CHECK_THAT(formula_type::ce1 + formula_type::ce2 + formula_type::ce3 +
                 formula_type::ce4 + formula_type::ce5 + formula_type::ce6,
             Catch::Matchers::WithinAbs(0.0, 1e-10));  // NOLINT

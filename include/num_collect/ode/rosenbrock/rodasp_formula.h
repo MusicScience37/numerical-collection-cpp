@@ -35,7 +35,7 @@ namespace num_collect::ode::rosenbrock {
 /*!
  * \brief Class of RODASP formula for Rosenbrock method.
  *
- * \note For coefficients, refer to \cite Blom2016.
+ * \note For coefficients, I referred to \cite Steinebach2022.
  *
  * \tparam Problem Type of problem.
  * \tparam EquationSolver Type of class to solve equations in Rosenbrock
@@ -90,21 +90,21 @@ public:
      */
     ///@{
     //! Coefficient in Rosenbrock method.
-    static constexpr scalar_type a21 = coeff(7.5e-1);
-    static constexpr scalar_type a31 = coeff(8.6120400814e-2);
-    static constexpr scalar_type a32 = coeff(1.2387959919e-1);
-    static constexpr scalar_type a41 = coeff(7.7403453551e-1);
-    static constexpr scalar_type a42 = coeff(1.4926515495e-1);
-    static constexpr scalar_type a43 = coeff(-2.9419969046e-1);
-    static constexpr scalar_type a51 = coeff(5.3087466826);
-    static constexpr scalar_type a52 = coeff(1.3308921400);
-    static constexpr scalar_type a53 = coeff(-5.3741378117);
-    static constexpr scalar_type a54 = coeff(-2.6550101103e-1);
-    static constexpr scalar_type a61 = coeff(-1.7644376488);
-    static constexpr scalar_type a62 = coeff(-4.7475655721e-1);
-    static constexpr scalar_type a63 = coeff(2.3696918469);
-    static constexpr scalar_type a64 = coeff(6.1950235906e-1);
-    static constexpr scalar_type a65 = coeff(2.5e-1);
+    static constexpr scalar_type a21 = coeff(0.75);
+    static constexpr scalar_type a31 = coeff(8.6120400814152190e-2);
+    static constexpr scalar_type a32 = coeff(0.1238795991858478);
+    static constexpr scalar_type a41 = coeff(0.7749345355073236);
+    static constexpr scalar_type a42 = coeff(0.1492651549508680);
+    static constexpr scalar_type a43 = coeff(-0.2941996904581916);
+    static constexpr scalar_type a51 = coeff(5.308746682646142);
+    static constexpr scalar_type a52 = coeff(1.330892140037269);
+    static constexpr scalar_type a53 = coeff(-5.374137811655562);
+    static constexpr scalar_type a54 = coeff(-0.2655010110278497);
+    static constexpr scalar_type a61 = coeff(-1.764437648774483);
+    static constexpr scalar_type a62 = coeff(-0.4747565572063027);
+    static constexpr scalar_type a63 = coeff(2.369691846915802);
+    static constexpr scalar_type a64 = coeff(0.6195023590649829);
+    static constexpr scalar_type a65 = coeff(0.25);
 
     static constexpr scalar_type b1 = coeff(0);
     static constexpr scalar_type b2 = a21;
@@ -113,35 +113,35 @@ public:
     static constexpr scalar_type b5 = a51 + a52 + a53 + a54;
     static constexpr scalar_type b6 = a61 + a62 + a63 + a64 + a65;
 
-    static constexpr scalar_type g21 = coeff(-7.5e-1);
-    static constexpr scalar_type g31 = coeff(-1.3551200000e-1);
-    static constexpr scalar_type g32 = coeff(-1.3799200000e-1);
-    static constexpr scalar_type g41 = coeff(-1.2560800000);
-    static constexpr scalar_type g42 = coeff(-2.5014500000e-1);
-    static constexpr scalar_type g43 = coeff(1.2209300000);
-    static constexpr scalar_type g51 = coeff(-7.0731800000);
-    static constexpr scalar_type g52 = coeff(-1.8056500000);
-    static constexpr scalar_type g53 = coeff(7.7438300000);
-    static constexpr scalar_type g54 = coeff(8.8500300000e-1);
-    static constexpr scalar_type g61 = coeff(1.6840700000);
-    static constexpr scalar_type g62 = coeff(4.1826600000e-1);
-    static constexpr scalar_type g63 = coeff(-1.8814100000);
-    static constexpr scalar_type g64 = coeff(-1.1378600000e-1);
-    static constexpr scalar_type g65 = coeff(-3.5714300000e-1);
-    static constexpr scalar_type g = coeff(2.5e-1);
+    static constexpr scalar_type g21 = coeff(-0.75);
+    static constexpr scalar_type g31 = coeff(-0.1355124008141522);
+    static constexpr scalar_type g32 = coeff(-0.1379915991858478);
+    static constexpr scalar_type g41 = coeff(-1.2569840048950798);
+    static constexpr scalar_type g42 = coeff(-0.2501447105064236);
+    static constexpr scalar_type g43 = coeff(1.2209287154015032);
+    static constexpr scalar_type g51 = coeff(-7.073184331420625);
+    static constexpr scalar_type g52 = coeff(-1.805648697243572);
+    static constexpr scalar_type g53 = coeff(7.7438296585713635);
+    static constexpr scalar_type g54 = coeff(0.8850033700928326);
+    static constexpr scalar_type g61 = coeff(1.6840692779853665);
+    static constexpr scalar_type g62 = coeff(0.41826594361385516);
+    static constexpr scalar_type g63 = coeff(-1.8814062168730028);
+    static constexpr scalar_type g64 = coeff(-0.11378614758336392);
+    static constexpr scalar_type g65 = coeff(-0.3571428571428569);
+    static constexpr scalar_type g = coeff(0.25);
 
-    static constexpr scalar_type c1 = coeff(-8.0368370789e-2);
-    static constexpr scalar_type c2 = coeff(-5.6490613592e-2);
-    static constexpr scalar_type c3 = coeff(4.8828563004e-1);
-    static constexpr scalar_type c4 = coeff(5.0571621148e-1);
-    static constexpr scalar_type c5 = coeff(-1.0714285714e-1);
-    static constexpr scalar_type c6 = coeff(2.5e-1);
+    static constexpr scalar_type c1 = coeff(-8.0368370789113464e-2);
+    static constexpr scalar_type c2 = coeff(-5.6490613592447572e-2);
+    static constexpr scalar_type c3 = coeff(0.4882856300427991);
+    static constexpr scalar_type c4 = coeff(0.5057162114816189);
+    static constexpr scalar_type c5 = coeff(-0.1071428571428569);
+    static constexpr scalar_type c6 = coeff(0.25);
 
-    static constexpr scalar_type cw1 = coeff(-1.7644376488);
-    static constexpr scalar_type cw2 = coeff(-4.7475655721e-1);
-    static constexpr scalar_type cw3 = coeff(2.3696918469);
-    static constexpr scalar_type cw4 = coeff(6.1950235906e-1);
-    static constexpr scalar_type cw5 = coeff(2.5e-1);
+    static constexpr scalar_type cw1 = coeff(-1.764437648774483);
+    static constexpr scalar_type cw2 = coeff(-0.4747565572063027);
+    static constexpr scalar_type cw3 = coeff(2.369691846915802);
+    static constexpr scalar_type cw4 = coeff(0.6195023590649829);
+    static constexpr scalar_type cw5 = coeff(0.25);
 
     static constexpr scalar_type ce1 = c1 - cw1;
     static constexpr scalar_type ce2 = c2 - cw2;
