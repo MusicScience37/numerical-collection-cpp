@@ -40,6 +40,17 @@ TEST_CASE("num_collect::ode::runge_kutta::rk4_formula") {
     SECTION("static definition") {
         STATIC_REQUIRE(formula_type::stages == 4);
         STATIC_REQUIRE(formula_type::order == 4);
+
+        CHECK(0.0 == formula_type::b1);
+        CHECK_THAT(
+            formula_type::a21, Catch::Matchers::WithinRel(formula_type::b2));
+        CHECK_THAT(
+            formula_type::a32, Catch::Matchers::WithinRel(formula_type::b3));
+        CHECK_THAT(
+            formula_type::a43, Catch::Matchers::WithinRel(formula_type::b4));
+        CHECK_THAT(formula_type::c1 + formula_type::c2 + formula_type::c3 +
+                formula_type::c4,
+            Catch::Matchers::WithinRel(1.0));
     }
 
     SECTION("initialize") {

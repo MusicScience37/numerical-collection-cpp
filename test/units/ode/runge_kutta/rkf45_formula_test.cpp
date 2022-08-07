@@ -41,6 +41,28 @@ TEST_CASE("num_collect::ode::runge_kutta::rkf45_formula") {
         STATIC_REQUIRE(formula_type::stages == 6);
         STATIC_REQUIRE(formula_type::order == 5);
         STATIC_REQUIRE(formula_type::lesser_order == 4);
+
+        CHECK_THAT(
+            formula_type::a21, Catch::Matchers::WithinRel(formula_type::b2));
+        CHECK_THAT(formula_type::a31 + formula_type::a32,
+            Catch::Matchers::WithinRel(formula_type::b3));
+        CHECK_THAT(formula_type::a41 + formula_type::a42 + formula_type::a43,
+            Catch::Matchers::WithinRel(formula_type::b4));
+        CHECK_THAT(formula_type::a51 + formula_type::a52 + formula_type::a53 +
+                formula_type::a54,
+            Catch::Matchers::WithinRel(formula_type::b5));
+        CHECK_THAT(formula_type::a61 + formula_type::a62 + formula_type::a63 +
+                formula_type::a64 + formula_type::a65,
+            Catch::Matchers::WithinRel(formula_type::b6));
+        CHECK_THAT(formula_type::c1 + formula_type::c3 + formula_type::c4 +
+                formula_type::c5 + formula_type::c6,
+            Catch::Matchers::WithinRel(1.0));
+        CHECK_THAT(formula_type::cw1 + formula_type::cw3 + formula_type::cw4 +
+                formula_type::cw5,
+            Catch::Matchers::WithinRel(1.0));
+        CHECK_THAT(formula_type::ce1 + formula_type::ce3 + formula_type::ce4 +
+                formula_type::ce5 + formula_type::ce6,
+            Catch::Matchers::WithinAbs(0.0, 1e-10));  // NOLINT
     }
 
     SECTION("initialize") {

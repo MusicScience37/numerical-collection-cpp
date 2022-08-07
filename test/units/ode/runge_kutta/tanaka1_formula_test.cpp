@@ -43,6 +43,16 @@ TEST_CASE("num_collect::ode::runge_kutta::tanaka1_formula") {
         STATIC_REQUIRE(formula_type::stages == 2);
         STATIC_REQUIRE(formula_type::order == 3);
         STATIC_REQUIRE(formula_type::lesser_order == 1);
+
+        CHECK_THAT(
+            formula_type::a11, Catch::Matchers::WithinRel(formula_type::b1));
+        CHECK_THAT(formula_type::a21 + formula_type::a22,
+            Catch::Matchers::WithinRel(formula_type::b2));
+        CHECK_THAT(formula_type::c1 + formula_type::c2,
+            Catch::Matchers::WithinRel(1.0));
+        CHECK_THAT(formula_type::cw1, Catch::Matchers::WithinRel(1.0));
+        CHECK_THAT(formula_type::ce1 + formula_type::ce2,
+            Catch::Matchers::WithinAbs(0.0, 1e-10));  // NOLINT
     }
 
     SECTION("initialize") {
