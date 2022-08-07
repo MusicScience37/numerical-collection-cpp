@@ -374,17 +374,15 @@ namespace num_collect {
          */
 
         //! Namespace of Runge-Kutta method.
-        namespace runge_kutta {
+        namespace runge_kutta {}
 
-            /*!
-             * \dir num_collect/ode/runge_kutta/impl
-             * \brief Directory of internal implementations.
-             */
+        /*!
+         * \dir num_collect/ode/rosenbrock
+         * \brief Directory of Rosenbrock method.
+         */
 
-            //! Namespace of internal implementations.
-            namespace impl {}
-
-        }  // namespace runge_kutta
+        //! Namespace of Rosenbrock method.
+        namespace rosenbrock {}
 
         /*!
          * \dir num_collect/ode/avf
