@@ -28,7 +28,6 @@
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "comparison_approvals.h"
-#include "eigen_approx.h"
 #include "num_collect/ode/embedded_solver.h"
 #include "num_prob_collect/ode/exponential_problem.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
