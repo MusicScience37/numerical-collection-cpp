@@ -15,21 +15,21 @@
  */
 /*!
  * \file
- * \brief Test of lu_rosenbrock_equation_solver class.
+ * \brief Test of scalar_rosenbrock_equation_solver class.
  */
-#include "num_collect/ode/rosenbrock/lu_rosenbrock_equation_solver.h"
+#include "num_collect/ode/rosenbrock/scalar_rosenbrock_equation_solver.h"
 
-#include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include "eigen_approx.h"
 #include "num_collect/ode/concepts/rosenbrock_equation_solver.h"  // IWYU pragma: keep
-#include "num_prob_collect/ode/spring_movement_problem.h"
+#include "num_prob_collect/ode/exponential_problem.h"
 
-TEST_CASE("num_collect::ode::rosenbrock::lu_rosenbrock_equation_solver") {
-    using problem_type = num_prob_collect::ode::spring_movement_problem;
+TEST_CASE("") {
+    using problem_type = num_prob_collect::ode::exponential_problem;
     using solver_type =
-        num_collect::ode::rosenbrock::lu_rosenbrock_equation_solver<
+        num_collect::ode::rosenbrock::scalar_rosenbrock_equation_solver<
             problem_type>;
 
     SECTION("check concept") {
@@ -42,14 +42,15 @@ TEST_CASE("num_collect::ode::rosenbrock::lu_rosenbrock_equation_solver") {
 
         problem_type problem;
         constexpr double time = 0.0;
-        const Eigen::Vector2d variable = Eigen::Vector2d(1.0, 0.0);
+        constexpr double variable = 1.0;
         constexpr double step_size = 0.1;
         constexpr double inverted_jacobian_coeff = 0.1;
 
         solver.init(problem, variable, inverted_jacobian_coeff);
         solver.update_jacobian(time, step_size, variable);
 
-        CHECK_THAT(solver.jacobian(), eigen_approx(problem.jacobian()));
+        CHECK_THAT(
+            solver.jacobian(), Catch::Matchers::WithinRel(problem.jacobian()));
     }
 
     SECTION("solve an equation") {
@@ -57,21 +58,21 @@ TEST_CASE("num_collect::ode::rosenbrock::lu_rosenbrock_equation_solver") {
 
         problem_type problem;
         constexpr double time = 0.0;
-        const Eigen::Vector2d variable = Eigen::Vector2d(1.0, 0.0);
+        constexpr double variable = 1.0;
         constexpr double step_size = 0.01;
         constexpr double inverted_jacobian_coeff = 0.2;
 
         solver.init(problem, variable, inverted_jacobian_coeff);
         solver.update_jacobian(time, step_size, variable);
 
-        const Eigen::Vector2d expected_result = Eigen::Vector2d(0.123, -0.234);
-        const Eigen::Vector2d rhs = expected_result -
+        constexpr double expected_result = 0.123;
+        const double rhs = expected_result -
             step_size * inverted_jacobian_coeff * problem.jacobian() *
                 expected_result;
 
-        Eigen::Vector2d result;
+        double result{0.0};
         solver.solve(rhs, result);
 
-        CHECK_THAT(result, eigen_approx(expected_result));
+        CHECK_THAT(result, Catch::Matchers::WithinRel(expected_result));
     }
 }
