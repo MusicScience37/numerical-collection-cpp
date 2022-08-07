@@ -27,7 +27,7 @@
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include "eigen_approx.h"
+#include "comparison_approvals.h"
 #include "num_prob_collect/ode/exponential_problem.h"
 #include "num_prob_collect/ode/external_force_vibration_problem.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
@@ -58,8 +58,7 @@ TEST_CASE("num_collect::ode::runge_kutta::ros34pw3_formula") {
         formula.step(time, step_size, prev_var, next_var);
 
         const double reference = std::exp(step_size);
-        constexpr double tol = 1e-12;
-        REQUIRE_THAT(next_var, Catch::Matchers::WithinRel(reference, tol));
+        comparison_approvals::verify_with_reference(next_var, reference);
     }
 
     SECTION("step_embedded") {
@@ -73,9 +72,8 @@ TEST_CASE("num_collect::ode::runge_kutta::ros34pw3_formula") {
         formula.step_embedded(time, step_size, prev_var, next_var, error);
 
         const double reference = std::exp(step_size);
-        constexpr double tol = 1e-4;
-        REQUIRE_THAT(next_var, Catch::Matchers::WithinRel(reference, tol));
-        REQUIRE_THAT(error, Catch::Matchers::WithinAbs(0.0, tol));
+        comparison_approvals::verify_with_reference_and_error(
+            next_var, error, reference);
     }
 }
 
@@ -99,9 +97,8 @@ TEST_CASE(
 
         REQUIRE_THAT(solver.time(), Catch::Matchers::WithinRel(end_time));
         const double reference = std::exp(duration);
-        constexpr double tol = 1e-6;
-        REQUIRE_THAT(
-            solver.variable(), Catch::Matchers::WithinRel(reference, tol));
+        comparison_approvals::verify_with_reference(
+            solver.variable(), reference);
         REQUIRE(solver.steps() > 1);
     }
 }
@@ -127,8 +124,8 @@ TEST_CASE(
         REQUIRE_THAT(solver.time(), Catch::Matchers::WithinRel(end_time));
         const Eigen::Vector2d reference =
             Eigen::Vector2d(std::cos(end_time), std::sin(end_time));
-        constexpr double tol = 1e-6;
-        REQUIRE_THAT(solver.variable(), eigen_approx(reference, tol));
+        comparison_approvals::verify_with_reference(
+            solver.variable(), reference);
         REQUIRE(solver.steps() > 1);
     }
 }
@@ -155,8 +152,8 @@ TEST_CASE(
         REQUIRE_THAT(solver.time(), Catch::Matchers::WithinRel(end_time));
         const Eigen::Vector2d reference =
             Eigen::Vector2d(-std::cos(end_time), -std::sin(end_time));
-        constexpr double tol = 1e-6;
-        REQUIRE_THAT(solver.variable(), eigen_approx(reference, tol));
+        comparison_approvals::verify_with_reference(
+            solver.variable(), reference);
         REQUIRE(solver.steps() > 1);
     }
 }

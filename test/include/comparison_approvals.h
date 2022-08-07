@@ -42,6 +42,18 @@ public:
                 actual, reference, precision));
     }
 
+    template <num_collect::concepts::real_scalar Scalar>
+    static void verify_with_reference_and_error(const Scalar& actual,
+        const Scalar& error, const Scalar& reference,
+        num_collect::index_type precision =
+            (std::numeric_limits<Scalar>::digits10 / 2)) {
+        ApprovalTests::Approvals::verify(
+            fmt::format("Actual:     {0:.{3}e}\n"
+                        "Reference:  {1:.{3}e}\n"
+                        "Est. Error: {2:.1e}",
+                actual, reference, error, precision));
+    }
+
     template <num_collect::concepts::real_scalar_dense_vector Vector>
     static void verify_with_reference(const Vector& actual,
         const Vector& reference,
