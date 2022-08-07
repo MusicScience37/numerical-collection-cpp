@@ -5,7 +5,8 @@
 ### Breaking Change
 
 - Changed the name of class `heuristic_1dim_optimizer` to `heuristic_global_optimizer` ([Issue #151](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/merge_requests/151)).
-- Refactored logging ([Issue #178](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/178), [Issue #179](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/179), [Issue #164](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/164), [Issue #166](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/166)).
+- Refactored logging ([Issue #178](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/178), [Issue #179](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/179), [Issue #164](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/164), [Issue #166](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/166), [Issue #182](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/182), [Issue #181](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/181)).
+- Refactored ode module for implementation of new algorithms ([Issue #192](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/192), [Issue #200](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/200)).
 
 ### Feature
 
@@ -18,15 +19,23 @@
     - Implemented FISTA for L1 regularization ([Issue #147](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/147)).
   - opt
     - Heuristic global optimizer for multi-variate problems ([Issue #151](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/merge_requests/151)).
+  - ode
+    - Automatic computation of the initial step size in ODE solver ([Issue #203](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/203))
+    - New algorithm to automatically compute the next step size in ODE solver ([Issue #202](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/202))
 
 ### Miscellaneous
 
-- Introduced [Approval Tests](https://approvaltests.com/) for tests ([Issue #139](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/139)).
+- Introduced [Approval Tests](https://approvaltests.com/) for tests ([Issue #139](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/139), [Issue #204](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/204)).
 - Update issue templates ([Issue #157](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/157)).
 - Fixed warnings on MSVC ([Issue #134](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/134)).
 - Set the default value of requirements_for_tests in conanfile.py to False ([Issue #159](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/159)).
 - Introduced profiling ([Issue #168](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/168)).
 - Introduced ccache ([Issue #177](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/177)).
+- Added concept of optimizers ([Issue #193](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/193)).
+- Added more tests of legendre function ([Issue #194](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/194)).
+- Changed CI configuration to upload coverage report ([Issue #196](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/196), [Issue #205](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/205), [Issue #206](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/206)).
+- Introduced [IWYU](https://github.com/include-what-you-use/include-what-you-use/) ([Issue #9](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/9)).
+- Decreased the size of artifacts in CI ([Issue #201](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/201)).
 
 ## 0.4.1 (2022/2/19)
 

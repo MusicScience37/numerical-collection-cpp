@@ -93,6 +93,12 @@ TEST_CASE("num_collect::ode::pi_step_size_controller") {
                 controller.check_and_calc_next(step_size, variable, error));
             CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.2));  // NOLINT}
         }
+
+        SECTION("already small step size") {
+            double step_size = 0.1;  // NOLINT
+            const auto error = Eigen::Vector2d{{2e-2, 2e-2}};
+            CHECK(controller.check_and_calc_next(step_size, variable, error));
+        }
     }
 
     SECTION("check when error satisfies tolerances") {
@@ -189,5 +195,19 @@ TEST_CASE("num_collect::ode::pi_step_size_controller") {
                 step_size, variable, current_error));
             CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.3));  // NOLINT}
         }
+    }
+
+    SECTION("check before initialization") {
+        using problem_type = exponential_problem;
+        using formula_type = rkf45_formula<problem_type>;
+        using controller_type = pi_step_size_controller<formula_type>;
+
+        controller_type controller;
+
+        double step_size = 0.4;  // NOLINT
+        constexpr double variable = 0.1;
+        const double error = 2e-3 / std::pow(2.0, 5);
+        CHECK_THROWS(
+            controller.check_and_calc_next(step_size, variable, error));
     }
 }

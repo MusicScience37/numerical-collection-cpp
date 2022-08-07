@@ -27,6 +27,7 @@
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+#include "comparison_approvals.h"
 #include "eigen_approx.h"
 #include "num_collect/ode/runge_kutta/rk4_formula.h"
 #include "num_prob_collect/ode/exponential_problem.h"
@@ -69,9 +70,8 @@ TEST_CASE(
         REQUIRE_THAT(
             solver.time(), Catch::Matchers::WithinRel(init_time + step_size));
         const double reference = std::exp(step_size);
-        constexpr double tol = 1e-12;
-        REQUIRE_THAT(
-            solver.variable(), Catch::Matchers::WithinRel(reference, tol));
+        comparison_approvals::verify_with_reference(
+            solver.variable(), reference);
         REQUIRE_THAT(solver.step_size(), Catch::Matchers::WithinRel(step_size));
         REQUIRE(solver.steps() == 1);
     }
@@ -89,9 +89,8 @@ TEST_CASE(
 
         REQUIRE_THAT(solver.time(), Catch::Matchers::WithinRel(end_time));
         const double reference = std::exp(duration);
-        constexpr double tol = 1e-10;
-        REQUIRE_THAT(
-            solver.variable(), Catch::Matchers::WithinRel(reference, tol));
+        comparison_approvals::verify_with_reference(
+            solver.variable(), reference);
         REQUIRE(solver.steps() > 1);
     }
 }
@@ -133,8 +132,8 @@ TEST_CASE(
         REQUIRE_THAT(solver.time(), Catch::Matchers::WithinRel(step_size));
         const Eigen::Vector2d reference =
             Eigen::Vector2d(std::cos(step_size), std::sin(step_size));
-        constexpr double tol = 1e-12;
-        REQUIRE_THAT(solver.variable(), eigen_approx(reference, tol));
+        comparison_approvals::verify_with_reference(
+            solver.variable(), reference);
         REQUIRE_THAT(solver.step_size(), Catch::Matchers::WithinRel(step_size));
         REQUIRE(solver.steps() == 1);
     }
@@ -153,8 +152,8 @@ TEST_CASE(
         REQUIRE_THAT(solver.time(), Catch::Matchers::WithinRel(end_time));
         const Eigen::Vector2d reference =
             Eigen::Vector2d(std::cos(end_time), std::sin(end_time));
-        constexpr double tol = 1e-10;
-        REQUIRE_THAT(solver.variable(), eigen_approx(reference, tol));
+        comparison_approvals::verify_with_reference(
+            solver.variable(), reference);
         REQUIRE(solver.steps() > 1);
     }
 }
