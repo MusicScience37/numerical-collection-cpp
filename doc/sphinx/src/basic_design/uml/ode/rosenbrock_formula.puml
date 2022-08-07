@@ -1,0 +1,29 @@
+@startuml rosenbrock_formula
+
+title Abstract Model of Formulas of Rosenbrock Method
+
+package ode {
+    !includesub ./formula_and_problems.puml!formula
+    !includesub ./embedded_formulas.puml!embedded_formula
+    formula <|- embedded_formula
+
+    package rosenbrock {
+
+        class rosenbrock_equation_solver<Problem> {
+            + init(problem: problem_type&, reference: variable_type,\n\tinverted_jacobian_coeff: scalar_type)
+            + update_jacobian(time: scalar_type, step_size: scalar_type,\n\tvariable: variable_type)
+            + jacobian() : jacobian_type
+            + solve(rhs: variable_type, result: variable_type&)
+        }
+
+        class rosenbrock_formula<Problem, EquationSolver>
+        formula <|-- rosenbrock_formula
+        rosenbrock_formula o-- rosenbrock_equation_solver
+
+        class embedded_rosenbrock_formula<Problem, EquationSolver>
+        rosenbrock_formula <|- embedded_rosenbrock_formula
+        embedded_formula <|-- embedded_rosenbrock_formula
+    }
+}
+
+@enduml

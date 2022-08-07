@@ -1,8 +1,8 @@
 @startuml embedded_formulas
 
-title Abstract Model of Embedded Formulas in Runge-Kutta Method
+title Abstract Model of Embedded Formulas for ODE Solvers
 
-package runge_kutta {
+package ode {
     !includesub ./formula_and_problems.puml!formula
     !includesub ./formula_and_problems.puml!solver
 
