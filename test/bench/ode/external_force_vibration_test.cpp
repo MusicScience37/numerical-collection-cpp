@@ -26,10 +26,10 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
+#include "num_collect/ode/rosenbrock/ros3w_formula.h"
 #include "num_collect/ode/runge_kutta/rk4_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
 #include "num_collect/ode/runge_kutta/ros34pw3_formula.h"
-#include "num_collect/ode/runge_kutta/ros3w_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka1_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka2_formula.h"
 #include "num_prob_collect/ode/external_force_vibration_problem.h"
@@ -108,7 +108,7 @@ STAT_BENCH_CASE_F(external_force_vibration_fixture,
     "ode_rk_external_force_vibration", "ros3w") {
     STAT_BENCH_MEASURE() {
         using solver_type =
-            num_collect::ode::runge_kutta::ros3w_solver<problem_type>;
+            num_collect::ode::rosenbrock::ros3w_solver<problem_type>;
         auto solver = solver_type(problem_type());
         perform(solver);
     };

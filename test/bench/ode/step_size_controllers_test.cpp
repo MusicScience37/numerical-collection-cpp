@@ -31,8 +31,8 @@
 #include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
 #include "num_collect/ode/pi_step_size_controller.h"
+#include "num_collect/ode/rosenbrock/ros3w_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
-#include "num_collect/ode/runge_kutta/ros3w_formula.h"
 #include "num_prob_collect/ode/free_fall_in_resistance_problem.h"
 
 STAT_BENCH_MAIN
@@ -137,7 +137,7 @@ STAT_BENCH_CASE_F(free_fall_in_resistance_fixture,
     "ode_rk_free_fall_in_resistance", "ros3w_basic") {
     STAT_BENCH_MEASURE() {
         using formula_type =
-            num_collect::ode::runge_kutta::ros3w_formula<problem_type>;
+            num_collect::ode::rosenbrock::ros3w_formula<problem_type>;
         using solver_type = num_collect::ode::embedded_solver<formula_type,
             num_collect::ode::basic_step_size_controller<formula_type>>;
         auto solver = solver_type(problem());
@@ -150,7 +150,7 @@ STAT_BENCH_CASE_F(free_fall_in_resistance_fixture,
     "ode_rk_free_fall_in_resistance", "ros3w_pi_gustafsson") {
     STAT_BENCH_MEASURE() {
         using formula_type =
-            num_collect::ode::runge_kutta::ros3w_formula<problem_type>;
+            num_collect::ode::rosenbrock::ros3w_formula<problem_type>;
         using solver_type = num_collect::ode::embedded_solver<formula_type,
             num_collect::ode::pi_step_size_controller<formula_type>>;
         auto solver = solver_type(problem());
@@ -167,7 +167,7 @@ STAT_BENCH_CASE_F(free_fall_in_resistance_fixture,
     "ode_rk_free_fall_in_resistance", "ros3w_pi_hairer") {
     STAT_BENCH_MEASURE() {
         using formula_type =
-            num_collect::ode::runge_kutta::ros3w_formula<problem_type>;
+            num_collect::ode::rosenbrock::ros3w_formula<problem_type>;
         using solver_type = num_collect::ode::embedded_solver<formula_type,
             num_collect::ode::pi_step_size_controller<formula_type>>;
         auto solver = solver_type(problem());

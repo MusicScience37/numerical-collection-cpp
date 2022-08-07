@@ -43,18 +43,15 @@ concept rosenbrock_equation_solver = requires() {
     requires std::is_same_v<typename T::jacobian_type,
         typename T::problem_type::jacobian_type>;
 
-    T();
-
-    requires requires(T & obj, typename T::problem_type & problem,
-        const typename T::variable_type& reference,
-        const typename T::scalar_type& inverted_jacobian_coeff) {
-        obj.init(problem, reference, inverted_jacobian_coeff);
+    requires requires(const typename T::scalar_type& inverted_jacobian_coeff) {
+        T(inverted_jacobian_coeff);
     };
 
-    requires requires(T & obj, const typename T::scalar_type& time,
+    requires requires(T & obj, typename T::problem_type & problem,
+        const typename T::scalar_type& time,
         const typename T::scalar_type& step_size,
         const typename T::variable_type& variable) {
-        obj.update_jacobian(time, step_size, variable);
+        obj.update_jacobian(problem, time, step_size, variable);
     };
 
     requires requires(const T& obj) {

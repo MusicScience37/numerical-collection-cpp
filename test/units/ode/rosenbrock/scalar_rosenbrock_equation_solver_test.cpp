@@ -38,55 +38,40 @@ TEST_CASE("") {
     }
 
     SECTION("update Jacobian") {
-        solver_type solver;
+        constexpr double inverted_jacobian_coeff = 0.1;
+        solver_type solver{inverted_jacobian_coeff};
 
         problem_type problem;
         constexpr double time = 0.0;
         constexpr double variable = 1.0;
         constexpr double step_size = 0.1;
-        constexpr double inverted_jacobian_coeff = 0.1;
-
-        solver.init(problem, variable, inverted_jacobian_coeff);
-        solver.update_jacobian(time, step_size, variable);
+        solver.update_jacobian(problem, time, step_size, variable);
 
         CHECK_THAT(
             solver.jacobian(), Catch::Matchers::WithinRel(problem.jacobian()));
     }
 
-    SECTION("try to update Jacobian before initialization") {
-        solver_type solver;
-
-        constexpr double time = 0.0;
-        constexpr double variable = 1.0;
-        constexpr double step_size = 0.1;
-
-        CHECK_THROWS(solver.update_jacobian(time, step_size, variable));
-    }
-
     SECTION("invalid condition for inversion") {
-        solver_type solver;
+        constexpr double inverted_jacobian_coeff = 0.5;
+        solver_type solver{inverted_jacobian_coeff};
 
         problem_type problem;
         constexpr double time = 0.0;
         constexpr double variable = 1.0;
         constexpr double step_size = 2.0;
-        constexpr double inverted_jacobian_coeff = 0.5;
-
-        solver.init(problem, variable, inverted_jacobian_coeff);
-        CHECK_THROWS(solver.update_jacobian(time, step_size, variable));
+        CHECK_THROWS(
+            solver.update_jacobian(problem, time, step_size, variable));
     }
 
     SECTION("solve an equation") {
-        solver_type solver;
+        constexpr double inverted_jacobian_coeff = 0.2;
+        solver_type solver{inverted_jacobian_coeff};
 
         problem_type problem;
         constexpr double time = 0.0;
         constexpr double variable = 1.0;
         constexpr double step_size = 0.01;
-        constexpr double inverted_jacobian_coeff = 0.2;
-
-        solver.init(problem, variable, inverted_jacobian_coeff);
-        solver.update_jacobian(time, step_size, variable);
+        solver.update_jacobian(problem, time, step_size, variable);
 
         constexpr double expected_result = 0.123;
         const double rhs = expected_result -

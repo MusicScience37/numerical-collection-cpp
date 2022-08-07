@@ -17,7 +17,7 @@
  * \file
  * \brief Test of ros3w_formula class.
  */
-#include "num_collect/ode/runge_kutta/ros3w_formula.h"
+#include "num_collect/ode/rosenbrock/ros3w_formula.h"
 
 #include <cmath>
 #include <string>
@@ -32,10 +32,10 @@
 #include "num_prob_collect/ode/external_force_vibration_problem.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
 
-TEST_CASE("num_collect::ode::runge_kutta::ros3w_formula") {
+TEST_CASE("num_collect::ode::rosenbrock::ros3w_formula") {
     using problem_type = num_prob_collect::ode::exponential_problem;
     using formula_type =
-        num_collect::ode::runge_kutta::ros3w_formula<problem_type>;
+        num_collect::ode::rosenbrock::ros3w_formula<problem_type>;
 
     SECTION("static definition") {
         STATIC_REQUIRE(formula_type::stages == 3);
@@ -90,11 +90,11 @@ TEST_CASE("num_collect::ode::runge_kutta::ros3w_formula") {
 }
 
 TEST_CASE(
-    "num_collect::ode::runge_kutta::ros3w_solver<num_prob_collect::ode::"
+    "num_collect::ode::rosenbrock::ros3w_solver<num_prob_collect::ode::"
     "exponential_problem>") {
     using problem_type = num_prob_collect::ode::exponential_problem;
     using solver_type =
-        num_collect::ode::runge_kutta::ros3w_solver<problem_type>;
+        num_collect::ode::rosenbrock::ros3w_solver<problem_type>;
 
     SECTION("solve_till") {
         auto solver = solver_type(problem_type());
@@ -116,11 +116,11 @@ TEST_CASE(
 }
 
 TEST_CASE(
-    "num_collect::ode::runge_kutta::ros3w_solver<num_prob_collect::ode::"
+    "num_collect::ode::rosenbrock::ros3w_solver<num_prob_collect::ode::"
     "spring_movement_problem>") {
     using problem_type = num_prob_collect::ode::spring_movement_problem;
     using solver_type =
-        num_collect::ode::runge_kutta::ros3w_solver<problem_type>;
+        num_collect::ode::rosenbrock::ros3w_solver<problem_type>;
 
     SECTION("solve_till") {
         auto solver = solver_type(problem_type());
@@ -143,12 +143,12 @@ TEST_CASE(
 }
 
 TEST_CASE(
-    "num_collect::ode::runge_kutta::ros3w_solver<num_prob_collect::ode::"
+    "num_collect::ode::rosenbrock::ros3w_solver<num_prob_collect::ode::"
     "external_force_vibration_problem>") {
     using problem_type =
         num_prob_collect::ode::external_force_vibration_problem;
     using solver_type =
-        num_collect::ode::runge_kutta::ros3w_solver<problem_type>;
+        num_collect::ode::rosenbrock::ros3w_solver<problem_type>;
 
     SECTION("solve_till") {
         auto solver = solver_type(problem_type());

@@ -38,47 +38,32 @@ TEST_CASE("num_collect::ode::rosenbrock::lu_rosenbrock_equation_solver") {
     }
 
     SECTION("update Jacobian") {
-        solver_type solver;
+        constexpr double inverted_jacobian_coeff = 0.1;
+        solver_type solver{inverted_jacobian_coeff};
 
         problem_type problem;
         constexpr double time = 0.0;
         const Eigen::Vector2d variable = Eigen::Vector2d(1.0, 0.0);
         constexpr double step_size = 0.1;
-        constexpr double inverted_jacobian_coeff = 0.1;
-
-        solver.init(problem, variable, inverted_jacobian_coeff);
-        solver.update_jacobian(time, step_size, variable);
+        solver.update_jacobian(problem, time, step_size, variable);
 
         CHECK_THAT(solver.jacobian(), eigen_approx(problem.jacobian()));
     }
 
-    SECTION("try to update Jacobian before initialization") {
-        solver_type solver;
-
-        constexpr double time = 0.0;
-        const Eigen::Vector2d variable = Eigen::Vector2d(1.0, 0.0);
-        constexpr double step_size = 0.1;
-
-        CHECK_THROWS(solver.update_jacobian(time, step_size, variable));
-    }
-
     SECTION("solve an equation") {
-        solver_type solver;
+        constexpr double inverted_jacobian_coeff = 0.2;
+        solver_type solver{inverted_jacobian_coeff};
 
         problem_type problem;
         constexpr double time = 0.0;
         const Eigen::Vector2d variable = Eigen::Vector2d(1.0, 0.0);
         constexpr double step_size = 0.01;
-        constexpr double inverted_jacobian_coeff = 0.2;
-
-        solver.init(problem, variable, inverted_jacobian_coeff);
-        solver.update_jacobian(time, step_size, variable);
+        solver.update_jacobian(problem, time, step_size, variable);
 
         const Eigen::Vector2d expected_result = Eigen::Vector2d(0.123, -0.234);
         const Eigen::Vector2d rhs = expected_result -
             step_size * inverted_jacobian_coeff * problem.jacobian() *
                 expected_result;
-
         Eigen::Vector2d result;
         solver.solve(rhs, result);
 

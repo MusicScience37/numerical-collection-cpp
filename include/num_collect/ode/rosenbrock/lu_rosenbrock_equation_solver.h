@@ -59,44 +59,30 @@ public:
 
     /*!
      * \brief Constructor.
-     */
-    lu_rosenbrock_equation_solver() = default;
-
-    /*!
-     * \brief Initialize this solver.
      *
-     * \param[in] problem Problem.
-     * \param[in] reference Reference variable. (For determining the size.)
      * \param[in] inverted_jacobian_coeff Coefficient multiplied to Jacobian
      * matrices in inverted matrices.
      */
-    void init(problem_type& problem, const variable_type& reference,
-        const scalar_type& inverted_jacobian_coeff) {
-        problem_ = &problem;
-        variable_size_ = reference.size();
-        inverted_jacobian_coeff_ = inverted_jacobian_coeff;
-    }
+    explicit lu_rosenbrock_equation_solver(
+        const scalar_type& inverted_jacobian_coeff)
+        : inverted_jacobian_coeff_(inverted_jacobian_coeff) {}
 
     /*!
      * \brief Update Jacobian matrix and internal parameters.
      *
+     * \param[in] problem Problem.
      * \param[in] time Time.
      * \param[in] step_size Step size.
      * \param[in] variable Variable.
      */
-    void update_jacobian(const scalar_type& time, const scalar_type& step_size,
-        const variable_type& variable) {
-        if (problem_ == nullptr) {
-            throw precondition_not_satisfied(
-                "Initialization is required before any other operation.");
-        }
-        NUM_COLLECT_ASSERT(variable.size() == variable_size_);
-
-        problem_->evaluate_on(time, variable,
+    void update_jacobian(problem_type& problem, const scalar_type& time,
+        const scalar_type& step_size, const variable_type& variable) {
+        problem.evaluate_on(time, variable,
             evaluation_type{.diff_coeff = true, .jacobian = true});
-        jacobian_ = problem_->jacobian();
+        jacobian_ = problem.jacobian();
 
-        lu_.compute(jacobian_type::Identity(variable_size_, variable_size_) -
+        const index_type variable_size = variable.size();
+        lu_.compute(jacobian_type::Identity(variable_size, variable_size) -
             step_size * inverted_jacobian_coeff_ * jacobian_);
 
         // TODO: Check that condition number is not so large.
@@ -120,12 +106,6 @@ public:
     }
 
 private:
-    //! Problem.
-    problem_type* problem_{nullptr};
-
-    //! Size of variables.
-    index_type variable_size_{};
-
     //! Jacobian matrix.
     jacobian_type jacobian_{};
 
