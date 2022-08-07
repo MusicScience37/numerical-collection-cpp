@@ -98,6 +98,8 @@ public:
 
         lu_.compute(jacobian_type::Identity(variable_size_, variable_size_) -
             step_size * inverted_jacobian_coeff_ * jacobian_);
+
+        // TODO: Check that condition number is not so large.
     }
 
     /*!

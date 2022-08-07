@@ -52,6 +52,16 @@ TEST_CASE("num_collect::ode::rosenbrock::lu_rosenbrock_equation_solver") {
         CHECK_THAT(solver.jacobian(), eigen_approx(problem.jacobian()));
     }
 
+    SECTION("try to update Jacobian before initialization") {
+        solver_type solver;
+
+        constexpr double time = 0.0;
+        const Eigen::Vector2d variable = Eigen::Vector2d(1.0, 0.0);
+        constexpr double step_size = 0.1;
+
+        CHECK_THROWS(solver.update_jacobian(time, step_size, variable));
+    }
+
     SECTION("solve an equation") {
         solver_type solver;
 

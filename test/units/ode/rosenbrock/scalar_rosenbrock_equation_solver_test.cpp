@@ -53,6 +53,29 @@ TEST_CASE("") {
             solver.jacobian(), Catch::Matchers::WithinRel(problem.jacobian()));
     }
 
+    SECTION("try to update Jacobian before initialization") {
+        solver_type solver;
+
+        constexpr double time = 0.0;
+        constexpr double variable = 1.0;
+        constexpr double step_size = 0.1;
+
+        CHECK_THROWS(solver.update_jacobian(time, step_size, variable));
+    }
+
+    SECTION("invalid condition for inversion") {
+        solver_type solver;
+
+        problem_type problem;
+        constexpr double time = 0.0;
+        constexpr double variable = 1.0;
+        constexpr double step_size = 2.0;
+        constexpr double inverted_jacobian_coeff = 0.5;
+
+        solver.init(problem, variable, inverted_jacobian_coeff);
+        CHECK_THROWS(solver.update_jacobian(time, step_size, variable));
+    }
+
     SECTION("solve an equation") {
         solver_type solver;
 
