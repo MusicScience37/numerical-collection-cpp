@@ -1,8 +1,8 @@
 @startuml formula_and_problems
 
-title Abstract Model of Formulas and Problems in Runge-Kutta Method
+title Abstract Model of Formulas and Problems for ODE Solvers
 
-package runge_kutta {
+package ode {
     struct evaluation_type {
         + diff_coeff: bool
         + jacobian: bool
@@ -33,7 +33,7 @@ package problems {
     problem <|-- mass_problem
 }
 
-package runge_kutta {
+package ode {
     !startsub formula
     class formula<Problem> {
         + using problem_type = Problem

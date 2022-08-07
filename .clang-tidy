@@ -10,6 +10,7 @@ Checks: >
     -cppcoreguidelines-avoid-non-const-global-variables,
   google-*,
     -google-runtime-references,
+    -google-readability-todo,
   performance-*,
   portability-*,
   readability-*,

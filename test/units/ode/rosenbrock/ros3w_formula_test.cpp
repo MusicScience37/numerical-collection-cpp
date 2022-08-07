@@ -15,9 +15,9 @@
  */
 /*!
  * \file
- * \brief Test of ros34pw3_formula class.
+ * \brief Test of ros3w_formula class.
  */
-#include "num_collect/ode/runge_kutta/ros34pw3_formula.h"
+#include "num_collect/ode/rosenbrock/ros3w_formula.h"
 
 #include <cmath>
 #include <string>
@@ -32,14 +32,14 @@
 #include "num_prob_collect/ode/external_force_vibration_problem.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
 
-TEST_CASE("num_collect::ode::runge_kutta::ros34pw3_formula") {
+TEST_CASE("num_collect::ode::rosenbrock::ros3w_formula") {
     using problem_type = num_prob_collect::ode::exponential_problem;
     using formula_type =
-        num_collect::ode::runge_kutta::ros34pw3_formula<problem_type>;
+        num_collect::ode::rosenbrock::ros3w_formula<problem_type>;
 
     SECTION("static definition") {
-        STATIC_REQUIRE(formula_type::stages == 4);
-        STATIC_REQUIRE(formula_type::order == 4);
+        STATIC_REQUIRE(formula_type::stages == 3);
+        STATIC_REQUIRE(formula_type::order == 3);
         STATIC_REQUIRE(formula_type::lesser_order == 2);
 
         CHECK(formula_type::b1 == 0.0);
@@ -47,15 +47,11 @@ TEST_CASE("num_collect::ode::runge_kutta::ros34pw3_formula") {
             formula_type::a21, Catch::Matchers::WithinRel(formula_type::b2));
         CHECK_THAT(formula_type::a31 + formula_type::a32,
             Catch::Matchers::WithinRel(formula_type::b3));
-        CHECK_THAT(formula_type::a41 + formula_type::a42 + formula_type::a43,
-            Catch::Matchers::WithinRel(formula_type::b4));
-        CHECK_THAT(formula_type::c1 + formula_type::c2 + formula_type::c3 +
-                formula_type::c4,
+        CHECK_THAT(formula_type::c1 + formula_type::c2 + formula_type::c3,
             Catch::Matchers::WithinRel(1.0));
         CHECK_THAT(formula_type::cw1 + formula_type::cw2 + formula_type::cw3,
             Catch::Matchers::WithinRel(1.0));
-        CHECK_THAT(formula_type::ce1 + formula_type::ce2 + formula_type::ce3 +
-                formula_type::ce4,
+        CHECK_THAT(formula_type::ce1 + formula_type::ce2 + formula_type::ce3,
             Catch::Matchers::WithinAbs(0.0, 1e-10));  // NOLINT
     }
 
@@ -94,11 +90,11 @@ TEST_CASE("num_collect::ode::runge_kutta::ros34pw3_formula") {
 }
 
 TEST_CASE(
-    "num_collect::ode::runge_kutta::ros34pw3_solver<num_prob_collect::ode::"
+    "num_collect::ode::rosenbrock::ros3w_solver<num_prob_collect::ode::"
     "exponential_problem>") {
     using problem_type = num_prob_collect::ode::exponential_problem;
     using solver_type =
-        num_collect::ode::runge_kutta::ros34pw3_solver<problem_type>;
+        num_collect::ode::rosenbrock::ros3w_solver<problem_type>;
 
     SECTION("solve_till") {
         auto solver = solver_type(problem_type());
@@ -120,11 +116,11 @@ TEST_CASE(
 }
 
 TEST_CASE(
-    "num_collect::ode::runge_kutta::ros34pw3_solver<num_prob_collect::ode::"
+    "num_collect::ode::rosenbrock::ros3w_solver<num_prob_collect::ode::"
     "spring_movement_problem>") {
     using problem_type = num_prob_collect::ode::spring_movement_problem;
     using solver_type =
-        num_collect::ode::runge_kutta::ros34pw3_solver<problem_type>;
+        num_collect::ode::rosenbrock::ros3w_solver<problem_type>;
 
     SECTION("solve_till") {
         auto solver = solver_type(problem_type());
@@ -147,12 +143,12 @@ TEST_CASE(
 }
 
 TEST_CASE(
-    "num_collect::ode::runge_kutta::ros34pw3_solver<num_prob_collect::ode::"
+    "num_collect::ode::rosenbrock::ros3w_solver<num_prob_collect::ode::"
     "external_force_vibration_problem>") {
     using problem_type =
         num_prob_collect::ode::external_force_vibration_problem;
     using solver_type =
-        num_collect::ode::runge_kutta::ros34pw3_solver<problem_type>;
+        num_collect::ode::rosenbrock::ros3w_solver<problem_type>;
 
     SECTION("solve_till") {
         auto solver = solver_type(problem_type());

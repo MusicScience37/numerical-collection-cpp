@@ -29,10 +29,10 @@
 #include "num_collect/ode/avf/avf4_formula.h"
 #include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
+#include "num_collect/ode/rosenbrock/ros34pw3_formula.h"
+#include "num_collect/ode/rosenbrock/ros3w_formula.h"
 #include "num_collect/ode/runge_kutta/rk4_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
-#include "num_collect/ode/runge_kutta/ros34pw3_formula.h"
-#include "num_collect/ode/runge_kutta/ros3w_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka1_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka2_formula.h"
 #include "num_prob_collect/ode/pendulum_movement_problem.h"
@@ -116,7 +116,7 @@ STAT_BENCH_CASE_F(
     pendulum_movement_fixture, "ode_rk_pendulum_movement", "ros3w") {
     STAT_BENCH_MEASURE() {
         using solver_type =
-            num_collect::ode::runge_kutta::ros3w_solver<problem_type>;
+            num_collect::ode::rosenbrock::ros3w_solver<problem_type>;
         auto solver = solver_type(problem_type());
         perform(solver);
     };
@@ -127,7 +127,7 @@ STAT_BENCH_CASE_F(
     pendulum_movement_fixture, "ode_rk_pendulum_movement", "ros34pw3") {
     STAT_BENCH_MEASURE() {
         using solver_type =
-            num_collect::ode::runge_kutta::ros34pw3_solver<problem_type>;
+            num_collect::ode::rosenbrock::ros34pw3_solver<problem_type>;
         auto solver = solver_type(problem_type());
         perform(solver);
     };

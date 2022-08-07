@@ -23,34 +23,38 @@
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/ode/concepts/differentiable_problem.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/problem.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/rosenbrock_equation_solver.h"  // IWYU pragma: keep
 #include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/evaluation_type.h"
 #include "num_collect/ode/formula_base.h"
-#include "num_collect/ode/runge_kutta/impl/rosenbrock_helper.h"
+#include "num_collect/ode/rosenbrock/default_rosenbrock_equation_solver.h"
 
-namespace num_collect::ode::runge_kutta {
+namespace num_collect::ode::rosenbrock {
 
 /*!
  * \brief Class of ROS3w formula in \cite Rang2005 for Rosenbrock method.
  *
  * \tparam Problem Type of problem.
+ * \tparam EquationSolver Type of class to solve equations in Rosenbrock
+ * methods.
  */
-template <concepts::differentiable_problem Problem>
-class ros3w_formula : public formula_base<ros3w_formula<Problem>, Problem> {
+template <concepts::problem Problem,
+    concepts::rosenbrock_equation_solver EquationSolver =
+        default_rosenbrock_equation_solver_t<Problem>>
+class ros3w_formula
+    : public formula_base<ros3w_formula<Problem, EquationSolver>, Problem> {
 public:
     //! Type of base class.
-    using base_type = formula_base<ros3w_formula<Problem>, Problem>;
+    using base_type =
+        formula_base<ros3w_formula<Problem, EquationSolver>, Problem>;
 
     using typename base_type::problem_type;
     using typename base_type::scalar_type;
     using typename base_type::variable_type;
 
-    //! Type of Jacobian.
-    using jacobian_type = typename problem_type::jacobian_type;
-
-    static_assert(!problem_type::allowed_evaluations.mass,
-        "Mass matrix is not supported.");
+    //! Type of class to solve equations in Rosenbrock methods.
+    using equation_solver_type = EquationSolver;
 
     using base_type::base_type;
     using base_type::problem;
@@ -70,7 +74,7 @@ public:
 
     //! Log tag.
     static constexpr auto log_tag =
-        logging::log_tag_view("num_collect::ode::runge_kutta::ros3w_formula");
+        logging::log_tag_view("num_collect::ode::rosenbrock::ros3w_formula");
 
     /*!
      * \name Coefficients in Rosenbrock method.
@@ -131,24 +135,23 @@ public:
     void step_embedded(scalar_type time, scalar_type step_size,
         const variable_type& current, variable_type& estimate,
         variable_type& error) {
-        problem().evaluate_on(time, current,
-            evaluation_type{.diff_coeff = true, .jacobian = true});
-        jacobian_ = problem().jacobian();
-        lu_solver_.compute(step_size * g * jacobian_);
+        solver_.update_jacobian(problem(), time, step_size, current);
 
-        k1_ = lu_solver_.solve(problem().diff_coeff());
+        solver_.solve(problem().diff_coeff(), k1_);
 
         problem().evaluate_on(time + b2 * step_size,
             current + step_size * (a21 * k1_),
             evaluation_type{.diff_coeff = true});
-        k2_ = lu_solver_.solve(
-            problem().diff_coeff() + step_size * jacobian_ * (g21 * k1_));
+        solver_.solve(problem().diff_coeff() +
+                step_size * solver_.jacobian() * (g21 * k1_),
+            k2_);
 
         problem().evaluate_on(time + b3 * step_size,
             current + step_size * (a31 * k1_ + a32 * k2_),
             evaluation_type{.diff_coeff = true});
-        k3_ = lu_solver_.solve(problem().diff_coeff() +
-            step_size * jacobian_ * (g31 * k1_ + g32 * k2_));
+        solver_.solve(problem().diff_coeff() +
+                step_size * solver_.jacobian() * (g31 * k1_ + g32 * k2_),
+            k3_);
 
         estimate = current + step_size * (c1 * k1_ + c2 * k2_ + c3 * k3_);
         error = step_size * (ce1 * k1_ + ce2 * k2_ + ce3 * k3_);
@@ -165,11 +168,8 @@ private:
     variable_type k3_{};
     ///@}
 
-    //! Jacobian.
-    jacobian_type jacobian_{};
-
-    //! Solver of LU decomposition.
-    impl::rosenbrock_helper<jacobian_type> lu_solver_{};
+    //! Solver.
+    equation_solver_type solver_{g};
 };
 
 /*!
@@ -180,4 +180,4 @@ private:
 template <concepts::differentiable_problem Problem>
 using ros3w_solver = embedded_solver<ros3w_formula<Problem>>;
 
-}  // namespace num_collect::ode::runge_kutta
+}  // namespace num_collect::ode::rosenbrock

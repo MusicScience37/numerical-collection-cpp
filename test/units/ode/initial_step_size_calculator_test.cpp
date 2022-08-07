@@ -27,8 +27,8 @@
 #include <fmt/format.h>
 
 #include "num_collect/ode/error_tolerances.h"
+#include "num_collect/ode/rosenbrock/ros3w_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
-#include "num_collect/ode/runge_kutta/ros3w_formula.h"
 #include "num_collect/ode/step_size_limits.h"
 #include "num_prob_collect/ode/exponential_problem.h"
 #include "num_prob_collect/ode/pendulum_movement_problem.h"
@@ -37,8 +37,8 @@ TEST_CASE("num_collect::ode::initial_step_size_calculator(actual problem)") {
     using num_collect::ode::error_tolerances;
     using num_collect::ode::initial_step_size_calculator;
     using num_collect::ode::step_size_limits;
+    using num_collect::ode::rosenbrock::ros3w_formula;
     using num_collect::ode::runge_kutta::rkf45_formula;
-    using num_collect::ode::runge_kutta::ros3w_formula;
     using num_prob_collect::ode::exponential_problem;
     using num_prob_collect::ode::pendulum_movement_problem;
 
