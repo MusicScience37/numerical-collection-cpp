@@ -71,7 +71,12 @@ public:
     //! Order of this formula.
     static constexpr index_type order = 4;
 
-    // TODO: lesser_order couldn't be found.
+    /*!
+     * \brief Order of lesser coefficients of this formula.
+     *
+     * \warning Exact information has not been found.
+     */
+    static constexpr index_type lesser_order = 3;
 
     //! Log tag.
     static constexpr auto log_tag =
