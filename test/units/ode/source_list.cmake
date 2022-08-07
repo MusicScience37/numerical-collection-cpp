@@ -10,6 +10,7 @@ set(SOURCE_FILES
     initial_step_size_calculator_test.cpp
     non_embedded_formula_wrapper_test.cpp
     pi_step_size_controller_test.cpp
+    rosenbrock/default_rosenbrock_equation_solver_test.cpp
     rosenbrock/lu_rosenbrock_equation_solver_test.cpp
     rosenbrock/scalar_rosenbrock_equation_solver_test.cpp
     runge_kutta/implicit_euler_formula_test.cpp

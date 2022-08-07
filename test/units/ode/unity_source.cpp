@@ -9,6 +9,7 @@
 #include "initial_step_size_calculator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "non_embedded_formula_wrapper_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "pi_step_size_controller_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "rosenbrock/default_rosenbrock_equation_solver_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rosenbrock/lu_rosenbrock_equation_solver_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rosenbrock/scalar_rosenbrock_equation_solver_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "runge_kutta/implicit_euler_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
