@@ -20,6 +20,7 @@
 #include "num_collect/ode/rosenbrock/scalar_rosenbrock_equation_solver.h"
 
 #include <cmath>
+#include <string>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
