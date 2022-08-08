@@ -135,7 +135,8 @@ public:
     void step_embedded(scalar_type time, scalar_type step_size,
         const variable_type& current, variable_type& estimate,
         variable_type& error) {
-        solver_.update_jacobian(problem(), time, step_size, current);
+        solver_.evaluate_and_update_jacobian(
+            problem(), time, step_size, current);
 
         solver_.solve(problem().diff_coeff(), k1_);
 

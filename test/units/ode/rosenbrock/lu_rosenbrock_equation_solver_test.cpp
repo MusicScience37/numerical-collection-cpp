@@ -45,7 +45,7 @@ TEST_CASE("num_collect::ode::rosenbrock::lu_rosenbrock_equation_solver") {
         constexpr double time = 0.0;
         const Eigen::Vector2d variable = Eigen::Vector2d(1.0, 0.0);
         constexpr double step_size = 0.1;
-        solver.update_jacobian(problem, time, step_size, variable);
+        solver.evaluate_and_update_jacobian(problem, time, step_size, variable);
 
         CHECK_THAT(solver.jacobian(), eigen_approx(problem.jacobian()));
     }
@@ -58,7 +58,7 @@ TEST_CASE("num_collect::ode::rosenbrock::lu_rosenbrock_equation_solver") {
         constexpr double time = 0.0;
         const Eigen::Vector2d variable = Eigen::Vector2d(1.0, 0.0);
         constexpr double step_size = 0.01;
-        solver.update_jacobian(problem, time, step_size, variable);
+        solver.evaluate_and_update_jacobian(problem, time, step_size, variable);
 
         const Eigen::Vector2d expected_result = Eigen::Vector2d(0.123, -0.234);
         const Eigen::Vector2d rhs = expected_result -

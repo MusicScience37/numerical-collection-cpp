@@ -75,8 +75,9 @@ public:
      * \param[in] step_size Step size.
      * \param[in] variable Variable.
      */
-    void update_jacobian(problem_type& problem, const scalar_type& time,
-        const scalar_type& step_size, const variable_type& variable) {
+    void evaluate_and_update_jacobian(problem_type& problem,
+        const scalar_type& time, const scalar_type& step_size,
+        const variable_type& variable) {
         problem.evaluate_on(time, variable,
             evaluation_type{.diff_coeff = true, .jacobian = true});
         jacobian_ = problem.jacobian();

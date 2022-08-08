@@ -45,7 +45,7 @@ TEST_CASE("") {
         constexpr double time = 0.0;
         constexpr double variable = 1.0;
         constexpr double step_size = 0.1;
-        solver.update_jacobian(problem, time, step_size, variable);
+        solver.evaluate_and_update_jacobian(problem, time, step_size, variable);
 
         CHECK_THAT(
             solver.jacobian(), Catch::Matchers::WithinRel(problem.jacobian()));
@@ -59,8 +59,8 @@ TEST_CASE("") {
         constexpr double time = 0.0;
         constexpr double variable = 1.0;
         constexpr double step_size = 2.0;
-        CHECK_THROWS(
-            solver.update_jacobian(problem, time, step_size, variable));
+        CHECK_THROWS(solver.evaluate_and_update_jacobian(
+            problem, time, step_size, variable));
     }
 
     SECTION("solve an equation") {
@@ -71,7 +71,7 @@ TEST_CASE("") {
         constexpr double time = 0.0;
         constexpr double variable = 1.0;
         constexpr double step_size = 0.01;
-        solver.update_jacobian(problem, time, step_size, variable);
+        solver.evaluate_and_update_jacobian(problem, time, step_size, variable);
 
         constexpr double expected_result = 0.123;
         const double rhs = expected_result -

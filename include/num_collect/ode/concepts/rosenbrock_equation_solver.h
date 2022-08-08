@@ -51,7 +51,7 @@ concept rosenbrock_equation_solver = requires() {
         const typename T::scalar_type& time,
         const typename T::scalar_type& step_size,
         const typename T::variable_type& variable) {
-        obj.update_jacobian(problem, time, step_size, variable);
+        obj.evaluate_and_update_jacobian(problem, time, step_size, variable);
     };
 
     requires requires(const T& obj) {
