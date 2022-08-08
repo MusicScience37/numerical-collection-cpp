@@ -47,8 +47,9 @@ TEST_CASE("") {
         constexpr double step_size = 0.1;
         solver.evaluate_and_update_jacobian(problem, time, step_size, variable);
 
-        CHECK_THAT(
-            solver.jacobian(), Catch::Matchers::WithinRel(problem.jacobian()));
+        double jacobian{0.0};
+        solver.apply_jacobian(1.0, jacobian);
+        CHECK_THAT(jacobian, Catch::Matchers::WithinRel(problem.jacobian()));
     }
 
     SECTION("invalid condition for inversion") {

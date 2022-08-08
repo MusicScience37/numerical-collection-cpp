@@ -179,48 +179,61 @@ public:
         solver_.evaluate_and_update_jacobian(
             problem(), time, step_size, current);
 
+        // 1st stage
         solver_.solve(problem().diff_coeff(), k1_);
 
-        problem().evaluate_on(time + b2 * step_size,
-            current + step_size * (a21 * k1_),
+        // 2nd stage
+        temp_var_ = g21 * k1_;
+        solver_.apply_jacobian(temp_var_, temp_rhs_);
+        temp_rhs_ *= step_size;
+        temp_var_ = current + step_size * (a21 * k1_);
+        problem().evaluate_on(time + b2 * step_size, temp_var_,
             evaluation_type{.diff_coeff = true});
-        solver_.solve(problem().diff_coeff() +
-                step_size * solver_.jacobian() * (g21 * k1_),
-            k2_);
+        temp_rhs_ += problem().diff_coeff();
+        solver_.solve(temp_rhs_, k2_);
 
-        problem().evaluate_on(time + b3 * step_size,
-            current + step_size * (a31 * k1_ + a32 * k2_),
+        // 3rd stage
+        temp_var_ = g31 * k1_ + g32 * k2_;
+        solver_.apply_jacobian(temp_var_, temp_rhs_);
+        temp_rhs_ *= step_size;
+        temp_var_ = current + step_size * (a31 * k1_ + a32 * k2_);
+        problem().evaluate_on(time + b3 * step_size, temp_var_,
             evaluation_type{.diff_coeff = true});
-        solver_.solve(problem().diff_coeff() +
-                step_size * solver_.jacobian() * (g31 * k1_ + g32 * k2_),
-            k3_);
+        temp_rhs_ += problem().diff_coeff();
+        solver_.solve(temp_rhs_, k3_);
 
-        problem().evaluate_on(time + b4 * step_size,
-            current + step_size * (a41 * k1_ + a42 * k2_ + a43 * k3_),
+        // 4th stage
+        temp_var_ = g41 * k1_ + g42 * k2_ + g43 * k3_;
+        solver_.apply_jacobian(temp_var_, temp_rhs_);
+        temp_rhs_ *= step_size;
+        temp_var_ = current + step_size * (a41 * k1_ + a42 * k2_ + a43 * k3_);
+        problem().evaluate_on(time + b4 * step_size, temp_var_,
             evaluation_type{.diff_coeff = true});
-        solver_.solve(problem().diff_coeff() +
-                step_size * solver_.jacobian() *
-                    (g41 * k1_ + g42 * k2_ + g43 * k3_),
-            k4_);
+        temp_rhs_ += problem().diff_coeff();
+        solver_.solve(temp_rhs_, k4_);
 
-        problem().evaluate_on(time + b5 * step_size,
-            current +
-                step_size * (a51 * k1_ + a52 * k2_ + a53 * k3_ + a54 * k4_),
+        // 5th stage
+        temp_var_ = g51 * k1_ + g52 * k2_ + g53 * k3_ + g54 * k4_;
+        solver_.apply_jacobian(temp_var_, temp_rhs_);
+        temp_rhs_ *= step_size;
+        temp_var_ = current +
+            step_size * (a51 * k1_ + a52 * k2_ + a53 * k3_ + a54 * k4_);
+        problem().evaluate_on(time + b5 * step_size, temp_var_,
             evaluation_type{.diff_coeff = true});
-        solver_.solve(problem().diff_coeff() +
-                step_size * solver_.jacobian() *
-                    (g51 * k1_ + g52 * k2_ + g53 * k3_ + g54 * k4_),
-            k5_);
+        temp_rhs_ += problem().diff_coeff();
+        solver_.solve(temp_rhs_, k5_);
 
-        problem().evaluate_on(time + b6 * step_size,
-            current +
-                step_size *
-                    (a61 * k1_ + a62 * k2_ + a63 * k3_ + a64 * k4_ + a65 * k5_),
+        // 6th stage
+        temp_var_ = g61 * k1_ + g62 * k2_ + g63 * k3_ + g64 * k4_ + g65 * k5_;
+        solver_.apply_jacobian(temp_var_, temp_rhs_);
+        temp_rhs_ *= step_size;
+        temp_var_ = current +
+            step_size *
+                (a61 * k1_ + a62 * k2_ + a63 * k3_ + a64 * k4_ + a65 * k5_);
+        problem().evaluate_on(time + b6 * step_size, temp_var_,
             evaluation_type{.diff_coeff = true});
-        solver_.solve(problem().diff_coeff() +
-                step_size * solver_.jacobian() *
-                    (g61 * k1_ + g62 * k2_ + g63 * k3_ + g64 * k4_ + g65 * k5_),
-            k6_);
+        temp_rhs_ += problem().diff_coeff();
+        solver_.solve(temp_rhs_, k6_);
 
         estimate = current +
             step_size *
@@ -244,6 +257,12 @@ private:
     variable_type k5_{};
     variable_type k6_{};
     ///@}
+
+    //! Temporary variable.
+    variable_type temp_var_{};
+
+    //! Temporary right-hand-side vector.
+    variable_type temp_rhs_{};
 
     //! Solver.
     equation_solver_type solver_{g};

@@ -94,17 +94,20 @@ public:
     }
 
     /*!
-     * \brief Get the Jacobian.
+     * \brief Multiply Jacobian to a value.
      *
-     * \return Jacobian.
+     * \param[in] target Target.
+     * \param[out] result Result.
      */
-    auto jacobian() const -> const jacobian_type& { return jacobian_; }
+    void apply_jacobian(const variable_type& target, variable_type& result) {
+        result = jacobian_ * target;
+    }
 
     /*!
      * \brief Solve a linear equation.
      *
      * \param[in] rhs Right-hand-side value.
-     * \param[in] result Result.
+     * \param[out] result Result.
      */
     void solve(const variable_type& rhs, variable_type& result) {
         result = inverted_coeff_ * rhs;

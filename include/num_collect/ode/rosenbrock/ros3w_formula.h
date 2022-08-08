@@ -138,21 +138,28 @@ public:
         solver_.evaluate_and_update_jacobian(
             problem(), time, step_size, current);
 
+        // 1st stage
         solver_.solve(problem().diff_coeff(), k1_);
 
-        problem().evaluate_on(time + b2 * step_size,
-            current + step_size * (a21 * k1_),
+        // 2nd stage
+        temp_var_ = g21 * k1_;
+        solver_.apply_jacobian(temp_var_, temp_rhs_);
+        temp_rhs_ *= step_size;
+        temp_var_ = current + step_size * (a21 * k1_);
+        problem().evaluate_on(time + b2 * step_size, temp_var_,
             evaluation_type{.diff_coeff = true});
-        solver_.solve(problem().diff_coeff() +
-                step_size * solver_.jacobian() * (g21 * k1_),
-            k2_);
+        temp_rhs_ += problem().diff_coeff();
+        solver_.solve(temp_rhs_, k2_);
 
-        problem().evaluate_on(time + b3 * step_size,
-            current + step_size * (a31 * k1_ + a32 * k2_),
+        // 3rd stage
+        temp_var_ = g31 * k1_ + g32 * k2_;
+        solver_.apply_jacobian(temp_var_, temp_rhs_);
+        temp_rhs_ *= step_size;
+        temp_var_ = current + step_size * (a31 * k1_ + a32 * k2_);
+        problem().evaluate_on(time + b3 * step_size, temp_var_,
             evaluation_type{.diff_coeff = true});
-        solver_.solve(problem().diff_coeff() +
-                step_size * solver_.jacobian() * (g31 * k1_ + g32 * k2_),
-            k3_);
+        temp_rhs_ += problem().diff_coeff();
+        solver_.solve(temp_rhs_, k3_);
 
         estimate = current + step_size * (c1 * k1_ + c2 * k2_ + c3 * k3_);
         error = step_size * (ce1 * k1_ + ce2 * k2_ + ce3 * k3_);
@@ -168,6 +175,12 @@ private:
     variable_type k2_{};
     variable_type k3_{};
     ///@}
+
+    //! Temporary variable.
+    variable_type temp_var_{};
+
+    //! Temporary right-hand-side vector.
+    variable_type temp_rhs_{};
 
     //! Solver.
     equation_solver_type solver_{g};
