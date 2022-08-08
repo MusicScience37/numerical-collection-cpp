@@ -33,6 +33,7 @@
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka1_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka2_formula.h"
+#include "num_prob_collect/ode/autonomous_external_force_vibration_problem.h"
 #include "num_prob_collect/ode/external_force_vibration_problem.h"
 
 STAT_BENCH_MAIN
@@ -64,7 +65,7 @@ public:
         context.add_custom_output("error", error_);
     }
 
-private:
+protected:
     num_collect::index_type steps_{};
     double error_{};
 };
@@ -134,6 +135,32 @@ STAT_BENCH_CASE_F(external_force_vibration_fixture,
             num_collect::ode::rosenbrock::rodasp_solver<problem_type>;
         auto solver = solver_type(problem_type());
         perform(solver);
+    };
+}
+
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(external_force_vibration_fixture,
+    "ode_rk_external_force_vibration", "rodasp_autonomous") {
+    STAT_BENCH_MEASURE() {
+        using solver_type = num_collect::ode::rosenbrock::rodasp_solver<
+            num_prob_collect::ode::autonomous_external_force_vibration_problem>;
+        auto solver = solver_type(num_prob_collect::ode::
+                autonomous_external_force_vibration_problem());
+
+        constexpr double init_time = 0.0;
+        const Eigen::Vector3d init_var = Eigen::Vector3d(-1.0, 0.0, init_time);
+        solver.init(init_time, init_var);
+#ifndef NDEBUG
+        constexpr double end_time = 0.1;
+#else
+        constexpr double end_time = 10.0;
+#endif
+        solver.solve_till(end_time);
+        steps_ = solver.steps();
+
+        const Eigen::Vector3d reference =
+            Eigen::Vector3d(-std::cos(end_time), -std::sin(end_time), end_time);
+        error_ = (solver.variable() - reference).norm();
     };
 }
 
