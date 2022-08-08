@@ -84,4 +84,24 @@ TEST_CASE("") {
 
         CHECK_THAT(result, Catch::Matchers::WithinRel(expected_result));
     }
+
+    SECTION("time derivative") {
+        constexpr double inverted_jacobian_coeff = 0.2;
+        solver_type solver{inverted_jacobian_coeff};
+
+        problem_type problem;
+        constexpr double time = 0.0;
+        constexpr double variable = 1.0;
+        constexpr double step_size = 0.01;
+        solver.evaluate_and_update_jacobian(problem, time, step_size, variable);
+
+        double target = 0.0;
+        constexpr double coeff = 1.0;
+        solver.add_time_derivative_term(step_size, coeff, target);
+        CHECK(target == 0.0);
+    }
+
+    SECTION("time derivative for non-autonomous system") {
+        // TODO
+    }
 }

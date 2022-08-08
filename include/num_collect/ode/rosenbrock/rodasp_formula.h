@@ -135,6 +135,13 @@ public:
     static constexpr scalar_type g65 = coeff(-0.3571428571428569);
     static constexpr scalar_type g = coeff(0.25);
 
+    static constexpr scalar_type g1 = g;
+    static constexpr scalar_type g2 = g21 + g;
+    static constexpr scalar_type g3 = g31 + g32 + g;
+    static constexpr scalar_type g4 = g41 + g42 + g43 + g;
+    static constexpr scalar_type g5 = g51 + g52 + g53 + g54 + g;
+    static constexpr scalar_type g6 = g61 + g62 + g63 + g64 + g65 + g;
+
     static constexpr scalar_type c1 = coeff(-8.0368370789113464e-2);
     static constexpr scalar_type c2 = coeff(-5.6490613592447572e-2);
     static constexpr scalar_type c3 = coeff(0.4882856300427991);
@@ -180,7 +187,9 @@ public:
             problem(), time, step_size, current);
 
         // 1st stage
-        solver_.solve(problem().diff_coeff(), k1_);
+        temp_rhs_ = problem().diff_coeff();
+        solver_.add_time_derivative_term(step_size, g1, temp_rhs_);
+        solver_.solve(temp_rhs_, k1_);
 
         // 2nd stage
         temp_var_ = g21 * k1_;
@@ -190,6 +199,7 @@ public:
         problem().evaluate_on(time + b2 * step_size, temp_var_,
             evaluation_type{.diff_coeff = true});
         temp_rhs_ += problem().diff_coeff();
+        solver_.add_time_derivative_term(step_size, g2, temp_rhs_);
         solver_.solve(temp_rhs_, k2_);
 
         // 3rd stage
@@ -200,6 +210,7 @@ public:
         problem().evaluate_on(time + b3 * step_size, temp_var_,
             evaluation_type{.diff_coeff = true});
         temp_rhs_ += problem().diff_coeff();
+        solver_.add_time_derivative_term(step_size, g3, temp_rhs_);
         solver_.solve(temp_rhs_, k3_);
 
         // 4th stage
@@ -210,6 +221,7 @@ public:
         problem().evaluate_on(time + b4 * step_size, temp_var_,
             evaluation_type{.diff_coeff = true});
         temp_rhs_ += problem().diff_coeff();
+        solver_.add_time_derivative_term(step_size, g4, temp_rhs_);
         solver_.solve(temp_rhs_, k4_);
 
         // 5th stage
@@ -221,6 +233,7 @@ public:
         problem().evaluate_on(time + b5 * step_size, temp_var_,
             evaluation_type{.diff_coeff = true});
         temp_rhs_ += problem().diff_coeff();
+        solver_.add_time_derivative_term(step_size, g5, temp_rhs_);
         solver_.solve(temp_rhs_, k5_);
 
         // 6th stage
@@ -233,6 +246,7 @@ public:
         problem().evaluate_on(time + b6 * step_size, temp_var_,
             evaluation_type{.diff_coeff = true});
         temp_rhs_ += problem().diff_coeff();
+        solver_.add_time_derivative_term(step_size, g6, temp_rhs_);
         solver_.solve(temp_rhs_, k6_);
 
         estimate = current +

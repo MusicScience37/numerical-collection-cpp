@@ -55,6 +55,12 @@ concept rosenbrock_equation_solver = requires() {
         obj.apply_jacobian(target, result);
     };
 
+    requires requires(T & obj, const typename T::scalar_type& step_size,
+        const typename T::scalar_type& coeff,
+        typename T::variable_type& target) {
+        obj.add_time_derivative_term(step_size, coeff, target);
+    };
+
     requires requires(T & obj, const typename T::variable_type& rhs,
         typename T::variable_type& result) {
         obj.solve(rhs, result);
