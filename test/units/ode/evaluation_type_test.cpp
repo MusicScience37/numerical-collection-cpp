@@ -78,6 +78,32 @@ TEST_CASE("num_collect::ode::evaluation_type") {
             }
         }
 
+        SECTION("time_derivative") {
+            SECTION("allowed and requested") {
+                const auto allowed = evaluation_type{.time_derivative = true};
+                const auto request = evaluation_type{.time_derivative = true};
+                CHECK(allowed.allows(request));
+            }
+
+            SECTION("allowed and not requested") {
+                const auto allowed = evaluation_type{.time_derivative = true};
+                const auto request = evaluation_type{.time_derivative = false};
+                CHECK(allowed.allows(request));
+            }
+
+            SECTION("not allowed and requested") {
+                const auto allowed = evaluation_type{.time_derivative = false};
+                const auto request = evaluation_type{.time_derivative = true};
+                CHECK_FALSE(allowed.allows(request));
+            }
+
+            SECTION("not allowed and not requested") {
+                const auto allowed = evaluation_type{.time_derivative = false};
+                const auto request = evaluation_type{.time_derivative = false};
+                CHECK(allowed.allows(request));
+            }
+        }
+
         SECTION("mass") {
             SECTION("allowed and requested") {
                 const auto allowed = evaluation_type{.mass = true};

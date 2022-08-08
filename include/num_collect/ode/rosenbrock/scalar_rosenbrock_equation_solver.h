@@ -21,14 +21,14 @@
 
 #include <cmath>
 #include <limits>
+#include <optional>
 
-#include <fmt/format.h>
+#include <fmt/format.h>  // IWYU pragma: keep
 
 #include "num_collect/base/exception.h"
-#include "num_collect/base/index_type.h"
 #include "num_collect/ode/concepts/single_variate_differentiable_problem.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/time_differentiable_problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/evaluation_type.h"
-#include "num_collect/util/assert.h"
 
 namespace num_collect::ode::rosenbrock {
 
@@ -53,6 +53,10 @@ public:
     //! Type of Jacobians.
     using jacobian_type = typename problem_type::jacobian_type;
 
+    //! Whether to use partial derivative with respect to time.
+    static constexpr bool use_time_derivative =
+        concepts::time_differentiable_problem<problem_type>;
+
     static_assert(!problem_type::allowed_evaluations.mass,
         "Mass matrix is not supported.");
     // TODO: Support is actually easy for this formula, but I want to test it
@@ -76,11 +80,17 @@ public:
      * \param[in] step_size Step size.
      * \param[in] variable Variable.
      */
-    void update_jacobian(problem_type& problem, const scalar_type& time,
-        const scalar_type& step_size, const variable_type& variable) {
+    void evaluate_and_update_jacobian(problem_type& problem,
+        const scalar_type& time, const scalar_type& step_size,
+        const variable_type& variable) {
         problem.evaluate_on(time, variable,
-            evaluation_type{.diff_coeff = true, .jacobian = true});
+            evaluation_type{.diff_coeff = true,
+                .jacobian = true,
+                .time_derivative = use_time_derivative});
         jacobian_ = problem.jacobian();
+        if constexpr (use_time_derivative) {
+            time_derivative_ = problem.time_derivative();
+        }
 
         const auto inverted_value = static_cast<scalar_type>(1) -
             step_size * inverted_jacobian_coeff_ * jacobian_;
@@ -93,17 +103,36 @@ public:
     }
 
     /*!
-     * \brief Get the Jacobian.
+     * \brief Multiply Jacobian to a value.
      *
-     * \return Jacobian.
+     * \param[in] target Target.
+     * \param[out] result Result.
      */
-    auto jacobian() const -> const jacobian_type& { return jacobian_; }
+    void apply_jacobian(const variable_type& target, variable_type& result) {
+        result = jacobian_ * target;
+    }
+
+    /*!
+     * \brief Add a term of partial derivative with respect to time.
+     *
+     * \param[in] step_size Step size.
+     * \param[in] coeff Coefficient in formula.
+     * \param[in,out] target Target variable.
+     */
+    void add_time_derivative_term(const scalar_type& step_size,
+        const scalar_type& coeff, variable_type& target) {
+        if constexpr (use_time_derivative) {
+            if (time_derivative_) {
+                target += step_size * coeff * (*time_derivative_);
+            }
+        }
+    }
 
     /*!
      * \brief Solve a linear equation.
      *
      * \param[in] rhs Right-hand-side value.
-     * \param[in] result Result.
+     * \param[out] result Result.
      */
     void solve(const variable_type& rhs, variable_type& result) {
         result = inverted_coeff_ * rhs;
@@ -112,6 +141,9 @@ public:
 private:
     //! Jacobian.
     jacobian_type jacobian_{};
+
+    //! Partial derivative with respect to time.
+    std::optional<variable_type> time_derivative_{};
 
     //! Inverted coefficient.
     jacobian_type inverted_coeff_{};

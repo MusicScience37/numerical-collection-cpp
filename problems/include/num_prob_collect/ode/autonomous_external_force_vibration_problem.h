@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of external_force_vibration_problem class.
+ * \brief Definition of autonomous_external_force_vibration_problem class.
  */
 #pragma once
 
@@ -23,13 +23,13 @@
 
 #include <Eigen/Core>
 
-#include "num_collect/ode/concepts/time_differentiable_problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/evaluation_type.h"
 
 namespace num_prob_collect::ode {
 
 /*!
- * \brief Class of test problem of vibration with external force.
+ * \brief Class of test problem of vibration with external force (autonomous
+ * version).
  *
  * This solves for following equation of motion:
  * \f[
@@ -38,33 +38,35 @@ namespace num_prob_collect::ode {
  *
  * In this class, the following equation is used to solve the above equation:
  * \f[
- *     \frac{d}{dt} \begin{pmatrix} \dot{x} \\ x \end{pmatrix}
- *     = \begin{pmatrix} \sin{t} \\ \dot{x} \end{pmatrix}
+ *     \frac{d}{dt} \begin{pmatrix} \dot{x} \\ x \\ t \end{pmatrix}
+ *     = \begin{pmatrix} \sin{t} \\ \dot{x} \\ 1 \end{pmatrix}
  * \f]
  *
  * When the initial variable is \f$(-1, 0)\f$,
  * the solution is \f$(-\cos{t}, -\sin{t})\f$.
  */
-class external_force_vibration_problem {
+class autonomous_external_force_vibration_problem {
 public:
     //! Type of variables.
-    using variable_type = Eigen::Vector2d;
+    using variable_type = Eigen::Vector3d;
 
     //! Type of scalars.
     using scalar_type = double;
 
     //! Type of Jacobian.
-    using jacobian_type = Eigen::Matrix2d;
+    using jacobian_type = Eigen::Matrix3d;
 
     /*!
      * \brief Constructor.
      */
-    external_force_vibration_problem() { jacobian_ << 0.0, 0.0, 1.0, 0.0; }
+    autonomous_external_force_vibration_problem() {
+        jacobian_ = Eigen::Matrix3d::Zero();
+        jacobian_(1, 0) = 1.0;
+    }
 
     //! Allowed evaluations.
     static constexpr auto allowed_evaluations =
-        num_collect::ode::evaluation_type{
-            .diff_coeff = true, .jacobian = true, .time_derivative = true};
+        num_collect::ode::evaluation_type{.diff_coeff = true, .jacobian = true};
 
     /*!
      * \brief Evaluate on a (time, variable) pair.
@@ -74,10 +76,10 @@ public:
      */
     void evaluate_on(scalar_type time, const variable_type& variable,
         num_collect::ode::evaluation_type /*evaluations*/) {
-        diff_coeff_[0] = std::sin(time);
-        diff_coeff_[1] = variable[0];
-        time_derivative_[0] = std::cos(time);
-        time_derivative_[1] = 0.0;
+        diff_coeff_(0) = std::sin(variable(2));
+        diff_coeff_(1) = variable(0);
+        diff_coeff_(2) = 1.0;
+        jacobian_(0, 2) = std::cos(variable(2));
     }
 
     /*!
@@ -98,28 +100,12 @@ public:
         return jacobian_;
     }
 
-    /*!
-     * \brief Get the partial derivative with respect to time.
-     *
-     * \return Derivative.
-     */
-    [[nodiscard]] auto time_derivative() const noexcept
-        -> const variable_type& {
-        return time_derivative_;
-    }
-
 private:
     //! Differential coefficient.
     variable_type diff_coeff_{};
 
     //! Jacobian.
     jacobian_type jacobian_{};
-
-    //! Partial derivative with respect to time.
-    variable_type time_derivative_{};
 };
-
-static_assert(num_collect::ode::concepts::time_differentiable_problem<
-    external_force_vibration_problem>);
 
 }  // namespace num_prob_collect::ode

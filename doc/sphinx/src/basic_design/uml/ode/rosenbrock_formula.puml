@@ -11,8 +11,9 @@ package ode {
 
         class rosenbrock_equation_solver<Problem> {
             + rosenbrock_equation_solver(inverted_jacobian_coeff: scalar_type)
-            + update_jacobian(problem: problem_type&,\n\ttime: scalar_type, step_size: scalar_type,\n\tvariable: variable_type)
-            + jacobian() : jacobian_type
+            + evaluate_and_update_jacobian(problem: problem_type&,\n\ttime: scalar_type, step_size: scalar_type,\n\tvariable: variable_type)
+            + apply_jacobian(target: variable_type, result: variable_type&)
+            + add_time_derivative_term(step_size: scalar_type, coeff: scalar_type, target: variable_type&)
             + solve(rhs: variable_type, result: variable_type&)
         }
 

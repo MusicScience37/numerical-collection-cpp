@@ -15,13 +15,11 @@
  */
 /*!
  * \file
- * \brief Definition of external_force_vibration_problem class.
+ * \brief Definition of external_external_exponential_problem class.
  */
 #pragma once
 
 #include <cmath>
-
-#include <Eigen/Core>
 
 #include "num_collect/ode/concepts/time_differentiable_problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/evaluation_type.h"
@@ -29,37 +27,19 @@
 namespace num_prob_collect::ode {
 
 /*!
- * \brief Class of test problem of vibration with external force.
- *
- * This solves for following equation of motion:
- * \f[
- *     \ddot{x} = \sin{t}
- * \f]
- *
- * In this class, the following equation is used to solve the above equation:
- * \f[
- *     \frac{d}{dt} \begin{pmatrix} \dot{x} \\ x \end{pmatrix}
- *     = \begin{pmatrix} \sin{t} \\ \dot{x} \end{pmatrix}
- * \f]
- *
- * When the initial variable is \f$(-1, 0)\f$,
- * the solution is \f$(-\cos{t}, -\sin{t})\f$.
+ * \brief Class of test problem to calculate exponential function using external
+ * time-dependent term..
  */
-class external_force_vibration_problem {
+class external_exponential_problem {
 public:
     //! Type of variables.
-    using variable_type = Eigen::Vector2d;
+    using variable_type = double;
 
     //! Type of scalars.
     using scalar_type = double;
 
     //! Type of Jacobian.
-    using jacobian_type = Eigen::Matrix2d;
-
-    /*!
-     * \brief Constructor.
-     */
-    external_force_vibration_problem() { jacobian_ << 0.0, 0.0, 1.0, 0.0; }
+    using jacobian_type = double;
 
     //! Allowed evaluations.
     static constexpr auto allowed_evaluations =
@@ -70,14 +50,11 @@ public:
      * \brief Evaluate on a (time, variable) pair.
      *
      * \param[in] time Time.
-     * \param[in] variable Variable.
      */
-    void evaluate_on(scalar_type time, const variable_type& variable,
+    void evaluate_on(double time, double /*variable*/,
         num_collect::ode::evaluation_type /*evaluations*/) {
-        diff_coeff_[0] = std::sin(time);
-        diff_coeff_[1] = variable[0];
-        time_derivative_[0] = std::cos(time);
-        time_derivative_[1] = 0.0;
+        diff_coeff_ = std::exp(time);
+        time_derivative_ = diff_coeff_;
     }
 
     /*!
@@ -85,7 +62,7 @@ public:
      *
      * \return Differential coefficient.
      */
-    [[nodiscard]] auto diff_coeff() const noexcept -> const variable_type& {
+    [[nodiscard]] auto diff_coeff() const -> const double& {
         return diff_coeff_;
     }
 
@@ -110,16 +87,16 @@ public:
 
 private:
     //! Differential coefficient.
-    variable_type diff_coeff_{};
+    double diff_coeff_{};
 
     //! Jacobian.
-    jacobian_type jacobian_{};
+    double jacobian_{1.0};
 
     //! Partial derivative with respect to time.
-    variable_type time_derivative_{};
+    double time_derivative_{};
 };
 
 static_assert(num_collect::ode::concepts::time_differentiable_problem<
-    external_force_vibration_problem>);
+    external_exponential_problem>);
 
 }  // namespace num_prob_collect::ode

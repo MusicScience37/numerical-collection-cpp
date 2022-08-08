@@ -26,6 +26,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
+#include "num_collect/ode/rosenbrock/rodasp_formula.h"
 #include "num_collect/ode/rosenbrock/ros34pw3_formula.h"
 #include "num_collect/ode/rosenbrock/ros3w_formula.h"
 #include "num_collect/ode/runge_kutta/rk4_formula.h"
@@ -120,6 +121,17 @@ STAT_BENCH_CASE_F(external_force_vibration_fixture,
     STAT_BENCH_MEASURE() {
         using solver_type =
             num_collect::ode::rosenbrock::ros34pw3_solver<problem_type>;
+        auto solver = solver_type(problem_type());
+        perform(solver);
+    };
+}
+
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(external_force_vibration_fixture,
+    "ode_rk_external_force_vibration", "rodasp") {
+    STAT_BENCH_MEASURE() {
+        using solver_type =
+            num_collect::ode::rosenbrock::rodasp_solver<problem_type>;
         auto solver = solver_type(problem_type());
         perform(solver);
     };

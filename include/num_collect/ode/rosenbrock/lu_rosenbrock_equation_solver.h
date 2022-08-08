@@ -19,13 +19,15 @@
  */
 #pragma once
 
+#include <optional>
+
+#include <Eigen/Core>  // IWYU pragma: keep
 #include <Eigen/LU>
 
-#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/ode/concepts/multi_variate_differentiable_problem.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/time_differentiable_problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/evaluation_type.h"
-#include "num_collect/util/assert.h"
 
 namespace num_collect::ode::rosenbrock {
 
@@ -52,6 +54,10 @@ public:
     //! Type of the LU solver.
     using lu_solver_type = Eigen::PartialPivLU<jacobian_type>;
 
+    //! Whether to use partial derivative with respect to time.
+    static constexpr bool use_time_derivative =
+        concepts::time_differentiable_problem<problem_type>;
+
     static_assert(!problem_type::allowed_evaluations.mass,
         "Mass matrix is not supported.");
     // TODO: Support is actually not so difficult for this formula, but I want
@@ -75,11 +81,17 @@ public:
      * \param[in] step_size Step size.
      * \param[in] variable Variable.
      */
-    void update_jacobian(problem_type& problem, const scalar_type& time,
-        const scalar_type& step_size, const variable_type& variable) {
+    void evaluate_and_update_jacobian(problem_type& problem,
+        const scalar_type& time, const scalar_type& step_size,
+        const variable_type& variable) {
         problem.evaluate_on(time, variable,
-            evaluation_type{.diff_coeff = true, .jacobian = true});
+            evaluation_type{.diff_coeff = true,
+                .jacobian = true,
+                .time_derivative = use_time_derivative});
         jacobian_ = problem.jacobian();
+        if constexpr (use_time_derivative) {
+            time_derivative_ = problem.time_derivative();
+        }
 
         const index_type variable_size = variable.size();
         lu_.compute(jacobian_type::Identity(variable_size, variable_size) -
@@ -89,17 +101,36 @@ public:
     }
 
     /*!
-     * \brief Get the Jacobian matrix.
+     * \brief Multiply Jacobian matrix to a vector.
      *
-     * \return Jacobian matrix.
+     * \param[in] target Target.
+     * \param[out] result Result.
      */
-    auto jacobian() const -> const jacobian_type& { return jacobian_; }
+    void apply_jacobian(const variable_type& target, variable_type& result) {
+        result = jacobian_ * target;
+    }
+
+    /*!
+     * \brief Add a term of partial derivative with respect to time.
+     *
+     * \param[in] step_size Step size.
+     * \param[in] coeff Coefficient in formula.
+     * \param[in,out] target Target variable.
+     */
+    void add_time_derivative_term(const scalar_type& step_size,
+        const scalar_type& coeff, variable_type& target) {
+        if constexpr (use_time_derivative) {
+            if (time_derivative_) {
+                target += step_size * coeff * (*time_derivative_);
+            }
+        }
+    }
 
     /*!
      * \brief Solve a linear equation.
      *
      * \param[in] rhs Right-hand-side value.
-     * \param[in] result Result.
+     * \param[out] result Result.
      */
     void solve(const variable_type& rhs, variable_type& result) {
         result = lu_.solve(rhs);
@@ -108,6 +139,9 @@ public:
 private:
     //! Jacobian matrix.
     jacobian_type jacobian_{};
+
+    //! Partial derivative with respect to time.
+    std::optional<variable_type> time_derivative_{};
 
     //! LU solver.
     lu_solver_type lu_{};

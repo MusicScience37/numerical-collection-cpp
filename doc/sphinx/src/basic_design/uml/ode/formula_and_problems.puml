@@ -6,6 +6,7 @@ package ode {
     struct evaluation_type {
         + diff_coeff: bool
         + jacobian: bool
+        + time_derivative: bool
         + mass: bool
     }
 }
@@ -25,6 +26,11 @@ package problems {
         + jacobian() : jacobian_type
     }
     problem <|-- differentiable_problem
+
+    class time_differentiable_problem {
+        + time_derivative() : variable_type
+    }
+    differentiable_problem <|-- time_differentiable_problem
 
     class mass_problem {
         + using mass_matrix_type = xxx

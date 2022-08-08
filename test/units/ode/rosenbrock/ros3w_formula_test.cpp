@@ -28,6 +28,7 @@
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "comparison_approvals.h"
+#include "num_collect/ode/rosenbrock/scalar_rosenbrock_equation_solver.h"
 #include "num_prob_collect/ode/exponential_problem.h"
 #include "num_prob_collect/ode/external_force_vibration_problem.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"

@@ -19,6 +19,8 @@
  */
 #include "num_collect/ode/rosenbrock/default_rosenbrock_equation_solver.h"
 
+#include <string>
+
 #include <catch2/catch_test_macros.hpp>
 
 #include "num_collect/ode/concepts/rosenbrock_equation_solver.h"  // IWYU pragma: keep
