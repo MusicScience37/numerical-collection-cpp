@@ -31,6 +31,9 @@ struct evaluation_type {
     //! Jacobian.
     bool jacobian{false};
 
+    //! Partial derivative with respect to time.
+    bool time_derivative{false};
+
     //! Mass matrix.
     bool mass{false};
 
@@ -44,6 +47,7 @@ struct evaluation_type {
     [[nodiscard]] constexpr auto allows(evaluation_type request) const -> bool {
         return !(!this->diff_coeff && request.diff_coeff) &&
             !(!this->jacobian && request.jacobian) &&
+            !(!this->time_derivative && request.time_derivative) &&
             !(!this->mass && request.mass);
     }
 };

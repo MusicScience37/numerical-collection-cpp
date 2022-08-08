@@ -23,6 +23,7 @@
 
 #include <Eigen/Core>
 
+#include "num_collect/ode/concepts/time_differentiable_problem.h"
 #include "num_collect/ode/evaluation_type.h"
 
 namespace num_prob_collect::ode {
@@ -62,7 +63,8 @@ public:
 
     //! Allowed evaluations.
     static constexpr auto allowed_evaluations =
-        num_collect::ode::evaluation_type{.diff_coeff = true, .jacobian = true};
+        num_collect::ode::evaluation_type{
+            .diff_coeff = true, .jacobian = true, .time_derivative = true};
 
     /*!
      * \brief Evaluate on a (time, variable) pair.
@@ -74,6 +76,8 @@ public:
         num_collect::ode::evaluation_type /*evaluations*/) {
         diff_coeff_[0] = std::sin(time);
         diff_coeff_[1] = variable[0];
+        time_derivative_[0] = std::cos(time);
+        time_derivative_[1] = 0.0;
     }
 
     /*!
@@ -94,12 +98,28 @@ public:
         return jacobian_;
     }
 
+    /*!
+     * \brief Get the partial derivative with respect to time.
+     *
+     * \return Derivative.
+     */
+    [[nodiscard]] auto time_derivative() const noexcept
+        -> const variable_type& {
+        return time_derivative_;
+    }
+
 private:
     //! Differential coefficient.
     variable_type diff_coeff_{};
 
     //! Jacobian.
     jacobian_type jacobian_{};
+
+    //! Partial derivative with respect to time.
+    variable_type time_derivative_{};
 };
+
+static_assert(num_collect::ode::concepts::time_differentiable_problem<
+    external_force_vibration_problem>);
 
 }  // namespace num_prob_collect::ode
