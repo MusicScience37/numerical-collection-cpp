@@ -19,12 +19,15 @@
  */
 #include "num_collect/ode/rosenbrock/scalar_rosenbrock_equation_solver.h"
 
+#include <cmath>
+
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "num_collect/ode/concepts/rosenbrock_equation_solver.h"  // IWYU pragma: keep
 #include "num_prob_collect/ode/exponential_problem.h"
+#include "num_prob_collect/ode/external_exponential_problem.h"
 
 TEST_CASE("") {
     using problem_type = num_prob_collect::ode::exponential_problem;
@@ -102,6 +105,25 @@ TEST_CASE("") {
     }
 
     SECTION("time derivative for non-autonomous system") {
-        // TODO
+        using problem_type =
+            num_prob_collect::ode::external_exponential_problem;
+        using solver_type =
+            num_collect::ode::rosenbrock::scalar_rosenbrock_equation_solver<
+                problem_type>;
+
+        constexpr double inverted_jacobian_coeff = 0.2;
+        solver_type solver{inverted_jacobian_coeff};
+
+        problem_type problem;
+        constexpr double time = 1.0;
+        constexpr double variable = 1.0;
+        constexpr double step_size = 0.01;
+        solver.evaluate_and_update_jacobian(problem, time, step_size, variable);
+
+        double target = 0.0;
+        constexpr double coeff = 0.2;
+        solver.add_time_derivative_term(step_size, coeff, target);
+        CHECK_THAT(target,
+            Catch::Matchers::WithinRel(step_size * coeff * std::exp(time)));
     }
 }
