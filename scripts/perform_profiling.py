@@ -29,7 +29,7 @@ PROF_RESULTS_DIR = THIS_DIR.parent / "profiling" / "results"
 @click.option(
     "--nodecount",
     "nodecount",
-    default=80,
+    default=100,
     type=int,
     show_default=True,
     help="Number of nodes in the result.",
@@ -64,7 +64,7 @@ def perform_profiling(
         env = os.environ
         env["CPUPROFILE_FREQUENCY"] = str(frequency)
         process_result = subprocess.run(
-            [binary_path], env=env, cwd=str(PROF_RESULTS_DIR)
+            [binary_path], env=env, cwd=str(PROF_RESULTS_DIR), check=True
         )
         click.echo(
             click.style(
