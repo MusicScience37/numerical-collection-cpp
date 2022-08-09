@@ -27,8 +27,8 @@
     "fredericbonnet.cmake-test-adapter",
     "hbenl.vscode-test-explorer",
     "ms-azuretools.vscode-docker",
-    "tomoki1207.pdf",
-    "tamasfe.even-better-toml"
+    "tamasfe.even-better-toml",
+    "james-yu.latex-workshop"
   ],
   "postCreateCommand": "bash ./.devcontainer/setup.bash",
   "settings": {
