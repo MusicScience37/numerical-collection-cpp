@@ -27,8 +27,9 @@ function(add_bench_using_pybind11 TARGET)
                                                 pybind11::embed)
         if(NUM_COLLECT_TEST_BENCHMARKS)
             add_test(
-                NAME ${TARGET} ${NUM_COLLECT_BENCH_DIR}
+                NAME ${TARGET}
                 COMMAND ${PIPENV_EXECUTABLE} run $<TARGET_FILE:${TARGET}>
+                        ${NUM_COLLECT_BENCH_DIR}
                 WORKING_DIRECTORY ${NUM_COLLECT_SOURCE_DIR})
         endif()
     endif()
