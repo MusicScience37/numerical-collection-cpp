@@ -78,6 +78,7 @@
     "pipenv",
     "Pipfile",
     "PlantUML",
+    "plotly",
     "pngpp",
     "pprof",
     "profraw",
