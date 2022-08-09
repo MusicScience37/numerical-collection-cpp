@@ -67,6 +67,18 @@ include(pipenv)
 include(ConfigureSanitizer)
 include(ConfigureCcache)
 
+find_program(
+    PYTHON_EXECUTABLE
+    NAMES python3 python
+    PATHS ${PIPENV_VENV_DIR}/bin ${PIPENV_VENV_DIR}/Scripts
+    NO_DEFAULT_PATH)
+if(PYTHON_EXECUTABLE)
+    message(STATUS "Found Python: ${PYTHON_EXECUTABLE}")
+    find_package(pybind11 REQUIRED)
+else()
+    message(STATUS "Python not found for Python interface")
+endif()
+
 set(NUM_COLLECT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_library(num_collect INTERFACE)

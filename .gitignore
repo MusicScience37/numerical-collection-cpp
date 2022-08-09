@@ -648,6 +648,8 @@ FodyWeavers.xsd
 # Output of examples
 /*.html
 /*.png
+**/diagrams/*.html
+**/diagrams/*.png
 
 # Temporary output of ApprovalTests
 *.received.*
