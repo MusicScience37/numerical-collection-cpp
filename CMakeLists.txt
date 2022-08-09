@@ -58,6 +58,15 @@ if(NUM_COLLECT_TESTING)
     find_package(Boost REQUIRED)
 endif()
 
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+include(TargetLinkSystemLibrary)
+include(ConfigureClangTidy)
+include(CppWarningFlags)
+include(CppFlags)
+include(pipenv)
+include(ConfigureSanitizer)
+include(ConfigureCcache)
+
 find_program(
     PYTHON_EXECUTABLE
     NAMES python3 python
@@ -69,15 +78,6 @@ if(PYTHON_EXECUTABLE)
 else()
     message(STATUS "Python not found for Python interface")
 endif()
-
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
-include(TargetLinkSystemLibrary)
-include(ConfigureClangTidy)
-include(CppWarningFlags)
-include(CppFlags)
-include(pipenv)
-include(ConfigureSanitizer)
-include(ConfigureCcache)
 
 set(NUM_COLLECT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
