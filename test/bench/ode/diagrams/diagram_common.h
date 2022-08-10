@@ -131,8 +131,8 @@ inline void perform(const std::string& solver_name, const Problem& problem,
         Solver solver{problem};
 
         solver.step_size_controller().tolerances(
-            num_collect::ode::error_tolerances<typename Problem::variable_type>(
-                init_var)
+            num_collect::ode::error_tolerances<
+                typename Problem::variable_type>()
                 .tol_rel_error(create_constant_variable(init_var, tol))
                 .tol_abs_error(create_constant_variable(init_var, tol)));
 
@@ -153,11 +153,10 @@ inline void perform(const std::string& solver_name, const Problem& problem,
     for (num_collect::index_type i = 0; i < repetition; ++i) {
         Solver solver{problem};
 
-        solver.step_size_controller().tolerances(
-            num_collect::ode::error_tolerances<typename Problem::variable_type>(
-                init_var)
-                .tol_rel_error(create_constant_variable(init_var, tol))
-                .tol_abs_error(create_constant_variable(init_var, tol)));
+        solver.tolerances(num_collect::ode::error_tolerances<
+                          typename Problem::variable_type>()
+                              .tol_rel_error(tol)
+                              .tol_abs_error(tol));
 
         solver.init(init_time, init_var);
         solver.solve_till(end_time);

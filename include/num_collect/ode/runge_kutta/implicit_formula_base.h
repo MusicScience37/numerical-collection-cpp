@@ -21,11 +21,9 @@
 
 #include <algorithm>
 
-#include "num_collect/base/norm.h"
-#include "num_collect/constants/zero.h"               // IWYU pragma: keep
-#include "num_collect/ode/concepts/formula_solver.h"  // IWYU pragma: keep
-#include "num_collect/ode/concepts/problem.h"         // IWYU pragma: keep
-#include "num_collect/util/assert.h"
+#include "num_collect/ode/concepts/problem.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/stage_equation_solver.h"  // IWYU pragma: keep
+#include "num_collect/ode/formula_base.h"
 
 namespace num_collect::ode::runge_kutta {
 
@@ -37,105 +35,30 @@ namespace num_collect::ode::runge_kutta {
  * \tparam FormulaSolver Type of solver of formula.
  */
 template <typename Derived, concepts::problem Problem,
-    concepts::formula_solver FormulaSolver>
-class implicit_formula_base {
+    concepts::stage_equation_solver FormulaSolver>
+class implicit_formula_base : public formula_base<Derived, Problem> {
 public:
-    //! Type of problem.
-    using problem_type = Problem;
+    //! Type of base class.
+    using base_type = formula_base<Derived, Problem>;
+
+    using typename base_type::problem_type;
+    using typename base_type::scalar_type;
+    using typename base_type::variable_type;
 
     //! Type of solver of formula.
     using formula_solver_type = FormulaSolver;
 
-    //! Type of variables.
-    using variable_type = typename problem_type::variable_type;
+protected:
+    using base_type::derived;
 
-    //! Type of scalars.
-    using scalar_type = typename problem_type::scalar_type;
-
-    static_assert(!problem_type::allowed_evaluations.mass,
-        "Mass matrix is not supported.");
-
+public:
     /*!
      * \brief Constructor.
      *
      * \param[in] problem Problem.
      */
     explicit implicit_formula_base(const problem_type& problem = problem_type())
-        : formula_solver_(problem) {}
-
-    /*!
-     * \brief Compute the next variable.
-     *
-     * \param[in] time Current time.
-     * \param[in] step_size Step size.
-     * \param[in] current Current variable.
-     * \param[out] estimate Estimate of the next variable.
-     */
-    void step(scalar_type time, scalar_type step_size,
-        const variable_type& current, variable_type& estimate) {
-        derived().step(time, step_size, current, estimate);
-    }
-
-    /*!
-     * \brief Get the problem.
-     *
-     * \return Problem.
-     */
-    [[nodiscard]] auto problem() -> problem_type& {
-        return formula_solver_.problem();
-    }
-
-    /*!
-     * \brief Get the problem.
-     *
-     * \return Problem.
-     */
-    [[nodiscard]] auto problem() const -> const problem_type& {
-        return formula_solver_.problem();
-    }
-
-    /*!
-     * \brief Set relative tolerance of residual norm.
-     *
-     * \param[in] val Value.
-     * \return This.
-     */
-    auto tol_rel_residual_norm(scalar_type val) -> Derived& {
-        NUM_COLLECT_ASSERT(val > constants::zero<scalar_type>);
-        tol_rel_residual_norm_ = val;
-        return derived();
-    }
-
-    /*!
-     * \brief Set absolute tolerance of residual norm.
-     *
-     * \param[in] val Value.
-     * \return This.
-     */
-    auto tol_abs_residual_norm(scalar_type val) -> Derived& {
-        NUM_COLLECT_ASSERT(val > constants::zero<scalar_type>);
-        tol_abs_residual_norm_ = val;
-        return derived();
-    }
-
-protected:
-    /*!
-     * \brief Access derived object.
-     *
-     * \return Reference to the derived object.
-     */
-    [[nodiscard]] auto derived() noexcept -> Derived& {
-        return *static_cast<Derived*>(this);
-    }
-
-    /*!
-     * \brief Access derived object.
-     *
-     * \return Reference to the derived object.
-     */
-    [[nodiscard]] auto derived() const noexcept -> const Derived& {
-        return *static_cast<const Derived*>(this);
-    }
+        : base_type(problem), formula_solver_() {}
 
     /*!
      * \brief Get solver of formula.
@@ -156,62 +79,38 @@ protected:
     }
 
     /*!
-     * \brief Convert coefficients.
+     * \brief Set the error tolerances.
      *
-     * \tparam T Input type.
-     * \param[in] val Input value.
-     * \return Converted value.
+     * \param[in] val Value.
+     * \return This.
      */
-    template <typename T>
-    static constexpr auto coeff(T val) -> scalar_type {
-        return static_cast<scalar_type>(val);
+    auto tolerances(const error_tolerances<variable_type>& val) -> Derived& {
+        formula_solver_.tolerances(val);
+        return derived();
     }
 
     /*!
-     * \brief Create coefficients.
+     * \brief Access to the logger.
      *
-     * \tparam T1 Input type.
-     * \tparam T2 Input type.
-     * \param[in] num Numerator.
-     * \param[in] den Denominator.
-     * \return Coefficient.
+     * \return Logger.
      */
-    template <typename T1, typename T2>
-    static constexpr auto coeff(T1 num, T2 den) -> scalar_type {
-        return static_cast<scalar_type>(num) / static_cast<scalar_type>(den);
+    [[nodiscard]] auto logger() const noexcept
+        -> const num_collect::logging::logger& {
+        return formula_solver_.logger();
     }
 
     /*!
-     * \brief Calculate tolerance of residual norm.
+     * \brief Access to the logger.
      *
-     * \param[in] variable Variable.
-     * \param[in] step_size Step size.
-     * \return Tolerance of residual norm.
+     * \return Logger.
      */
-    [[nodiscard]] auto tol_residual_norm(
-        const variable_type& variable, scalar_type step_size) {
-        return std::max(tol_abs_residual_norm_,
-                   tol_rel_residual_norm_ * norm(variable)) /
-            step_size;
+    [[nodiscard]] auto logger() noexcept -> num_collect::logging::logger& {
+        return formula_solver_.logger();
     }
 
 private:
     //! Solver of formula.
     formula_solver_type formula_solver_;
-
-    //! Default relative tolerance of residual norm.
-    static constexpr auto default_tol_rel_residual_norm =
-        static_cast<scalar_type>(1e-8);
-
-    //! Relative tolerance of residual norm.
-    scalar_type tol_rel_residual_norm_{default_tol_rel_residual_norm};
-
-    //! Default absolute tolerance of residual norm.
-    static constexpr auto default_tol_abs_residual_norm =
-        static_cast<scalar_type>(1e-8);
-
-    //! Absolute tolerance of residual norm.
-    scalar_type tol_abs_residual_norm_{default_tol_abs_residual_norm};
 };
 
 }  // namespace num_collect::ode::runge_kutta

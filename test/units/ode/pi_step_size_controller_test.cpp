@@ -60,14 +60,14 @@ TEST_CASE("num_collect::ode::pi_step_size_controller") {
         controller_type controller;
 
         const auto variable = Eigen::Vector2d{{0.0, 1.0}};
-        controller.init(variable);
+        controller.init();
 
         const auto limits =
             step_size_limits<double>().upper_limit(1.0).lower_limit(0.2);
         controller.limits(limits);
 
         const auto tolerances =
-            error_tolerances<Eigen::Vector2d>(variable)
+            error_tolerances<Eigen::Vector2d>()
                 .tol_rel_error(Eigen::Vector2d{{1e-2, 1e-2}})
                 .tol_abs_error(Eigen::Vector2d{{1e-2, 1e-2}});
         controller.tolerances(tolerances);
@@ -109,15 +109,14 @@ TEST_CASE("num_collect::ode::pi_step_size_controller") {
         controller_type controller;
 
         constexpr double variable = 0.1;
-        controller.init(variable);
+        controller.init();
 
         const auto limits =
             step_size_limits<double>().upper_limit(1.0).lower_limit(0.2);
         controller.limits(limits);
 
-        const auto tolerances = error_tolerances<double>(variable)
-                                    .tol_rel_error(1e-2)
-                                    .tol_abs_error(1e-3);
+        const auto tolerances =
+            error_tolerances<double>().tol_rel_error(1e-2).tol_abs_error(1e-3);
         controller.tolerances(tolerances);
 
         constexpr double reduction_rate = 0.5;
@@ -195,19 +194,5 @@ TEST_CASE("num_collect::ode::pi_step_size_controller") {
                 step_size, variable, current_error));
             CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.3));  // NOLINT}
         }
-    }
-
-    SECTION("check before initialization") {
-        using problem_type = exponential_problem;
-        using formula_type = rkf45_formula<problem_type>;
-        using controller_type = pi_step_size_controller<formula_type>;
-
-        controller_type controller;
-
-        double step_size = 0.4;  // NOLINT
-        constexpr double variable = 0.1;
-        const double error = 2e-3 / std::pow(2.0, 5);
-        CHECK_THROWS(
-            controller.check_and_calc_next(step_size, variable, error));
     }
 }

@@ -7,6 +7,7 @@ set(SOURCE_FILES
     error_tolerances_test.cpp
     evaluation_type_test.cpp
     impl/get_least_known_order_test.cpp
+    inexact_newton_stage_equation_solver_test.cpp
     initial_step_size_calculator_test.cpp
     non_embedded_formula_wrapper_test.cpp
     pi_step_size_controller_test.cpp
@@ -20,7 +21,6 @@ set(SOURCE_FILES
     runge_kutta/implicit_euler_formula_test.cpp
     runge_kutta/rk4_formula_test.cpp
     runge_kutta/rkf45_formula_test.cpp
-    runge_kutta/semi_implicit_formula_solver_test.cpp
     runge_kutta/tanaka1_formula_test.cpp
     runge_kutta/tanaka2_formula_test.cpp
     simple_solver_test.cpp

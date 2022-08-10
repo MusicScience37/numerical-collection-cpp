@@ -19,8 +19,10 @@
  */
 #pragma once
 
+#include "num_collect/base/concepts/reference_of.h"  // IWYU pragma: keep
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/logger.h"
 #include "num_collect/logging/logging_mixin.h"
 #include "num_collect/ode/concepts/formula.h"  // IWYU pragma: keep
 
@@ -61,6 +63,14 @@ public:
     explicit solver_base(const problem_type& problem)
         : formula_(problem), logging::logging_mixin(formula_type::log_tag) {
         this->logger().set_iterative();
+        if constexpr (requires(formula_type & formula) {
+                          {
+                              formula.logger()
+                              }
+                              -> base::concepts::reference_of<logging::logger>;
+                      }) {
+            this->logger().initialize_child_algorithm_logger(formula_.logger());
+        }
     }
 
     /*!

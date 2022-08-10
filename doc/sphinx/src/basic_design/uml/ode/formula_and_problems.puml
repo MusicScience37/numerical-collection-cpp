@@ -45,6 +45,7 @@ package ode {
         + using problem_type = Problem
         {static} + stages : index_type
         {static} + order : index_type
+        + init(tolerances: error_tolerances)
         + step(time: scalar_type, step_size: scalar_type,\n\tcurrent: const variable_type&, estimate: variable_type&)
         + problem() : problem_type&
     }

@@ -84,7 +84,7 @@ public:
         variable_ = variable;
         steps_ = 0;
 
-        step_size_controller_.init(variable_);
+        step_size_controller_.init();
 
         if (step_size_) {
             this->logger().trace()(
@@ -200,6 +200,24 @@ public:
      */
     auto step_size_controller() const -> const step_size_controller_type& {
         return step_size_controller_;
+    }
+
+    /*!
+     * \brief Set the error tolerances.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto tolerances(const error_tolerances<variable_type>& val)
+        -> embedded_solver& {
+        step_size_controller_.tolerances(val);
+        if constexpr (requires(formula_type & formula,
+                          const error_tolerances<variable_type>& val) {
+                          formula.tolerances(val);
+                      }) {
+            formula().tolerances(val);
+        }
+        return *this;
     }
 
 private:

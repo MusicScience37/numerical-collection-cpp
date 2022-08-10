@@ -54,18 +54,6 @@ public:
     using scalar_type = typename problem_type::scalar_type;
 
     /*!
-     * \brief Initialize.
-     *
-     * \param[in] reference Reference variable. (For determining the size of
-     * variables.)
-     */
-    void init(const variable_type& reference) {
-        if (!tolerances_) {
-            tolerances_.emplace(reference);
-        }
-    }
-
-    /*!
      * \brief Set the limits of step sizes.
      *
      * \param[in] val Value.
@@ -103,10 +91,7 @@ public:
      */
     [[nodiscard]] auto tolerances() const
         -> const error_tolerances<variable_type>& {
-        if (!tolerances_) {
-            throw precondition_not_satisfied("Error tolerance is not set yet.");
-        }
-        return *tolerances_;
+        return tolerances_;
     }
 
     /*!
@@ -171,8 +156,8 @@ protected:
             }
             this->logger().warning()(
                 "Error tolerance not satisfied even with the lowest step size "
-                "{}.",
-                step_size);
+                "{} (error: {}).",
+                step_size, tolerances().calc_norm(variable, error));
         }
         return false;
     }
@@ -182,7 +167,7 @@ private:
     step_size_limits<scalar_type> limits_{};
 
     //! Error tolerances.
-    std::optional<error_tolerances<variable_type>> tolerances_{};
+    error_tolerances<variable_type> tolerances_{};
 
     //! Default rate to reduce step sizes when error is large.
     static constexpr auto default_reduction_rate =

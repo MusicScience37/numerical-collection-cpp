@@ -22,9 +22,7 @@ license_scanning:
   needs: []
 
 .retry setting:
-  retry:
-    max: 2
-    when: runner_system_failure
+  retry: 1
 
 sync pipenv:
   extends: .retry setting

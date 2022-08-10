@@ -15,24 +15,28 @@
  */
 /*!
  * \file
- * \brief Definition of rosenbrock_equation_solver concept.
+ * \brief Definition of stage_equation_solver concept.
  */
 #pragma once
 
 #include <type_traits>  // IWYU pragma: keep
 
 #include "num_collect/base/concepts/const_reference_of.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/iterative_solver.h"    // IWYU pragma: keep
 #include "num_collect/ode/concepts/problem.h"              // IWYU pragma: keep
+#include "num_collect/ode/error_tolerances.h"
 
 namespace num_collect::ode::concepts {
 
 /*!
- * \brief Concept of classes to solve equations in Rosenbrock method.
+ * \brief Concept of classes solve equations of implicit stages using inexact
+ * Newton method.
  *
  * \tparam T Type.
  */
 template <typename T>
-concept rosenbrock_equation_solver = requires() {
+concept stage_equation_solver = base::concepts::iterative_solver<T> &&
+    requires() {
     typename T::problem_type;
     requires problem<typename T::problem_type>;
 
@@ -44,31 +48,36 @@ concept rosenbrock_equation_solver = requires() {
     requires std::is_same_v<typename T::scalar_type,
         typename T::problem_type::scalar_type>;
 
-    requires requires(const typename T::scalar_type& inverted_jacobian_coeff) {
-        T(inverted_jacobian_coeff);
-    };
+    T();
 
     requires requires(T & obj, typename T::problem_type & problem,
-        const typename T::scalar_type& time,
-        const typename T::scalar_type& step_size,
-        const typename T::variable_type& variable) {
-        obj.evaluate_and_update_jacobian(problem, time, step_size, variable);
+        typename T::scalar_type time, typename T::scalar_type step_size,
+        const typename T::variable_type& variable,
+        typename T::scalar_type solution_coeff) {
+        obj.update_jacobian(problem, time, step_size, variable, solution_coeff);
     };
 
-    requires requires(T & obj, const typename T::variable_type& target,
-        typename T::variable_type& result) {
-        obj.apply_jacobian(target, result);
+    requires requires(T & obj, typename T::variable_type & solution) {
+        obj.init(solution);
     };
 
-    requires requires(T & obj, const typename T::scalar_type& step_size,
-        const typename T::scalar_type& coeff,
-        typename T::variable_type& target) {
-        obj.add_time_derivative_term(step_size, coeff, target);
+    requires requires(T & obj, typename T::scalar_type time,
+        typename T::scalar_type step_size,
+        const typename T::variable_type& variable,
+        typename T::variable_type& solution) {
+        obj.init(time, step_size, variable, solution);
     };
 
-    requires requires(T & obj, const typename T::variable_type& rhs,
-        typename T::variable_type& result) {
-        obj.solve(rhs, result);
+    requires requires(
+        T & obj, const error_tolerances<typename T::variable_type>& val) {
+        obj.tolerances(val);
+    };
+
+    requires requires(const T& obj) {
+        {
+            obj.tolerances()
+            } -> base::concepts::const_reference_of<
+                error_tolerances<typename T::variable_type>>;
     };
 };
 
