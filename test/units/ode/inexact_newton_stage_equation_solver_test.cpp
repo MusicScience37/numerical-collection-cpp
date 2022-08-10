@@ -55,6 +55,39 @@ TEST_CASE("num_collect::ode::inexact_newton_stage_equation_solver(scalar)") {
         const double reference = std::exp(step_size);
         comparison_approvals::verify_with_reference(variable, reference);
     }
+
+    SECTION("failure in solving an equation") {
+        solver_type solver;
+
+        problem_type problem;
+        constexpr double init_time = 0.0;
+        constexpr double step_size = 1.0;
+        constexpr double init_var = 1.0;
+        constexpr double solution_coeff = 1.0;
+
+        CHECK_THROWS(solver.update_jacobian(
+            problem, init_time, step_size, init_var, solution_coeff));
+    }
+
+    SECTION("call solve function before initialization") {
+        solver_type solver;
+
+        problem_type problem;
+        constexpr double init_time = 0.0;
+        constexpr double step_size = 1e-4;
+        constexpr double init_var = 1.0;
+        constexpr double solution_coeff = 1.0;
+
+        CHECK_THROWS(solver.solve());
+
+        solver.update_jacobian(
+            problem, init_time, step_size, init_var, solution_coeff);
+        CHECK_THROWS(solver.solve());
+
+        double solution{0.0};
+        solver.init(init_time, step_size, init_var, solution);
+        CHECK_NOTHROW(solver.solve());
+    }
 }
 
 TEST_CASE("num_collect::ode::inexact_newton_stage_equation_solver(vector)") {
@@ -86,5 +119,42 @@ TEST_CASE("num_collect::ode::inexact_newton_stage_equation_solver(vector)") {
         const Eigen::Vector2d reference =
             Eigen::Vector2d(std::cos(step_size), std::sin(step_size));
         comparison_approvals::verify_with_reference(variable, reference);
+    }
+
+    SECTION("failure in solving an equation") {
+        solver_type solver;
+
+        problem_type problem;
+        constexpr double init_time = 0.0;
+        constexpr double step_size = 1e-4;
+        const Eigen::Vector2d init_var =
+            Eigen::Vector2d(1.0, std::numeric_limits<double>::quiet_NaN());
+        constexpr double solution_coeff = 1.0;
+
+        solver.update_jacobian(
+            problem, init_time, step_size, init_var, solution_coeff);
+        Eigen::Vector2d solution;
+        solver.init(init_time, step_size, init_var, solution);
+        CHECK_THROWS(solver.solve());
+    }
+
+    SECTION("call solve function before initialization") {
+        solver_type solver;
+
+        problem_type problem;
+        constexpr double init_time = 0.0;
+        constexpr double step_size = 1e-4;
+        const Eigen::Vector2d init_var = Eigen::Vector2d(1.0, 0.0);
+        constexpr double solution_coeff = 1.0;
+
+        CHECK_THROWS(solver.solve());
+
+        solver.update_jacobian(
+            problem, init_time, step_size, init_var, solution_coeff);
+        CHECK_THROWS(solver.solve());
+
+        Eigen::Vector2d solution;
+        solver.init(init_time, step_size, init_var, solution);
+        CHECK_NOTHROW(solver.solve());
     }
 }
