@@ -6,6 +6,7 @@
 #include "error_tolerances_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "evaluation_type_test.cpp"   // NOLINT(bugprone-suspicious-include)
 #include "impl/get_least_known_order_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "inexact_newton_stage_equation_solver_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "initial_step_size_calculator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "non_embedded_formula_wrapper_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "pi_step_size_controller_test.cpp"  // NOLINT(bugprone-suspicious-include)
