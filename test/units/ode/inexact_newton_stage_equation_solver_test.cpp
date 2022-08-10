@@ -22,6 +22,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "comparison_approvals.h"
+#include "num_collect/ode/concepts/stage_equation_solver.h"  // IWYU pragma: keep
 #include "num_prob_collect/ode/exponential_problem.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
 
@@ -29,6 +30,11 @@ TEST_CASE("num_collect::ode::inexact_newton_stage_equation_solver(scalar)") {
     using problem_type = num_prob_collect::ode::exponential_problem;
     using solver_type =
         num_collect::ode::inexact_newton_stage_equation_solver<problem_type>;
+
+    SECTION("check concept") {
+        STATIC_REQUIRE(
+            num_collect::ode::concepts::stage_equation_solver<solver_type>);
+    }
 
     SECTION("solve for implicit Euler method") {
         solver_type solver;
@@ -55,6 +61,11 @@ TEST_CASE("num_collect::ode::inexact_newton_stage_equation_solver(vector)") {
     using problem_type = num_prob_collect::ode::spring_movement_problem;
     using solver_type =
         num_collect::ode::inexact_newton_stage_equation_solver<problem_type>;
+
+    SECTION("check concept") {
+        STATIC_REQUIRE(
+            num_collect::ode::concepts::stage_equation_solver<solver_type>);
+    }
 
     SECTION("solve for implicit Euler method") {
         solver_type solver;

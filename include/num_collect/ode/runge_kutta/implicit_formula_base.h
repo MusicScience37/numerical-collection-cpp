@@ -21,11 +21,8 @@
 
 #include <algorithm>
 
-#include "num_collect/base/norm.h"
-#include "num_collect/constants/zero.h"               // IWYU pragma: keep
-#include "num_collect/ode/concepts/formula_solver.h"  // IWYU pragma: keep
-#include "num_collect/ode/concepts/problem.h"         // IWYU pragma: keep
-#include "num_collect/util/assert.h"
+#include "num_collect/ode/concepts/problem.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/stage_equation_solver.h"  // IWYU pragma: keep
 
 namespace num_collect::ode::runge_kutta {
 
@@ -37,7 +34,7 @@ namespace num_collect::ode::runge_kutta {
  * \tparam FormulaSolver Type of solver of formula.
  */
 template <typename Derived, concepts::problem Problem,
-    concepts::formula_solver FormulaSolver>
+    concepts::stage_equation_solver FormulaSolver>
 class implicit_formula_base {
 public:
     //! Type of problem.
@@ -61,7 +58,7 @@ public:
      * \param[in] problem Problem.
      */
     explicit implicit_formula_base(const problem_type& problem = problem_type())
-        : formula_solver_(problem) {}
+        : problem_(problem), formula_solver_() {}
 
     /*!
      * \brief Compute the next variable.
@@ -81,9 +78,7 @@ public:
      *
      * \return Problem.
      */
-    [[nodiscard]] auto problem() -> problem_type& {
-        return formula_solver_.problem();
-    }
+    [[nodiscard]] auto problem() -> problem_type& { return problem_; }
 
     /*!
      * \brief Get the problem.
@@ -91,31 +86,55 @@ public:
      * \return Problem.
      */
     [[nodiscard]] auto problem() const -> const problem_type& {
-        return formula_solver_.problem();
+        return problem_;
     }
 
     /*!
-     * \brief Set relative tolerance of residual norm.
+     * \brief Get solver of formula.
+     *
+     * \return Solver of formula.
+     */
+    [[nodiscard]] auto formula_solver() -> formula_solver_type& {
+        return formula_solver_;
+    }
+
+    /*!
+     * \brief Get solver of formula.
+     *
+     * \return Solver of formula.
+     */
+    [[nodiscard]] auto formula_solver() const -> const formula_solver_type& {
+        return formula_solver_;
+    }
+
+    /*!
+     * \brief Set the error tolerances.
      *
      * \param[in] val Value.
      * \return This.
      */
-    auto tol_rel_residual_norm(scalar_type val) -> Derived& {
-        NUM_COLLECT_ASSERT(val > constants::zero<scalar_type>);
-        tol_rel_residual_norm_ = val;
+    auto tolerances(const error_tolerances<variable_type>& val) -> Derived& {
+        formula_solver_.tolerances(val);
         return derived();
     }
 
     /*!
-     * \brief Set absolute tolerance of residual norm.
+     * \brief Access to the logger.
      *
-     * \param[in] val Value.
-     * \return This.
+     * \return Logger.
      */
-    auto tol_abs_residual_norm(scalar_type val) -> Derived& {
-        NUM_COLLECT_ASSERT(val > constants::zero<scalar_type>);
-        tol_abs_residual_norm_ = val;
-        return derived();
+    [[nodiscard]] auto logger() const noexcept
+        -> const num_collect::logging::logger& {
+        return formula_solver_.logger();
+    }
+
+    /*!
+     * \brief Access to the logger.
+     *
+     * \return Logger.
+     */
+    [[nodiscard]] auto logger() noexcept -> num_collect::logging::logger& {
+        return formula_solver_.logger();
     }
 
 protected:
@@ -135,24 +154,6 @@ protected:
      */
     [[nodiscard]] auto derived() const noexcept -> const Derived& {
         return *static_cast<const Derived*>(this);
-    }
-
-    /*!
-     * \brief Get solver of formula.
-     *
-     * \return Solver of formula.
-     */
-    [[nodiscard]] auto formula_solver() -> formula_solver_type& {
-        return formula_solver_;
-    }
-
-    /*!
-     * \brief Get solver of formula.
-     *
-     * \return Solver of formula.
-     */
-    [[nodiscard]] auto formula_solver() const -> const formula_solver_type& {
-        return formula_solver_;
     }
 
     /*!
@@ -181,37 +182,12 @@ protected:
         return static_cast<scalar_type>(num) / static_cast<scalar_type>(den);
     }
 
-    /*!
-     * \brief Calculate tolerance of residual norm.
-     *
-     * \param[in] variable Variable.
-     * \param[in] step_size Step size.
-     * \return Tolerance of residual norm.
-     */
-    [[nodiscard]] auto tol_residual_norm(
-        const variable_type& variable, scalar_type step_size) {
-        return std::max(tol_abs_residual_norm_,
-                   tol_rel_residual_norm_ * norm(variable)) /
-            step_size;
-    }
-
 private:
+    //! Problem.
+    problem_type problem_;
+
     //! Solver of formula.
     formula_solver_type formula_solver_;
-
-    //! Default relative tolerance of residual norm.
-    static constexpr auto default_tol_rel_residual_norm =
-        static_cast<scalar_type>(1e-8);
-
-    //! Relative tolerance of residual norm.
-    scalar_type tol_rel_residual_norm_{default_tol_rel_residual_norm};
-
-    //! Default absolute tolerance of residual norm.
-    static constexpr auto default_tol_abs_residual_norm =
-        static_cast<scalar_type>(1e-8);
-
-    //! Absolute tolerance of residual norm.
-    scalar_type tol_abs_residual_norm_{default_tol_abs_residual_norm};
 };
 
 }  // namespace num_collect::ode::runge_kutta
