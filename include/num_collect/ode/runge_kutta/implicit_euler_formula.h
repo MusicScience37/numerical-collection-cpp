@@ -84,6 +84,7 @@ public:
         const variable_type& current, variable_type& estimate) {
         formula_solver().update_jacobian(problem(), time + step_size, step_size,
             current, static_cast<scalar_type>(1));
+        slope_ = problem().diff_coeff();
         formula_solver().init(slope_);
         formula_solver().solve();
         estimate = current + step_size * slope_;

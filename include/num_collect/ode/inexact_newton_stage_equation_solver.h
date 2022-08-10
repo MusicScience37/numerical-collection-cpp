@@ -195,7 +195,7 @@ public:
                 tolerance_rate_;
         }
 
-        constexpr index_type max_iterations = 100;  // safe guard
+        constexpr index_type max_iterations = 1000;  // safe guard
         return converged || (iterations_ > max_iterations);
     }
 
@@ -419,6 +419,12 @@ public:
             evaluation_type{.diff_coeff = true});
         residual_ = (*solution_) - problem_->diff_coeff();
         update_ = -lu_.solve(residual_);
+        if (!update_.array().isFinite().all()) {
+            this->logger().error()(
+                "Failed to solve an equation. step_size={}, cond={}.",
+                step_size_, lu_.rcond());
+            throw algorithm_failure("Failed to solve an equation.");
+        }
         *solution_ += update_;
 
         const scalar_type update_norm =

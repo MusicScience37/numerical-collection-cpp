@@ -156,8 +156,8 @@ protected:
             }
             this->logger().warning()(
                 "Error tolerance not satisfied even with the lowest step size "
-                "{}.",
-                step_size);
+                "{} (error: {}).",
+                step_size, tolerances().calc_norm(variable, error));
         }
         return false;
     }

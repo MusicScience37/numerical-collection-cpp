@@ -129,11 +129,13 @@ public:
         variable_type& error) {
         formula_solver().update_jacobian(
             problem(), time + b1 * step_size, step_size, current, a11);
+        k1_ = problem().diff_coeff();
         formula_solver().init(k1_);
         formula_solver().solve();
 
         formula_solver().update_jacobian(problem(), time + b2 * step_size,
             step_size, current + step_size * a21 * k1_, a22);
+        k2_ = problem().diff_coeff();
         formula_solver().init(k2_);
         formula_solver().solve();
 
