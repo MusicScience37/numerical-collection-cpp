@@ -25,6 +25,32 @@
 #include "num_prob_collect/ode/exponential_problem.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
 
+TEST_CASE("num_collect::ode::inexact_newton_stage_equation_solver(scalar)") {
+    using problem_type = num_prob_collect::ode::exponential_problem;
+    using solver_type =
+        num_collect::ode::inexact_newton_stage_equation_solver<problem_type>;
+
+    SECTION("solve for implicit Euler method") {
+        solver_type solver;
+
+        problem_type problem;
+        constexpr double init_time = 0.0;
+        constexpr double step_size = 1e-4;
+        constexpr double init_var = 1.0;
+        constexpr double solution_coeff = 1.0;
+
+        solver.update_jacobian(
+            problem, init_time, step_size, init_var, solution_coeff);
+        double solution{0.0};
+        solver.init(init_time, step_size, init_var, solution);
+        solver.solve();
+
+        const double variable = init_var + step_size * solution;
+        const double reference = std::exp(step_size);
+        comparison_approvals::verify_with_reference(variable, reference);
+    }
+}
+
 TEST_CASE("num_collect::ode::inexact_newton_stage_equation_solver(vector)") {
     using problem_type = num_prob_collect::ode::spring_movement_problem;
     using solver_type =
