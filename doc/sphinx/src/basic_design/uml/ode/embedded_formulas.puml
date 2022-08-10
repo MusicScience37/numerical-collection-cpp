@@ -27,12 +27,14 @@ package ode {
         + apply(val: scalar_type) : scalar_type
     }
 
+    !startsub error_tolerances
     class error_tolerances<Variable> {
         + check(var: variable_type, err: variable_type) : bool
         + calc_norm(var: variable_type, err: variable_type) : scalar_type
         + tol_rel_error(val: variable_type)
         + tol_abs_error(val: variable_type)
     }
+    !endsub
 
     class step_size_controller<Formula> {
         + init()
