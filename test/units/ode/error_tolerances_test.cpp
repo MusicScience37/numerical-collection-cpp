@@ -84,6 +84,46 @@ TEST_CASE("num_collect::ode::error_tolerances<vector>") {
         const auto error4 = variable_type{{2e-2, 4e-3, 2.1e-4}};
         CHECK_FALSE(tolerances.check(variable, error4));
     }
+
+    SECTION("set relative error to a scalar and absolute error to a vector") {
+        using variable_type = Eigen::VectorXd;
+        using scalar_type = double;
+
+        const variable_type variable{{0.0, -2.0, 1.0}};
+        const scalar_type tol_rel_error{1e-2};
+        const variable_type tol_abs_error{{2e-2, 2e-2, 1e-2}};
+        const auto tolerances = error_tolerances<variable_type>()
+                                    .tol_rel_error(tol_rel_error)
+                                    .tol_abs_error(tol_abs_error);
+
+        const auto error1 = variable_type{{2e-2, 4e-2, 2e-2}};
+        CHECK(tolerances.check(variable, error1));
+        CHECK_THAT(tolerances.calc_norm(variable, error1),
+            Catch::Matchers::WithinRel(1.0));
+
+        const auto error2 = variable_type{{2e-2, 4.1e-2, 2e-2}};
+        CHECK_FALSE(tolerances.check(variable, error2));
+    }
+
+    SECTION("set relative error to a vector and absolute error to a scalar") {
+        using variable_type = Eigen::VectorXd;
+        using scalar_type = double;
+
+        const variable_type variable{{0.0, -0.5, 1.0}};
+        const variable_type tol_rel_error{{1e-2, 2e-2, 3e-2}};
+        const scalar_type tol_abs_error{1e-2};
+        const auto tolerances = error_tolerances<variable_type>()
+                                    .tol_rel_error(tol_rel_error)
+                                    .tol_abs_error(tol_abs_error);
+
+        const auto error1 = variable_type{{1e-2, 2e-2, 4e-2}};
+        CHECK(tolerances.check(variable, error1));
+        CHECK_THAT(tolerances.calc_norm(variable, error1),
+            Catch::Matchers::WithinRel(1.0));
+
+        const auto error2 = variable_type{{1e-2, 2e-2, 4.1e-2}};
+        CHECK_FALSE(tolerances.check(variable, error2));
+    }
 }
 
 TEST_CASE("num_collect::ode::error_tolerances<scalar>") {
