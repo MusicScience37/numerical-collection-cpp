@@ -23,6 +23,7 @@
 
 #include "num_collect/ode/concepts/problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/concepts/stage_equation_solver.h"  // IWYU pragma: keep
+#include "num_collect/ode/formula_base.h"
 
 namespace num_collect::ode::runge_kutta {
 
@@ -35,59 +36,29 @@ namespace num_collect::ode::runge_kutta {
  */
 template <typename Derived, concepts::problem Problem,
     concepts::stage_equation_solver FormulaSolver>
-class implicit_formula_base {
+class implicit_formula_base : public formula_base<Derived, Problem> {
 public:
-    //! Type of problem.
-    using problem_type = Problem;
+    //! Type of base class.
+    using base_type = formula_base<Derived, Problem>;
+
+    using typename base_type::problem_type;
+    using typename base_type::scalar_type;
+    using typename base_type::variable_type;
 
     //! Type of solver of formula.
     using formula_solver_type = FormulaSolver;
 
-    //! Type of variables.
-    using variable_type = typename problem_type::variable_type;
+protected:
+    using base_type::derived;
 
-    //! Type of scalars.
-    using scalar_type = typename problem_type::scalar_type;
-
-    static_assert(!problem_type::allowed_evaluations.mass,
-        "Mass matrix is not supported.");
-
+public:
     /*!
      * \brief Constructor.
      *
      * \param[in] problem Problem.
      */
     explicit implicit_formula_base(const problem_type& problem = problem_type())
-        : problem_(problem), formula_solver_() {}
-
-    /*!
-     * \brief Compute the next variable.
-     *
-     * \param[in] time Current time.
-     * \param[in] step_size Step size.
-     * \param[in] current Current variable.
-     * \param[out] estimate Estimate of the next variable.
-     */
-    void step(scalar_type time, scalar_type step_size,
-        const variable_type& current, variable_type& estimate) {
-        derived().step(time, step_size, current, estimate);
-    }
-
-    /*!
-     * \brief Get the problem.
-     *
-     * \return Problem.
-     */
-    [[nodiscard]] auto problem() -> problem_type& { return problem_; }
-
-    /*!
-     * \brief Get the problem.
-     *
-     * \return Problem.
-     */
-    [[nodiscard]] auto problem() const -> const problem_type& {
-        return problem_;
-    }
+        : base_type(problem), formula_solver_() {}
 
     /*!
      * \brief Get solver of formula.
@@ -137,55 +108,7 @@ public:
         return formula_solver_.logger();
     }
 
-protected:
-    /*!
-     * \brief Access derived object.
-     *
-     * \return Reference to the derived object.
-     */
-    [[nodiscard]] auto derived() noexcept -> Derived& {
-        return *static_cast<Derived*>(this);
-    }
-
-    /*!
-     * \brief Access derived object.
-     *
-     * \return Reference to the derived object.
-     */
-    [[nodiscard]] auto derived() const noexcept -> const Derived& {
-        return *static_cast<const Derived*>(this);
-    }
-
-    /*!
-     * \brief Convert coefficients.
-     *
-     * \tparam T Input type.
-     * \param[in] val Input value.
-     * \return Converted value.
-     */
-    template <typename T>
-    static constexpr auto coeff(T val) -> scalar_type {
-        return static_cast<scalar_type>(val);
-    }
-
-    /*!
-     * \brief Create coefficients.
-     *
-     * \tparam T1 Input type.
-     * \tparam T2 Input type.
-     * \param[in] num Numerator.
-     * \param[in] den Denominator.
-     * \return Coefficient.
-     */
-    template <typename T1, typename T2>
-    static constexpr auto coeff(T1 num, T2 den) -> scalar_type {
-        return static_cast<scalar_type>(num) / static_cast<scalar_type>(den);
-    }
-
 private:
-    //! Problem.
-    problem_type problem_;
-
     //! Solver of formula.
     formula_solver_type formula_solver_;
 };
