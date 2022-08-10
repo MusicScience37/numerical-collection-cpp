@@ -115,10 +115,6 @@ public:
         const index_type dim = variable_.size();
         lu_.compute(jacobian_type::Identity(dim, dim) -
             step_size_ * solution_coeff_ * problem_->jacobian());
-
-        if (!tolerances_) {
-            tolerances_.emplace(variable_);
-        }
     }
 
     /*!
@@ -254,10 +250,7 @@ public:
      */
     [[nodiscard]] auto tolerances() const
         -> const error_tolerances<variable_type>& {
-        if (!tolerances_) {
-            throw precondition_not_satisfied("Error tolerance is not set yet.");
-        }
-        return *tolerances_;
+        return tolerances_;
     }
 
 private:
@@ -308,7 +301,7 @@ private:
     index_type iterations_{0};
 
     //! Error tolerances.
-    std::optional<error_tolerances<variable_type>> tolerances_{};
+    error_tolerances<variable_type> tolerances_{};
 };
 
 }  // namespace num_collect::ode

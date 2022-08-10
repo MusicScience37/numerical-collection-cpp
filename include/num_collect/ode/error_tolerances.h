@@ -20,6 +20,7 @@
 #pragma once
 
 #include <cmath>
+#include <variant>
 
 #include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"  // IWYU pragma: keep
@@ -71,16 +72,10 @@ public:
 
     /*!
      * \brief Constructor.
-     *
-     * \param[in] reference Reference variable. (For determining the size.)
      */
-    explicit error_tolerances(variable_type reference)
-        : tol_rel_error_(variable_type::Constant(
-              reference.size(), impl::default_tol_rel_error<scalar_type>)),
-          tol_abs_error_(variable_type::Constant(
-              reference.size(), impl::default_tol_abs_error<scalar_type>)),
-          norm_weight_(std::sqrt(static_cast<scalar_type>(1) /
-              static_cast<scalar_type>(reference.size()))) {}
+    error_tolerances()
+        : tol_rel_error_(impl::default_tol_rel_error<scalar_type>),
+          tol_abs_error_(impl::default_tol_abs_error<scalar_type>) {}
 
     /*!
      * \brief Check whether the given error satisfies tolerances.
@@ -92,10 +87,49 @@ public:
      */
     [[nodiscard]] auto check(const variable_type& variable,
         const variable_type& error) const -> bool {
-        return (error.array().abs() <=
-            (tol_rel_error_.array() * variable.array().abs() +
-                tol_abs_error_.array()))
-            .all();
+        class evaluator {
+        public:
+            evaluator(const variable_type& variable, const variable_type& error)
+                : variable_(variable), error_(error) {}
+
+            [[nodiscard]] auto operator()(const scalar_type& tol_rel_error,
+                const scalar_type& tol_abs_error) const -> bool {
+                return (error_.array().abs() <=
+                    (tol_rel_error * variable_.array().abs() + tol_abs_error))
+                    .all();
+            }
+
+            [[nodiscard]] auto operator()(const variable_type& tol_rel_error,
+                const scalar_type& tol_abs_error) const -> bool {
+                return (error_.array().abs() <=
+                    (tol_rel_error.array() * variable_.array().abs() +
+                        tol_abs_error))
+                    .all();
+            }
+
+            [[nodiscard]] auto operator()(const scalar_type& tol_rel_error,
+                const variable_type& tol_abs_error) const -> bool {
+                return (error_.array().abs() <=
+                    (tol_rel_error * variable_.array().abs() +
+                        tol_abs_error.array()))
+                    .all();
+            }
+
+            [[nodiscard]] auto operator()(const variable_type& tol_rel_error,
+                const variable_type& tol_abs_error) const -> bool {
+                return (error_.array().abs() <=
+                    (tol_rel_error.array() * variable_.array().abs() +
+                        tol_abs_error.array()))
+                    .all();
+            }
+
+        private:
+            const variable_type& variable_;
+            const variable_type& error_;
+        };
+
+        evaluator eval{variable, error};
+        return std::visit(eval, tol_rel_error_, tol_abs_error_);
     }
 
     /*!
@@ -107,11 +141,76 @@ public:
      */
     [[nodiscard]] auto calc_norm(const variable_type& variable,
         const variable_type& error) const -> scalar_type {
-        return norm_weight_ *
-            (error.cwiseQuotient(
-                 tol_rel_error_.cwiseProduct(variable.cwiseAbs()) +
-                 tol_abs_error_))
-                .norm();
+        class evaluator {
+        public:
+            evaluator(const variable_type& variable, const variable_type& error)
+                : variable_(variable), error_(error) {}
+
+            [[nodiscard]] auto operator()(const scalar_type& tol_rel_error,
+                const scalar_type& tol_abs_error) const -> scalar_type {
+                using std::sqrt;
+                return sqrt((error_.array() /
+                                (tol_rel_error * variable_.array().abs() +
+                                    tol_abs_error))
+                                .abs2()
+                                .sum() /
+                    static_cast<scalar_type>(variable_.size()));
+            }
+
+            [[nodiscard]] auto operator()(const variable_type& tol_rel_error,
+                const scalar_type& tol_abs_error) const -> scalar_type {
+                using std::sqrt;
+                return sqrt(
+                    (error_.array() /
+                        (tol_rel_error.array() * variable_.array().abs() +
+                            tol_abs_error))
+                        .abs2()
+                        .sum() /
+                    static_cast<scalar_type>(variable_.size()));
+            }
+
+            [[nodiscard]] auto operator()(const scalar_type& tol_rel_error,
+                const variable_type& tol_abs_error) const -> scalar_type {
+                using std::sqrt;
+                return sqrt((error_.array() /
+                                (tol_rel_error * variable_.array().abs() +
+                                    tol_abs_error.array()))
+                                .abs2()
+                                .sum() /
+                    static_cast<scalar_type>(variable_.size()));
+            }
+
+            [[nodiscard]] auto operator()(const variable_type& tol_rel_error,
+                const variable_type& tol_abs_error) const -> scalar_type {
+                using std::sqrt;
+                return sqrt(
+                    (error_.array() /
+                        (tol_rel_error.array() * variable_.array().abs() +
+                            tol_abs_error.array()))
+                        .abs2()
+                        .sum() /
+                    static_cast<scalar_type>(variable_.size()));
+            }
+
+        private:
+            const variable_type& variable_;
+            const variable_type& error_;
+        };
+
+        evaluator eval{variable, error};
+        return std::visit(eval, tol_rel_error_, tol_abs_error_);
+    }
+
+    /*!
+     * \brief Set the tolerance of relative error.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto tol_rel_error(const scalar_type& val) -> error_tolerances& {
+        NUM_COLLECT_ASSERT(val >= static_cast<scalar_type>(0));
+        tol_rel_error_ = val;
+        return *this;
     }
 
     /*!
@@ -121,7 +220,6 @@ public:
      * \return This.
      */
     auto tol_rel_error(const variable_type& val) -> error_tolerances& {
-        NUM_COLLECT_ASSERT(val.size() == tol_rel_error_.size());
         NUM_COLLECT_ASSERT((val.array() >= static_cast<scalar_type>(0)).all());
         tol_rel_error_ = val;
         return *this;
@@ -133,22 +231,33 @@ public:
      * \param[in] val Value.
      * \return This.
      */
+    auto tol_abs_error(const scalar_type& val) -> error_tolerances& {
+        NUM_COLLECT_ASSERT(val >= static_cast<scalar_type>(0));
+        tol_abs_error_ = val;
+        return *this;
+    }
+
+    /*!
+     * \brief Set the tolerance of absolute error.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
     auto tol_abs_error(const variable_type& val) -> error_tolerances& {
-        NUM_COLLECT_ASSERT(val.size() == tol_abs_error_.size());
         NUM_COLLECT_ASSERT((val.array() >= static_cast<scalar_type>(0)).all());
         tol_abs_error_ = val;
         return *this;
     }
 
 private:
+    //! Type of variant used for tolerances.
+    using variant_type = std::variant<scalar_type, variable_type>;
+
     //! Tolerance of relative error.
-    variable_type tol_rel_error_;
+    variant_type tol_rel_error_;
 
     //! Tolerance of absolute error.
-    variable_type tol_abs_error_;
-
-    //! Weight for error norm.
-    scalar_type norm_weight_;
+    variant_type tol_abs_error_;
 };
 
 /*!
@@ -167,10 +276,8 @@ public:
 
     /*!
      * \brief Constructor.
-     *
-     * Argument is ignored in this implementation.
      */
-    explicit error_tolerances(variable_type /*reference*/ = variable_type())
+    explicit error_tolerances()
         : tol_rel_error_(impl::default_tol_rel_error<scalar_type>),
           tol_abs_error_(impl::default_tol_abs_error<scalar_type>) {}
 

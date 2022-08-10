@@ -84,7 +84,7 @@ public:
         variable_ = variable;
         steps_ = 0;
 
-        step_size_controller_.init(variable_);
+        step_size_controller_.init();
 
         if (step_size_) {
             this->logger().trace()(

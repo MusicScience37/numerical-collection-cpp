@@ -63,6 +63,13 @@ public:
         : base_type(basic_step_size_controller_log_tag) {}
 
     /*!
+     * \brief Initialize.
+     */
+    void init() {
+        // no operation.
+    }
+
+    /*!
      * \brief Check the error estimate and calculate the next step size.
      *
      * \param[in,out] step_size Step size.

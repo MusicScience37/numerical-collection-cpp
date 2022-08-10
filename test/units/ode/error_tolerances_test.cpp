@@ -33,7 +33,7 @@ TEST_CASE("num_collect::ode::error_tolerances<vector>") {
         using variable_type = Eigen::Vector2d;
 
         const variable_type variable{{0.0, -3.0}};
-        const auto tolerances = error_tolerances<variable_type>(variable);
+        const auto tolerances = error_tolerances<variable_type>();
 
         const auto error1 = variable_type{{1e-6, 0.0}};
         const double expected_norm1 = std::sqrt(0.5);
@@ -52,7 +52,7 @@ TEST_CASE("num_collect::ode::error_tolerances<vector>") {
         const variable_type variable{{0.0, -2.0, 1.0}};
         const variable_type tol_rel_error{{1e-2, 1e-3, 1e-4}};
         const variable_type tol_abs_error{{2e-2, 2e-3, 1e-4}};
-        const auto tolerances = error_tolerances<variable_type>(variable)
+        const auto tolerances = error_tolerances<variable_type>()
                                     .tol_rel_error(tol_rel_error)
                                     .tol_abs_error(tol_abs_error);
 
@@ -68,7 +68,7 @@ TEST_CASE("num_collect::ode::error_tolerances<vector>") {
         const variable_type variable{{0.0, -2.0, 1.0}};
         const variable_type tol_rel_error{{1e-2, 1e-3, 1e-4}};
         const variable_type tol_abs_error{{2e-2, 2e-3, 1e-4}};
-        const auto tolerances = error_tolerances<variable_type>(variable)
+        const auto tolerances = error_tolerances<variable_type>()
                                     .tol_rel_error(tol_rel_error)
                                     .tol_abs_error(tol_abs_error);
 

@@ -55,9 +55,7 @@ concept step_size_controller = requires() {
 
     requires requires() { T(); };
 
-    requires requires(T & obj, const typename T::variable_type& reference) {
-        obj.init(reference);
-    };
+    requires requires(T & obj) { obj.init(); };
 
     requires requires(T & obj, typename T::scalar_type & step_size,
         const typename T::variable_type& variable,

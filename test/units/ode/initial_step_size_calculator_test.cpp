@@ -73,7 +73,7 @@ TEST_CASE("num_collect::ode::initial_step_size_calculator(actual problem)") {
         const auto limits =
             step_size_limits<double>().lower_limit(1e-8).upper_limit(1e+10);
         const auto tolerances =
-            error_tolerances<Eigen::Vector2d>(initial_variable)
+            error_tolerances<Eigen::Vector2d>()
                 .tol_rel_error(Eigen::Vector2d{{1e-6, 1e-6}})
                 .tol_abs_error(Eigen::Vector2d{{1e-6, 1e-6}});
 
