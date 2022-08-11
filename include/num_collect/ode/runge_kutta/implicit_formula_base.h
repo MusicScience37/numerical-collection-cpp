@@ -22,7 +22,7 @@
 #include <algorithm>
 
 #include "num_collect/ode/concepts/problem.h"  // IWYU pragma: keep
-#include "num_collect/ode/concepts/stage_equation_solver.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/slope_equation_solver.h"  // IWYU pragma: keep
 #include "num_collect/ode/formula_base.h"
 
 namespace num_collect::ode::runge_kutta {
@@ -35,7 +35,7 @@ namespace num_collect::ode::runge_kutta {
  * \tparam FormulaSolver Type of solver of formula.
  */
 template <typename Derived, concepts::problem Problem,
-    concepts::stage_equation_solver FormulaSolver>
+    concepts::slope_equation_solver FormulaSolver>
 class implicit_formula_base : public formula_base<Derived, Problem> {
 public:
     //! Type of base class.

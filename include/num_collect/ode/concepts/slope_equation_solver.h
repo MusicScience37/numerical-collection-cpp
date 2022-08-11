@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of stage_equation_solver concept.
+ * \brief Definition of slope_equation_solver concept.
  */
 #pragma once
 
@@ -29,13 +29,18 @@
 namespace num_collect::ode::concepts {
 
 /*!
- * \brief Concept of classes solve equations of implicit stages using inexact
- * Newton method.
+ * \brief Concept of classes solve equations of implicit slopes.
+ *
+ * This type of classes solves following equation:
+ * \f[
+ *     \boldsymbol{k}_i = \boldsymbol{f}\left(t + b_i h, \boldsymbol{y}(t)
+ *         + h \sum_{j = 1}^s a_{ij} \boldsymbol{k}_j \right)
+ * \f]
  *
  * \tparam T Type.
  */
 template <typename T>
-concept stage_equation_solver = base::concepts::iterative_solver<T> &&
+concept slope_equation_solver = base::concepts::iterative_solver<T> &&
     requires() {
     typename T::problem_type;
     requires problem<typename T::problem_type>;

@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of inexact_newton_stage_equation_solver class.
+ * \brief Definition of inexact_newton_slope_equation_solver class.
  */
 #pragma once
 
@@ -40,32 +40,44 @@
 namespace num_collect::ode {
 
 //! Log tag.
-constexpr auto inexact_newton_stage_equation_solver_tag = logging::log_tag_view(
-    "num_collect::ode::inexact_newton_stage_equation_solver");
+constexpr auto inexact_newton_slope_equation_solver_tag = logging::log_tag_view(
+    "num_collect::ode::inexact_newton_slope_equation_solver");
 
 /*!
- * \brief Class to solve equations of implicit stages using inexact Newton
+ * \brief Class to solve equations of implicit slopes using inexact Newton
  * method.
  *
- * \note This solver uses stop criterion written in \cite Hairer1991.
+ * This class solves following equation using the stop criterion written in
+ * \cite Hairer1991 :
+ *
+ * \f[
+ *     \boldsymbol{k}_i = \boldsymbol{f}\left(t + b_i h, \boldsymbol{y}(t)
+ *         + h \sum_{j = 1}^s a_{ij} \boldsymbol{k}_j \right)
+ * \f]
  *
  * \tparam Problem Type of the problem.
  */
 template <concepts::differentiable_problem Problem>
-class inexact_newton_stage_equation_solver;
+class inexact_newton_slope_equation_solver;
 
 /*!
- * \brief Class to solve equations of implicit stages using inexact Newton
+ * \brief Class to solve equations of implicit slopes using inexact Newton
  * method.
  *
- * \note This solver uses stop criterion written in \cite Hairer1991.
+ * This class solves following equation using the stop criterion written in
+ * \cite Hairer1991 :
+ *
+ * \f[
+ *     \boldsymbol{k}_i = \boldsymbol{f}\left(t + b_i h, \boldsymbol{y}(t)
+ *         + h \sum_{j = 1}^s a_{ij} \boldsymbol{k}_j \right)
+ * \f]
  *
  * \tparam Problem Type of the problem.
  */
 template <concepts::single_variate_differentiable_problem Problem>
-class inexact_newton_stage_equation_solver<Problem>
+class inexact_newton_slope_equation_solver<Problem>
     : public iterative_solver_base<
-          inexact_newton_stage_equation_solver<Problem>> {
+          inexact_newton_slope_equation_solver<Problem>> {
 public:
     //! Type of problem.
     using problem_type = Problem;
@@ -85,9 +97,9 @@ public:
     // implementation, so I postpone the implementation.
 
     //! Constructor.
-    inexact_newton_stage_equation_solver()
-        : iterative_solver_base<inexact_newton_stage_equation_solver<Problem>>(
-              inexact_newton_stage_equation_solver_tag) {}
+    inexact_newton_slope_equation_solver()
+        : iterative_solver_base<inexact_newton_slope_equation_solver<Problem>>(
+              inexact_newton_slope_equation_solver_tag) {}
 
     /*!
      * \brief Update Jacobian and internal parameters.
@@ -238,7 +250,7 @@ public:
      * \return This.
      */
     auto tolerances(const error_tolerances<variable_type>& val)
-        -> inexact_newton_stage_equation_solver& {
+        -> inexact_newton_slope_equation_solver& {
         tolerances_ = val;
         return *this;
     }
@@ -305,17 +317,23 @@ private:
 };
 
 /*!
- * \brief Class to solve equations of implicit stages using inexact Newton
+ * \brief Class to solve equations of implicit slopes using inexact Newton
  * method.
  *
- * \note This solver uses stop criterion written in \cite Hairer1991.
+ * This class solves following equation using the stop criterion written in
+ * \cite Hairer1991 :
+ *
+ * \f[
+ *     \boldsymbol{k}_i = \boldsymbol{f}\left(t + b_i h, \boldsymbol{y}(t)
+ *         + h \sum_{j = 1}^s a_{ij} \boldsymbol{k}_j \right)
+ * \f]
  *
  * \tparam Problem Type of the problem.
  */
 template <concepts::multi_variate_differentiable_problem Problem>
-class inexact_newton_stage_equation_solver<Problem>
+class inexact_newton_slope_equation_solver<Problem>
     : public iterative_solver_base<
-          inexact_newton_stage_equation_solver<Problem>> {
+          inexact_newton_slope_equation_solver<Problem>> {
 public:
     //! Type of problem.
     using problem_type = Problem;
@@ -335,9 +353,9 @@ public:
     // implementation, so I postpone the implementation.
 
     //! Constructor.
-    inexact_newton_stage_equation_solver()
-        : iterative_solver_base<inexact_newton_stage_equation_solver<Problem>>(
-              inexact_newton_stage_equation_solver_tag) {}
+    inexact_newton_slope_equation_solver()
+        : iterative_solver_base<inexact_newton_slope_equation_solver<Problem>>(
+              inexact_newton_slope_equation_solver_tag) {}
 
     /*!
      * \brief Update Jacobian and internal parameters.
@@ -496,7 +514,7 @@ public:
      * \return This.
      */
     auto tolerances(const error_tolerances<variable_type>& val)
-        -> inexact_newton_stage_equation_solver& {
+        -> inexact_newton_slope_equation_solver& {
         tolerances_ = val;
         return *this;
     }

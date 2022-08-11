@@ -10,12 +10,12 @@ package ode {
 
     package runge_kutta {
 
-        class stage_equation_solver<Problem> {
+        class slope_equation_solver<Problem> {
             + solve(problem: problem_type&,\n\ttime: scalar_type, step_size: scalar_type,\n\tvariable: const variable_type&, k_coeff: scalar_type)
             + k() : const variable_type&
             + tol_residual_norm(val: scalar_type)
         }
-        stage_equation_solver o-- error_tolerances
+        slope_equation_solver o-- error_tolerances
 
         class implicit_formula_solver_coeffs {
             {static} + stages: index_type
@@ -39,7 +39,7 @@ package ode {
             + tol_abs_residual_norm(val: scalar_type)
         }
         formula <|-- implicit_formula
-        implicit_formula o-- stage_equation_solver
+        implicit_formula o-- slope_equation_solver
         implicit_formula o-- step_equation_solver
 
         class implicit_embedded_formula<Problem> {
@@ -51,7 +51,7 @@ package ode {
             Actually one of these are used in implicit_formula
             depending on formulas.
         end note
-        implicit_formula_solver_selection_note .. stage_equation_solver
+        implicit_formula_solver_selection_note .. slope_equation_solver
         implicit_formula_solver_selection_note .. step_equation_solver
         implicit_formula_solver_selection_note .up. implicit_formula
 
