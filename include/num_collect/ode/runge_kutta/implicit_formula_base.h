@@ -34,8 +34,7 @@ namespace num_collect::ode::runge_kutta {
  * \tparam Problem Type of problem.
  * \tparam FormulaSolver Type of solver of formula.
  */
-template <typename Derived, concepts::problem Problem,
-    concepts::slope_equation_solver FormulaSolver>
+template <typename Derived, concepts::problem Problem, typename FormulaSolver>
 class implicit_formula_base : public formula_base<Derived, Problem> {
 public:
     //! Type of base class.

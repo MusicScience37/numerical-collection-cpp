@@ -22,6 +22,7 @@
 #include "runge_kutta/implicit_euler_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "runge_kutta/rk4_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "runge_kutta/rkf45_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "runge_kutta/sdirk4_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "runge_kutta/tanaka1_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "runge_kutta/tanaka2_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "simple_solver_test.cpp"     // NOLINT(bugprone-suspicious-include)
