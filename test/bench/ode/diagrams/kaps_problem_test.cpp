@@ -49,7 +49,7 @@ template <typename Solver>
 inline void bench_one(
     const std::string& solver_name, double epsilon, bench_result& result) {
     constexpr double init_time = 0.0;
-    constexpr double end_time = 10.0;
+    constexpr double end_time = 1.0;
     const Eigen::Vector2d init_var{{1.0, 1.0}};
     const Eigen::Vector2d reference{
         {std::exp(-2.0 * end_time), std::exp(-end_time)}};
