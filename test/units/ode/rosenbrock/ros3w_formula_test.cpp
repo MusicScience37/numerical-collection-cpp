@@ -26,6 +26,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
+#include <fmt/format.h>
 
 #include "comparison_approvals.h"
 #include "num_collect/ode/rosenbrock/scalar_rosenbrock_equation_solver.h"

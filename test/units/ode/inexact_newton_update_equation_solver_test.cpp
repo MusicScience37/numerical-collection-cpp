@@ -19,7 +19,12 @@
  */
 #include "num_collect/ode/inexact_newton_update_equation_solver.h"
 
+#include <initializer_list>
+#include <limits>
+#include <string>
+
 #include <catch2/catch_test_macros.hpp>
+#include <fmt/format.h>
 
 #include "comparison_approvals.h"
 #include "num_collect/ode/concepts/update_equation_solver.h"  // IWYU pragma: keep

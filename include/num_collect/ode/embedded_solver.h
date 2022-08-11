@@ -32,6 +32,7 @@
 #include "num_collect/logging/iteration_logger.h"
 #include "num_collect/ode/concepts/embedded_formula.h"      // IWYU pragma: keep
 #include "num_collect/ode/concepts/step_size_controller.h"  // IWYU pragma: keep
+#include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/initial_step_size_calculator.h"
 #include "num_collect/ode/pi_step_size_controller.h"
 #include "num_collect/ode/solver_base.h"

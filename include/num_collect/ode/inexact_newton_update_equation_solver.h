@@ -21,6 +21,7 @@
 
 #include <cmath>
 #include <optional>
+#include <string_view>
 
 #include <Eigen/Core>
 #include <Eigen/LU>
@@ -35,7 +36,6 @@
 #include "num_collect/ode/concepts/single_variate_differentiable_problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/evaluation_type.h"
-#include "num_collect/util/assert.h"
 
 namespace num_collect::ode {
 
