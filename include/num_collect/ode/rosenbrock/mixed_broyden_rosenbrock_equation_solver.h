@@ -20,7 +20,7 @@
 #pragma once
 
 #include <limits>
-#include <optional>
+#include <string_view>
 
 #include <Eigen/Core>  // IWYU pragma: keep
 #include <Eigen/LU>
