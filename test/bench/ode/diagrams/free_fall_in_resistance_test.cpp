@@ -32,6 +32,7 @@
 #include "num_collect/ode/rosenbrock/rodaspr_formula.h"
 #include "num_collect/ode/rosenbrock/ros34pw3_formula.h"
 #include "num_collect/ode/rosenbrock/ros3w_formula.h"
+#include "num_collect/ode/runge_kutta/dopri5_formula.h"
 #include "num_collect/ode/runge_kutta/rk4_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka1_formula.h"
@@ -86,6 +87,8 @@ auto main(int argc, char** argv) -> int {
 
     bench_one<num_collect::ode::runge_kutta::rkf45_solver<problem_type>>(
         "RKF45", result);
+    bench_one<num_collect::ode::runge_kutta::dopri5_solver<problem_type>>(
+        "DOPRI5", result);
     bench_one<num_collect::ode::runge_kutta::tanaka1_solver<problem_type>>(
         "Tanaka1", result);
     bench_one<num_collect::ode::runge_kutta::tanaka2_solver<problem_type>>(
