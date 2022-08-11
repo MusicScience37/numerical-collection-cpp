@@ -20,8 +20,8 @@
 #pragma once
 
 #include "num_collect/logging/logger.h"
-#include "num_collect/ode/concepts/problem.h"  // IWYU pragma: keep
-#include "num_collect/ode/concepts/slope_equation_solver.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/ode_equation_solver.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/problem.h"              // IWYU pragma: keep
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/formula_base.h"
 
@@ -34,7 +34,8 @@ namespace num_collect::ode::runge_kutta {
  * \tparam Problem Type of problem.
  * \tparam FormulaSolver Type of solver of formula.
  */
-template <typename Derived, concepts::problem Problem, typename FormulaSolver>
+template <typename Derived, concepts::problem Problem,
+    concepts::ode_equation_solver FormulaSolver>
 class implicit_formula_base : public formula_base<Derived, Problem> {
 public:
     //! Type of base class.
