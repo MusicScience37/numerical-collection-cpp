@@ -33,6 +33,7 @@
 #include "num_collect/ode/rosenbrock/rodaspr_formula.h"
 #include "num_collect/ode/rosenbrock/ros34pw3_formula.h"
 #include "num_collect/ode/rosenbrock/ros3w_formula.h"
+#include "num_collect/ode/runge_kutta/dopri5_formula.h"
 #include "num_collect/ode/runge_kutta/rk4_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka1_formula.h"
@@ -95,6 +96,17 @@ STAT_BENCH_CASE_F(free_fall_in_resistance_fixture,
     STAT_BENCH_MEASURE() {
         using solver_type =
             num_collect::ode::runge_kutta::rkf45_solver<problem_type>;
+        auto solver = solver_type(problem());
+        perform(solver);
+    };
+}
+
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(free_fall_in_resistance_fixture,
+    "ode_rk_free_fall_in_resistance", "dopri5") {
+    STAT_BENCH_MEASURE() {
+        using solver_type =
+            num_collect::ode::runge_kutta::dopri5_solver<problem_type>;
         auto solver = solver_type(problem());
         perform(solver);
     };
