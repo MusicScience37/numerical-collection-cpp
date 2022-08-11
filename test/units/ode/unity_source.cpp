@@ -13,6 +13,7 @@
 #include "pi_step_size_controller_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rosenbrock/default_rosenbrock_equation_solver_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rosenbrock/lu_rosenbrock_equation_solver_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "rosenbrock/mixed_broyden_rosenbrock_equation_solver_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rosenbrock/rodasp_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rosenbrock/rodaspr_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rosenbrock/ros34pw3_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
