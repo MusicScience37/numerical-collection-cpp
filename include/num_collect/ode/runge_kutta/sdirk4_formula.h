@@ -21,6 +21,7 @@
 
 #include <string_view>
 
+#include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/concepts/problem.h"  // IWYU pragma: keep
@@ -136,8 +137,13 @@ public:
             problem(), time, step_size, current, ad);
 
         z1_ = step_size * ad * problem().diff_coeff();
-        formula_solver().init(
-            time + b1 * step_size, static_cast<scalar_type>(0) * current, z1_);
+        if constexpr (base::concepts::real_scalar_dense_vector<variable_type>) {
+            formula_solver().init(time + b1 * step_size,
+                variable_type::Zero(current.size()), z1_);
+        } else {
+            formula_solver().init(
+                time + b1 * step_size, static_cast<variable_type>(0), z1_);
+        }
         formula_solver().solve();
         k1_ = z1_ / (step_size * ad);
 
