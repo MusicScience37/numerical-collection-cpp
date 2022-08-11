@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of inexact_newton_slope_equation_solver class.
+ * \brief Definition of inexact_newton_update_equation_solver class.
  */
 #pragma once
 
@@ -40,44 +40,49 @@
 namespace num_collect::ode {
 
 //! Log tag.
-constexpr auto inexact_newton_slope_equation_solver_tag = logging::log_tag_view(
-    "num_collect::ode::inexact_newton_slope_equation_solver");
+constexpr auto inexact_newton_update_equation_solver_tag =
+    logging::log_tag_view(
+        "num_collect::ode::inexact_newton_update_equation_solver");
 
 /*!
- * \brief Class to solve equations of implicit slopes using inexact Newton
+ * \brief Class to solve equations of implicit updates using inexact Newton
  * method.
  *
  * This class solves following equation using the stop criterion written in
  * \cite Hairer1991 :
  *
  * \f[
- *     \boldsymbol{k}_i = \boldsymbol{f}\left(t + b_i h, \boldsymbol{y}(t)
- *         + h \sum_{j = 1}^s a_{ij} \boldsymbol{k}_j \right)
+ *     \boldsymbol{z}_i = h a_{ii}
+ *         \boldsymbol{f}\left(t + b_i h,
+ *             \boldsymbol{y}(t) + \boldsymbol{z}_i \right)
+ *         + \boldsymbol{z}_{offset}
  * \f]
  *
  * \tparam Problem Type of the problem.
  */
 template <concepts::differentiable_problem Problem>
-class inexact_newton_slope_equation_solver;
+class inexact_newton_update_equation_solver;
 
 /*!
- * \brief Class to solve equations of implicit slopes using inexact Newton
+ * \brief Class to solve equations of implicit updates using inexact Newton
  * method.
  *
  * This class solves following equation using the stop criterion written in
  * \cite Hairer1991 :
  *
  * \f[
- *     \boldsymbol{k}_i = \boldsymbol{f}\left(t + b_i h, \boldsymbol{y}(t)
- *         + h \sum_{j = 1}^s a_{ij} \boldsymbol{k}_j \right)
+ *     \boldsymbol{z}_i = h a_{ii}
+ *         \boldsymbol{f}\left(t + b_i h,
+ *             \boldsymbol{y}(t) + \boldsymbol{z}_i \right)
+ *         + \boldsymbol{z}_{offset}
  * \f]
  *
  * \tparam Problem Type of the problem.
  */
 template <concepts::single_variate_differentiable_problem Problem>
-class inexact_newton_slope_equation_solver<Problem>
+class inexact_newton_update_equation_solver<Problem>
     : public iterative_solver_base<
-          inexact_newton_slope_equation_solver<Problem>> {
+          inexact_newton_update_equation_solver<Problem>> {
 public:
     //! Type of problem.
     using problem_type = Problem;
@@ -97,9 +102,9 @@ public:
     // implementation, so I postpone the implementation.
 
     //! Constructor.
-    inexact_newton_slope_equation_solver()
-        : iterative_solver_base<inexact_newton_slope_equation_solver<Problem>>(
-              inexact_newton_slope_equation_solver_tag) {}
+    inexact_newton_update_equation_solver()
+        : iterative_solver_base<inexact_newton_update_equation_solver<Problem>>(
+              inexact_newton_update_equation_solver_tag) {}
 
     /*!
      * \brief Update Jacobian and internal parameters.
@@ -108,24 +113,24 @@ public:
      * \param[in] time Time.
      * \param[in] step_size Step size.
      * \param[in] variable Variable.
-     * \param[in] solution_coeff Coefficient to multiply to solution in the
+     * \param[in] slope_coeff Coefficient to multiply to slope in the
      * equation.
      */
     void update_jacobian(problem_type& problem, scalar_type time,
         scalar_type step_size, const variable_type& variable,
-        scalar_type solution_coeff) {
+        scalar_type slope_coeff) {
         problem_ = &problem;
         time_ = time;
         step_size_ = step_size;
         variable_ = variable;
-        solution_coeff_ = solution_coeff;
+        slope_coeff_ = slope_coeff;
 
         problem_->evaluate_on(time_, variable_,
             evaluation_type{.diff_coeff = true, .jacobian = true});
 
         coeff_inverse_ = static_cast<jacobian_type>(1) /
             (static_cast<jacobian_type>(1) -
-                step_size_ * solution_coeff_ * problem_->jacobian());
+                step_size_ * slope_coeff_ * problem_->jacobian());
         using std::isfinite;
         if (!isfinite(coeff_inverse_)) {
             throw algorithm_failure("Failed to calculate inverse.");
@@ -135,9 +140,12 @@ public:
     /*!
      * \brief Initialize for solving an equation.
      *
+     * \param[in] solution_offset Offset of the solution added to the term of
+     * slopes.
      * \param[in,out] solution Solution.
      */
-    void init(variable_type& solution) {
+    void init(const variable_type& solution_offset, variable_type& solution) {
+        solution_offset_ = solution_offset;
         solution_ = &solution;
         update_norm_.reset();
         update_reduction_rate_.reset();
@@ -155,12 +163,13 @@ public:
             throw precondition_not_satisfied("Initialization is not done yet.");
         }
 
-        temp_variable_ =
-            variable_ + step_size_ * solution_coeff_ * (*solution_);
+        temp_variable_ = variable_ + (*solution_);
 
         problem_->evaluate_on(
             time_, temp_variable_, evaluation_type{.diff_coeff = true});
-        residual_ = (*solution_) - problem_->diff_coeff();
+        residual_ = (*solution_) -
+            step_size_ * slope_coeff_ * problem_->diff_coeff() -
+            solution_offset_;
         update_ = -coeff_inverse_ * residual_;
         *solution_ += update_;
 
@@ -208,6 +217,15 @@ public:
     }
 
     /*!
+     * \brief Get the offset of the solution added to the term of slopes.
+     *
+     * \return Value.
+     */
+    [[nodiscard]] auto solution_offset() const -> const variable_type& {
+        return solution_offset_;
+    }
+
+    /*!
      * \brief Get the norm of update.
      *
      * \return Norm of update.
@@ -233,7 +251,7 @@ public:
      * \return This.
      */
     auto tolerances(const error_tolerances<variable_type>& val)
-        -> inexact_newton_slope_equation_solver& {
+        -> inexact_newton_update_equation_solver& {
         tolerances_ = val;
         return *this;
     }
@@ -258,11 +276,14 @@ private:
     //! Step size.
     scalar_type step_size_{};
 
-    //! Coefficient to multiply to solution in the equation.
-    scalar_type solution_coeff_{};
+    //! Coefficient to multiply to slope in the equation.
+    scalar_type slope_coeff_{};
 
     //! Variable.
     variable_type variable_{};
+
+    //! Offset of the solution added to the term of slopes.
+    variable_type solution_offset_{};
 
     //! Solution.
     variable_type* solution_{nullptr};
@@ -300,23 +321,25 @@ private:
 };
 
 /*!
- * \brief Class to solve equations of implicit slopes using inexact Newton
+ * \brief Class to solve equations of implicit updates using inexact Newton
  * method.
  *
  * This class solves following equation using the stop criterion written in
  * \cite Hairer1991 :
  *
  * \f[
- *     \boldsymbol{k}_i = \boldsymbol{f}\left(t + b_i h, \boldsymbol{y}(t)
- *         + h \sum_{j = 1}^s a_{ij} \boldsymbol{k}_j \right)
+ *     \boldsymbol{z}_i = h a_{ii}
+ *         \boldsymbol{f}\left(t + b_i h,
+ *             \boldsymbol{y}(t) + \boldsymbol{z}_i \right)
+ *         + \boldsymbol{z}_{offset}
  * \f]
  *
  * \tparam Problem Type of the problem.
  */
 template <concepts::multi_variate_differentiable_problem Problem>
-class inexact_newton_slope_equation_solver<Problem>
+class inexact_newton_update_equation_solver<Problem>
     : public iterative_solver_base<
-          inexact_newton_slope_equation_solver<Problem>> {
+          inexact_newton_update_equation_solver<Problem>> {
 public:
     //! Type of problem.
     using problem_type = Problem;
@@ -336,9 +359,9 @@ public:
     // implementation, so I postpone the implementation.
 
     //! Constructor.
-    inexact_newton_slope_equation_solver()
-        : iterative_solver_base<inexact_newton_slope_equation_solver<Problem>>(
-              inexact_newton_slope_equation_solver_tag) {}
+    inexact_newton_update_equation_solver()
+        : iterative_solver_base<inexact_newton_update_equation_solver<Problem>>(
+              inexact_newton_update_equation_solver_tag) {}
 
     /*!
      * \brief Update Jacobian and internal parameters.
@@ -348,34 +371,41 @@ public:
      * \param[in] time Time.
      * \param[in] step_size Step size.
      * \param[in] variable Variable.
-     * \param[in] solution_coeff Coefficient to multiply to solution in the
+     * \param[in] slope_coeff Coefficient to multiply to slope in the
      * equation.
      */
     template <typename VariableExpression>
     void update_jacobian(problem_type& problem, scalar_type time,
         scalar_type step_size,
         const Eigen::MatrixBase<VariableExpression>& variable,
-        scalar_type solution_coeff) {
+        scalar_type slope_coeff) {
         problem_ = &problem;
         time_ = time;
         step_size_ = step_size;
         variable_ = variable;
-        solution_coeff_ = solution_coeff;
+        slope_coeff_ = slope_coeff;
 
         problem_->evaluate_on(time_, variable_,
             evaluation_type{.diff_coeff = true, .jacobian = true});
 
         const index_type dim = variable_.size();
         lu_.compute(jacobian_type::Identity(dim, dim) -
-            step_size_ * solution_coeff_ * problem_->jacobian());
+            step_size_ * slope_coeff_ * problem_->jacobian());
     }
 
     /*!
      * \brief Initialize for solving an equation.
      *
+     * \tparam OffsetExpression Type of the matrix expression of
+     * solution_offset.
+     * \param[in] solution_offset Offset of the solution added to the term of
+     * slopes.
      * \param[in,out] solution Solution.
      */
-    void init(variable_type& solution) {
+    template <typename OffsetExpression>
+    void init(const Eigen::MatrixBase<OffsetExpression>& solution_offset,
+        variable_type& solution) {
+        solution_offset_ = solution_offset;
         solution_ = &solution;
         update_norm_.reset();
         update_reduction_rate_.reset();
@@ -393,12 +423,13 @@ public:
             throw precondition_not_satisfied("Initialization is not done yet.");
         }
 
-        temp_variable_ =
-            variable_ + step_size_ * solution_coeff_ * (*solution_);
+        temp_variable_ = variable_ + (*solution_);
 
         problem_->evaluate_on(
             time_, temp_variable_, evaluation_type{.diff_coeff = true});
-        residual_ = (*solution_) - problem_->diff_coeff();
+        residual_ = (*solution_) -
+            step_size_ * slope_coeff_ * problem_->diff_coeff() -
+            solution_offset_;
         update_ = -lu_.solve(residual_);
         if (!update_.array().isFinite().all()) {
             this->logger().error()(
@@ -452,6 +483,15 @@ public:
     }
 
     /*!
+     * \brief Get the offset of the solution added to the term of slopes.
+     *
+     * \return Value.
+     */
+    [[nodiscard]] auto solution_offset() const -> const variable_type& {
+        return solution_offset_;
+    }
+
+    /*!
      * \brief Get the norm of update.
      *
      * \return Norm of update.
@@ -477,7 +517,7 @@ public:
      * \return This.
      */
     auto tolerances(const error_tolerances<variable_type>& val)
-        -> inexact_newton_slope_equation_solver& {
+        -> inexact_newton_update_equation_solver& {
         tolerances_ = val;
         return *this;
     }
@@ -502,11 +542,14 @@ private:
     //! Step size.
     scalar_type step_size_{};
 
-    //! Coefficient to multiply to solution in the equation.
-    scalar_type solution_coeff_{};
+    //! Coefficient to multiply to slope in the equation.
+    scalar_type slope_coeff_{};
 
     //! Variable.
     variable_type variable_{};
+
+    //! Offset of the solution added to the term of slopes.
+    variable_type solution_offset_{};
 
     //! Solution.
     variable_type* solution_{nullptr};

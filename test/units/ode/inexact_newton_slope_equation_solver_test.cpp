@@ -48,7 +48,7 @@ TEST_CASE("num_collect::ode::inexact_newton_slope_equation_solver(scalar)") {
         solver.update_jacobian(
             problem, init_time, step_size, init_var, solution_coeff);
         double solution{0.0};
-        solver.init(init_time, step_size, init_var, solution);
+        solver.init(solution);
         solver.solve();
 
         const double variable = init_var + step_size * solution;
@@ -85,7 +85,7 @@ TEST_CASE("num_collect::ode::inexact_newton_slope_equation_solver(scalar)") {
         CHECK_THROWS(solver.solve());
 
         double solution{0.0};
-        solver.init(init_time, step_size, init_var, solution);
+        solver.init(solution);
         CHECK_NOTHROW(solver.solve());
     }
 }
@@ -112,7 +112,7 @@ TEST_CASE("num_collect::ode::inexact_newton_slope_equation_solver(vector)") {
         solver.update_jacobian(
             problem, init_time, step_size, init_var, solution_coeff);
         Eigen::Vector2d solution;
-        solver.init(init_time, step_size, init_var, solution);
+        solver.init(solution);
         solver.solve();
 
         const Eigen::Vector2d variable = init_var + step_size * solution;
@@ -134,7 +134,7 @@ TEST_CASE("num_collect::ode::inexact_newton_slope_equation_solver(vector)") {
         solver.update_jacobian(
             problem, init_time, step_size, init_var, solution_coeff);
         Eigen::Vector2d solution;
-        solver.init(init_time, step_size, init_var, solution);
+        solver.init(solution);
         CHECK_THROWS(solver.solve());
     }
 
@@ -154,7 +154,7 @@ TEST_CASE("num_collect::ode::inexact_newton_slope_equation_solver(vector)") {
         CHECK_THROWS(solver.solve());
 
         Eigen::Vector2d solution;
-        solver.init(init_time, step_size, init_var, solution);
+        solver.init(solution);
         CHECK_NOTHROW(solver.solve());
     }
 }
