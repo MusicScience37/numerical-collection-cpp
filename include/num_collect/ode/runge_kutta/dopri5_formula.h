@@ -31,7 +31,7 @@
 namespace num_collect::ode::runge_kutta {
 
 /*!
- * \brief Class of DOPRI5 formula.
+ * \brief Class of DOPRI5 formula using coefficients in \cite Hairer1991.
  *
  * \tparam Problem Type of problem.
  */
@@ -132,6 +132,92 @@ public:
     static constexpr scalar_type ce6 = c6 - cw6;
     static constexpr scalar_type ce7 = -cw7;
     ///@}
+
+    //! \copydoc ode::formula_base::step
+    void step(scalar_type time, scalar_type step_size,
+        const variable_type& current, variable_type& estimate) {
+        constexpr auto evaluations = evaluation_type{.diff_coeff = true};
+
+        problem().evaluate_on(time, current, evaluations);
+        k1_ = problem().diff_coeff();
+
+        problem().evaluate_on(time + b2 * step_size,
+            current + step_size * a21 * k1_, evaluations);
+        k2_ = problem().diff_coeff();
+
+        problem().evaluate_on(time + b3 * step_size,
+            current + step_size * (a31 * k1_ + a32 * k2_), evaluations);
+        k3_ = problem().diff_coeff();
+
+        problem().evaluate_on(time + b4 * step_size,
+            current + step_size * (a41 * k1_ + a42 * k2_ + a43 * k3_),
+            evaluations);
+        k4_ = problem().diff_coeff();
+
+        problem().evaluate_on(time + b5 * step_size,
+            current +
+                step_size * (a51 * k1_ + a52 * k2_ + a53 * k3_ + a54 * k4_),
+            evaluations);
+        k5_ = problem().diff_coeff();
+
+        problem().evaluate_on(time + b6 * step_size,
+            current +
+                step_size *
+                    (a61 * k1_ + a62 * k2_ + a63 * k3_ + a64 * k4_ + a65 * k5_),
+            evaluations);
+        k6_ = problem().diff_coeff();
+
+        estimate = current +
+            step_size * (c1 * k1_ + c3 * k3_ + c4 * k4_ + c5 * k5_ + c6 * k6_);
+    }
+
+    /*!
+     * \brief Compute the next variable and weak estimate of it with embedded
+     * formula.
+     *
+     * \param[in] time Current time.
+     * \param[in] step_size Step size.
+     * \param[in] current Current variable.
+     * \param[out] estimate Estimate of the next variable.
+     * \param[out] error Estimate of error.
+     */
+    void step_embedded(scalar_type time, scalar_type step_size,
+        const variable_type& current, variable_type& estimate,
+        variable_type& error) {
+        step(time, step_size, current, estimate);
+
+        constexpr auto evaluations = evaluation_type{.diff_coeff = true};
+        problem().evaluate_on(time + b7 * step_size, estimate, evaluations);
+        k7_ = problem().diff_coeff();
+
+        error = step_size *
+            (ce1 * k1_ + ce3 * k3_ + ce4 * k4_ + ce5 * k5_ + ce6 * k6_ +
+                ce7 * k7_);
+    }
+
+private:
+    /*!
+     * \name Intermediate variables.
+     */
+    ///@{
+    //! Intermediate variable.
+    variable_type k1_{};
+    variable_type k2_{};
+    variable_type k3_{};
+    variable_type k4_{};
+    variable_type k5_{};
+    variable_type k6_{};
+    variable_type k7_{};
+    ///@}
 };
+
+/*!
+ * \brief Class of solver using DOPRI5 formula with coefficients in
+ * \cite Hairer1991.
+ *
+ * \tparam Problem Type of problem.
+ */
+template <concepts::problem Problem>
+using dopri5_solver = embedded_solver<dopri5_formula<Problem>>;
 
 }  // namespace num_collect::ode::runge_kutta
