@@ -32,6 +32,7 @@
     "DFMT",
     "DNUM",
     "DontAlign",
+    "DOPRI",
     "doxygen",
     "Eigen",
     "Elden",
