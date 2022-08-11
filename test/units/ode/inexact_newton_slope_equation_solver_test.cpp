@@ -15,25 +15,29 @@
  */
 /*!
  * \file
- * \brief Test of inexact_newton_stage_equation_solver class.
+ * \brief Test of inexact_newton_slope_equation_solver class.
  */
-#include "num_collect/ode/inexact_newton_stage_equation_solver.h"
+#include "num_collect/ode/inexact_newton_slope_equation_solver.h"
+
+#include <limits>
+#include <string>
 
 #include <catch2/catch_test_macros.hpp>
+#include <fmt/format.h>
 
 #include "comparison_approvals.h"
-#include "num_collect/ode/concepts/stage_equation_solver.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/slope_equation_solver.h"  // IWYU pragma: keep
 #include "num_prob_collect/ode/exponential_problem.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
 
-TEST_CASE("num_collect::ode::inexact_newton_stage_equation_solver(scalar)") {
+TEST_CASE("num_collect::ode::inexact_newton_slope_equation_solver(scalar)") {
     using problem_type = num_prob_collect::ode::exponential_problem;
     using solver_type =
-        num_collect::ode::inexact_newton_stage_equation_solver<problem_type>;
+        num_collect::ode::inexact_newton_slope_equation_solver<problem_type>;
 
     SECTION("check concept") {
         STATIC_REQUIRE(
-            num_collect::ode::concepts::stage_equation_solver<solver_type>);
+            num_collect::ode::concepts::slope_equation_solver<solver_type>);
     }
 
     SECTION("solve for implicit Euler method") {
@@ -48,7 +52,7 @@ TEST_CASE("num_collect::ode::inexact_newton_stage_equation_solver(scalar)") {
         solver.update_jacobian(
             problem, init_time, step_size, init_var, solution_coeff);
         double solution{0.0};
-        solver.init(init_time, step_size, init_var, solution);
+        solver.init(solution);
         solver.solve();
 
         const double variable = init_var + step_size * solution;
@@ -85,19 +89,19 @@ TEST_CASE("num_collect::ode::inexact_newton_stage_equation_solver(scalar)") {
         CHECK_THROWS(solver.solve());
 
         double solution{0.0};
-        solver.init(init_time, step_size, init_var, solution);
+        solver.init(solution);
         CHECK_NOTHROW(solver.solve());
     }
 }
 
-TEST_CASE("num_collect::ode::inexact_newton_stage_equation_solver(vector)") {
+TEST_CASE("num_collect::ode::inexact_newton_slope_equation_solver(vector)") {
     using problem_type = num_prob_collect::ode::spring_movement_problem;
     using solver_type =
-        num_collect::ode::inexact_newton_stage_equation_solver<problem_type>;
+        num_collect::ode::inexact_newton_slope_equation_solver<problem_type>;
 
     SECTION("check concept") {
         STATIC_REQUIRE(
-            num_collect::ode::concepts::stage_equation_solver<solver_type>);
+            num_collect::ode::concepts::slope_equation_solver<solver_type>);
     }
 
     SECTION("solve for implicit Euler method") {
@@ -112,7 +116,7 @@ TEST_CASE("num_collect::ode::inexact_newton_stage_equation_solver(vector)") {
         solver.update_jacobian(
             problem, init_time, step_size, init_var, solution_coeff);
         Eigen::Vector2d solution;
-        solver.init(init_time, step_size, init_var, solution);
+        solver.init(solution);
         solver.solve();
 
         const Eigen::Vector2d variable = init_var + step_size * solution;
@@ -134,7 +138,7 @@ TEST_CASE("num_collect::ode::inexact_newton_stage_equation_solver(vector)") {
         solver.update_jacobian(
             problem, init_time, step_size, init_var, solution_coeff);
         Eigen::Vector2d solution;
-        solver.init(init_time, step_size, init_var, solution);
+        solver.init(solution);
         CHECK_THROWS(solver.solve());
     }
 
@@ -154,7 +158,7 @@ TEST_CASE("num_collect::ode::inexact_newton_stage_equation_solver(vector)") {
         CHECK_THROWS(solver.solve());
 
         Eigen::Vector2d solution;
-        solver.init(init_time, step_size, init_var, solution);
+        solver.init(solution);
         CHECK_NOTHROW(solver.solve());
     }
 }
