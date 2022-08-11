@@ -172,7 +172,7 @@ private:
  *
  * \tparam Problem Type of problem.
  */
-template <concepts::differentiable_problem Problem>
+template <concepts::problem Problem>
 using tanaka2_solver = embedded_solver<tanaka2_formula<Problem>>;
 
 }  // namespace num_collect::ode::runge_kutta

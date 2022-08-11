@@ -65,4 +65,118 @@ TEST_CASE("num_collect::ode::runge_kutta::sdirk4_formula") {
                 formula_type::ce5,
             Catch::Matchers::WithinAbs(0.0, 1e-10));  // NOLINT
     }
+
+    SECTION("initialize") {
+        auto formula = formula_type(problem_type());
+        (void)formula;
+    }
+
+    SECTION("step") {
+        auto formula = formula_type(problem_type());
+
+        constexpr double time = 0.0;
+        constexpr double step_size = 1e-4;
+        constexpr double prev_var = 1.0;
+        double next_var = 0.0;
+        formula.step(time, step_size, prev_var, next_var);
+
+        const double reference = std::exp(step_size);
+        comparison_approvals::verify_with_reference(next_var, reference);
+    }
+
+    SECTION("step_embedded") {
+        auto formula = formula_type(problem_type());
+
+        constexpr double time = 0.0;
+        constexpr double step_size = 1e-2;
+        constexpr double prev_var = 1.0;
+        double next_var = 0.0;
+        double error = 0.0;
+        formula.step_embedded(time, step_size, prev_var, next_var, error);
+
+        const double reference = std::exp(step_size);
+        comparison_approvals::verify_with_reference_and_error(
+            next_var, error, reference);
+    }
+}
+
+TEST_CASE(
+    "num_collect::ode::runge_kutta::sdirk4_solver<num_prob_collect::ode::"
+    "exponential_problem>") {
+    using problem_type = num_prob_collect::ode::exponential_problem;
+    using solver_type =
+        num_collect::ode::runge_kutta::sdirk4_solver<problem_type>;
+
+    SECTION("solve_till") {
+        auto solver = solver_type(problem_type());
+
+        constexpr double init_time = 1.234;
+        constexpr double init_var = 1.0;
+        solver.init(init_time, init_var);
+
+        constexpr double duration = 2.345;
+        constexpr double end_time = init_time + duration;
+        REQUIRE_NOTHROW(solver.solve_till(end_time));
+
+        REQUIRE_THAT(solver.time(), Catch::Matchers::WithinRel(end_time));
+        const double reference = std::exp(duration);
+        comparison_approvals::verify_with_reference(
+            solver.variable(), reference);
+        REQUIRE(solver.steps() > 1);
+    }
+}
+
+TEST_CASE(
+    "num_collect::ode::runge_kutta::sdirk4_solver<num_prob_collect::ode::"
+    "spring_movement_problem>") {
+    using problem_type = num_prob_collect::ode::spring_movement_problem;
+    using solver_type =
+        num_collect::ode::runge_kutta::sdirk4_solver<problem_type>;
+
+    SECTION("solve_till") {
+        auto solver = solver_type(problem_type());
+
+        constexpr double init_time = 0.0;
+        const Eigen::Vector2d init_var = Eigen::Vector2d(1.0, 0.0);
+        solver.init(init_time, init_var);
+
+        constexpr double duration = 2.345;
+        constexpr double end_time = init_time + duration;
+        REQUIRE_NOTHROW(solver.solve_till(end_time));
+
+        REQUIRE_THAT(solver.time(), Catch::Matchers::WithinRel(end_time));
+        const Eigen::Vector2d reference =
+            Eigen::Vector2d(std::cos(end_time), std::sin(end_time));
+        comparison_approvals::verify_with_reference(
+            solver.variable(), reference);
+        REQUIRE(solver.steps() > 1);
+    }
+}
+
+TEST_CASE(
+    "num_collect::ode::runge_kutta::sdirk4_solver<num_prob_collect::ode::"
+    "external_force_vibration_problem>") {
+    using problem_type =
+        num_prob_collect::ode::external_force_vibration_problem;
+    using solver_type =
+        num_collect::ode::runge_kutta::sdirk4_solver<problem_type>;
+
+    SECTION("solve_till") {
+        auto solver = solver_type(problem_type());
+
+        constexpr double init_time = 0.0;
+        const Eigen::Vector2d init_var = Eigen::Vector2d(-1.0, 0.0);
+        solver.init(init_time, init_var);
+
+        constexpr double duration = 2.345;
+        constexpr double end_time = init_time + duration;
+        REQUIRE_NOTHROW(solver.solve_till(end_time));
+
+        REQUIRE_THAT(solver.time(), Catch::Matchers::WithinRel(end_time));
+        const Eigen::Vector2d reference =
+            Eigen::Vector2d(-std::cos(end_time), -std::sin(end_time));
+        comparison_approvals::verify_with_reference(
+            solver.variable(), reference);
+        REQUIRE(solver.steps() > 1);
+    }
 }

@@ -128,6 +128,90 @@ public:
     // ce4 = 0
     static constexpr scalar_type ce5 = c5 - cw5;
     ///@}
+
+    //! \copydoc runge_kutta::implicit_formula_base::step
+    void step(scalar_type time, scalar_type step_size,
+        const variable_type& current, variable_type& estimate) {
+        formula_solver().update_jacobian(
+            problem(), time, step_size, current, ad);
+
+        z1_ = step_size * ad * problem().diff_coeff();
+        formula_solver().init(
+            time + b1 * step_size, static_cast<scalar_type>(0) * current, z1_);
+        formula_solver().solve();
+        k1_ = z1_ / (step_size * ad);
+
+        z2_ = z1_;
+        formula_solver().init(
+            time + b2 * step_size, step_size * a21 * k1_, z2_);
+        formula_solver().solve();
+        k2_ = (z2_ - formula_solver().solution_offset()) / (step_size * ad);
+
+        z3_ = z2_;
+        formula_solver().init(
+            time + b3 * step_size, step_size * (a31 * k1_ + a32 * k2_), z3_);
+        formula_solver().solve();
+        k3_ = (z3_ - formula_solver().solution_offset()) / (step_size * ad);
+
+        z4_ = z3_;
+        formula_solver().init(time + b4 * step_size,
+            step_size * (a41 * k1_ + a42 * k2_ + a43 * k3_), z4_);
+        formula_solver().solve();
+        k4_ = (z4_ - formula_solver().solution_offset()) / (step_size * ad);
+
+        z5_ = z4_;
+        formula_solver().init(time + b5 * step_size,
+            step_size * (a51 * k1_ + a52 * k2_ + a53 * k3_ + a54 * k4_), z5_);
+        formula_solver().solve();
+
+        estimate = current + z5_;
+    }
+
+    /*!
+     * \brief Compute the next variable and weak estimate of it with embedded
+     * formula.
+     *
+     * \param[in] time Current time.
+     * \param[in] step_size Step size.
+     * \param[in] current Current variable.
+     * \param[out] estimate Estimate of the next variable.
+     * \param[out] error Estimate of error.
+     */
+    void step_embedded(scalar_type time, scalar_type step_size,
+        const variable_type& current, variable_type& estimate,
+        variable_type& error) {
+        step(time, step_size, current, estimate);
+        k5_ = (z5_ - formula_solver().solution_offset()) / (step_size * ad);
+
+        error = step_size * (ce1 * k1_ + ce2 * k2_ + ce3 * k3_ + ce5 * k5_);
+    }
+
+private:
+    /*!
+     * \name Intermediate variables.
+     */
+    ///@{
+    //! Intermediate variable.
+    variable_type k1_{};
+    variable_type k2_{};
+    variable_type k3_{};
+    variable_type k4_{};
+    variable_type k5_{};
+    variable_type z1_{};
+    variable_type z2_{};
+    variable_type z3_{};
+    variable_type z4_{};
+    variable_type z5_{};
+    ///@}
 };
+
+/*!
+ * \brief Class of solver using 4th order SDIRK (singly diagonally implicit
+ * Runge-Kutta) formula in \cite Hairer1991.
+ *
+ * \tparam Problem Type of problem.
+ */
+template <concepts::problem Problem>
+using sdirk4_solver = embedded_solver<sdirk4_formula<Problem>>;
 
 }  // namespace num_collect::ode::runge_kutta

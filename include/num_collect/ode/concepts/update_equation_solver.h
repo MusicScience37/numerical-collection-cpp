@@ -69,6 +69,12 @@ concept update_equation_solver = base::concepts::iterative_solver<T> &&
         obj.init(solution_offset, solution);
     };
 
+    requires requires(const typename T::scalar_type& time, T& obj,
+        const typename T::variable_type& solution_offset,
+        typename T::variable_type& solution) {
+        obj.init(time, solution_offset, solution);
+    };
+
     requires requires(
         T & obj, const error_tolerances<typename T::variable_type>& val) {
         obj.tolerances(val);

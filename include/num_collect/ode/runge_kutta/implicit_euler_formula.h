@@ -100,7 +100,7 @@ private:
  *
  * \tparam Problem Type of problem.
  */
-template <concepts::differentiable_problem Problem>
+template <concepts::problem Problem>
 using implicit_euler_solver = simple_solver<implicit_euler_formula<Problem>>;
 
 }  // namespace num_collect::ode::runge_kutta
