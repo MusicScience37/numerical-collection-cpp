@@ -15,8 +15,10 @@
  */
 /*!
  * \file
- * \brief Test of solving ODE of free false in resistance.
+ * \brief Test of solving Kaps' problem.
  */
+#include "num_prob_collect/ode/kaps_problem.h"
+
 #include <cmath>
 #include <memory>
 #include <type_traits>
@@ -37,43 +39,46 @@
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka1_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka2_formula.h"
-#include "num_prob_collect/ode/free_fall_in_resistance_problem.h"
 
 STAT_BENCH_MAIN
 
-using problem_type = num_prob_collect::ode::free_fall_in_resistance_problem;
+using problem_type = num_prob_collect::ode::kaps_problem;
 
 class free_fall_in_resistance_fixture : public stat_bench::FixtureBase {
 public:
     free_fall_in_resistance_fixture() {
-        add_param<double>("k")->add(1.0)->add(1e+4);  // NOLINT
+        add_param<double>("eps")
+            ->add(1.0)
+            ->add(1e-3)  // NOLINT
+#ifdef NDEBUG
+            ->add(1e-6)  // NOLINT
+#endif
+            ;
     }
 
     void setup(stat_bench::bench::InvocationContext& context) override {
-        k_ = context.get_param<double>("k");
+        eps_ = context.get_param<double>("eps");
     }
 
     [[nodiscard]] auto problem() const -> problem_type {
-        return problem_type(k_, g_);
+        return problem_type(eps_);
     }
 
     template <typename Solver>
     void perform(Solver& solver) {
         constexpr double init_time = 0.0;
-        const Eigen::Vector2d init_var = Eigen::Vector2d(0.0, 0.0);
+        const Eigen::Vector2d init_var{{1.0, 1.0}};
         solver.init(init_time, init_var);
 #ifndef NDEBUG
         constexpr double end_time = 0.1;
 #else
-        constexpr double end_time = 5.0;
+        constexpr double end_time = 1.0;
 #endif
         solver.solve_till(end_time);
         steps_ = solver.steps();
 
-        const Eigen::Vector2d reference =
-            Eigen::Vector2d((g_ / k_) * std::expm1(-k_ * end_time),
-                -(g_ / (k_ * k_)) * std::expm1(-k_ * end_time) -
-                    g_ / k_ * end_time);
+        const Eigen::Vector2d reference{
+            {std::exp(-2.0 * end_time), std::exp(-end_time)}};
         error_ = (solver.variable() - reference).norm();
     }
 
@@ -83,8 +88,7 @@ public:
     }
 
 private:
-    double k_{1.0};
-    double g_{1.0};
+    double eps_{1.0};
     num_collect::index_type steps_{};
     double error_{};
 };
@@ -161,17 +165,6 @@ STAT_BENCH_CASE_F(free_fall_in_resistance_fixture,
     STAT_BENCH_MEASURE() {
         using solver_type =
             num_collect::ode::rosenbrock::rodaspr_solver<problem_type>;
-        auto solver = solver_type(problem());
-        perform(solver);
-    };
-}
-
-// NOLINTNEXTLINE
-STAT_BENCH_CASE_F(free_fall_in_resistance_fixture,
-    "ode_rk_free_fall_in_resistance", "rk4_auto") {
-    STAT_BENCH_MEASURE() {
-        using solver_type = num_collect::ode::non_embedded_auto_solver<
-            num_collect::ode::runge_kutta::rk4_formula<problem_type>>;
         auto solver = solver_type(problem());
         perform(solver);
     };

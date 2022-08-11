@@ -12,3 +12,6 @@ add_bench_using_pybind11(num_collect_bench_ode_diagram_free_fall_in_resistance)
 add_executable(num_collect_bench_ode_diagram_spring_movement
                spring_movement_test.cpp)
 add_bench_using_pybind11(num_collect_bench_ode_diagram_spring_movement)
+
+add_executable(num_collect_bench_ode_diagram_kaps_problem kaps_problem_test.cpp)
+add_bench_using_pybind11(num_collect_bench_ode_diagram_kaps_problem)
