@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of stage_equation_solver concept.
+ * \brief Definition of update_equation_solver concept.
  */
 #pragma once
 
@@ -29,13 +29,20 @@
 namespace num_collect::ode::concepts {
 
 /*!
- * \brief Concept of classes solve equations of implicit stages using inexact
- * Newton method.
+ * \brief Concept of classes solve equations of implicit updates.
+ *
+ * This type of classes solves following equation:
+ * \f[
+ *     \boldsymbol{z}_i = h a_{ii}
+ *         \boldsymbol{f}\left(t + b_i h,
+ *             \boldsymbol{y}(t) + \boldsymbol{z}_i \right)
+ *         + \boldsymbol{z}_{offset}
+ * \f]
  *
  * \tparam T Type.
  */
 template <typename T>
-concept stage_equation_solver = base::concepts::iterative_solver<T> &&
+concept update_equation_solver = base::concepts::iterative_solver<T> &&
     requires() {
     typename T::problem_type;
     requires problem<typename T::problem_type>;
@@ -57,20 +64,20 @@ concept stage_equation_solver = base::concepts::iterative_solver<T> &&
         obj.update_jacobian(problem, time, step_size, variable, solution_coeff);
     };
 
-    requires requires(T & obj, typename T::variable_type & solution) {
-        obj.init(solution);
-    };
-
-    requires requires(T & obj, typename T::scalar_type time,
-        typename T::scalar_type step_size,
-        const typename T::variable_type& variable,
+    requires requires(T & obj, const typename T::variable_type& solution_offset,
         typename T::variable_type& solution) {
-        obj.init(time, step_size, variable, solution);
+        obj.init(solution_offset, solution);
     };
 
     requires requires(
         T & obj, const error_tolerances<typename T::variable_type>& val) {
         obj.tolerances(val);
+    };
+
+    requires requires(const T& obj) {
+        {
+            obj.solution_offset()
+            } -> base::concepts::const_reference_of<typename T::variable_type>;
     };
 
     requires requires(const T& obj) {

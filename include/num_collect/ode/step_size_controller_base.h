@@ -19,10 +19,6 @@
  */
 #pragma once
 
-#include <optional>
-#include <string_view>
-
-#include "num_collect/base/exception.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_mixin.h"
 #include "num_collect/ode/concepts/formula.h"  // IWYU pragma: keep

@@ -24,9 +24,9 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/constants/one.h"  // IWYU pragma: keep
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/ode/concepts/differentiable_problem.h"  // IWYU pragma: keep
-#include "num_collect/ode/concepts/stage_equation_solver.h"  // IWYU pragma: keep
-#include "num_collect/ode/inexact_newton_stage_equation_solver.h"
+#include "num_collect/ode/concepts/problem.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/slope_equation_solver.h"  // IWYU pragma: keep
+#include "num_collect/ode/inexact_newton_slope_equation_solver.h"
 #include "num_collect/ode/runge_kutta/implicit_formula_base.h"
 #include "num_collect/ode/simple_solver.h"
 
@@ -38,9 +38,9 @@ namespace num_collect::ode::runge_kutta {
  * \tparam Problem Type of problem.
  * \tparam FormulaSolver Type of solver of formula.
  */
-template <concepts::differentiable_problem Problem,
-    concepts::stage_equation_solver FormulaSolver =
-        inexact_newton_stage_equation_solver<Problem>>
+template <concepts::problem Problem,
+    concepts::slope_equation_solver FormulaSolver =
+        inexact_newton_slope_equation_solver<Problem>>
 class implicit_euler_formula
     : public implicit_formula_base<
           implicit_euler_formula<Problem, FormulaSolver>, Problem,

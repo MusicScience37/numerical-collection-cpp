@@ -27,6 +27,7 @@
 #include <fmt/format.h>
 
 #include "num_collect/ode/error_tolerances.h"
+#include "num_collect/ode/rosenbrock/lu_rosenbrock_equation_solver.h"
 #include "num_collect/ode/rosenbrock/ros3w_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
 #include "num_collect/ode/step_size_limits.h"

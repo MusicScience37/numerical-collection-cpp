@@ -28,6 +28,26 @@ async def cancel_process(process: trio.Process):
     process.send_signal(signal.SIGKILL)
 
 
+def remove_correct_lines(target: str) -> str:
+
+    result = ""
+    prev_line_removed = False
+    for line in target.splitlines():
+        remove_this_line = False
+        if "has correct #includes/fwd-decls)" in line:
+            remove_this_line = True
+        if prev_line_removed and line == "":
+            remove_this_line = True
+
+        if remove_this_line:
+            prev_line_removed = True
+        else:
+            prev_line_removed = False
+            result = result + line + "\n"
+
+    return result
+
+
 async def apply_iwyu_to_file(
     filepath: str,
     build_dir: str,
@@ -57,13 +77,9 @@ async def apply_iwyu_to_file(
             tqdm_obj.write(click.style(f"> {filepath}: OK", fg="green"))
             tqdm_obj.update()
         else:
-            tqdm_obj.write(
-                click.style(f"> {filepath}: NG", fg="red")
-                + "\n"
-                + result.stdout.decode("utf8")
-                + "\n"
-                + result.stderr.decode("utf8")
-            )
+            console = result.stdout.decode("utf8") + "\n" + result.stderr.decode("utf8")
+            console = remove_correct_lines(console)
+            tqdm_obj.write(click.style(f"> {filepath}: NG", fg="red") + "\n" + console)
             IS_SUCCESS = False
             if stop_on_error:
                 raise IwyuProcessError(f"Error in {filepath}.")
