@@ -32,6 +32,7 @@
 
 #include <Eigen/Core>
 #include <fmt/format.h>
+#include <gil.h>
 #include <pybind11/embed.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -190,41 +191,49 @@ void write_result(std::string_view problem_name, const bench_result& result,
     std::string_view output_directory) {
     num_collect::logging::logger().info()("Write results.");
 
-    pybind11::scoped_interpreter interpreter;
-    auto pd = pybind11::module::import("pandas");
-    auto px = pybind11::module::import("plotly.express");
+    static pybind11::scoped_interpreter interpreter;
+    pybind11::gil_scoped_acquire gil;
+    try {
+        auto pd = pybind11::module::import("pandas");
+        auto px = pybind11::module::import("plotly.express");
 
-    const std::string solver_key = "Solver";
-    const std::string tolerance_key = "Err. Tol.";
-    const std::string error_key = "Error";
-    const std::string time_key = "Time [sec]";
+        const std::string solver_key = "Solver";
+        const std::string tolerance_key = "Err. Tol.";
+        const std::string error_key = "Error";
+        const std::string time_key = "Time [sec]";
 
-    std::unordered_map<std::string, pybind11::object> data;
-    data.try_emplace(solver_key, pybind11::cast(result.solver_list));
-    data.try_emplace(tolerance_key, pybind11::cast(result.tolerance_list));
-    data.try_emplace(error_key, pybind11::cast(result.error_list));
-    data.try_emplace(time_key, pybind11::cast(result.time_list));
+        std::unordered_map<std::string, pybind11::object> data;
+        data.try_emplace(solver_key, pybind11::cast(result.solver_list));
+        data.try_emplace(tolerance_key, pybind11::cast(result.tolerance_list));
+        data.try_emplace(error_key, pybind11::cast(result.error_list));
+        data.try_emplace(time_key, pybind11::cast(result.time_list));
 
-    auto fig = px.attr("line")(              //
-        pybind11::arg("data_frame") = data,  //
-        pybind11::arg("x") = time_key,
-        pybind11::arg("y") = error_key,       //
-        pybind11::arg("color") = solver_key,  //
-        pybind11::arg("hover_data") = std::vector<std::string>{solver_key,
-            tolerance_key, error_key, time_key},  //
-        pybind11::arg("markers") = true,          //
-        pybind11::arg("log_x") = true,            //
-        pybind11::arg("log_y") = true);
+        auto fig = px.attr("line")(              //
+            pybind11::arg("data_frame") = data,  //
+            pybind11::arg("x") = time_key,
+            pybind11::arg("y") = error_key,       //
+            pybind11::arg("color") = solver_key,  //
+            pybind11::arg("hover_data") = std::vector<std::string>{solver_key,
+                tolerance_key, error_key, time_key},  //
+            pybind11::arg("markers") = true,          //
+            pybind11::arg("log_x") = true,            //
+            pybind11::arg("log_y") = true);
 
-    const std::string base_name =
-        fmt::format("{}/diagrams/{}", output_directory, problem_name);
-    std::filesystem::create_directories(
-        std::filesystem::path(base_name).parent_path());
+        const std::string base_name =
+            fmt::format("{}/diagrams/{}", output_directory, problem_name);
+        std::filesystem::create_directories(
+            std::filesystem::path(base_name).parent_path());
 
-    fig.attr("write_html")(fmt::format("{}.html", base_name));
-    fig.attr("write_image")(fmt::format("{}.png", base_name));
+        fig.attr("write_html")(fmt::format("{}.html", base_name));
+        fig.attr("write_image")(fmt::format("{}.png", base_name));
 
-    num_collect::logging::logger().info()("Wrote results to {}.", base_name);
+        num_collect::logging::logger().info()(
+            "Wrote results to {}.", base_name);
+    } catch (const std::exception& e) {
+        num_collect::logging::logger().error()(
+            "Exception in writing the result: {}", e.what());
+        PyErr_Clear();
+    }
 }
 
 /*!
