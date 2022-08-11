@@ -108,8 +108,8 @@ public:
             return;
         }
 
-        problem.evaluate_on(time, variable,
-            evaluation_type{.diff_coeff = true, .jacobian = true});
+        problem.evaluate_on(
+            time, variable, evaluation_type{.diff_coeff = true});
         q_ = problem.diff_coeff() - diff_coeff_;
         v_ = s_ - step_size * inverted_jacobian_coeff_ * q_;
         if (v_.norm() <
