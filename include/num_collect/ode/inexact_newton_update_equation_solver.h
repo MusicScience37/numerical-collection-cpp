@@ -148,7 +148,15 @@ public:
         solution_offset_ = solution_offset;
         solution_ = &solution;
         update_norm_.reset();
-        update_reduction_rate_.reset();
+        if (update_reduction_rate_) {
+            constexpr auto exponent = static_cast<scalar_type>(0.8);
+            constexpr auto min_rate = static_cast<scalar_type>(0.5);
+            using std::pow;
+            *update_reduction_rate_ = pow(*update_reduction_rate_, exponent);
+            if (*update_reduction_rate_ < min_rate) {
+                *update_reduction_rate_ = min_rate;
+            }
+        }
         iterations_ = 0;
     }
 
@@ -408,7 +416,15 @@ public:
         solution_offset_ = solution_offset;
         solution_ = &solution;
         update_norm_.reset();
-        update_reduction_rate_.reset();
+        if (update_reduction_rate_) {
+            constexpr auto exponent = static_cast<scalar_type>(0.8);
+            constexpr auto min_rate = static_cast<scalar_type>(0.5);
+            using std::pow;
+            *update_reduction_rate_ = pow(*update_reduction_rate_, exponent);
+            if (*update_reduction_rate_ < min_rate) {
+                *update_reduction_rate_ = min_rate;
+            }
+        }
         iterations_ = 0;
     }
 
