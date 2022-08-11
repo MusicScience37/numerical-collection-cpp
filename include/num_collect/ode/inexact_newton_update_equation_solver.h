@@ -161,6 +161,20 @@ public:
     }
 
     /*!
+     * \brief Initialize for solving an equation.
+     *
+     * \param[in] time Time.
+     * \param[in] solution_offset Offset of the solution added to the term of
+     * slopes.
+     * \param[in,out] solution Solution.
+     */
+    void init(const scalar_type& time, const variable_type& solution_offset,
+        variable_type& solution) {
+        time_ = time;
+        init(solution_offset, solution);
+    }
+
+    /*!
      * \brief Iterate the algorithm once.
      *
      * \warning Any required initializations (with update_jacobian, init
@@ -426,6 +440,24 @@ public:
             }
         }
         iterations_ = 0;
+    }
+
+    /*!
+     * \brief Initialize for solving an equation.
+     *
+     * \tparam OffsetExpression Type of the matrix expression of
+     * solution_offset.
+     * \param[in] time Time.
+     * \param[in] solution_offset Offset of the solution added to the term of
+     * slopes.
+     * \param[in,out] solution Solution.
+     */
+    template <typename OffsetExpression>
+    void init(const scalar_type& time,
+        const Eigen::MatrixBase<OffsetExpression>& solution_offset,
+        variable_type& solution) {
+        time_ = time;
+        init(solution_offset, solution);
     }
 
     /*!

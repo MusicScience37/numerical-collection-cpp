@@ -23,6 +23,7 @@ set(SOURCE_FILES
     runge_kutta/implicit_euler_formula_test.cpp
     runge_kutta/rk4_formula_test.cpp
     runge_kutta/rkf45_formula_test.cpp
+    runge_kutta/sdirk4_formula_test.cpp
     runge_kutta/tanaka1_formula_test.cpp
     runge_kutta/tanaka2_formula_test.cpp
     simple_solver_test.cpp

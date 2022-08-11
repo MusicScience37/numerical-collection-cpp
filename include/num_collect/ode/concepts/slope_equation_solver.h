@@ -19,12 +19,8 @@
  */
 #pragma once
 
-#include <type_traits>  // IWYU pragma: keep
-
 #include "num_collect/base/concepts/const_reference_of.h"  // IWYU pragma: keep
-#include "num_collect/base/concepts/iterative_solver.h"    // IWYU pragma: keep
-#include "num_collect/ode/concepts/problem.h"              // IWYU pragma: keep
-#include "num_collect/ode/error_tolerances.h"
+#include "num_collect/ode/concepts/ode_equation_solver.h"  // IWYU pragma: keep
 
 namespace num_collect::ode::concepts {
 
@@ -40,21 +36,8 @@ namespace num_collect::ode::concepts {
  * \tparam T Type.
  */
 template <typename T>
-concept slope_equation_solver = base::concepts::iterative_solver<T> &&
+concept slope_equation_solver = ode::concepts::ode_equation_solver<T> &&
     requires() {
-    typename T::problem_type;
-    requires problem<typename T::problem_type>;
-
-    typename T::variable_type;
-    requires std::is_same_v<typename T::variable_type,
-        typename T::problem_type::variable_type>;
-
-    typename T::scalar_type;
-    requires std::is_same_v<typename T::scalar_type,
-        typename T::problem_type::scalar_type>;
-
-    T();
-
     requires requires(T & obj, typename T::problem_type & problem,
         typename T::scalar_type time, typename T::scalar_type step_size,
         const typename T::variable_type& variable,
@@ -64,18 +47,6 @@ concept slope_equation_solver = base::concepts::iterative_solver<T> &&
 
     requires requires(T & obj, typename T::variable_type & solution) {
         obj.init(solution);
-    };
-
-    requires requires(
-        T & obj, const error_tolerances<typename T::variable_type>& val) {
-        obj.tolerances(val);
-    };
-
-    requires requires(const T& obj) {
-        {
-            obj.tolerances()
-            } -> base::concepts::const_reference_of<
-                error_tolerances<typename T::variable_type>>;
     };
 };
 

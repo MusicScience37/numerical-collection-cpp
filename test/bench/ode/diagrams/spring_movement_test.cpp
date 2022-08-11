@@ -38,6 +38,7 @@
 #include "num_collect/ode/runge_kutta/dopri5_formula.h"
 #include "num_collect/ode/runge_kutta/rk4_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
+#include "num_collect/ode/runge_kutta/sdirk4_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka1_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka2_formula.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
@@ -92,6 +93,8 @@ auto main(int argc, char** argv) -> int {
         "Tanaka1", result);
     bench_one<num_collect::ode::runge_kutta::tanaka2_solver<problem_type>>(
         "Tanaka2", result);
+    bench_one<num_collect::ode::runge_kutta::sdirk4_solver<problem_type>>(
+        "SDIRK4", result);
     bench_one<num_collect::ode::rosenbrock::ros3w_solver<problem_type>>(
         "ROS3w", result);
     bench_one<num_collect::ode::rosenbrock::ros34pw3_solver<problem_type>>(
