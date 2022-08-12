@@ -37,6 +37,7 @@
     "doxygen",
     "Eigen",
     "Elden",
+    "ESDIRK",
     "fcoverage",
     "Fehlberg",
     "FISTA",
