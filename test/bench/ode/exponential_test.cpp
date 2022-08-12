@@ -38,23 +38,21 @@
 #include "num_collect/ode/runge_kutta/sdirk4_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka1_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka2_formula.h"
-#include "num_prob_collect/ode/free_fall_in_resistance_problem.h"
+#include "num_prob_collect/ode/exponential_problem.h"
 
-using problem_type = num_prob_collect::ode::free_fall_in_resistance_problem;
+using problem_type = num_prob_collect::ode::exponential_problem;
 
-static constexpr std::string_view problem_name =
-    "free_fall_in_resistance_problem";
+static constexpr std::string_view problem_name = "exponential_problem";
+static constexpr std::string_view problem_description =
+    "Problem to Calculate Exponential";
 
 template <typename Solver>
-inline void bench_one(const std::string& solver_name, bench_result& result) {
+inline void bench_one(
+    const std::string& solver_name, bench_executor& executor) {
     constexpr double init_time = 0.0;
     constexpr double end_time = 10.0;
-    const Eigen::Vector2d init_var = Eigen::Vector2d(0.0, 0.0);
-    constexpr double k = 1e+2;
-    constexpr double g = 1.0;
-    const Eigen::Vector2d reference =
-        Eigen::Vector2d((g / k) * std::expm1(-k * end_time),
-            -(g / (k * k)) * std::expm1(-k * end_time) - g / k * end_time);
+    constexpr double init_var = 1.0;
+    const double reference = std::exp(end_time);
 
 #ifndef NDEBUG
     constexpr num_collect::index_type repetitions = 10;
@@ -63,12 +61,12 @@ inline void bench_one(const std::string& solver_name, bench_result& result) {
 #endif
 
     constexpr std::array<double, 5> tolerance_list{
-        1e-1, 1e-2, 1e-3, 1e-4, 1e-5};
+        1e-2, 1e-3, 1e-4, 1e-5, 1e-6};
 
     for (const double tol : tolerance_list) {
-        const problem_type problem{k, g};
-        perform<problem_type, Solver>(solver_name, problem, init_time, end_time,
-            init_var, reference, repetitions, tol, result);
+        const problem_type problem;
+        executor.perform<problem_type, Solver>(solver_name, problem, init_time,
+            end_time, init_var, reference, repetitions, tol);
     }
 }
 
@@ -84,28 +82,28 @@ auto main(int argc, char** argv) -> int {
 
     configure_logging();
 
-    bench_result result{};
+    bench_executor executor{};
 
     bench_one<num_collect::ode::runge_kutta::rkf45_solver<problem_type>>(
-        "RKF45", result);
+        "RKF45", executor);
     bench_one<num_collect::ode::runge_kutta::dopri5_solver<problem_type>>(
-        "DOPRI5", result);
+        "DOPRI5", executor);
     bench_one<num_collect::ode::runge_kutta::tanaka1_solver<problem_type>>(
-        "Tanaka1", result);
+        "Tanaka1", executor);
     bench_one<num_collect::ode::runge_kutta::tanaka2_solver<problem_type>>(
-        "Tanaka2", result);
+        "Tanaka2", executor);
     bench_one<num_collect::ode::runge_kutta::sdirk4_solver<problem_type>>(
-        "SDIRK4", result);
+        "SDIRK4", executor);
     bench_one<num_collect::ode::rosenbrock::ros3w_solver<problem_type>>(
-        "ROS3w", result);
+        "ROS3w", executor);
     bench_one<num_collect::ode::rosenbrock::ros34pw3_solver<problem_type>>(
-        "ROS34PW3", result);
+        "ROS34PW3", executor);
     bench_one<num_collect::ode::rosenbrock::rodasp_solver<problem_type>>(
-        "RODASP", result);
+        "RODASP", executor);
     bench_one<num_collect::ode::rosenbrock::rodaspr_solver<problem_type>>(
-        "RODASPR", result);
+        "RODASPR", executor);
 
-    write_result(problem_name, result, output_directory);
+    executor.write_result(problem_name, problem_description, output_directory);
 
     return 0;
 }

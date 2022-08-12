@@ -35,9 +35,12 @@
 using problem_type = num_prob_collect::ode::kaps_problem;
 
 static constexpr std::string_view problem_name = "kaps_problem3_rosenbrock";
+static constexpr std::string_view problem_description =
+    "Kaps' problem (epsilon=1e-3)";
 
 template <typename Solver>
-inline void bench_one(const std::string& solver_name, bench_result& result) {
+inline void bench_one(
+    const std::string& solver_name, bench_executor& executor) {
     constexpr double epsilon = 1e-3;
     constexpr double init_time = 0.0;
     constexpr double end_time = 1.0;
@@ -56,8 +59,8 @@ inline void bench_one(const std::string& solver_name, bench_result& result) {
 
     for (const double tol : tolerance_list) {
         const problem_type problem{epsilon};
-        perform<problem_type, Solver>(solver_name, problem, init_time, end_time,
-            init_var, reference, repetitions, tol, result);
+        executor.perform<problem_type, Solver>(solver_name, problem, init_time,
+            end_time, init_var, reference, repetitions, tol);
     }
 }
 
@@ -73,31 +76,31 @@ auto main(int argc, char** argv) -> int {
 
     configure_logging();
 
-    bench_result result{};
+    bench_executor executor{};
 
     bench_one<num_collect::ode::embedded_solver<
         num_collect::ode::rosenbrock::ros3w_formula<problem_type,
             num_collect::ode::rosenbrock::lu_rosenbrock_equation_solver<
-                problem_type>>>>("ROS3w_lu", result);
+                problem_type>>>>("ROS3w_lu", executor);
 
     bench_one<num_collect::ode::embedded_solver<
         num_collect::ode::rosenbrock::ros3w_formula<problem_type,
             num_collect::ode::rosenbrock::
                 mixed_broyden_rosenbrock_equation_solver<problem_type>>>>(
-        "ROS3w_broyden", result);
+        "ROS3w_broyden", executor);
 
     bench_one<num_collect::ode::embedded_solver<
         num_collect::ode::rosenbrock::ros34pw3_formula<problem_type,
             num_collect::ode::rosenbrock::lu_rosenbrock_equation_solver<
-                problem_type>>>>("ROS34PW3_lu", result);
+                problem_type>>>>("ROS34PW3_lu", executor);
 
     bench_one<num_collect::ode::embedded_solver<
         num_collect::ode::rosenbrock::ros34pw3_formula<problem_type,
             num_collect::ode::rosenbrock::
                 mixed_broyden_rosenbrock_equation_solver<problem_type>>>>(
-        "ROS34PW3_broyden", result);
+        "ROS34PW3_broyden", executor);
 
-    write_result(problem_name, result, output_directory);
+    executor.write_result(problem_name, problem_description, output_directory);
 
     return 0;
 }

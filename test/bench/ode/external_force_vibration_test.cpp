@@ -17,15 +17,17 @@
  * \file
  * \brief Test of solving ODE of vibration with external force.
  */
-#include <cmath>
+#include <array>
+#include <string>
+#include <string_view>
 
 #include <Eigen/Core>
-#include <stat_bench/bench/invocation_context.h>
-#include <stat_bench/benchmark_macros.h>
+#include <fmt/format.h>
 
+#include "diagram_common.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/ode/basic_step_size_controller.h"
 #include "num_collect/ode/embedded_solver.h"
-#include "num_collect/ode/non_embedded_formula_wrapper.h"
 #include "num_collect/ode/rosenbrock/rodasp_formula.h"
 #include "num_collect/ode/rosenbrock/rodaspr_formula.h"
 #include "num_collect/ode/rosenbrock/ros34pw3_formula.h"
@@ -33,141 +35,77 @@
 #include "num_collect/ode/runge_kutta/dopri5_formula.h"
 #include "num_collect/ode/runge_kutta/rk4_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
+#include "num_collect/ode/runge_kutta/sdirk4_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka1_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka2_formula.h"
 #include "num_prob_collect/ode/external_force_vibration_problem.h"
 
-STAT_BENCH_MAIN
-
-class external_force_vibration_fixture : public stat_bench::FixtureBase {
-public:
-    external_force_vibration_fixture() = default;
-
-    template <typename Solver>
-    void perform(Solver& solver) {
-        constexpr double init_time = 0.0;
-        const Eigen::Vector2d init_var = Eigen::Vector2d(-1.0, 0.0);
-        solver.init(init_time, init_var);
-#ifndef NDEBUG
-        constexpr double end_time = 0.1;
-#else
-        constexpr double end_time = 10.0;
-#endif
-        solver.solve_till(end_time);
-        steps_ = solver.steps();
-
-        const Eigen::Vector2d reference =
-            Eigen::Vector2d(-std::cos(end_time), -std::sin(end_time));
-        error_ = (solver.variable() - reference).norm();
-    }
-
-    void tear_down(stat_bench::bench::InvocationContext& context) override {
-        context.add_custom_output("steps", static_cast<double>(steps_));
-        context.add_custom_output("error", error_);
-    }
-
-private:
-    num_collect::index_type steps_{};
-    double error_{};
-};
-
 using problem_type = num_prob_collect::ode::external_force_vibration_problem;
 
-// NOLINTNEXTLINE
-STAT_BENCH_CASE_F(external_force_vibration_fixture,
-    "ode_rk_external_force_vibration", "rkf45") {
-    STAT_BENCH_MEASURE() {
-        using solver_type =
-            num_collect::ode::runge_kutta::rkf45_solver<problem_type>;
-        auto solver = solver_type(problem_type());
-        perform(solver);
-    };
+static constexpr std::string_view problem_name =
+    "external_force_vibration_problem";
+static constexpr std::string_view problem_description =
+    "Vibration with External Force";
+
+template <typename Solver>
+inline void bench_one(
+    const std::string& solver_name, bench_executor& executor) {
+    constexpr double init_time = 0.0;
+    constexpr double end_time = 10.0;
+    const Eigen::Vector2d init_var = Eigen::Vector2d(-1.0, 0.0);
+    const Eigen::Vector2d reference =
+        Eigen::Vector2d(-std::cos(end_time), -std::sin(end_time));
+
+#ifndef NDEBUG
+    constexpr num_collect::index_type repetitions = 10;
+#else
+    constexpr num_collect::index_type repetitions = 1000;
+#endif
+
+    constexpr std::array<double, 5> tolerance_list{
+        1e-2, 1e-3, 1e-4, 1e-5, 1e-6};
+
+    for (const double tol : tolerance_list) {
+        const problem_type problem;
+        executor.perform<problem_type, Solver>(solver_name, problem, init_time,
+            end_time, init_var, reference, repetitions, tol);
+    }
 }
 
-// NOLINTNEXTLINE
-STAT_BENCH_CASE_F(external_force_vibration_fixture,
-    "ode_rk_external_force_vibration", "dopri5") {
-    STAT_BENCH_MEASURE() {
-        using solver_type =
-            num_collect::ode::runge_kutta::dopri5_solver<problem_type>;
-        auto solver = solver_type(problem_type());
-        perform(solver);
-    };
-}
+auto main(int argc, char** argv) -> int {
+    if (argc != 2) {
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+        fmt::print("Usage: {} <output_directory>", argv[0]);
+        return 1;
+    }
 
-// NOLINTNEXTLINE
-STAT_BENCH_CASE_F(external_force_vibration_fixture,
-    "ode_rk_external_force_vibration", "tanaka1") {
-    STAT_BENCH_MEASURE() {
-        using solver_type =
-            num_collect::ode::runge_kutta::tanaka1_solver<problem_type>;
-        auto solver = solver_type(problem_type());
-        perform(solver);
-    };
-}
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+    const std::string_view output_directory = argv[1];
 
-// NOLINTNEXTLINE
-STAT_BENCH_CASE_F(external_force_vibration_fixture,
-    "ode_rk_external_force_vibration", "tanaka2") {
-    STAT_BENCH_MEASURE() {
-        using solver_type =
-            num_collect::ode::runge_kutta::tanaka2_solver<problem_type>;
-        auto solver = solver_type(problem_type());
-        perform(solver);
-    };
-}
+    configure_logging();
 
-// NOLINTNEXTLINE
-STAT_BENCH_CASE_F(external_force_vibration_fixture,
-    "ode_rk_external_force_vibration", "ros3w") {
-    STAT_BENCH_MEASURE() {
-        using solver_type =
-            num_collect::ode::rosenbrock::ros3w_solver<problem_type>;
-        auto solver = solver_type(problem_type());
-        perform(solver);
-    };
-}
+    bench_executor executor{};
 
-// NOLINTNEXTLINE
-STAT_BENCH_CASE_F(external_force_vibration_fixture,
-    "ode_rk_external_force_vibration", "ros34pw3") {
-    STAT_BENCH_MEASURE() {
-        using solver_type =
-            num_collect::ode::rosenbrock::ros34pw3_solver<problem_type>;
-        auto solver = solver_type(problem_type());
-        perform(solver);
-    };
-}
+    bench_one<num_collect::ode::runge_kutta::rkf45_solver<problem_type>>(
+        "RKF45", executor);
+    bench_one<num_collect::ode::runge_kutta::dopri5_solver<problem_type>>(
+        "DOPRI5", executor);
+    bench_one<num_collect::ode::runge_kutta::tanaka1_solver<problem_type>>(
+        "Tanaka1", executor);
+    bench_one<num_collect::ode::runge_kutta::tanaka2_solver<problem_type>>(
+        "Tanaka2", executor);
+    bench_one<num_collect::ode::runge_kutta::sdirk4_solver<problem_type>>(
+        "SDIRK4", executor);
+    bench_one<num_collect::ode::rosenbrock::ros3w_solver<problem_type>>(
+        "ROS3w", executor);
+    bench_one<num_collect::ode::rosenbrock::ros34pw3_solver<problem_type>>(
+        "ROS34PW3", executor);
+    bench_one<num_collect::ode::rosenbrock::rodasp_solver<problem_type>>(
+        "RODASP", executor);
+    bench_one<num_collect::ode::rosenbrock::rodaspr_solver<problem_type>>(
+        "RODASPR", executor);
 
-// NOLINTNEXTLINE
-STAT_BENCH_CASE_F(external_force_vibration_fixture,
-    "ode_rk_external_force_vibration", "rodasp") {
-    STAT_BENCH_MEASURE() {
-        using solver_type =
-            num_collect::ode::rosenbrock::rodasp_solver<problem_type>;
-        auto solver = solver_type(problem_type());
-        perform(solver);
-    };
-}
+    executor.write_result(problem_name, problem_description, output_directory);
 
-// NOLINTNEXTLINE
-STAT_BENCH_CASE_F(external_force_vibration_fixture,
-    "ode_rk_external_force_vibration", "rodaspr") {
-    STAT_BENCH_MEASURE() {
-        using solver_type =
-            num_collect::ode::rosenbrock::rodaspr_solver<problem_type>;
-        auto solver = solver_type(problem_type());
-        perform(solver);
-    };
-}
-
-// NOLINTNEXTLINE
-STAT_BENCH_CASE_F(external_force_vibration_fixture,
-    "ode_rk_external_force_vibration", "rk4_auto") {
-    STAT_BENCH_MEASURE() {
-        using solver_type = num_collect::ode::non_embedded_auto_solver<
-            num_collect::ode::runge_kutta::rk4_formula<problem_type>>;
-        auto solver = solver_type(problem_type());
-        perform(solver);
-    };
+    return 0;
 }
