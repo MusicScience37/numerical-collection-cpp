@@ -22,6 +22,7 @@
 #include "runge_kutta/ark43_esdirk_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "runge_kutta/ark54_esdirk_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "runge_kutta/dopri5_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "runge_kutta/esdirk45_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "runge_kutta/implicit_euler_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "runge_kutta/rk4_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "runge_kutta/rkf45_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
