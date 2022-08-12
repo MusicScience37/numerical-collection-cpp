@@ -43,6 +43,8 @@
 using problem_type = num_prob_collect::ode::exponential_problem;
 
 static constexpr std::string_view problem_name = "exponential_problem";
+static constexpr std::string_view problem_description =
+    "Problem to Calculate Exponential";
 
 template <typename Solver>
 inline void bench_one(
@@ -101,7 +103,7 @@ auto main(int argc, char** argv) -> int {
     bench_one<num_collect::ode::rosenbrock::rodaspr_solver<problem_type>>(
         "RODASPR", executor);
 
-    executor.write_result(problem_name, output_directory);
+    executor.write_result(problem_name, problem_description, output_directory);
 
     return 0;
 }

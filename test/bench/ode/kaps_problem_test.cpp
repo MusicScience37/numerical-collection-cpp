@@ -119,7 +119,9 @@ auto main(int argc, char** argv) -> int {
         bench_one<num_collect::ode::rosenbrock::rodaspr_solver<problem_type>>(
             "RODASPR", epsilon, executor);
 
-        executor.write_result(problem_name, output_directory);
+        executor.write_result(problem_name,
+            fmt::format("Kaps' problem (epsilon={:.0e})", epsilon),
+            output_directory);
     }
 
     return 0;

@@ -211,11 +211,14 @@ public:
      * \brief Write the result.
      *
      * \param[in] problem_name Name of the problem.
+     * \param[in] problem_description Description of the problem to show in
+     * diagrams.
      * \param[in] result Result.
      * \param[in] output_directory Output directory.
      */
-    void write_result(
-        std::string_view problem_name, std::string_view output_directory) {
+    void write_result(std::string_view problem_name,
+        std::string_view problem_description,
+        std::string_view output_directory) {
         this->logger().info()("Write results.");
 
         static pybind11::scoped_interpreter interpreter;
@@ -247,7 +250,9 @@ public:
                         solver_key, tolerance_key, error_key, time_key},  //
                 pybind11::arg("markers") = true,                          //
                 pybind11::arg("log_x") = true,                            //
-                pybind11::arg("log_y") = true);
+                pybind11::arg("log_y") = true,                            //
+                pybind11::arg("title") = fmt::format(
+                    "Work-Error diagram of {}.", problem_description));
 
             const std::string base_name =
                 fmt::format("{}/diagrams/{}", output_directory, problem_name);

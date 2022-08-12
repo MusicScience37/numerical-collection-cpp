@@ -46,6 +46,7 @@
 using problem_type = num_prob_collect::ode::spring_movement_problem;
 
 static constexpr std::string_view problem_name = "spring_movement_problem";
+static constexpr std::string_view problem_description = "Spring Movement";
 
 template <typename Solver>
 inline void bench_one(
@@ -111,7 +112,7 @@ auto main(int argc, char** argv) -> int {
     bench_one<num_collect::ode::avf::avf4_auto_solver<problem_type>>(
         "AVF4", executor);
 
-    executor.write_result(problem_name, output_directory);
+    executor.write_result(problem_name, problem_description, output_directory);
 
     return 0;
 }

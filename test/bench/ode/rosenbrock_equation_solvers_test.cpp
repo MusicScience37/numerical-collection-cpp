@@ -35,6 +35,8 @@
 using problem_type = num_prob_collect::ode::kaps_problem;
 
 static constexpr std::string_view problem_name = "kaps_problem3_rosenbrock";
+static constexpr std::string_view problem_description =
+    "Kaps' problem (epsilon=1e-3)";
 
 template <typename Solver>
 inline void bench_one(
@@ -98,7 +100,7 @@ auto main(int argc, char** argv) -> int {
                 mixed_broyden_rosenbrock_equation_solver<problem_type>>>>(
         "ROS34PW3_broyden", executor);
 
-    executor.write_result(problem_name, output_directory);
+    executor.write_result(problem_name, problem_description, output_directory);
 
     return 0;
 }

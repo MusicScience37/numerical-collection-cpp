@@ -37,6 +37,7 @@ using problem_type = num_prob_collect::ode::spring_movement_problem;
 
 static constexpr std::string_view problem_name =
     "spring_movement_step_size_controllers";
+static constexpr std::string_view problem_description = "Spring Movement";
 
 template <typename Solver>
 inline void bench_one(
@@ -113,7 +114,7 @@ auto main(int argc, char** argv) -> int {
             num_collect::ode::rosenbrock::rodasp_formula<problem_type>>>>(
         "RODASP_pi", executor);
 
-    executor.write_result(problem_name, output_directory);
+    executor.write_result(problem_name, problem_description, output_directory);
 
     return 0;
 }
