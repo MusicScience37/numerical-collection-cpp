@@ -20,7 +20,10 @@ set(SOURCE_FILES
     rosenbrock/ros34pw3_formula_test.cpp
     rosenbrock/ros3w_formula_test.cpp
     rosenbrock/scalar_rosenbrock_equation_solver_test.cpp
+    runge_kutta/ark43_esdirk_formula_test.cpp
+    runge_kutta/ark54_esdirk_formula_test.cpp
     runge_kutta/dopri5_formula_test.cpp
+    runge_kutta/esdirk45_formula_test.cpp
     runge_kutta/implicit_euler_formula_test.cpp
     runge_kutta/rk4_formula_test.cpp
     runge_kutta/rkf45_formula_test.cpp
