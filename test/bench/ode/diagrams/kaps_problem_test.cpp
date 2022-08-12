@@ -47,7 +47,7 @@ static constexpr std::string_view problem_name_base = "kaps_problem";
 
 template <typename Solver>
 inline void bench_one(
-    const std::string& solver_name, double epsilon, bench_result& result) {
+    const std::string& solver_name, double epsilon, bench_executor& executor) {
     constexpr double init_time = 0.0;
     constexpr double end_time = 1.0;
     const Eigen::Vector2d init_var{{1.0, 1.0}};
@@ -72,8 +72,8 @@ inline void bench_one(
 
     for (const double tol : tolerance_list) {
         const problem_type problem{epsilon};
-        perform<problem_type, Solver>(solver_name, problem, init_time, end_time,
-            init_var, reference, repetitions, tol, result);
+        executor.perform<problem_type, Solver>(solver_name, problem, init_time,
+            end_time, init_var, reference, repetitions, tol);
     }
 }
 
@@ -98,28 +98,28 @@ auto main(int argc, char** argv) -> int {
         const std::string problem_name = fmt::format(
             "{}{:.0f}", problem_name_base, std::abs(std::log10(epsilon)));
 
-        bench_result result{};
+        bench_executor executor{};
 
         bench_one<num_collect::ode::runge_kutta::rkf45_solver<problem_type>>(
-            "RKF45", epsilon, result);
+            "RKF45", epsilon, executor);
         bench_one<num_collect::ode::runge_kutta::dopri5_solver<problem_type>>(
-            "DOPRI5", epsilon, result);
+            "DOPRI5", epsilon, executor);
         bench_one<num_collect::ode::runge_kutta::tanaka1_solver<problem_type>>(
-            "Tanaka1", epsilon, result);
+            "Tanaka1", epsilon, executor);
         bench_one<num_collect::ode::runge_kutta::tanaka2_solver<problem_type>>(
-            "Tanaka2", epsilon, result);
+            "Tanaka2", epsilon, executor);
         bench_one<num_collect::ode::runge_kutta::sdirk4_solver<problem_type>>(
-            "SDIRK4", epsilon, result);
+            "SDIRK4", epsilon, executor);
         bench_one<num_collect::ode::rosenbrock::ros3w_solver<problem_type>>(
-            "ROS3w", epsilon, result);
+            "ROS3w", epsilon, executor);
         bench_one<num_collect::ode::rosenbrock::ros34pw3_solver<problem_type>>(
-            "ROS34PW3", epsilon, result);
+            "ROS34PW3", epsilon, executor);
         bench_one<num_collect::ode::rosenbrock::rodasp_solver<problem_type>>(
-            "RODASP", epsilon, result);
+            "RODASP", epsilon, executor);
         bench_one<num_collect::ode::rosenbrock::rodaspr_solver<problem_type>>(
-            "RODASPR", epsilon, result);
+            "RODASPR", epsilon, executor);
 
-        write_result(problem_name, result, output_directory);
+        executor.write_result(problem_name, output_directory);
     }
 
     return 0;

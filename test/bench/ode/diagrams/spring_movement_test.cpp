@@ -48,7 +48,8 @@ using problem_type = num_prob_collect::ode::spring_movement_problem;
 static constexpr std::string_view problem_name = "spring_movement_problem";
 
 template <typename Solver>
-inline void bench_one(const std::string& solver_name, bench_result& result) {
+inline void bench_one(
+    const std::string& solver_name, bench_executor& executor) {
     constexpr double init_time = 0.0;
     constexpr double end_time = 10.0;
     const Eigen::Vector2d init_var = Eigen::Vector2d(1.0, 0.0);
@@ -66,8 +67,8 @@ inline void bench_one(const std::string& solver_name, bench_result& result) {
 
     for (const double tol : tolerance_list) {
         const problem_type problem;
-        perform<problem_type, Solver>(solver_name, problem, init_time, end_time,
-            init_var, reference, repetitions, tol, result);
+        executor.perform<problem_type, Solver>(solver_name, problem, init_time,
+            end_time, init_var, reference, repetitions, tol);
     }
 }
 
@@ -83,34 +84,34 @@ auto main(int argc, char** argv) -> int {
 
     configure_logging();
 
-    bench_result result{};
+    bench_executor executor{};
 
     bench_one<num_collect::ode::runge_kutta::rkf45_solver<problem_type>>(
-        "RKF45", result);
+        "RKF45", executor);
     bench_one<num_collect::ode::runge_kutta::dopri5_solver<problem_type>>(
-        "DOPRI5", result);
+        "DOPRI5", executor);
     bench_one<num_collect::ode::runge_kutta::tanaka1_solver<problem_type>>(
-        "Tanaka1", result);
+        "Tanaka1", executor);
     bench_one<num_collect::ode::runge_kutta::tanaka2_solver<problem_type>>(
-        "Tanaka2", result);
+        "Tanaka2", executor);
     bench_one<num_collect::ode::runge_kutta::sdirk4_solver<problem_type>>(
-        "SDIRK4", result);
+        "SDIRK4", executor);
     bench_one<num_collect::ode::rosenbrock::ros3w_solver<problem_type>>(
-        "ROS3w", result);
+        "ROS3w", executor);
     bench_one<num_collect::ode::rosenbrock::ros34pw3_solver<problem_type>>(
-        "ROS34PW3", result);
+        "ROS34PW3", executor);
     bench_one<num_collect::ode::rosenbrock::rodasp_solver<problem_type>>(
-        "RODASP", result);
+        "RODASP", executor);
     bench_one<num_collect::ode::rosenbrock::rodaspr_solver<problem_type>>(
-        "RODASPR", result);
+        "RODASPR", executor);
     bench_one<num_collect::ode::avf::avf2_auto_solver<problem_type>>(
-        "AVF2", result);
+        "AVF2", executor);
     bench_one<num_collect::ode::avf::avf3_auto_solver<problem_type>>(
-        "AVF3", result);
+        "AVF3", executor);
     bench_one<num_collect::ode::avf::avf4_auto_solver<problem_type>>(
-        "AVF4", result);
+        "AVF4", executor);
 
-    write_result(problem_name, result, output_directory);
+    executor.write_result(problem_name, output_directory);
 
     return 0;
 }
