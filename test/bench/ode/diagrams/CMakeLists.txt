@@ -20,3 +20,7 @@ add_executable(num_collect_bench_ode_diagram_rosenbrock_equation_solvers
                rosenbrock_equation_solvers_test.cpp)
 add_bench_using_pybind11(
     num_collect_bench_ode_diagram_rosenbrock_equation_solvers)
+
+add_executable(num_collect_bench_ode_diagram_step_size_controllers
+               step_size_controllers_test.cpp)
+add_bench_using_pybind11(num_collect_bench_ode_diagram_step_size_controllers)
