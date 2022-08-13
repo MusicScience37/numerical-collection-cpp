@@ -28,6 +28,7 @@
 #include <limits>
 #include <string>
 #include <string_view>
+#include <unordered_map>
 #include <vector>
 
 #include <Eigen/Core>
@@ -240,11 +241,40 @@ public:
                 error_key, pybind11::cast(result_.error_rate_list));
             data.try_emplace(time_key, pybind11::cast(result_.time_list));
 
+            const auto line_dash_map =
+                std::unordered_map<std::string, std::string>{
+                    // Explicit Runge-Kutta.
+                    {"RKF45", "solid"}, {"DOPRI5", "solid"},
+                    // Implicit Runge-Kutta.
+                    {"Tanaka1", "dot"}, {"Tanaka2", "dot"}, {"SDIRK4", "dot"},
+                    {"ARK4(3)-ESDIRK", "dot"}, {"ARK5(4)-ESDIRK", "dot"},
+                    {"ESDIRK45c", "dot"},
+                    // Rosenbrock.
+                    {"ROS3w", "longdash"}, {"ROS34PW3", "longdash"},
+                    {"RODASP", "longdash"}, {"RODASPR", "longdash"},
+                    // AVF.
+                    {"AVF2", "dashdot"}, {"AVF3", "dashdot"},
+                    {"AVF4", "dashdot"},
+                    // LU in Rosenbrock.
+                    {"ROS3w_lu", "solid"}, {"ROS34PW3_lu", "solid"},
+                    // Broyden in Rosenbrock.
+                    {"ROS3w_broyden", "dot"}, {"ROS34PW3_broyden", "dot"},
+                    // Basic step size controller.
+                    {"RKF45_basic", "solid"}, {"ROS3w_basic", "solid"},
+                    {"RODASP_basic", "solid"},
+                    // PI step size controller.
+                    {"RKF45_pi", "dot"}, {"ROS3w_pi", "dot"},
+                    {"RODASP_pi", "dot"},
+                    //
+                };
+
             auto fig = px.attr("line")(              //
                 pybind11::arg("data_frame") = data,  //
                 pybind11::arg("x") = time_key,
-                pybind11::arg("y") = error_key,       //
-                pybind11::arg("color") = solver_key,  //
+                pybind11::arg("y") = error_key,                  //
+                pybind11::arg("color") = solver_key,             //
+                pybind11::arg("line_dash") = solver_key,         //
+                pybind11::arg("line_dash_map") = line_dash_map,  //
                 pybind11::arg("hover_data") =
                     std::vector<std::string>{
                         solver_key, tolerance_key, error_key, time_key},  //
