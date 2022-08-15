@@ -25,6 +25,9 @@ sphinxcontrib-plantuml = "*"
 trio = "*"
 trio-typing = "*"
 tqdm = "*"
+lizard = "*"
+jinja2 = "*"
+lcov-cobertura = "*"
 
 [requires]
 python_version = "3.9"
