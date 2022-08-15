@@ -64,6 +64,23 @@ line count:
       - line_count
     expire_in: "1 mos"
 
+complexity:
+  extends: .retry setting
+  stage: test
+  needs:
+    - sync pipenv
+  dependencies:
+    - sync pipenv
+  image: musicscience37/clang-ci:clang14
+  script:
+    - mkdir -p complexity
+    - pipenv run lizard -o complexity/complexity_per_function.html include
+    - pipenv run lizard -o complexity/result.txt -E duplicate include
+  artifacts:
+    paths:
+      - complexity
+    expire_in: "1 mos"
+
 pre-commit:
   stage: test
   needs:
@@ -529,13 +546,19 @@ pages:
   needs:
     - doc
     - clang coverage
+    - line_count
+    - complexity
   dependencies:
     - doc
     - clang coverage
+    - line_count
+    - complexity
   script:
     - rm -rf public
     - mv build_doc/doc/html public
     - mv build_clang_coverage/coverage/html public/coverage
+    - mv line_count public/line_count
+    - mv complexity public/complexity
   artifacts:
     paths:
       - public
