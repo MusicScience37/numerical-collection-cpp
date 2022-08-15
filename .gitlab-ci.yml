@@ -132,6 +132,7 @@ static analysis:
   before_script:
     - mkdir -p .venv
     - pipenv sync --dev
+    - pipenv run pip install certifi
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --force --detect default
