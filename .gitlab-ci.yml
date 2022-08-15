@@ -132,13 +132,14 @@ static analysis:
   before_script:
     - mkdir -p .venv
     - pipenv sync --dev
+    # TODO: Explicit re-install of certifi was needed to fix CI.
     - pipenv run pip install certifi
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=${CONAN_STD_CPP_LIB} default
     - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
-    - pipenv run conan install --build missing -o num_collect:requirements_for_tests=True ..
+    - pipenv run conan install --build missing -s build_type=${CMAKE_BUILD_TYPE} -o num_collect:requirements_for_tests=True ..
     - cd ../
   script:
     - cmake -S ./ -B $BUILD_DIR
@@ -148,8 +149,8 @@ static analysis:
       -DNUM_COLLECT_ENABLE_INTEG_TESTS=ON
       -DNUM_COLLECT_ENABLE_BENCH=OFF
       -DNUM_COLLECT_TEST_BENCHMARKS=OFF
-      -DNUM_COLLECT_BUILD_EXAMPLES=OFF
-      -DNUM_COLLECT_TEST_EXAMPLES=OFF
+      -DNUM_COLLECT_BUILD_EXAMPLES=ON
+      -DNUM_COLLECT_TEST_EXAMPLES=ON
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
       -DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON
     - cd $BUILD_DIR
@@ -198,42 +199,9 @@ static analysis:
   extends: .release-test-base
   variables:
     CMAKE_BUILD_TYPE: Debug
-  script:
-    - cmake -S ./ -B $BUILD_DIR
-      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-      -DNUM_COLLECT_TESTING:BOOL=ON
-      -DNUM_COLLECT_ENABLE_UNIT_TESTS=ON
-      -DNUM_COLLECT_ENABLE_INTEG_TESTS=ON
-      -DNUM_COLLECT_ENABLE_BENCH=OFF
-      -DNUM_COLLECT_TEST_BENCHMARKS=OFF
-      -DNUM_COLLECT_BUILD_EXAMPLES=ON
-      -DNUM_COLLECT_TEST_EXAMPLES=ON
-      -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
-      -DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON
-    - cd $BUILD_DIR
-    - cmake --build .
-    - ctest -V
-
-.clang-release-test-base:
-  extends: .release-test-base
-  variables:
-    CONAN_STD_CPP_LIB: "libc++"
-    CMAKE_BUILD_TYPE: Release
-
-.clang-bench-base:
-  extends: .bench-base
-  variables:
-    CONAN_STD_CPP_LIB: "libc++"
-    CMAKE_BUILD_TYPE: Release
-
-.clang-debug-test-base:
-  extends: .debug-test-base
-  variables:
-    CONAN_STD_CPP_LIB: "libc++"
-    CMAKE_BUILD_TYPE: Debug
 
 clang coverage:
-  extends: .clang-debug-test-base
+  extends: .release-test-base
   image: musicscience37/clang-ci:clang14
   variables:
     BUILD_DIR: build_clang_coverage
@@ -314,7 +282,7 @@ gcc coverage:
     expire_in: "1 mos"
 
 gcc-10-debug:
-  extends: .debug-test-base
+  extends: .release-test-base
   image: musicscience37/gcc-ci:gcc10
   variables:
     BUILD_DIR: build_gcc10_debug
@@ -338,7 +306,7 @@ gcc-10-bench:
     CMAKE_BUILD_TYPE: Release
 
 clang-14-debug:
-  extends: .clang-debug-test-base
+  extends: .release-test-base
   image: musicscience37/clang-ci:clang14
   variables:
     BUILD_DIR: build_clang14_debug
@@ -346,7 +314,7 @@ clang-14-debug:
     CMAKE_BUILD_TYPE: Debug
 
 clang-14-release:
-  extends: .clang-release-test-base
+  extends: .release-test-base
   image: musicscience37/clang-ci:clang14
   variables:
     BUILD_DIR: build_clang14_release
@@ -354,7 +322,7 @@ clang-14-release:
     CMAKE_BUILD_TYPE: Release
 
 clang-14-bench:
-  extends: .clang-bench-base
+  extends: .bench-base
   image: musicscience37/clang-ci:clang14
   variables:
     BUILD_DIR: build_clang14_bench
@@ -362,7 +330,7 @@ clang-14-bench:
     CMAKE_BUILD_TYPE: Release
 
 clang-14-asan-ubsan:
-  extends: .clang-debug-test-base
+  extends: .release-test-base
   image: musicscience37/clang-ci:clang14
   variables:
     BUILD_DIR: build_clang_asan_ubsan
