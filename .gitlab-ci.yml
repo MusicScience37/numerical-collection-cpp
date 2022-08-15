@@ -127,19 +127,21 @@ static analysis:
     CCACHE_DIR: ${CI_PROJECT_DIR}/.cache
     CCACHE_COMPILERCHECK: content
     CONAN_USER_HOME: ${CI_PROJECT_DIR}
+    CONAN_STD_CPP_LIB: "libstdc++11"
+    CMAKE_BUILD_TYPE: Release
   before_script:
     - mkdir -p .venv
     - pipenv sync --dev
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --force --detect default
-    - pipenv run conan profile update settings.compiler.libcxx=libstdc++11 default
+    - pipenv run conan profile update settings.compiler.libcxx=${CONAN_STD_CPP_LIB} default
     - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
     - pipenv run conan install --build missing -o num_collect:requirements_for_tests=True ..
     - cd ../
   script:
     - cmake -S ./ -B $BUILD_DIR
-      -DCMAKE_BUILD_TYPE=Release
+      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
       -DNUM_COLLECT_TESTING:BOOL=ON
       -DNUM_COLLECT_ENABLE_UNIT_TESTS=ON
       -DNUM_COLLECT_ENABLE_INTEG_TESTS=ON
@@ -173,9 +175,11 @@ static analysis:
 
 .bench-base:
   extends: .release-test-base
+  variables:
+    CMAKE_BUILD_TYPE: Release
   script:
     - cmake -S ./ -B $BUILD_DIR
-      -DCMAKE_BUILD_TYPE=Release
+      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
       -DNUM_COLLECT_TESTING:BOOL=ON
       -DNUM_COLLECT_ENABLE_UNIT_TESTS=OFF
       -DNUM_COLLECT_ENABLE_INTEG_TESTS=OFF
@@ -191,9 +195,11 @@ static analysis:
 
 .debug-test-base:
   extends: .release-test-base
+  variables:
+    CMAKE_BUILD_TYPE: Debug
   script:
     - cmake -S ./ -B $BUILD_DIR
-      -DCMAKE_BUILD_TYPE=Debug
+      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
       -DNUM_COLLECT_TESTING:BOOL=ON
       -DNUM_COLLECT_ENABLE_UNIT_TESTS=ON
       -DNUM_COLLECT_ENABLE_INTEG_TESTS=ON
@@ -209,48 +215,29 @@ static analysis:
 
 .clang-release-test-base:
   extends: .release-test-base
-  before_script:
-    - mkdir -p .venv
-    - pipenv sync --dev
-    - mkdir $BUILD_DIR
-    - cd $BUILD_DIR
-    - pipenv run conan profile new --force --detect default
-    - pipenv run conan profile update settings.compiler.libcxx=libc++ default
-    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
-    - pipenv run conan install --build missing -o num_collect:requirements_for_tests=True -s build_type=Release ..
-    - cd ../
+  variables:
+    CONAN_STD_CPP_LIB: "libc++"
+    CMAKE_BUILD_TYPE: Release
 
 .clang-bench-base:
   extends: .bench-base
-  before_script:
-    - mkdir -p .venv
-    - pipenv sync --dev
-    - mkdir $BUILD_DIR
-    - cd $BUILD_DIR
-    - pipenv run conan profile new --force --detect default
-    - pipenv run conan profile update settings.compiler.libcxx=libc++ default
-    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
-    - pipenv run conan install --build missing -o num_collect:requirements_for_tests=True -s build_type=Release ..
-    - cd ../
+  variables:
+    CONAN_STD_CPP_LIB: "libc++"
+    CMAKE_BUILD_TYPE: Release
 
 .clang-debug-test-base:
   extends: .debug-test-base
-  before_script:
-    - mkdir -p .venv
-    - pipenv sync --dev
-    - mkdir $BUILD_DIR
-    - cd $BUILD_DIR
-    - pipenv run conan profile new --force --detect default
-    - pipenv run conan profile update settings.compiler.libcxx=libc++ default
-    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
-    - pipenv run conan install --build missing -o num_collect:requirements_for_tests=True -s build_type=Debug ..
-    - cd ../
+  variables:
+    CONAN_STD_CPP_LIB: "libc++"
+    CMAKE_BUILD_TYPE: Debug
 
 clang coverage:
   extends: .clang-debug-test-base
   image: musicscience37/clang-ci:clang14
   variables:
     BUILD_DIR: build_clang_coverage
+    CONAN_STD_CPP_LIB: "libc++"
+    CMAKE_BUILD_TYPE: Debug
   script:
     - cmake -S ./ -B $BUILD_DIR
       -DCMAKE_BUILD_TYPE=Debug
@@ -290,6 +277,8 @@ gcc coverage:
   extends: .release-test-base
   image: musicscience37/gcc-ci:gcc10
   variables:
+    CONAN_STD_CPP_LIB: "libstdc++11"
+    CMAKE_BUILD_TYPE: Debug
     BUILD_DIR: build_gcc_coverage
   script:
     - cmake -S ./ -B $BUILD_DIR
@@ -328,36 +317,48 @@ gcc-10-debug:
   image: musicscience37/gcc-ci:gcc10
   variables:
     BUILD_DIR: build_gcc10_debug
+    CONAN_STD_CPP_LIB: "libstdc++11"
+    CMAKE_BUILD_TYPE: Debug
 
 gcc-10-release:
   extends: .release-test-base
   image: musicscience37/gcc-ci:gcc10
   variables:
     BUILD_DIR: build_gcc10_release
+    CONAN_STD_CPP_LIB: "libstdc++11"
+    CMAKE_BUILD_TYPE: Release
 
 gcc-10-bench:
   extends: .bench-base
   image: musicscience37/gcc-ci:gcc10
   variables:
     BUILD_DIR: build_gcc10_bench
+    CONAN_STD_CPP_LIB: "libstdc++11"
+    CMAKE_BUILD_TYPE: Release
 
 clang-14-debug:
   extends: .clang-debug-test-base
   image: musicscience37/clang-ci:clang14
   variables:
     BUILD_DIR: build_clang14_debug
+    CONAN_STD_CPP_LIB: "libc++"
+    CMAKE_BUILD_TYPE: Debug
 
 clang-14-release:
   extends: .clang-release-test-base
   image: musicscience37/clang-ci:clang14
   variables:
     BUILD_DIR: build_clang14_release
+    CONAN_STD_CPP_LIB: "libc++"
+    CMAKE_BUILD_TYPE: Release
 
 clang-14-bench:
   extends: .clang-bench-base
   image: musicscience37/clang-ci:clang14
   variables:
     BUILD_DIR: build_clang14_bench
+    CONAN_STD_CPP_LIB: "libc++"
+    CMAKE_BUILD_TYPE: Release
 
 clang-14-asan-ubsan:
   extends: .clang-debug-test-base
@@ -365,6 +366,8 @@ clang-14-asan-ubsan:
   variables:
     BUILD_DIR: build_clang_asan_ubsan
     ASAN_OPTIONS: "alloc_dealloc_mismatch=0"
+    CONAN_STD_CPP_LIB: "libc++"
+    CMAKE_BUILD_TYPE: Debug
   script:
     - cmake -S ./ -B $BUILD_DIR
       -DCMAKE_BUILD_TYPE=Debug
