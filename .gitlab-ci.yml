@@ -70,6 +70,8 @@ pre-commit:
   script:
     - mkdir -p .venv
     - pipenv sync --dev
+    # TODO: Explicit re-install of certifi was needed to fix CI.
+    - pipenv run pip install certifi
     - pipenv run pre-commit run --all-files
   cache:
     key: cache-${CI_JOB_NAME}
@@ -86,6 +88,8 @@ static analysis:
   before_script:
     - mkdir -p .venv
     - pipenv sync --dev
+    # TODO: Explicit re-install of certifi was needed to fix CI.
+    - pipenv run pip install certifi
     - apt update
     - apt install -y libstdc++-10-dev
     - mkdir build_static_analysis
@@ -357,6 +361,8 @@ clang-14-conan:
   script:
     - mkdir -p .venv
     - pipenv sync --dev
+    # TODO: Explicit re-install of certifi was needed to fix CI.
+    - pipenv run pip install certifi
     - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libc++ default
     - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
@@ -372,6 +378,8 @@ clang-14-conan-release:
   script:
     - mkdir -p .venv
     - pipenv sync --dev
+    # TODO: Explicit re-install of certifi was needed to fix CI.
+    - pipenv run pip install certifi
     - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libc++ default
     - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
@@ -465,22 +473,15 @@ clang-14-conan-release:
     - ctest -V --build-config Release
 
 doc:
-  extends: .retry setting
+  extends: .release-test-base
   stage: test
   needs: []
   image: musicscience37/sphinx-doxygen:clang14
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
+    CMAKE_BUILD_TYPE: Release
+    BUILD_DIR: build_doc
   script:
-    - mkdir -p .venv
-    - pipenv sync --dev
-    - mkdir build_doc
-    - cd build_doc
-    - pipenv run conan profile new --force --detect default
-    - pipenv run conan profile update settings.compiler.libcxx=libstdc++11 default
-    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
-    - pipenv run conan install --build missing -o num_collect:requirements_for_tests=True ..
-    - cd ../
     - cmake -S ./ -B build_doc
       -DNUM_COLLECT_BUILD_DOC:BOOL=ON
     - cmake --build build_doc --target num_collect_doc
