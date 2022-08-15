@@ -1,7 +1,6 @@
 image: ubuntu:focal
 
 stages:
-  - prepare
   - test
   - deploy
 
@@ -23,26 +22,6 @@ license_scanning:
 
 .retry setting:
   retry: 1
-
-sync pipenv:
-  extends: .retry setting
-  stage: prepare
-  needs: []
-  image: musicscience37/clang-ci:clang14
-  script:
-    - mkdir -p .venv
-    - pipenv sync --dev
-  cache:
-    key:
-      prefix: pipenv-linux
-      files:
-        - Pipfile.lock
-    paths:
-      - .venv
-  artifacts:
-    paths:
-      - .venv
-    expire_in: "1 mos"
 
 line count:
   extends: .retry setting
@@ -67,15 +46,18 @@ line count:
 complexity:
   extends: .retry setting
   stage: test
-  needs:
-    - sync pipenv
-  dependencies:
-    - sync pipenv
+  needs: []
   image: musicscience37/clang-ci:clang14
   script:
+    - mkdir -p .venv
+    - pipenv sync --dev
     - mkdir -p complexity
     - pipenv run lizard -o complexity/complexity_per_function.html include
     - pipenv run lizard -o complexity/result.txt -E duplicate include
+  cache:
+    key: cache-${CI_JOB_NAME}
+    paths:
+      - .venv
   artifacts:
     paths:
       - complexity
@@ -83,32 +65,30 @@ complexity:
 
 pre-commit:
   stage: test
-  needs:
-    - sync pipenv
-  dependencies:
-    - sync pipenv
+  needs: []
   image: musicscience37/clang-ci:clang14
   script:
+    - mkdir -p .venv
+    - pipenv sync --dev
     - pipenv run pre-commit run --all-files
+  cache:
+    key: cache-${CI_JOB_NAME}
+    paths:
+      - .venv
 
 static analysis:
   extends: .retry setting
   stage: test
-  needs:
-    - sync pipenv
-  dependencies:
-    - sync pipenv
+  needs: []
   image: musicscience37/clang-ci:clang14
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   before_script:
+    - mkdir -p .venv
+    - pipenv sync --dev
     - apt update
     - apt install -y libstdc++-10-dev
-    - pip3 install junit2html
     - mkdir build_static_analysis
-    - cd build_static_analysis
-    - git clone https://github.com/PSPDFKit-labs/clang-tidy-to-junit.git
-    - cd ../
   script:
     - cd build_static_analysis
     - pipenv run conan profile new --force --detect default
@@ -125,11 +105,10 @@ static analysis:
     - cmake --build build_static_analysis
       --target num_collect_clang_tidy
     - scripts/check_clang_tidy.sh build_static_analysis/clang_tidy
-  after_script:
-    - cd build_static_analysis/clang_tidy
-    - cat $(find $1 -name '*.txt') |
-      python3 ../clang-tidy-to-junit/clang-tidy-to-junit.py $(dirname $(pwd)) > clang_tidy_junit.xml
-    - python3 -m junit2htmlreport clang_tidy_junit.xml clang_tidy_junit.html
+  cache:
+    key: cache-${CI_JOB_NAME}
+    paths:
+      - .venv
   artifacts:
     paths:
       - build_static_analysis/clang_tidy
@@ -142,16 +121,14 @@ static analysis:
 .release-test-base:
   extends: .retry setting
   stage: test
-  needs:
-    - sync pipenv
-  dependencies:
-    - sync pipenv
+  needs: []
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
     CCACHE_DIR: ${CI_PROJECT_DIR}/.cache
     CCACHE_COMPILERCHECK: content
     CONAN_USER_HOME: ${CI_PROJECT_DIR}
   before_script:
+    - mkdir -p .venv
     - pipenv sync --dev
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
@@ -180,6 +157,7 @@ static analysis:
     paths:
       - .cache
       - .conan
+      - .venv
   artifacts:
     paths:
       - $BUILD_DIR/bench
@@ -232,6 +210,8 @@ static analysis:
 .clang-release-test-base:
   extends: .release-test-base
   before_script:
+    - mkdir -p .venv
+    - pipenv sync --dev
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --force --detect default
@@ -243,6 +223,8 @@ static analysis:
 .clang-bench-base:
   extends: .bench-base
   before_script:
+    - mkdir -p .venv
+    - pipenv sync --dev
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --force --detect default
@@ -254,6 +236,8 @@ static analysis:
 .clang-debug-test-base:
   extends: .debug-test-base
   before_script:
+    - mkdir -p .venv
+    - pipenv sync --dev
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --force --detect default
@@ -394,14 +378,13 @@ clang-14-asan-ubsan:
 
 clang-14-conan:
   extends: .retry setting
-  needs:
-    - sync pipenv
-  dependencies:
-    - sync pipenv
+  needs: []
   image: musicscience37/clang-ci:clang14
   variables:
     CONAN_CHANNEL: "testing"
   script:
+    - mkdir -p .venv
+    - pipenv sync --dev
     - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libc++ default
     - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
@@ -410,14 +393,13 @@ clang-14-conan:
 clang-14-conan-release:
   extends: .retry setting
   stage: deploy
-  needs:
-    - sync pipenv
-  dependencies:
-    - sync pipenv
+  needs: []
   image: musicscience37/clang-ci:clang14
   variables:
     CONAN_CHANNEL: "stable"
   script:
+    - mkdir -p .venv
+    - pipenv sync --dev
     - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libc++ default
     - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
@@ -513,14 +495,13 @@ clang-14-conan-release:
 doc:
   extends: .retry setting
   stage: test
-  needs:
-    - sync pipenv
-  dependencies:
-    - sync pipenv
+  needs: []
   image: musicscience37/sphinx-doxygen:clang14
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   script:
+    - mkdir -p .venv
+    - pipenv sync --dev
     - mkdir build_doc
     - cd build_doc
     - pipenv run conan profile new --force --detect default
