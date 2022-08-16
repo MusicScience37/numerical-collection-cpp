@@ -110,7 +110,7 @@ template <num_collect::base::concepts::real_scalar_dense_vector T>
         // AVF.
         {"AVF2", "dashdot"}, {"AVF3", "dashdot"}, {"AVF4", "dashdot"},
         // Symplectic.
-        {"LeapFrog", "longdash"},
+        {"LeapFrog", "longdash"}, {"Forest4", "longdash"},
         // LU in Rosenbrock.
         {"ROS3w_lu", "solid"}, {"ROS34PW3_lu", "solid"},
         // Broyden in Rosenbrock.

@@ -27,6 +27,7 @@
 #include "num_collect/ode/avf/avf4_formula.h"
 #include "num_collect/ode/runge_kutta/rk4_formula.h"
 #include "num_collect/ode/symplectic/leap_frog_formula.h"
+#include "num_collect/ode/symplectic/symplectic_forest4_formula.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
 
 using problem_type = num_prob_collect::ode::spring_movement_problem;
@@ -39,7 +40,11 @@ template <typename Solver>
 inline void bench_one(
     const std::string& solver_name, fixed_step_bench_executor& executor) {
     constexpr double init_time = 0.0;
+#ifndef NDEBUG
     constexpr double end_time = 10.0;
+#else
+    constexpr double end_time = 100.0;
+#endif
     const Eigen::Vector2d init_var = Eigen::Vector2d(1.0, 0.0);
     const Eigen::Vector2d reference =
         Eigen::Vector2d(std::cos(end_time), std::sin(end_time));
@@ -85,6 +90,9 @@ auto main(int argc, char** argv) -> int {
         "RK4", executor);
     bench_one<num_collect::ode::symplectic::leap_frog_solver<problem_type>>(
         "LeapFrog", executor);
+    bench_one<
+        num_collect::ode::symplectic::symplectic_forest4_solver<problem_type>>(
+        "Forest4", executor);
     bench_one<num_collect::ode::avf::avf2_solver<problem_type>>(
         "AVF2", executor);
     bench_one<num_collect::ode::avf::avf3_solver<problem_type>>(
