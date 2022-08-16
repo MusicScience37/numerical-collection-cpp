@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Test of solving ODE of vibration with external force.
+ * \brief Test of solving ODE of spring movement.
  */
 #include <array>
 #include <string>
