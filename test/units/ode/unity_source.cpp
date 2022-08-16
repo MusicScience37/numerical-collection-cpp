@@ -31,3 +31,4 @@
 #include "runge_kutta/tanaka2_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "simple_solver_test.cpp"     // NOLINT(bugprone-suspicious-include)
 #include "step_size_limits_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "symplectic/leap_frog_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
