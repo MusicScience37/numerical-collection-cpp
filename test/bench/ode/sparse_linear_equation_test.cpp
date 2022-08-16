@@ -15,9 +15,10 @@
  */
 /*!
  * \file
- * \brief Test of basic operations in multi-double calculations.
+ * \brief Test of sparse linear equations.
  */
 #include <cmath>
+#include <stdexcept>
 #include <vector>
 
 #include <Eigen/IterativeLinearSolvers>
@@ -35,27 +36,28 @@ STAT_BENCH_MAIN
 class sparse_linear_equation_test_fixture : public stat_bench::FixtureBase {
 public:
     sparse_linear_equation_test_fixture() {
-        this->add_param<int>("size")
-            ->add(10)  // NOLINT
-            ->add(20)  // NOLINT
-            ->add(50)  // NOLINT
-#ifdef NDEBUG
+        this->add_param<int>("dim")
             ->add(100)  // NOLINT
             ->add(200)  // NOLINT
             ->add(500)  // NOLINT
+#ifdef NDEBUG
+            ->add(1000)   // NOLINT
+            ->add(2000)   // NOLINT
+            ->add(5000)   // NOLINT
+            ->add(10000)  // NOLINT
 #endif
             ;
     }
 
     void setup(stat_bench::bench::InvocationContext& context) override {
-        size_ = context.get_param<int>("size");
+        size_ = context.get_param<int>("dim");
         std::vector<Eigen::Triplet<double>> triplets;
         triplets.emplace_back(0, 0, 1.0);
         triplets.emplace_back(size_ - 1, size_ - 1, 1.0);
         for (int i = 1; i < size_ - 1; ++i) {
-            triplets.emplace_back(i, i - 1, 1.0);
-            triplets.emplace_back(i, i, -2.0);  // NOLINT
-            triplets.emplace_back(i, i + 1, 1.0);
+            triplets.emplace_back(i, i - 1, 1e-2);  // NOLINT
+            triplets.emplace_back(i, i, 1.0);       // NOLINT
+            triplets.emplace_back(i, i + 1, 1e-2);  // NOLINT
         }
         coeff_.resize(size_, size_);
         coeff_.setFromTriplets(triplets.begin(), triplets.end());
@@ -108,9 +110,11 @@ protected:
 class gmres_fixture : public sparse_linear_equation_test_fixture {
 public:
     gmres_fixture() {
-        this->add_param<int>("subspace")
+        this->add_param<int>("sub_dim")
             ->add(1)   // NOLINT
             ->add(2)   // NOLINT
+            ->add(3)   // NOLINT
+            ->add(4)   // NOLINT
             ->add(5)   // NOLINT
             ->add(10)  // NOLINT
             ;
@@ -118,7 +122,7 @@ public:
 
     void setup(stat_bench::bench::InvocationContext& context) override {
         sparse_linear_equation_test_fixture::setup(context);
-        subspace_size_ = context.get_param<int>("subspace");
+        subspace_size_ = context.get_param<int>("sub_dim");
     }
 
 protected:
@@ -141,9 +145,10 @@ STAT_BENCH_CASE_F(gmres_fixture, "sparse_linear_equation", "repeated_gmres") {
             solver.solve(coeff_function, rhs_, sol_);
             if ((coeff_ * sol_ - rhs_).norm() < tol) {
                 iterations_ = i;
-                break;
+                return;
             }
         }
+        throw std::runtime_error("Failed to converge.");
     };
 }
 
