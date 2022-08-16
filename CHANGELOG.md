@@ -24,8 +24,10 @@
     - New algorithm to automatically compute the next step size in ODE solver ([Issue #202](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/202)).
     - RODASP formula ([Issue #199](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/199)).
     - RODASPR formula ([Issue #213](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/213)).
-    - DOPRI% formula ([Issue #220](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/220)).
+    - DOPRI5 formula ([Issue #220](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/220)).
     - Approximate Jacobian matrix for some Rosenbrock formulas ([Issue #210](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/210)).
+    - ARK formulas ([Issue #215](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/215), [Issue #224](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/224)).
+    - Symplectic integration ([Issue #226](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/226)).
 
 ### Miscellaneous
 
