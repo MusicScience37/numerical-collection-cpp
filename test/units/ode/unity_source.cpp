@@ -19,6 +19,7 @@
 #include "rosenbrock/ros34pw3_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rosenbrock/ros3w_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rosenbrock/scalar_rosenbrock_equation_solver_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "runge_kutta/ark43_erk_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "runge_kutta/ark43_esdirk_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "runge_kutta/ark54_esdirk_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "runge_kutta/dopri5_formula_test.cpp"  // NOLINT(bugprone-suspicious-include)
