@@ -12,6 +12,10 @@ add_bench_using_pybind11(num_collect_bench_ode_free_fall_in_resistance)
 add_executable(num_collect_bench_ode_spring_movement spring_movement_test.cpp)
 add_bench_using_pybind11(num_collect_bench_ode_spring_movement)
 
+add_executable(num_collect_bench_ode_pendulum_movement
+               pendulum_movement_test.cpp)
+add_bench_using_pybind11(num_collect_bench_ode_pendulum_movement)
+
 add_executable(num_collect_bench_ode_kaps_problem kaps_problem_test.cpp)
 add_bench_using_pybind11(num_collect_bench_ode_kaps_problem)
 
@@ -26,3 +30,7 @@ add_bench_using_pybind11(num_collect_bench_ode_step_size_controllers)
 add_executable(num_collect_bench_ode_fixed_step_spring_movement
                spring_movement_fixed_step_test.cpp)
 add_bench_using_pybind11(num_collect_bench_ode_fixed_step_spring_movement)
+
+add_executable(num_collect_bench_ode_fixed_step_pendulum_movement
+               pendulum_movement_fixed_step_test.cpp)
+add_bench_using_pybind11(num_collect_bench_ode_fixed_step_pendulum_movement)
