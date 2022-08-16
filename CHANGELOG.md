@@ -6,7 +6,7 @@
 
 - Changed the name of class `heuristic_1dim_optimizer` to `heuristic_global_optimizer` ([Issue #151](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/merge_requests/151)).
 - Refactored logging ([Issue #178](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/178), [Issue #179](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/179), [Issue #164](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/164), [Issue #166](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/166), [Issue #182](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/182), [Issue #181](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/181)).
-- Refactored ode module for implementation of new algorithms ([Issue #192](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/192), [Issue #200](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/200), [Issue #208](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/208), [Issue #209](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/209), [Issue #212](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/212), [Issue #216](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/216), [Issue #218](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/218)).
+- Refactored ode module for implementation of new algorithms ([Issue #192](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/192), [Issue #200](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/200), [Issue #208](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/208), [Issue #209](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/209), [Issue #212](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/212), [Issue #216](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/216), [Issue #218](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/218), [Issue #219](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/219), [Issue #221](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/221), [Issue #215](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/215), [Issue #223](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/223)).
 
 ### Feature
 
@@ -24,6 +24,8 @@
     - New algorithm to automatically compute the next step size in ODE solver ([Issue #202](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/202)).
     - RODASP formula ([Issue #199](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/199)).
     - RODASPR formula ([Issue #213](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/213)).
+    - DOPRI% formula ([Issue #220](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/220)).
+    - Approximate Jacobian matrix for some Rosenbrock formulas ([Issue #210](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/210)).
 
 ### Miscellaneous
 
@@ -39,6 +41,7 @@
 - Introduced [IWYU](https://github.com/include-what-you-use/include-what-you-use/) ([Issue #9](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/9)).
 - Decreased the size of artifacts in CI ([Issue #201](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/201)).
 - More example problems of ODEs ([Issue #218](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/218)).
+- Introduced lizard ([Issue #225](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/225)).
 
 ## 0.4.1 (2022/2/19)
 
