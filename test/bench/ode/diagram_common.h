@@ -245,6 +245,7 @@ public:
                 std::unordered_map<std::string, std::string>{
                     // Explicit Runge-Kutta.
                     {"RKF45", "solid"}, {"DOPRI5", "solid"},
+                    {"ARK4(3)-ERK", "solid"},
                     // Implicit Runge-Kutta.
                     {"Tanaka1", "dot"}, {"Tanaka2", "dot"}, {"SDIRK4", "dot"},
                     {"ARK4(3)-ESDIRK", "dot"}, {"ARK5(4)-ESDIRK", "dot"},
