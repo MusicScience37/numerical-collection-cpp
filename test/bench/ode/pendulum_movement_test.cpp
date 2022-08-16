@@ -15,12 +15,8 @@
  */
 /*!
  * \file
- * \brief Test of solving ODE of spring movement.
+ * \brief Test of solving ODE of pendulum movement.
  */
-#include <array>
-#include <string>
-#include <string_view>
-
 #include <Eigen/Core>
 #include <fmt/format.h>
 
@@ -45,22 +41,42 @@
 #include "num_collect/ode/runge_kutta/sdirk4_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka1_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka2_formula.h"
-#include "num_prob_collect/ode/spring_movement_problem.h"
+#include "num_prob_collect/ode/pendulum_movement_problem.h"
 
-using problem_type = num_prob_collect::ode::spring_movement_problem;
+using problem_type = num_prob_collect::ode::pendulum_movement_problem;
 
-static constexpr std::string_view problem_name = "spring_movement_problem";
-static constexpr std::string_view problem_description = "Spring Movement";
+static constexpr std::string_view problem_name = "pendulum_movement_problem";
+static constexpr std::string_view problem_description = "Pendulum Movement";
+
+static auto calculate_reference(double init_time, double end_time,
+    const Eigen::Vector2d& init_var) -> Eigen::Vector2d {
+    num_collect::ode::runge_kutta::rk4_solver<problem_type> solver{
+        problem_type{}};
+#ifndef NDEBUG
+    constexpr double step_size = 1e-4;
+#else
+    constexpr double step_size = 1e-6;
+#endif
+    solver.step_size(step_size);
+    solver.init(init_time, init_var);
+    solver.solve_till(end_time);
+    return solver.variable();
+}
+
+static constexpr double init_time = 0.0;
+#ifndef NDEBUG
+static constexpr double end_time = 1.0;
+#else
+static constexpr double end_time = 10.0;
+#endif
+static const Eigen::Vector2d init_var = Eigen::Vector2d(0.0, 1.0);
+
+static const Eigen::Vector2d reference =
+    calculate_reference(init_time, end_time, init_var);
 
 template <typename Solver>
 inline void bench_one(
     const std::string& solver_name, bench_executor& executor) {
-    constexpr double init_time = 0.0;
-    constexpr double end_time = 10.0;
-    const Eigen::Vector2d init_var = Eigen::Vector2d(1.0, 0.0);
-    const Eigen::Vector2d reference =
-        Eigen::Vector2d(std::cos(end_time), std::sin(end_time));
-
 #ifndef NDEBUG
     constexpr num_collect::index_type repetitions = 10;
 #else

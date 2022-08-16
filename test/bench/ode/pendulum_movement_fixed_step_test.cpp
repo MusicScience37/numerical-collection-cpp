@@ -1,0 +1,123 @@
+/*
+ * Copyright 2021 MusicScience37 (Kenta Kabashima)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*!
+ * \file
+ * \brief Test of solving ODE of pendulum movement with fixed step sizes.
+ */
+#include <Eigen/Core>
+#include <fmt/format.h>
+
+#include "diagram_common.h"
+#include "fixed_step_bench_executor.h"
+#include "num_collect/ode/avf/avf2_formula.h"
+#include "num_collect/ode/avf/avf3_formula.h"
+#include "num_collect/ode/avf/avf4_formula.h"
+#include "num_collect/ode/runge_kutta/rk4_formula.h"
+#include "num_collect/ode/symplectic/leap_frog_formula.h"
+#include "num_collect/ode/symplectic/symplectic_forest4_formula.h"
+#include "num_prob_collect/ode/pendulum_movement_problem.h"
+
+using problem_type = num_prob_collect::ode::pendulum_movement_problem;
+
+static constexpr std::string_view problem_name =
+    "pendulum_movement_problem_fixed_step";
+static constexpr std::string_view problem_description = "Pendulum Movement";
+
+static auto calculate_reference(double init_time, double end_time,
+    const Eigen::Vector2d& init_var) -> Eigen::Vector2d {
+    num_collect::ode::runge_kutta::rk4_solver<problem_type> solver{
+        problem_type{}};
+#ifndef NDEBUG
+    constexpr double step_size = 1e-4;
+#else
+    constexpr double step_size = 1e-6;
+#endif
+    solver.step_size(step_size);
+    solver.init(init_time, init_var);
+    solver.solve_till(end_time);
+    return solver.variable();
+}
+
+static constexpr double init_time = 0.0;
+#ifndef NDEBUG
+static constexpr double end_time = 1.0;
+#else
+static constexpr double end_time = 100.0;
+#endif
+static const Eigen::Vector2d init_var = Eigen::Vector2d(0.0, 1.0);
+
+static const Eigen::Vector2d reference =
+    calculate_reference(init_time, end_time, init_var);
+
+template <typename Solver>
+inline void bench_one(
+    const std::string& solver_name, fixed_step_bench_executor& executor) {
+    const auto energy_function = [](const Eigen::Vector2d& var) -> double {
+        return 0.5 * var[0] * var[0] - std::cos(var[1]);  // NOLINT
+    };
+
+#ifndef NDEBUG
+    constexpr std::array<double, 3> step_size_list{1e-1, 1e-2, 1e-3};
+#else
+    constexpr std::array<double, 4> step_size_list{1e-1, 1e-2, 1e-3, 1e-4};
+#endif
+
+    for (const double step_size : step_size_list) {
+#ifndef NDEBUG
+        constexpr num_collect::index_type repetitions = 10;
+#else
+        const auto repetitions =
+            static_cast<num_collect::index_type>(10000.0 * step_size);
+#endif
+        const problem_type problem;
+        executor.perform<problem_type, Solver>(solver_name, problem, init_time,
+            end_time, init_var, reference, repetitions, step_size,
+            energy_function);
+    }
+}
+
+auto main(int argc, char** argv) -> int {
+    if (argc != 2) {
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+        fmt::print("Usage: {} <output_directory>", argv[0]);
+        return 1;
+    }
+
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+    const std::string_view output_directory = argv[1];
+
+    configure_logging();
+
+    fixed_step_bench_executor executor{};
+
+    bench_one<num_collect::ode::runge_kutta::rk4_solver<problem_type>>(
+        "RK4", executor);
+    bench_one<num_collect::ode::symplectic::leap_frog_solver<problem_type>>(
+        "LeapFrog", executor);
+    bench_one<
+        num_collect::ode::symplectic::symplectic_forest4_solver<problem_type>>(
+        "Forest4", executor);
+    bench_one<num_collect::ode::avf::avf2_solver<problem_type>>(
+        "AVF2", executor);
+    bench_one<num_collect::ode::avf::avf3_solver<problem_type>>(
+        "AVF3", executor);
+    bench_one<num_collect::ode::avf::avf4_solver<problem_type>>(
+        "AVF4", executor);
+
+    executor.write_result(problem_name, problem_description, output_directory);
+
+    return 0;
+}

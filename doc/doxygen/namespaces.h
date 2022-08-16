@@ -402,6 +402,14 @@ namespace num_collect {
 
         }  // namespace avf
 
+        /*!
+         * \dir num_collect/ode/symplectic
+         * \brief Directory of symplectic integration.
+         */
+
+        //! Namespace of symplectic integration.
+        namespace symplectic {}
+
     }  // namespace ode
 
 }  // namespace num_collect
