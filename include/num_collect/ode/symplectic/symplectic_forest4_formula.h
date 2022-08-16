@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of leap_frog_formula class.
+ * \brief Definition of symplectic_forest4_formula class.
  */
 #pragma once
 
@@ -23,7 +23,7 @@
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/constants/half.h"  // IWYU pragma: keep
+#include "num_collect/constants/cbrt.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/concepts/multi_variate_problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/evaluation_type.h"
@@ -33,7 +33,8 @@
 namespace num_collect::ode::symplectic {
 
 /*!
- * \brief Class of leap-frog formula.
+ * \brief Class of fourth-order symplectic integration formula in
+ * \cite Forest1990.
  *
  * This formula solves initial value problems of ODEs with following structure:
  *
@@ -51,16 +52,15 @@ namespace num_collect::ode::symplectic {
  * the lower half of the solution vector is position \f$\boldsymbol{q}\f$,
  * and the upper half is moment \f$\boldsymbol{p}\f$.
  *
- * \note For theoretical discussion, see \cite Forest1990.
- *
  * \tparam Problem Type of problem.
  */
 template <concepts::multi_variate_problem Problem>
-class leap_frog_formula
-    : public formula_base<leap_frog_formula<Problem>, Problem> {
+class symplectic_forest4_formula
+    : public formula_base<symplectic_forest4_formula<Problem>, Problem> {
 public:
     //! Type of base class.
-    using base_type = formula_base<leap_frog_formula<Problem>, Problem>;
+    using base_type =
+        formula_base<symplectic_forest4_formula<Problem>, Problem>;
 
     using typename base_type::problem_type;
     using typename base_type::scalar_type;
@@ -77,14 +77,39 @@ protected:
 
 public:
     //! Number of stages of this formula.
-    static constexpr index_type stages = 3;
+    static constexpr index_type stages = 7;
 
     //! Order of this formula.
-    static constexpr index_type order = 2;
+    static constexpr index_type order = 4;
 
     //! Log tag.
     static constexpr auto log_tag = logging::log_tag_view(
-        "num_collect::ode::symplectic::leap_frog_formula");
+        "num_collect::ode::symplectic::symplectic_forest4_formula");
+
+    //! A constant of this formula \f$\alpha = 1 - 2^{1/3}\f$.
+    static constexpr scalar_type alpha = static_cast<scalar_type>(1) -
+        constants::cbrt(static_cast<scalar_type>(2));
+
+    /*!
+     * \name Coefficients of this formula.
+     *
+     * - `bp` is coefficients to update moment.
+     * - `bq` is coefficients to update position.
+     */
+    ///@{
+    //! Coefficients of this formula.
+    static constexpr scalar_type bp1 = static_cast<scalar_type>(1) /
+        (static_cast<scalar_type>(2) * (static_cast<scalar_type>(1) + alpha));
+    static constexpr scalar_type bq1 =
+        static_cast<scalar_type>(1) / (static_cast<scalar_type>(1) + alpha);
+    static constexpr scalar_type bp2 = alpha /
+        (static_cast<scalar_type>(2) * (static_cast<scalar_type>(1) + alpha));
+    static constexpr scalar_type bq2 = (alpha - static_cast<scalar_type>(1)) /
+        (static_cast<scalar_type>(1) + alpha);
+    static constexpr scalar_type bp3 = bp2;
+    static constexpr scalar_type bq3 = bq1;
+    static constexpr scalar_type bp4 = bp1;
+    ///@}
 
     //! \copydoc ode::formula_base::step
     void step(scalar_type time, scalar_type step_size,
@@ -101,21 +126,38 @@ public:
         constexpr auto evaluations = evaluation_type{.diff_coeff = true};
 
         problem().evaluate_on(time, estimate, evaluations);
-        estimate.head(half_dim) += step_size * constants::half<scalar_type> *
-            problem().diff_coeff().head(half_dim);
+        estimate.head(half_dim) +=
+            step_size * bp1 * problem().diff_coeff().head(half_dim);
 
         problem().evaluate_on(time, estimate, evaluations);
         estimate.tail(half_dim) +=
-            step_size * problem().diff_coeff().tail(half_dim);
+            step_size * bq1 * problem().diff_coeff().tail(half_dim);
 
         problem().evaluate_on(time, estimate, evaluations);
-        estimate.head(half_dim) += step_size * constants::half<scalar_type> *
-            problem().diff_coeff().head(half_dim);
+        estimate.head(half_dim) +=
+            step_size * bp2 * problem().diff_coeff().head(half_dim);
+
+        problem().evaluate_on(time, estimate, evaluations);
+        estimate.tail(half_dim) +=
+            step_size * bq2 * problem().diff_coeff().tail(half_dim);
+
+        problem().evaluate_on(time, estimate, evaluations);
+        estimate.head(half_dim) +=
+            step_size * bp3 * problem().diff_coeff().head(half_dim);
+
+        problem().evaluate_on(time, estimate, evaluations);
+        estimate.tail(half_dim) +=
+            step_size * bq3 * problem().diff_coeff().tail(half_dim);
+
+        problem().evaluate_on(time, estimate, evaluations);
+        estimate.head(half_dim) +=
+            step_size * bp4 * problem().diff_coeff().head(half_dim);
     }
 };
 
 /*!
- * \brief Class of solver using leap-frog formula.
+ * \brief Class of fourth-order symplectic integration formula in
+ * \cite Forest1990.
  *
  * This formula solves initial value problems of ODEs with following structure:
  *
@@ -133,11 +175,10 @@ public:
  * the lower half of the solution vector is position \f$\boldsymbol{q}\f$,
  * and the upper half is moment \f$\boldsymbol{p}\f$.
  *
- * \note For theoretical discussion, see \cite Forest1990.
- *
  * \tparam Problem Type of problem.
  */
 template <concepts::problem Problem>
-using leap_frog_solver = simple_solver<leap_frog_formula<Problem>>;
+using symplectic_forest4_solver =
+    simple_solver<symplectic_forest4_formula<Problem>>;
 
 }  // namespace num_collect::ode::symplectic

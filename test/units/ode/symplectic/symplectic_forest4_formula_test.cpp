@@ -15,9 +15,9 @@
  */
 /*!
  * \file
- * \brief Test of leap_frog_formula class.
+ * \brief Test of symplectic_forest4_formula class.
  */
-#include "num_collect/ode/symplectic/leap_frog_formula.h"
+#include "num_collect/ode/symplectic/symplectic_forest4_formula.h"
 
 #include <cmath>
 #include <string>
@@ -31,14 +31,14 @@
 #include "comparison_approvals.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
 
-TEST_CASE("num_collect::ode::symplectic::leap_frog_formula") {
+TEST_CASE("num_collect::ode::symplectic::symplectic_forest4_formula") {
     using problem_type = num_prob_collect::ode::spring_movement_problem;
     using formula_type =
-        num_collect::ode::symplectic::leap_frog_formula<problem_type>;
+        num_collect::ode::symplectic::symplectic_forest4_formula<problem_type>;
 
     SECTION("static definition") {
-        STATIC_REQUIRE(formula_type::stages == 3);
-        STATIC_REQUIRE(formula_type::order == 2);
+        STATIC_REQUIRE(formula_type::stages == 7);
+        STATIC_REQUIRE(formula_type::order == 4);
     }
 
     SECTION("initialize") {
@@ -62,11 +62,12 @@ TEST_CASE("num_collect::ode::symplectic::leap_frog_formula") {
 }
 
 TEST_CASE(
-    "num_collect::ode::symplectic::leap_frog_solver<num_prob_collect::ode::"
+    "num_collect::ode::symplectic::symplectic_forest4_solver<num_prob_collect::"
+    "ode::"
     "spring_movement_problem>") {
     using problem_type = num_prob_collect::ode::spring_movement_problem;
     using solver_type =
-        num_collect::ode::symplectic::leap_frog_solver<problem_type>;
+        num_collect::ode::symplectic::symplectic_forest4_solver<problem_type>;
 
     SECTION("solve_till") {
         auto solver = solver_type(problem_type());
