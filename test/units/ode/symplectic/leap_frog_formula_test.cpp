@@ -29,6 +29,7 @@
 #include <fmt/format.h>
 
 #include "comparison_approvals.h"
+#include "num_prob_collect/ode/autonomous_external_force_vibration_problem.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
 
 TEST_CASE("num_collect::ode::symplectic::leap_frog_formula") {
@@ -58,6 +59,23 @@ TEST_CASE("num_collect::ode::symplectic::leap_frog_formula") {
         const Eigen::Vector2d reference =
             Eigen::Vector2d(std::cos(step_size), std::sin(step_size));
         comparison_approvals::verify_with_reference(next_var, reference);
+    }
+}
+
+TEST_CASE("num_collect::ode::symplectic::leap_frog_formula(invalid problem)") {
+    using problem_type =
+        num_prob_collect::ode::autonomous_external_force_vibration_problem;
+    using formula_type =
+        num_collect::ode::symplectic::leap_frog_formula<problem_type>;
+
+    SECTION("step") {
+        auto formula = formula_type(problem_type());
+
+        constexpr double time = 0.0;
+        constexpr double step_size = 1e-2;
+        const Eigen::Vector3d prev_var = Eigen::Vector3d{{1.0, 0.0, 0.0}};
+        Eigen::Vector3d next_var{{0.0, 0.0, 0.0}};
+        CHECK_THROWS(formula.step(time, step_size, prev_var, next_var));
     }
 }
 
