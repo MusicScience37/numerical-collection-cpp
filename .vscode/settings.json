@@ -6,6 +6,7 @@
     "AUSAN",
     "BDCSVD",
     "bfgs",
+    "BiCGSTAB",
     "Blom",
     "boldsymbol",
     "Brochu",

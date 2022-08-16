@@ -119,7 +119,7 @@ public:
 
 private:
     //! Default maximum number of dimensions of subspace.
-    static constexpr index_type default_max_subspace_dim = 10;
+    static constexpr index_type default_max_subspace_dim = 1;
 
     //! Maximum number of dimensions of subspace.
     index_type max_subspace_dim_{default_max_subspace_dim};

@@ -1,3 +1,7 @@
+add_executable(num_collect_bench_sparse_linear_equation
+               sparse_linear_equation_test.cpp)
+target_add_to_benchmark(num_collect_bench_sparse_linear_equation)
+
 add_executable(num_collect_bench_ode_exponential exponential_test.cpp)
 add_bench_using_pybind11(num_collect_bench_ode_exponential)
 
