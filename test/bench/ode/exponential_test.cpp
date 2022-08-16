@@ -32,6 +32,7 @@
 #include "num_collect/ode/rosenbrock/rodaspr_formula.h"
 #include "num_collect/ode/rosenbrock/ros34pw3_formula.h"
 #include "num_collect/ode/rosenbrock/ros3w_formula.h"
+#include "num_collect/ode/runge_kutta/ark43_erk_formula.h"
 #include "num_collect/ode/runge_kutta/ark43_esdirk_formula.h"
 #include "num_collect/ode/runge_kutta/ark54_esdirk_formula.h"
 #include "num_collect/ode/runge_kutta/dopri5_formula.h"
@@ -91,6 +92,8 @@ auto main(int argc, char** argv) -> int {
         "RKF45", executor);
     bench_one<num_collect::ode::runge_kutta::dopri5_solver<problem_type>>(
         "DOPRI5", executor);
+    bench_one<num_collect::ode::runge_kutta::ark43_erk_solver<problem_type>>(
+        "ARK4(3)-ERK", executor);
     bench_one<num_collect::ode::runge_kutta::tanaka1_solver<problem_type>>(
         "Tanaka1", executor);
     bench_one<num_collect::ode::runge_kutta::tanaka2_solver<problem_type>>(

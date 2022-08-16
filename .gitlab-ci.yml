@@ -248,6 +248,8 @@ clang coverage:
 
 gcc coverage:
   extends: .release-test-base
+  only:
+    - develop
   image: musicscience37/gcc-ci:gcc10
   variables:
     CONAN_STD_CPP_LIB: "libstdc++11"

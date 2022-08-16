@@ -34,6 +34,7 @@
 #include "num_collect/ode/rosenbrock/rodaspr_formula.h"
 #include "num_collect/ode/rosenbrock/ros34pw3_formula.h"
 #include "num_collect/ode/rosenbrock/ros3w_formula.h"
+#include "num_collect/ode/runge_kutta/ark43_erk_formula.h"
 #include "num_collect/ode/runge_kutta/ark43_esdirk_formula.h"
 #include "num_collect/ode/runge_kutta/ark54_esdirk_formula.h"
 #include "num_collect/ode/runge_kutta/dopri5_formula.h"
@@ -61,7 +62,8 @@ inline void bench_one(
     constexpr num_collect::index_type repetitions = 10;
 #else
     num_collect::index_type repetitions = 1000;  // NOLINT
-    if (solver_name == "RKF45" || solver_name == "DOPRI5") {
+    if (solver_name == "RKF45" || solver_name == "DOPRI5" ||
+        solver_name == "ARK4(3)-ERK") {
         if (epsilon < 1e-4) {
             repetitions = 10;  // NOLINT
         } else {
@@ -107,6 +109,9 @@ auto main(int argc, char** argv) -> int {
             "RKF45", epsilon, executor);
         bench_one<num_collect::ode::runge_kutta::dopri5_solver<problem_type>>(
             "DOPRI5", epsilon, executor);
+        bench_one<
+            num_collect::ode::runge_kutta::ark43_erk_solver<problem_type>>(
+            "ARK4(3)-ERK", epsilon, executor);
         bench_one<num_collect::ode::runge_kutta::tanaka1_solver<problem_type>>(
             "Tanaka1", epsilon, executor);
         bench_one<num_collect::ode::runge_kutta::tanaka2_solver<problem_type>>(
