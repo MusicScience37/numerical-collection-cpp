@@ -157,7 +157,7 @@ private:
      * matrix.
      * \param[in] coeff_function Function to multiply coefficient matrix.
      * \param[in] rhs Right-hand-side vector.
-     * \param[in,out] solution Solution. (Given vector is used as the initial
+     * \param[in] solution Solution. (Given vector is used as the initial
      * solution.)
      */
     template <base::concepts::invocable<const vector_type&, vector_type&>
