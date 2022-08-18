@@ -6,6 +6,7 @@ set(SOURCE_FILES
     embedded_solver_test.cpp
     error_tolerances_test.cpp
     evaluation_type_test.cpp
+    impl/bicgstab_test.cpp
     impl/get_least_known_order_test.cpp
     impl/gmres_test.cpp
     inexact_newton_slope_equation_solver_test.cpp
@@ -13,6 +14,7 @@ set(SOURCE_FILES
     initial_step_size_calculator_test.cpp
     non_embedded_formula_wrapper_test.cpp
     pi_step_size_controller_test.cpp
+    rosenbrock/bicgstab_rosenbrock_equation_solver_test.cpp
     rosenbrock/default_rosenbrock_equation_solver_test.cpp
     rosenbrock/gmres_rosenbrock_equation_solver_test.cpp
     rosenbrock/lu_rosenbrock_equation_solver_test.cpp

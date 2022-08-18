@@ -29,6 +29,8 @@
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/constants/pi.h"
+#include "num_collect/ode/error_tolerances.h"
+#include "num_collect/ode/impl/bicgstab.h"
 #include "num_collect/ode/impl/gmres.h"
 
 STAT_BENCH_MAIN
@@ -154,6 +156,25 @@ STAT_BENCH_CASE_F(gmres_fixture, "sparse_linear_equation", "repeated_gmres") {
 
 STAT_BENCH_CASE_F(
     sparse_linear_equation_test_fixture, "sparse_linear_equation", "BiCGSTAB") {
+    num_collect::ode::impl::bicgstab<Eigen::VectorXd> solver;
+    const auto tol_abs_error_per_elem =
+        1e+2 * rel_tol * rhs_.norm() / std::sqrt(rhs_.size());
+    solver.tolerances(num_collect::ode::error_tolerances<Eigen::VectorXd>()
+                          .tol_rel_error(0.0)
+                          .tol_abs_error(tol_abs_error_per_elem));
+    const auto coeff_function = [coeff_ptr = &coeff_](
+                                    const auto& target, auto& result) {
+        result = (*coeff_ptr) * target;
+    };
+    STAT_BENCH_MEASURE() {
+        sol_.setZero();
+        solver.solve(coeff_function, rhs_, sol_);
+        iterations_ = static_cast<int>(solver.iterations());
+    };
+}
+
+STAT_BENCH_CASE_F(sparse_linear_equation_test_fixture, "sparse_linear_equation",
+    "BiCGSTAB_eigen") {
     Eigen::BiCGSTAB<Eigen::SparseMatrix<double>> solver;
     solver.setTolerance(rel_tol);
     STAT_BENCH_MEASURE() {

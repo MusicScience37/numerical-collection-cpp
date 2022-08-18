@@ -15,11 +15,12 @@
  */
 /*!
  * \file
- * \brief Definition of gmres function.
+ * \brief Definition of gmres class.
  */
 #pragma once
 
 // IWYU pragma: no_include <utility>
+// IWYU pragma: no_include <Eigen/SparseCore>
 
 #include <limits>
 

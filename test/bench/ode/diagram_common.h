@@ -118,6 +118,9 @@ template <num_collect::base::concepts::real_scalar_dense_vector T>
         // GMRES in Rosenbrock.
         {"ROS3w_gmres", "dashdot"}, {"ROS34PW3_gmres", "dashdot"},
         {"RODASP_gmres", "dashdot"},
+        // BiCGstab in Rosenbrock.
+        {"ROS3w_bicgstab", "dot"}, {"ROS34PW3_bicgstab", "dot"},
+        {"RODASP_bicgstab", "dot"},
         // Basic step size controller.
         {"RKF45_basic", "solid"}, {"ROS3w_basic", "solid"},
         {"RODASP_basic", "solid"},

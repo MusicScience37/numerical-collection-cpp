@@ -5,6 +5,7 @@
 import pathlib
 import random
 import signal
+import subprocess
 
 import click
 import trio
@@ -172,6 +173,7 @@ def check_iwyu(file_or_directory_paths: list[str], build_dir: str, num_jobs: int
 
     if not IS_SUCCESS:
         click.echo(click.style("Some errors occurred.", fg="red"))
+        subprocess.run(["pkill", "include-what"], check=False)
 
 
 if __name__ == "__main__":
