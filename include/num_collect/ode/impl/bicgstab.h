@@ -81,6 +81,13 @@ public:
         iterations_ = 0;
         initialize(coeff_function, rhs, solution);
 
+        scalar_type residual_norm = tolerances_.calc_norm(rhs, residual_);
+        if (residual_norm < tolerance_rate_ || iterations_ >= max_iterations_) {
+            this->logger().trace()(
+                "No iteration needed. residual_norm={}", residual_norm);
+            return;
+        }
+
         while (true) {
             coeff_function(p_, ap_);
             const scalar_type as_dot = r0_.dot(ap_);
@@ -101,8 +108,12 @@ public:
             solution += omega * residual_;
             residual_ -= omega * as_;  // r in reference.
 
-            if (tolerances_.calc_norm(rhs, residual_) < tolerance_rate_ ||
+            residual_norm = tolerances_.calc_norm(rhs, residual_);
+            if (residual_norm < tolerance_rate_ ||
                 iterations_ >= max_iterations_) {
+                this->logger().trace()(
+                    "Finished iterations: iterations={}, residual_norm={}",
+                    iterations_, residual_norm);
                 return;
             }
 
@@ -125,6 +136,13 @@ public:
         tolerances_ = val;
         return *this;
     }
+
+    /*!
+     * \brief Get the number of iterations.
+     *
+     * \return Number of iterations.
+     */
+    auto iterations() -> index_type { return iterations_; }
 
 private:
     /*!
