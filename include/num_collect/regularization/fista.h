@@ -80,7 +80,7 @@ public:
     void compute(const Coeff& coeff, const Data& data) {
         coeff_ = &coeff;
         data_ = &data;
-        inv_max_eigen_ = scalar_type(1) / max_eigen_aat(coeff);
+        inv_max_eigen_ = static_cast<scalar_type>(1) / max_eigen_aat(coeff);
         this->logger().trace()("inv_max_eigen={}", inv_max_eigen_);
     }
 
