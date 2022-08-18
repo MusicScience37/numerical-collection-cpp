@@ -28,6 +28,7 @@ tqdm = "*"
 lizard = "*"
 jinja2 = "*"
 lcov-cobertura = "*"
+clang-tidy-checker = "*"
 
 [requires]
 python_version = "3.9"
