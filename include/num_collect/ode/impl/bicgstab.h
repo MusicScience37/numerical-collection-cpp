@@ -82,7 +82,7 @@ public:
         initialize(coeff_function, rhs, solution);
 
         scalar_type residual_norm = tolerances_.calc_norm(rhs, residual_);
-        if (residual_norm < tolerance_rate_ || iterations_ >= max_iterations_) {
+        if (residual_norm <= tolerance_rate_) {
             this->logger().trace()(
                 "No iteration needed. residual_norm={}", residual_norm);
             return;
@@ -92,7 +92,8 @@ public:
             coeff_function(p_, ap_);
             const scalar_type as_dot = r0_.dot(ap_);
             if (abs(as_dot) < std::numeric_limits<scalar_type>::min()) {
-                throw algorithm_failure("Division by zero.");
+                this->logger().warning()("No further iteration can be done.");
+                return;
             }
             const scalar_type mu = rho_ / r0_.dot(ap_);
             residual_ -= mu * ap_;  // s in reference.
@@ -102,6 +103,7 @@ public:
             solution += mu * p_;
             if (abs(as_norm2) < std::numeric_limits<scalar_type>::min()) {
                 initialize(coeff_function, rhs, solution);
+                ++iterations_;
                 continue;
             }
             const scalar_type omega = residual_.dot(as_) / as_norm2;
@@ -109,7 +111,7 @@ public:
             residual_ -= omega * as_;  // r in reference.
 
             residual_norm = tolerances_.calc_norm(rhs, residual_);
-            if (residual_norm < tolerance_rate_ ||
+            if (residual_norm <= tolerance_rate_ ||
                 iterations_ >= max_iterations_) {
                 this->logger().trace()(
                     "Finished iterations: iterations={}, residual_norm={}",
