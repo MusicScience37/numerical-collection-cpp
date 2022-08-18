@@ -256,7 +256,7 @@ public:
      * \return Distance between center point and vertex.
      */
     [[nodiscard]] auto dist() const -> value_type {
-        auto squared_sum = value_type(0);
+        auto squared_sum = static_cast<value_type>(0);
         for (index_type i = 0; i < vertex_.dim(); ++i) {
             using std::pow;
             squared_sum +=

@@ -167,7 +167,7 @@ public:
      * \param[in] tag Tag.
      * \param[in] config Configuration.
      */
-    logger(log_tag tag, log_tag_config config) noexcept
+    logger(log_tag tag, log_tag_config config)
         : tag_(std::move(tag)),
           config_(std::move(config)),
           always_output_log_level_(std::max(config_.output_log_level(),

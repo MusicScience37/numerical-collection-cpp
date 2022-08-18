@@ -208,7 +208,9 @@ private:
     std::string label_;
 
     //! Function to get the value.
-    Function function_;
+    Function
+        function_;  // NOLINT(readability-identifier-naming,-warnings-as-errors)
+                    // False positive
 
     //! Width.
     index_type width_{impl::iteration_logger_default_width};
@@ -335,7 +337,9 @@ private:
     std::string label_;
 
     //! Function to get the value.
-    Function function_;
+    Function
+        function_;  // NOLINT(readability-identifier-naming,-warnings-as-errors)
+                    // False positive
 
     //! Precision.
     index_type precision_{impl::iteration_logger_default_precision};

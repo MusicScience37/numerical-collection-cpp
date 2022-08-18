@@ -178,7 +178,8 @@ TEST_CASE("num_collect::logging::iteration_logger") {
 
         constexpr int repetition = 10;
         for (int i = 0; i < repetition; ++i) {
-            val1 = i;
+            val1 = i;  // NOLINT(clang-analyzer-deadcode.DeadStores)
+                       // false positive
             iteration_logger.write_iteration();
         }
 
@@ -212,7 +213,8 @@ TEST_CASE("num_collect::logging::iteration_logger") {
         constexpr int repetition = 3;
         for (int i = 0; i < repetition; ++i) {
             iteration_logger.reset_count();
-            val1 = i;
+            val1 = i;  // NOLINT(clang-analyzer-deadcode.DeadStores)
+                       // false positive
             iteration_logger.write_iteration();
         }
 
