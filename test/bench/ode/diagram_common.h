@@ -112,9 +112,12 @@ template <num_collect::base::concepts::real_scalar_dense_vector T>
         // Symplectic.
         {"LeapFrog", "longdash"}, {"Forest4", "longdash"},
         // LU in Rosenbrock.
-        {"ROS3w_lu", "solid"}, {"ROS34PW3_lu", "solid"},
+        {"ROS3w_lu", "solid"}, {"ROS34PW3_lu", "solid"}, {"RODASP_lu", "solid"},
         // Broyden in Rosenbrock.
-        {"ROS3w_broyden", "dot"}, {"ROS34PW3_broyden", "dot"},
+        {"ROS3w_broyden", "longdash"}, {"ROS34PW3_broyden", "longdash"},
+        // GMRES in Rosenbrock.
+        {"ROS3w_gmres", "dashdot"}, {"ROS34PW3_gmres", "dashdot"},
+        {"RODASP_gmres", "dashdot"},
         // Basic step size controller.
         {"RKF45_basic", "solid"}, {"ROS3w_basic", "solid"},
         {"RODASP_basic", "solid"},

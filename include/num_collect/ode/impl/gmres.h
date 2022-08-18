@@ -99,6 +99,9 @@ public:
             residual_norm = residual_.norm();
             hessenberg_(k, k - 1) = residual_norm;
         }
+        if (k == 0) {
+            return;
+        }
         qr_.compute(hessenberg_.topLeftCorner(k + 1, k));
         temp_rhs_(0) = initial_residual_norm;
         temp_sol_.head(k) = qr_.solve(temp_rhs_.head(k + 1));
@@ -119,7 +122,7 @@ public:
 
 private:
     //! Default maximum number of dimensions of subspace.
-    static constexpr index_type default_max_subspace_dim = 1;
+    static constexpr index_type default_max_subspace_dim = 2;
 
     //! Maximum number of dimensions of subspace.
     index_type max_subspace_dim_{default_max_subspace_dim};

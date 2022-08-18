@@ -156,6 +156,7 @@ public:
             result *= -step_size_ * inverted_jacobian_coeff_;
             result += target;
         };
+        result = variable_type::Zero(rhs.size());
         for (index_type i = 0; i < max_iterations; ++i) {
             gmres_.solve(coeff_function, rhs, result);
             coeff_function(result, residual_);

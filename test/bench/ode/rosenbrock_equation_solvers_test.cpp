@@ -26,8 +26,10 @@
 
 #include "diagram_common.h"
 #include "num_collect/ode/embedded_solver.h"
+#include "num_collect/ode/rosenbrock/gmres_rosenbrock_equation_solver.h"
 #include "num_collect/ode/rosenbrock/lu_rosenbrock_equation_solver.h"
 #include "num_collect/ode/rosenbrock/mixed_broyden_rosenbrock_equation_solver.h"
+#include "num_collect/ode/rosenbrock/rodasp_formula.h"
 #include "num_collect/ode/rosenbrock/ros34pw3_formula.h"
 #include "num_collect/ode/rosenbrock/ros3w_formula.h"
 #include "num_prob_collect/ode/kaps_problem.h"
@@ -43,19 +45,28 @@ inline void bench_one(
     const std::string& solver_name, bench_executor& executor) {
     constexpr double epsilon = 1e-3;
     constexpr double init_time = 0.0;
+#ifndef NDEBUG
+    constexpr double end_time = 0.1;
+#else
     constexpr double end_time = 1.0;
+#endif
     const Eigen::Vector2d init_var{{1.0, 1.0}};
     const Eigen::Vector2d reference{
         {std::exp(-2.0 * end_time), std::exp(-end_time)}};
 
 #ifndef NDEBUG
-    constexpr num_collect::index_type repetitions = 10;
+    num_collect::index_type repetitions = 10;  // NOLINT
+    if (solver_name.ends_with("_gmres")) {
+        repetitions = 1;  // NOLINT
+    }
 #else
-    constexpr num_collect::index_type repetitions = 1000;
+    num_collect::index_type repetitions = 1000;  // NOLINT
+    if (solver_name.ends_with("_gmres")) {
+        repetitions = 100;  // NOLINT
+    }
 #endif
 
-    constexpr std::array<double, 5> tolerance_list{
-        1e-2, 1e-3, 1e-4, 1e-5, 1e-6};
+    constexpr std::array<double, 4> tolerance_list{1e-2, 1e-3, 1e-4, 1e-5};
 
     for (const double tol : tolerance_list) {
         const problem_type problem{epsilon};
@@ -90,6 +101,11 @@ auto main(int argc, char** argv) -> int {
         "ROS3w_broyden", executor);
 
     bench_one<num_collect::ode::embedded_solver<
+        num_collect::ode::rosenbrock::ros3w_formula<problem_type,
+            num_collect::ode::rosenbrock::gmres_rosenbrock_equation_solver<
+                problem_type>>>>("ROS3w_gmres", executor);
+
+    bench_one<num_collect::ode::embedded_solver<
         num_collect::ode::rosenbrock::ros34pw3_formula<problem_type,
             num_collect::ode::rosenbrock::lu_rosenbrock_equation_solver<
                 problem_type>>>>("ROS34PW3_lu", executor);
@@ -99,6 +115,21 @@ auto main(int argc, char** argv) -> int {
             num_collect::ode::rosenbrock::
                 mixed_broyden_rosenbrock_equation_solver<problem_type>>>>(
         "ROS34PW3_broyden", executor);
+
+    bench_one<num_collect::ode::embedded_solver<
+        num_collect::ode::rosenbrock::ros34pw3_formula<problem_type,
+            num_collect::ode::rosenbrock::gmres_rosenbrock_equation_solver<
+                problem_type>>>>("ROS34PW3_gmres", executor);
+
+    bench_one<num_collect::ode::embedded_solver<
+        num_collect::ode::rosenbrock::rodasp_formula<problem_type,
+            num_collect::ode::rosenbrock::lu_rosenbrock_equation_solver<
+                problem_type>>>>("RODASP_lu", executor);
+
+    bench_one<num_collect::ode::embedded_solver<
+        num_collect::ode::rosenbrock::rodasp_formula<problem_type,
+            num_collect::ode::rosenbrock::gmres_rosenbrock_equation_solver<
+                problem_type>>>>("RODASP_gmres", executor);
 
     executor.write_result(problem_name, problem_description, output_directory);
 
