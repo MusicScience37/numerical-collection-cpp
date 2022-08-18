@@ -173,6 +173,23 @@ public:
         error = step_size * (ce1 * k1_ + ce2 * k2_ + ce3 * k3_);
     }
 
+    /*!
+     * \brief Set the error tolerances.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto tolerances(const error_tolerances<variable_type>& val)
+        -> ros3w_formula& {
+        if constexpr (requires(equation_solver_type & solver,
+                          const error_tolerances<variable_type>& val) {
+                          solver.tolerances(val);
+                      }) {
+            solver_.tolerances(val);
+        }
+        return *this;
+    }
+
 private:
     /*!
      * \name Intermediate variables.

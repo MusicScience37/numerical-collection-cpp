@@ -55,15 +55,9 @@ inline void bench_one(
         {std::exp(-2.0 * end_time), std::exp(-end_time)}};
 
 #ifndef NDEBUG
-    num_collect::index_type repetitions = 10;  // NOLINT
-    if (solver_name.ends_with("_gmres")) {
-        repetitions = 1;  // NOLINT
-    }
+    constexpr num_collect::index_type repetitions = 10;  // NOLINT
 #else
-    num_collect::index_type repetitions = 1000;  // NOLINT
-    if (solver_name.ends_with("_gmres")) {
-        repetitions = 100;  // NOLINT
-    }
+    constexpr num_collect::index_type repetitions = 1000;  // NOLINT
 #endif
 
     constexpr std::array<double, 4> tolerance_list{1e-2, 1e-3, 1e-4, 1e-5};

@@ -29,6 +29,7 @@
 
 #include "comparison_approvals.h"
 #include "num_collect/ode/concepts/rosenbrock_equation_solver.h"  // IWYU pragma: keep
+#include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/evaluation_type.h"
 #include "num_prob_collect/ode/external_force_vibration_problem.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
@@ -70,6 +71,8 @@ TEST_CASE("num_collect::ode::rosenbrock::gmres_rosenbrock_equation_solver") {
         constexpr double inverted_jacobian_coeff = 0.2;
         solver_type solver{inverted_jacobian_coeff};
         solver.max_subspace_dim(1);
+        solver.tolerances(
+            num_collect::ode::error_tolerances<Eigen::Vector2d>());
 
         problem_type problem;
         constexpr double time = 0.0;
@@ -129,5 +132,22 @@ TEST_CASE("num_collect::ode::rosenbrock::gmres_rosenbrock_equation_solver") {
         CHECK_THAT(target(0),
             Catch::Matchers::WithinRel(step_size * coeff * std::cos(time)));
         CHECK(target(1) == 0.0);
+    }
+
+    SECTION("use Jacobian and time derivative before setting them") {
+        constexpr double inverted_jacobian_coeff = 0.1;
+        solver_type solver{inverted_jacobian_coeff};
+
+        const Eigen::Vector2d target{};
+        Eigen::Vector2d result{};
+        CHECK_THROWS(solver.apply_jacobian(target, result));
+        CHECK_THROWS(solver.solve(target, result));
+
+        constexpr double step_size = 1.0;
+        constexpr double coeff = 1.0;
+        result = Eigen::Vector2d::Zero();
+        solver.add_time_derivative_term(step_size, coeff, result);
+        CHECK(result(0) == 0.0);
+        CHECK(result(1) == 0.0);
     }
 }

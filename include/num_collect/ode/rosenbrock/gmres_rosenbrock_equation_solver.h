@@ -30,6 +30,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/ode/concepts/multi_variate_problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/concepts/time_differentiable_problem.h"  // IWYU pragma: keep
+#include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/evaluation_type.h"
 #include "num_collect/ode/impl/gmres.h"
 
@@ -161,7 +162,8 @@ public:
             gmres_.solve(coeff_function, rhs, result);
             coeff_function(result, residual_);
             residual_ -= rhs;
-            if (residual_.norm() <= tol_gmres_ * rhs.norm()) {
+            if (tolerances_.calc_norm(variable_, residual_) <=
+                tolerance_rate_) {
                 return;
             }
         }
@@ -175,6 +177,18 @@ public:
      */
     auto max_subspace_dim(index_type val) -> gmres_rosenbrock_equation_solver& {
         gmres_.max_subspace_dim(val);
+        return *this;
+    }
+
+    /*!
+     * \brief Set the error tolerances.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto tolerances(const error_tolerances<variable_type>& val)
+        -> gmres_rosenbrock_equation_solver& {
+        tolerances_ = val;
         return *this;
     }
 
@@ -200,11 +214,15 @@ private:
     //! Residual.
     variable_type residual_{};
 
-    //! Default tolerance of GMRES.
-    static constexpr auto default_tol_gmres = static_cast<scalar_type>(1e-8);
+    //! Default rate of tolerance in this solver.
+    static constexpr auto default_tolerance_rate =
+        static_cast<scalar_type>(1e-2);
 
-    //! Tolerance of GMRES.
-    scalar_type tol_gmres_{};
+    //! Rate of tolerance in this solver.
+    scalar_type tolerance_rate_{default_tolerance_rate};
+
+    //! Error tolerances.
+    error_tolerances<variable_type> tolerances_{};
 
     //! Coefficient multiplied to Jacobian matrices in inverted matrices.
     scalar_type inverted_jacobian_coeff_{static_cast<scalar_type>(1)};
