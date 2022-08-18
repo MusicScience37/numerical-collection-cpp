@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of gmres function.
+ * \brief Definition of gmres class.
  */
 #pragma once
 
