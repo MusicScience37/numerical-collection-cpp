@@ -20,13 +20,13 @@
 #pragma once
 
 #include "num_collect/base/concepts/const_reference_of.h"  // IWYU pragma: keep
-#include "num_collect/ode/concepts/differentiable_problem.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/problem.h"              // IWYU pragma: keep
 #include "num_collect/ode/evaluation_type.h"
 
 namespace num_collect::ode::concepts {
 
 template <typename T>
-concept time_differentiable_problem = differentiable_problem<T> && requires() {
+concept time_differentiable_problem = problem<T> && requires() {
     requires T::allowed_evaluations.allows(
         evaluation_type{.time_derivative = true});
 

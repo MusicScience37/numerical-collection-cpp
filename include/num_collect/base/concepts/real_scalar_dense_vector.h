@@ -20,7 +20,7 @@
 #pragma once
 
 #include "num_collect/base/concepts/dense_vector.h"  // IWYU pragma: keep
-#include "num_collect/base/concepts/real_scalar.h"   // IWYU pragma: keep
+#include "num_collect/base/concepts/real_scalar_dense_matrix.h"  // IWYU pragma: keep
 
 namespace num_collect {
 inline namespace base {
@@ -32,10 +32,8 @@ namespace concepts {
  * \tparam T Type.
  */
 template <typename T>
-concept real_scalar_dense_vector = dense_vector<T> && requires {
-    typename T::Scalar;
-    requires real_scalar<typename T::Scalar>;
-};
+concept real_scalar_dense_vector =
+    real_scalar_dense_matrix<T> && dense_vector<T>;
 
 }  // namespace concepts
 }  // namespace base
