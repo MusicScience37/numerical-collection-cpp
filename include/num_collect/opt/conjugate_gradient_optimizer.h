@@ -103,8 +103,8 @@ public:
             variable_scalar_type prev_coeff =
                 gradient().dot(gradient() - prev_grad_) /
                 prev_grad_.squaredNorm();
-            if (prev_coeff < variable_scalar_type(0)) {
-                prev_coeff = variable_scalar_type(0);
+            if (prev_coeff < static_cast<variable_scalar_type>(0)) {
+                prev_coeff = static_cast<variable_scalar_type>(0);
             }
             direction_ = -gradient() + prev_coeff * direction_;
             prev_grad_ = gradient();

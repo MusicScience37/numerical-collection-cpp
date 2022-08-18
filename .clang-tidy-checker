@@ -4,5 +4,7 @@ file_patterns:
   - test/units/util/unity_source.cpp
   - test/units/logging/unity_source.cpp
   - test/units/constants/unity_source.cpp
+  - test/units/auto_diff/unity_source.cpp
+  - test/units/opt/unity_source.cpp
 extra_args:
   - "--extra-arg=-isystem/usr/lib/llvm-14/include/c++/v1"
