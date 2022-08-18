@@ -178,6 +178,7 @@ static analysis:
       -DNUM_COLLECT_BUILD_EXAMPLES=ON
       -DNUM_COLLECT_ENABLE_CPP_WARNINGS:BOOL=ON
     - pipenv run clang-tidy-checker -b ${BUILD_DIR}
+  allow_failure: true
 
 clang coverage:
   extends: .release-test-base
