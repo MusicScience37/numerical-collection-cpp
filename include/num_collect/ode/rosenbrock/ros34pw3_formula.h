@@ -26,6 +26,7 @@
 #include "num_collect/ode/concepts/problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/concepts/rosenbrock_equation_solver.h"  // IWYU pragma: keep
 #include "num_collect/ode/embedded_solver.h"
+#include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/evaluation_type.h"
 #include "num_collect/ode/formula_base.h"
 #include "num_collect/ode/rosenbrock/default_rosenbrock_equation_solver.h"
@@ -193,6 +194,23 @@ public:
         estimate =
             current + step_size * (c1 * k1_ + c2 * k2_ + c3 * k3_ + c4 * k4_);
         error = step_size * (ce1 * k1_ + ce2 * k2_ + ce3 * k3_ + ce4 * k4_);
+    }
+
+    /*!
+     * \brief Set the error tolerances.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto tolerances(const error_tolerances<variable_type>& val)
+        -> ros34pw3_formula& {
+        if constexpr (requires(equation_solver_type & solver,
+                          const error_tolerances<variable_type>& val) {
+                          solver.tolerances(val);
+                      }) {
+            solver_.tolerances(val);
+        }
+        return *this;
     }
 
 private:

@@ -25,8 +25,10 @@
 #include <fmt/format.h>
 
 #include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/concepts/real_scalar_dense_matrix.h"
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/util/format_dense_matrix.h"
 #include "num_collect/util/format_dense_vector.h"
 
 class comparison_approvals {
@@ -64,5 +66,17 @@ public:
                         "Reference: {1:.{2}e}",
                 num_collect::util::format_dense_vector(actual),
                 num_collect::util::format_dense_vector(reference), precision));
+    }
+
+    template <num_collect::concepts::real_scalar_dense_matrix Matrix>
+    static void verify_with_reference(const Matrix& actual,
+        const Matrix& reference,
+        num_collect::index_type precision =
+            (std::numeric_limits<typename Matrix::Scalar>::digits10 / 2)) {
+        ApprovalTests::Approvals::verify(
+            fmt::format("Actual:    {0:.{2}e}\n"
+                        "Reference: {1:.{2}e}",
+                num_collect::util::format_dense_matrix(actual),
+                num_collect::util::format_dense_matrix(reference), precision));
     }
 };

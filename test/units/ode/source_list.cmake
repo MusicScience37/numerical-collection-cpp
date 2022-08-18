@@ -7,12 +7,14 @@ set(SOURCE_FILES
     error_tolerances_test.cpp
     evaluation_type_test.cpp
     impl/get_least_known_order_test.cpp
+    impl/gmres_test.cpp
     inexact_newton_slope_equation_solver_test.cpp
     inexact_newton_update_equation_solver_test.cpp
     initial_step_size_calculator_test.cpp
     non_embedded_formula_wrapper_test.cpp
     pi_step_size_controller_test.cpp
     rosenbrock/default_rosenbrock_equation_solver_test.cpp
+    rosenbrock/gmres_rosenbrock_equation_solver_test.cpp
     rosenbrock/lu_rosenbrock_equation_solver_test.cpp
     rosenbrock/mixed_broyden_rosenbrock_equation_solver_test.cpp
     rosenbrock/rodasp_formula_test.cpp
