@@ -19,12 +19,15 @@
  */
 #pragma once
 
+// IWYU pragma: no_include <Eigen/Core>
+// IWYU pragma: no_include <Eigen/SparseCore>
+
 #include <cmath>
 #include <limits>
+#include <string_view>
 
 #include "num_collect/base/concepts/invocable.h"  // IWYU pragma: keep
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"  // IWYU pragma: keep
-#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_mixin.h"

@@ -20,6 +20,7 @@
 #pragma once
 
 // IWYU pragma: no_include <utility>
+// IWYU pragma: no_include <Eigen/SparseCore>
 
 #include <limits>
 

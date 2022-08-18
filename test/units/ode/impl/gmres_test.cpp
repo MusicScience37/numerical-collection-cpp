@@ -19,8 +19,12 @@
  */
 #include "num_collect/ode/impl/gmres.h"
 
+#include <string>
+
+#include <ApprovalTests.hpp>
 #include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
+#include <fmt/format.h>
 
 #include "comparison_approvals.h"
 #include "num_collect/util/format_dense_vector.h"
