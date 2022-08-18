@@ -26,6 +26,7 @@
 #include "num_collect/ode/concepts/problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/concepts/rosenbrock_equation_solver.h"  // IWYU pragma: keep
 #include "num_collect/ode/embedded_solver.h"
+#include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/evaluation_type.h"
 #include "num_collect/ode/formula_base.h"
 #include "num_collect/ode/rosenbrock/default_rosenbrock_equation_solver.h"
