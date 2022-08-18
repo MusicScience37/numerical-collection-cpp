@@ -169,10 +169,10 @@ static analysis:
     GIT_SUBMODULE_STRATEGY: recursive
     BUILD_DIR: build_static_analysis
     CONAN_STD_CPP_LIB: "libc++"
-    CMAKE_BUILD_TYPE: Release
+    CMAKE_BUILD_TYPE: Debug
   script:
     - cmake -S ./ -B ${BUILD_DIR}
-      -DNUM_COLLECT_ENABLE_CLANG_TIDY:BOOL=ON
+      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
       -DNUM_COLLECT_TESTING:BOOL=ON
       -DNUM_COLLECT_ENABLE_BENCH=ON
       -DNUM_COLLECT_BUILD_EXAMPLES=ON
