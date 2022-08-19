@@ -28,8 +28,8 @@
 #include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/evaluation_type.h"
-#include "num_collect/ode/formula_base.h"
 #include "num_collect/ode/rosenbrock/default_rosenbrock_equation_solver.h"
+#include "num_collect/ode/rosenbrock/rosenbrock_formula_base.h"
 
 namespace num_collect::ode::rosenbrock {
 
@@ -44,20 +44,21 @@ template <concepts::problem Problem,
     concepts::rosenbrock_equation_solver EquationSolver =
         default_rosenbrock_equation_solver_t<Problem>>
 class ros3w_formula
-    : public formula_base<ros3w_formula<Problem, EquationSolver>, Problem> {
+    : public rosenbrock_formula_base<ros3w_formula<Problem, EquationSolver>,
+          Problem, EquationSolver> {
 public:
     //! Type of base class.
     using base_type =
-        formula_base<ros3w_formula<Problem, EquationSolver>, Problem>;
+        rosenbrock_formula_base<ros3w_formula<Problem, EquationSolver>, Problem,
+            EquationSolver>;
 
+    using typename base_type::equation_solver_type;
     using typename base_type::problem_type;
     using typename base_type::scalar_type;
     using typename base_type::variable_type;
 
-    //! Type of class to solve equations in Rosenbrock methods.
-    using equation_solver_type = EquationSolver;
-
     using base_type::base_type;
+    using base_type::equation_solver;
     using base_type::problem;
 
 protected:
@@ -120,6 +121,14 @@ public:
     static constexpr scalar_type ce3 = c3 - cw3;
     ///@}
 
+    /*!
+     * \brief Constructor.
+     *
+     * \param[in] problem Problem.
+     */
+    explicit ros3w_formula(const problem_type& problem)
+        : base_type(problem, g) {}
+
     //! \copydoc ode::formula_base::step
     void step(scalar_type time, scalar_type step_size,
         const variable_type& current, variable_type& estimate) {
@@ -140,55 +149,38 @@ public:
     void step_embedded(scalar_type time, scalar_type step_size,
         const variable_type& current, variable_type& estimate,
         variable_type& error) {
-        solver_.evaluate_and_update_jacobian(
+        equation_solver().evaluate_and_update_jacobian(
             problem(), time, step_size, current);
 
         // 1st stage
         temp_rhs_ = problem().diff_coeff();
-        solver_.add_time_derivative_term(step_size, g1, temp_rhs_);
-        solver_.solve(temp_rhs_, k1_);
+        equation_solver().add_time_derivative_term(step_size, g1, temp_rhs_);
+        equation_solver().solve(temp_rhs_, k1_);
 
         // 2nd stage
         temp_var_ = g21 * k1_;
-        solver_.apply_jacobian(temp_var_, temp_rhs_);
+        equation_solver().apply_jacobian(temp_var_, temp_rhs_);
         temp_rhs_ *= step_size;
         temp_var_ = current + step_size * (a21 * k1_);
         problem().evaluate_on(time + b2 * step_size, temp_var_,
             evaluation_type{.diff_coeff = true});
         temp_rhs_ += problem().diff_coeff();
-        solver_.add_time_derivative_term(step_size, g2, temp_rhs_);
-        solver_.solve(temp_rhs_, k2_);
+        equation_solver().add_time_derivative_term(step_size, g2, temp_rhs_);
+        equation_solver().solve(temp_rhs_, k2_);
 
         // 3rd stage
         temp_var_ = g31 * k1_ + g32 * k2_;
-        solver_.apply_jacobian(temp_var_, temp_rhs_);
+        equation_solver().apply_jacobian(temp_var_, temp_rhs_);
         temp_rhs_ *= step_size;
         temp_var_ = current + step_size * (a31 * k1_ + a32 * k2_);
         problem().evaluate_on(time + b3 * step_size, temp_var_,
             evaluation_type{.diff_coeff = true});
         temp_rhs_ += problem().diff_coeff();
-        solver_.add_time_derivative_term(step_size, g3, temp_rhs_);
-        solver_.solve(temp_rhs_, k3_);
+        equation_solver().add_time_derivative_term(step_size, g3, temp_rhs_);
+        equation_solver().solve(temp_rhs_, k3_);
 
         estimate = current + step_size * (c1 * k1_ + c2 * k2_ + c3 * k3_);
         error = step_size * (ce1 * k1_ + ce2 * k2_ + ce3 * k3_);
-    }
-
-    /*!
-     * \brief Set the error tolerances.
-     *
-     * \param[in] val Value.
-     * \return This.
-     */
-    auto tolerances(const error_tolerances<variable_type>& val)
-        -> ros3w_formula& {
-        if constexpr (requires(equation_solver_type & solver,
-                          const error_tolerances<variable_type>& val) {
-                          solver.tolerances(val);
-                      }) {
-            solver_.tolerances(val);
-        }
-        return *this;
     }
 
 private:
@@ -207,9 +199,6 @@ private:
 
     //! Temporary right-hand-side vector.
     variable_type temp_rhs_{};
-
-    //! Solver.
-    equation_solver_type solver_{g};
 };
 
 /*!

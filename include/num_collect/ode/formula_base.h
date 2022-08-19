@@ -24,10 +24,10 @@
 namespace num_collect::ode {
 
 /*!
- * \brief Class of formulas in Runge-Kutta method.
+ * \brief Base class of formulas in ODE solvers.
  *
- * \tparam Derived Type of derived class.
- * \tparam Problem Type of problem.
+ * \tparam Derived Type of the derived class.
+ * \tparam Problem Type of the problem.
  */
 template <typename Derived, concepts::problem Problem>
 class formula_base {

@@ -28,8 +28,8 @@
 #include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/evaluation_type.h"
-#include "num_collect/ode/formula_base.h"
 #include "num_collect/ode/rosenbrock/default_rosenbrock_equation_solver.h"
+#include "num_collect/ode/rosenbrock/rosenbrock_formula_base.h"
 
 namespace num_collect::ode::rosenbrock {
 
@@ -46,20 +46,21 @@ template <concepts::problem Problem,
     concepts::rosenbrock_equation_solver EquationSolver =
         default_rosenbrock_equation_solver_t<Problem>>
 class rodasp_formula
-    : public formula_base<rodasp_formula<Problem, EquationSolver>, Problem> {
+    : public rosenbrock_formula_base<rodasp_formula<Problem, EquationSolver>,
+          Problem, EquationSolver> {
 public:
     //! Type of base class.
     using base_type =
-        formula_base<rodasp_formula<Problem, EquationSolver>, Problem>;
+        rosenbrock_formula_base<rodasp_formula<Problem, EquationSolver>,
+            Problem, EquationSolver>;
 
+    using typename base_type::equation_solver_type;
     using typename base_type::problem_type;
     using typename base_type::scalar_type;
     using typename base_type::variable_type;
 
-    //! Type of class to solve equations in Rosenbrock methods.
-    using equation_solver_type = EquationSolver;
-
     using base_type::base_type;
+    using base_type::equation_solver;
     using base_type::problem;
 
 protected:
@@ -164,6 +165,14 @@ public:
     static constexpr scalar_type ce6 = c6;
     ///@}
 
+    /*!
+     * \brief Constructor.
+     *
+     * \param[in] problem Problem.
+     */
+    explicit rodasp_formula(const problem_type& problem)
+        : base_type(problem, g) {}
+
     //! \copydoc ode::formula_base::step
     void step(scalar_type time, scalar_type step_size,
         const variable_type& current, variable_type& estimate) {
@@ -184,62 +193,62 @@ public:
     void step_embedded(scalar_type time, scalar_type step_size,
         const variable_type& current, variable_type& estimate,
         variable_type& error) {
-        solver_.evaluate_and_update_jacobian(
+        equation_solver().evaluate_and_update_jacobian(
             problem(), time, step_size, current);
 
         // 1st stage
         temp_rhs_ = problem().diff_coeff();
-        solver_.add_time_derivative_term(step_size, g1, temp_rhs_);
-        solver_.solve(temp_rhs_, k1_);
+        equation_solver().add_time_derivative_term(step_size, g1, temp_rhs_);
+        equation_solver().solve(temp_rhs_, k1_);
 
         // 2nd stage
         temp_var_ = g21 * k1_;
-        solver_.apply_jacobian(temp_var_, temp_rhs_);
+        equation_solver().apply_jacobian(temp_var_, temp_rhs_);
         temp_rhs_ *= step_size;
         temp_var_ = current + step_size * (a21 * k1_);
         problem().evaluate_on(time + b2 * step_size, temp_var_,
             evaluation_type{.diff_coeff = true});
         temp_rhs_ += problem().diff_coeff();
-        solver_.add_time_derivative_term(step_size, g2, temp_rhs_);
-        solver_.solve(temp_rhs_, k2_);
+        equation_solver().add_time_derivative_term(step_size, g2, temp_rhs_);
+        equation_solver().solve(temp_rhs_, k2_);
 
         // 3rd stage
         temp_var_ = g31 * k1_ + g32 * k2_;
-        solver_.apply_jacobian(temp_var_, temp_rhs_);
+        equation_solver().apply_jacobian(temp_var_, temp_rhs_);
         temp_rhs_ *= step_size;
         temp_var_ = current + step_size * (a31 * k1_ + a32 * k2_);
         problem().evaluate_on(time + b3 * step_size, temp_var_,
             evaluation_type{.diff_coeff = true});
         temp_rhs_ += problem().diff_coeff();
-        solver_.add_time_derivative_term(step_size, g3, temp_rhs_);
-        solver_.solve(temp_rhs_, k3_);
+        equation_solver().add_time_derivative_term(step_size, g3, temp_rhs_);
+        equation_solver().solve(temp_rhs_, k3_);
 
         // 4th stage
         temp_var_ = g41 * k1_ + g42 * k2_ + g43 * k3_;
-        solver_.apply_jacobian(temp_var_, temp_rhs_);
+        equation_solver().apply_jacobian(temp_var_, temp_rhs_);
         temp_rhs_ *= step_size;
         temp_var_ = current + step_size * (a41 * k1_ + a42 * k2_ + a43 * k3_);
         problem().evaluate_on(time + b4 * step_size, temp_var_,
             evaluation_type{.diff_coeff = true});
         temp_rhs_ += problem().diff_coeff();
-        solver_.add_time_derivative_term(step_size, g4, temp_rhs_);
-        solver_.solve(temp_rhs_, k4_);
+        equation_solver().add_time_derivative_term(step_size, g4, temp_rhs_);
+        equation_solver().solve(temp_rhs_, k4_);
 
         // 5th stage
         temp_var_ = g51 * k1_ + g52 * k2_ + g53 * k3_ + g54 * k4_;
-        solver_.apply_jacobian(temp_var_, temp_rhs_);
+        equation_solver().apply_jacobian(temp_var_, temp_rhs_);
         temp_rhs_ *= step_size;
         temp_var_ = current +
             step_size * (a51 * k1_ + a52 * k2_ + a53 * k3_ + a54 * k4_);
         problem().evaluate_on(time + b5 * step_size, temp_var_,
             evaluation_type{.diff_coeff = true});
         temp_rhs_ += problem().diff_coeff();
-        solver_.add_time_derivative_term(step_size, g5, temp_rhs_);
-        solver_.solve(temp_rhs_, k5_);
+        equation_solver().add_time_derivative_term(step_size, g5, temp_rhs_);
+        equation_solver().solve(temp_rhs_, k5_);
 
         // 6th stage
         temp_var_ = g61 * k1_ + g62 * k2_ + g63 * k3_ + g64 * k4_ + g65 * k5_;
-        solver_.apply_jacobian(temp_var_, temp_rhs_);
+        equation_solver().apply_jacobian(temp_var_, temp_rhs_);
         temp_rhs_ *= step_size;
         temp_var_ = current +
             step_size *
@@ -247,8 +256,8 @@ public:
         problem().evaluate_on(time + b6 * step_size, temp_var_,
             evaluation_type{.diff_coeff = true});
         temp_rhs_ += problem().diff_coeff();
-        solver_.add_time_derivative_term(step_size, g6, temp_rhs_);
-        solver_.solve(temp_rhs_, k6_);
+        equation_solver().add_time_derivative_term(step_size, g6, temp_rhs_);
+        equation_solver().solve(temp_rhs_, k6_);
 
         estimate = current +
             step_size *
@@ -257,23 +266,6 @@ public:
         error = step_size *
             (ce1 * k1_ + ce2 * k2_ + ce3 * k3_ + ce4 * k4_ + ce5 * k5_ +
                 ce6 * k6_);
-    }
-
-    /*!
-     * \brief Set the error tolerances.
-     *
-     * \param[in] val Value.
-     * \return This.
-     */
-    auto tolerances(const error_tolerances<variable_type>& val)
-        -> rodasp_formula& {
-        if constexpr (requires(equation_solver_type & solver,
-                          const error_tolerances<variable_type>& val) {
-                          solver.tolerances(val);
-                      }) {
-            solver_.tolerances(val);
-        }
-        return *this;
     }
 
 private:
@@ -295,9 +287,6 @@ private:
 
     //! Temporary right-hand-side vector.
     variable_type temp_rhs_{};
-
-    //! Solver.
-    equation_solver_type solver_{g};
 };
 
 /*!
