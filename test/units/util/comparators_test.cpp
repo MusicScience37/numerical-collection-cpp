@@ -32,7 +32,7 @@ TEST_CASE("num_collect::util::less") {
     SECTION("compare") {
         struct right {};
         struct left {
-            [[nodiscard]] auto operator<(const right& r) const -> bool {
+            [[nodiscard]] auto operator<(const right& /*r*/) const -> bool {
                 return true;
             }
         };
@@ -49,7 +49,7 @@ TEST_CASE("num_collect::util::less_equal") {
     SECTION("compare") {
         struct right {};
         struct left {
-            [[nodiscard]] auto operator<=(const right& r) const -> bool {
+            [[nodiscard]] auto operator<=(const right& /*r*/) const -> bool {
                 return true;
             }
         };
@@ -66,7 +66,7 @@ TEST_CASE("num_collect::util::greater") {
     SECTION("compare") {
         struct right {};
         struct left {
-            [[nodiscard]] auto operator>(const right& r) const -> bool {
+            [[nodiscard]] auto operator>(const right& /*r*/) const -> bool {
                 return true;
             }
         };
@@ -83,7 +83,7 @@ TEST_CASE("num_collect::util::greater_equal") {
     SECTION("compare") {
         struct right {};
         struct left {
-            [[nodiscard]] auto operator>=(const right& r) const -> bool {
+            [[nodiscard]] auto operator>=(const right& /*r*/) const -> bool {
                 return true;
             }
         };
@@ -100,7 +100,7 @@ TEST_CASE("num_collect::util::equal") {
     SECTION("compare") {
         struct right {};
         struct left {
-            [[nodiscard]] auto operator==(const right& r) const -> bool {
+            [[nodiscard]] auto operator==(const right& /*r*/) const -> bool {
                 return true;
             }
         };
@@ -117,7 +117,7 @@ TEST_CASE("num_collect::util::not_equal") {
     SECTION("compare") {
         struct right {};
         struct left {
-            [[nodiscard]] auto operator!=(const right& r) const -> bool {
+            [[nodiscard]] auto operator!=(const right& /*r*/) const -> bool {
                 return true;
             }
         };

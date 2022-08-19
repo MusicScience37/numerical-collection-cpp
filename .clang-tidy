@@ -17,6 +17,7 @@ Checks: >
     readability-identifier-naming,
     -readability-identifier-length,
     -readability-function-cognitive-complexity,
+    -readability-suspicious-call-argument,
   modernize-*,
     -modernize-pass-by-value,
     -modernize-return-braced-init-list,
@@ -39,7 +40,7 @@ Checks: >
 # - readability-function-cognitive-complexity is hard to be fixed in tests.
 # - cppcoreguidelines-owning-memory forces to use an external library.
 # - cppcoreguidelines-pro-bounds-constant-array-index forces to use an external library.
-# - bugprone-easily-swappable-parameters is difficult to fix.
+# - bugprone-easily-swappable-parameters, readability-suspicious-call-argument is difficult to fix.
 # - cert-err58-cpp produces warnings in all tests due to Catch2 library.
 # - cppcoreguidelines-avoid-non-const-global-variables produces warnings in all tests due to Catch2 library.
 # - readability-identifier-length prevent traditional codes.

@@ -139,7 +139,7 @@ public:
     template <typename Container>
     [[nodiscard]] auto kernel_param_search_region(const Container& list) const
         -> std::pair<kernel_param_type, kernel_param_type> {
-        NUM_COLLECT_ASSERT(list.size() > 1);
+        NUM_COLLECT_ASSERT(list.size() > static_cast<std::size_t>(1));
 
         len_param_type max_min_dist =
             std::numeric_limits<len_param_type>::min();

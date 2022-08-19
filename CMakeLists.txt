@@ -67,6 +67,10 @@ include(pipenv)
 include(ConfigureSanitizer)
 include(ConfigureCcache)
 
+target_compile_options(
+    num_collect_cpp_warnings INTERFACE # For macro of fmt library.
+                                       -Wno-unused-local-typedef)
+
 find_program(
     PYTHON_EXECUTABLE
     NAMES python3 python

@@ -86,6 +86,8 @@ public:
 
     //! \copydoc num_collect::regularization::iterative_regularized_solver_base::init
     void init(const scalar_type& param, data_type& solution) {
+        (void)param;
+
         NUM_COLLECT_ASSERT(coeff_->rows() == data_->rows());
         NUM_COLLECT_ASSERT(coeff_->cols() == solution.rows());
         NUM_COLLECT_ASSERT(data_->cols() == solution.cols());

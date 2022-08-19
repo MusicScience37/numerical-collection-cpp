@@ -84,7 +84,6 @@ TEST_CASE("num_collect::ode::inexact_newton_update_equation_solver(scalar)") {
         constexpr double step_size = 1.0;
         constexpr double init_var = 1.0;
         constexpr double slope_coeff = 1.0;
-        const double solution_offset = 1.0;
 
         CHECK_THROWS(solver.update_jacobian(
             problem, init_time, step_size, init_var, slope_coeff));

@@ -32,7 +32,7 @@ TEST_CASE("num_collect::base::concepts::invocable_as") {
         STATIC_CHECK(
             invocable_as<decltype(func1), std::uint32_t(std::uint32_t)>);
 
-        const auto func2 = [](std::uint32_t x) { return std::string(); };
+        const auto func2 = [](std::uint32_t /*x*/) { return std::string(); };
         STATIC_CHECK_FALSE(
             invocable_as<decltype(func2), std::uint32_t(std::uint32_t)>);
     }
