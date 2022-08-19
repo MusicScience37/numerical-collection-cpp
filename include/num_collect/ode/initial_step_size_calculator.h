@@ -74,8 +74,8 @@ public:
      * \param[in] tolerances Tolerances of errors.
      * \return Selected initial step size.
      */
-    auto calculate(problem_type& problem, const scalar_type& initial_time,
-        const variable_type& initial_variable,
+    [[nodiscard]] auto calculate(problem_type& problem,
+        const scalar_type& initial_time, const variable_type& initial_variable,
         const step_size_limits<scalar_type>& limits,
         const error_tolerances<variable_type>& tolerances) const
         -> scalar_type {
@@ -115,7 +115,8 @@ private:
      * \param[in] tolerances Tolerances of errors.
      * \return Step size and norm of initial differential coefficients.
      */
-    auto calculate_step_size_from_diff(const variable_type& initial_variable,
+    [[nodiscard]] auto calculate_step_size_from_diff(
+        const variable_type& initial_variable,
         const variable_type& initial_diff,
         const error_tolerances<variable_type>& tolerances) const
         -> std::tuple<scalar_type, scalar_type> {
@@ -158,8 +159,9 @@ private:
      * \param[in] tolerances Tolerances of errors.
      * \return Step size.
      */
-    auto calculate_step_size_from_second_diff(problem_type& problem,
-        const scalar_type& initial_time, const variable_type& initial_variable,
+    [[nodiscard]] auto calculate_step_size_from_second_diff(
+        problem_type& problem, const scalar_type& initial_time,
+        const variable_type& initial_variable,
         const variable_type& initial_diff,
         const scalar_type& step_size_from_diff,
         const scalar_type& initial_diff_norm,

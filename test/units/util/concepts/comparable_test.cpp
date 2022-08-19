@@ -32,7 +32,7 @@ TEST_CASE("num_collect::util::concepts::less_than_comparable") {
 
         struct right {};
         struct left {
-            [[nodiscard]] auto operator<(const right& r) const -> bool {
+            [[nodiscard]] auto operator<(const right& /*r*/) const -> bool {
                 return true;
             }
         };
@@ -50,7 +50,7 @@ TEST_CASE("num_collect::util::concepts::less_than_or_equal_to_comparable") {
 
         struct right {};
         struct left {
-            [[nodiscard]] auto operator<=(const right& r) const -> bool {
+            [[nodiscard]] auto operator<=(const right& /*r*/) const -> bool {
                 return true;
             }
         };
@@ -67,7 +67,7 @@ TEST_CASE("num_collect::util::concepts::greater_than_comparable") {
 
         struct right {};
         struct left {
-            [[nodiscard]] auto operator>(const right& r) const -> bool {
+            [[nodiscard]] auto operator>(const right& /*r*/) const -> bool {
                 return true;
             }
         };
@@ -85,7 +85,7 @@ TEST_CASE("num_collect::util::concepts::greater_than_or_equal_to_comparable") {
 
         struct right {};
         struct left {
-            [[nodiscard]] auto operator>=(const right& r) const -> bool {
+            [[nodiscard]] auto operator>=(const right& /*r*/) const -> bool {
                 return true;
             }
         };
@@ -102,7 +102,7 @@ TEST_CASE("num_collect::util::concepts::equal_to_comparable") {
 
         struct right {};
         struct left {
-            [[nodiscard]] auto operator==(const right& r) const -> bool {
+            [[nodiscard]] auto operator==(const right& /*r*/) const -> bool {
                 return true;
             }
         };
@@ -119,7 +119,7 @@ TEST_CASE("num_collect::util::concepts::not_equal_to_comparable") {
 
         struct right {};
         struct left {
-            [[nodiscard]] auto operator!=(const right& r) const -> bool {
+            [[nodiscard]] auto operator!=(const right& /*r*/) const -> bool {
                 return true;
             }
         };

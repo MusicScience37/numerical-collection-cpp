@@ -103,13 +103,6 @@ private:
             solution_size)};
 };
 
-constexpr std::int64_t samples = 30;
-#ifndef NDEBUG
-constexpr std::int64_t iterations = 1;
-#else
-constexpr std::int64_t iterations = 10;
-#endif
-
 using coeff_type =
     typename num_prob_collect::regularization::blur_sine::coeff_type;
 using data_type =

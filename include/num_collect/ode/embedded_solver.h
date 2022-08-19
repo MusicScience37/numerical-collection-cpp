@@ -190,7 +190,7 @@ public:
      *
      * \return Reference of the controller.
      */
-    auto step_size_controller() -> step_size_controller_type& {
+    [[nodiscard]] auto step_size_controller() -> step_size_controller_type& {
         return step_size_controller_;
     }
 
@@ -199,7 +199,8 @@ public:
      *
      * \return Reference of the controller.
      */
-    auto step_size_controller() const -> const step_size_controller_type& {
+    [[nodiscard]] auto step_size_controller() const
+        -> const step_size_controller_type& {
         return step_size_controller_;
     }
 

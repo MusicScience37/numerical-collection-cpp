@@ -71,10 +71,9 @@ public:
     /*!
      * \brief Evaluate on a (time, variable) pair.
      *
-     * \param[in] time Time.
      * \param[in] variable Variable.
      */
-    void evaluate_on(scalar_type time, const variable_type& variable,
+    void evaluate_on(scalar_type /*time*/, const variable_type& variable,
         num_collect::ode::evaluation_type /*evaluations*/) {
         diff_coeff_(0) = std::sin(variable(2));
         diff_coeff_(1) = variable(0);
