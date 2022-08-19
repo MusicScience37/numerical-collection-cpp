@@ -28,6 +28,7 @@
     - Approximate Jacobian matrix for some Rosenbrock formulas ([Issue #210](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/210)).
     - ARK formulas ([Issue #215](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/215), [Issue #224](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/224)).
     - Symplectic integration ([Issue #226](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/226)).
+    - Solvers of Rosenbrock formulas for large problems ([Issue #211](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/211), [Issue #229](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/229)).
 
 ### Miscellaneous
 
