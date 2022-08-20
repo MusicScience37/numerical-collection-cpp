@@ -499,7 +499,10 @@ pages:
 
 upload-document:
   stage: deploy
-  needs: [doc]
+  needs:
+    - doc
+  dependencies:
+    - doc
   image: registry.gitlab.com/musicscience37/my-cpp-env-docker:clang14
   rules:
     - if: $CI_COMMIT_TAG =~ /^v/
@@ -514,7 +517,9 @@ upload-document:
 release:
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   stage: release
-  needs: [upload-document]
+  needs:
+    - upload-document
+    - clang-14-conan-release
   rules:
     - if: $CI_COMMIT_TAG =~ /^v/
   script:
