@@ -3,10 +3,12 @@ image: ubuntu:focal
 stages:
   - test
   - deploy
+  - release
 
 variables:
-  NUM_COLLECT_VERSION: "0.4.1"
+  NUM_COLLECT_VERSION: "0.5.0a2"
   CONAN_USER: "MusicScience37+numerical-collection-cpp"
+  DOCS_PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/numerical-collection-cpp-doc"
   SECURE_LOG_LEVEL: debug
 
 include:
@@ -494,3 +496,39 @@ pages:
   artifacts:
     paths:
       - public
+
+upload-document:
+  stage: deploy
+  needs:
+    - doc
+  dependencies:
+    - doc
+  image: registry.gitlab.com/musicscience37/my-cpp-env-docker:clang14
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v/
+  script:
+    - mv build_doc/doc/html numerical-collection-cpp-doc
+    - tar acf numerical-collection-cpp-doc.tar.gz numerical-collection-cpp-doc
+    - |
+      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" \
+      --upload-file numerical-collection-cpp-doc.tar.gz \
+      ${DOCS_PACKAGE_REGISTRY_URL}/${CI_COMMIT_TAG}/numerical-collection-cpp-doc.tar.gz
+
+release:
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  stage: release
+  needs:
+    - upload-document
+    - clang-14-conan-release
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v/
+  script:
+    - echo "This is a release job."
+  release:
+    tag_name: $CI_COMMIT_TAG
+    name: "$CI_COMMIT_TAG"
+    description: "./doc/sphinx/src/release_notes/${CI_COMMIT_TAG}.md"
+    assets:
+      links:
+        - name: "documentation"
+          url: "${DOCS_PACKAGE_REGISTRY_URL}/${CI_COMMIT_TAG}/numerical-collection-cpp-doc.tar.gz"

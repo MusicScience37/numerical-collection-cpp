@@ -9,14 +9,15 @@ Developed at
 API reference can be viewed `here <api/index.html>`_.
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     :caption: About
 
     license
     acknowledgement
+    release_notes/index
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     :caption: Usage
 
     how_to_use
@@ -24,7 +25,7 @@ API reference can be viewed `here <api/index.html>`_.
     directories
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     :caption: Development
 
     how_to_build_in_repository
