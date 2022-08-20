@@ -6,7 +6,7 @@ stages:
   - release
 
 variables:
-  NUM_COLLECT_VERSION: "0.5.0a1"
+  NUM_COLLECT_VERSION: "0.5.0a2"
   CONAN_USER: "MusicScience37+numerical-collection-cpp"
   DOCS_PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/numerical-collection-cpp-doc"
   SECURE_LOG_LEVEL: debug
@@ -500,6 +500,7 @@ pages:
 upload-document:
   stage: deploy
   needs: [doc]
+  image: registry.gitlab.com/musicscience37/my-cpp-env-docker:clang14
   rules:
     - if: $CI_COMMIT_TAG =~ /^v/
   script:
@@ -513,6 +514,7 @@ upload-document:
 release:
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   stage: release
+  needs: [upload-document]
   rules:
     - if: $CI_COMMIT_TAG =~ /^v/
   script:
