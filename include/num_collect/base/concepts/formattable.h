@@ -19,7 +19,7 @@
  */
 #pragma once
 
-#include <fmt/core.h>
+#include <fmt/format.h>
 
 namespace num_collect {
 inline namespace base {

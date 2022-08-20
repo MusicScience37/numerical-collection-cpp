@@ -18,6 +18,9 @@
  * \brief Test of integration of exponential function.
  */
 #include <cmath>
+#include <exception>
+#include <unordered_set>
+#include <vector>
 
 #include <stat_bench/bench/invocation_context.h>
 #include <stat_bench/benchmark_macros.h>

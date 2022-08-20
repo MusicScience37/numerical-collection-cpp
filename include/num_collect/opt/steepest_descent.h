@@ -19,9 +19,14 @@
  */
 #pragma once
 
+#include <string_view>
+
+#include "num_collect/base/index_type.h"
+#include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/log_tag_view.h"
 #include "num_collect/opt/backtracking_line_searcher.h"
-#include "num_collect/opt/concepts/differentiable_objective_function.h"
-#include "num_collect/opt/concepts/line_searcher.h"
+#include "num_collect/opt/concepts/differentiable_objective_function.h"  // IWYU pragma: keep
+#include "num_collect/opt/concepts/line_searcher.h"  // IWYU pragma: keep
 #include "num_collect/opt/descent_method_base.h"
 
 namespace num_collect::opt {
@@ -58,7 +63,7 @@ public:
     using typename base_type::variable_type;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] obj_fun Objective function.
      */

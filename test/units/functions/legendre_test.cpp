@@ -19,41 +19,53 @@
  */
 #include "num_collect/functions/legendre.h"
 
+#include <cmath>
+#include <ostream>
+#include <string>
+
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::functions::legendre", "", float, double) {
+    SECTION("n = -1") {
+        constexpr int n = -1;
+        constexpr auto x = static_cast<TestType>(0);
+        const auto val = num_collect::functions::legendre(x, n);
+        REQUIRE(std::isnan(val));
+    }
+
     SECTION("n = 0") {
         constexpr int n = 0;
         SECTION("x = -1") {
             constexpr auto x = static_cast<TestType>(-1);
-            constexpr auto val = num_collect::functions::legendre(x, n);
+            const auto val = num_collect::functions::legendre(x, n);
             constexpr auto true_val = 1.0;
             REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
         }
         SECTION("x = -0.5") {
             constexpr auto x = static_cast<TestType>(-0.5);
-            constexpr auto val = num_collect::functions::legendre(x, n);
+            const auto val = num_collect::functions::legendre(x, n);
             constexpr auto true_val = 1.0;
             REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
         }
         SECTION("x = 0") {
             constexpr auto x = static_cast<TestType>(0);
-            constexpr auto val = num_collect::functions::legendre(x, n);
+            const auto val = num_collect::functions::legendre(x, n);
             constexpr auto true_val = 1.0;
             REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
         }
         SECTION("x = 0.5") {
             constexpr auto x = static_cast<TestType>(0.5);
-            constexpr auto val = num_collect::functions::legendre(x, n);
+            const auto val = num_collect::functions::legendre(x, n);
             constexpr auto true_val = 1.0;
             REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
         }
         SECTION("x = 1") {
             constexpr auto x = static_cast<TestType>(1);
-            constexpr auto val = num_collect::functions::legendre(x, n);
+            const auto val = num_collect::functions::legendre(x, n);
             constexpr auto true_val = 1.0;
             REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
         }
@@ -63,31 +75,31 @@ TEMPLATE_TEST_CASE("num_collect::functions::legendre", "", float, double) {
         constexpr int n = 1;
         SECTION("x = -1") {
             constexpr auto x = static_cast<TestType>(-1);
-            constexpr auto val = num_collect::functions::legendre(x, n);
+            const auto val = num_collect::functions::legendre(x, n);
             constexpr auto true_val = x;
             REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
         }
         SECTION("x = -0.5") {
             constexpr auto x = static_cast<TestType>(-0.5);
-            constexpr auto val = num_collect::functions::legendre(x, n);
+            const auto val = num_collect::functions::legendre(x, n);
             constexpr auto true_val = x;
             REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
         }
         SECTION("x = 0") {
             constexpr auto x = static_cast<TestType>(0);
-            constexpr auto val = num_collect::functions::legendre(x, n);
+            const auto val = num_collect::functions::legendre(x, n);
             constexpr auto true_val = x;
             REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
         }
         SECTION("x = 0.5") {
             constexpr auto x = static_cast<TestType>(0.5);
-            constexpr auto val = num_collect::functions::legendre(x, n);
+            const auto val = num_collect::functions::legendre(x, n);
             constexpr auto true_val = x;
             REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
         }
         SECTION("x = 1") {
             constexpr auto x = static_cast<TestType>(1);
-            constexpr auto val = num_collect::functions::legendre(x, n);
+            const auto val = num_collect::functions::legendre(x, n);
             constexpr auto true_val = x;
             REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
         }
@@ -97,35 +109,35 @@ TEMPLATE_TEST_CASE("num_collect::functions::legendre", "", float, double) {
         constexpr int n = 2;
         SECTION("x = -1") {
             constexpr auto x = static_cast<TestType>(-1);
-            constexpr auto val = num_collect::functions::legendre(x, n);
+            const auto val = num_collect::functions::legendre(x, n);
             constexpr auto true_val = static_cast<TestType>(1.5) * x * x +
                 static_cast<TestType>(-0.5);
             REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
         }
         SECTION("x = -0.5") {
             constexpr auto x = static_cast<TestType>(-0.5);
-            constexpr auto val = num_collect::functions::legendre(x, n);
+            const auto val = num_collect::functions::legendre(x, n);
             constexpr auto true_val = static_cast<TestType>(1.5) * x * x +
                 static_cast<TestType>(-0.5);
             REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
         }
         SECTION("x = 0") {
             constexpr auto x = static_cast<TestType>(0);
-            constexpr auto val = num_collect::functions::legendre(x, n);
+            const auto val = num_collect::functions::legendre(x, n);
             constexpr auto true_val = static_cast<TestType>(1.5) * x * x +
                 static_cast<TestType>(-0.5);
             REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
         }
         SECTION("x = 0.5") {
             constexpr auto x = static_cast<TestType>(0.5);
-            constexpr auto val = num_collect::functions::legendre(x, n);
+            const auto val = num_collect::functions::legendre(x, n);
             constexpr auto true_val = static_cast<TestType>(1.5) * x * x +
                 static_cast<TestType>(-0.5);
             REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
         }
         SECTION("x = 1") {
             constexpr auto x = static_cast<TestType>(1);
-            constexpr auto val = num_collect::functions::legendre(x, n);
+            const auto val = num_collect::functions::legendre(x, n);
             constexpr auto true_val = static_cast<TestType>(1.5) * x * x +
                 static_cast<TestType>(-0.5);
             REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
@@ -136,35 +148,35 @@ TEMPLATE_TEST_CASE("num_collect::functions::legendre", "", float, double) {
         constexpr int n = 3;
         SECTION("x = -1") {
             constexpr auto x = static_cast<TestType>(-1);
-            constexpr auto val = num_collect::functions::legendre(x, n);
+            const auto val = num_collect::functions::legendre(x, n);
             constexpr auto true_val = static_cast<TestType>(2.5) * x * x * x +
                 static_cast<TestType>(-1.5) * x;
             REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
         }
         SECTION("x = -0.5") {
             constexpr auto x = static_cast<TestType>(-0.5);
-            constexpr auto val = num_collect::functions::legendre(x, n);
+            const auto val = num_collect::functions::legendre(x, n);
             constexpr auto true_val = static_cast<TestType>(2.5) * x * x * x +
                 static_cast<TestType>(-1.5) * x;
             REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
         }
         SECTION("x = 0") {
             constexpr auto x = static_cast<TestType>(0);
-            constexpr auto val = num_collect::functions::legendre(x, n);
+            const auto val = num_collect::functions::legendre(x, n);
             constexpr auto true_val = static_cast<TestType>(2.5) * x * x * x +
                 static_cast<TestType>(-1.5) * x;
             REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
         }
         SECTION("x = 0.5") {
             constexpr auto x = static_cast<TestType>(0.5);
-            constexpr auto val = num_collect::functions::legendre(x, n);
+            const auto val = num_collect::functions::legendre(x, n);
             constexpr auto true_val = static_cast<TestType>(2.5) * x * x * x +
                 static_cast<TestType>(-1.5) * x;
             REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
         }
         SECTION("x = 1") {
             constexpr auto x = static_cast<TestType>(1);
-            constexpr auto val = num_collect::functions::legendre(x, n);
+            const auto val = num_collect::functions::legendre(x, n);
             constexpr auto true_val = static_cast<TestType>(2.5) * x * x * x +
                 static_cast<TestType>(-1.5) * x;
             REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
@@ -175,12 +187,20 @@ TEMPLATE_TEST_CASE("num_collect::functions::legendre", "", float, double) {
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::functions::legendre_with_diff", "", float, double) {
+    SECTION("n = -1") {
+        constexpr int n = -1;
+        constexpr auto x = static_cast<TestType>(0);
+        const auto pair = num_collect::functions::legendre_with_diff(x, n);
+        const auto [val, diff] = pair;
+        REQUIRE(std::isnan(val));
+        REQUIRE(std::isnan(diff));
+    }
+
     SECTION("n = 0") {
         constexpr int n = 0;
         SECTION("x = -1") {
             constexpr auto x = static_cast<TestType>(-1);
-            constexpr auto pair =
-                num_collect::functions::legendre_with_diff(x, n);
+            const auto pair = num_collect::functions::legendre_with_diff(x, n);
             const auto [val, diff] = pair;
             constexpr auto true_val = 1.0;
             constexpr auto true_diff = 0.0;
@@ -189,8 +209,7 @@ TEMPLATE_TEST_CASE(
         }
         SECTION("x = -0.5") {
             constexpr auto x = static_cast<TestType>(-0.5);
-            constexpr auto pair =
-                num_collect::functions::legendre_with_diff(x, n);
+            const auto pair = num_collect::functions::legendre_with_diff(x, n);
             const auto [val, diff] = pair;
             constexpr auto true_val = 1.0;
             constexpr auto true_diff = 0.0;
@@ -199,8 +218,7 @@ TEMPLATE_TEST_CASE(
         }
         SECTION("x = 0") {
             constexpr auto x = static_cast<TestType>(0);
-            constexpr auto pair =
-                num_collect::functions::legendre_with_diff(x, n);
+            const auto pair = num_collect::functions::legendre_with_diff(x, n);
             const auto [val, diff] = pair;
             constexpr auto true_val = 1.0;
             constexpr auto true_diff = 0.0;
@@ -209,8 +227,7 @@ TEMPLATE_TEST_CASE(
         }
         SECTION("x = 0.5") {
             constexpr auto x = static_cast<TestType>(0.5);
-            constexpr auto pair =
-                num_collect::functions::legendre_with_diff(x, n);
+            const auto pair = num_collect::functions::legendre_with_diff(x, n);
             const auto [val, diff] = pair;
             constexpr auto true_val = 1.0;
             constexpr auto true_diff = 0.0;
@@ -219,8 +236,7 @@ TEMPLATE_TEST_CASE(
         }
         SECTION("x = 1") {
             constexpr auto x = static_cast<TestType>(1);
-            constexpr auto pair =
-                num_collect::functions::legendre_with_diff(x, n);
+            const auto pair = num_collect::functions::legendre_with_diff(x, n);
             const auto [val, diff] = pair;
             constexpr auto true_val = 1.0;
             constexpr auto true_diff = 0.0;
@@ -233,8 +249,7 @@ TEMPLATE_TEST_CASE(
         constexpr int n = 1;
         SECTION("x = -1") {
             constexpr auto x = static_cast<TestType>(-1);
-            constexpr auto pair =
-                num_collect::functions::legendre_with_diff(x, n);
+            const auto pair = num_collect::functions::legendre_with_diff(x, n);
             const auto [val, diff] = pair;
             constexpr auto true_val = x;
             constexpr auto true_diff = 1.0;
@@ -243,8 +258,7 @@ TEMPLATE_TEST_CASE(
         }
         SECTION("x = -0.5") {
             constexpr auto x = static_cast<TestType>(-0.5);
-            constexpr auto pair =
-                num_collect::functions::legendre_with_diff(x, n);
+            const auto pair = num_collect::functions::legendre_with_diff(x, n);
             const auto [val, diff] = pair;
             constexpr auto true_val = x;
             constexpr auto true_diff = 1.0;
@@ -253,8 +267,7 @@ TEMPLATE_TEST_CASE(
         }
         SECTION("x = 0") {
             constexpr auto x = static_cast<TestType>(0);
-            constexpr auto pair =
-                num_collect::functions::legendre_with_diff(x, n);
+            const auto pair = num_collect::functions::legendre_with_diff(x, n);
             const auto [val, diff] = pair;
             constexpr auto true_val = x;
             constexpr auto true_diff = 1.0;
@@ -263,8 +276,7 @@ TEMPLATE_TEST_CASE(
         }
         SECTION("x = 0.5") {
             constexpr auto x = static_cast<TestType>(0.5);
-            constexpr auto pair =
-                num_collect::functions::legendre_with_diff(x, n);
+            const auto pair = num_collect::functions::legendre_with_diff(x, n);
             const auto [val, diff] = pair;
             constexpr auto true_val = x;
             constexpr auto true_diff = 1.0;
@@ -273,8 +285,7 @@ TEMPLATE_TEST_CASE(
         }
         SECTION("x = 1") {
             constexpr auto x = static_cast<TestType>(1);
-            constexpr auto pair =
-                num_collect::functions::legendre_with_diff(x, n);
+            const auto pair = num_collect::functions::legendre_with_diff(x, n);
             const auto [val, diff] = pair;
             constexpr auto true_val = x;
             constexpr auto true_diff = 1.0;
@@ -287,8 +298,7 @@ TEMPLATE_TEST_CASE(
         constexpr int n = 2;
         SECTION("x = -1") {
             constexpr auto x = static_cast<TestType>(-1);
-            constexpr auto pair =
-                num_collect::functions::legendre_with_diff(x, n);
+            const auto pair = num_collect::functions::legendre_with_diff(x, n);
             const auto [val, diff] = pair;
             constexpr auto true_val = static_cast<TestType>(1.5) * x * x +
                 static_cast<TestType>(-0.5);
@@ -298,8 +308,7 @@ TEMPLATE_TEST_CASE(
         }
         SECTION("x = -0.5") {
             constexpr auto x = static_cast<TestType>(-0.5);
-            constexpr auto pair =
-                num_collect::functions::legendre_with_diff(x, n);
+            const auto pair = num_collect::functions::legendre_with_diff(x, n);
             const auto [val, diff] = pair;
             constexpr auto true_val = static_cast<TestType>(1.5) * x * x +
                 static_cast<TestType>(-0.5);
@@ -309,8 +318,7 @@ TEMPLATE_TEST_CASE(
         }
         SECTION("x = 0") {
             constexpr auto x = static_cast<TestType>(0);
-            constexpr auto pair =
-                num_collect::functions::legendre_with_diff(x, n);
+            const auto pair = num_collect::functions::legendre_with_diff(x, n);
             const auto [val, diff] = pair;
             constexpr auto true_val = static_cast<TestType>(1.5) * x * x +
                 static_cast<TestType>(-0.5);
@@ -320,8 +328,7 @@ TEMPLATE_TEST_CASE(
         }
         SECTION("x = 0.5") {
             constexpr auto x = static_cast<TestType>(0.5);
-            constexpr auto pair =
-                num_collect::functions::legendre_with_diff(x, n);
+            const auto pair = num_collect::functions::legendre_with_diff(x, n);
             const auto [val, diff] = pair;
             constexpr auto true_val = static_cast<TestType>(1.5) * x * x +
                 static_cast<TestType>(-0.5);
@@ -331,8 +338,7 @@ TEMPLATE_TEST_CASE(
         }
         SECTION("x = 1") {
             constexpr auto x = static_cast<TestType>(1);
-            constexpr auto pair =
-                num_collect::functions::legendre_with_diff(x, n);
+            const auto pair = num_collect::functions::legendre_with_diff(x, n);
             const auto [val, diff] = pair;
             constexpr auto true_val = static_cast<TestType>(1.5) * x * x +
                 static_cast<TestType>(-0.5);
@@ -346,8 +352,7 @@ TEMPLATE_TEST_CASE(
         constexpr int n = 3;
         SECTION("x = -1") {
             constexpr auto x = static_cast<TestType>(-1);
-            constexpr auto pair =
-                num_collect::functions::legendre_with_diff(x, n);
+            const auto pair = num_collect::functions::legendre_with_diff(x, n);
             const auto [val, diff] = pair;
             constexpr auto true_val = static_cast<TestType>(2.5) * x * x * x +
                 static_cast<TestType>(-1.5) * x;
@@ -358,8 +363,7 @@ TEMPLATE_TEST_CASE(
         }
         SECTION("x = -0.5") {
             constexpr auto x = static_cast<TestType>(-0.5);
-            constexpr auto pair =
-                num_collect::functions::legendre_with_diff(x, n);
+            const auto pair = num_collect::functions::legendre_with_diff(x, n);
             const auto [val, diff] = pair;
             constexpr auto true_val = static_cast<TestType>(2.5) * x * x * x +
                 static_cast<TestType>(-1.5) * x;
@@ -370,8 +374,7 @@ TEMPLATE_TEST_CASE(
         }
         SECTION("x = 0") {
             constexpr auto x = static_cast<TestType>(0);
-            constexpr auto pair =
-                num_collect::functions::legendre_with_diff(x, n);
+            const auto pair = num_collect::functions::legendre_with_diff(x, n);
             const auto [val, diff] = pair;
             constexpr auto true_val = static_cast<TestType>(2.5) * x * x * x +
                 static_cast<TestType>(-1.5) * x;
@@ -382,8 +385,7 @@ TEMPLATE_TEST_CASE(
         }
         SECTION("x = 0.5") {
             constexpr auto x = static_cast<TestType>(0.5);
-            constexpr auto pair =
-                num_collect::functions::legendre_with_diff(x, n);
+            const auto pair = num_collect::functions::legendre_with_diff(x, n);
             const auto [val, diff] = pair;
             constexpr auto true_val = static_cast<TestType>(2.5) * x * x * x +
                 static_cast<TestType>(-1.5) * x;
@@ -394,8 +396,7 @@ TEMPLATE_TEST_CASE(
         }
         SECTION("x = 1") {
             constexpr auto x = static_cast<TestType>(1);
-            constexpr auto pair =
-                num_collect::functions::legendre_with_diff(x, n);
+            const auto pair = num_collect::functions::legendre_with_diff(x, n);
             const auto [val, diff] = pair;
             constexpr auto true_val = static_cast<TestType>(2.5) * x * x * x +
                 static_cast<TestType>(-1.5) * x;

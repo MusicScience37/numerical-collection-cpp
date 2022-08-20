@@ -1,0 +1,65 @@
+[
+  # https://github.com/include-what-you-use/include-what-you-use/blob/208fbfffa5d69364b9f78e427caa443441279283/libcxx.imp
+  { include: ["<__functional_base>", private, "<functional>", public ] },
+  { include: ["<__mutex_base>", private, "<mutex>", public ] },
+  { symbol: [ "std::declval", private, "<utility>", public ] },
+  { symbol: [ "std::forward", private, "<utility>", public ] },
+  { symbol: [ "std::move", private, "<utility>", public ] },
+  { symbol: [ "std::nullptr_t", private, "<cstddef>", public ] },
+  { symbol: [ "std::string", private, "<string>", public ] },
+  # Custom (STL - C headers)
+  { include: [ "<stddef.h>", public, "<cstddef>", public ] },
+  { include: [ "<stdint.h>", public, "<cstdint>", public ] },
+  { include: [ "<stdlib.h>", public, "<cstdlib>", public ] },
+  # Custom (STL - Integers)
+  { symbol: [ "uint64_t", private, "<cstddef>", public ] },
+  { symbol: [ "std::uint64_t", private, "<cstddef>", public ] },
+  # Custom (STL - Math)
+  { symbol: [ "std::abs", private, "<cmath>", public ] },
+  { symbol: [ "abs", private, "<cmath>", public ] },
+  { symbol: [ "std::exp", private, "<cmath>", public ] },
+  { symbol: [ "std::log", private, "<cmath>", public ] },
+  { symbol: [ "std::sqrt", private, "<cmath>", public ] },
+  { symbol: [ "std::pow", private, "<cmath>", public ] },
+  { symbol: [ "std::log10", private, "<cmath>", public ] },
+  { symbol: [ "std::cos", private, "<cmath>", public ] },
+  # Custom (STL - Internal headers)
+  { include: ["@<__memory/.*>", private, "<memory>", public ] },
+  { include: ["@<__functional/.*>", private, "<functional>", public ] },
+  { include: ["@<__iterator/.*>", private, "<iterator>", public ] },
+  { include: ["@<__utility/.*>", private, "<utility>", public ] },
+  { include: ["@<__compare/.*>", private, "<compare>", public ] },
+  { include: ["@<__chrono/.*>", private, "<chrono>", public ] },
+  { include: ["@<__filesystem/.*>", private, "<filesystem>", public ] },
+  { include: ["@<__algorithm/.*>", private, "<algorithm>", public ] },
+  { include: ["<__tuple>", private, "<tuple>", public ] },
+  { include: ["<__tuple>", private, "<utility>", public ] },
+  { include: ["<__tuple>", private, "<unordered_map>", public ] },
+  { include: ["<__bit_reference>", private, "<vector>", public ] },
+  # Custom (STL - Others)
+  { symbol: [ "std::hash", private, "<functional>", public ] },
+  { symbol: [ "std::FILE", private, "<cstdio>", public ] },
+  { symbol: [ "char_traits", private, "<string>", public ] },
+  # Custom (fmt)
+  { include: ["<fmt/core.h>", private, "<fmt/format.h>", public ] },
+  # Custom (Eigen)
+  { include: ["@<Eigen/src/Core/.*>", private, "<Eigen/Core>", public ] },
+  { include: ["@\"src/Core/.*", private, "<Eigen/Core>", public ] },
+  { include: ["\"src/Core/DenseBase.h\"", private, "<Eigen/Core>", public ] },
+  { include: ["\"src/Core/MatrixBase.h\"", private, "<Eigen/Core>", public ] },
+  { include: ["\"src/Core/ArrayBase.h\"", private, "<Eigen/Core>", public ] },
+  { include: ["<Eigen/src/plugins/ArrayCwiseUnaryOps.h>", private, "<Eigen/Core>", public ] },
+  { include: ["@<Eigen/src/Cholesky/.*>", private, "<Eigen/Cholesky>", public ] },
+  { include: ["@<Eigen/src/Eigenvalues/.*>", private, "<Eigen/Eigenvalues>", public ] },
+  { include: ["@<Eigen/src/Householder/.*>", private, "<Eigen/Householder>", public ] },
+  { include: ["@<Eigen/src/SparseCore/.*>", private, "<Eigen/SparseCore>", public ] },
+  { include: ["@<Eigen/src/LU/.*>", private, "<Eigen/LU>", public ] },
+  { include: ["@<Eigen/src/QR/.*>", private, "<Eigen/QR>", public ] },
+  # Custom (toml++)
+  { include: ["@<toml\\+\\+/impl/.*>", private, "<toml++/toml.h>", public ] },
+  # Custom (trompeloeil)
+  { include: ["<trompeloeil.hpp>", private, "\"trompeloeil_catch2.h\"", public ] },
+  # Custom (Pybind11)
+  { include: ["<cast.h>", private, "<pybind11/pybind11.h>", public ] },
+  { include: ["<pytypes.h>", private, "<pybind11/pybind11.h>", public ] },
+]

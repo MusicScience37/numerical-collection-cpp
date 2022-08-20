@@ -22,7 +22,7 @@
 #include <cmath>
 
 #include "num_collect/opt/function_object_wrapper.h"
-#include "num_collect/opt/heuristic_1dim_optimizer.h"
+#include "num_collect/opt/heuristic_global_optimizer.h"
 #include "num_collect/regularization/concepts/explicit_regularized_solver.h"
 #include "num_collect/regularization/explicit_param_searcher_base.h"
 
@@ -45,7 +45,7 @@ public:
     using scalar_type = typename solver_type::scalar_type;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] solver Solver.
      */
@@ -78,7 +78,7 @@ private:
  * \tparam Optimizer Type of optimizers.
  */
 template <concepts::explicit_regularized_solver Solver,
-    template <typename> typename Optimizer = opt::heuristic_1dim_optimizer>
+    template <typename> typename Optimizer = opt::heuristic_global_optimizer>
 class explicit_gcv
     : public explicit_param_searcher_base<explicit_gcv<Solver, Optimizer>,
           Solver> {
@@ -97,7 +97,7 @@ public:
             explicit_gcv_objective_function<solver_type>>>;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] solver Solver.
      */

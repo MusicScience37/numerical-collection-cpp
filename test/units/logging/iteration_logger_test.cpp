@@ -19,17 +19,16 @@
  */
 #include "num_collect/logging/iteration_logger.h"
 
-#include <iterator>
-
 #include <catch2/catch_test_macros.hpp>
 #include <fmt/format.h>
 
 #include "mock_log_sink.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/logging/log_config.h"
+#include "num_collect/logging/log_level.h"
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
+#include "trompeloeil_catch2.h"
 
 TEST_CASE("num_collect::logging::iteration_logger_item") {
     using num_collect::logging::iteration_logger_item;
@@ -123,15 +122,16 @@ TEST_CASE("num_collect::logging::iteration_logger") {
         "num_collect::logging::iteration_logger_test");
     const auto sink =
         std::make_shared<num_collect_test::logging::mock_log_sink>();
-    const auto config = num_collect::logging::log_tag_config()
-                            .write_traces(true)
-                            .write_iterations(true)
-                            .write_summary(true)
-                            .iteration_output_period(iteration_output_period)
-                            .iteration_label_period(iteration_label_period)
-                            .sink(sink);
-    const auto logger = num_collect::logging::logger(tag, config);
-    auto iteration_logger = num_collect::logging::iteration_logger();
+    const auto config =
+        num_collect::logging::log_tag_config()
+            .output_log_level(num_collect::logging::log_level::trace)
+            .output_log_level_in_child_iterations(
+                num_collect::logging::log_level::summary)
+            .iteration_output_period(iteration_output_period)
+            .iteration_label_period(iteration_label_period)
+            .sink(sink);
+    auto logger = num_collect::logging::logger(tag, config);
+    auto iteration_logger = num_collect::logging::iteration_logger(logger);
 
     SECTION("set items") {
         constexpr num_collect::index_type width = 7;
@@ -152,7 +152,7 @@ TEST_CASE("num_collect::logging::iteration_logger") {
         val1 = 12345;  // NOLINT
         val2 = 3.14;   // NOLINT
         val3 = "abc";
-        iteration_logger.write_iteration_to(logger);
+        iteration_logger.write_iteration();
 
         REQUIRE(logs.size() == 2);
         CHECK(logs.at(0) == "    val1    val2    val3");
@@ -178,8 +178,9 @@ TEST_CASE("num_collect::logging::iteration_logger") {
 
         constexpr int repetition = 10;
         for (int i = 0; i < repetition; ++i) {
-            val1 = i;
-            iteration_logger.write_iteration_to(logger);
+            val1 = i;  // NOLINT(clang-analyzer-deadcode.DeadStores)
+                       // false positive
+            iteration_logger.write_iteration();
         }
 
         CHECK(logs.size() == 7);                          // NOLINT
@@ -212,8 +213,9 @@ TEST_CASE("num_collect::logging::iteration_logger") {
         constexpr int repetition = 3;
         for (int i = 0; i < repetition; ++i) {
             iteration_logger.reset_count();
-            val1 = i;
-            iteration_logger.write_iteration_to(logger);
+            val1 = i;  // NOLINT(clang-analyzer-deadcode.DeadStores)
+                       // false positive
+            iteration_logger.write_iteration();
         }
 
         CHECK(logs.size() == 6);                          // NOLINT
@@ -243,9 +245,34 @@ TEST_CASE("num_collect::logging::iteration_logger") {
         val2 = 3.14;   // NOLINT
         val3 = "abc";
 
-        iteration_logger.write_summary_to(logger);
+        iteration_logger.write_summary();
 
         CHECK(logs.size() == 1);  // NOLINT
-        CHECK(logs.at(0) == "Last state: val1=12345, val2=3.14, val3=abc, ");
+        CHECK(logs.at(0) ==
+            "Finished iterations: val1=12345, val2=3.14, val3=abc");
+    }
+
+    SECTION("limit child iteration logs") {
+        constexpr auto child_tag = num_collect::logging::log_tag_view(
+            "num_collect::logging::iteration_logger_test::child");
+        auto child_logger = num_collect::logging::logger(child_tag, config);
+        logger.set_iterative();
+        logger.initialize_child_algorithm_logger(child_logger);
+        auto child_iteration_logger =
+            num_collect::logging::iteration_logger(child_logger);
+
+        int val1 = 0;
+        child_iteration_logger.append("val1", val1);
+
+        std::vector<std::string> logs;
+        ALLOW_CALL(*sink, write(_, _, _, _, _))
+            // NOLINTNEXTLINE
+            .LR_SIDE_EFFECT(logs.emplace_back(_5));
+
+        child_iteration_logger.write_iteration();
+        CHECK(logs.size() == 0);  // NOLINT
+
+        child_iteration_logger.write_summary();
+        CHECK(logs.size() == 1);  // NOLINT
     }
 }

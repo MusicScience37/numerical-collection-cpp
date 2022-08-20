@@ -1,5 +1,5 @@
 option(NUM_COLLECT_WRITE_JUNIT
-       "write JUnit XML files in tests of numeric-collection-cpp" OFF)
+       "write JUnit XML files in tests of ${FULL_PROJECT_NAME}" OFF)
 if(NUM_COLLECT_WRITE_JUNIT)
     set(NUM_COLLECT_JUNIT_DIR
         "${CMAKE_BINARY_DIR}/junit"
@@ -16,8 +16,9 @@ set(NUM_COLLECT_TEST_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 macro(target_add_catch2 TARGET)
     target_link_libraries(
-        ${TARGET} PRIVATE Catch2::Catch2WithMain trompeloeil::trompeloeil
-                          num_collect num_prob_collect)
+        ${TARGET}
+        PRIVATE Catch2::Catch2WithMain trompeloeil::trompeloeil
+                ApprovalTests::ApprovalTests num_collect num_prob_collect)
     target_include_directories(${TARGET}
                                PRIVATE ${NUM_COLLECT_TEST_INCLUDE_DIR})
 
@@ -35,13 +36,18 @@ macro(target_add_catch2 TARGET)
 endmacro()
 
 option(NUM_COLLECT_ENABLE_UNIT_TESTS
-       "enable unit tests of numeric-collection-cpp" ON)
+       "enable unit tests of ${FULL_PROJECT_NAME}" ON)
 if(NUM_COLLECT_ENABLE_UNIT_TESTS)
     add_subdirectory(units)
 endif()
 
-option(NUM_COLLECT_ENABLE_BENCH "enable benchmarks of numeric-collection-cpp"
-       OFF)
+option(NUM_COLLECT_ENABLE_INTEG_TESTS
+       "enable integration tests of ${FULL_PROJECT_NAME}" ON)
+if(NUM_COLLECT_ENABLE_INTEG_TESTS)
+    add_subdirectory(integ)
+endif()
+
+option(NUM_COLLECT_ENABLE_BENCH "enable benchmarks of ${FULL_PROJECT_NAME}" OFF)
 if(NUM_COLLECT_ENABLE_BENCH)
     add_subdirectory(bench)
 endif()

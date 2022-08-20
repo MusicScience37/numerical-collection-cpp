@@ -21,6 +21,7 @@
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/iterative_solver_base.h"
+#include "num_collect/logging/log_tag_view.h"
 
 namespace num_collect::opt {
 
@@ -37,7 +38,7 @@ protected:
 
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] tag Log tag.
      */

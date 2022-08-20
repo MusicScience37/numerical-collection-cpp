@@ -19,7 +19,7 @@
  */
 #include "num_collect/opt/steepest_descent.h"
 
-#include <iostream>
+#include <Eigen/Core>
 
 #include "../configure_logging.h"
 #include "num_prob_collect/opt/multi_quadratic_function.h"

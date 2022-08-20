@@ -35,7 +35,7 @@ namespace num_collect::util {
 class source_info_view {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] file_path File path.
      * \param[in] line Line number.

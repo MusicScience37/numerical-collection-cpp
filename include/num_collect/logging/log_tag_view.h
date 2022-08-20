@@ -19,10 +19,11 @@
  */
 #pragma once
 
+#include <compare>
+#include <string>
 #include <string_view>
 
 #include "num_collect/logging/log_tag.h"
-#include "num_collect/util/hash_string.h"
 
 namespace num_collect::logging {
 
@@ -37,15 +38,15 @@ public:
      * \param[in] name Name of this tag.
      */
     constexpr explicit log_tag_view(std::string_view name) noexcept
-        : name_(name), hash_(util::hash_string(name)) {}
+        : name_(name) {}
 
     /*!
-     * \brief Construct (implicit convertion).
+     * \brief Construct (implicit conversion).
      *
      * \param[in] tag Tag.
      */
     log_tag_view(const log_tag& tag) noexcept  // NOLINT
-        : name_(tag.name()), hash_(tag.hash()) {}
+        : name_(tag.name()) {}
 
     /*!
      * \brief Convert to log_tag object.
@@ -61,15 +62,6 @@ public:
      */
     [[nodiscard]] constexpr auto name() const noexcept -> std::string_view {
         return name_;
-    }
-
-    /*!
-     * \brief Get the hash number of this tag.
-     *
-     * \return Hash number.
-     */
-    [[nodiscard]] constexpr auto hash() const noexcept -> std::size_t {
-        return hash_;
     }
 
     /*!
@@ -91,9 +83,6 @@ public:
      */
     constexpr auto operator==(const log_tag_view& right) const noexcept
         -> bool {
-        if (this->hash() != right.hash()) {
-            return false;
-        }
         return this->name() == right.name();
     }
 
@@ -109,9 +98,6 @@ public:
 private:
     //! Name.
     std::string_view name_;
-
-    //! Hash number.
-    std::size_t hash_;
 };
 
 }  // namespace num_collect::logging

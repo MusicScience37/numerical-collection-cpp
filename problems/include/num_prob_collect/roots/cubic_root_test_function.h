@@ -19,8 +19,6 @@
  */
 #pragma once
 
-#include <cmath>
-
 namespace num_prob_collect::roots {
 
 /*!
@@ -35,7 +33,7 @@ public:
     using jacobian_type = double;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] target Value to calculate cubic root of.
      */

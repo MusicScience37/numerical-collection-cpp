@@ -19,10 +19,10 @@
  */
 #pragma once
 
-#include <type_traits>
+#include <utility>
 #include <vector>
 
-#include "num_collect/base/concepts/implicitly_convertible_to.h"
+#include "num_collect/base/concepts/implicitly_convertible_to.h"  // IWYU pragma: keep
 
 namespace num_collect::interp::kernel::concepts {
 

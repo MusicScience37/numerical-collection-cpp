@@ -19,7 +19,7 @@
  */
 #include "num_collect/opt/adaptive_diagonal_curves.h"
 
-#include <iostream>
+#include <Eigen/Core>
 
 #include "../configure_logging.h"
 #include "num_prob_collect/opt/shekel_function.h"

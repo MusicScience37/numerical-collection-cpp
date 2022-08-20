@@ -19,17 +19,21 @@
  */
 #pragma once
 
+#include <string_view>
+
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/norm.h"
-#include "num_collect/constants/half.h"
-#include "num_collect/constants/one.h"
-#include "num_collect/constants/zero.h"
+#include "num_collect/constants/half.h"  // IWYU pragma: keep
+#include "num_collect/constants/one.h"   // IWYU pragma: keep
+#include "num_collect/constants/zero.h"  // IWYU pragma: keep
 #include "num_collect/integration/gauss_legendre_integrator.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/avf/impl/avf_integrand.h"
-#include "num_collect/ode/concepts/differentiable_problem.h"
+#include "num_collect/ode/concepts/differentiable_problem.h"  // IWYU pragma: keep
+#include "num_collect/ode/evaluation_type.h"
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
 #include "num_collect/ode/simple_solver.h"
+#include "num_collect/util/assert.h"
 
 namespace num_collect::ode::avf {
 
@@ -65,7 +69,7 @@ public:
         logging::log_tag_view("num_collect::ode::avf::avf4_formula");
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] problem Problem.
      */
@@ -84,7 +88,8 @@ public:
         const variable_type& current, variable_type& estimate) {
         const auto dim = current.size();
 
-        problem().evaluate_on(time, current, true);
+        problem().evaluate_on(time, current,
+            evaluation_type{.diff_coeff = true, .jacobian = true});
         static constexpr scalar_type coeff_jacobi =
             -static_cast<scalar_type>(1) / static_cast<scalar_type>(12);
         jacobian_type coeff = step_size *
@@ -100,7 +105,8 @@ public:
         constexpr index_type max_loops = 10000;
         for (index_type i = 0; i < max_loops; ++i) {
             problem().evaluate_on(time,
-                constants::half<scalar_type> * (current + estimate), true);
+                constants::half<scalar_type> * (current + estimate),
+                evaluation_type{.diff_coeff = true, .jacobian = true});
             coeff = step_size *
                 (jacobian_type::Identity(dim, dim) +
                     coeff_jacobi * step_size * step_size *

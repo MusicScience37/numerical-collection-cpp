@@ -19,11 +19,14 @@
  */
 #pragma once
 
-#include <Eigen/Cholesky>
+#include <string_view>
 
+#include "num_collect/base/index_type.h"
+#include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/log_tag_view.h"
 #include "num_collect/opt/backtracking_line_searcher.h"
-#include "num_collect/opt/concepts/line_searcher.h"
-#include "num_collect/opt/concepts/multi_variate_differentiable_objective_function.h"
+#include "num_collect/opt/concepts/line_searcher.h"  // IWYU pragma: keep
+#include "num_collect/opt/concepts/multi_variate_differentiable_objective_function.h"  // IWYU pragma: keep
 #include "num_collect/opt/descent_method_base.h"
 
 namespace num_collect::opt {
@@ -65,7 +68,7 @@ public:
     using variable_scalar_type = typename variable_type::Scalar;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] obj_fun Objective function.
      */
@@ -100,8 +103,8 @@ public:
             variable_scalar_type prev_coeff =
                 gradient().dot(gradient() - prev_grad_) /
                 prev_grad_.squaredNorm();
-            if (prev_coeff < variable_scalar_type(0)) {
-                prev_coeff = variable_scalar_type(0);
+            if (prev_coeff < static_cast<variable_scalar_type>(0)) {
+                prev_coeff = static_cast<variable_scalar_type>(0);
             }
             direction_ = -gradient() + prev_coeff * direction_;
             prev_grad_ = gradient();

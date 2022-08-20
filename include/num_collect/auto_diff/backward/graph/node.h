@@ -23,7 +23,7 @@
 #include <utility>
 #include <vector>
 
-#include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
 #include "num_collect/util/assert.h"
 
 namespace num_collect::auto_diff::backward::graph {
@@ -51,7 +51,7 @@ public:
     using scalar_type = Scalar;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] node Child node.
      * \param[in] sensitivity Partial differential coefficient of the parent
@@ -102,7 +102,7 @@ public:
     using scalar_type = Scalar;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] children Child nodes.
      */

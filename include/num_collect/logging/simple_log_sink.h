@@ -19,14 +19,22 @@
  */
 #pragma once
 
+#include <chrono>
 #include <cstdio>
+#include <exception>
 #include <filesystem>
 #include <iostream>
 #include <mutex>
+#include <string>
+#include <string_view>
+
+#include <fmt/format.h>
 
 #include "num_collect/base/exception.h"
 #include "num_collect/logging/impl/log_formatter.h"
+#include "num_collect/logging/log_level.h"
 #include "num_collect/logging/log_sink_base.h"
+#include "num_collect/util/source_info_view.h"
 
 namespace num_collect::logging {
 
@@ -36,7 +44,7 @@ namespace num_collect::logging {
 class simple_log_sink final : public log_sink_base {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] file File pointer.
      * \param[in] close_on_destruction Whether to close file on destruction.
@@ -45,7 +53,7 @@ public:
         : file_(file), close_on_destruction_(close_on_destruction) {}
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] file_path File path to write logs.
      */
@@ -58,11 +66,11 @@ public:
     auto operator=(simple_log_sink&&) -> simple_log_sink& = delete;
 
     /*!
-     * \brief Destruct.
+     * \brief Destructor.
      */
     ~simple_log_sink() noexcept override {
         if (file_ != nullptr && close_on_destruction_) {
-            std::fclose(file_);
+            (void)std::fclose(file_);
         }
     }
 
@@ -82,9 +90,9 @@ public:
             std::unique_lock<std::mutex> lock(mutex_);
             const auto formatted =
                 formatter_.format(time, tag, level, source, body);
-            std::fwrite(formatted.data(), 1, formatted.size(), file_);
-            std::fputc('\n', file_);
-            std::fflush(file_);
+            (void)std::fwrite(formatted.data(), 1, formatted.size(), file_);
+            (void)std::fputc('\n', file_);
+            (void)std::fflush(file_);
         } catch (const std::exception& e) {
             std::cerr << "ERROR IN LOGGING: " << e.what() << std::endl;
         }

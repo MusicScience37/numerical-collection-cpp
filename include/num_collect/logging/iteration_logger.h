@@ -19,19 +19,27 @@
  */
 #pragma once
 
+#include <chrono>
 #include <functional>
 #include <iterator>
 #include <memory>
+#include <string>
 #include <string_view>
 #include <type_traits>
+#include <utility>
+#include <vector>
 
 #include <fmt/format.h>
 
-#include "num_collect/base/concepts/formattable.h"
-#include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/concepts/formattable.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
 #include "num_collect/base/exception.h"
-#include "num_collect/logging/concepts/formattable_real_scalar.h"
-#include "num_collect/logging/concepts/getter_of.h"
+#include "num_collect/base/index_type.h"
+#include "num_collect/logging/concepts/formattable_real_scalar.h"  // IWYU pragma: keep
+#include "num_collect/logging/concepts/getter_of.h"  // IWYU pragma: keep
+#include "num_collect/logging/log_level.h"
+#include "num_collect/logging/log_sink_base.h"
+#include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/util/source_info_view.h"
@@ -90,13 +98,13 @@ public:
         -> iteration_logger_item_base& = delete;
 
     /*!
-     * \brief Destruct.
+     * \brief Destructor.
      */
     virtual ~iteration_logger_item_base() noexcept = default;
 
 protected:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      */
     iteration_logger_item_base() noexcept = default;
 };
@@ -113,7 +121,7 @@ template <base::concepts::formattable Value,
 class iteration_logger_item final : public iteration_logger_item_base {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \tparam InputFunction Type of the input function.
      * \param[in] label Label.
@@ -171,7 +179,7 @@ public:
      */
     auto width(index_type value) -> iteration_logger_item* {
         if (value <= 0) {
-            throw assertion_failure("Width must be a positive number.");
+            throw invalid_argument("Width must be a positive number.");
         }
         width_ = value;
         return this;
@@ -191,7 +199,7 @@ public:
     auto operator=(iteration_logger_item&&) -> iteration_logger_item& = delete;
 
     /*!
-     * \brief Destruct.
+     * \brief Destructor.
      */
     ~iteration_logger_item() noexcept override = default;
 
@@ -200,7 +208,9 @@ private:
     std::string label_;
 
     //! Function to get the value.
-    Function function_;
+    Function
+        function_;  // NOLINT(readability-identifier-naming,-warnings-as-errors)
+                    // False positive
 
     //! Width.
     index_type width_{impl::iteration_logger_default_width};
@@ -219,7 +229,7 @@ class iteration_logger_item<Value, Function> final
     : public iteration_logger_item_base {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \tparam InputFunction Type of the input function.
      * \param[in] label Label.
@@ -277,7 +287,7 @@ public:
      */
     auto width(index_type value) -> iteration_logger_item* {
         if (value <= 0) {
-            throw assertion_failure("Width must be a positive number.");
+            throw invalid_argument("Width must be a positive number.");
         }
         width_ = value;
         return this;
@@ -298,7 +308,7 @@ public:
      */
     auto precision(index_type value) -> iteration_logger_item* {
         if (value <= 0) {
-            throw assertion_failure("Precision must be a positive number.");
+            throw invalid_argument("Precision must be a positive number.");
         }
         precision_ = value;
         return this;
@@ -318,7 +328,7 @@ public:
     auto operator=(iteration_logger_item&&) -> iteration_logger_item& = delete;
 
     /*!
-     * \brief Destruct.
+     * \brief Destructor.
      */
     ~iteration_logger_item() noexcept override = default;
 
@@ -327,7 +337,9 @@ private:
     std::string label_;
 
     //! Function to get the value.
-    Function function_;
+    Function
+        function_;  // NOLINT(readability-identifier-naming,-warnings-as-errors)
+                    // False positive
 
     //! Precision.
     index_type precision_{impl::iteration_logger_default_precision};
@@ -345,9 +357,17 @@ private:
 class iteration_logger {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
+     *
+     * \param[in] logger Logger.
      */
-    iteration_logger() = default;
+    explicit iteration_logger(num_collect::logging::logger& logger)
+        : tag_(logger.tag()),
+          write_iterations_(logger.should_log(log_level::iteration)),
+          write_summaries_(logger.should_log(log_level::summary)),
+          sink_(logger.config().sink()),
+          iteration_output_period_(logger.config().iteration_output_period()),
+          iteration_label_period_(logger.config().iteration_label_period()) {}
 
     /*!
      * \brief Reset the iteration count.
@@ -433,45 +453,51 @@ public:
      * \param[in] buffer Buffer to format to.
      */
     void format_summary_to(fmt::memory_buffer& buffer) const {
-        buffer.append(std::string_view("Last state: "));
+        buffer.append(std::string_view("Finished iterations: "));
+        bool is_first = true;
         for (const auto& item : items_) {
+            if (is_first) {
+                is_first = false;
+            } else {
+                buffer.push_back(',');
+                buffer.push_back(' ');
+            }
             item->format_summary_to(buffer);
-            buffer.push_back(',');
-            buffer.push_back(' ');
         }
     }
 
     /*!
      * \brief Write an iteration to a logger.
      *
-     * \param[in] l Logger.
      * \param[in] source Information of the source code.
      *
      * \note This will write logs taking period configurations into account.
      */
-    void write_iteration_to(const logger& l,
+    void write_iteration(
         util::source_info_view source = util::source_info_view()) {
-        if (!l.config().write_iterations()) {
+        if (!write_iterations_) {
             return;
         }
 
-        if ((iterations_ % l.config().iteration_output_period()) != 0) {
+        if ((iterations_ % iteration_output_period_) != 0) {
             ++iterations_;
             return;
         }
 
         if ((iterations_ %
-                (l.config().iteration_label_period() *
-                    l.config().iteration_output_period())) == 0) {
+                (iteration_label_period_ * iteration_output_period_)) == 0) {
             buffer_.clear();
             format_labels_to(buffer_);
-            l.iteration_label(source)(
+            sink_->write(std::chrono::system_clock::now(), tag_.name(),
+                log_level::iteration_label, source,
                 std::string_view(buffer_.data(), buffer_.size()));
         }
 
         buffer_.clear();
         format_values_to(buffer_);
-        l.iteration(source)(std::string_view(buffer_.data(), buffer_.size()));
+        sink_->write(std::chrono::system_clock::now(), tag_.name(),
+            log_level::iteration, source,
+            std::string_view(buffer_.data(), buffer_.size()));
 
         ++iterations_;
     }
@@ -479,21 +505,40 @@ public:
     /*!
      * \brief Write a summary to a logger.
      *
-     * \param[in] l Logger.
      * \param[in] source Information of the source code.
      */
-    void write_summary_to(const logger& l,
+    void write_summary(
         util::source_info_view source = util::source_info_view()) {
-        if (!l.config().write_summary()) {
+        if (!write_summaries_) {
             return;
         }
 
         buffer_.clear();
         format_summary_to(buffer_);
-        l.summary(source)(std::string_view(buffer_.data(), buffer_.size()));
+        sink_->write(std::chrono::system_clock::now(), tag_.name(),
+            log_level::summary, source,
+            std::string_view(buffer_.data(), buffer_.size()));
     }
 
 private:
+    //! Log tag.
+    log_tag_view tag_;
+
+    //! Whether to write iteration logs.
+    bool write_iterations_;
+
+    //! Whether to write summary logs.
+    bool write_summaries_;
+
+    //! Log sink.
+    std::shared_ptr<log_sink_base> sink_;
+
+    //! Period to write iteration logs.
+    index_type iteration_output_period_;
+
+    //! Period to write labels of iteration logs.
+    index_type iteration_label_period_;
+
     //! Log items.
     std::vector<std::shared_ptr<iteration_logger_item_base>> items_{};
 

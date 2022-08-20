@@ -20,6 +20,7 @@
 #include "num_collect/util/kahan_adder.h"
 
 #include <cmath>
+#include <cstddef>
 #include <iomanip>
 #include <iostream>
 

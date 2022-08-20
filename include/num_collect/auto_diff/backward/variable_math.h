@@ -21,6 +21,7 @@
 
 #include <cmath>
 
+#include "num_collect/auto_diff/backward/graph/node.h"
 #include "num_collect/auto_diff/backward/variable.h"
 
 namespace num_collect::auto_diff::backward {

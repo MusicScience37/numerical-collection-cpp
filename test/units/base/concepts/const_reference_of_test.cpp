@@ -19,6 +19,8 @@
  */
 #include "num_collect/base/concepts/const_reference_of.h"
 
+#include <string>
+
 #include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("num_collect::base::concepts::const_reference_of") {

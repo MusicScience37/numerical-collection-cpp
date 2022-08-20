@@ -19,17 +19,26 @@
  */
 #include "num_collect/opt/golden_section_search.h"
 
-#include <sstream>
+#include <string>
 
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
-#include <catch2/matchers/catch_matchers_string.hpp>
 
+#include "num_collect/opt/concepts/box_constrained_optimizer.h"  // IWYU pragma: keep
+#include "num_collect/opt/concepts/optimizer.h"  // IWYU pragma: keep
 #include "num_prob_collect/opt/quadratic_function.h"
 
 TEST_CASE("num_collect::opt::golden_section_search") {
     using num_collect::opt::golden_section_search;
     using num_prob_collect::opt::quadratic_function;
+
+    SECTION("concepts") {
+        STATIC_REQUIRE(num_collect::opt::concepts::optimizer<
+            golden_section_search<quadratic_function>>);
+        STATIC_REQUIRE(num_collect::opt::concepts::box_constrained_optimizer<
+            golden_section_search<quadratic_function>>);
+    }
 
     SECTION("init") {
         auto opt = golden_section_search<quadratic_function>();

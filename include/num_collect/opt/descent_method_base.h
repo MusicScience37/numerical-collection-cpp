@@ -19,8 +19,9 @@
  */
 #pragma once
 
+#include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/opt/concepts/line_searcher.h"
+#include "num_collect/opt/concepts/line_searcher.h"  // IWYU pragma: keep
 #include "num_collect/opt/optimizer_base.h"
 
 namespace num_collect::opt {
@@ -102,16 +103,14 @@ public:
     /*!
      * \copydoc num_collect::opt::optimizer_base::opt_variable
      */
-    [[nodiscard]] auto opt_variable() const {
+    [[nodiscard]] auto opt_variable() const -> const variable_type& {
         return line_searcher().opt_variable();
     }
 
     /*!
      * \copydoc num_collect::opt::optimizer_base::opt_value
      */
-    [[nodiscard]] auto opt_value() const
-        -> std::invoke_result_t<decltype(&line_searcher_type::opt_value),
-            const line_searcher_type> {
+    [[nodiscard]] auto opt_value() const -> const value_type& {
         return line_searcher().opt_value();
     }
 
@@ -134,9 +133,7 @@ public:
      *
      * \return Gradient for current optimal variable.
      */
-    [[nodiscard]] auto gradient() const
-        -> std::invoke_result_t<decltype(&line_searcher_type::gradient),
-            const line_searcher_type> {
+    [[nodiscard]] auto gradient() const -> const variable_type& {
         return line_searcher().gradient();
     }
 
@@ -165,7 +162,7 @@ protected:
     using optimizer_base<Derived>::derived;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] tag Log tag.
      * \param[in] obj_fun Objective function.

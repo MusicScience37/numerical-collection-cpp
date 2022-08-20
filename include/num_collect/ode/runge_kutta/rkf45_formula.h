@@ -19,9 +19,13 @@
  */
 #pragma once
 
+#include <string_view>
+
+#include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/ode/concepts/problem.h"
+#include "num_collect/ode/concepts/problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/embedded_solver.h"
+#include "num_collect/ode/evaluation_type.h"
 #include "num_collect/ode/formula_base.h"
 
 namespace num_collect::ode::runge_kutta {
@@ -40,6 +44,9 @@ public:
     using typename base_type::problem_type;
     using typename base_type::scalar_type;
     using typename base_type::variable_type;
+
+    static_assert(!problem_type::allowed_evaluations.mass,
+        "Mass matrix is not supported.");
 
     using base_type::base_type;
     using base_type::problem;
@@ -132,31 +139,35 @@ public:
     void step_embedded(scalar_type time, scalar_type step_size,
         const variable_type& current, variable_type& estimate,
         variable_type& error) {
-        problem().evaluate_on(time, current);
+        constexpr auto evaluations = evaluation_type{.diff_coeff = true};
+
+        problem().evaluate_on(time, current, evaluations);
         k1_ = problem().diff_coeff();
 
-        problem().evaluate_on(
-            time + b2 * step_size, current + step_size * a21 * k1_);
+        problem().evaluate_on(time + b2 * step_size,
+            current + step_size * a21 * k1_, evaluations);
         k2_ = problem().diff_coeff();
 
         problem().evaluate_on(time + b3 * step_size,
-            current + step_size * (a31 * k1_ + a32 * k2_));
+            current + step_size * (a31 * k1_ + a32 * k2_), evaluations);
         k3_ = problem().diff_coeff();
 
         problem().evaluate_on(time + b4 * step_size,
-            current + step_size * (a41 * k1_ + a42 * k2_ + a43 * k3_));
+            current + step_size * (a41 * k1_ + a42 * k2_ + a43 * k3_),
+            evaluations);
         k4_ = problem().diff_coeff();
 
         problem().evaluate_on(time + b5 * step_size,
             current +
-                step_size * (a51 * k1_ + a52 * k2_ + a53 * k3_ + a54 * k4_));
+                step_size * (a51 * k1_ + a52 * k2_ + a53 * k3_ + a54 * k4_),
+            evaluations);
         k5_ = problem().diff_coeff();
 
         problem().evaluate_on(time + b6 * step_size,
             current +
                 step_size *
-                    (a61 * k1_ + a62 * k2_ + a63 * k3_ + a64 * k4_ +
-                        a65 * k5_));
+                    (a61 * k1_ + a62 * k2_ + a63 * k3_ + a64 * k4_ + a65 * k5_),
+            evaluations);
         k6_ = problem().diff_coeff();
 
         estimate = current +

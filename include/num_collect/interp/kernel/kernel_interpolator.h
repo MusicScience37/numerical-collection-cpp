@@ -20,10 +20,16 @@
 #pragma once
 
 #include <algorithm>
+#include <cstddef>
+#include <utility>
 #include <vector>
 
-#include "num_collect/interp/kernel/concepts/kernel.h"
+#include <Eigen/Core>
+
+#include "num_collect/base/index_type.h"
+#include "num_collect/interp/kernel/concepts/kernel.h"  // IWYU pragma: keep
 #include "num_collect/interp/kernel/impl/kernel_coeff_solver.h"
+#include "num_collect/logging/logger.h"
 
 namespace num_collect::interp::kernel {
 
@@ -53,7 +59,7 @@ public:
     using kernel_param_type = typename kernel_type::kernel_param_type;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] kernel Kernel.
      */
@@ -228,6 +234,24 @@ public:
     [[nodiscard]] auto calc_reg_term(
         const Eigen::MatrixBase<InputData>& data) const -> value_type {
         return solver_.calc_reg_term(data);
+    }
+
+    /*!
+     * \brief Access to the logger.
+     *
+     * \return Logger.
+     */
+    [[nodiscard]] auto logger() const noexcept -> const logging::logger& {
+        return solver_.logger();
+    }
+
+    /*!
+     * \brief Access to the logger.
+     *
+     * \return Logger.
+     */
+    [[nodiscard]] auto logger() noexcept -> logging::logger& {
+        return solver_.logger();
     }
 
 private:

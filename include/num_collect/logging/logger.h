@@ -19,13 +19,21 @@
  */
 #pragma once
 
+#include <algorithm>
+#include <chrono>
 #include <iterator>
+#include <memory>
+#include <string>
 #include <string_view>
 #include <utility>
 
 #include <fmt/format.h>
 
+#include "num_collect/logging/impl/iteration_layer_handler.h"
 #include "num_collect/logging/log_config.h"
+#include "num_collect/logging/log_level.h"
+#include "num_collect/logging/log_sink_base.h"
+#include "num_collect/logging/log_tag.h"
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/util/source_info_view.h"
@@ -41,7 +49,7 @@ namespace num_collect::logging {
 class logging_proxy {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] tag Tag.
      * \param[in] level Log level.
@@ -125,19 +133,19 @@ inline constexpr auto default_tag = log_tag_view("");
 /*!
  * \brief Class of loggers.
  *
- * \note Member functions in this class except for constructors are thread safe
- * thanks to thread safety in log sinks (objects derived from
- * num_collect::logging::log_sink_base class).
+ * \thread_safety All `const` member functions (member functions except for
+ * initialize_child_algorithm_logger function, constructors, destructor, and
+ * assignment operators) are thread safe even for the same object.
  */
 class logger {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      */
     logger() : logger(default_tag) {}
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] tag Tag.
      */
@@ -145,22 +153,34 @@ public:
         : logger(tag, log_config::instance().get_config_of(tag)) {}
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] tag Tag.
      * \param[in] config Configuration.
      */
     logger(log_tag_view tag, log_tag_config config)
-        : logger(log_tag(tag), std::move(config)) {}
+        : logger(static_cast<log_tag>(tag), std::move(config)) {}
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] tag Tag.
      * \param[in] config Configuration.
      */
-    logger(log_tag tag, log_tag_config config) noexcept
-        : tag_(std::move(tag)), config_(std::move(config)) {}
+    logger(log_tag tag, log_tag_config config)
+        : tag_(std::move(tag)),
+          config_(std::move(config)),
+          always_output_log_level_(std::max(config_.output_log_level(),
+              config_.output_log_level_in_child_iterations())),
+          lowest_output_log_level_(std::min(config_.output_log_level(),
+              config_.output_log_level_in_child_iterations())) {}
+
+    /*!
+     * \brief Get the log tag.
+     *
+     * \return Log tag.
+     */
+    [[nodiscard]] auto tag() const noexcept -> const log_tag& { return tag_; }
 
     /*!
      * \brief Get the configuration.
@@ -172,7 +192,63 @@ public:
     }
 
     /*!
-     * \brief Write a tarace log.
+     * \brief Set this node to an iterative algorithm.
+     */
+    void set_iterative() const noexcept {
+        iteration_layer_handler_.set_iterative();
+    }
+
+    /*!
+     * \brief Initialize a logger as the logger of the algorithm called from the
+     * algorithm of this logger.
+     *
+     * \param[in] child Logger of the algorithm called from the algorithm of
+     * this logger.
+     */
+    void initialize_child_algorithm_logger(logger& child) noexcept {
+        iteration_layer_handler_.initialize_lower_layer(
+            child.iteration_layer_handler_);
+    }
+
+    /*!
+     * \brief Check whether to write logs with a log level.
+     *
+     * \param[in] level Log level.
+     * \retval true Should write logs.
+     * \retval false Should not write logs.
+     */
+    [[nodiscard]] auto should_log(log_level level) const noexcept -> bool {
+        if (level < lowest_output_log_level_) {
+            return false;
+        }
+        if (level >= always_output_log_level_) {
+            return true;
+        }
+        if (iteration_layer_handler_.is_upper_layer_iterative()) {
+            return level >= config_.output_log_level_in_child_iterations();
+        }
+        return level >= config_.output_log_level();
+    }
+
+    /*!
+     * \brief Write a log.
+     *
+     * \param[in] level Log level.
+     * \param[in] source Information of the source code.
+     * \return Proxy object to write log.
+     *
+     * \note Argument source should be left to be the default value if you want
+     * to write logs with the current position.
+     */
+    [[nodiscard]] auto log(log_level level,
+        util::source_info_view source = util::source_info_view()) const noexcept
+        -> logging_proxy {
+        return logging_proxy(tag_.name(), level, source, config_.sink().get(),
+            should_log(level));
+    }
+
+    /*!
+     * \brief Write a trace log.
      *
      * \param[in] source Information of the source code.
      * \return Proxy object to write log.
@@ -183,8 +259,7 @@ public:
     [[nodiscard]] auto trace(
         util::source_info_view source = util::source_info_view()) const noexcept
         -> logging_proxy {
-        return logging_proxy(tag_.name(), log_level::trace, source,
-            config_.sink().get(), config_.write_traces());
+        return log(log_level::trace, source);
     }
 
     /*!
@@ -200,8 +275,7 @@ public:
     [[nodiscard]] auto iteration(
         util::source_info_view source = util::source_info_view()) const noexcept
         -> logging_proxy {
-        return logging_proxy(tag_.name(), log_level::iteration, source,
-            config_.sink().get(), config_.write_iterations());
+        return log(log_level::iteration, source);
     }
 
     /*!
@@ -217,8 +291,7 @@ public:
     [[nodiscard]] auto iteration_label(
         util::source_info_view source = util::source_info_view()) const noexcept
         -> logging_proxy {
-        return logging_proxy(tag_.name(), log_level::iteration_label, source,
-            config_.sink().get(), config_.write_iterations());
+        return log(log_level::iteration_label, source);
     }
 
     /*!
@@ -234,8 +307,7 @@ public:
     [[nodiscard]] auto summary(
         util::source_info_view source = util::source_info_view()) const noexcept
         -> logging_proxy {
-        return logging_proxy(tag_.name(), log_level::summary, source,
-            config_.sink().get(), config_.write_summary());
+        return log(log_level::summary, source);
     }
 
     /*!
@@ -250,9 +322,7 @@ public:
     [[nodiscard]] auto info(
         util::source_info_view source = util::source_info_view()) const noexcept
         -> logging_proxy {
-        constexpr bool write_log = true;
-        return logging_proxy(tag_.name(), log_level::info, source,
-            config_.sink().get(), write_log);
+        return log(log_level::info, source);
     }
 
     /*!
@@ -267,9 +337,7 @@ public:
     [[nodiscard]] auto warning(
         util::source_info_view source = util::source_info_view()) const noexcept
         -> logging_proxy {
-        constexpr bool write_log = true;
-        return logging_proxy(tag_.name(), log_level::warning, source,
-            config_.sink().get(), write_log);
+        return log(log_level::warning, source);
     }
 
     /*!
@@ -284,9 +352,7 @@ public:
     [[nodiscard]] auto error(
         util::source_info_view source = util::source_info_view()) const noexcept
         -> logging_proxy {
-        constexpr bool write_log = true;
-        return logging_proxy(tag_.name(), log_level::error, source,
-            config_.sink().get(), write_log);
+        return log(log_level::error, source);
     }
 
 private:
@@ -295,6 +361,15 @@ private:
 
     //! Configuration.
     log_tag_config config_;
+
+    //! Minimum log level to output always.
+    log_level always_output_log_level_;
+
+    //! Lowest log level to output.
+    log_level lowest_output_log_level_;
+
+    //! Handler of layers of iterations.
+    impl::iteration_layer_handler iteration_layer_handler_{};
 };
 
 }  // namespace num_collect::logging

@@ -20,10 +20,13 @@
 #pragma once
 
 #include <cmath>
-#include <type_traits>
+#include <cstddef>
+#include <limits>
+#include <type_traits>  // IWYU pragma: keep
+#include <utility>
 
-#include "num_collect/interp/kernel/concepts/distance.h"
-#include "num_collect/interp/kernel/concepts/rbf.h"
+#include "num_collect/interp/kernel/concepts/distance.h"  // IWYU pragma: keep
+#include "num_collect/interp/kernel/concepts/rbf.h"       // IWYU pragma: keep
 #include "num_collect/util/assert.h"
 
 namespace num_collect::interp::kernel {
@@ -59,7 +62,7 @@ public:
     using kernel_param_type = len_param_type;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] dist Calculator of distances.
      * \param[in] rbf RBF.
@@ -136,7 +139,7 @@ public:
     template <typename Container>
     [[nodiscard]] auto kernel_param_search_region(const Container& list) const
         -> std::pair<kernel_param_type, kernel_param_type> {
-        NUM_COLLECT_ASSERT(list.size() > 1);
+        NUM_COLLECT_ASSERT(list.size() > static_cast<std::size_t>(1));
 
         len_param_type max_min_dist =
             std::numeric_limits<len_param_type>::min();

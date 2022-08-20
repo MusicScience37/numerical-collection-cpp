@@ -20,13 +20,16 @@
 #include "num_collect/util/kahan_adder.h"
 
 #include <cmath>
-#include <limits>
+#include <cstddef>
+#include <ostream>
+#include <string>
 
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include "num_collect/constants/pi.h"
+#include "num_collect/constants/pi.h"  // IWYU pragma: keep
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::util::kahan_adder (floating-point number)", "",

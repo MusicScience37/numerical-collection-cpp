@@ -22,9 +22,10 @@
 #include <cmath>
 #include <utility>
 
+#include "num_collect/logging/logger.h"
 #include "num_collect/opt/function_object_wrapper.h"
-#include "num_collect/opt/heuristic_1dim_optimizer.h"
-#include "num_collect/regularization/impl/coeff_param.h"
+#include "num_collect/opt/heuristic_global_optimizer.h"
+#include "num_collect/regularization/impl/coeff_param.h"  // IWYU pragma: keep
 
 namespace num_collect::interp::kernel::impl {
 
@@ -43,7 +44,7 @@ public:
     using scalar_type = typename solver_type::scalar_type;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] solver Solver.
      */
@@ -87,7 +88,7 @@ public:
         auto_regularizer_objective_function<solver_type>;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] solver Solver.
      */
@@ -130,6 +131,15 @@ public:
         return optimizer_.opt_value();
     }
 
+    /*!
+     * \brief Access to the logger.
+     *
+     * \return Logger.
+     */
+    [[nodiscard]] auto logger() noexcept -> logging::logger& {
+        return optimizer_.logger();
+    }
+
 private:
     /*!
      * \brief Get the default region to search for the optimal regularization
@@ -151,7 +161,7 @@ private:
     const solver_type* solver_;
 
     //! Optimizer.
-    opt::heuristic_1dim_optimizer<opt::function_object_wrapper<
+    opt::heuristic_global_optimizer<opt::function_object_wrapper<
         scalar_type(scalar_type), objective_function_type>>
         optimizer_;
 };

@@ -19,8 +19,13 @@
  */
 #include "num_collect/interp/kernel/calc_kernel_mat.h"
 
+#include <cmath>
+#include <string>
+#include <vector>
+
 #include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "num_collect/interp/kernel/euclidean_distance.h"

@@ -19,14 +19,10 @@
  */
 #pragma once
 
-#include <cmath>
 #include <complex>
-#include <type_traits>
 
-#include <Eigen/Core>
-
-#include "num_collect/base/concepts/dense_matrix.h"
-#include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/concepts/dense_matrix.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/real_scalar.h"   // IWYU pragma: keep
 #include "num_collect/base/index_type.h"
 
 namespace num_collect {

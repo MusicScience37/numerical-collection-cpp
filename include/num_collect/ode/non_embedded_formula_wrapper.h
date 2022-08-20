@@ -20,12 +20,10 @@
 #pragma once
 
 #include "num_collect/base/index_type.h"
-#include "num_collect/constants/half.h"
-#include "num_collect/constants/two.h"
+#include "num_collect/constants/half.h"  // IWYU pragma: keep
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/ode/concepts/formula.h"
+#include "num_collect/ode/concepts/formula.h"  // IWYU pragma: keep
 #include "num_collect/ode/embedded_solver.h"
-#include "num_collect/ode/formula_base.h"
 
 namespace num_collect::ode {
 
@@ -62,7 +60,7 @@ public:
     static constexpr logging::log_tag_view log_tag = base_formula_type::log_tag;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] problem Problem.
      */
@@ -111,7 +109,7 @@ public:
      *
      * \return Problem.
      */
-    [[nodiscard]] auto problem() -> problem_type& { return formula_.problem_; }
+    [[nodiscard]] auto problem() -> problem_type& { return formula_.problem(); }
 
     /*!
      * \brief Get the problem.
@@ -119,7 +117,7 @@ public:
      * \return Problem.
      */
     [[nodiscard]] auto problem() const -> const problem_type& {
-        return formula_.problem_;
+        return formula_.problem();
     }
 
 private:

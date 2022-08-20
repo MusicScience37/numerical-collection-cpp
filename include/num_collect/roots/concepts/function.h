@@ -21,7 +21,7 @@
 
 #include <utility>
 
-#include "num_collect/base/concepts/const_reference_of.h"
+#include "num_collect/base/concepts/const_reference_of.h"  // IWYU pragma: keep
 
 namespace num_collect::roots::concepts {
 

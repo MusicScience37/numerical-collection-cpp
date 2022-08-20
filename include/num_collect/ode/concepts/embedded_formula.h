@@ -19,7 +19,7 @@
  */
 #pragma once
 
-#include "num_collect/ode/concepts/formula.h"
+#include "num_collect/ode/concepts/formula.h"  // IWYU pragma: keep
 
 namespace num_collect::ode::concepts {
 
@@ -29,14 +29,13 @@ namespace num_collect::ode::concepts {
  * \tparam T Type.
  */
 template <typename T>
-concept embedded_formula = formula<T> && requires(T& obj) {
-    { T::lesser_order } -> base::concepts::decayed_to<index_type>;
-
-    {obj.step_embedded(std::declval<typename T::scalar_type>() /*time*/,
-        std::declval<typename T::scalar_type>() /*step_size*/,
-        std::declval<typename T::variable_type>() /*current*/,
-        std::declval<typename T::variable_type&>() /*estimate*/,
-        std::declval<typename T::variable_type&>() /*error*/)};
+concept embedded_formula = formula<T> && requires() {
+    requires requires(T & obj, const typename T::scalar_type& time,
+        const typename T::scalar_type& step_size,
+        const typename T::variable_type& current,
+        typename T::variable_type& estimate, typename T::variable_type& error) {
+        obj.step_embedded(time, step_size, current, estimate, error);
+    };
 };
 
 }  // namespace num_collect::ode::concepts

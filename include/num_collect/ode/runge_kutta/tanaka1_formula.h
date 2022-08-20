@@ -19,11 +19,15 @@
  */
 #pragma once
 
+#include <string_view>
+
+#include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/ode/concepts/differentiable_problem.h"
+#include "num_collect/ode/concepts/problem.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/slope_equation_solver.h"  // IWYU pragma: keep
 #include "num_collect/ode/embedded_solver.h"
+#include "num_collect/ode/inexact_newton_slope_equation_solver.h"
 #include "num_collect/ode/runge_kutta/implicit_formula_base.h"
-#include "num_collect/ode/runge_kutta/semi_implicit_formula_solver.h"
 
 namespace num_collect::ode::runge_kutta {
 
@@ -31,23 +35,29 @@ namespace num_collect::ode::runge_kutta {
  * \brief Class of Tanaka Formula 1.
  *
  * \tparam Problem Type of problem.
+ * \tparam FormulaSolver Type of solver of formula.
  */
-template <concepts::differentiable_problem Problem, typename StrategyTag>
+template <concepts::problem Problem,
+    concepts::slope_equation_solver FormulaSolver =
+        inexact_newton_slope_equation_solver<Problem>>
 class tanaka1_formula
-    : public implicit_formula_base<tanaka1_formula<Problem, StrategyTag>,
-          Problem, semi_implicit_formula_solver<Problem, StrategyTag>> {
+    : public implicit_formula_base<tanaka1_formula<Problem, FormulaSolver>,
+          Problem, FormulaSolver> {
 public:
     //! Type of this class.
-    using this_type = tanaka1_formula<Problem, StrategyTag>;
+    using this_type = tanaka1_formula<Problem, FormulaSolver>;
 
     //! Type of base class.
     using base_type =
-        implicit_formula_base<tanaka1_formula<Problem, StrategyTag>, Problem,
-            semi_implicit_formula_solver<Problem, StrategyTag>>;
+        implicit_formula_base<tanaka1_formula<Problem, FormulaSolver>, Problem,
+            FormulaSolver>;
 
     using typename base_type::problem_type;
     using typename base_type::scalar_type;
     using typename base_type::variable_type;
+
+    static_assert(!problem_type::allowed_evaluations.mass,
+        "Mass matrix is not supported.");
 
     using base_type::base_type;
     using base_type::problem;
@@ -55,7 +65,6 @@ public:
 protected:
     using base_type::coeff;
     using base_type::formula_solver;
-    using base_type::tol_residual_norm;
 
 public:
     //! Number of stages of this formula.
@@ -118,15 +127,17 @@ public:
     void step_embedded(scalar_type time, scalar_type step_size,
         const variable_type& current, variable_type& estimate,
         variable_type& error) {
-        formula_solver().tol_residual_norm(
-            tol_residual_norm(current, step_size));
+        formula_solver().update_jacobian(
+            problem(), time + b1 * step_size, step_size, current, a11);
+        k1_ = problem().diff_coeff();
+        formula_solver().init(k1_);
+        formula_solver().solve();
 
-        formula_solver().solve(time + b1 * step_size, step_size, current, a11);
-        k1_ = formula_solver().k();
-
-        formula_solver().solve(time + b2 * step_size, step_size,
-            current + step_size * a21 * k1_, a22);
-        k2_ = formula_solver().k();
+        formula_solver().update_jacobian(problem(), time + b2 * step_size,
+            step_size, current + step_size * a21 * k1_, a22);
+        k2_ = problem().diff_coeff();
+        formula_solver().init(k2_);
+        formula_solver().solve();
 
         estimate = current + step_size * (c1 * k1_ + c2 * k2_);
         error = step_size * (ce1 * k1_ + ce2 * k2_);
@@ -148,8 +159,7 @@ private:
  *
  * \tparam Problem Type of problem.
  */
-template <concepts::differentiable_problem Problem>
-using tanaka1_solver = embedded_solver<tanaka1_formula<Problem,
-    implicit_formula_solver_strategies::modified_newton_raphson_tag>>;
+template <concepts::problem Problem>
+using tanaka1_solver = embedded_solver<tanaka1_formula<Problem>>;
 
 }  // namespace num_collect::ode::runge_kutta

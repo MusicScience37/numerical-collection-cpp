@@ -19,15 +19,20 @@
  */
 #include "num_collect/base/exception.h"
 
-#include <type_traits>
+#include <ostream>
+#include <type_traits>  // IWYU pragma: keep
 
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
+
+#include "num_collect/util/impl/compiler_builtins.h"
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("exceptions", "", num_collect::num_collect_exception,
-    num_collect::assertion_failure, num_collect::algorithm_failure,
+    num_collect::assertion_failure, num_collect::precondition_not_satisfied,
+    num_collect::invalid_argument, num_collect::algorithm_failure,
     num_collect::file_error) {
     using test_type = TestType;
 
@@ -42,7 +47,7 @@ TEMPLATE_TEST_CASE("exceptions", "", num_collect::num_collect_exception,
         const auto message = std::string("test message");
         auto e = test_type(message);
         REQUIRE_THAT(e.what(), Catch::Matchers::ContainsSubstring(message));
-#if NUM_COLLECT_HAS_SOURCE_LOCATION
+#if NUM_COLLECT_HAS_BUILTIN_FUNCTION
         REQUIRE_THAT(
             e.what(), Catch::Matchers::ContainsSubstring("exception_test.cpp"));
 #endif

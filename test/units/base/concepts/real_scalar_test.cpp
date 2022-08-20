@@ -19,6 +19,8 @@
  */
 #include "num_collect/base/concepts/real_scalar.h"
 
+#include <string>
+
 #include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
 

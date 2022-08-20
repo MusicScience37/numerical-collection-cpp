@@ -19,18 +19,28 @@
  */
 #include "num_collect/opt/steepest_descent.h"
 
-#include <sstream>
+#include <string>
 
+#include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
-#include <catch2/matchers/catch_matchers_string.hpp>
 
 #include "eigen_approx.h"
+#include "num_collect/opt/concepts/descent_method.h"  // IWYU pragma: keep
+#include "num_collect/opt/concepts/optimizer.h"       // IWYU pragma: keep
 #include "num_prob_collect/opt/multi_quadratic_function.h"
 
 TEST_CASE("num_collect::opt::steepest_descent") {
     using num_collect::opt::steepest_descent;
     using num_prob_collect::opt::multi_quadratic_function;
+
+    SECTION("concepts") {
+        STATIC_REQUIRE(num_collect::opt::concepts::optimizer<
+            steepest_descent<multi_quadratic_function>>);
+        STATIC_REQUIRE(num_collect::opt::concepts::descent_method<
+            steepest_descent<multi_quadratic_function>>);
+    }
 
     SECTION("init") {
         auto opt = steepest_descent<multi_quadratic_function>();

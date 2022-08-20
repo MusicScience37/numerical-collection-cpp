@@ -19,14 +19,17 @@
  */
 #pragma once
 
+#include <chrono>
 #include <cstdio>
-#include <filesystem>
+#include <exception>
 #include <iostream>
 #include <mutex>
+#include <string_view>
 
-#include "num_collect/base/exception.h"
 #include "num_collect/logging/impl/colored_log_formatter.h"
+#include "num_collect/logging/log_level.h"
 #include "num_collect/logging/log_sink_base.h"
+#include "num_collect/util/source_info_view.h"
 
 namespace num_collect::logging {
 
@@ -36,7 +39,7 @@ namespace num_collect::logging {
 class colored_console_log_sink final : public log_sink_base {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] file File pointer.
      *
@@ -53,7 +56,7 @@ public:
         -> colored_console_log_sink& = delete;
 
     /*!
-     * \brief Destruct.
+     * \brief Destructor.
      */
     ~colored_console_log_sink() noexcept override = default;
 
@@ -73,9 +76,9 @@ public:
             std::unique_lock<std::mutex> lock(mutex_);
             const auto formatted =
                 formatter_.format(time, tag, level, source, body);
-            std::fwrite(formatted.data(), 1, formatted.size(), file_);
-            std::fputc('\n', file_);
-            std::fflush(file_);
+            (void)std::fwrite(formatted.data(), 1, formatted.size(), file_);
+            (void)std::fputc('\n', file_);
+            (void)std::fflush(file_);
         } catch (const std::exception& e) {
             std::cerr << "ERROR IN LOGGING: " << e.what() << std::endl;
         }

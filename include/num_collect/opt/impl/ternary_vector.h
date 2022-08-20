@@ -20,9 +20,11 @@
 #pragma once
 
 #include <algorithm>
+#include <cstddef>
 #include <cstdint>
-#include <functional>  // std::hash
+#include <functional>
 #include <limits>
+#include <utility>
 
 #include <Eigen/Core>
 
@@ -44,12 +46,12 @@ public:
         static_cast<index_type>(std::numeric_limits<digit_type>::max());
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      */
     ternary_vector() = default;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] dim Number of digits.
      */
@@ -151,12 +153,12 @@ public:
                 }
             }
             for (index_type j = min_digits; j < left_digits; ++j) {
-                if (data_(i, j + 1) != digit_type(0)) {
+                if (data_(i, j + 1) != static_cast<digit_type>(0)) {
                     return false;
                 }
             }
             for (index_type j = min_digits; j < right_digits; ++j) {
-                if (right.data_(i, j + 1) != digit_type(0)) {
+                if (right.data_(i, j + 1) != static_cast<digit_type>(0)) {
                     return false;
                 }
             }
@@ -185,9 +187,10 @@ public:
     [[nodiscard]] auto elem_as(index_type dim) const -> Scalar {
         NUM_COLLECT_DEBUG_ASSERT(dim < data_.rows());
         const auto ndigits = digits(dim);
-        auto num = Scalar(0);
-        auto coeff = Scalar(1);
-        static const Scalar inv_base = Scalar(1) / Scalar(3);
+        auto num = static_cast<Scalar>(0);
+        auto coeff = static_cast<Scalar>(1);
+        static const Scalar inv_base =
+            static_cast<Scalar>(1) / static_cast<Scalar>(3);
         for (index_type i = 0; i < ndigits; ++i) {
             num += coeff * static_cast<Scalar>(data_(dim, i + 1));
             coeff *= inv_base;

@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <tuple>
 #include <type_traits>
 
 #include "num_collect/multi_double/impl/basic_operations.h"

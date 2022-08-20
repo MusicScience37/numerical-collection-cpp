@@ -19,6 +19,8 @@
  */
 #include "num_collect/util/concepts/rhs_comparable.h"
 
+#include <string>
+
 #include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("num_collect::util::concepts::rhs_less_than_comparable") {
@@ -30,7 +32,7 @@ TEST_CASE("num_collect::util::concepts::rhs_less_than_comparable") {
 
         struct right {};
         struct left {
-            [[nodiscard]] auto operator<(const right& r) const -> bool {
+            [[nodiscard]] auto operator<(const right& /*r*/) const -> bool {
                 return true;
             }
         };
@@ -48,7 +50,7 @@ TEST_CASE("num_collect::util::concepts::rhs_less_than_or_equal_to_comparable") {
 
         struct right {};
         struct left {
-            [[nodiscard]] auto operator<=(const right& r) const -> bool {
+            [[nodiscard]] auto operator<=(const right& /*r*/) const -> bool {
                 return true;
             }
         };
@@ -65,7 +67,7 @@ TEST_CASE("num_collect::util::concepts::rhs_greater_than_comparable") {
 
         struct right {};
         struct left {
-            [[nodiscard]] auto operator>(const right& r) const -> bool {
+            [[nodiscard]] auto operator>(const right& /*r*/) const -> bool {
                 return true;
             }
         };
@@ -84,7 +86,7 @@ TEST_CASE(
 
         struct right {};
         struct left {
-            [[nodiscard]] auto operator>=(const right& r) const -> bool {
+            [[nodiscard]] auto operator>=(const right& /*r*/) const -> bool {
                 return true;
             }
         };
@@ -101,7 +103,7 @@ TEST_CASE("num_collect::util::concepts::rhs_equal_to_comparable") {
 
         struct right {};
         struct left {
-            [[nodiscard]] auto operator==(const right& r) const -> bool {
+            [[nodiscard]] auto operator==(const right& /*r*/) const -> bool {
                 return true;
             }
         };
@@ -118,7 +120,7 @@ TEST_CASE("num_collect::util::concepts::rhs_not_equal_to_comparable") {
 
         struct right {};
         struct left {
-            [[nodiscard]] auto operator!=(const right& r) const -> bool {
+            [[nodiscard]] auto operator!=(const right& /*r*/) const -> bool {
                 return true;
             }
         };

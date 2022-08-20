@@ -6,7 +6,7 @@ A collection of algorithms in numerical analysis implemented in C++.
 [![C++ standard](https://img.shields.io/badge/standard-C%2B%2B20-blue?logo=c%2B%2B)](https://en.cppreference.com/w/cpp/compiler_support/20)
 [![pipeline status](https://gitlab.com/MusicScience37/numerical-collection-cpp/badges/develop/pipeline.svg)](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/commits/develop)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
-[![codecov](https://codecov.io/gl/MusicScience37/numerical-collection-cpp/branch/develop/graph/badge.svg?token=HRS501E1UU)](https://codecov.io/gl/MusicScience37/numerical-collection-cpp)
+[![coverage report](https://gitlab.com/MusicScience37/numerical-collection-cpp/badges/develop/coverage.svg)](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/commits/develop)
 
 ## Repositories
 
@@ -45,7 +45,12 @@ which are installed automatically when using Conan:
 - [fmt](https://fmt.dev/)
 - [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page)
 
-## How to Build This Repository
+## How to Build in the Repository
+
+### Dependencies
+
+A development environment including dependencies can be created using
+[Devcontainer of VSCode](https://code.visualstudio.com/docs/remote/containers).
 
 To build this repository,
 you will require following dependencies:
@@ -63,7 +68,7 @@ you will require following dependencies:
 - C++ 20 Compiler
   - Following compilers are tested in CI:
     - GCC 10
-    - Clang 12, 13
+    - Clang 14
     - MSVC 19
 
 Additionally, you will require following dependencies
@@ -73,20 +78,22 @@ to build documentation.
 - [Graphviz](https://graphviz.org/)
 - [PlantUML](https://plantuml.com)
   - Set `PLANTUML_JAR_PATH` environment variable to specify the place of `plantuml.jar` file.
-- Java runtime environment (JRE) for PlantUML
+- Java runtime environment (JRE) for PlantUML.
 
-After installing the above dependencies,
-execute the following commands:
+### Build commands
+
+After installation of dependencies,
+execute the following commands to build:
 
 1. Start a shell of pipenv.
 
    ```bash
    cd <this-directory>
-   pipenv install --dev
+   pipenv sync --dev
    pipenv shell
    ```
 
-2. Add the Conan remote in GitLab. (Once in an environment.)
+2. Add the Conan remote in GitLab. (Once in an environment. Already done in devcontainer of VSCode.)
 
    ```bash
    conan remote add gitlab https://gitlab.com/api/v4/packages/conan
@@ -95,21 +102,22 @@ execute the following commands:
 3. Download and install required Conan packages.
 
    ```bash
-   mkdir build
-   cd build
-   conan install --build missing ..
+   python3 ./scripts/install_conan_dependencies.py <build_type>
    ```
+
+   `build_type` can be `Debug`, `RelWithDebInfo`, or `Release`.
 
 4. Configure.
 
    ```bash
+   cd build
    cmake ..
    ```
 
 5. Optionally edit options.
 
    ```bash
-   <some-editor> CMakeCache.txt
+   <some_editor> CMakeCache.txt
    ```
 
 6. Build.
@@ -123,3 +131,14 @@ execute the following commands:
    ```bash
    ctest
    ```
+
+## Profiling
+
+This project uses gperftools for profiling.
+See
+[documentation of profiler in gperftools](http://gperftools.github.io/gperftools/cpuprofile.html)
+for usage of the profiler.
+
+## License
+
+This project is licensed under [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).

@@ -19,7 +19,7 @@
  */
 #pragma once
 
-#include "num_collect/util/concepts/kahan_addable.h"
+#include "num_collect/util/concepts/kahan_addable.h"  // IWYU pragma: keep
 
 namespace num_collect::util {
 
@@ -32,7 +32,7 @@ template <concepts::kahan_addable T>
 class kahan_adder {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \note This won't work for Eigen's vectors and matrices.
      * Use another constructor for them.

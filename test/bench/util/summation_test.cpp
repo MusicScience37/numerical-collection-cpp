@@ -18,6 +18,8 @@
  * \brief Test of summation.
  */
 #include <cmath>
+#include <cstddef>
+#include <limits>
 
 #include <stat_bench/bench/invocation_context.h>
 #include <stat_bench/benchmark_macros.h>

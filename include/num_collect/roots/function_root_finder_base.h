@@ -19,11 +19,9 @@
  */
 #pragma once
 
-#include <type_traits>
-
-#include "num_collect/base/index_type.h"
 #include "num_collect/base/iterative_solver_base.h"
-#include "num_collect/roots/concepts/function.h"
+#include "num_collect/logging/log_tag_view.h"
+#include "num_collect/roots/concepts/function.h"  // IWYU pragma: keep
 
 namespace num_collect::roots {
 
@@ -44,7 +42,7 @@ public:
     using variable_type = typename function_type::variable_type;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] tag Log tag.
      * \param[in] function Function of equation.

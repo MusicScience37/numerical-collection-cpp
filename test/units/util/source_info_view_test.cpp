@@ -19,7 +19,10 @@
  */
 #include "num_collect/util/source_info_view.h"
 
+#include <string>
+
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 
 static auto source_info_view_test1(num_collect::util::source_info_view info =

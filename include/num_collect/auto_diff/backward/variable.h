@@ -19,10 +19,12 @@
  */
 #pragma once
 
+#include <utility>
+
 #include <Eigen/Core>
 
 #include "num_collect/auto_diff/backward/graph/node.h"
-#include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
 
 namespace num_collect::auto_diff::backward {
 
@@ -49,7 +51,7 @@ public:
     using scalar_type = Scalar;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] value Value.
      * \param[in] node Node.
@@ -82,7 +84,7 @@ public:
         : variable(value, constant_tag()) {}
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      */
     variable() : variable(static_cast<scalar_type>(0)) {}
 

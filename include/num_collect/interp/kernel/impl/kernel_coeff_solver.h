@@ -19,12 +19,27 @@
  */
 #pragma once
 
-#include <type_traits>
-#include <vector>
+#include <cstddef>
+#include <memory>
+#include <string_view>
 
-#include "num_collect/interp/kernel/concepts/kernel.h"
+#include <Eigen/Core>
+
+#include "num_collect/interp/kernel/concepts/kernel.h"  // IWYU pragma: keep
 #include "num_collect/interp/kernel/impl/auto_regularizer_wrapper.h"
 #include "num_collect/interp/kernel/impl/kernel_parameter_optimizer.h"
+#include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logger.h"
+#include "num_collect/logging/logging_mixin.h"
+#include "num_collect/util/assert.h"
+
+namespace num_collect::interp::kernel {
+
+//! Log tag of kernel_interpolator.
+constexpr auto kernel_interpolator_tag =
+    logging::log_tag_view("num_collect::interp::kernel::kernel_interpolator");
+
+}  // namespace num_collect::interp::kernel
 
 namespace num_collect::interp::kernel::impl {
 
@@ -34,7 +49,7 @@ namespace num_collect::interp::kernel::impl {
  * \tparam Kernel Type of the kernel.
  */
 template <concepts::kernel Kernel>
-class kernel_coeff_solver {
+class kernel_coeff_solver : public logging::logging_mixin {
 public:
     //! Type of the kernel.
     using kernel_type = Kernel;
@@ -49,12 +64,12 @@ public:
     using kernel_param_type = typename kernel_type::kernel_param_type;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] kernel Kernel.
      */
     explicit kernel_coeff_solver(const kernel_type& kernel = kernel_type())
-        : kernel_(kernel) {
+        : logging::logging_mixin(kernel_interpolator_tag), kernel_(kernel) {
         search_kernel_param_auto();
     }
 
@@ -76,6 +91,7 @@ public:
      */
     auto regularize_automatically() -> kernel_coeff_solver& {
         interpolator_.regularize_automatically();
+        update_logger_state();
         return *this;
     }
 
@@ -122,6 +138,7 @@ public:
                 std::make_unique<impl::kernel_parameter_optimizer<kernel_type>>(
                     interpolator_, kernel_);
         }
+        update_logger_state();
         return *this;
     }
 
@@ -198,6 +215,25 @@ public:
     }
 
 private:
+    /*!
+     * \brief Update states of loggers.
+     */
+    void update_logger_state() {
+        if (optimizer_) {
+            logging::logger& parent_logger = optimizer_->logger();
+            this->logger().initialize_child_algorithm_logger(parent_logger);
+            logging::logger* child_logger = interpolator_.logger();
+            if (child_logger != nullptr) {
+                parent_logger.initialize_child_algorithm_logger(*child_logger);
+            }
+        } else {
+            logging::logger* child_logger = interpolator_.logger();
+            if (child_logger != nullptr) {
+                this->logger().initialize_child_algorithm_logger(*child_logger);
+            }
+        }
+    }
+
     //! Kernel.
     kernel_type kernel_;
 

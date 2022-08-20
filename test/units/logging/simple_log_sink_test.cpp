@@ -20,8 +20,11 @@
 #include "num_collect/logging/simple_log_sink.h"
 
 #include <memory>
+#include <type_traits>
 
 #include <catch2/catch_test_macros.hpp>
+
+#include "num_collect/base/index_type.h"
 
 TEST_CASE("num_collect::logging::simple_log_sink") {
     using num_collect::index_type;

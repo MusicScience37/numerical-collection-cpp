@@ -19,7 +19,7 @@
  */
 #pragma once
 
-#include "num_collect/base/concepts/dense_matrix.h"
+#include "num_collect/base/concepts/dense_matrix.h"  // IWYU pragma: keep
 
 namespace num_collect {
 inline namespace base {

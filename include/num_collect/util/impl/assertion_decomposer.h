@@ -19,16 +19,18 @@
  */
 #pragma once
 
-#include <iterator>
+// IWYU pragma: no_include <functional>
+
+#include <string_view>
 #include <type_traits>
 
 #include <fmt/format.h>
 
-#include "num_collect/base/concepts/convertible_to.h"
-#include "num_collect/base/concepts/formattable.h"
-#include "num_collect/util/comparators.h"
-#include "num_collect/util/concepts/comparator.h"
-#include "num_collect/util/concepts/rhs_comparable.h"
+#include "num_collect/base/concepts/convertible_to.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/formattable.h"     // IWYU pragma: keep
+#include "num_collect/util/comparators.h"              // IWYU pragma: keep
+#include "num_collect/util/concepts/comparator.h"      // IWYU pragma: keep
+#include "num_collect/util/concepts/rhs_comparable.h"  // IWYU pragma: keep
 
 namespace num_collect::util::impl {
 
@@ -90,7 +92,7 @@ class assertion_value
     : public assertion_expression_base<assertion_value<Value>> {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] value Value.
      */
@@ -151,7 +153,7 @@ class assertion_comparison
           assertion_comparison<Left, Right, Comparator>> {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] left Left-hand-side value.
      * \param[in] right Right-hand-side value.
@@ -329,7 +331,7 @@ class assertion_comparison2
           Right, ComparatorLeft, ComparatorRight>> {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] comp_left Comparison of two values.
      * \param[in] right Right-hand-side value.
@@ -431,7 +433,7 @@ template <typename Left, typename Middle, typename ComparatorLeft,
 class assertion_decomposer {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      */
     assertion_decomposer() = default;
 

@@ -18,6 +18,9 @@
  * \brief Test of integration of \f$ 1/\sqrt{1-x^2} \f$.
  */
 #include <cmath>
+#include <exception>
+#include <unordered_set>
+#include <vector>
 
 #include <stat_bench/bench/invocation_context.h>
 #include <stat_bench/benchmark_macros.h>

@@ -19,8 +19,8 @@
  */
 #pragma once
 
-#include "num_collect/constants/one.h"
-#include "num_collect/constants/zero.h"
+#include "num_collect/constants/one.h"   // IWYU pragma: keep
+#include "num_collect/constants/zero.h"  // IWYU pragma: keep
 
 namespace num_collect::constants::impl {
 

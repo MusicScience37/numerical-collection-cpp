@@ -29,6 +29,11 @@
 
 namespace num_collect::regularization::concepts {
 
+/*!
+ * \brief Concept of solvers using explicit formulas for regularization.
+ *
+ * \tparam T Type.
+ */
 template <typename T>
 concept explicit_regularized_solver = requires() {
     typename T::scalar_type;

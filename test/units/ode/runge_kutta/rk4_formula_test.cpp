@@ -20,11 +20,15 @@
 #include "num_collect/ode/runge_kutta/rk4_formula.h"
 
 #include <cmath>
+#include <string>
 
+#include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
+#include <fmt/format.h>
 
-#include "eigen_approx.h"
+#include "comparison_approvals.h"
 #include "num_prob_collect/ode/exponential_problem.h"
 #include "num_prob_collect/ode/external_force_vibration_problem.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
@@ -37,6 +41,17 @@ TEST_CASE("num_collect::ode::runge_kutta::rk4_formula") {
     SECTION("static definition") {
         STATIC_REQUIRE(formula_type::stages == 4);
         STATIC_REQUIRE(formula_type::order == 4);
+
+        CHECK(0.0 == formula_type::b1);
+        CHECK_THAT(
+            formula_type::a21, Catch::Matchers::WithinRel(formula_type::b2));
+        CHECK_THAT(
+            formula_type::a32, Catch::Matchers::WithinRel(formula_type::b3));
+        CHECK_THAT(
+            formula_type::a43, Catch::Matchers::WithinRel(formula_type::b4));
+        CHECK_THAT(formula_type::c1 + formula_type::c2 + formula_type::c3 +
+                formula_type::c4,
+            Catch::Matchers::WithinRel(1.0));
     }
 
     SECTION("initialize") {
@@ -54,8 +69,7 @@ TEST_CASE("num_collect::ode::runge_kutta::rk4_formula") {
         formula.step(time, step_size, prev_var, next_var);
 
         const double reference = std::exp(step_size);
-        constexpr double tol = 1e-12;
-        REQUIRE_THAT(next_var, Catch::Matchers::WithinRel(reference, tol));
+        comparison_approvals::verify_with_reference(next_var, reference);
     }
 }
 
@@ -72,15 +86,14 @@ TEST_CASE(
         constexpr double init_var = 1.0;
         solver.init(init_time, init_var);
 
-        constexpr double duration = 2.345;
+        constexpr double duration = 0.1;
         constexpr double end_time = init_time + duration;
         REQUIRE_NOTHROW(solver.solve_till(end_time));
 
         REQUIRE_THAT(solver.time(), Catch::Matchers::WithinRel(end_time));
         const double reference = std::exp(duration);
-        constexpr double tol = 1e-10;
-        REQUIRE_THAT(
-            solver.variable(), Catch::Matchers::WithinRel(reference, tol));
+        comparison_approvals::verify_with_reference(
+            solver.variable(), reference);
         REQUIRE(solver.steps() > 1);
     }
 }
@@ -98,15 +111,15 @@ TEST_CASE(
         const Eigen::Vector2d init_var = Eigen::Vector2d(1.0, 0.0);
         solver.init(init_time, init_var);
 
-        constexpr double duration = 2.345;
+        constexpr double duration = 0.1;
         constexpr double end_time = init_time + duration;
         REQUIRE_NOTHROW(solver.solve_till(end_time));
 
         REQUIRE_THAT(solver.time(), Catch::Matchers::WithinRel(end_time));
         const Eigen::Vector2d reference =
             Eigen::Vector2d(std::cos(end_time), std::sin(end_time));
-        constexpr double tol = 1e-10;
-        REQUIRE_THAT(solver.variable(), eigen_approx(reference, tol));
+        comparison_approvals::verify_with_reference(
+            solver.variable(), reference);
         REQUIRE(solver.steps() > 1);
     }
 }
@@ -125,15 +138,15 @@ TEST_CASE(
         const Eigen::Vector2d init_var = Eigen::Vector2d(-1.0, 0.0);
         solver.init(init_time, init_var);
 
-        constexpr double duration = 2.345;
+        constexpr double duration = 0.1;
         constexpr double end_time = init_time + duration;
         REQUIRE_NOTHROW(solver.solve_till(end_time));
 
         REQUIRE_THAT(solver.time(), Catch::Matchers::WithinRel(end_time));
         const Eigen::Vector2d reference =
             Eigen::Vector2d(-std::cos(end_time), -std::sin(end_time));
-        constexpr double tol = 1e-10;
-        REQUIRE_THAT(solver.variable(), eigen_approx(reference, tol));
+        comparison_approvals::verify_with_reference(
+            solver.variable(), reference);
         REQUIRE(solver.steps() > 1);
     }
 }

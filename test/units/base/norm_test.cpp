@@ -21,9 +21,11 @@
 
 #include <cmath>
 #include <complex>
+#include <string>
 
 #include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 TEST_CASE("num_collect::norm") {

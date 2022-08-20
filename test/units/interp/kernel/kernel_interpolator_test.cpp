@@ -19,13 +19,16 @@
  */
 #include "num_collect/interp/kernel/kernel_interpolator.h"
 
+#include <cmath>
+#include <functional>
+#include <string>
+
 #include <Eigen/Core>
+#include <catch2/catch_message.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include "eigen_approx.h"
-#include "is_finite.h"
-#include "num_collect/interp/kernel/calc_kernel_mat.h"
 #include "num_collect/interp/kernel/euclidean_distance.h"
 #include "num_collect/interp/kernel/gaussian_rbf.h"
 #include "num_collect/interp/kernel/rbf_kernel.h"

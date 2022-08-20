@@ -39,7 +39,7 @@ public:
     using data_type = Eigen::VectorXd;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] data_size Size of data.
      * \param[in] solution_size Size of solution.

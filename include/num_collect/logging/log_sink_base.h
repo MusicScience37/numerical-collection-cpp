@@ -22,8 +22,6 @@
 #include <chrono>
 #include <string_view>
 
-#include <fmt/format.h>
-
 #include "num_collect/logging/log_level.h"
 #include "num_collect/util/source_info_view.h"
 
@@ -55,13 +53,13 @@ public:
     auto operator=(log_sink_base&&) -> log_sink_base& = delete;
 
     /*!
-     * \brief Destruct.
+     * \brief Destructor.
      */
     virtual ~log_sink_base() noexcept = default;
 
 protected:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      */
     log_sink_base() noexcept = default;
 };

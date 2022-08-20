@@ -19,10 +19,12 @@
  */
 #pragma once
 
+#include <cstddef>
 #include <deque>
 #include <limits>
+#include <utility>
 
-#include <fmt/core.h>
+#include <fmt/format.h>  // IWYU pragma: keep
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
@@ -51,12 +53,12 @@ public:
     using container_type = Container;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      */
     bidirectional_vector() = default;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] container Internal container.
      * \param[in] origin_index Index of origin.
@@ -273,7 +275,7 @@ private:
      * \param[in] index Index.
      */
     [[noreturn]] void throw_out_of_range(index_type index) const {
-        throw assertion_failure(
+        throw invalid_argument(
             fmt::format("Index out of range (index: {}, range: [{}, {}])",
                 index, min_index(), max_index()));
     }

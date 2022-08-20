@@ -19,12 +19,15 @@
  */
 #include "num_prob_collect/opt/quadratic_function.h"
 
+#include <utility>
+
 #include <stat_bench/bench/invocation_context.h>
 #include <stat_bench/benchmark_macros.h>
 
+#include "num_collect/base/index_type.h"
 #include "num_collect/opt/dividing_rectangles.h"
 #include "num_collect/opt/golden_section_search.h"
-#include "num_collect/opt/heuristic_1dim_optimizer.h"
+#include "num_collect/opt/heuristic_global_optimizer.h"
 #include "num_collect/opt/sampling_optimizer.h"
 
 STAT_BENCH_MAIN
@@ -100,9 +103,9 @@ STAT_BENCH_CASE_F(quadratic_function_fixture, "opt_quadratic_function",
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(quadratic_function_fixture, "opt_quadratic_function",
-    "heuristic_1dim_optimizer") {
+    "heuristic_global_optimizer") {
     STAT_BENCH_MEASURE() {
-        auto optimizer = num_collect::opt::heuristic_1dim_optimizer<
+        auto optimizer = num_collect::opt::heuristic_global_optimizer<
             num_prob_collect::opt::quadratic_function>();
         const auto [lower, upper] = search_region();
         optimizer.init(lower, upper);

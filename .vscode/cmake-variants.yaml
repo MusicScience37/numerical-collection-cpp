@@ -1,78 +1,128 @@
 buildType:
-  default: debug
-  description: Debug
-  choices:
-    clang-asan-ubsan:
-      short: ClangAUSan
-      long: ASan and USan in Clang
-      buildType: Debug
-      settings:
-        CMAKE_CXX_FLAGS: "-fsanitize=address,undefined"
-        CMAKE_MODULE_LINKER_FLAGS: "-fsanitize=address,undefined"
-    debug:
-      short: Debug
-      long: Debug build
-      buildType: Debug
-      settings:
-        CMAKE_CXX_FLAGS: ""
-        CMAKE_MODULE_LINKER_FLAGS: ""
-    release with debug info:
-      short: RelWithDebInfo
-      long: Release build with debug info
-      buildType: RelWithDebInfo
-      settings:
-        CMAKE_CXX_FLAGS: ""
-        CMAKE_MODULE_LINKER_FLAGS: ""
-    release:
-      short: Release
-      long: Release build
-      buildType: Release
-      settings:
-        CMAKE_CXX_FLAGS: ""
-        CMAKE_MODULE_LINKER_FLAGS: ""
-
-tests:
-  default: unit only
+  default: clang-asan-ubsan-unit-dox
   choices:
     none:
       short: None
       long: Don't set any test options
-    unit only:
-      short: UnitOnly
-      long: Unit tests only
+    clang-asan-ubsan-unit:
+      short: ClangAUSan-Unit
+      long: ASan and USan in Clang + Unit Tests
+      buildType: Debug
       settings:
+        NUM_COLLECT_ENABLE_AUSAN: ON
         NUM_COLLECT_TESTING: ON
         NUM_COLLECT_WRITE_JUNIT: OFF
         NUM_COLLECT_ENABLE_BENCH: ON
         NUM_COLLECT_TEST_BENCHMARKS: OFF
         NUM_COLLECT_BUILD_EXAMPLES: ON
-    unit and bench:
-      short: UnitAndBench
-      long: Unit tests and benchmarks
+        NUM_COLLECT_BUILD_DOC: OFF
+        NUM_COLLECT_ENABLE_PROFILING: OFF
+        NUM_COLLECT_ENABLE_CCACHE: ON
+        NUM_COLLECT_ENABLE_CPP_WARNINGS: ON
+    clang-asan-ubsan-unit-dox:
+      short: ClangAUSan-Unit-Dox
+      long: ASan and USan in Clang + Unit Tests + Doxygen
+      buildType: Debug
       settings:
+        NUM_COLLECT_ENABLE_AUSAN: ON
+        NUM_COLLECT_TESTING: ON
+        NUM_COLLECT_WRITE_JUNIT: OFF
+        NUM_COLLECT_ENABLE_BENCH: ON
+        NUM_COLLECT_TEST_BENCHMARKS: OFF
+        NUM_COLLECT_BUILD_EXAMPLES: ON
+        NUM_COLLECT_BUILD_DOC: ON
+        NUM_COLLECT_BUILD_DOC_SPHINX: OFF
+        NUM_COLLECT_ENABLE_PROFILING: OFF
+        NUM_COLLECT_ENABLE_CCACHE: ON
+        NUM_COLLECT_ENABLE_CPP_WARNINGS: ON
+    clang-asan-ubsan-unit-docs:
+      short: ClangAUSan-Unit-Documents
+      long: ASan and USan in Clang + Unit Tests + All documents
+      buildType: Debug
+      settings:
+        NUM_COLLECT_ENABLE_AUSAN: ON
+        NUM_COLLECT_TESTING: ON
+        NUM_COLLECT_WRITE_JUNIT: OFF
+        NUM_COLLECT_ENABLE_BENCH: ON
+        NUM_COLLECT_TEST_BENCHMARKS: OFF
+        NUM_COLLECT_BUILD_EXAMPLES: ON
+        NUM_COLLECT_BUILD_DOC: ON
+        NUM_COLLECT_BUILD_DOC_SPHINX: ON
+        NUM_COLLECT_ENABLE_PROFILING: OFF
+        NUM_COLLECT_ENABLE_CCACHE: ON
+        NUM_COLLECT_ENABLE_CPP_WARNINGS: ON
+    debug-unit:
+      short: Debug-Unit
+      long: Debug build + Unit Tests
+      buildType: Debug
+      settings:
+        NUM_COLLECT_ENABLE_AUSAN: OFF
+        NUM_COLLECT_TESTING: ON
+        NUM_COLLECT_WRITE_JUNIT: OFF
+        NUM_COLLECT_ENABLE_BENCH: ON
+        NUM_COLLECT_TEST_BENCHMARKS: OFF
+        NUM_COLLECT_BUILD_EXAMPLES: ON
+        NUM_COLLECT_BUILD_DOC: OFF
+        NUM_COLLECT_ENABLE_PROFILING: OFF
+        NUM_COLLECT_ENABLE_CCACHE: ON
+        NUM_COLLECT_ENABLE_CPP_WARNINGS: ON
+    relwithdebinfo-unit:
+      short: RelWithDebInfo-Unit
+      long: Release build with debug info + Unit Tests
+      buildType: RelWithDebInfo
+      settings:
+        NUM_COLLECT_ENABLE_AUSAN: OFF
+        NUM_COLLECT_TESTING: ON
+        NUM_COLLECT_WRITE_JUNIT: OFF
+        NUM_COLLECT_ENABLE_BENCH: ON
+        NUM_COLLECT_TEST_BENCHMARKS: OFF
+        NUM_COLLECT_BUILD_EXAMPLES: ON
+        NUM_COLLECT_BUILD_DOC: OFF
+        NUM_COLLECT_ENABLE_PROFILING: OFF
+        NUM_COLLECT_ENABLE_CCACHE: ON
+        NUM_COLLECT_ENABLE_CPP_WARNINGS: ON
+    relwithdebinfo-unit-profiling:
+      short: RelWithDebInfo-Unit-Prof
+      long: Release build with debug info + Unit Tests + Profiling
+      buildType: RelWithDebInfo
+      settings:
+        NUM_COLLECT_ENABLE_AUSAN: OFF
+        NUM_COLLECT_TESTING: ON
+        NUM_COLLECT_WRITE_JUNIT: OFF
+        NUM_COLLECT_ENABLE_BENCH: ON
+        NUM_COLLECT_TEST_BENCHMARKS: OFF
+        NUM_COLLECT_BUILD_EXAMPLES: ON
+        NUM_COLLECT_BUILD_DOC: OFF
+        NUM_COLLECT_ENABLE_PROFILING: ON
+        NUM_COLLECT_ENABLE_CCACHE: ON
+        NUM_COLLECT_ENABLE_CPP_WARNINGS: ON
+    release-unit:
+      short: Release-Unit
+      long: Release build + Unit Tests
+      buildType: Release
+      settings:
+        NUM_COLLECT_ENABLE_AUSAN: OFF
+        NUM_COLLECT_TESTING: ON
+        NUM_COLLECT_WRITE_JUNIT: OFF
+        NUM_COLLECT_ENABLE_BENCH: ON
+        NUM_COLLECT_TEST_BENCHMARKS: OFF
+        NUM_COLLECT_BUILD_EXAMPLES: ON
+        NUM_COLLECT_BUILD_DOC: OFF
+        NUM_COLLECT_ENABLE_PROFILING: OFF
+        NUM_COLLECT_ENABLE_CCACHE: ON
+        NUM_COLLECT_ENABLE_CPP_WARNINGS: ON
+    release-bench:
+      short: Release-Bench
+      long: Release build + Benchmarks execution
+      buildType: Release
+      settings:
+        NUM_COLLECT_ENABLE_AUSAN: OFF
         NUM_COLLECT_TESTING: ON
         NUM_COLLECT_WRITE_JUNIT: OFF
         NUM_COLLECT_ENABLE_BENCH: ON
         NUM_COLLECT_TEST_BENCHMARKS: ON
         NUM_COLLECT_BUILD_EXAMPLES: ON
-
-docs:
-  default: docs on
-  choices:
-    docs on:
-      short: DocsON
-      long: Build documentation
-      settings:
-        NUM_COLLECT_BUILD_DOC: ON
-        NUM_COLLECT_BUILD_DOC_SPHINX: ON
-    doxygen only:
-      short: DoxOnly
-      long: Build documentation of doxygen only
-      settings:
-        NUM_COLLECT_BUILD_DOC: ON
-        NUM_COLLECT_BUILD_DOC_SPHINX: OFF
-    docs off:
-      short: DocsOFF
-      long: Don't build documentation
-      settings:
         NUM_COLLECT_BUILD_DOC: OFF
+        NUM_COLLECT_ENABLE_PROFILING: OFF
+        NUM_COLLECT_ENABLE_CCACHE: ON
+        NUM_COLLECT_ENABLE_CPP_WARNINGS: ON

@@ -3,7 +3,11 @@
   "containerEnv": {
     "CONAN_USER_HOME": "${containerWorkspaceFolder}",
     "PIPENV_VENV_IN_PROJECT": "1",
-    "ASAN_OPTIONS": "alloc_dealloc_mismatch=0"
+    "PIPENV_IGNORE_VIRTUALENVS": "1",
+    "ASAN_OPTIONS": "alloc_dealloc_mismatch=0",
+    "CCACHE_DIR": "${containerWorkspaceFolder}/.ccache",
+    "CCACHE_COMPILERCHECK": "content",
+    "CCACHE_MAXSIZE": "10G"
   },
   "extensions": [
     "ms-vscode.cpptools",
@@ -22,10 +26,13 @@
     "trond-snekvik.simple-rst",
     "fredericbonnet.cmake-test-adapter",
     "hbenl.vscode-test-explorer",
-    "ms-azuretools.vscode-docker"
+    "ms-azuretools.vscode-docker",
+    "tamasfe.even-better-toml",
+    "james-yu.latex-workshop"
   ],
   "postCreateCommand": "bash ./.devcontainer/setup.bash",
   "settings": {
-    "cmakeFormat.exePath": "/workspaces/numerical-collection-cpp/.venv/bin/cmake-format"
+    "cmakeFormat.exePath": "/workspaces/numerical-collection-cpp/.venv/bin/cmake-format",
+    "plantuml.jar": "/usr/local/plantuml/plantuml.jar"
   }
 }

@@ -8,7 +8,8 @@ conan = "*"
 
 [dev-packages]
 adr-tools-python = "*"
-autopep8 = "*"
+black = "*"
+click = "*"
 cmakelang = "*"
 doc8 = "*"
 kaleido = "*"
@@ -21,6 +22,13 @@ sphinx = "*"
 sphinx-autobuild = "*"
 sphinx-rtd-theme = "*"
 sphinxcontrib-plantuml = "*"
+trio = "*"
+trio-typing = "*"
+tqdm = "*"
+lizard = "*"
+jinja2 = "*"
+lcov-cobertura = "*"
+clang-tidy-checker = "*"
 
 [requires]
 python_version = "3.9"

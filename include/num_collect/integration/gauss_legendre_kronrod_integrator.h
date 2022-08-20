@@ -19,26 +19,29 @@
  */
 #pragma once
 
+// IWYU pragma: no_include <__hash_table>
+// IWYU pragma: no_include <complex>
+
 #include <cmath>
+#include <cstddef>
 #include <limits>
 #include <stack>
 #include <type_traits>
 #include <unordered_set>
 #include <utility>
+#include <vector>
 
 #include <Eigen/Core>
 #include <Eigen/Eigenvalues>
 
-#include "num_collect/base/concepts/invocable_as.h"
-#include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/concepts/invocable_as.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/real_scalar.h"   // IWYU pragma: keep
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/norm.h"
-#include "num_collect/constants/half.h"
-#include "num_collect/constants/one.h"
-#include "num_collect/constants/two.h"
-#include "num_collect/constants/zero.h"
-#include "num_collect/functions/legendre.h"
-#include "num_collect/functions/legendre_roots.h"
+#include "num_collect/constants/half.h"  // IWYU pragma: keep
+#include "num_collect/constants/one.h"   // IWYU pragma: keep
+#include "num_collect/constants/two.h"   // IWYU pragma: keep
+#include "num_collect/constants/zero.h"  // IWYU pragma: keep
 #include "num_collect/util/assert.h"
 #include "num_collect/util/safe_cast.h"
 
@@ -73,7 +76,7 @@ public:
     static constexpr index_type default_order = 5;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] order Order.
      */
@@ -131,7 +134,7 @@ public:
     }
 
     /*!
-     * \brief Integrate a function adaptiveply.
+     * \brief Integrate a function adaptively.
      *
      * \tparam Function Type of function.
      * \param[in] function Function.

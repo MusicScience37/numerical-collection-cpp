@@ -19,12 +19,20 @@
  */
 #include "num_prob_collect/opt/shekel_function.h"
 
+#include <memory>
+#include <string_view>
+#include <type_traits>
+#include <utility>
+
 #include <stat_bench/bench/invocation_context.h>
 #include <stat_bench/benchmark_macros.h>
+#include <stat_bench/param/parameter_value_vector.h>
 
 #include "num_collect/base/exception.h"
+#include "num_collect/base/index_type.h"
 #include "num_collect/opt/adaptive_diagonal_curves.h"
 #include "num_collect/opt/dividing_rectangles.h"
+#include "num_collect/opt/heuristic_global_optimizer.h"
 
 STAT_BENCH_MAIN
 
@@ -116,6 +124,44 @@ STAT_BENCH_CASE_F(shekel_function_fixture, "opt_shekel_function",
         auto optimizer = num_collect::opt::adaptive_diagonal_curves<
             num_prob_collect::opt::shekel_function>(this->function());
         const auto [lower, upper] = shekel_function_fixture::search_region();
+        optimizer.init(lower, upper);
+        this->test_optimizer(optimizer);
+    };
+}
+
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(shekel_function_fixture, "opt_shekel_function",
+    "heuristic_global_optimizer") {
+    STAT_BENCH_MEASURE() {
+        auto optimizer = num_collect::opt::heuristic_global_optimizer<
+            num_prob_collect::opt::shekel_function>(this->function());
+        const auto [lower, upper] = shekel_function_fixture::search_region();
+        optimizer.init(lower, upper);
+        this->test_optimizer(optimizer);
+    };
+}
+
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(shekel_function_fixture, "opt_shekel_function",
+    "heuristic_global_optimizer_light") {
+    STAT_BENCH_MEASURE() {
+        auto optimizer = num_collect::opt::heuristic_global_optimizer<
+            num_prob_collect::opt::shekel_function>(this->function());
+        const auto [lower, upper] = shekel_function_fixture::search_region();
+        optimizer.light_mode();
+        optimizer.init(lower, upper);
+        this->test_optimizer(optimizer);
+    };
+}
+
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(shekel_function_fixture, "opt_shekel_function",
+    "heuristic_global_optimizer_heavy") {
+    STAT_BENCH_MEASURE() {
+        auto optimizer = num_collect::opt::heuristic_global_optimizer<
+            num_prob_collect::opt::shekel_function>(this->function());
+        const auto [lower, upper] = shekel_function_fixture::search_region();
+        optimizer.heavy_mode();
         optimizer.init(lower, upper);
         this->test_optimizer(optimizer);
     };

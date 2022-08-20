@@ -20,6 +20,7 @@
 #include "num_collect/base/concepts/integral.h"
 
 #include <cstdint>
+#include <string>
 
 #include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>

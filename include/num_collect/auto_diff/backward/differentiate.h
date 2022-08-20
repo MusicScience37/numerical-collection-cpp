@@ -19,15 +19,16 @@
  */
 #pragma once
 
+#include <cstddef>
 #include <memory>
-#include <type_traits>
-#include <utility>
+#include <utility>  // IWYU pragma: keep
+#include <vector>
 
 #include <Eigen/Core>
 
-#include "num_collect/auto_diff/backward/graph/node.h"
 #include "num_collect/auto_diff/backward/graph/node_differentiator.h"
 #include "num_collect/auto_diff/backward/variable.h"
+#include "num_collect/base/index_type.h"
 #include "num_collect/util/assert.h"
 #include "num_collect/util/safe_cast.h"
 
@@ -73,7 +74,7 @@ public:
         ArgType::MaxRowsAtCompileTime, ArgType::MaxColsAtCompileTime>;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] arg Matrix of variable.
      * \param[in] diff Differentiator.
@@ -160,7 +161,7 @@ public:
             FuncValType::MaxRowsAtCompileTime, ArgType::MaxRowsAtCompileTime>;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] arg Matrix of variable.
      * \param[in] diff Differentiators.

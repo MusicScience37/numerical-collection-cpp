@@ -21,11 +21,13 @@
 
 #include <cstdio>
 #include <memory>
+#include <string_view>
 #include <utility>
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/colored_console_log_sink.h"
+#include "num_collect/logging/log_level.h"
 #include "num_collect/logging/log_sink_base.h"
 
 namespace num_collect::logging {
@@ -51,7 +53,7 @@ namespace impl {
 class log_tag_config {
 public:
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] sink Log sink.
      */
@@ -74,69 +76,77 @@ public:
      */
     auto sink(std::shared_ptr<log_sink_base> val) -> log_tag_config& {
         if (!val) {
-            throw assertion_failure("Null sink.");
+            throw invalid_argument("Null sink.");
         }
         sink_ = std::move(val);
         return *this;
     }
 
     /*!
-     * \brief Get whether to write trace logs.
+     * \brief Get the minimum log level to output.
      *
-     * \return value.
+     * \return Value.
      */
-    [[nodiscard]] auto write_traces() const noexcept -> bool {
-        return write_traces_;
+    [[nodiscard]] auto output_log_level() const noexcept -> log_level {
+        return output_log_level_;
     }
 
     /*!
-     * \brief Set whether to write trace logs.
+     * \brief Set the minimum log level to output.
      *
      * \param[in] val Value.
      * \return This.
      */
-    auto write_traces(bool val) -> log_tag_config& {
-        write_traces_ = val;
+    auto output_log_level(log_level val) -> log_tag_config& {
+        switch (val) {
+        case log_level::trace:
+        case log_level::iteration:
+        case log_level::iteration_label:
+        case log_level::summary:
+        case log_level::info:
+        case log_level::warning:
+        case log_level::error:
+        case log_level::off:
+            break;
+        default:
+            throw invalid_argument("Invalid log level.");
+        }
+        output_log_level_ = val;
         return *this;
     }
 
     /*!
-     * \brief Get whether to write iteration logs.
+     * \brief Get the minimum log level to output in child iterations.
      *
-     * \return value.
+     * \return Value.
      */
-    [[nodiscard]] auto write_iterations() const noexcept -> bool {
-        return write_iterations_;
+    [[nodiscard]] auto output_log_level_in_child_iterations() const noexcept
+        -> log_level {
+        return output_log_level_in_child_iterations_;
     }
 
     /*!
-     * \brief Set whether to write iteration logs.
+     * \brief Set the minimum log level to output in child iterations.
      *
      * \param[in] val Value.
      * \return This.
      */
-    auto write_iterations(bool val) -> log_tag_config& {
-        write_iterations_ = val;
-        return *this;
-    }
-
-    /*!
-     * \brief Get whether to write summary logs.
-     *
-     * \return value.
-     */
-    [[nodiscard]] auto write_summary() const noexcept -> bool {
-        return write_summary_;
-    }
-
-    /*!
-     * \brief Set whether to write summary logs.
-     *
-     * \param[in] val Value.
-     * \return This.
-     */
-    auto write_summary(bool val) -> log_tag_config& {
-        write_summary_ = val;
+    auto output_log_level_in_child_iterations(log_level val)
+        -> log_tag_config& {
+        switch (val) {
+        case log_level::trace:
+        case log_level::iteration:
+        case log_level::iteration_label:
+        case log_level::summary:
+        case log_level::info:
+        case log_level::warning:
+        case log_level::error:
+        case log_level::off:
+            break;
+        default:
+            throw invalid_argument("Invalid log level.");
+        }
+        output_log_level_in_child_iterations_ = val;
         return *this;
     }
 
@@ -157,7 +167,7 @@ public:
      */
     auto iteration_output_period(index_type val) -> log_tag_config& {
         if (val <= 0) {
-            throw assertion_failure(
+            throw invalid_argument(
                 "iteration_output_period must be a positive integer.");
         }
         iteration_output_period_ = val;
@@ -181,7 +191,7 @@ public:
      */
     auto iteration_label_period(index_type val) -> log_tag_config& {
         if (val <= 0) {
-            throw assertion_failure(
+            throw invalid_argument(
                 "iteration_label_period must be a positive integer.");
         }
         iteration_label_period_ = val;
@@ -192,14 +202,11 @@ private:
     //! Log sink.
     std::shared_ptr<log_sink_base> sink_{impl::get_default_log_sink()};
 
-    //! Whether to write trace logs.
-    bool write_traces_{false};
+    //! Minimum log level to output.
+    log_level output_log_level_{log_level::info};
 
-    //! Whether to write iteration logs.
-    bool write_iterations_{false};
-
-    //! Whether to write summary logs.
-    bool write_summary_{false};
+    //! Minimum log level to output in child iterations.
+    log_level output_log_level_in_child_iterations_{log_level::info};
 
     //! Default period to write iteration logs.
     static constexpr index_type default_iteration_output_period = 10;

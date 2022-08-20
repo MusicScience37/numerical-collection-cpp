@@ -20,9 +20,12 @@
 #pragma once
 
 #include <cmath>
-#include <utility>
+#include <string_view>
 
-#include "num_collect/opt/concepts/single_variate_objective_function.h"
+#include "num_collect/base/index_type.h"
+#include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/log_tag_view.h"
+#include "num_collect/opt/concepts/single_variate_objective_function.h"  // IWYU pragma: keep
 #include "num_collect/opt/optimizer_base.h"
 
 namespace num_collect::opt {
@@ -50,7 +53,7 @@ public:
     using value_type = typename objective_function_type::value_type;
 
     /*!
-     * \brief Construct.
+     * \brief Constructor.
      *
      * \param[in] obj_fun Objective function.
      */
@@ -131,12 +134,16 @@ public:
     /*!
      * \copydoc num_collect::opt::optimizer_base::opt_variable
      */
-    [[nodiscard]] auto opt_variable() const { return mid1_; }
+    [[nodiscard]] auto opt_variable() const -> const variable_type& {
+        return mid1_;
+    }
 
     /*!
      * \copydoc num_collect::opt::optimizer_base::opt_value
      */
-    [[nodiscard]] auto opt_value() const { return value1_; }
+    [[nodiscard]] auto opt_value() const -> const value_type& {
+        return value1_;
+    }
 
     /*!
      * \copydoc num_collect::opt::optimizer_base::iterations

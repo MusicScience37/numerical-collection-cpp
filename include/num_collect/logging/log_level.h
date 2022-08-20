@@ -48,7 +48,10 @@ enum class log_level {
     warning,
 
     //! For errors.
-    error
+    error,
+
+    //! Turn off output (only for output log level).
+    off
 };
 
 /*!
@@ -74,6 +77,8 @@ enum class log_level {
         return "warning";
     case log_level::error:
         return "error";
+    case log_level::off:
+        return "off";
     }
     return "unknown";
 }

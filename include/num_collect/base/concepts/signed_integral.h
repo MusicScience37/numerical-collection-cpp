@@ -21,7 +21,7 @@
 
 #include <type_traits>
 
-#include "num_collect/base/concepts/integral.h"
+#include "num_collect/base/concepts/integral.h"  // IWYU pragma: keep
 
 namespace num_collect {
 inline namespace base {
@@ -47,7 +47,7 @@ template <typename T>
 constexpr bool is_signed_v = is_signed<T>::value;
 
 /*!
- * \brief Concept of signed ingegers.
+ * \brief Concept of signed integers.
  *
  * \tparam T Type.
  */

@@ -23,7 +23,7 @@
 
 #include "num_collect/auto_diff/forward/create_diff_variable.h"
 #include "num_collect/auto_diff/forward/variable.h"
-#include "num_collect/auto_diff/forward/variable_math.h"
+#include "num_collect/auto_diff/forward/variable_math.h"  // IWYU pragma: keep
 #include "xexp.h"
 
 auto main() -> int {

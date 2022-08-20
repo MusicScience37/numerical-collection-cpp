@@ -19,12 +19,14 @@
  */
 #include "num_collect/opt/sampling_optimizer.h"
 
-#include <sstream>
+#include <string>
 
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
-#include <catch2/matchers/catch_matchers_string.hpp>
 
+#include "num_collect/opt/concepts/box_constrained_optimizer.h"  // IWYU pragma: keep
+#include "num_collect/opt/concepts/optimizer.h"  // IWYU pragma: keep
 #include "num_prob_collect/opt/quadratic_function.h"
 
 TEST_CASE("num_collect::opt::sampling_optimizer") {
@@ -32,6 +34,13 @@ TEST_CASE("num_collect::opt::sampling_optimizer") {
     using num_prob_collect::opt::quadratic_function;
 
     constexpr num_collect::index_type num_samples = 11;
+
+    SECTION("concepts") {
+        STATIC_REQUIRE(num_collect::opt::concepts::optimizer<
+            sampling_optimizer<quadratic_function>>);
+        STATIC_REQUIRE(num_collect::opt::concepts::box_constrained_optimizer<
+            sampling_optimizer<quadratic_function>>);
+    }
 
     SECTION("init") {
         auto opt = sampling_optimizer<quadratic_function>();

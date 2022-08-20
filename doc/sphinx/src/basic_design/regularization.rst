@@ -47,3 +47,36 @@ Regularization Using L2 Norm
         + solve(solution: data_type&)
     }
     explicit_param_searcher_base o-left- explicit_regularized_solver_base
+
+Regularization Using L1 Norm
+--------------------------------------
+
+.. uml::
+
+    title Abstract Model of Regularization Using L1 Norm
+
+    interface implicit_regularized_solver_base<Data> {
+        + using data_type = Data
+        + using scalar_type = data_type::Scalar
+        + solve(param: scalar_type, solution: data_type&)
+        + residual_norm(param: scalar_type, solution: const data_type&) : scalar_type
+        + regularization_term(param: scalar_type, solution: const data_type&) : scalar_type
+        + data_size() : index_type
+        + param_search_region() : pair<scalar_type, scalar_type>
+    }
+
+    class fista<Coeff, Data> {
+        + using coeff_type = Coeff
+        + compute(coeff: const coeff_type&, data: const data_type&)
+    }
+    implicit_regularized_solver_base <|-- fista
+
+    interface implicit_param_searcher_base<Solver> {
+        + using solver_type = Solver
+        + using scalar_type = Solver::scalar_type
+        + using data_type = Solver::data_type
+        + search()
+        + opt_param() : scalar_type
+        + solve(solution: data_type&)
+    }
+    implicit_param_searcher_base o-left- implicit_regularized_solver_base

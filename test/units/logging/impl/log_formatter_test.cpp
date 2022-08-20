@@ -19,10 +19,13 @@
  */
 #include "num_collect/logging/impl/log_formatter.h"
 
+#include <string>
 #include <string_view>
 #include <unordered_map>
 
+#include <catch2/catch_message.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 
 #include "num_collect/base/index_type.h"
@@ -45,8 +48,8 @@ TEST_CASE("num_collect::logging::impl::get_output_log_level_str") {
 
     SECTION("format") {
         const auto dict = std::unordered_map<log_level, std::string>{
-            {log_level::trace, "trace"}, {log_level::iteration, "iter"},
-            {log_level::iteration_label, "iter"},
+            {log_level::trace, "trace"}, {log_level::iteration, "iteration"},
+            {log_level::iteration_label, "iteration"},
             {log_level::summary, "summary"}, {log_level::warning, "warning"},
             {log_level::error, "error"},
             {static_cast<log_level>(static_cast<int>(log_level::error) + 1),

@@ -19,12 +19,8 @@
  */
 #pragma once
 
-#include <type_traits>
-
-#include "num_collect/base/concepts/real_scalar.h"
-#include "num_collect/base/concepts/real_scalar_dense_matrix.h"
-#include "num_collect/base/concepts/real_scalar_dense_vector.h"
-#include "num_collect/ode/concepts/differentiable_problem.h"
+#include "num_collect/ode/concepts/differentiable_problem.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/multi_variate_problem.h"  // IWYU pragma: keep
 
 namespace num_collect::ode::concepts {
 
@@ -35,8 +31,7 @@ namespace num_collect::ode::concepts {
  * \tparam T Type.
  */
 template <typename T>
-concept multi_variate_differentiable_problem = differentiable_problem<T> &&
-    base::concepts::real_scalar_dense_vector<typename T::variable_type> &&
-    base::concepts::real_scalar_dense_matrix<typename T::jacobian_type>;
+concept multi_variate_differentiable_problem =
+    differentiable_problem<T> && multi_variate_problem<T>;
 
 }  // namespace num_collect::ode::concepts
