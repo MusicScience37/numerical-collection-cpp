@@ -18,7 +18,6 @@ function(add_unit_test_for MODULE_NAME)
                 ApprovalTests::ApprovalTests num_collect num_prob_collect)
     target_include_directories(num_collect_test_units_${MODULE_NAME}_unity
                                PRIVATE ${NUM_COLLECT_TEST_INCLUDE_DIR})
-    target_check_clang_tidy(num_collect_test_units_${MODULE_NAME}_unity)
 endfunction()
 
 add_subdirectory(base)
