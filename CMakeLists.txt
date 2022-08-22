@@ -58,9 +58,12 @@ if(NUM_COLLECT_TESTING)
     find_package(Boost REQUIRED)
 endif()
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS
+    ON
+    CACHE BOOL "export compile commands" FORCE)
+
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 include(TargetLinkSystemLibrary)
-include(ConfigureClangTidy)
 include(CppWarningFlags)
 include(CppFlags)
 include(pipenv)
