@@ -206,7 +206,7 @@ private:
  *
  * \tparam Problem Type of problem.
  */
-template <concepts::differentiable_problem Problem>
+template <concepts::problem Problem>
 using ros3w_solver = embedded_solver<ros3w_formula<Problem>>;
 
 }  // namespace num_collect::ode::rosenbrock

@@ -292,7 +292,7 @@ private:
  *
  * \tparam Problem Type of problem.
  */
-template <concepts::differentiable_problem Problem>
+template <concepts::problem Problem>
 using rodaspr_solver = embedded_solver<rodaspr_formula<Problem>>;
 
 }  // namespace num_collect::ode::rosenbrock
