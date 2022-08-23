@@ -125,12 +125,15 @@
     "tanaka",
     "Tikhonov",
     "tomlplusplus",
+    "tonexty",
     "tqdm",
     "trompeloeil",
     "tsan",
     "ubsan",
     "venv",
-    "Xiwyu"
+    "xaxis",
+    "Xiwyu",
+    "yaxis"
   ],
   "clangd.arguments": [
     "--compile-commands-dir=${workspaceFolder}/build/Debug",

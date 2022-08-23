@@ -39,166 +39,7 @@
 #include "num_collect/ode/rosenbrock/rodasp_formula.h"
 #include "num_collect/util/assert.h"
 #include "num_collect/util/format_dense_vector.h"
-
-/*!
- * \brief Class of ODE problem to solve the 1-dimensional wave equation
- * discretized by the finite difference.
- */
-class finite_difference_wave_equation_1d {
-public:
-    //! Type of variables.
-    using variable_type = Eigen::VectorXd;
-
-    //! Type of scalars.
-    using scalar_type = double;
-
-    //! Allowed evaluations.
-    static constexpr auto allowed_evaluations =
-        num_collect::ode::evaluation_type{.diff_coeff = true};
-
-    //! Parameters.
-    struct parameters {
-    public:
-        //! Speed of the wave.
-        double speed{1.0};
-
-        //! Number of spatial points.
-        num_collect::index_type num_points{10};  // NOLINT
-
-        //! Length of the space.
-        double length{1.0};
-    };
-
-    /*!
-     * \brief Constructor.
-     *
-     * \param[in] params Parameters.
-     */
-    explicit finite_difference_wave_equation_1d(const parameters& params)
-        : speed_(params.speed), num_points_(params.num_points) {
-        NUM_COLLECT_ASSERT(params.num_points >= 3);
-        points_ = variable_type::LinSpaced(num_points_, 0.0, params.length);
-        diff_coeff_ = variable_type::Zero(num_points_ * 2);
-    }
-
-    /*!
-     * \brief Evaluate on a (time, variable) pair.
-     *
-     * \param[in] variable Variable.
-     */
-    void evaluate_on(scalar_type /*time*/, const variable_type& variable,
-        num_collect::ode::evaluation_type /*evaluations*/) {
-        const double dx = points_(1) - points_(0);
-        // acceleration.
-        diff_coeff_.segment(1, num_points_ - 2) = speed_ * speed_ / (dx * dx) *
-            (variable.segment(num_points_ + 2, num_points_ - 2) -
-                2.0  // NOLINT
-                    * variable.segment(num_points_ + 1, num_points_ - 2) +
-                variable.segment(num_points_, num_points_ - 2));
-        // velocity.
-        diff_coeff_.segment(num_points_, num_points_) =
-            variable.segment(0, num_points_);
-    }
-
-    /*!
-     * \brief Get the differential coefficient.
-     *
-     * \return Differential coefficient.
-     */
-    [[nodiscard]] auto diff_coeff() const noexcept -> const variable_type& {
-        return diff_coeff_;
-    }
-
-    /*!
-     * \brief Get the spacial points.
-     *
-     * \return Points.
-     */
-    [[nodiscard]] auto points() const noexcept -> const variable_type& {
-        return points_;
-    }
-
-private:
-    //! Speed.
-    double speed_;
-
-    //! Number of points.
-    num_collect::index_type num_points_;
-
-    //! Spatial points.
-    variable_type points_;
-
-    //! Differential coefficient.
-    variable_type diff_coeff_;
-};
-
-class wave_equation_1d_solution {
-public:
-    //! Parameters.
-    struct parameters {
-    public:
-        //! Speed of the wave.
-        double speed{1.0};
-
-        //! Length of the space.
-        double length{1.0};
-    };
-
-    /*!
-     * \brief Constructor.
-     *
-     * \param[in] params Parameters.
-     */
-    explicit wave_equation_1d_solution(const parameters& params)
-        : speed_(params.speed), length_(params.length) {}
-
-    /*!
-     * \brief Evaluate solution.
-     *
-     * \param[in] time Time.
-     * \param[in] points Spatial points.
-     */
-    void evaluate_on(double time, const Eigen::VectorXd& points) {
-        const num_collect::index_type num_points = points.size();
-        solution_.resize(num_points * 2);
-
-        // displacement.
-        solution_.segment(num_points, num_points) =
-            (points * num_collect::constants::pi<double> / length_)
-                .array()
-                .sin() *
-            std::cos(
-                time * num_collect::constants::pi<double> * speed_ / length_);
-
-        // velocity.
-        solution_.segment(0, num_points) =
-            (points * num_collect::constants::pi<double> / length_)
-                .array()
-                .sin() *
-            (-num_collect::constants::pi<double> * speed_ / length_) *
-            std::sin(
-                time * num_collect::constants::pi<double> * speed_ / length_);
-    }
-
-    /*!
-     * \brief Get the solution.
-     *
-     * \return Solution.
-     */
-    [[nodiscard]] auto solution() -> const Eigen::VectorXd& {
-        return solution_;
-    }
-
-private:
-    //! Speed.
-    double speed_;
-
-    //! Length.
-    double length_;
-
-    //! Solution.
-    Eigen::VectorXd solution_;
-};
+#include "num_prob_collect/ode/string_wave_1d_problem.h"
 
 template <typename T>
 static auto get_config_value(
@@ -223,7 +64,7 @@ auto main(int argc, char** argv) -> int {
         }
         num_collect::logging::load_logging_config(std::string(config_filepath));
 
-        using problem_type = finite_difference_wave_equation_1d;
+        using problem_type = num_prob_collect::ode::string_wave_1d_problem;
         using formula_type =
             num_collect::ode::rosenbrock::rodasp_formula<problem_type,
                 num_collect::ode::rosenbrock::
@@ -236,16 +77,16 @@ auto main(int argc, char** argv) -> int {
             get_config_value<num_collect::index_type>(config, "num_points");
         const double length = get_config_value<double>(config, "length");
 
-        problem_type problem{problem_type::parameters{
-            .speed = speed, .num_points = num_points, .length = length}};
+        const num_prob_collect::ode::string_wave_1d_parameters params{
+            .speed = speed, .num_points = num_points, .length = length};
+
+        problem_type problem{params};
         solver_type solver{problem};
 
-        wave_equation_1d_solution solution{
-            wave_equation_1d_solution::parameters{
-                .speed = speed, .length = length}};
+        num_prob_collect::ode::string_wave_1d_solution solution{params};
 
         constexpr double init_time = 0.0;
-        solution.evaluate_on(init_time, problem.points());
+        solution.evaluate_on(init_time);
         solver.init(init_time, solution.solution());
 
         num_collect::logging::logger logger;
@@ -273,7 +114,7 @@ auto main(int argc, char** argv) -> int {
                     pybind11::arg("mode") = "lines",
                     pybind11::arg("name") = fmt::format("t = {:.1f}", time)));
 
-            solution.evaluate_on(time, problem.points());
+            solution.evaluate_on(time);
             const auto error_norm =
                 (solver.variable() - solution.solution()).norm();
             logger.info()(
