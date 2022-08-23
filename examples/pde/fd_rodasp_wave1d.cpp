@@ -25,6 +25,9 @@
 
 #include <Eigen/Core>
 #include <fmt/format.h>
+#include <pybind11/eigen.h>
+#include <pybind11/embed.h>
+#include <pybind11/pybind11.h>
 #include <toml++/toml.h>
 
 #include "num_collect/base/exception.h"
@@ -159,7 +162,7 @@ public:
         const num_collect::index_type num_points = points.size();
         solution_.resize(num_points * 2);
 
-        // vibration without derivative.
+        // displacement.
         solution_.segment(num_points, num_points) =
             (points * num_collect::constants::pi<double> / length_)
                 .array()
@@ -245,18 +248,47 @@ auto main(int argc, char** argv) -> int {
         solution.evaluate_on(init_time, problem.points());
         solver.init(init_time, solution.solution());
 
-        solver.step_size(1e-2);  // NOLINT
-
-        constexpr double end_time = 0.1;
-        solver.solve_till(end_time);
-
         num_collect::logging::logger logger;
 
-        solution.evaluate_on(end_time, problem.points());
-        logger.info()("Solution:  {:.3f}",
-            num_collect::util::format_dense_vector(solver.variable()));
-        logger.info()("Reference: {:.3f}",
-            num_collect::util::format_dense_vector(solution.solution()));
+        pybind11::scoped_interpreter interpreter;
+        auto go = pybind11::module::import("plotly.graph_objects");
+        auto fig = go.attr("Figure")();
+
+        fig.attr("add_trace")(
+            go.attr("Scatter")(pybind11::arg("x") = problem.points(),
+                pybind11::arg("y") =
+                    solver.variable().tail(problem.points().size()),
+                pybind11::arg("mode") = "lines",
+                pybind11::arg("name") = fmt::format("t = {:.1f}", 0.0)));
+
+        const auto time_list = std::vector<double>{0.2, 0.4, 0.6, 0.8, 1.0};
+        for (const double time : time_list) {
+            logger.trace()("Solve till {}", time);
+            solver.solve_till(time);
+
+            fig.attr("add_trace")(
+                go.attr("Scatter")(pybind11::arg("x") = problem.points(),
+                    pybind11::arg("y") =
+                        solver.variable().tail(problem.points().size()),
+                    pybind11::arg("mode") = "lines",
+                    pybind11::arg("name") = fmt::format("t = {:.1f}", time)));
+
+            solution.evaluate_on(time, problem.points());
+            const auto error_norm =
+                (solver.variable() - solution.solution()).norm();
+            logger.info()(
+                "Error norm at time {:.3f}: {:.3e}", time, error_norm);
+        }
+
+        fig.attr("update_layout")(
+            pybind11::arg("title") =
+                "Solution of 1D wave equation using finite difference and "
+                "Rosenbrock method (RODASP formula)",
+            pybind11::arg("xaxis_title") = "x",
+            pybind11::arg("yaxis_title") = "Displacement");
+
+        fig.attr("write_html")("fd_rodasp_wave1d.html");
+        fig.attr("write_image")("fd_rodasp_wave1d.png");
 
         return 0;
     } catch (const std::exception& e) {

@@ -74,7 +74,7 @@ auto main() -> int {
         pybind11::arg("name") = "Lower bound (3 sigma)"));
     fig.attr("add_trace")(go.attr("Scatter")(pybind11::arg("x") = sample_vars,
         pybind11::arg("y") = sample_upper, pybind11::arg("mode") = "lines",
-        pybind11::arg("name") = "Uppper bound (3 sigma)",
+        pybind11::arg("name") = "Upper bound (3 sigma)",
         pybind11::arg("fill") = "tonexty"));
 
     // interpolated line

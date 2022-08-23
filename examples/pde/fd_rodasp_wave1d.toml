@@ -1,10 +1,10 @@
 [[num_collect.logging.tag_configs]]
 tag = ""
 sink = "default"
-output_log_level = "iteration"
+output_log_level = "info"
 iteration_output_period = 1
 
 [fd_rodasp_wave1d]
 speed = 1.0
-num_points = 11
+num_points = 101
 length = 1.0
