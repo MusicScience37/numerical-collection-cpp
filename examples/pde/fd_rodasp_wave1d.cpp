@@ -65,11 +65,8 @@ auto main(int argc, char** argv) -> int {
         num_collect::logging::load_logging_config(std::string(config_filepath));
 
         using problem_type = num_prob_collect::ode::string_wave_1d_problem;
-        using formula_type =
-            num_collect::ode::rosenbrock::rodasp_formula<problem_type,
-                num_collect::ode::rosenbrock::
-                    bicgstab_rosenbrock_equation_solver<problem_type>>;
-        using solver_type = num_collect::ode::embedded_solver<formula_type>;
+        using solver_type =
+            num_collect::ode::rosenbrock::rodasp_solver<problem_type>;
 
         const auto config = toml::parse_file(config_filepath);
         const double speed = get_config_value<double>(config, "speed");

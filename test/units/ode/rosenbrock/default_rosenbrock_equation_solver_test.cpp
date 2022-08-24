@@ -20,24 +20,43 @@
 #include "num_collect/ode/rosenbrock/default_rosenbrock_equation_solver.h"
 
 #include <string>
+#include <type_traits>
 
 #include <catch2/catch_test_macros.hpp>
 
 #include "num_collect/ode/concepts/rosenbrock_equation_solver.h"  // IWYU pragma: keep
+#include "num_collect/ode/rosenbrock/lu_rosenbrock_equation_solver.h"
+#include "num_collect/ode/rosenbrock/scalar_rosenbrock_equation_solver.h"
 #include "num_prob_collect/ode/exponential_problem.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
+#include "num_prob_collect/ode/string_wave_1d_problem.h"
 
 TEST_CASE(
     "num_collect::ode::rosenbrock::default_rosenbrock_equation_solver_t") {
     using num_collect::ode::concepts::rosenbrock_equation_solver;
     using num_collect::ode::rosenbrock::default_rosenbrock_equation_solver_t;
 
-    SECTION("check concept") {
+    SECTION("for single-variate differentiable problem") {
+        using problem_type = num_prob_collect::ode::exponential_problem;
         STATIC_REQUIRE(
-            rosenbrock_equation_solver<default_rosenbrock_equation_solver_t<
-                num_prob_collect::ode::exponential_problem>>);
+            std::is_same_v<default_rosenbrock_equation_solver_t<problem_type>,
+                num_collect::ode::rosenbrock::scalar_rosenbrock_equation_solver<
+                    problem_type>>);
+    }
+
+    SECTION("for multi-variate differentiable problem") {
+        using problem_type = num_prob_collect::ode::spring_movement_problem;
         STATIC_REQUIRE(
-            rosenbrock_equation_solver<default_rosenbrock_equation_solver_t<
-                num_prob_collect::ode::spring_movement_problem>>);
+            std::is_same_v<default_rosenbrock_equation_solver_t<problem_type>,
+                num_collect::ode::rosenbrock::lu_rosenbrock_equation_solver<
+                    problem_type>>);
+    }
+
+    SECTION("for multi-variate non-differentiable problem") {
+        using problem_type = num_prob_collect::ode::string_wave_1d_problem;
+        STATIC_REQUIRE(
+            std::is_same_v<default_rosenbrock_equation_solver_t<problem_type>,
+                num_collect::ode::rosenbrock::
+                    bicgstab_rosenbrock_equation_solver<problem_type>>);
     }
 }
