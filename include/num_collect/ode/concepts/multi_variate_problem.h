@@ -32,7 +32,6 @@ namespace num_collect::ode::concepts {
  */
 template <typename T>
 concept multi_variate_problem = problem<T> &&
-    base::concepts::real_scalar_dense_vector<typename T::variable_type> &&
-    base::concepts::real_scalar_dense_matrix<typename T::jacobian_type>;
+    base::concepts::real_scalar_dense_vector<typename T::variable_type>;
 
 }  // namespace num_collect::ode::concepts

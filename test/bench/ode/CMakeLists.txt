@@ -23,6 +23,9 @@ add_bench_using_pybind11(num_collect_bench_ode_pendulum_movement)
 add_executable(num_collect_bench_ode_kaps_problem kaps_problem_test.cpp)
 add_bench_using_pybind11(num_collect_bench_ode_kaps_problem)
 
+add_executable(num_collect_bench_ode_string_wave_1d string_wave_1d_test.cpp)
+add_bench_using_pybind11(num_collect_bench_ode_string_wave_1d)
+
 add_executable(num_collect_bench_ode_rosenbrock_equation_solvers
                rosenbrock_equation_solvers_test.cpp)
 add_bench_using_pybind11(num_collect_bench_ode_rosenbrock_equation_solvers)
