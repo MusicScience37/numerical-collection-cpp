@@ -42,6 +42,7 @@
 #include "num_collect/ode/runge_kutta/sdirk4_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka1_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka2_formula.h"
+#include "num_collect/ode/step_size_limits.h"
 #include "num_prob_collect/ode/string_wave_1d_problem.h"
 
 using problem_type = num_prob_collect::ode::string_wave_1d_problem;
@@ -72,7 +73,8 @@ inline void bench_one(
     solution.evaluate_on(end_time);
     const Eigen::VectorXd reference = solution.solution();
 
-    constexpr std::array<double, 4> tolerance_list{1e-3, 1e-4, 1e-5, 1e-6};
+    constexpr std::array<double, 5> tolerance_list{
+        1e-2, 1e-3, 1e-4, 1e-5, 1e-6};
 
     for (const double tol : tolerance_list) {
         const problem_type problem{parameters};
@@ -101,6 +103,11 @@ auto main(int argc, char** argv) -> int {
         "DOPRI5", executor);
     bench_one<num_collect::ode::runge_kutta::ark43_erk_solver<problem_type>>(
         "ARK4(3)-ERK", executor);
+
+    // Implicit formulas are too slow with large step sizes.
+    executor.step_size_limits(
+        num_collect::ode::step_size_limits<double>().upper_limit(
+            1e-2));  // NOLINT
     bench_one<num_collect::ode::rosenbrock::ros3w_solver<problem_type>>(
         "ROS3w", executor);
     bench_one<num_collect::ode::rosenbrock::ros34pw3_solver<problem_type>>(
