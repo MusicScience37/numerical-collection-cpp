@@ -39,7 +39,7 @@ public:
     double speed{1.0};
 
     //! Number of spatial points.
-    num_collect::index_type num_points{10};  // NOLINT
+    num_collect::index_type num_points{101};  // NOLINT
 
     //! Length of the space.
     double length{1.0};
