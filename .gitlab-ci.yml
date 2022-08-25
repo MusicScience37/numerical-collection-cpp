@@ -53,6 +53,7 @@ complexity:
   script:
     - mkdir -p .venv
     - pipenv sync --dev
+    - pipenv clean
     - mkdir -p complexity
     - pipenv run lizard -o complexity/complexity_per_function.html include
     - pipenv run lizard -o complexity/result.txt -E duplicate include
@@ -72,7 +73,7 @@ pre-commit:
   script:
     - mkdir -p .venv
     - pipenv sync --dev
-    # TODO: Explicit re-install of certifi was needed to fix CI.
+    - pipenv clean
     - pipenv run pip install certifi
     - pipenv run pre-commit run --all-files
   cache:
@@ -94,8 +95,7 @@ pre-commit:
   before_script:
     - mkdir -p .venv
     - pipenv sync --dev
-    # TODO: Explicit re-install of certifi was needed to fix CI.
-    - pipenv run pip install certifi
+    - pipenv clean
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --force --detect default
@@ -317,8 +317,7 @@ clang-14-conan:
   script:
     - mkdir -p .venv
     - pipenv sync --dev
-    # TODO: Explicit re-install of certifi was needed to fix CI.
-    - pipenv run pip install certifi
+    - pipenv clean
     - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libc++ default
     - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
@@ -334,8 +333,7 @@ clang-14-conan-release:
   script:
     - mkdir -p .venv
     - pipenv sync --dev
-    # TODO: Explicit re-install of certifi was needed to fix CI.
-    - pipenv run pip install certifi
+    - pipenv clean
     - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libc++ default
     - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
@@ -365,6 +363,7 @@ clang-14-conan-release:
     - ccache --version
     - pip install pipenv
     - pipenv sync
+    - pipenv clean
   script:
     # Changed in below.
     - ls
