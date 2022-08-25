@@ -67,8 +67,6 @@ public:
 
     static_assert(!problem_type::allowed_evaluations.mass,
         "Mass matrix is not supported.");
-    // TODO: Support is actually not so difficult for this formula, but I want
-    // to test it after implementation, so postpone the implementation.
 
     /*!
      * \brief Constructor.

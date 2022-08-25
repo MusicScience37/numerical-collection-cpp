@@ -25,6 +25,7 @@
 #include <Eigen/LU>
 
 #include "num_collect/base/index_type.h"
+#include "num_collect/ode/concepts/mass_problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/concepts/multi_variate_differentiable_problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/concepts/time_differentiable_problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/evaluation_type.h"
@@ -58,10 +59,8 @@ public:
     static constexpr bool use_time_derivative =
         concepts::time_differentiable_problem<problem_type>;
 
-    static_assert(!problem_type::allowed_evaluations.mass,
-        "Mass matrix is not supported.");
-    // TODO: Support is actually not so difficult for this formula, but I want
-    // to test it after implementation, so postpone the implementation.
+    //! Whether to use mass.
+    static constexpr bool use_mass = concepts::mass_problem<problem_type>;
 
     /*!
      * \brief Constructor.
@@ -87,15 +86,21 @@ public:
         problem.evaluate_on(time, variable,
             evaluation_type{.diff_coeff = true,
                 .jacobian = true,
-                .time_derivative = use_time_derivative});
+                .time_derivative = use_time_derivative,
+                .mass = use_mass});
         jacobian_ = problem.jacobian();
         if constexpr (use_time_derivative) {
             time_derivative_ = problem.time_derivative();
         }
 
         const index_type variable_size = variable.size();
-        lu_.compute(jacobian_type::Identity(variable_size, variable_size) -
-            step_size * inverted_jacobian_coeff_ * jacobian_);
+        if constexpr (use_mass) {
+            lu_.compute(problem.mass() -
+                step_size * inverted_jacobian_coeff_ * jacobian_);
+        } else {
+            lu_.compute(jacobian_type::Identity(variable_size, variable_size) -
+                step_size * inverted_jacobian_coeff_ * jacobian_);
+        }
 
         // TODO: Check that condition number is not so large.
     }
