@@ -241,6 +241,30 @@ gcc-10-bench:
     CONAN_STD_CPP_LIB: "libstdc++11"
     CMAKE_BUILD_TYPE: Release
 
+gcc-12-debug:
+  extends: .release-test-base
+  image: musicscience37/gcc-ci:gcc12
+  variables:
+    BUILD_DIR: build_gcc12_debug
+    CONAN_STD_CPP_LIB: "libstdc++11"
+    CMAKE_BUILD_TYPE: Debug
+
+gcc-12-release:
+  extends: .release-test-base
+  image: musicscience37/gcc-ci:gcc12
+  variables:
+    BUILD_DIR: build_gcc12_release
+    CONAN_STD_CPP_LIB: "libstdc++11"
+    CMAKE_BUILD_TYPE: Release
+
+gcc-12-bench:
+  extends: .bench-base
+  image: musicscience37/gcc-ci:gcc12
+  variables:
+    BUILD_DIR: build_gcc12_bench
+    CONAN_STD_CPP_LIB: "libstdc++11"
+    CMAKE_BUILD_TYPE: Release
+
 clang-14-debug:
   extends: .release-test-base
   image: musicscience37/clang-ci:clang14
