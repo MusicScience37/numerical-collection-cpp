@@ -33,8 +33,8 @@ package problems {
     differentiable_problem <|-- time_differentiable_problem
 
     class mass_problem {
-        + using mass_matrix_type = xxx
-        + mass() : mass_matrix_type
+        + using mass_type = xxx
+        + mass() : mass_type
     }
     problem <|-- mass_problem
 }

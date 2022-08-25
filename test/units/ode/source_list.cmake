@@ -12,6 +12,7 @@ set(SOURCE_FILES
     inexact_newton_slope_equation_solver_test.cpp
     inexact_newton_update_equation_solver_test.cpp
     initial_step_size_calculator_test.cpp
+    integ/implicit_exponential_problem_test.cpp
     non_embedded_formula_wrapper_test.cpp
     pi_step_size_controller_test.cpp
     rosenbrock/bicgstab_rosenbrock_equation_solver_test.cpp
