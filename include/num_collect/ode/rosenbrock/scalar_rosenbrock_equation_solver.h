@@ -26,6 +26,7 @@
 #include <fmt/format.h>  // IWYU pragma: keep
 
 #include "num_collect/base/exception.h"
+#include "num_collect/ode/concepts/mass_problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/concepts/single_variate_differentiable_problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/concepts/time_differentiable_problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/evaluation_type.h"
@@ -57,10 +58,8 @@ public:
     static constexpr bool use_time_derivative =
         concepts::time_differentiable_problem<problem_type>;
 
-    static_assert(!problem_type::allowed_evaluations.mass,
-        "Mass matrix is not supported.");
-    // TODO: Support is actually easy for this formula, but I want to test it
-    // after implementation, so postpone the implementation.
+    //! Whether to use mass.
+    static constexpr bool use_mass = concepts::mass_problem<problem_type>;
 
     /*!
      * \brief Constructor.
@@ -86,14 +85,18 @@ public:
         problem.evaluate_on(time, variable,
             evaluation_type{.diff_coeff = true,
                 .jacobian = true,
-                .time_derivative = use_time_derivative});
+                .time_derivative = use_time_derivative,
+                .mass = use_mass});
         jacobian_ = problem.jacobian();
         if constexpr (use_time_derivative) {
             time_derivative_ = problem.time_derivative();
         }
 
-        const auto inverted_value = static_cast<scalar_type>(1) -
-            step_size * inverted_jacobian_coeff_ * jacobian_;
+        auto inverted_value = static_cast<scalar_type>(1);
+        if constexpr (use_mass) {
+            inverted_value = problem.mass();
+        }
+        inverted_value -= step_size * inverted_jacobian_coeff_ * jacobian_;
         using std::abs;
         if (abs(inverted_value) < std::numeric_limits<scalar_type>::epsilon()) {
             throw algorithm_failure(fmt::format(

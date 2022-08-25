@@ -229,7 +229,7 @@ private:
  *
  * \tparam Problem Type of problem.
  */
-template <concepts::differentiable_problem Problem>
+template <concepts::problem Problem>
 using ros34pw3_solver = embedded_solver<ros34pw3_formula<Problem>>;
 
 }  // namespace num_collect::ode::rosenbrock

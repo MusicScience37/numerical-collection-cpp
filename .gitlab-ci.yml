@@ -6,7 +6,7 @@ stages:
   - release
 
 variables:
-  NUM_COLLECT_VERSION: "0.5.0a2"
+  NUM_COLLECT_VERSION: "0.5.0"
   CONAN_USER: "MusicScience37+numerical-collection-cpp"
   DOCS_PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/numerical-collection-cpp-doc"
   SECURE_LOG_LEVEL: debug
@@ -53,6 +53,7 @@ complexity:
   script:
     - mkdir -p .venv
     - pipenv sync --dev
+    - pipenv clean
     - mkdir -p complexity
     - pipenv run lizard -o complexity/complexity_per_function.html include
     - pipenv run lizard -o complexity/result.txt -E duplicate include
@@ -72,7 +73,7 @@ pre-commit:
   script:
     - mkdir -p .venv
     - pipenv sync --dev
-    # TODO: Explicit re-install of certifi was needed to fix CI.
+    - pipenv clean
     - pipenv run pip install certifi
     - pipenv run pre-commit run --all-files
   cache:
@@ -94,8 +95,7 @@ pre-commit:
   before_script:
     - mkdir -p .venv
     - pipenv sync --dev
-    # TODO: Explicit re-install of certifi was needed to fix CI.
-    - pipenv run pip install certifi
+    - pipenv clean
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --force --detect default
@@ -111,8 +111,7 @@ pre-commit:
       -DNUM_COLLECT_ENABLE_INTEG_TESTS=ON
       -DNUM_COLLECT_ENABLE_BENCH=OFF
       -DNUM_COLLECT_TEST_BENCHMARKS=OFF
-      -DNUM_COLLECT_BUILD_EXAMPLES=ON
-      -DNUM_COLLECT_TEST_EXAMPLES=ON
+      -DNUM_COLLECT_BUILD_EXAMPLES=OFF
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
       -DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON
     - cd $BUILD_DIR
@@ -157,11 +156,6 @@ pre-commit:
     - cmake --build .
     - ctest -V
 
-.debug-test-base:
-  extends: .release-test-base
-  variables:
-    CMAKE_BUILD_TYPE: Debug
-
 static analysis:
   extends: .release-test-base
   stage: test
@@ -180,8 +174,6 @@ static analysis:
       -DNUM_COLLECT_BUILD_EXAMPLES=ON
       -DNUM_COLLECT_ENABLE_CPP_WARNINGS:BOOL=ON
     - pipenv run clang-tidy-checker -b ${BUILD_DIR}
-  allow_failure: true
-  retry: 0
 
 clang coverage:
   extends: .release-test-base
@@ -225,47 +217,6 @@ clang coverage:
     when: always
     expire_in: "1 mos"
 
-gcc coverage:
-  extends: .release-test-base
-  only:
-    - develop
-  image: musicscience37/gcc-ci:gcc10
-  variables:
-    CONAN_STD_CPP_LIB: "libstdc++11"
-    CMAKE_BUILD_TYPE: Debug
-    BUILD_DIR: build_gcc_coverage
-  script:
-    - cmake -S ./ -B $BUILD_DIR
-      -DCMAKE_BUILD_TYPE=Debug
-      -DNUM_COLLECT_TESTING:BOOL=ON
-      -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
-      "-DCMAKE_CXX_FLAGS=--coverage"
-      "-DCMAKE_MODULE_LINKER_FLAGS=--coverage"
-      -DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON
-    - cd $BUILD_DIR
-    - cmake --build .
-    - ctest -V
-    - cd ../
-    - scripts/collect_gcc_coverage.sh build_gcc_coverage
-    - pipenv run lcov_cobertura $BUILD_DIR/coverage/coverage --output $BUILD_DIR/coverage.xml
-  #coverage: '/Total:\|\s*(\d+\.?\d+?)%/'
-  artifacts:
-    paths:
-      - $BUILD_DIR/bench
-      - $BUILD_DIR/junit
-      - $BUILD_DIR/temp_test
-      - $BUILD_DIR/coverage
-      - "*.png"
-      - "*.html"
-    reports:
-      junit:
-        - $BUILD_DIR/junit/*.xml
-      #coverage_report:
-      #  coverage_format: cobertura
-      #  path: $BUILD_DIR/coverage.xml
-    when: always
-    expire_in: "1 mos"
-
 gcc-10-debug:
   extends: .release-test-base
   image: musicscience37/gcc-ci:gcc10
@@ -287,6 +238,30 @@ gcc-10-bench:
   image: musicscience37/gcc-ci:gcc10
   variables:
     BUILD_DIR: build_gcc10_bench
+    CONAN_STD_CPP_LIB: "libstdc++11"
+    CMAKE_BUILD_TYPE: Release
+
+gcc-12-debug:
+  extends: .release-test-base
+  image: musicscience37/gcc-ci:gcc12
+  variables:
+    BUILD_DIR: build_gcc12_debug
+    CONAN_STD_CPP_LIB: "libstdc++11"
+    CMAKE_BUILD_TYPE: Debug
+
+gcc-12-release:
+  extends: .release-test-base
+  image: musicscience37/gcc-ci:gcc12
+  variables:
+    BUILD_DIR: build_gcc12_release
+    CONAN_STD_CPP_LIB: "libstdc++11"
+    CMAKE_BUILD_TYPE: Release
+
+gcc-12-bench:
+  extends: .bench-base
+  image: musicscience37/gcc-ci:gcc12
+  variables:
+    BUILD_DIR: build_gcc12_bench
     CONAN_STD_CPP_LIB: "libstdc++11"
     CMAKE_BUILD_TYPE: Release
 
@@ -342,8 +317,7 @@ clang-14-conan:
   script:
     - mkdir -p .venv
     - pipenv sync --dev
-    # TODO: Explicit re-install of certifi was needed to fix CI.
-    - pipenv run pip install certifi
+    - pipenv clean
     - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libc++ default
     - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
@@ -359,8 +333,7 @@ clang-14-conan-release:
   script:
     - mkdir -p .venv
     - pipenv sync --dev
-    # TODO: Explicit re-install of certifi was needed to fix CI.
-    - pipenv run pip install certifi
+    - pipenv clean
     - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libc++ default
     - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
@@ -370,7 +343,7 @@ clang-14-conan-release:
     - tags
 
 .msvc-base:
-  extends: .debug-test-base
+  extends: .release-test-base
   tags:
     - shared-windows
     - windows
@@ -390,6 +363,7 @@ clang-14-conan-release:
     - ccache --version
     - pip install pipenv
     - pipenv sync
+    - pipenv clean
   script:
     # Changed in below.
     - ls
@@ -499,7 +473,10 @@ pages:
 
 upload-document:
   stage: deploy
-  needs: [doc]
+  needs:
+    - doc
+  dependencies:
+    - doc
   image: registry.gitlab.com/musicscience37/my-cpp-env-docker:clang14
   rules:
     - if: $CI_COMMIT_TAG =~ /^v/
@@ -514,7 +491,9 @@ upload-document:
 release:
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   stage: release
-  needs: [upload-document]
+  needs:
+    - upload-document
+    - clang-14-conan-release
   rules:
     - if: $CI_COMMIT_TAG =~ /^v/
   script:

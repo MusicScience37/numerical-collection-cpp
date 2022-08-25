@@ -15,23 +15,35 @@
  */
 /*!
  * \file
- * \brief Definition of multi_variate_problem concept.
+ * \brief Definition of mass_problem concept.
  */
 #pragma once
 
-#include "num_collect/base/concepts/real_scalar_dense_matrix.h"  // IWYU pragma: keep
-#include "num_collect/base/concepts/real_scalar_dense_vector.h"  // IWYU pragma: keep
-#include "num_collect/ode/concepts/problem.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/const_reference_of.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/problem.h"              // IWYU pragma: keep
+#include "num_collect/ode/evaluation_type.h"
 
 namespace num_collect::ode::concepts {
 
 /*!
- * \brief Concept of problems of multi-variate ordinary differential equations.
+ * \brief Concept of problems of ordinary differential equations with mass.
  *
  * \tparam T Type.
  */
 template <typename T>
-concept multi_variate_problem = problem<T> &&
-    base::concepts::real_scalar_dense_vector<typename T::variable_type>;
+concept mass_problem = problem<T> && requires(T& obj, const T& const_obj) {
+    typename T::mass_type;
+
+    requires requires(
+        typename T::variable_type & var, const typename T::mass_type& coeff) {
+        var = var + coeff * var;
+    };
+
+    requires T::allowed_evaluations.allows(evaluation_type{.mass = true});
+
+    {
+        const_obj.mass()
+        } -> base::concepts::const_reference_of<typename T::mass_type>;
+};
 
 }  // namespace num_collect::ode::concepts

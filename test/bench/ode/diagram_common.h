@@ -50,6 +50,7 @@
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/rosenbrock/rodasp_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
+#include "num_collect/ode/step_size_limits.h"
 #include "num_prob_collect/ode/external_force_vibration_problem.h"
 
 constexpr auto benchmark_tag = num_collect::logging::log_tag_view("benchmark");
@@ -195,6 +196,8 @@ public:
         {
             Solver solver{problem};
 
+            solver.step_size_controller().limits(step_size_limits_);
+
             solver.tolerances(
                 num_collect::ode::error_tolerances<
                     typename Problem::variable_type>()
@@ -220,6 +223,8 @@ public:
 
         for (num_collect::index_type i = 0; i < repetition; ++i) {
             Solver solver{problem};
+
+            solver.step_size_controller().limits(step_size_limits_);
 
             solver.tolerances(num_collect::ode::error_tolerances<
                               typename Problem::variable_type>()
@@ -316,6 +321,16 @@ public:
         }
     }
 
+    /*!
+     * \brief Change the limits of step sizes.
+     *
+     * \param[in] limits Limits.
+     */
+    void step_size_limits(
+        const num_collect::ode::step_size_limits<double>& limits) {
+        step_size_limits_ = limits;
+    }
+
 private:
     //! Iteration logger.
     num_collect::logging::iteration_logger iter_logger_;
@@ -337,6 +352,9 @@ private:
 
     //! Error rate.
     double error_rate_{};
+
+    //! Limits of step sizes.
+    num_collect::ode::step_size_limits<double> step_size_limits_{};
 };
 
 /*!
