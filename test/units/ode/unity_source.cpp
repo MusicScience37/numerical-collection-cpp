@@ -12,6 +12,7 @@
 #include "inexact_newton_update_equation_solver_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "initial_step_size_calculator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "integ/implicit_exponential_problem_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "integ/implicit_kaps_problem_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "non_embedded_formula_wrapper_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "pi_step_size_controller_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rosenbrock/bicgstab_rosenbrock_equation_solver_test.cpp"  // NOLINT(bugprone-suspicious-include)
