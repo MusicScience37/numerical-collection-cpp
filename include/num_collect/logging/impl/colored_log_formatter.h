@@ -99,6 +99,12 @@ public:
         std::string_view body) -> std::string_view {
         buffer_.clear();
 
+        std::string_view filename = source.file_path();
+        const std::size_t last_separator_pos = filename.find_last_of("/\\");
+        if (last_separator_pos != std::string_view::npos) {
+            filename = filename.substr(last_separator_pos + 1);
+        }
+
         auto out = std::back_inserter(buffer_);
         out = fmt::format_to(out, FMT_STRING("[{}] "), iso8601_time(time));
         out = fmt::format_to(out, get_log_level_style(level),
@@ -107,8 +113,8 @@ public:
         out =
             fmt::format_to(out, get_body_style(level), FMT_STRING("{}"), body);
         out = fmt::format_to(out, fmt::fg(fmt::color::gray),
-            FMT_STRING(" ({}:{}:{}, {})"), source.file_path(), source.line(),
-            source.column(), source.function_name());
+            FMT_STRING(" ({}:{}, {})"), filename, source.line(),
+            source.function_name());
 
         return std::string_view(buffer_.data(), buffer_.size());
     }
