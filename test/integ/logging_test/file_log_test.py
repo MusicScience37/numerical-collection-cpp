@@ -1,4 +1,4 @@
-"""Test of console logs.
+"""Test of file logs.
 """
 
 import pathlib
@@ -13,6 +13,7 @@ def _verify_command_result(
     writer_path: pathlib.Path,
     config_file_path: pathlib.Path,
     test_temp_dir_path: pathlib.Path,
+    log_path: pathlib.Path,
 ) -> None:
     result = subprocess.run(
         args=[str(writer_path), str(config_file_path)],
@@ -23,12 +24,17 @@ def _verify_command_result(
         encoding="utf-8",
     )
 
+    with open(str(log_path), mode="r", encoding="utf-8") as file:
+        log_contents = file.read()
+
     approvaltests.verify(
         f"""exit code: {result.returncode}
 stdout:
 {result.stdout}
 stderr:
 {result.stderr}
+{log_path.name}:
+{log_contents}
 """,
         options=approvaltests.Options().with_scrubber(
             create_scrubber(str(config_file_path))
@@ -45,6 +51,7 @@ def test_trace_log(
 
     _verify_command_result(
         writer_path=writer_path,
-        config_file_path=config_dir_path / "console_log_trace.toml",
+        config_file_path=config_dir_path / "file_log_trace.toml",
         test_temp_dir_path=test_temp_dir_path,
+        log_path=test_temp_dir_path / "num_collect_test_integ_logging.log",
     )

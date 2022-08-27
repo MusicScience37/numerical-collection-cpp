@@ -46,5 +46,5 @@ def test_directory(
     _verify_command_result(
         writer_path=writer_path,
         config_file_path=config_dir_path,
-        test_temp_dir_path=str(test_temp_dir_path),
+        test_temp_dir_path=test_temp_dir_path,
     )
