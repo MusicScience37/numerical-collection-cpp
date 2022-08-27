@@ -24,11 +24,8 @@
 #include <string>
 #include <string_view>
 
-#include <lyra/cli.hpp>
-#include <lyra/opt.hpp>
-#include <lyra/parser.hpp>
-
 #include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/load_logging_config.h"
 #include "num_collect/logging/log_config.h"
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/log_tag_config.h"
@@ -39,44 +36,42 @@
 
 constexpr auto my_tag = num_collect::logging::log_tag_view("example tag");
 
+// Fix filepath to make results cross-platform.
+constexpr std::string_view test_filepath =
+    "/test/integ/logging_test/writer.cpp";
+
 static void write_logs() {
     // Location for test.
-    const auto location = num_collect::util::source_info_view(
-        "/test/logging.cpp", 1, 0, "write_logs");
-
-    // Configuration.
-    const auto config =
-        num_collect::logging::log_config::instance()
-            .get_default_tag_config()
-            .output_log_level(num_collect::logging::log_level::trace);
-    num_collect::logging::log_config::instance().set_config_of(my_tag, config);
+    const auto location =
+        num_collect::util::source_info_view(test_filepath, 1, 0, "write_logs");
 
     // Create a logger with a tag.
     const auto logger = num_collect::logging::logger(my_tag);
 
     // Write logs.
     logger.trace(location)("trace");
+    logger.iteration(location)("iteration");
+    logger.iteration_label(location)("iteration_label");
     logger.summary(location)("summary");
     logger.info(location)("info");
     logger.warning(location)("warning");
     logger.error(location)("error");
-
-    // These may not be used in ordinary user code.
-    logger.iteration(location)("iteration");
-    logger.iteration_label(location)("iteration_label");
 }
 
 static void write_to_default_tag() {
     // Location for test.
     const auto location = num_collect::util::source_info_view(
-        "/test/logging.cpp", 2, 0, "write_to_default_tag");
+        test_filepath, 2, 0, "write_to_default_tag");
 
     // Create a logger without tag. (Default tag will be used.)
     const auto logger = num_collect::logging::logger();
 
     // Write logs.
-    logger.trace(location)(
-        "trace");  // Not shown with the default configuration.
+    logger.trace(location)("trace");
+    logger.iteration(location)("iteration");
+    logger.iteration_label(location)("iteration_label");
+    logger.summary(location)("summary");
+    logger.info(location)("info");
     logger.warning(location)("warning");
     logger.error(location)("error");
 }
@@ -84,16 +79,7 @@ static void write_to_default_tag() {
 static void write_iterations() {
     // Location for test.
     const auto location = num_collect::util::source_info_view(
-        "/test/logging.cpp", 3, 0, "write_iterations");
-
-    // Configuration.
-    const auto config =
-        num_collect::logging::log_config::instance()
-            .get_default_tag_config()
-            .output_log_level(num_collect::logging::log_level::trace)
-            .iteration_output_period(2)  // NOLINT
-            .iteration_label_period(5);  // NOLINT
-    num_collect::logging::log_config::instance().set_config_of(my_tag, config);
+        test_filepath, 3, 0, "write_iterations");
 
     // Logger.
     auto logger = num_collect::logging::logger(my_tag);
@@ -112,11 +98,9 @@ static void write_iterations() {
     // Set and write values.
     val1 = 3;  // NOLINT
     val2 = "abc";
-    iteration_logger.write_iteration(location);
 
     // Iteratively set and write values.
-    constexpr int repetition = 20;
-    iteration_logger.reset_count();
+    constexpr int repetition = 123;
     for (int i = 0; i < repetition; ++i) {
         val1 = i;
         iteration_logger.write_iteration(location);
@@ -128,24 +112,17 @@ static void write_iterations() {
 
 auto main(int argc, char** argv) -> int {
     try {
-        std::string log_file_path;
-        auto cli = lyra::cli() |
-            lyra::opt(log_file_path, "filepath")["-o"]["--out"](
-                "Write logs to a file.");
-        const auto result = cli.parse({argc, argv});
-        if (!result) {
-            std::cerr << cli << std::endl;
+        if (argc != 2) {
+            std::cerr
+                << "Usage: "
+                << argv[0]  // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+                << " <configuration-file>" << std::endl;
             return 1;
         }
 
-        if (!log_file_path.empty()) {
-            // Configure logging to a file.
-            const auto config = num_collect::logging::log_tag_config().sink(
-                std::make_shared<num_collect::logging::simple_log_sink>(
-                    log_file_path));
-            num_collect::logging::log_config::instance().set_default_tag_config(
-                config);
-        }
+        const std::string_view config_filepath =
+            argv[1];  // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+        num_collect::logging::load_logging_config(std::string{config_filepath});
 
         write_logs();
         write_to_default_tag();

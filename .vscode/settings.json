@@ -1,10 +1,12 @@
 {
   "cSpell.words": [
+    "addoption",
     "alloc",
     "approvaltests",
     "Armijo",
     "asan",
     "AUSAN",
+    "autouse",
     "BDCSVD",
     "bfgs",
     "BiCGSTAB",
