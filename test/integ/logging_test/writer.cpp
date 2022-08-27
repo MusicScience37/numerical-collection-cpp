@@ -24,6 +24,7 @@
 #include <string>
 #include <string_view>
 
+#include "num_collect/base/exception.h"
 #include "num_collect/logging/iteration_logger.h"
 #include "num_collect/logging/load_logging_config.h"
 #include "num_collect/logging/log_config.h"
@@ -36,51 +37,35 @@
 
 constexpr auto my_tag = num_collect::logging::log_tag_view("example tag");
 
-// Fix filepath to make results cross-platform.
-constexpr std::string_view test_filepath =
-    "/test/integ/logging_test/writer.cpp";
-
 static void write_logs() {
-    // Location for test.
-    const auto location =
-        num_collect::util::source_info_view(test_filepath, 1, 0, "write_logs");
-
     // Create a logger with a tag.
     const auto logger = num_collect::logging::logger(my_tag);
 
     // Write logs.
-    logger.trace(location)("trace");
-    logger.iteration(location)("iteration");
-    logger.iteration_label(location)("iteration_label");
-    logger.summary(location)("summary");
-    logger.info(location)("info");
-    logger.warning(location)("warning");
-    logger.error(location)("error");
+    logger.trace()("trace");
+    logger.iteration()("iteration");
+    logger.iteration_label()("iteration_label");
+    logger.summary()("summary");
+    logger.info()("info");
+    logger.warning()("warning");
+    logger.error()("error");
 }
 
 static void write_to_default_tag() {
-    // Location for test.
-    const auto location = num_collect::util::source_info_view(
-        test_filepath, 2, 0, "write_to_default_tag");
-
     // Create a logger without tag. (Default tag will be used.)
     const auto logger = num_collect::logging::logger();
 
     // Write logs.
-    logger.trace(location)("trace");
-    logger.iteration(location)("iteration");
-    logger.iteration_label(location)("iteration_label");
-    logger.summary(location)("summary");
-    logger.info(location)("info");
-    logger.warning(location)("warning");
-    logger.error(location)("error");
+    logger.trace()("trace");
+    logger.iteration()("iteration");
+    logger.iteration_label()("iteration_label");
+    logger.summary()("summary");
+    logger.info()("info");
+    logger.warning()("warning");
+    logger.error()("error");
 }
 
 static void write_iterations() {
-    // Location for test.
-    const auto location = num_collect::util::source_info_view(
-        test_filepath, 3, 0, "write_iterations");
-
     // Logger.
     auto logger = num_collect::logging::logger(my_tag);
 
@@ -103,11 +88,11 @@ static void write_iterations() {
     constexpr int repetition = 123;
     for (int i = 0; i < repetition; ++i) {
         val1 = i;
-        iteration_logger.write_iteration(location);
+        iteration_logger.write_iteration();
     }
 
     // Last state.
-    iteration_logger.write_summary(location);
+    iteration_logger.write_summary();
 }
 
 auto main(int argc, char** argv) -> int {

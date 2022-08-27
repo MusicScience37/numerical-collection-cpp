@@ -1,4 +1,4 @@
-"""Test of console logs.
+"""Test of invalid logging configuration files.
 """
 
 import pathlib
@@ -36,15 +36,15 @@ stderr:
     )
 
 
-def test_trace_log(
+def test_directory(
     writer_path: pathlib.Path,
     test_temp_dir_path: pathlib.Path,
     config_dir_path: pathlib.Path,
 ):
-    """Test with trace log level."""
+    """Test to pass directory paths."""
 
     _verify_command_result(
         writer_path=writer_path,
-        config_file_path=config_dir_path / "console_log_trace.toml",
+        config_file_path=config_dir_path,
         test_temp_dir_path=str(test_temp_dir_path),
     )
