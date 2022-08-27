@@ -20,8 +20,9 @@ def _scrub_exception_path(input: str) -> str:
         filename = pathlib.Path(match.group(1)).name
         line = match.group(2)
 
+        # Line number differs between Clang and GCC.
         # Column is not support in GCC.
-        return f"({filename}:{line}:<col>)"
+        return f"({filename}:<line>:<col>)"
 
     return re.sub(r"\((.*):(\d*):(\d*)\)", replace_path, input)
 
@@ -32,7 +33,7 @@ def _scrub_file_log_location(input: str) -> str:
         line = match.group(2)
 
         # Column is not support in GCC.
-        # Function name can be different in different compilers.
+        # Function name can differ between different compilers.
         return f"({filename}:{line}:<col>, <function-name>)"
 
     return re.sub(r"\((.*):(\d*):(\d*), (.*)\)", replace_path, input)
