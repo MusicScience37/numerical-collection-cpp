@@ -39,7 +39,6 @@ class NumCollectConan(ConanFile):
             self.build_requires("approvaltests.cpp/10.12.2")
             self.build_requires("pngpp/0.2.10")
             self.build_requires("lyra/1.6.0")
-            self.build_requires("boost/1.79.0")
 
     def package(self):
         self.copy("*.h")

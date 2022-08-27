@@ -26,9 +26,11 @@ trio = "*"
 trio-typing = "*"
 tqdm = "*"
 lizard = "*"
-jinja2 = "<3.1"
+jinja2 = "~=3.1.2"
 lcov-cobertura = "*"
 clang-tidy-checker = "*"
+pytest = "*"
+pytest-approvaltests = "*"
 
 [requires]
 python_version = "3.9"

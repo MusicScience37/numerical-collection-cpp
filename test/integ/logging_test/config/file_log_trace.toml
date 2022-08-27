@@ -1,0 +1,9 @@
+[[num_collect.logging.tag_configs]]
+tag = ""
+sink = "console"
+output_log_level = "trace"
+
+[[num_collect.logging.sinks]]
+name = "console"
+type = "single_file"
+filepath = "num_collect_test_integ_logging.log"

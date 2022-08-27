@@ -20,6 +20,7 @@
 #pragma once
 
 #include <exception>
+#include <filesystem>
 #include <string>
 
 #include <fmt/format.h>
@@ -35,9 +36,15 @@ namespace num_collect::logging {
  *
  * \param[in] filepath File path.
  */
-inline void load_logging_config(const std::string& filepath) {
+inline void load_logging_config(std::string_view filepath) {
+    if (!std::filesystem::exists(std::filesystem::path(filepath)) ||
+        !std::filesystem::is_regular_file(std::filesystem::path(filepath))) {
+        throw invalid_argument(fmt::format(
+            "Invalid filepath to load configurations {}", filepath));
+    }
     try {
-        impl::toml_config::load_logging_config_toml(toml::parse_file(filepath));
+        const auto parse_result = toml::parse_file(filepath);
+        impl::toml_config::load_logging_config_toml(parse_result);
     } catch (const std::exception& e) {
         throw invalid_argument(
             fmt::format("Failed to load {}: {}", filepath, e.what()));

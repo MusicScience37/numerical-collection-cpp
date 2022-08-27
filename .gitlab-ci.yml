@@ -130,6 +130,7 @@ pre-commit:
       - $BUILD_DIR/temp_test
       - "*.png"
       - "*.html"
+      - "test/**/*.approved.*"
     reports:
       junit:
         - $BUILD_DIR/junit/*.xml
