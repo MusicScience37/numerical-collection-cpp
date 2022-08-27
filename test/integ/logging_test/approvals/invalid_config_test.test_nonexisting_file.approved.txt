@@ -1,0 +1,6 @@
+exit code: 1
+stdout:
+
+stderr:
+Exception thrown: Invalid filepath to load configurations <config-filepath> (load_logging_config.h:42:<col>)
+
