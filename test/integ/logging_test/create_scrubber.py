@@ -19,11 +19,12 @@ def _scrub_exception_path(input: str) -> str:
     def replace_path(match: re.Match[str]) -> str:
         filename = pathlib.Path(match.group(1)).name
         line = match.group(2)
-        col = match.group(3)
 
-        return f"({filename}:{line}:{col})"
+        # Column is not support in GCC.
+        return f"({filename}:{line}:<col>)"
 
     return re.sub(r"\((.*):(\d*):(\d*)\)", replace_path, input)
+
 
 def _create_config_filepath_scrubber(
     config_filepath: str,
