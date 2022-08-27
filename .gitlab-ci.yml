@@ -130,6 +130,7 @@ pre-commit:
       - $BUILD_DIR/temp_test
       - "*.png"
       - "*.html"
+      - "*.approved.*"
     reports:
       junit:
         - $BUILD_DIR/junit/*.xml
@@ -208,8 +209,6 @@ clang coverage:
       - $BUILD_DIR/coverage
       - "*.png"
       - "*.html"
-      - "*.html"
-      - "*.approved.*"
     reports:
       junit:
         - $BUILD_DIR/junit/*.xml
