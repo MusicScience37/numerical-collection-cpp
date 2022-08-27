@@ -2,13 +2,14 @@
 """Helper script to install dependent Conan packages.
 """
 
-from pathlib import Path
-import subprocess
-from sys import argv
-from typing import Iterable
 import os
+import pathlib
+import subprocess
+import typing
 
-THIS_DIR = Path(__file__).absolute().parent
+import click
+
+THIS_DIR = pathlib.Path(__file__).absolute().parent
 
 
 def make_build_path(build_type: str) -> str:
@@ -24,7 +25,10 @@ def make_build_path(build_type: str) -> str:
     return str(THIS_DIR.parent / "build" / build_type)
 
 
-def install_conan_dependencies(build_type: str, *additional_args: Iterable[str]):
+@click.command
+@click.argument("build_type", type=click.Choice(["Debug", "RelWithDebInfo", "Release"]))
+@click.argument("additional_args", nargs=-1)
+def install_conan_dependencies(build_type: str, additional_args: typing.List[str]):
     """Install dependent Conan packages.
 
     Args:
@@ -59,8 +63,4 @@ def install_conan_dependencies(build_type: str, *additional_args: Iterable[str])
 
 
 if __name__ == "__main__":
-    if len(argv) == 1:
-        print(f"Usage: python3 {argv[0]} <build_type> <optional_additional_args>...")
-        exit(1)
-
-    install_conan_dependencies(*(argv[1:]))
+    install_conan_dependencies()

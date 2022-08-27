@@ -55,7 +55,6 @@ if(NUM_COLLECT_TESTING)
     find_package(ApprovalTests REQUIRED)
     find_package(cpp_stat_bench REQUIRED)
     find_package(lyra REQUIRED)
-    find_package(Boost REQUIRED)
 endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS
