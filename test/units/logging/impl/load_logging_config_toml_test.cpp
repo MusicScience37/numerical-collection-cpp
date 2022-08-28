@@ -84,12 +84,13 @@ TEST_CASE("num_collect::logging::impl::toml_config::require_log_level") {
     const auto test_toml = std::string_view(R"(
 [test]
 trace = "trace"
+debug = "debug"
 iteration = "iteration"
-iteration_label = "iteration_label"
 summary = "summary"
 info = "info"
 warning = "warning"
 error = "error"
+critical = "critical"
 off = "off"
 invalid1 = "invalid"
 invalid2 = 123
@@ -98,11 +99,11 @@ invalid2 = 123
 
     SECTION("valid log levels") {
         const auto dict = std::unordered_map<log_level, std::string>{
-            {log_level::trace, "trace"}, {log_level::iteration, "iteration"},
-            {log_level::iteration_label, "iteration_label"},
+            {log_level::trace, "trace"}, {log_level::debug, "debug"},
+            {log_level::iteration, "iteration"},
             {log_level::summary, "summary"}, {log_level::info, "info"},
             {log_level::warning, "warning"}, {log_level::error, "error"},
-            {log_level::off, "off"}};
+            {log_level::critical, "critical"}, {log_level::off, "off"}};
 
         for (const auto& [level, str] : dict) {
             INFO("level = " << static_cast<int>(level));

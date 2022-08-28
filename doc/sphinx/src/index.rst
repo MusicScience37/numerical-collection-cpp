@@ -23,6 +23,7 @@ API reference can be viewed `here <api/index.html>`_.
     how_to_use
     modules
     directories
+    user_guide/index
 
 .. toctree::
     :maxdepth: 1

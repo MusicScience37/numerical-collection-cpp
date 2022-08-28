@@ -263,6 +263,21 @@ public:
     }
 
     /*!
+     * \brief Write a debug log.
+     *
+     * \param[in] source Information of the source code.
+     * \return Proxy object to write log.
+     *
+     * \note Argument source should be left to be the default value if you want
+     * to write logs with the current position.
+     */
+    [[nodiscard]] auto debug(
+        util::source_info_view source = util::source_info_view()) const noexcept
+        -> logging_proxy {
+        return log(log_level::debug, source);
+    }
+
+    /*!
      * \brief Write a iteration log.
      *
      * \param[in] source Information of the source code.
@@ -353,6 +368,21 @@ public:
         util::source_info_view source = util::source_info_view()) const noexcept
         -> logging_proxy {
         return log(log_level::error, source);
+    }
+
+    /*!
+     * \brief Write a critical log.
+     *
+     * \param[in] source Information of the source code.
+     * \return Proxy object to write log.
+     *
+     * \note Argument source should be left to be the default value if you want
+     * to write logs with the current position.
+     */
+    [[nodiscard]] auto critical(
+        util::source_info_view source = util::source_info_view()) const noexcept
+        -> logging_proxy {
+        return log(log_level::critical, source);
     }
 
 private:

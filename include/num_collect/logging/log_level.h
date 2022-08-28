@@ -32,6 +32,9 @@ enum class log_level {
     //! For internal trace logs.
     trace,
 
+    //! For debug information. (Meant for use in user code, not in algorithms.)
+    debug,
+
     //! For logs of iterations.
     iteration,
 
@@ -50,6 +53,9 @@ enum class log_level {
     //! For errors.
     error,
 
+    //! For critical errors.
+    critical,
+
     //! Turn off output (only for output log level).
     off
 };
@@ -65,6 +71,8 @@ enum class log_level {
     switch (level) {
     case log_level::trace:
         return "trace";
+    case log_level::debug:
+        return "debug";
     case log_level::iteration:
         return "iteration";
     case log_level::iteration_label:
@@ -77,6 +85,8 @@ enum class log_level {
         return "warning";
     case log_level::error:
         return "error";
+    case log_level::critical:
+        return "critical";
     case log_level::off:
         return "off";
     }

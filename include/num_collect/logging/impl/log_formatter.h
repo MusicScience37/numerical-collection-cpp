@@ -131,6 +131,8 @@ namespace num_collect::logging::impl {
     switch (level) {
     case log_level::trace:
         return "trace";
+    case log_level::debug:
+        return "debug";
     case log_level::iteration:
     case log_level::iteration_label:
         return "iteration";
@@ -142,6 +144,8 @@ namespace num_collect::logging::impl {
         return "warning";
     case log_level::error:
         return "error";
+    case log_level::critical:
+        return "critical";
     default:
         return "unknown";
     }
