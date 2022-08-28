@@ -1,4 +1,7 @@
 #include "concepts/getter_of_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "formatters/detailed_log_formatter_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "formatters/get_log_level_str_for_log_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "formatters/iso8601_time_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/iteration_layer_handler_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/load_logging_config_toml_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/log_formatter_test.cpp"  // NOLINT(bugprone-suspicious-include)

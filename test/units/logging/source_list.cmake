@@ -1,5 +1,8 @@
 set(SOURCE_FILES
     concepts/getter_of_test.cpp
+    formatters/detailed_log_formatter_test.cpp
+    formatters/get_log_level_str_for_log_test.cpp
+    formatters/iso8601_time_test.cpp
     impl/iteration_layer_handler_test.cpp
     impl/load_logging_config_toml_test.cpp
     impl/log_formatter_test.cpp
