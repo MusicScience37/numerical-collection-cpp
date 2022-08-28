@@ -19,6 +19,8 @@
  */
 #pragma once
 
+// IWYU pragma: no_include <type_traits>
+
 #include <chrono>
 
 #include <fmt/chrono.h>

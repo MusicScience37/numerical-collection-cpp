@@ -19,9 +19,14 @@
  */
 #include "num_collect/logging/formatters/colored_compact_log_formatter.h"
 
+#include <string>
+#include <vector>
+
 #include <ApprovalTests.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <fmt/format.h>
+
+#include "num_collect/base/index_type.h"
 
 TEST_CASE("num_collect::logging::formatters::colored_compact_log_formatter") {
     using num_collect::index_type;

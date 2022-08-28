@@ -20,6 +20,7 @@
 #include "num_collect/logging/formatters/iso8601_time.h"
 
 #include <chrono>
+#include <string>
 
 #include <catch2/catch_test_macros.hpp>
 

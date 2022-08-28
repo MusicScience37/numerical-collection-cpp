@@ -20,6 +20,8 @@
 #pragma once
 
 #include <chrono>
+#include <cstddef>
+#include <iterator>
 #include <string_view>
 
 #include <fmt/format.h>
