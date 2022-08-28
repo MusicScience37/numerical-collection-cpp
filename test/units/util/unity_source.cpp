@@ -7,6 +7,7 @@
 #include "concepts/rhs_comparable_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "format_dense_matrix_test.cpp"   // NOLINT(bugprone-suspicious-include)
 #include "format_dense_vector_test.cpp"   // NOLINT(bugprone-suspicious-include)
+#include "format_errno_test.cpp"          // NOLINT(bugprone-suspicious-include)
 #include "format_sparse_matrix_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "hash_string_test.cpp"           // NOLINT(bugprone-suspicious-include)
 #include "impl/assertion_decomposer_test.cpp"  // NOLINT(bugprone-suspicious-include)

@@ -8,6 +8,7 @@ set(SOURCE_FILES
     concepts/rhs_comparable_test.cpp
     format_dense_matrix_test.cpp
     format_dense_vector_test.cpp
+    format_errno_test.cpp
     format_sparse_matrix_test.cpp
     hash_string_test.cpp
     impl/assertion_decomposer_test.cpp
