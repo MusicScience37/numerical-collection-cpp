@@ -16,7 +16,6 @@
 /*!
  * \file
  * \brief Documentation of namespaces
- * \note This file must be consistent with `doc/sphinx/src/modules.rst`.
  */
 
 /*!
@@ -107,6 +106,14 @@ namespace num_collect {
 
         //! Namespace of formatters of logs.
         namespace formatters {}
+
+        /*!
+         * \dir num_collect/logging/sinks
+         * \brief Directory of log sinks.
+         */
+
+        //! Namespace of log sinks.
+        namespace sinks {}
 
         /*!
          * \dir num_collect/logging/impl
