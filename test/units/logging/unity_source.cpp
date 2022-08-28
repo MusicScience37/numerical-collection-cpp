@@ -1,4 +1,5 @@
 #include "concepts/getter_of_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "formatters/colored_compact_log_formatter_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "formatters/detailed_log_formatter_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "formatters/get_log_level_str_for_log_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "formatters/iso8601_time_test.cpp"  // NOLINT(bugprone-suspicious-include)
