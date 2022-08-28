@@ -40,7 +40,7 @@
 #include "num_collect/logging/log_tag.h"
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/logger.h"
-#include "num_collect/logging/simple_log_sink.h"
+#include "num_collect/logging/sinks/simple_log_sink.h"
 #include "num_collect/opt/heuristic_global_optimizer.h"
 
 #define STRING1(STR) #STR
@@ -56,7 +56,7 @@ public:
         const auto file_path = fmt::format("num_collect_test_units_{}.log",
             STRING(NUM_COLLECT_TEST_MODULE_NAME));
         const auto sink =
-            std::make_shared<num_collect::logging::simple_log_sink>(file_path);
+            num_collect::logging::sinks::create_single_file_sink(file_path);
         const auto config =
             num_collect::logging::log_tag_config()
                 .sink(sink)

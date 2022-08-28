@@ -144,7 +144,7 @@ TEST_CASE("num_collect::logging::iteration_logger") {
         iteration_logger.append("val3", val3)->width(width);
 
         std::vector<std::string> logs;
-        REQUIRE_CALL(*sink, write(_, _, _, _, _))
+        REQUIRE_CALL(*sink, write_impl(_, _, _, _, _))
             .TIMES(2)
             // NOLINTNEXTLINE
             .LR_SIDE_EFFECT(logs.emplace_back(_5));
@@ -169,7 +169,7 @@ TEST_CASE("num_collect::logging::iteration_logger") {
         iteration_logger.append("val3", val3)->width(width);
 
         std::vector<std::string> logs;
-        ALLOW_CALL(*sink, write(_, _, _, _, _))
+        ALLOW_CALL(*sink, write_impl(_, _, _, _, _))
             // NOLINTNEXTLINE
             .LR_SIDE_EFFECT(logs.emplace_back(_5));
 
@@ -203,7 +203,7 @@ TEST_CASE("num_collect::logging::iteration_logger") {
         iteration_logger.append("val3", val3)->width(width);
 
         std::vector<std::string> logs;
-        ALLOW_CALL(*sink, write(_, _, _, _, _))
+        ALLOW_CALL(*sink, write_impl(_, _, _, _, _))
             // NOLINTNEXTLINE
             .LR_SIDE_EFFECT(logs.emplace_back(_5));
 
@@ -237,7 +237,7 @@ TEST_CASE("num_collect::logging::iteration_logger") {
         iteration_logger.append("val3", val3)->width(width);
 
         std::vector<std::string> logs;
-        ALLOW_CALL(*sink, write(_, _, _, _, _))
+        ALLOW_CALL(*sink, write_impl(_, _, _, _, _))
             // NOLINTNEXTLINE
             .LR_SIDE_EFFECT(logs.emplace_back(_5));
 
@@ -265,7 +265,7 @@ TEST_CASE("num_collect::logging::iteration_logger") {
         child_iteration_logger.append("val1", val1);
 
         std::vector<std::string> logs;
-        ALLOW_CALL(*sink, write(_, _, _, _, _))
+        ALLOW_CALL(*sink, write_impl(_, _, _, _, _))
             // NOLINTNEXTLINE
             .LR_SIDE_EFFECT(logs.emplace_back(_5));
 

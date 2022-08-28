@@ -7,7 +7,6 @@ set(SOURCE_FILES
     formatters/iso8601_time_test.cpp
     impl/iteration_layer_handler_test.cpp
     impl/load_logging_config_toml_test.cpp
-    impl/log_formatter_test.cpp
     impl/log_tag_config_tree_test.cpp
     impl/log_tag_element_test.cpp
     impl/separate_top_log_tag_element_test.cpp
@@ -20,7 +19,6 @@ set(SOURCE_FILES
     log_tag_view_test.cpp
     logger_test.cpp
     logging_mixin_test.cpp
-    simple_log_sink_test.cpp
     sinks/file_wrapper_test.cpp
     sinks/simple_log_sink_test.cpp
 )

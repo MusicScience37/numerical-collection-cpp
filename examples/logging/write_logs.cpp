@@ -30,7 +30,7 @@
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
-#include "num_collect/logging/simple_log_sink.h"
+#include "num_collect/logging/sinks/simple_log_sink.h"
 
 constexpr auto my_tag = num_collect::logging::log_tag_view("example tag");
 
@@ -116,7 +116,7 @@ auto main(int argc, char** argv) -> int {
             // Configure logging to a file.
             const std::string log_file_path = argv[1];  // NOLINT
             const auto config = num_collect::logging::log_tag_config().sink(
-                std::make_shared<num_collect::logging::simple_log_sink>(
+                num_collect::logging::sinks::create_single_file_sink(
                     log_file_path));
             num_collect::logging::log_config::instance().set_default_tag_config(
                 config);

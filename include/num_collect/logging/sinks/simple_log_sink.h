@@ -19,12 +19,15 @@
  */
 #pragma once
 
+// IWYU pragma: no_include <type_traits>
+
 #include <chrono>
 #include <exception>
 #include <filesystem>
 #include <iostream>
 #include <memory>
 #include <mutex>
+#include <string>
 #include <string_view>
 #include <utility>
 
@@ -81,7 +84,9 @@ public:
             std::unique_lock<std::mutex> lock(mutex_);
             buffer_.clear();
             formatter_->format(buffer_, time, tag, level, source, body);
+            buffer_.push_back('\n');
             file_.write(std::string_view(buffer_.data(), buffer_.size()));
+            file_.flush();
         } catch (const std::exception& e) {
             std::cerr << "ERROR IN LOGGING: " << e.what() << std::endl;
             file_.close();

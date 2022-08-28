@@ -29,13 +29,13 @@
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 
-#include "num_collect/logging/colored_console_log_sink.h"
 #include "num_collect/logging/log_config.h"
 #include "num_collect/logging/log_level.h"
-#include "num_collect/logging/log_sink_base.h"
 #include "num_collect/logging/log_tag.h"
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/sinks/log_sink_base.h"
+#include "num_collect/logging/sinks/simple_log_sink.h"
 
 TEST_CASE("num_collect::logging::impl::toml_config::require_value") {
     using num_collect::logging::impl::toml_config::require_value;
@@ -199,18 +199,16 @@ type = "single_file"
 }
 
 TEST_CASE("num_collect::logging::impl::toml_config::parse_log_tag_config") {
-    using num_collect::logging::colored_console_log_sink;
     using num_collect::logging::log_level;
-    using num_collect::logging::log_sink_base;
     using num_collect::logging::log_tag;
     using num_collect::logging::log_tag_config;
     using num_collect::logging::impl::toml_config::parse_log_tag_config;
+    using num_collect::logging::sinks::create_colored_console_sink;
+    using num_collect::logging::sinks::log_sink_base;
 
     std::unordered_map<std::string, std::shared_ptr<log_sink_base>> sinks;
-    sinks.try_emplace(
-        "sink1", std::make_shared<colored_console_log_sink>(stdout));
-    sinks.try_emplace(
-        "sink2", std::make_shared<colored_console_log_sink>(stdout));
+    sinks.try_emplace("sink1", create_colored_console_sink());
+    sinks.try_emplace("sink2", create_colored_console_sink());
 
     const auto test_toml = std::string_view(R"(
 [test.all]

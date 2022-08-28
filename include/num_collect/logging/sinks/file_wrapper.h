@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <cerrno>
 #include <cstdio>
 #include <string>
 #include <string_view>
@@ -158,6 +159,21 @@ public:
         const std::size_t written_size =
             std::fwrite(data.data(), 1, data.size(), file_);
         if (written_size != data.size()) {
+            throw file_error(util::format_errno("Failed to write to file"));
+        }
+    }
+
+    /*!
+     * \brief Flush buffer.
+     */
+    void flush() {
+        if (file_ == nullptr) {
+            throw file_error("Failed to write to file: file is not opened.");
+        }
+
+        errno = 0;
+        const int result = std::fflush(file_);
+        if (result != 0) {
             throw file_error(util::format_errno("Failed to write to file"));
         }
     }

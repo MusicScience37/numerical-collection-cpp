@@ -20,20 +20,15 @@
 #include <exception>
 #include <functional>
 #include <iostream>
-#include <memory>
 #include <string>
 #include <string_view>
 
-#include "num_collect/base/exception.h"
+#include <fmt/format.h>
+
 #include "num_collect/logging/iteration_logger.h"
 #include "num_collect/logging/load_logging_config.h"
-#include "num_collect/logging/log_config.h"
-#include "num_collect/logging/log_level.h"
-#include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
-#include "num_collect/logging/simple_log_sink.h"
-#include "num_collect/util/source_info_view.h"
 
 constexpr auto my_tag = num_collect::logging::log_tag_view("example tag");
 

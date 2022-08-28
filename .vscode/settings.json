@@ -47,6 +47,7 @@
     "doxygen",
     "Eigen",
     "Elden",
+    "errno",
     "ESDIRK",
     "fcoverage",
     "Fehlberg",

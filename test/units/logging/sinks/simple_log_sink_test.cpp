@@ -21,6 +21,8 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include "num_collect/base/index_type.h"
+
 TEST_CASE("num_collect::logging::sinks::create_single_file_sink") {
     using num_collect::index_type;
     using num_collect::logging::log_level;

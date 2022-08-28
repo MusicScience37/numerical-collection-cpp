@@ -17,8 +17,7 @@
  * \file
  * \brief Benchmark of writing trace logs.
  */
-#include <memory>
-
+#include <fmt/format.h>
 #include <stat_bench/bench/invocation_context.h>
 #include <stat_bench/benchmark_macros.h>
 
@@ -26,7 +25,7 @@
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/logger.h"
-#include "num_collect/logging/simple_log_sink.h"
+#include "num_collect/logging/sinks/simple_log_sink.h"
 
 STAT_BENCH_MAIN
 
@@ -42,7 +41,7 @@ static void perform(
 STAT_BENCH_CASE("trace_logs", "write no log") {
     num_collect::logging::log_config::instance().set_default_tag_config(
         num_collect::logging::log_tag_config()
-            .sink(std::make_shared<num_collect::logging::simple_log_sink>(
+            .sink(num_collect::logging::sinks::create_single_file_sink(
                 "num_collect_bench_logging_write_trace_logs.log"))
             .output_log_level(num_collect::logging::log_level::iteration));
 
@@ -53,7 +52,7 @@ STAT_BENCH_CASE("trace_logs", "write no log") {
 STAT_BENCH_CASE("trace_logs", "write log") {
     num_collect::logging::log_config::instance().set_default_tag_config(
         num_collect::logging::log_tag_config()
-            .sink(std::make_shared<num_collect::logging::simple_log_sink>(
+            .sink(num_collect::logging::sinks::create_single_file_sink(
                 "num_collect_bench_logging_write_trace_logs.log"))
             .output_log_level(num_collect::logging::log_level::trace));
 

@@ -21,10 +21,10 @@
 
 #include <cerrno>
 #include <iterator>
+#include <string>
 #include <system_error>
 #include <utility>
 
-#include <fmt/core.h>
 #include <fmt/format.h>
 
 namespace num_collect::util {
