@@ -55,16 +55,18 @@ TEST_CASE("num_collect::logging::logger") {
             log_tag_config().output_log_level(log_level::trace).sink(sink);
         CHECK_NOTHROW(log_config::instance().set_config_of(tag, config));
 
-        REQUIRE_CALL(*sink, write(_, _, _, _, _)).TIMES(7);
+        REQUIRE_CALL(*sink, write(_, _, _, _, _)).TIMES(9);
 
         const auto l = logger(tag);
         l.trace()("Test trace log.");
+        l.debug()("Test debug log.");
         l.iteration()("Test iteration log.");
         l.iteration_label()("Test iteration_label log.");
         l.summary()("Test summary log.");
         l.info()("Test info log.");
         l.warning()("Test warning log.");
         l.error()("Test error log.");
+        l.critical()("Test critical log.");
     }
 
     SECTION("write logs with formatting") {

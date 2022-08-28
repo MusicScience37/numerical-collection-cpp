@@ -43,6 +43,7 @@ namespace num_collect::logging::impl {
     switch (level) {
     case log_level::trace:
         return fmt::fg(fmt::color::gray);
+    case log_level::debug:
     case log_level::iteration:
     case log_level::iteration_label:
         return fmt::text_style();
@@ -54,6 +55,9 @@ namespace num_collect::logging::impl {
         return fmt::fg(fmt::color::orange_red);
     case log_level::error:
         return fmt::fg(fmt::color::red) | fmt::emphasis::bold;
+    case log_level::critical:
+        return fmt::fg(fmt::color::red) | fmt::bg(fmt::color::yellow) |
+            fmt::emphasis::bold;
     default:
         return fmt::text_style();
     }
@@ -71,6 +75,9 @@ namespace num_collect::logging::impl {
         return fmt::emphasis::bold | fmt::fg(fmt::color::gray);
     case log_level::error:
         return fmt::emphasis::bold | fmt::fg(fmt::color::red);
+    case log_level::critical:
+        return fmt::emphasis::bold | fmt::fg(fmt::color::red) |
+            fmt::bg(fmt::color::yellow);
     default:
         return fmt::text_style();
     }

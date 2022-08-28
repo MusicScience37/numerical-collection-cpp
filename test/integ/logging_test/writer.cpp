@@ -43,12 +43,14 @@ static void write_logs() {
 
     // Write logs.
     logger.trace()("trace");
+    logger.debug()("debug");
     logger.iteration()("iteration");
     logger.iteration_label()("iteration_label");
     logger.summary()("summary");
     logger.info()("info");
     logger.warning()("warning");
     logger.error()("error");
+    logger.critical()("critical");
 }
 
 static void write_to_default_tag() {
@@ -57,12 +59,14 @@ static void write_to_default_tag() {
 
     // Write logs.
     logger.trace()("trace");
+    logger.debug()("debug");
     logger.iteration()("iteration");
     logger.iteration_label()("iteration_label");
     logger.summary()("summary");
     logger.info()("info");
     logger.warning()("warning");
     logger.error()("error");
+    logger.critical()("critical");
 }
 
 static void write_iterations() {

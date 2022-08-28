@@ -87,11 +87,11 @@ inline auto require_log_level(const toml::table& table, std::string_view path,
     if (str == "trace") {
         return log_level::trace;
     }
+    if (str == "debug") {
+        return log_level::debug;
+    }
     if (str == "iteration") {
         return log_level::iteration;
-    }
-    if (str == "iteration_label") {
-        return log_level::iteration_label;
     }
     if (str == "summary") {
         return log_level::summary;
@@ -104,6 +104,9 @@ inline auto require_log_level(const toml::table& table, std::string_view path,
     }
     if (str == "error") {
         return log_level::error;
+    }
+    if (str == "critical") {
+        return log_level::critical;
     }
     if (str == "off") {
         return log_level::off;

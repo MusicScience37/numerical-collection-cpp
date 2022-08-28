@@ -47,10 +47,12 @@ static void write_logs() {
 
     // Write logs.
     logger.trace()("trace");
+    logger.debug()("debug");
     logger.summary()("summary");
     logger.info()("info");
     logger.warning()("warning");
     logger.error()("error");
+    logger.critical()("critical");
 
     // These may not be used in ordinary user code.
     logger.iteration()("iteration");
