@@ -101,6 +101,14 @@ namespace num_collect {
         namespace concepts {}
 
         /*!
+         * \dir num_collect/logging/formatters
+         * \brief Directory of formatters of logs.
+         */
+
+        //! Namespace of formatters of logs.
+        namespace formatters {}
+
+        /*!
          * \dir num_collect/logging/impl
          * \brief Directory of implementation.
          */
