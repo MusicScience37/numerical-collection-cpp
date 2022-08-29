@@ -17,27 +17,23 @@
  * \file
  * \brief Test of simple_log_sink class.
  */
-#include "num_collect/logging/simple_log_sink.h"
-
-#include <memory>
-#include <type_traits>
+#include "num_collect/logging/sinks/simple_log_sink.h"
 
 #include <catch2/catch_test_macros.hpp>
 
 #include "num_collect/base/index_type.h"
 
-TEST_CASE("num_collect::logging::simple_log_sink") {
+TEST_CASE("num_collect::logging::sinks::create_single_file_sink") {
     using num_collect::index_type;
     using num_collect::logging::log_level;
-    using num_collect::logging::simple_log_sink;
-    using num_collect::logging::impl::log_formatter;
+    using num_collect::logging::sinks::create_single_file_sink;
     using num_collect::util::source_info_view;
 
     const std::string dir_path = "./logging";
-    const std::string file_path = "./logging/simple_log_sink_test.log";
+    const std::string filepath = "./logging/simple_log_sink_test.log";
     std::filesystem::remove_all(dir_path);
 
-    const auto sink = std::make_shared<simple_log_sink>(file_path);
+    const auto sink = create_single_file_sink(filepath);
 
     SECTION("write") {
         const auto time = std::chrono::system_clock::now();

@@ -32,10 +32,10 @@
 #include "num_collect/logging/impl/iteration_layer_handler.h"
 #include "num_collect/logging/log_config.h"
 #include "num_collect/logging/log_level.h"
-#include "num_collect/logging/log_sink_base.h"
 #include "num_collect/logging/log_tag.h"
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/sinks/log_sink_base.h"
 #include "num_collect/util/source_info_view.h"
 
 namespace num_collect::logging {
@@ -58,7 +58,7 @@ public:
      * \param[in] write_log Whether to write log.
      */
     logging_proxy(std::string_view tag, log_level level,
-        util::source_info_view source, log_sink_base* sink,
+        util::source_info_view source, sinks::log_sink_base* sink,
         bool write_log) noexcept
         : tag_(tag),
           level_(level),
@@ -76,7 +76,8 @@ public:
             return;
         }
 
-        write(body);
+        sink_->write(
+            std::chrono::system_clock::now(), tag_, level_, source_, body);
     }
 
     /*!
@@ -95,20 +96,11 @@ public:
         fmt::memory_buffer buffer;
         fmt::format_to(
             std::back_inserter(buffer), format, std::forward<Args>(args)...);
-        write(std::string_view(buffer.data(), buffer.size()));
+        sink_->write(std::chrono::system_clock::now(), tag_, level_, source_,
+            std::move(buffer));
     }
 
 private:
-    /*!
-     * \brief Write a log.
-     *
-     * \param[in] body Body.
-     */
-    void write(std::string_view body) const {
-        sink_->write(
-            std::chrono::system_clock::now(), tag_, level_, source_, body);
-    }
-
     //! Tag.
     std::string_view tag_;
 
@@ -119,7 +111,7 @@ private:
     util::source_info_view source_;
 
     //! Log sink.
-    log_sink_base* sink_;
+    sinks::log_sink_base* sink_;
 
     //! Whether to write log.
     bool write_log_;

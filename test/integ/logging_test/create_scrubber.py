@@ -10,7 +10,7 @@ import approvaltests.scrubbers
 
 def _create_timestamp_scrubber() -> typing.Callable[[str], str]:
     return approvaltests.scrubbers.create_regex_scrubber(
-        r"\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.\d\d\d\d\d\d.\d\d\d\d",
+        r"\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.\d\d\d\d\d\d",
         "<time-stamp>",
     )
 

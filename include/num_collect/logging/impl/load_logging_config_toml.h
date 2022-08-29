@@ -19,7 +19,6 @@
  */
 #pragma once
 
-#include <cstdio>
 #include <functional>
 #include <memory>
 #include <optional>
@@ -33,13 +32,12 @@
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/logging/colored_console_log_sink.h"
 #include "num_collect/logging/log_config.h"
 #include "num_collect/logging/log_level.h"
-#include "num_collect/logging/log_sink_base.h"
 #include "num_collect/logging/log_tag.h"
 #include "num_collect/logging/log_tag_config.h"
-#include "num_collect/logging/simple_log_sink.h"
+#include "num_collect/logging/sinks/log_sink_base.h"
+#include "num_collect/logging/sinks/simple_log_sink.h"
 
 namespace num_collect::logging::impl::toml_config {
 
@@ -121,7 +119,7 @@ inline auto require_log_level(const toml::table& table, std::string_view path,
  * \return Name and log sink.
  */
 inline auto parse_log_sink_config(const toml::table& table)
-    -> std::pair<std::string, std::shared_ptr<log_sink_base>> {
+    -> std::pair<std::string, std::shared_ptr<sinks::log_sink_base>> {
     const auto name = require_value<std::string>(
         table, "name", "name in num_collect.logging.sinks element", "a string");
     if (name == default_log_sink_name) {
@@ -133,14 +131,13 @@ inline auto parse_log_sink_config(const toml::table& table)
         table, "type", "type in num_collect.logging.sinks element", "a string");
 
     if (type == "colored_console") {
-        std::FILE* file = stdout;
-        return {name, std::make_shared<colored_console_log_sink>(file)};
+        return {name, sinks::create_colored_console_sink()};
     }
 
     if (type == "single_file") {
         const auto filepath = require_value<std::string>(table, "filepath",
             "filepath in num_collect.logging.sinks element", "a string");
-        return {name, std::make_shared<simple_log_sink>(filepath)};
+        return {name, sinks::create_single_file_sink(filepath)};
     }
 
     throw invalid_argument(fmt::format("Invalid log sink type {}.", type));
@@ -154,8 +151,9 @@ inline auto parse_log_sink_config(const toml::table& table)
  * \return Log tag and its configuration.
  */
 inline auto parse_log_tag_config(const toml::table& table,
-    const std::unordered_map<std::string, std::shared_ptr<log_sink_base>>&
-        sinks) -> std::pair<log_tag, log_tag_config> {
+    const std::unordered_map<std::string,
+        std::shared_ptr<sinks::log_sink_base>>& sinks)
+    -> std::pair<log_tag, log_tag_config> {
     const auto tag_string = require_value<std::string>(table, "tag",
         "tag in num_collect.logging.tag_configs element", "a string");
     const auto tag = log_tag(tag_string);
@@ -215,8 +213,9 @@ inline auto parse_log_tag_config(const toml::table& table,
  * \return Log sinks.
  */
 inline auto parse_log_sinks(const toml::array& array)
-    -> std::unordered_map<std::string, std::shared_ptr<log_sink_base>> {
-    std::unordered_map<std::string, std::shared_ptr<log_sink_base>> sinks;
+    -> std::unordered_map<std::string, std::shared_ptr<sinks::log_sink_base>> {
+    std::unordered_map<std::string, std::shared_ptr<sinks::log_sink_base>>
+        sinks;
     for (const auto& elem_node : array) {
         const auto* elem_table = elem_node.as_table();
         if (elem_table == nullptr) {
@@ -236,8 +235,8 @@ inline auto parse_log_sinks(const toml::array& array)
  * \param[in] sinks Log sinks.
  */
 inline void load_log_tag_configs(const toml::array& array,
-    const std::unordered_map<std::string, std::shared_ptr<log_sink_base>>&
-        sinks) {
+    const std::unordered_map<std::string,
+        std::shared_ptr<sinks::log_sink_base>>& sinks) {
     for (const auto& elem_node : array) {
         const auto* elem_table = elem_node.as_table();
         if (elem_table == nullptr) {
@@ -257,7 +256,8 @@ inline void load_log_tag_configs(const toml::array& array,
  * \param[in] table Base table.
  */
 inline void load_logging_config_toml(const toml::table& table) {
-    std::unordered_map<std::string, std::shared_ptr<log_sink_base>> sinks;
+    std::unordered_map<std::string, std::shared_ptr<sinks::log_sink_base>>
+        sinks;
 
     const auto log_sink_configs_node =
         table.at_path("num_collect.logging.sinks");

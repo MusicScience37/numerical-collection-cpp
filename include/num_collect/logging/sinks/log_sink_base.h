@@ -22,10 +22,12 @@
 #include <chrono>
 #include <string_view>
 
+#include <fmt/format.h>
+
 #include "num_collect/logging/log_level.h"
 #include "num_collect/util/source_info_view.h"
 
-namespace num_collect::logging {
+namespace num_collect::logging::sinks {
 
 /*!
  * \brief Interface of log sinks.
@@ -47,6 +49,21 @@ public:
         std::string_view tag, log_level level, util::source_info_view source,
         std::string_view body) noexcept = 0;
 
+    /*!
+     * \brief Write a log.
+     *
+     * \param[in] time Time.
+     * \param[in] tag Tag.
+     * \param[in] level Log level.
+     * \param[in] source Information of the source code.
+     * \param[in] body Log body.
+     *
+     * \note Implementations of this function must be thread-safe.
+     */
+    virtual void write(std::chrono::system_clock::time_point time,
+        std::string_view tag, log_level level, util::source_info_view source,
+        fmt::memory_buffer&& body) noexcept = 0;
+
     log_sink_base(const log_sink_base&) = delete;
     log_sink_base(log_sink_base&&) = delete;
     auto operator=(const log_sink_base&) -> log_sink_base& = delete;
@@ -64,4 +81,4 @@ protected:
     log_sink_base() noexcept = default;
 };
 
-}  // namespace num_collect::logging
+}  // namespace num_collect::logging::sinks

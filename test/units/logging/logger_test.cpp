@@ -55,7 +55,7 @@ TEST_CASE("num_collect::logging::logger") {
             log_tag_config().output_log_level(log_level::trace).sink(sink);
         CHECK_NOTHROW(log_config::instance().set_config_of(tag, config));
 
-        REQUIRE_CALL(*sink, write(_, _, _, _, _)).TIMES(9);
+        REQUIRE_CALL(*sink, write_impl(_, _, _, _, _)).TIMES(9);
 
         const auto l = logger(tag);
         l.trace()("Test trace log.");
@@ -76,7 +76,7 @@ TEST_CASE("num_collect::logging::logger") {
         CHECK_NOTHROW(log_config::instance().set_config_of(tag, config));
 
         REQUIRE_CALL(*sink,
-            write(_, std::string_view(tag.name()), log_level::info, _,
+            write_impl(_, std::string_view(tag.name()), log_level::info, _,
                 std::string_view("Test info log with formatting. (value=3)")));
 
         const auto l = logger(tag);
@@ -88,7 +88,7 @@ TEST_CASE("num_collect::logging::logger") {
         const auto sink = std::make_shared<mock_log_sink>();
         const auto config = log_tag_config().sink(sink);
 
-        FORBID_CALL(*sink, write(_, _, _, _, _));
+        FORBID_CALL(*sink, write_impl(_, _, _, _, _));
 
         const auto l = logger(tag, config);
         l.trace()("Test trace log.");
@@ -114,8 +114,8 @@ TEST_CASE("num_collect::logging::logger") {
         l.set_iterative();
         {
             REQUIRE_CALL(*sink,
-                write(_, std::string_view(tag.name()), log_level::summary, _,
-                    std::string_view("Test summary log.")))
+                write_impl(_, std::string_view(tag.name()), log_level::summary,
+                    _, std::string_view("Test summary log.")))
                 .TIMES(1);
 
             l.trace()("Test trace log.");
@@ -126,7 +126,7 @@ TEST_CASE("num_collect::logging::logger") {
 
         lp.set_iterative();
         {
-            FORBID_CALL(*sink, write(_, _, _, _, _));
+            FORBID_CALL(*sink, write_impl(_, _, _, _, _));
 
             l.trace()("Test trace log.");
             l.iteration()("Test iteration log.");

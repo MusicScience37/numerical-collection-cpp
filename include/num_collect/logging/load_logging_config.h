@@ -22,6 +22,7 @@
 #include <exception>
 #include <filesystem>
 #include <string>
+#include <string_view>
 
 #include <fmt/format.h>
 #include <toml++/toml.h>
