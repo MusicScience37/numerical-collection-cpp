@@ -28,6 +28,7 @@ namespace num_collect_test::logging {
 
 class mock_log_sink final : public num_collect::logging::sinks::log_sink_base {
 public:
+    // NOLINTNEXTLINE(bugprone-exception-escape)
     void write(std::chrono::system_clock::time_point time, std::string_view tag,
         num_collect::logging::log_level level,
         num_collect::util::source_info_view source,
@@ -35,6 +36,7 @@ public:
         write_impl(time, tag, level, source, body);
     }
 
+    // NOLINTNEXTLINE(bugprone-exception-escape)
     void write(std::chrono::system_clock::time_point time, std::string_view tag,
         num_collect::logging::log_level level,
         num_collect::util::source_info_view source,
