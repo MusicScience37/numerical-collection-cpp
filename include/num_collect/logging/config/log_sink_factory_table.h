@@ -27,12 +27,18 @@
 #include <unordered_map>
 #include <utility>
 
+#include <fmt/core.h>
 #include <fmt/format.h>
 
+#include "num_collect/base/exception.h"
+#include "num_collect/logging/config/default_log_sink_factory.h"
 #include "num_collect/logging/config/log_sink_factory_base.h"
 #include "num_collect/logging/sinks/log_sink_base.h"
 
 namespace num_collect::logging::config {
+
+//! Name of the default log sink.
+constexpr auto default_log_sink_name = std::string_view("default");
 
 /*!
  * \brief Class of tables of log sinks.
@@ -40,7 +46,10 @@ namespace num_collect::logging::config {
 class log_sink_factory_table {
 public:
     //! Constructor.
-    log_sink_factory_table() = default;
+    log_sink_factory_table() {
+        append(std::string{default_log_sink_name},
+            std::make_shared<default_log_sink_factory>());
+    }
 
     /*!
      * \brief Append a factory of a log sink.
@@ -48,9 +57,12 @@ public:
      * \param[in] name Name of the log sink.
      * \param[in] sink_factory Factory of the log sink.
      */
-    void append(
-        std::string name, std::shared_ptr<log_sink_factory_base> sink_factory) {
-        caches_.try_emplace(std::move(name), std::move(sink_factory));
+    void append(const std::string& name,
+        const std::shared_ptr<log_sink_factory_base>& sink_factory) {
+        if (!caches_.try_emplace(name, sink_factory).second) {
+            throw invalid_argument(fmt::format(
+                "Duplicate configurations of a log sink {}.", name));
+        }
     }
 
     /*!

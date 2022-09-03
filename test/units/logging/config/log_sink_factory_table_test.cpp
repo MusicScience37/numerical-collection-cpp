@@ -26,11 +26,14 @@
 
 #include "../mock_log_sink.h"
 #include "mock_log_sink_factory.h"
+#include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/sinks/log_sink_base.h"
 #include "trompeloeil_catch2.h"
 
 TEST_CASE("num_collect::logging::config::log_sink_factory_table") {
+    using num_collect::logging::config::default_log_sink_name;
     using num_collect::logging::config::log_sink_factory_table;
+    using num_collect::logging::impl::get_default_log_sink;
     using num_collect::logging::sinks::log_sink_base;
     using num_collect_test::logging::mock_log_sink;
     using num_collect_test::logging::config::mock_log_sink_factory;
@@ -102,5 +105,24 @@ TEST_CASE("num_collect::logging::config::log_sink_factory_table") {
             CHECK(static_cast<void*>(sink.get()) ==
                 static_cast<void*>(sink1.get()));
         }
+    }
+
+    SECTION("get default log sink") {
+        log_sink_factory_table table;
+
+        std::shared_ptr<log_sink_base> sink;
+        CHECK_NOTHROW(sink = table.get(std::string{default_log_sink_name}));
+        CHECK(static_cast<void*>(sink.get()) ==
+            static_cast<void*>(get_default_log_sink().get()));
+    }
+
+    SECTION("duplicate name of log sinks") {
+        log_sink_factory_table table;
+
+        const auto name1 = std::string("sink1");
+        const auto sink1 = std::make_shared<mock_log_sink>();
+        const auto factory1 = std::make_shared<mock_log_sink_factory>();
+        CHECK_NOTHROW(table.append(name1, factory1));
+        CHECK_THROWS(table.append(name1, factory1));
     }
 }

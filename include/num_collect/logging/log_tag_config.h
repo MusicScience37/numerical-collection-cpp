@@ -100,12 +100,13 @@ public:
     auto output_log_level(log_level val) -> log_tag_config& {
         switch (val) {
         case log_level::trace:
+        case log_level::debug:
         case log_level::iteration:
-        case log_level::iteration_label:
         case log_level::summary:
         case log_level::info:
         case log_level::warning:
         case log_level::error:
+        case log_level::critical:
         case log_level::off:
             break;
         default:
@@ -135,12 +136,13 @@ public:
         -> log_tag_config& {
         switch (val) {
         case log_level::trace:
+        case log_level::debug:
         case log_level::iteration:
-        case log_level::iteration_label:
         case log_level::summary:
         case log_level::info:
         case log_level::warning:
         case log_level::error:
+        case log_level::critical:
         case log_level::off:
             break;
         default:

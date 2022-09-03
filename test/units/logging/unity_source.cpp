@@ -2,6 +2,7 @@
 #include "config/log_sink_factory_table_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "config/toml/toml_console_log_sink_config_parser_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "config/toml/toml_helper_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "config/toml/toml_log_config_parser_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "config/toml/toml_single_file_log_sink_config_parser_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "formatters/colored_compact_log_formatter_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "formatters/compact_log_formatter_test.cpp"  // NOLINT(bugprone-suspicious-include)
