@@ -11,7 +11,6 @@ set(SOURCE_FILES
     formatters/get_log_level_str_for_log_test.cpp
     formatters/iso8601_time_test.cpp
     impl/iteration_layer_handler_test.cpp
-    impl/load_logging_config_toml_test.cpp
     impl/log_tag_config_tree_test.cpp
     impl/log_tag_element_test.cpp
     impl/separate_top_log_tag_element_test.cpp

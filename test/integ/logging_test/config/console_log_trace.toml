@@ -5,4 +5,5 @@ output_log_level = "trace"
 
 [[num_collect.logging.sinks]]
 name = "console"
-type = "colored_console"
+type = "console"
+use_color = true

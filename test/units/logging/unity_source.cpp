@@ -10,7 +10,6 @@
 #include "formatters/get_log_level_str_for_log_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "formatters/iso8601_time_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/iteration_layer_handler_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "impl/load_logging_config_toml_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/log_tag_config_tree_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/log_tag_element_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/separate_top_log_tag_element_test.cpp"  // NOLINT(bugprone-suspicious-include)
