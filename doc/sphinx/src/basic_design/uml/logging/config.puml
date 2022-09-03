@@ -15,17 +15,17 @@ package logging {
 
     package config {
         interface log_sink_factory_base {
-            {abstract} + create(sinks: log_sink_table&) : shared_ptr<log_sink_base>
+            {abstract} + create(sinks: log_sink_factory_table&) : shared_ptr<log_sink_base>
         }
         log_sink_factory_base ..> log_sink_base
 
-        class log_sink_table {
+        class log_sink_factory_table {
             + append(name: string,\n\tsink_factory: shared_ptr<log_sink_factory_base>)
             + get(name: string) : shared_ptr<log_sink_base>
         }
-        log_sink_table o-- log_sink_factory_base
-        log_sink_table o-- log_sink_base
-        log_sink_factory_base .up.> log_sink_table
+        log_sink_factory_table o-- log_sink_factory_base
+        log_sink_factory_table o-- log_sink_base
+        log_sink_factory_base .up.> log_sink_factory_table
 
         interface log_config_parser_base {
             {abstract} + parse_from_file(filepath: string_view)
@@ -52,7 +52,7 @@ package logging {
             }
             log_config_parser_base <|.. toml_log_config_parser
             toml_log_config_parser o-- toml_log_sink_config_parser
-            toml_log_config_parser o-- log_sink_table
+            toml_log_config_parser ..> log_sink_factory_table
             toml_log_config_parser ..> log_config
         }
     }

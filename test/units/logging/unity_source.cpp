@@ -1,4 +1,5 @@
 #include "concepts/getter_of_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "config/log_sink_factory_table_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "formatters/colored_compact_log_formatter_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "formatters/compact_log_formatter_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "formatters/detailed_log_formatter_test.cpp"  // NOLINT(bugprone-suspicious-include)
