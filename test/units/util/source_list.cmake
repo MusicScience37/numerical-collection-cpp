@@ -16,6 +16,8 @@ set(SOURCE_FILES
     is_eigen_matrix_test.cpp
     is_eigen_vector_test.cpp
     kahan_adder_test.cpp
+    object_storage_test.cpp
+    producer_consumer_circular_queue_test.cpp
     safe_cast_test.cpp
     source_info_view_test.cpp
 )
