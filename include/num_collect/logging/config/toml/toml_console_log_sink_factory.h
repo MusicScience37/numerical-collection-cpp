@@ -25,6 +25,7 @@
 #include <toml++/toml.h>
 
 #include "num_collect/logging/config/log_sink_factory_base.h"
+#include "num_collect/logging/config/log_sink_factory_table.h"
 #include "num_collect/logging/config/toml/toml_helper.h"
 #include "num_collect/logging/formatters/colored_compact_log_formatter.h"
 #include "num_collect/logging/formatters/compact_log_formatter.h"

@@ -23,11 +23,11 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <type_traits>
 #include <unordered_map>
 #include <utility>
 
-#include <fmt/core.h>
 #include <fmt/format.h>
 
 #include "num_collect/base/exception.h"

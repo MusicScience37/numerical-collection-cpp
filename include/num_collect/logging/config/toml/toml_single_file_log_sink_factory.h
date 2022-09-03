@@ -21,14 +21,12 @@
 
 #include <memory>
 #include <string>
-#include <utility>
 
 #include <toml++/toml.h>
 
 #include "num_collect/logging/config/log_sink_factory_base.h"
+#include "num_collect/logging/config/log_sink_factory_table.h"
 #include "num_collect/logging/config/toml/toml_helper.h"
-#include "num_collect/logging/formatters/detailed_log_formatter.h"
-#include "num_collect/logging/sinks/file_wrapper.h"
 #include "num_collect/logging/sinks/log_sink_base.h"
 #include "num_collect/logging/sinks/simple_log_sink.h"
 

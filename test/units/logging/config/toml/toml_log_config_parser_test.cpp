@@ -21,16 +21,17 @@
 
 #include <fstream>
 
+#include <catch2/catch_message.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 
 #include "../../mock_log_sink.h"
 #include "../mock_log_sink_factory.h"
-#include "num_collect/logging/config/log_sink_factory_base.h"
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/log_tag.h"
 #include "num_collect/logging/log_tag_config.h"
+#include "num_collect/logging/log_tag_view.h"
 #include "trompeloeil_catch2.h"
 
 TEST_CASE("num_collect::logging::config::toml::impl::require_log_level") {

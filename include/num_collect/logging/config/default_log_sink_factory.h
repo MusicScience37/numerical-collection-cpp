@@ -20,7 +20,6 @@
 #pragma once
 
 #include <memory>
-#include <utility>
 
 #include "num_collect/logging/config/log_sink_factory_base.h"
 #include "num_collect/logging/log_tag_config.h"

@@ -19,17 +19,22 @@
  */
 #pragma once
 
+#include <exception>
+#include <filesystem>
+#include <functional>
 #include <memory>
 #include <string>
 #include <string_view>
+#include <type_traits>
 #include <unordered_map>
+#include <utility>
 
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <toml++/toml.h>
 
 #include "num_collect/base/exception.h"
+#include "num_collect/base/index_type.h"
 #include "num_collect/logging/config/log_config_parser_base.h"
-#include "num_collect/logging/config/log_sink_factory_base.h"
 #include "num_collect/logging/config/log_sink_factory_table.h"
 #include "num_collect/logging/config/parse_output_log_level_str.h"
 #include "num_collect/logging/config/toml/toml_console_log_sink_config_parser.h"
