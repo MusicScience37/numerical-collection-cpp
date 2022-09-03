@@ -38,20 +38,20 @@ package logging {
             log_sink_factory_base <|.. toml_xxx_log_sink_factory
             toml_xxx_log_sink_factory ..> xxx_log_sink
 
-            interface toml_log_sink_config_parser {
+            interface toml_log_sink_config_parser_base {
                 {abstract} + parse(table: toml::table) : shared_ptr<log_sink_factory_base>
             }
-            toml_log_sink_config_parser ..> log_sink_factory_base
+            toml_log_sink_config_parser_base ..> log_sink_factory_base
 
             class toml_xxx_log_sink_config_parser
-            toml_log_sink_config_parser <|.. toml_xxx_log_sink_config_parser
+            toml_log_sink_config_parser_base <|.. toml_xxx_log_sink_config_parser
             toml_xxx_log_sink_config_parser ..> toml_xxx_log_sink_factory
 
             class toml_log_config_parser {
                 + parse_from_table(table: toml::table)
             }
             log_config_parser_base <|.. toml_log_config_parser
-            toml_log_config_parser o-- toml_log_sink_config_parser
+            toml_log_config_parser o-- toml_log_sink_config_parser_base
             toml_log_config_parser ..> log_sink_factory_table
             toml_log_config_parser ..> log_config
         }

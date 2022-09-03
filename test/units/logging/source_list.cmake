@@ -1,6 +1,8 @@
 set(SOURCE_FILES
     concepts/getter_of_test.cpp
     config/log_sink_factory_table_test.cpp
+    config/toml/toml_console_log_sink_config_parser_test.cpp
+    config/toml/toml_helper_test.cpp
     formatters/colored_compact_log_formatter_test.cpp
     formatters/compact_log_formatter_test.cpp
     formatters/detailed_log_formatter_test.cpp
