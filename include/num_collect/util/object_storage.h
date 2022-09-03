@@ -82,6 +82,7 @@ public:
 #ifndef NDEBUG
         assert(!has_object_);
 #endif
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay,hicpp-no-array-decay)
         ::new (storage_.data()) T(std::forward<Args>(args)...);
 #ifndef NDEBUG
         has_object_ = true;

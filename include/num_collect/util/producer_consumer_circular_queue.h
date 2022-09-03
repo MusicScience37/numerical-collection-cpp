@@ -20,9 +20,13 @@
 #pragma once
 
 #include <atomic>
+#include <cstddef>
 #include <limits>
-#include <type_traits>
+#include <string>
+#include <type_traits>  // IWYU pragma: keep
 #include <utility>
+
+#include <fmt/format.h>
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
@@ -48,7 +52,8 @@ public:
      */
     explicit producer_consumer_circular_queue(index_type size)
         : begin_(new storage_type[get_buffer_size(size)]),
-          end_(begin_ + size + 1),
+          // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+          end_(begin_ + (size + 1)),
           producer_pos_(begin_),
           consumer_pos_(begin_) {}
 
@@ -150,6 +155,7 @@ private:
      * \return Incremented pointer.
      */
     [[nodiscard]] auto increment(storage_type* ptr) noexcept -> storage_type* {
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         ++ptr;
         if (ptr == end_) {
             ptr = begin_;
