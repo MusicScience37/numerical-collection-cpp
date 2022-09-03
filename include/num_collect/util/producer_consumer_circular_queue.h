@@ -83,14 +83,16 @@ public:
     template <typename... Args>
     [[nodiscard]] auto try_emplace(Args&&... args) noexcept(
         std::is_nothrow_constructible_v<T, Args...>) -> bool {
-        storage_type* const pushed_pos = producer_pos_.load();
+        storage_type* const pushed_pos =
+            producer_pos_.load(std::memory_order::relaxed);
         storage_type* const next_producer_pos = increment(pushed_pos);
-        if (next_producer_pos == consumer_pos_.load()) {
+        if (next_producer_pos ==
+            consumer_pos_.load(std::memory_order::acquire)) {
             return false;
         }
 
         pushed_pos->emplace(std::forward<Args>(args)...);
-        producer_pos_.store(next_producer_pos);
+        producer_pos_.store(next_producer_pos, std::memory_order::release);
         return true;
     }
 
@@ -104,14 +106,15 @@ public:
     template <typename Output>
     [[nodiscard]] auto try_pop(Output& output) noexcept(
         noexcept(output = std::move(std::declval<T&>()))) -> bool {
-        storage_type* const popped_pos = consumer_pos_.load();
-        if (popped_pos == producer_pos_.load()) {
+        storage_type* const popped_pos =
+            consumer_pos_.load(std::memory_order::relaxed);
+        if (popped_pos == producer_pos_.load(std::memory_order::acquire)) {
             return false;
         }
 
         output = std::move(popped_pos->get_ref());
         popped_pos->reset();
-        consumer_pos_.store(increment(popped_pos));
+        consumer_pos_.store(increment(popped_pos), std::memory_order::release);
         return true;
     }
 
@@ -121,13 +124,14 @@ public:
      * \return Whether an element could be popped.
      */
     [[nodiscard]] auto try_ignore() noexcept -> bool {
-        storage_type* const popped_pos = consumer_pos_.load();
-        if (popped_pos == producer_pos_.load()) {
+        storage_type* const popped_pos =
+            consumer_pos_.load(std::memory_order::relaxed);
+        if (popped_pos == producer_pos_.load(std::memory_order::acquire)) {
             return false;
         }
 
         popped_pos->reset();
-        consumer_pos_.store(increment(popped_pos));
+        consumer_pos_.store(increment(popped_pos), std::memory_order::release);
         return true;
     }
 
