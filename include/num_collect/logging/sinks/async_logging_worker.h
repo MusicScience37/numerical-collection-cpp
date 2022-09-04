@@ -309,10 +309,6 @@ private:
  */
 class async_log_queue {
 public:
-    //! Type of queues for threads.
-    using thread_queue_type =
-        util::producer_consumer_circular_queue<async_log_request>;
-
     /*!
      * \brief Push a request of logging.
      *
@@ -377,19 +373,6 @@ public:
         const async_logging_worker_config& config) -> async_log_queue& {
         static async_log_queue queue{config};
         return queue;
-    }
-
-    /*!
-     * \brief Get the instance.
-     *
-     * \note If this function is called before another overload with a
-     * configuration, the queue is initialized with the default configuration.
-     *
-     * \return Instance.
-     */
-    [[nodiscard]] static auto instance() -> async_log_queue& {
-        static async_logging_worker_config config{};
-        return instance(config);
     }
 
     async_log_queue(const async_log_queue&) = delete;
