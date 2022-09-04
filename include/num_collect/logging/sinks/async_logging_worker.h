@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <atomic>
 #include <chrono>
 #include <limits>
 #include <memory>
@@ -26,6 +27,10 @@
 #include <optional>
 #include <queue>
 #include <string>
+#include <string_view>
+#include <thread>
+#include <type_traits>
+#include <utility>
 #include <vector>
 
 #include <fmt/format.h>
@@ -102,6 +107,34 @@ public:
         return *this;
     }
 
+    /*!
+     * \brief Get the time to wait the next log when no log exists in queues.
+     *
+     * \return Value.
+     */
+    [[nodiscard]] auto log_wait_time() const noexcept
+        -> std::chrono::microseconds {
+        return log_wait_time_;
+    }
+
+    /*!
+     * \brief Set the time to wait the next log when no log exists in queues.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto log_wait_time(std::chrono::microseconds val)
+        -> async_logging_worker_config& {
+        if (val <= std::chrono::microseconds(0)) {
+            throw invalid_argument(
+                fmt::format("Invalid time to wait the next log when no log "
+                            "exists in queues. {} us.",
+                    val.count()));
+        }
+        log_wait_time_ = val;
+        return *this;
+    }
+
 private:
     /*!
      * \brief Default size of queues for threads.
@@ -119,6 +152,12 @@ private:
     //! Maximum number of logs processed at once per thread.
     index_type max_logs_at_once_per_thread_{
         default_max_logs_at_once_per_thread};
+
+    //! Default time to wait the next log when no log exists in queues.
+    static constexpr std::chrono::microseconds default_log_wait_time{100};
+
+    //! Time to wait the next log when no log exists in queues.
+    std::chrono::microseconds log_wait_time_{default_log_wait_time};
 };
 
 namespace impl {
@@ -272,21 +311,7 @@ public:
      */
     void push(async_log_request&& request) {
         if (!this_thread_queue().try_emplace(std::move(request))) {
-            throw algorithm_failure("Failed to push a log in the queue.");
-        }
-    }
-
-    /*!
-     * \brief Collect newly added queues.
-     */
-    void collect_new_queues() {
-        while (true) {
-            async_log_thread_queue_type* thread_queue =
-                async_log_thread_queue_notifier::instance().try_pop();
-            if (thread_queue == nullptr) [[likely]] {
-                return;
-            }
-            thread_queues_.push_back(thread_queue);
+            throw algorithm_failure("Queue of logs is full.");
         }
     }
 
@@ -309,6 +334,7 @@ public:
      */
     template <typename Function>
     auto spin_once(Function&& function) -> spin_once_result_type {
+        collect_new_queues();
         if (thread_queues_.empty()) {
             return spin_once_result_type::no_thread_queue;
         }
@@ -388,6 +414,20 @@ private:
      */
     ~async_log_queue() = default;
 
+    /*!
+     * \brief Collect newly added queues.
+     */
+    void collect_new_queues() {
+        while (true) {
+            async_log_thread_queue_type* thread_queue =
+                async_log_thread_queue_notifier::instance().try_pop();
+            if (thread_queue == nullptr) [[likely]] {
+                return;
+            }
+            thread_queues_.push_back(thread_queue);
+        }
+    }
+
     //! Configuration.
     async_logging_worker_config config_;
 
@@ -397,6 +437,142 @@ private:
 
 }  // namespace impl
 
-class async_logging_worker;
+/*!
+ * \brief Class to process logs asynchronously.
+ */
+class async_logging_worker {
+public:
+    /*!
+     * \brief Write a log asynchronously.
+     *
+     * \param[in] sink Log sink.
+     * \param[in] time Time.
+     * \param[in] tag Tag.
+     * \param[in] level Log level.
+     * \param[in] source Information of the source code.
+     * \param[in] body Log body.
+     */
+    void async_write(const std::shared_ptr<log_sink_base>& sink,
+        std::chrono::system_clock::time_point time, std::string_view tag,
+        log_level level, util::source_info_view source, std::string_view body) {
+        queue_.push(impl::async_log_request{.time = time,
+            .tag = std::string{tag},
+            .level = level,
+            .source = source,
+            .body = std::string{body},
+            .sink = sink});
+    }
+
+    /*!
+     * \brief Start this worker.
+     *
+     * \note This is called from the constructor.
+     */
+    void start() {
+        std::unique_lock<std::mutex> lock(worker_thread_mutex_);
+        is_enabled_ = true;
+        if (!worker_thread_.joinable()) {
+            worker_thread_ = std::thread{[this] { work(); }};
+        }
+    }
+
+    /*!
+     * \brief Stop this worker.
+     *
+     * \note This is called from the destructor.
+     */
+    void stop() {
+        std::unique_lock<std::mutex> lock(worker_thread_mutex_);
+        is_enabled_ = false;
+        if (worker_thread_.joinable()) {
+            worker_thread_.join();
+        }
+    }
+
+    /*!
+     * \brief Get the instance.
+     *
+     * \note Initialization using the configuration is done only in the first
+     * invocation.
+     *
+     * \param[in] config Configuration.
+     * \return Instance.
+     */
+    [[nodiscard]] static auto instance(
+        const async_logging_worker_config& config) -> async_logging_worker& {
+        static async_logging_worker worker{config};
+        return worker;
+    }
+
+    /*!
+     * \brief Get the instance.
+     *
+     * \note If this function is called before another overload with a
+     * configuration, the queue is initialized with the default configuration.
+     *
+     * \return Instance.
+     */
+    [[nodiscard]] static auto instance() -> async_logging_worker& {
+        static async_logging_worker_config config{};
+        return instance(config);
+    }
+
+    async_logging_worker(const async_logging_worker&) = delete;
+    async_logging_worker(async_logging_worker&&) = delete;
+    auto operator=(const async_logging_worker&) = delete;
+    auto operator=(async_logging_worker&&) = delete;
+
+private:
+    /*!
+     * \brief Constructor.
+     *
+     * \param[in] config Configuration.
+     */
+    explicit async_logging_worker(const async_logging_worker_config& config)
+        : config_(config), queue_(impl::async_log_queue::instance(config)) {
+        start();
+    }
+
+    /*!
+     * \brief Destructor.
+     */
+    ~async_logging_worker() { stop(); }
+
+    /*!
+     * \brief Process logs. (For worker thread.)
+     */
+    void work() {
+        while (is_enabled_) {
+            const auto result =
+                queue_.spin_once([](const impl::async_log_request& request) {
+                    request.sink->write(request.time, request.tag,
+                        request.level, request.source, request.body);
+                });
+
+            if (result ==
+                impl::async_log_queue::spin_once_result_type::
+                    some_logs_processed) {
+                std::this_thread::yield();
+            } else {
+                std::this_thread::sleep_for(config_.log_wait_time());
+            }
+        }
+    }
+
+    //! Configuration.
+    async_logging_worker_config config_;
+
+    //! Queue.
+    impl::async_log_queue& queue_;
+
+    //! Worker thread.
+    std::thread worker_thread_{};
+
+    //! Whether this worker is enabled.
+    std::atomic<bool> is_enabled_{true};
+
+    //! Mutex of thread.
+    std::mutex worker_thread_mutex_{};
+};
 
 }  // namespace num_collect::logging::sinks
