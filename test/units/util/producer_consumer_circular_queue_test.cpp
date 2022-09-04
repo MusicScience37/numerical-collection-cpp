@@ -21,6 +21,7 @@
 
 #include <chrono>
 #include <cstddef>
+#include <limits>
 #include <memory>
 #include <ratio>
 #include <thread>
@@ -28,6 +29,8 @@
 
 #include <catch2/catch_test_macros.hpp>
 #include <fmt/format.h>
+
+#include "num_collect/base/index_type.h"
 
 TEST_CASE("num_collect::util::producer_consumer_circular_queue<string>") {
     using queue_type =
@@ -170,6 +173,15 @@ TEST_CASE("num_collect::util::producer_consumer_circular_queue<string>") {
         consumer.join();
 
         CHECK(output == input);
+    }
+
+    SECTION("boundary of queue size") {
+        CHECK_NOTHROW((void)queue_type(2));
+        CHECK_NOTHROW((void)queue_type(1));
+        CHECK_THROWS((void)queue_type(0));
+        CHECK_THROWS((void)queue_type(-1));
+        CHECK_THROWS((void)queue_type(
+            std::numeric_limits<num_collect::index_type>::max()));
     }
 }
 
