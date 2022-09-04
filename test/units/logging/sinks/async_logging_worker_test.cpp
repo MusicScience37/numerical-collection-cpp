@@ -67,6 +67,21 @@ TEST_CASE("num_collect::logging::sinks::async_logging_worker_config") {
         CHECK_NOTHROW(config.max_logs_at_once_per_thread(1));
         CHECK_NOTHROW(config.max_logs_at_once_per_thread(2));
     }
+
+    SECTION("log_wait_time") {
+        async_logging_worker_config config;
+        CHECK(config.log_wait_time().count() > 0);
+
+        constexpr int count = 12345;
+        CHECK(config.log_wait_time(std::chrono::microseconds(count))
+                  .log_wait_time()
+                  .count() == count);
+
+        CHECK_THROWS(config.log_wait_time(std::chrono::microseconds(-1)));
+        CHECK_THROWS(config.log_wait_time(std::chrono::microseconds(0)));
+        CHECK_NOTHROW(config.log_wait_time(std::chrono::microseconds(1)));
+        CHECK_NOTHROW(config.log_wait_time(std::chrono::microseconds(2)));
+    }
 }
 
 TEST_CASE(
