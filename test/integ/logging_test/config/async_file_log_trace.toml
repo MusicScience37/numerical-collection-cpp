@@ -1,7 +1,12 @@
 [[num_collect.logging.tag_configs]]
 tag = ""
-sink = "file"
+sink = "async_file"
 output_log_level = "trace"
+
+[[num_collect.logging.sinks]]
+name = "async_file"
+type = "async"
+inner_sink_name = "file"
 
 [[num_collect.logging.sinks]]
 name = "file"

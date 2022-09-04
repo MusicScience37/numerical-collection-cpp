@@ -17,11 +17,13 @@
  * \file
  * \brief Test to write logs.
  */
+#include <chrono>
 #include <exception>
 #include <functional>
 #include <iostream>
 #include <string>
 #include <string_view>
+#include <thread>
 
 #include <fmt/format.h>
 
@@ -111,6 +113,8 @@ auto main(int argc, char** argv) -> int {
         write_logs();
         write_to_default_tag();
         write_iterations();
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));  // NOLINT
 
         return 0;
     } catch (const std::exception& e) {
