@@ -105,7 +105,12 @@ namespace num_collect {
          */
 
         //! Namespace of formatters of logs.
-        namespace formatters {}
+        namespace formatters {
+
+            //! Namespace of internal implementations.
+            namespace impl {}
+
+        }  // namespace formatters
 
         /*!
          * \dir num_collect/logging/sinks
@@ -113,7 +118,35 @@ namespace num_collect {
          */
 
         //! Namespace of log sinks.
-        namespace sinks {}
+        namespace sinks {
+
+            //! Namespace of internal implementations.
+            namespace impl {}
+
+        }  // namespace sinks
+
+        /*!
+         * \dir num_collect/logging/config
+         * \brief Directory of logging configuration.
+         */
+
+        //! Namespace of logging configuration.
+        namespace config {
+
+            /*!
+             * \dir num_collect/logging/config/toml
+             * \brief Directory of logging configuration in TOML files.
+             */
+
+            //! Namespace of logging configuration in TOML files.
+            namespace toml {
+
+                //! Namespace of internal implementations.
+                namespace impl {}
+
+            }  // namespace toml
+
+        }  // namespace config
 
         /*!
          * \dir num_collect/logging/impl
