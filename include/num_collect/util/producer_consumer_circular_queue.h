@@ -41,9 +41,12 @@ namespace num_collect::util {
  * producer thread and a single consumer thread.
  *
  * \tparam T Type of elements in the queue.
+ *
+ * \thread_safety Operations for the same object is thread safe only if a single
+ * producer thread and a single consumer thread exists.
  */
 template <typename T>
-class producer_consumer_circular_queue {
+class alignas(cache_line) producer_consumer_circular_queue {
 public:
     /*!
      * \brief Constructor.

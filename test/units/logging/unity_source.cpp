@@ -22,5 +22,6 @@
 #include "log_tag_view_test.cpp"         // NOLINT(bugprone-suspicious-include)
 #include "logger_test.cpp"               // NOLINT(bugprone-suspicious-include)
 #include "logging_mixin_test.cpp"        // NOLINT(bugprone-suspicious-include)
-#include "sinks/file_wrapper_test.cpp"   // NOLINT(bugprone-suspicious-include)
+#include "sinks/async_logging_worker_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "sinks/file_wrapper_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "sinks/simple_log_sink_test.cpp"  // NOLINT(bugprone-suspicious-include)

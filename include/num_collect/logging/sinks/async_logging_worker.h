@@ -1,0 +1,402 @@
+/*
+ * Copyright 2022 MusicScience37 (Kenta Kabashima)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*!
+ * \file
+ * \brief Definition of async_logging_worker class.
+ */
+#pragma once
+
+#include <chrono>
+#include <limits>
+#include <memory>
+#include <mutex>
+#include <optional>
+#include <queue>
+#include <string>
+#include <vector>
+
+#include <fmt/format.h>
+
+#include "num_collect/base/exception.h"
+#include "num_collect/base/index_type.h"
+#include "num_collect/logging/log_level.h"
+#include "num_collect/logging/sinks/log_sink_base.h"
+#include "num_collect/util/producer_consumer_circular_queue.h"
+#include "num_collect/util/source_info_view.h"
+
+namespace num_collect::logging::sinks {
+
+/*!
+ * \brief Configurations of the worker of asynchronous logging.
+ *
+ * \thread_safety Only different objects are usable thread-safely.
+ */
+class async_logging_worker_config {
+public:
+    /*!
+     * \brief Constructor.
+     */
+    async_logging_worker_config() = default;
+
+    /*!
+     * \brief Get the size of queues for threads.
+     *
+     * \return Value.
+     */
+    [[nodiscard]] auto thread_queue_size() const noexcept -> index_type {
+        return thread_queue_size_;
+    }
+
+    /*!
+     * \brief Set the size of queues for threads.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto thread_queue_size(index_type val) -> async_logging_worker_config& {
+        if (val <= 0 || val == std::numeric_limits<index_type>::max()) {
+            throw invalid_argument(fmt::format("Invalid queue size {}.", val));
+        }
+        thread_queue_size_ = val;
+        return *this;
+    }
+
+    /*!
+     * \brief Get the maximum number of logs processed at once per thread.
+     *
+     * \return Value.
+     */
+    [[nodiscard]] auto max_logs_at_once_per_thread() const noexcept
+        -> index_type {
+        return max_logs_at_once_per_thread_;
+    }
+
+    /*!
+     * \brief Set the maximum number of logs processed at once per thread.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto max_logs_at_once_per_thread(index_type val)
+        -> async_logging_worker_config& {
+        if (val <= 0) {
+            throw invalid_argument(
+                fmt::format("Invalid maximum number of logs processed at once "
+                            "per thread. {}.",
+                    val));
+        }
+        max_logs_at_once_per_thread_ = val;
+        return *this;
+    }
+
+private:
+    /*!
+     * \brief Default size of queues for threads.
+     *
+     * \note Queues for threads use one more element in current implementation.
+     */
+    static constexpr index_type default_thread_queue_size = (1U << 10U) - 1U;
+
+    //! Size of queues for threads.
+    index_type thread_queue_size_{default_thread_queue_size};
+
+    //! Default maximum number of logs processed at once per thread.
+    static constexpr index_type default_max_logs_at_once_per_thread = 100;
+
+    //! Maximum number of logs processed at once per thread.
+    index_type max_logs_at_once_per_thread_{
+        default_max_logs_at_once_per_thread};
+};
+
+namespace impl {
+
+/*!
+ * \brief Struct of data to request asynchronous processing of logs.
+ *
+ * \thread_safety Only different objects are usable thread-safely.
+ */
+struct async_log_request {
+public:
+    //! Time.
+    std::chrono::system_clock::time_point time;
+
+    //! Tag.
+    std::string tag;
+
+    //! Log level.
+    log_level level;
+
+    //! Information of the source code.
+    util::source_info_view source;
+
+    //! Log body.
+    std::string body;
+
+    //! Log sink to write to.
+    std::shared_ptr<log_sink_base> sink;
+};
+
+//! Type of queues of asynchronous logs for threads.
+using async_log_thread_queue_type =
+    util::producer_consumer_circular_queue<async_log_request>;
+
+/*!
+ * \brief Class of a queue of queues of asynchronous logs for threads.
+ *
+ * \thread_safety Every operation even for the same object is thread safe.
+ */
+class async_log_thread_queue_notifier {
+public:
+    /*!
+     * \brief Push a queue.
+     *
+     * \note This function assumes the input is not null.
+     *
+     * \param[in] ptr Pointer to the queue.
+     */
+    void push(async_log_thread_queue_type* ptr) {
+        std::unique_lock<std::mutex> lock(mutex_);
+        queue_.push(ptr);
+    }
+
+    /*!
+     * \brief Try to pop a queue.
+     *
+     * \return Pointer to the queue if exists, otherwise null pointer.
+     */
+    [[nodiscard]] auto try_pop() -> async_log_thread_queue_type* {
+        std::unique_lock<std::mutex> lock(mutex_);
+        if (queue_.empty()) {
+            return nullptr;
+        }
+        async_log_thread_queue_type* ptr = queue_.front();
+        queue_.pop();
+        return ptr;
+    }
+
+    /*!
+     * \brief Get the global instance.
+     *
+     * \return Instance.
+     */
+    [[nodiscard]] static auto instance() -> async_log_thread_queue_notifier& {
+        static async_log_thread_queue_notifier notifier{};
+        return notifier;
+    }
+
+    /*!
+     * \brief Constructor.
+     *
+     * \warning This constructor is publicly available only for tests of this
+     * class.
+     */
+    async_log_thread_queue_notifier() = default;
+
+    /*!
+     * \brief Destructor.
+     */
+    ~async_log_thread_queue_notifier() = default;
+
+    async_log_thread_queue_notifier(
+        const async_log_thread_queue_notifier&) = delete;
+    async_log_thread_queue_notifier(async_log_thread_queue_notifier&&) = delete;
+    auto operator=(const async_log_thread_queue_notifier&) = delete;
+    auto operator=(async_log_thread_queue_notifier&&) = delete;
+
+private:
+    //! Queue.
+    std::queue<async_log_thread_queue_type*> queue_{};
+
+    //! Mutex of the queue.
+    std::mutex mutex_{};
+};
+
+/*!
+ * \brief Class to initialize queues of asynchronous logs for threads.
+ */
+class async_log_thread_queue_initializer {
+public:
+    /*!
+     * \brief Constructor.
+     *
+     * \param[in] config Configuration.
+     */
+    explicit async_log_thread_queue_initializer(
+        const async_logging_worker_config& config)
+        : queue_(config.thread_queue_size()) {
+        async_log_thread_queue_notifier::instance().push(&queue_);
+    }
+
+    /*!
+     * \brief Access the queue.
+     *
+     * \return Queue.
+     */
+    [[nodiscard]] auto queue() noexcept -> async_log_thread_queue_type& {
+        return queue_;
+    }
+
+private:
+    //! Queue.
+    async_log_thread_queue_type queue_;
+};
+
+/*!
+ * \brief Class of a queue of asynchronous logs.
+ *
+ * \thread_safety instance, push functions are thread safe, but others are not.
+ */
+class async_log_queue {
+public:
+    //! Type of queues for threads.
+    using thread_queue_type =
+        util::producer_consumer_circular_queue<async_log_request>;
+
+    /*!
+     * \brief Push a request of logging.
+     *
+     * \param[in] request Request of logging.
+     */
+    void push(async_log_request&& request) {
+        if (!this_thread_queue().try_emplace(std::move(request))) {
+            throw algorithm_failure("Failed to push a log in the queue.");
+        }
+    }
+
+    /*!
+     * \brief Collect newly added queues.
+     */
+    void collect_new_queues() {
+        while (true) {
+            async_log_thread_queue_type* thread_queue =
+                async_log_thread_queue_notifier::instance().try_pop();
+            if (thread_queue == nullptr) [[likely]] {
+                return;
+            }
+            thread_queues_.push_back(thread_queue);
+        }
+    }
+
+    //! Enumeration of the result of spin_once function.
+    enum class spin_once_result_type {
+        //! No queue exists.
+        no_thread_queue,
+        //! No log exists.
+        no_log,
+        //! Some logs processed.
+        some_logs_processed
+    };
+
+    /*!
+     * \brief Process logs once.
+     *
+     * \tparam Function Type of the function to process requests of logging.
+     * \param[in] function Function to process requests of logging.
+     * \return Result.
+     */
+    template <typename Function>
+    auto spin_once(Function&& function) -> spin_once_result_type {
+        if (thread_queues_.empty()) {
+            return spin_once_result_type::no_thread_queue;
+        }
+
+        spin_once_result_type res = spin_once_result_type::no_log;
+        std::optional<async_log_request> request;
+        for (async_log_thread_queue_type* queue : thread_queues_) {
+            for (index_type i = 0; i < config_.max_logs_at_once_per_thread();
+                 ++i) {
+                if (queue->try_pop(request)) {
+                    function(*request);
+                    res = spin_once_result_type::some_logs_processed;
+                } else {
+                    break;
+                }
+            }
+        }
+        return res;
+    }
+
+    /*!
+     * \brief Get the instance.
+     *
+     * \note Initialization using the configuration is done only in the first
+     * invocation.
+     *
+     * \param[in] config Configuration.
+     * \return Instance.
+     */
+    [[nodiscard]] static auto instance(
+        const async_logging_worker_config& config) -> async_log_queue& {
+        static async_log_queue queue{config};
+        return queue;
+    }
+
+    /*!
+     * \brief Get the instance.
+     *
+     * \note If this function is called before another overload with a
+     * configuration, the queue is initialized with the default configuration.
+     *
+     * \return Instance.
+     */
+    [[nodiscard]] static auto instance() -> async_log_queue& {
+        static async_logging_worker_config config{};
+        return instance(config);
+    }
+
+    async_log_queue(const async_log_queue&) = delete;
+    async_log_queue(async_log_queue&&) = delete;
+    auto operator=(const async_log_queue&) = delete;
+    auto operator=(async_log_queue&&) = delete;
+
+private:
+    /*!
+     * \brief Constructor.
+     *
+     * \param[in] config Configuration.
+     */
+    explicit async_log_queue(const async_logging_worker_config& config)
+        : config_(config) {}
+
+    /*!
+     * \brief Get the queue for this thread.
+     *
+     * \return Queue.
+     */
+    [[nodiscard]] auto this_thread_queue() const
+        -> async_log_thread_queue_type& {
+        static thread_local async_log_thread_queue_initializer initializer{
+            config_};
+        return initializer.queue();
+    }
+
+    /*!
+     * \brief Destructor.
+     */
+    ~async_log_queue() = default;
+
+    //! Configuration.
+    async_logging_worker_config config_;
+
+    //! Queues for threads.
+    std::vector<async_log_thread_queue_type*> thread_queues_{};
+};
+
+}  // namespace impl
+
+class async_logging_worker;
+
+}  // namespace num_collect::logging::sinks

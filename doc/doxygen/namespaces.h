@@ -118,7 +118,12 @@ namespace num_collect {
          */
 
         //! Namespace of log sinks.
-        namespace sinks {}
+        namespace sinks {
+
+            //! Namespace of internal implementations.
+            namespace impl {}
+
+        }  // namespace sinks
 
         /*!
          * \dir num_collect/logging/config
