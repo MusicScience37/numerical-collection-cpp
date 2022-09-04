@@ -178,8 +178,17 @@ public:
     //! Log level.
     log_level level;
 
-    //! Information of the source code.
-    util::source_info_view source;
+    //! Filepath.
+    std::string file_path;
+
+    //! Line number.
+    index_type line;
+
+    //! Column number.
+    index_type column;
+
+    //! Function name.
+    std::string function_name;
 
     //! Log body.
     std::string body;
@@ -458,7 +467,10 @@ public:
         queue_.push(impl::async_log_request{.time = time,
             .tag = std::string{tag},
             .level = level,
-            .source = source,
+            .file_path = std::string{source.file_path()},
+            .line = source.line(),
+            .column = source.column(),
+            .function_name = std::string{source.function_name()},
             .body = std::string{body},
             .sink = sink});
     }
@@ -546,7 +558,10 @@ private:
             const auto result =
                 queue_.spin_once([](const impl::async_log_request& request) {
                     request.sink->write(request.time, request.tag,
-                        request.level, request.source, request.body);
+                        request.level,
+                        util::source_info_view{request.file_path, request.line,
+                            request.column, request.function_name},
+                        request.body);
                 });
 
             if (result ==

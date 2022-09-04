@@ -134,7 +134,10 @@ TEST_CASE("num_collect::logging::sinks::async_logging_worker") {
                 (request_promise.set_value(async_log_request{.time = _1,
                     .tag = std::string{_2},
                     .level = _3,
-                    .source = _4,
+                    .file_path = std::string{_4.file_path()},
+                    .line = _4.line(),
+                    .column = _4.column(),
+                    .function_name = std::string{_4.function_name()},
                     .body = std::string{_5}})));
 
         const auto time = std::chrono::system_clock::now();
@@ -157,10 +160,10 @@ TEST_CASE("num_collect::logging::sinks::async_logging_worker") {
         CHECK(request.time == time);
         CHECK(request.tag == tag);
         CHECK(request.level == level);
-        CHECK(std::string(request.source.file_path()) == file_path);
-        CHECK(request.source.line() == line);
-        CHECK(request.source.column() == column);
-        CHECK(std::string(request.source.function_name()) == function_name);
+        CHECK(request.file_path == file_path);
+        CHECK(request.line == line);
+        CHECK(request.column == column);
+        CHECK(request.function_name == function_name);
         CHECK(request.body == body);
     }
 
