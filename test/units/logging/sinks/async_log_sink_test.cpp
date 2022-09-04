@@ -64,7 +64,7 @@ TEST_CASE("num_collect::logging::sinks::async_log_sink") {
             source_info_view(file_path, line, column, function_name);
         const auto body = std::string("body");
 
-        async_log_sink async_sink{inner_sink, async_logging_worker_config{}};
+        async_log_sink async_sink{inner_sink};
         async_sink.write(time, tag, level, source, body);
 
         REQUIRE(request_future.wait_for(std::chrono::seconds(1)) ==

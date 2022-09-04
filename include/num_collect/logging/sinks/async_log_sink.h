@@ -44,12 +44,9 @@ public:
      * \brief Constructor.
      *
      * \param[in] sink Log sink to write logs actually.
-     * \param[in] config Configuration.
      */
-    async_log_sink(std::shared_ptr<log_sink_base> sink,
-        const async_logging_worker_config& config)
-        : sink_(std::move(sink)),
-          worker_(async_logging_worker::instance(config)) {}
+    explicit async_log_sink(std::shared_ptr<log_sink_base> sink)
+        : sink_(std::move(sink)), worker_(async_logging_worker::instance()) {}
 
     /*!
      * \brief Destructor.

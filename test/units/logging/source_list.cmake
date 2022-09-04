@@ -1,6 +1,7 @@
 set(SOURCE_FILES
     concepts/getter_of_test.cpp
     config/log_sink_factory_table_test.cpp
+    config/toml/toml_async_log_sink_config_parser_test.cpp
     config/toml/toml_console_log_sink_config_parser_test.cpp
     config/toml/toml_helper_test.cpp
     config/toml/toml_log_config_parser_test.cpp
