@@ -1,0 +1,20 @@
+[[num_collect.logging.tag_configs]]
+tag = ""
+sink = "combined_file_console"
+output_log_level = "trace"
+
+[[num_collect.logging.sinks]]
+name = "combined_file_console"
+type = "combined"
+inner_sink_names = ["file", "console"]
+output_log_levels = ["debug", "warning"]
+
+[[num_collect.logging.sinks]]
+name = "console"
+type = "console"
+use_color = false
+
+[[num_collect.logging.sinks]]
+name = "file"
+type = "single_file"
+filepath = "num_collect_test_integ_logging.log"

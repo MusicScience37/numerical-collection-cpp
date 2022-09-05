@@ -1,10 +1,15 @@
 exit code: 0
 stdout:
+[<time-stamp>] [warning] [example tag] warning (writer.cpp:49, write_logs)
+[<time-stamp>] [error] [example tag] error (writer.cpp:50, write_logs)
+[<time-stamp>] [critical] [example tag] critical (writer.cpp:51, write_logs)
+[<time-stamp>] [warning] [] warning (writer.cpp:65, write_to_default_tag)
+[<time-stamp>] [error] [] error (writer.cpp:66, write_to_default_tag)
+[<time-stamp>] [critical] [] critical (writer.cpp:67, write_to_default_tag)
 
 stderr:
 
 num_collect_test_integ_logging.log:
-[<time-stamp>] [trace] [example tag] trace (writer.cpp:43:<col>, <function-name>)
 [<time-stamp>] [debug] [example tag] debug (writer.cpp:44:<col>, <function-name>)
 [<time-stamp>] [iteration] [example tag] iteration (writer.cpp:45:<col>, <function-name>)
 [<time-stamp>] [iteration] [example tag] iteration_label (writer.cpp:46:<col>, <function-name>)
@@ -13,7 +18,6 @@ num_collect_test_integ_logging.log:
 [<time-stamp>] [warning] [example tag] warning (writer.cpp:49:<col>, <function-name>)
 [<time-stamp>] [error] [example tag] error (writer.cpp:50:<col>, <function-name>)
 [<time-stamp>] [critical] [example tag] critical (writer.cpp:51:<col>, <function-name>)
-[<time-stamp>] [trace] [] trace (writer.cpp:59:<col>, <function-name>)
 [<time-stamp>] [debug] [] debug (writer.cpp:60:<col>, <function-name>)
 [<time-stamp>] [iteration] [] iteration (writer.cpp:61:<col>, <function-name>)
 [<time-stamp>] [iteration] [] iteration_label (writer.cpp:62:<col>, <function-name>)

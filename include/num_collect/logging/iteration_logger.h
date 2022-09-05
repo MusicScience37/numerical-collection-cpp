@@ -475,11 +475,11 @@ public:
      */
     void write_iteration(
         util::source_info_view source = util::source_info_view()) {
-        if (!write_iterations_) {
+        if (!write_iterations_) [[likely]] {
             return;
         }
 
-        if ((iterations_ % iteration_output_period_) != 0) {
+        if ((iterations_ % iteration_output_period_) != 0) [[likely]] {
             ++iterations_;
             return;
         }
@@ -509,7 +509,7 @@ public:
      */
     void write_summary(
         util::source_info_view source = util::source_info_view()) {
-        if (!write_summaries_) {
+        if (!write_summaries_) [[likely]] {
             return;
         }
 

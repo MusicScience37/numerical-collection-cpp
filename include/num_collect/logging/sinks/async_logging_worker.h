@@ -227,7 +227,7 @@ public:
      */
     [[nodiscard]] auto try_pop() -> async_log_thread_queue_type* {
         std::unique_lock<std::mutex> lock(mutex_);
-        if (queue_.empty()) {
+        if (queue_.empty()) [[likely]] {
             return nullptr;
         }
         async_log_thread_queue_type* ptr = queue_.front();
@@ -315,7 +315,7 @@ public:
      * \param[in] request Request of logging.
      */
     void push(async_log_request&& request) {
-        if (!this_thread_queue().try_emplace(std::move(request))) {
+        if (!this_thread_queue().try_emplace(std::move(request))) [[unlikely]] {
             throw algorithm_failure("Queue of logs is full.");
         }
     }

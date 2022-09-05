@@ -98,3 +98,23 @@ Configuration files can be written in
       # Log sink used to actual logging in asynchronous processing. (Required.)
       # A log sink with this name must be configured in the same file.
       inner_sink_name = "another log sink"
+
+- Configuration of a log sink to write to multiple log sinks:
+
+  .. code-block:: toml
+
+      [[num_collect.logging.sinks]]
+
+      # Name of the log sink. (Required.)
+      name = "single file sink"
+
+      # Type of the log sink. (Required.)
+      type = "async"
+
+      # Log sinks used to actual logging. (Required.)
+      # Log sink with these names must be configured in the same file.
+      inner_sink_names = ["sink1", "sink2"]
+
+      # Minimum log levels to output. (Required.)
+      # Number of elements must be same with inner_sink_names.
+      output_log_levels = ["trace", "debug"]

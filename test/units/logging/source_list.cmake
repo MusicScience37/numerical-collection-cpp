@@ -2,6 +2,7 @@ set(SOURCE_FILES
     concepts/getter_of_test.cpp
     config/log_sink_factory_table_test.cpp
     config/toml/toml_async_log_sink_config_parser_test.cpp
+    config/toml/toml_combined_log_sink_config_parser_test.cpp
     config/toml/toml_console_log_sink_config_parser_test.cpp
     config/toml/toml_helper_test.cpp
     config/toml/toml_log_config_parser_test.cpp
@@ -26,6 +27,7 @@ set(SOURCE_FILES
     logging_mixin_test.cpp
     sinks/async_log_sink_test.cpp
     sinks/async_logging_worker_test.cpp
+    sinks/combined_log_sink_test.cpp
     sinks/file_wrapper_test.cpp
     sinks/simple_log_sink_test.cpp
 )

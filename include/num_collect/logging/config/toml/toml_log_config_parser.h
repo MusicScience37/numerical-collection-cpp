@@ -38,6 +38,7 @@
 #include "num_collect/logging/config/log_sink_factory_table.h"
 #include "num_collect/logging/config/parse_output_log_level_str.h"
 #include "num_collect/logging/config/toml/toml_async_log_sink_config_parser.h"
+#include "num_collect/logging/config/toml/toml_combined_log_sink_config_parser.h"
 #include "num_collect/logging/config/toml/toml_console_log_sink_config_parser.h"
 #include "num_collect/logging/config/toml/toml_helper.h"
 #include "num_collect/logging/config/toml/toml_log_sink_config_parser_base.h"
@@ -131,6 +132,8 @@ public:
             std::make_shared<toml_single_file_log_sink_config_parser>());
         append_log_sink_config_parser(
             "async", std::make_shared<toml_async_log_sink_config_parser>());
+        append_log_sink_config_parser("combined",
+            std::make_shared<toml_combined_log_sink_config_parser>());
     }
 
     /*!
