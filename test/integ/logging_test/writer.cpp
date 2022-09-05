@@ -24,6 +24,7 @@
 #include <string>
 #include <string_view>
 #include <thread>
+#include <vector>
 
 #include <fmt/format.h>
 
@@ -96,6 +97,19 @@ static void write_iterations() {
     iteration_logger.write_summary();
 }
 
+static void write_parameters() {
+    // Logger.
+    auto logger = num_collect::logging::logger(my_tag);
+
+    constexpr int param1 = 12345;
+    logger.debug()("Write a parameter: {}.", param1);
+
+    const std::vector<double> param2{1.234, 5.678};
+    const std::string_view param3 = "abc";
+    logger.info()("Write multiple parameters: [{:.3f}], {}",
+        fmt::join(param2, ","), param3);
+}
+
 auto main(int argc, char** argv) -> int {
     try {
         if (argc != 2) {
@@ -113,6 +127,7 @@ auto main(int argc, char** argv) -> int {
         write_logs();
         write_to_default_tag();
         write_iterations();
+        write_parameters();
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));  // NOLINT
 
