@@ -192,7 +192,7 @@ output_log_levels = ["trace", "iteration_label"]
         const auto test_toml = std::string_view(R"(
 name = "combined"
 type = "combined"
-inner_sink_name = ["sink1", "sink2"]
+inner_sink_names = ["sink1", "sink2"]
 output_log_levels = ["trace", "debug", "info"]
 )");
         const auto table = toml::parse(test_toml);
