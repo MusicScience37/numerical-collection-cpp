@@ -72,7 +72,7 @@ public:
      * \param[in] body Body.
      */
     void operator()(std::string_view body) const {
-        if (!write_log_) {
+        if (!write_log_) [[likely]] {
             return;
         }
 
@@ -89,7 +89,7 @@ public:
      */
     template <typename... Args>
     void operator()(fmt::format_string<Args...> format, Args&&... args) const {
-        if (!write_log_) {
+        if (!write_log_) [[likely]] {
             return;
         }
 
@@ -210,13 +210,13 @@ public:
      * \retval false Should not write logs.
      */
     [[nodiscard]] auto should_log(log_level level) const noexcept -> bool {
-        if (level < lowest_output_log_level_) {
+        if (level < lowest_output_log_level_) [[likely]] {
             return false;
         }
-        if (level >= always_output_log_level_) {
+        if (level >= always_output_log_level_) [[unlikely]] {
             return true;
         }
-        if (iteration_layer_handler_.is_upper_layer_iterative()) {
+        if (iteration_layer_handler_.is_upper_layer_iterative()) [[unlikely]] {
             return level >= config_.output_log_level_in_child_iterations();
         }
         return level >= config_.output_log_level();

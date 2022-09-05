@@ -77,7 +77,7 @@ public:
     void write(std::chrono::system_clock::time_point time, std::string_view tag,
         log_level level, util::source_info_view source,
         std::string_view body) noexcept override {
-        if (!is_enabled_) {
+        if (!is_enabled_) [[unlikely]] {
             return;
         }
         try {

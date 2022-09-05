@@ -151,14 +151,14 @@ public:
      * \param[in] data Data.
      */
     void write(std::string_view data) {
-        if (file_ == nullptr) {
+        if (file_ == nullptr) [[unlikely]] {
             throw file_error("Failed to write to file: file is not opened.");
         }
 
         errno = 0;
         const std::size_t written_size =
             std::fwrite(data.data(), 1, data.size(), file_);
-        if (written_size != data.size()) {
+        if (written_size != data.size()) [[unlikely]] {
             throw file_error(util::format_errno("Failed to write to file"));
         }
     }
@@ -167,13 +167,13 @@ public:
      * \brief Flush buffer.
      */
     void flush() {
-        if (file_ == nullptr) {
+        if (file_ == nullptr) [[unlikely]] {
             throw file_error("Failed to write to file: file is not opened.");
         }
 
         errno = 0;
         const int result = std::fflush(file_);
-        if (result != 0) {
+        if (result != 0) [[unlikely]] {
             throw file_error(util::format_errno("Failed to write to file"));
         }
     }
