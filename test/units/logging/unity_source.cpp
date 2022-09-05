@@ -1,6 +1,7 @@
 #include "concepts/getter_of_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "config/log_sink_factory_table_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "config/toml/toml_async_log_sink_config_parser_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "config/toml/toml_combined_log_sink_config_parser_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "config/toml/toml_console_log_sink_config_parser_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "config/toml/toml_helper_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "config/toml/toml_log_config_parser_test.cpp"  // NOLINT(bugprone-suspicious-include)
