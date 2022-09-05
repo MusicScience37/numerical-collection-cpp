@@ -28,6 +28,7 @@
 #include "../../mock_log_sink.h"
 #include "../mock_log_sink_factory.h"
 #include "num_collect/logging/config/log_sink_factory_table.h"
+#include "trompeloeil_catch2.h"
 
 TEST_CASE(
     "num_collect::logging::config::toml::toml_combined_log_sink_config_"

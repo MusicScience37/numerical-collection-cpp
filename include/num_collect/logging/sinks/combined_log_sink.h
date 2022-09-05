@@ -20,17 +20,15 @@
 #pragma once
 
 #include <chrono>
-#include <exception>
-#include <iostream>
 #include <memory>
 #include <string_view>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
 #include <fmt/format.h>
 
 #include "num_collect/logging/log_level.h"
-#include "num_collect/logging/sinks/async_logging_worker.h"
 #include "num_collect/logging/sinks/log_sink_base.h"
 #include "num_collect/util/source_info_view.h"
 
