@@ -26,8 +26,6 @@
 #include <utility>
 #include <vector>
 
-#include <fmt/format.h>
-
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/sinks/log_sink_base.h"
 #include "num_collect/util/source_info_view.h"
@@ -75,27 +73,6 @@ public:
         for (const auto& [sink, output_log_level] : sinks_) {
             if (level >= output_log_level) {
                 sink->write(time, tag, level, source, body);
-            }
-        }
-    }
-
-    /*!
-     * \brief Write a log.
-     *
-     * \param[in] time Time.
-     * \param[in] tag Tag.
-     * \param[in] level Log level.
-     * \param[in] source Information of the source code.
-     * \param[in] body Log body.
-     *
-     * \note Implementations of this function must be thread-safe.
-     */
-    void write(std::chrono::system_clock::time_point time, std::string_view tag,
-        log_level level, util::source_info_view source,
-        fmt::memory_buffer&& body) noexcept override {
-        for (const auto& [sink, output_log_level] : sinks_) {
-            if (level >= output_log_level) {
-                sink->write(time, tag, level, source, std::move(body));
             }
         }
     }

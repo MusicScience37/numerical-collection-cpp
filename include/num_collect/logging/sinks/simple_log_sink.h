@@ -95,24 +95,6 @@ public:
     }
 
     /*!
-     * \brief Write a log.
-     *
-     * \param[in] time Time.
-     * \param[in] tag Tag.
-     * \param[in] level Log level.
-     * \param[in] source Information of the source code.
-     * \param[in] body Log body.
-     *
-     * \note Implementations of this function must be thread-safe.
-     */
-    void write(std::chrono::system_clock::time_point time, std::string_view tag,
-        log_level level, util::source_info_view source,
-        fmt::memory_buffer&& body) noexcept override {
-        write(time, tag, level, source,
-            std::string_view(body.data(), body.size()));
-    }
-
-    /*!
      * \brief Destructor.
      */
     ~simple_log_sink() override = default;

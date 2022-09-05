@@ -97,7 +97,7 @@ public:
         fmt::format_to(
             std::back_inserter(buffer), format, std::forward<Args>(args)...);
         sink_->write(std::chrono::system_clock::now(), tag_, level_, source_,
-            std::move(buffer));
+            std::string_view{buffer.data(), buffer.size()});
     }
 
 private:

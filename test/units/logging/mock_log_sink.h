@@ -36,15 +36,6 @@ public:
         write_impl(time, tag, level, source, body);
     }
 
-    // NOLINTNEXTLINE(bugprone-exception-escape)
-    void write(std::chrono::system_clock::time_point time, std::string_view tag,
-        num_collect::logging::log_level level,
-        num_collect::util::source_info_view source,
-        fmt::memory_buffer&& body) noexcept override {
-        write_impl(time, tag, level, source,
-            std::string_view(body.data(), body.size()));
-    }
-
     // NOLINTNEXTLINE
     MAKE_MOCK5(write_impl,
         void(std::chrono::system_clock::time_point time, std::string_view tag,
