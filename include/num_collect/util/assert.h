@@ -46,7 +46,7 @@ template <typename Derived>
 void evaluate_assertion(const assertion_expression_base<Derived>& assertion,
     std::string_view condition_str,
     source_info_view source = source_info_view()) {
-    if (assertion.evaluate_to_bool()) {
+    if (assertion.evaluate_to_bool()) [[likely]] {
         return;
     }
 
