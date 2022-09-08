@@ -44,6 +44,8 @@ which are installed automatically when using Conan:
 
 - [fmt](https://fmt.dev/)
 - [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page)
+- [cpp-hash-tables](https://gitlab.com/MusicScience37/cpp-hash-tables)
+- [toml++](https://marzer.github.io/tomlplusplus/)
 
 ## How to Build in the Repository
 
@@ -68,8 +70,9 @@ you will require following dependencies:
 - C++ 20 Compiler
   - Following compilers are tested in CI:
     - GCC 10
+    - GCC 12
     - Clang 14
-    - MSVC 19
+    - ~~MSVC 19~~ (Currently not tested due to an [Issue in CI](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/195).)
 
 Additionally, you will require following dependencies
 to build documentation.
