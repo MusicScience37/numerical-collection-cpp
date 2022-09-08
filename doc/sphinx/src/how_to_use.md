@@ -25,3 +25,5 @@ which are installed automatically when using Conan:
 
 - [fmt](https://fmt.dev/)
 - [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page)
+- [cpp-hash-tables](https://gitlab.com/MusicScience37/cpp-hash-tables)
+- [toml++](https://marzer.github.io/tomlplusplus/)
