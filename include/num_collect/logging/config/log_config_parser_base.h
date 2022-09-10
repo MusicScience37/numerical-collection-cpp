@@ -35,6 +35,13 @@ public:
      */
     virtual void parse_from_file(std::string_view filepath) = 0;
 
+    /*!
+     * \brief Parse configuration from a file.
+     *
+     * \param[in] text Text.
+     */
+    virtual void parse_from_text(std::string_view text) = 0;
+
     log_config_parser_base(const log_config_parser_base&) = delete;
     log_config_parser_base(log_config_parser_base&&) = delete;
     auto operator=(const log_config_parser_base&)

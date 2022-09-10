@@ -136,11 +136,7 @@ public:
             std::make_shared<toml_combined_log_sink_config_parser>());
     }
 
-    /*!
-     * \brief Parse configuration from a file.
-     *
-     * \param[in] filepath Filepath.
-     */
+    //! \copydoc num_collect::logging::config::log_config_parser_base::parse_from_file
     void parse_from_file(std::string_view filepath) override {
         if (!std::filesystem::exists(std::filesystem::path(filepath)) ||
             !std::filesystem::is_regular_file(
@@ -154,6 +150,20 @@ public:
         } catch (const std::exception& e) {
             throw invalid_argument(
                 fmt::format("Failed to load {}: {}", filepath, e.what()));
+        }
+    }
+
+    //! \copydoc num_collect::logging::config::log_config_parser_base::parse_from_text
+    void parse_from_text(std::string_view text) override {
+        try {
+            const auto parse_result = ::toml::parse(text);
+            parse_from_table(parse_result);
+        } catch (const std::exception& e) {
+            throw invalid_argument(
+                fmt::format("Failed to load from a text: {}\n"
+                            "Input:\n"
+                            "{}",
+                    e.what(), text));
         }
     }
 

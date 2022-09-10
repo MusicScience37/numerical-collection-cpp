@@ -29,6 +29,7 @@ package logging {
 
         interface log_config_parser_base {
             {abstract} + parse_from_file(filepath: string_view)
+            {abstract} + parse_from_text(filepath: string_view)
         }
 
         package toml {

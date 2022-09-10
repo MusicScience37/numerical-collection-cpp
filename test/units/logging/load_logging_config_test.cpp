@@ -33,7 +33,7 @@
 #include "num_collect/logging/log_tag_view.h"
 
 TEST_CASE("num_collect::logging::load_logging_config") {
-    using num_collect::logging::load_logging_config;
+    using num_collect::logging::load_logging_config_file;
     using num_collect::logging::log_config;
     using num_collect::logging::log_level;
     using num_collect::logging::log_tag_view;
@@ -70,7 +70,7 @@ filepath = "logging_impl_toml_config_load_logging_config_test2.log"
             REQUIRE(stream);
         }
 
-        CHECK_NOTHROW(load_logging_config(filepath));
+        CHECK_NOTHROW(load_logging_config_file(filepath));
     }
 
     SECTION("invalid") {
@@ -92,7 +92,7 @@ output_log_level = "summary"
             REQUIRE(stream);
         }
 
-        CHECK_THROWS_WITH(load_logging_config(filepath),
+        CHECK_THROWS_WITH(load_logging_config_file(filepath),
             Catch::Matchers::ContainsSubstring(filepath));
         CHECK(log_config::instance()
                   .get_config_of(

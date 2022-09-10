@@ -30,7 +30,7 @@ namespace num_collect::logging {
  *
  * \param[in] filepath File path.
  */
-inline void load_logging_config(std::string_view filepath) {
+inline void load_logging_config_file(std::string_view filepath) {
     config::toml::toml_log_config_parser().parse_from_file(filepath);
 }
 
