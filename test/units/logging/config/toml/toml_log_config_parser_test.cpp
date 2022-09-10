@@ -20,6 +20,7 @@
 #include "num_collect/logging/config/toml/toml_log_config_parser.h"
 
 #include <fstream>
+#include <string_view>
 
 #include <catch2/catch_message.hpp>
 #include <catch2/catch_test_macros.hpp>
@@ -259,5 +260,25 @@ filepath = "logging/toml_log_config_parser3.log"
                   .get_config_of(log_tag_view("num_collect::logging::config::"
                                               "toml::toml_log_config_parser3"))
                   .output_log_level() == log_level::debug);
+    }
+
+    SECTION("parse from text") {
+        const std::string_view config_text = R"(
+# valid config
+[[num_collect.logging.tag_configs]]
+tag = "num_collect::logging::config::toml::toml_log_config_parser4"
+sink = "sink4"
+output_log_level = "iteration"
+
+[[num_collect.logging.sinks]]
+name = "sink4"
+type = "single_file"
+filepath = "logging/toml_log_config_parser44.log"
+)";
+        CHECK_NOTHROW(toml_log_config_parser().parse_from_text(config_text));
+        CHECK(log_config::instance()
+                  .get_config_of(log_tag_view("num_collect::logging::config::"
+                                              "toml::toml_log_config_parser4"))
+                  .output_log_level() == log_level::iteration);
     }
 }

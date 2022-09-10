@@ -46,7 +46,8 @@ auto main(int argc, char** argv) -> int {
 
         const std::string_view config_filepath =
             argv[1];  // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-        num_collect::logging::load_logging_config(std::string{config_filepath});
+        num_collect::logging::load_logging_config_file(
+            std::string{config_filepath});
 
         num_collect::logging::logger logger{};
         for (std::size_t i = 0; i < 100; ++i) {  // NOLINT

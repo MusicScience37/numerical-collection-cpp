@@ -213,7 +213,7 @@ inner_sink_name = "single_file"
         output_directory);
 
     num_collect::logging::config::toml::toml_log_config_parser()
-        .parse_from_table(toml::parse(config_text));
+        .parse_from_text(config_text);
 }
 
 auto main(int argc, char** argv) -> int {
