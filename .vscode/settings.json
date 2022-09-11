@@ -85,6 +85,7 @@
     "libc++",
     "libcxx",
     "libstdc",
+    "literalinclude",
     "longdash",
     "maclaurin",
     "maxdepth",
