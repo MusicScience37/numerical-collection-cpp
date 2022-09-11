@@ -5,6 +5,8 @@ verify_ssl = true
 
 [packages]
 conan = "*"
+# Pin version to prevent import errors in Sphinx.
+jinja2 = "==3.0.3"
 
 [dev-packages]
 adr-tools-python = "*"
@@ -18,7 +20,7 @@ pandas = "*"
 plotly = "*"
 pre-commit = "*"
 pylint = "*"
-sphinx = "*"
+sphinx = ">=5.1.1"
 sphinx-autobuild = "*"
 sphinx-rtd-theme = "*"
 sphinxcontrib-plantuml = "*"
@@ -26,7 +28,6 @@ trio = "*"
 trio-typing = "*"
 tqdm = "*"
 lizard = "*"
-jinja2 = "~=3.1.2"
 lcov-cobertura = "*"
 clang-tidy-checker = "*"
 pytest = "*"
