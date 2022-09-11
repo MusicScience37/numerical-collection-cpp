@@ -125,4 +125,62 @@ TEST_CASE("num_collect::logging::config::log_sink_factory_table") {
         CHECK_NOTHROW(table.append(name1, factory1));
         CHECK_THROWS(table.append(name1, factory1));
     }
+
+    SECTION("create log sinks with references") {
+        log_sink_factory_table table;
+
+        const auto name1 = std::string("sink1");
+        const auto sink1 = std::make_shared<mock_log_sink>();
+        const auto factory1 = std::make_shared<mock_log_sink_factory>();
+        table.append(name1, factory1);
+
+        const auto name2 = std::string("sink2");
+        const auto sink2 = std::make_shared<mock_log_sink>();
+        const auto factory2 = std::make_shared<mock_log_sink_factory>();
+        table.append(name2, factory2);
+
+        {
+            std::shared_ptr<log_sink_base> inner_sink;
+            REQUIRE_CALL(*factory1, create(_))
+                .TIMES(1)
+                .LR_SIDE_EFFECT(inner_sink = _1.get(name2))  // NOLINT
+                .RETURN(sink1);                              // NOLINT
+            REQUIRE_CALL(*factory2, create(_))
+                .TIMES(1)
+                .RETURN(sink2);  // NOLINT
+
+            std::shared_ptr<log_sink_base> sink;
+            CHECK_NOTHROW(sink = table.get(name1));
+            CHECK(static_cast<void*>(sink.get()) ==
+                static_cast<void*>(sink1.get()));
+            CHECK(static_cast<void*>(inner_sink.get()) ==
+                static_cast<void*>(sink2.get()));
+        }
+    }
+
+    SECTION("create log sinks with looped references") {
+        log_sink_factory_table table;
+
+        const auto name1 = std::string("sink1");
+        const auto sink1 = std::make_shared<mock_log_sink>();
+        const auto factory1 = std::make_shared<mock_log_sink_factory>();
+        table.append(name1, factory1);
+
+        const auto name2 = std::string("sink2");
+        const auto sink2 = std::make_shared<mock_log_sink>();
+        const auto factory2 = std::make_shared<mock_log_sink_factory>();
+        table.append(name2, factory2);
+
+        {
+            ALLOW_CALL(*factory1, create(_))
+                .SIDE_EFFECT((void)_1.get(name2))  // NOLINT
+                .RETURN(sink1);                    // NOLINT
+            ALLOW_CALL(*factory2, create(_))
+                .SIDE_EFFECT((void)_1.get(name1))  // NOLINT
+                .RETURN(sink2);                    // NOLINT
+
+            CHECK_THROWS(table.get(name1));
+            CHECK_THROWS(table.get(name2));
+        }
+    }
 }

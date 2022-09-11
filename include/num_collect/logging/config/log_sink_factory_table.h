@@ -26,6 +26,7 @@
 #include <string_view>
 #include <type_traits>
 #include <unordered_map>
+#include <unordered_set>
 #include <utility>
 
 #include <fmt/format.h>
@@ -73,12 +74,15 @@ public:
      */
     [[nodiscard]] auto get(const std::string& name)
         -> std::shared_ptr<sinks::log_sink_base> {
+        check_sink_reference_loop(name);
         const auto iter = caches_.find(name);
         if (iter == caches_.end()) {
             throw std::invalid_argument(
                 fmt::format("Log sink {} not found.", name));
         }
-        return iter->second.get(*this);
+        auto sink = iter->second.get(*this);
+        pop_created_log_sink_name(name);
+        return sink;
     }
 
 private:
@@ -115,8 +119,36 @@ private:
         std::shared_ptr<sinks::log_sink_base> sink_{};
     };
 
+    /*!
+     * \brief Check whether a log sink can be created without loop of
+     * references.
+     *
+     * \param[in] name Name of the log sink.
+     */
+    void check_sink_reference_loop(std::string name) {
+        if (!currently_creating_sink_names_.insert(std::move(name)).second) {
+            throw invalid_argument(
+                fmt::format("Loop of references of log sinks in configurations "
+                            "detected for log sink {}.",
+                    name));
+        }
+    }
+
+    /*!
+     * \brief Pop a name of a created log sink from
+     * currently_creating_sink_names_.
+     *
+     * \param[in] name Name of the log sink.
+     */
+    void pop_created_log_sink_name(const std::string& name) {
+        currently_creating_sink_names_.erase(name);
+    }
+
     //! Caches.
     std::unordered_map<std::string, cached_log_sink> caches_{};
+
+    //! Names of currently creating sinks.
+    std::unordered_set<std::string> currently_creating_sink_names_{};
 };
 
 }  // namespace num_collect::logging::config
