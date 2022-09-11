@@ -31,6 +31,7 @@ Configuration files can be written in
       [[num_collect.logging.tag_configs]]
 
       # Log tag. (Required.)
+      # Empty string specifies the default configuration.
       tag = "example_tag"
 
       # Name of a log sink. (Optional.)
@@ -90,7 +91,7 @@ Configuration files can be written in
       [[num_collect.logging.sinks]]
 
       # Name of the log sink. (Required.)
-      name = "single file sink"
+      name = "async sink"
 
       # Type of the log sink. (Required.)
       type = "async"
@@ -106,10 +107,10 @@ Configuration files can be written in
       [[num_collect.logging.sinks]]
 
       # Name of the log sink. (Required.)
-      name = "single file sink"
+      name = "combined sink"
 
       # Type of the log sink. (Required.)
-      type = "async"
+      type = "combined"
 
       # Log sinks used to actual logging. (Required.)
       # Log sink with these names must be configured in the same file.

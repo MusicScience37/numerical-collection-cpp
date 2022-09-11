@@ -24,26 +24,25 @@
 #include <string>
 #include <string_view>
 
+#include <lyra/cli.hpp>
+#include <lyra/opt.hpp>
+
 #include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/load_logging_config.h"
 #include "num_collect/logging/log_config.h"
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
+#include "num_collect/logging/sinks/async_logging_worker.h"
 #include "num_collect/logging/sinks/simple_log_sink.h"
 
 constexpr auto my_tag = num_collect::logging::log_tag_view("example tag");
 
 static void write_logs() {
-    // Configuration.
-    const auto config =
-        num_collect::logging::log_config::instance()
-            .get_default_tag_config()
-            .output_log_level(num_collect::logging::log_level::trace);
-    num_collect::logging::log_config::instance().set_config_of(my_tag, config);
-
     // Create a logger with a tag.
     const auto logger = num_collect::logging::logger(my_tag);
+    logger.info()("Example of logs with various log levels.");
 
     // Write logs.
     logger.trace()("trace");
@@ -62,6 +61,7 @@ static void write_logs() {
 static void write_to_default_tag() {
     // Create a logger without tag. (Default tag will be used.)
     const auto logger = num_collect::logging::logger();
+    logger.info()("Example of logs without a log tag.");
 
     // Write logs.
     logger.trace()("trace");  // Not shown with the default configuration.
@@ -70,17 +70,9 @@ static void write_to_default_tag() {
 }
 
 static void write_iterations() {
-    // Configuration.
-    const auto config =
-        num_collect::logging::log_config::instance()
-            .get_default_tag_config()
-            .output_log_level(num_collect::logging::log_level::trace)
-            .iteration_output_period(2)  // NOLINT
-            .iteration_label_period(5);  // NOLINT
-    num_collect::logging::log_config::instance().set_config_of(my_tag, config);
-
     // Logger.
     auto logger = num_collect::logging::logger(my_tag);
+    logger.info()("Example of logs of iterations.");
 
     // Configure.
     auto iteration_logger = num_collect::logging::iteration_logger(logger);
@@ -99,7 +91,7 @@ static void write_iterations() {
     iteration_logger.write_iteration();
 
     // Iteratively set and write values.
-    constexpr int repetition = 20;
+    constexpr int repetition = 300;
     iteration_logger.reset_count();
     for (int i = 0; i < repetition; ++i) {
         val1 = i;
@@ -112,19 +104,43 @@ static void write_iterations() {
 
 auto main(int argc, char** argv) -> int {
     try {
-        if (argc == 2) {
-            // Configure logging to a file.
-            const std::string log_file_path = argv[1];  // NOLINT
-            const auto config = num_collect::logging::log_tag_config().sink(
-                num_collect::logging::sinks::create_single_file_sink(
-                    log_file_path));
+        // Parse command line arguments.
+        std::string config_filepath;
+        const auto cli = lyra::cli().add_argument(
+            lyra::opt(config_filepath, "path")
+                .name("--config")
+                .name("-c")
+                .optional()
+                .help("Load a logging configuration file."));
+        const auto result = cli.parse({argc, argv});
+        if (!result) {
+            std::cerr << result.message() << "\n\n";
+            std::cerr << cli << std::endl;
+            return 1;
+        }
+
+        // Configure logging.
+        if (config_filepath.empty()) {
+            // Use custom configuration to show all logs.
+            const auto config =
+                num_collect::logging::log_config::instance()
+                    .get_default_tag_config()
+                    .output_log_level(num_collect::logging::log_level::trace);
             num_collect::logging::log_config::instance().set_default_tag_config(
                 config);
+        } else {
+            // Use the give configuration file.
+            num_collect::logging::load_logging_config_file(config_filepath);
         }
 
         write_logs();
         write_to_default_tag();
         write_iterations();
+
+        // Stop thread of asynchronous logs.
+        // Without this line, this program can crush
+        // (https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/259).
+        num_collect::logging::sinks::async_logging_worker::instance().stop();
 
         return 0;
     } catch (const std::exception& e) {
