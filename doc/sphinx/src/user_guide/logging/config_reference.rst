@@ -3,6 +3,11 @@ Reference of configurations
 
 Configurations are made of following blocks:
 
+.. contents::
+    :depth: 1
+    :local:
+    :backlinks: none
+
 Configuration of a log tag
 -------------------------------
 

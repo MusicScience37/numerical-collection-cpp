@@ -3,6 +3,11 @@ Example configurations
 
 Here shows some example full configurations.
 
+.. contents::
+    :depth: 1
+    :local:
+    :backlinks: none
+
 Example configuration to use the default log sink to write to console
 -------------------------------------------------------------------------
 
