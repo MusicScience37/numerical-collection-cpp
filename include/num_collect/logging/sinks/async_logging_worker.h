@@ -572,11 +572,14 @@ private:
         const bool is_enabled = is_enabled_.load(std::memory_order::relaxed);
         if (result !=
             impl::async_log_queue::spin_once_result_type::some_logs_processed) {
-            return is_enabled;
+            if (!is_enabled) {
+                return false;
+            }
+            std::this_thread::sleep_for(config_.log_wait_time());
+            return true;
         }
 
         if (is_enabled) {
-            std::this_thread::sleep_for(config_.log_wait_time());
             return true;
         }
         std::atomic_thread_fence(std::memory_order::acquire);
