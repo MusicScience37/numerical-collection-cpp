@@ -137,11 +137,6 @@ auto main(int argc, char** argv) -> int {
         write_to_default_tag();
         write_iterations();
 
-        // Stop thread of asynchronous logs.
-        // Without this line, this program can crush
-        // (https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/259).
-        num_collect::logging::sinks::async_logging_worker::instance().stop();
-
         return 0;
     } catch (const std::exception& e) {
         std::cerr << "Exception thrown: " << e.what() << std::endl;

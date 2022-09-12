@@ -130,8 +130,6 @@ auto main(int argc, char** argv) -> int {
         write_iterations();
         write_parameters();
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));  // NOLINT
-
         return 0;
     } catch (const std::exception& e) {
         std::cerr << "Exception thrown: " << e.what() << std::endl;

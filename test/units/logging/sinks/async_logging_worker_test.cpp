@@ -96,35 +96,35 @@ TEST_CASE(
 
         async_log_thread_queue_notifier notifier;
 
-        std::vector<async_log_thread_queue_type*> output;
+        std::vector<std::shared_ptr<async_log_thread_queue_type>> output;
         output.reserve(num_elems);
         std::thread consumer{[&notifier, &output] {
             const auto deadline = std::chrono::steady_clock::now() + timeout;
             while (output.size() < num_elems &&
                 std::chrono::steady_clock::now() < deadline) {
-                async_log_thread_queue_type* ptr = notifier.try_pop();
+                auto ptr = notifier.try_pop();
                 if (ptr == nullptr) {
                     std::this_thread::sleep_for(wait_time);
                 } else {
-                    output.push_back(ptr);
+                    output.push_back(std::move(ptr));
                 }
             }
         }};
 
-        std::vector<std::unique_ptr<async_log_thread_queue_type>> input;
+        std::vector<std::shared_ptr<async_log_thread_queue_type>> input;
         input.reserve(num_elems);
         for (std::size_t i = 0; i < num_elems; ++i) {
             input.push_back(std::make_unique<async_log_thread_queue_type>(1));
         }
         for (const auto& elem : input) {
-            notifier.push(elem.get());
+            notifier.push(elem);
         }
 
         consumer.join();
 
         for (std::size_t i = 0; i < num_elems; ++i) {
             INFO("i = " << i);
-            CHECK(static_cast<void*>(output.at(i)) ==
+            CHECK(static_cast<void*>(output.at(i).get()) ==
                 static_cast<void*>(input.at(i).get()));
         }
     }
