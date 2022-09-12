@@ -21,6 +21,7 @@
 
 #include <atomic>
 #include <chrono>
+#include <exception>
 #include <iostream>
 #include <limits>
 #include <memory>
