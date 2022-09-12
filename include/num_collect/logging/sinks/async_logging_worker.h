@@ -21,6 +21,8 @@
 
 #include <atomic>
 #include <chrono>
+#include <exception>
+#include <iostream>
 #include <limits>
 #include <memory>
 #include <mutex>
@@ -215,9 +217,9 @@ public:
      *
      * \param[in] ptr Pointer to the queue.
      */
-    void push(async_log_thread_queue_type* ptr) {
+    void push(std::shared_ptr<async_log_thread_queue_type> ptr) {
         std::unique_lock<std::mutex> lock(mutex_);
-        queue_.push(ptr);
+        queue_.push(std::move(ptr));
     }
 
     /*!
@@ -225,12 +227,13 @@ public:
      *
      * \return Pointer to the queue if exists, otherwise null pointer.
      */
-    [[nodiscard]] auto try_pop() -> async_log_thread_queue_type* {
+    [[nodiscard]] auto try_pop()
+        -> std::shared_ptr<async_log_thread_queue_type> {
         std::unique_lock<std::mutex> lock(mutex_);
         if (queue_.empty()) [[likely]] {
             return nullptr;
         }
-        async_log_thread_queue_type* ptr = queue_.front();
+        auto ptr = std::move(queue_.front());
         queue_.pop();
         return ptr;
     }
@@ -266,7 +269,7 @@ public:
 
 private:
     //! Queue.
-    std::queue<async_log_thread_queue_type*> queue_{};
+    std::queue<std::shared_ptr<async_log_thread_queue_type>> queue_{};
 
     //! Mutex of the queue.
     std::mutex mutex_{};
@@ -284,8 +287,9 @@ public:
      */
     explicit async_log_thread_queue_initializer(
         const async_logging_worker_config& config)
-        : queue_(config.thread_queue_size()) {
-        async_log_thread_queue_notifier::instance().push(&queue_);
+        : queue_(std::make_shared<async_log_thread_queue_type>(
+              config.thread_queue_size())) {
+        async_log_thread_queue_notifier::instance().push(queue_);
     }
 
     /*!
@@ -294,12 +298,12 @@ public:
      * \return Queue.
      */
     [[nodiscard]] auto queue() noexcept -> async_log_thread_queue_type& {
-        return queue_;
+        return *queue_;
     }
 
 private:
     //! Queue.
-    async_log_thread_queue_type queue_;
+    std::shared_ptr<async_log_thread_queue_type> queue_;
 };
 
 /*!
@@ -346,7 +350,7 @@ public:
 
         spin_once_result_type res = spin_once_result_type::no_log;
         std::optional<async_log_request> request;
-        for (async_log_thread_queue_type* queue : thread_queues_) {
+        for (const auto& queue : thread_queues_) {
             for (index_type i = 0; i < config_.max_logs_at_once_per_thread();
                  ++i) {
                 if (queue->try_pop(request)) {
@@ -411,12 +415,12 @@ private:
      */
     void collect_new_queues() {
         while (true) {
-            async_log_thread_queue_type* thread_queue =
+            auto thread_queue =
                 async_log_thread_queue_notifier::instance().try_pop();
             if (thread_queue == nullptr) [[likely]] {
                 return;
             }
-            thread_queues_.push_back(thread_queue);
+            thread_queues_.push_back(std::move(thread_queue));
         }
     }
 
@@ -424,7 +428,7 @@ private:
     async_logging_worker_config config_;
 
     //! Queues for threads.
-    std::vector<async_log_thread_queue_type*> thread_queues_{};
+    std::vector<std::shared_ptr<async_log_thread_queue_type>> thread_queues_{};
 };
 
 }  // namespace impl
@@ -465,7 +469,7 @@ public:
      */
     void start() {
         std::unique_lock<std::mutex> lock(worker_thread_mutex_);
-        is_enabled_ = true;
+        is_enabled_.store(true, std::memory_order::relaxed);
         if (!worker_thread_.joinable()) {
             worker_thread_ = std::thread{[this] { work(); }};
         }
@@ -478,7 +482,9 @@ public:
      */
     void stop() {
         std::unique_lock<std::mutex> lock(worker_thread_mutex_);
-        is_enabled_ = false;
+        worker_thread_end_deadline_ =
+            std::chrono::steady_clock::now() + worker_thread_end_timeout;
+        is_enabled_.store(false, std::memory_order::release);
         if (worker_thread_.joinable()) {
             worker_thread_.join();
         }
@@ -537,24 +543,48 @@ private:
      * \brief Process logs. (For worker thread.)
      */
     void work() {
-        while (is_enabled_) {
-            const auto result =
-                queue_.spin_once([](const impl::async_log_request& request) {
-                    request.sink->write(request.time, request.tag,
-                        request.level,
-                        util::source_info_view{request.file_path, request.line,
-                            request.column, request.function_name},
-                        request.body);
-                });
-
-            if (result ==
-                impl::async_log_queue::spin_once_result_type::
-                    some_logs_processed) {
-                std::this_thread::yield();
-            } else {
-                std::this_thread::sleep_for(config_.log_wait_time());
+        while (true) {
+            try {
+                const bool continue_work = work_once();
+                if (!continue_work) {
+                    return;
+                }
+            } catch (const std::exception& e) {
+                std::cerr << "Exception in worker thread: " << e.what()
+                          << std::endl;
             }
         }
+    }
+
+    /*!
+     * \brief Process logs once.
+     *
+     * \return Whether to continue.
+     */
+    [[nodiscard]] auto work_once() -> bool {
+        const auto result =
+            queue_.spin_once([](const impl::async_log_request& request) {
+                request.sink->write(request.time, request.tag, request.level,
+                    util::source_info_view{request.file_path, request.line,
+                        request.column, request.function_name},
+                    request.body);
+            });
+
+        const bool is_enabled = is_enabled_.load(std::memory_order::relaxed);
+        if (result !=
+            impl::async_log_queue::spin_once_result_type::some_logs_processed) {
+            if (!is_enabled) {
+                return false;
+            }
+            std::this_thread::sleep_for(config_.log_wait_time());
+            return true;
+        }
+
+        if (is_enabled) {
+            return true;
+        }
+        std::atomic_thread_fence(std::memory_order::acquire);
+        return std::chrono::steady_clock::now() <= *worker_thread_end_deadline_;
     }
 
     //! Configuration.
@@ -571,6 +601,13 @@ private:
 
     //! Mutex of thread.
     std::mutex worker_thread_mutex_{};
+
+    //! Deadline of the end of the worker thread.
+    std::optional<std::chrono::steady_clock::time_point>
+        worker_thread_end_deadline_{};
+
+    //! Timeout of the end of the worker thread.
+    static constexpr auto worker_thread_end_timeout = std::chrono::seconds(1);
 };
 
 }  // namespace num_collect::logging::sinks
