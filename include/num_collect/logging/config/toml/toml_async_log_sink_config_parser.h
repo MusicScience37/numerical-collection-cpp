@@ -32,6 +32,8 @@ namespace num_collect::logging::config::toml {
 /*!
  * \brief Class to parse configurations of log sinks to write logs
  * asynchronously.
+ *
+ * \thread_safety Not thread-safe.
  */
 class toml_async_log_sink_config_parser final
     : public toml_log_sink_config_parser_base {

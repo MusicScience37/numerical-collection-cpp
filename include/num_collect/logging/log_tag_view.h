@@ -29,6 +29,8 @@ namespace num_collect::logging {
 
 /*!
  * \brief Class of tags of logs without memory management.
+ *
+ * \thread_safety Not thread-safe.
  */
 class log_tag_view {
 public:

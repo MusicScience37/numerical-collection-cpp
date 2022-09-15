@@ -27,6 +27,8 @@ namespace num_collect::logging {
 
 /*!
  * \brief Class of configurations of logs.
+ *
+ * \thread_safety Thread-safe for all operations.
  */
 class log_config {
 public:

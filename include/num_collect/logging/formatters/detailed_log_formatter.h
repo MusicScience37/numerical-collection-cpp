@@ -37,6 +37,8 @@ namespace num_collect::logging::formatters {
  * \brief Class to format logs with details.
  *
  * \note This formatter is meant for logs written to files.
+ *
+ * \thread_safety Thread-safe for all operations.
  */
 class detailed_log_formatter : public log_formatter_base {
 public:

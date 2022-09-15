@@ -351,8 +351,8 @@ private:
 /*!
  * \brief Class to write logs of iterations.
  *
- * \note This class is not thread safe because this class is meant for use only
- * from single thread at the end of each iteration.
+ * \thread_safety This class is not thread safe because this class is meant for
+ * use only from single thread at the end of each iteration.
  */
 class iteration_logger {
 public:

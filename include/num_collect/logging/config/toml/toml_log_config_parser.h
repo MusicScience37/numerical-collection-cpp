@@ -119,6 +119,8 @@ inline void parse_log_tag_config_to(log_tag_config& config,
 
 /*!
  * \brief Class to parse log configuration from a TOML file.
+ *
+ * \thread_safety Not thread-safe.
  */
 class toml_log_config_parser final : public log_config_parser_base {
 public:

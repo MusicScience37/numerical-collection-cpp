@@ -41,6 +41,8 @@ namespace num_collect::logging::config::toml {
 
 /*!
  * \brief Class to create log sinks to write logs to multiple log sinks.
+ *
+ * \thread_safety Not thread-safe.
  */
 class toml_combined_log_sink_factory final : public log_sink_factory_base {
 public:

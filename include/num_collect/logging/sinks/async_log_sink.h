@@ -35,6 +35,8 @@ namespace num_collect::logging::sinks {
 
 /*!
  * \brief Class of log sinks to write logs asynchronously.
+ *
+ * \thread_safety Thread-safe for all operations.
  */
 class async_log_sink final : public log_sink_base {
 public:
@@ -56,17 +58,7 @@ public:
     auto operator=(const async_log_sink&) -> async_log_sink& = delete;
     auto operator=(async_log_sink&&) -> async_log_sink& = delete;
 
-    /*!
-     * \brief Write a log.
-     *
-     * \param[in] time Time.
-     * \param[in] tag Tag.
-     * \param[in] level Log level.
-     * \param[in] source Information of the source code.
-     * \param[in] body Log body.
-     *
-     * \note Implementations of this function must be thread-safe.
-     */
+    //! \copydoc num_collect::logging::sinks::log_sink_base::write
     void write(std::chrono::system_clock::time_point time, std::string_view tag,
         log_level level, util::source_info_view source,
         std::string_view body) noexcept override {
