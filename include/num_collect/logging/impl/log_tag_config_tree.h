@@ -38,6 +38,8 @@ namespace num_collect::logging::impl {
 
 /*!
  * \brief Class of nodes in log_tag_config_tree objects.
+ *
+ * \thread_safety Thread-safe for all operations.
  */
 class log_tag_config_tree_node {
 public:
@@ -114,6 +116,8 @@ private:
 
 /*!
  * \brief Class of trees of configurations of log tags.
+ *
+ * \thread_safety Thread-safe for all operations.
  */
 class log_tag_config_tree {
 public:

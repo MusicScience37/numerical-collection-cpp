@@ -435,6 +435,8 @@ private:
 
 /*!
  * \brief Class to process logs asynchronously.
+ *
+ * \thread_safety Thread-safe for all operations.
  */
 class async_logging_worker {
 public:

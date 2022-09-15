@@ -34,6 +34,8 @@ namespace num_collect::logging::sinks {
 
 /*!
  * \brief Class to wrap file pointer.
+ *
+ * \thread_safety Not thread-safe.
  */
 class file_wrapper {
 public:

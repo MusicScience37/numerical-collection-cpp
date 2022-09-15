@@ -39,6 +39,8 @@ namespace num_collect::logging::config::toml {
 /*!
  * \brief Class to create log sinks to write to consoles using TOML
  * configurations.
+ *
+ * \thread_safety Not thread-safe.
  */
 class toml_console_log_sink_factory final : public log_sink_factory_base {
 public:

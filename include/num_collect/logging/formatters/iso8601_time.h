@@ -30,6 +30,8 @@ namespace num_collect::logging::formatters {
 
 /*!
  * \brief Class to hold time for formatting it as in ISO 8601.
+ *
+ * \thread_safety Thread-safe for all operations.
  */
 class iso8601_time {
 public:

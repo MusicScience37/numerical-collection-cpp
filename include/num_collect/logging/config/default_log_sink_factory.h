@@ -29,6 +29,8 @@ namespace num_collect::logging::config {
 
 /*!
  * \brief Class to create default log sink.
+ *
+ * \thread_safety Thread-safe for all operations.
  */
 class default_log_sink_factory final : public log_sink_factory_base {
 public:

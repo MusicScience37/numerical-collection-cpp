@@ -35,6 +35,8 @@ namespace num_collect::logging::config::toml {
 /*!
  * \brief Class to create log sinks to write to files without rotation using
  * TOML configurations.
+ *
+ * \thread_safety Not thread-safe.
  */
 class toml_single_file_log_sink_factory final : public log_sink_factory_base {
 public:

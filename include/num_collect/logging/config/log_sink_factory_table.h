@@ -43,6 +43,8 @@ constexpr auto default_log_sink_name = std::string_view("default");
 
 /*!
  * \brief Class of tables of log sinks.
+ *
+ * \thread_safety Not thread-safe.
  */
 class log_sink_factory_table {
 public:
