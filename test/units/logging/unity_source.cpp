@@ -18,6 +18,7 @@
 #include "iteration_logger_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "iterations/iteration_parameter_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "iterations/iteration_paramter_formatter_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "iterations/member_variable_iteration_parameter_value_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "iterations/variable_iteration_parameter_value_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "load_logging_config_test.cpp"   // NOLINT(bugprone-suspicious-include)
 #include "log_config_test.cpp"            // NOLINT(bugprone-suspicious-include)
