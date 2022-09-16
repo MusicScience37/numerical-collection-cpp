@@ -19,6 +19,7 @@
  */
 #include "num_collect/logging/iterations/iteration_paramter_formatter.h"
 
+#include <optional>
 #include <string>
 
 #include <catch2/catch_test_macros.hpp>
@@ -84,5 +85,31 @@ TEST_CASE("num_collect::logging::iterations::iteration_parameter_formatter") {
         buffer.clear();
         CHECK_NOTHROW(formatter.format(val3, buffer));
         CHECK(std::string(buffer.data(), buffer.size()) == "3.14159");
+    }
+
+    SECTION("optional<int>") {
+        STATIC_REQUIRE(
+            formattable_iteration_parameter_value<std::optional<int>>);
+
+        iteration_parameter_formatter<std::optional<int>> formatter;
+        const std::optional<int> val1 = 12345;
+        fmt::memory_buffer buffer;
+        CHECK_NOTHROW(formatter.format(val1, buffer));
+        CHECK(std::string(buffer.data(), buffer.size()) == "12345");
+
+        const std::optional<int> val2 = -234;
+        constexpr num_collect::index_type width = 7;
+        buffer.clear();
+        CHECK_NOTHROW(formatter.format_with_alignment(val2, width, buffer));
+        CHECK(std::string(buffer.data(), buffer.size()) == "   -234");
+
+        const std::optional<int> null_val{};
+        buffer.clear();
+        CHECK_NOTHROW(formatter.format(null_val, buffer));
+        CHECK(std::string(buffer.data(), buffer.size()) == "---");
+
+        buffer.clear();
+        CHECK_NOTHROW(formatter.format_with_alignment(null_val, width, buffer));
+        CHECK(std::string(buffer.data(), buffer.size()) == "    ---");
     }
 }

@@ -20,13 +20,17 @@
 #pragma once
 
 #include <iterator>
+#include <optional>
+#include <string_view>
 
 #include <fmt/format.h>
 
 #include "num_collect/base/concepts/formattable.h"  // IWYU pragma: keep
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/logging/concepts/formattable_iteration_parameter_value.h"  // IWYU pragma: keep
 #include "num_collect/logging/concepts/formattable_real_scalar.h"  // IWYU pragma: keep
+#include "num_collect/logging/iterations/iteration_paramter_formatter_decl.h"
 
 namespace num_collect::logging::iterations {
 
@@ -39,14 +43,6 @@ namespace impl {
 inline constexpr index_type iteration_parameter_formatter_default_precision = 4;
 
 }  // namespace impl
-
-/*!
- * \brief Class of the formatter of parameter values in iterations.
- *
- * \tparam Value Type of values.
- */
-template <typename Value>
-class iteration_parameter_formatter;
 
 /*!
  * \brief Class of the formatter of parameter values in iterations.
@@ -150,6 +146,60 @@ private:
     //! Precision.
     index_type precision_{
         impl::iteration_parameter_formatter_default_precision};
+};
+
+/*!
+ * \brief Class of the formatter of parameter values in iterations.
+ *
+ * \tparam Value Type of values.
+ *
+ * \thread_safety Not thread-safe.
+ */
+template <concepts::formattable_iteration_parameter_value Value>
+class iteration_parameter_formatter<std::optional<Value>>
+    : public iteration_parameter_formatter<Value> {
+public:
+    /*!
+     * \brief Constructor.
+     */
+    iteration_parameter_formatter() noexcept = default;
+
+    /*!
+     * \brief Format a value.
+     *
+     * \param[in] value Value.
+     * \param[out] buffer Buffer to write the formatted value.
+     */
+    void format(
+        const std::optional<Value>& value, fmt::memory_buffer& buffer) const {
+        if (value) {
+            iteration_parameter_formatter<Value>::format(*value, buffer);
+        } else {
+            buffer.append(null_string);
+        }
+    }
+
+    /*!
+     * \brief Format a value with alignment.
+     *
+     * \param[in] value Value.
+     * \param[in] width Width of the output.
+     * \param[out] buffer Buffer to write the formatted value.
+     */
+    void format_with_alignment(const std::optional<Value>& value,
+        index_type width, fmt::memory_buffer& buffer) const {
+        if (value) {
+            iteration_parameter_formatter<Value>::format_with_alignment(
+                *value, width, buffer);
+        } else {
+            fmt::format_to(
+                std::back_inserter(buffer), "{0: >{1}}", null_string, width);
+        }
+    }
+
+private:
+    //! String to express null.
+    static constexpr std::string_view null_string{"---"};
 };
 
 }  // namespace num_collect::logging::iterations
