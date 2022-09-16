@@ -19,6 +19,7 @@ set(SOURCE_FILES
     iteration_logger_test.cpp
     iterations/iteration_parameter_test.cpp
     iterations/iteration_paramter_formatter_test.cpp
+    iterations/member_function_iteration_parameter_value_test.cpp
     iterations/member_variable_iteration_parameter_value_test.cpp
     iterations/variable_iteration_parameter_value_test.cpp
     load_logging_config_test.cpp
