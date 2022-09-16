@@ -15,25 +15,28 @@
  */
 /*!
  * \file
- * \brief Definition of getter_of class.
+ * \brief Definition of iteration_parameter_value concept.
  */
 #pragma once
-
-#include <type_traits>
 
 #include "num_collect/base/concepts/decayed_to.h"
 
 namespace num_collect::logging::concepts {
 
 /*!
- * \brief Concept of getter functions.
+ * \brief Concept of parameters values in iterations.
  *
- * \tparam Func Type of the function.
- * \tparam Value Type of returned values.
+ * \tparam T Type.
+ * \tparam Algorithm Type of the algorithm.
+ * \tparam Value Type of the value.
  */
-template <typename Func, typename Value>
-concept getter_of = requires(const Func& func) {
-    { func() } -> base::concepts::decayed_to<Value>;
+template <typename T, typename Algorithm, typename Value>
+concept iteration_parameter_value = requires(const T& obj) {
+    { obj.get() } -> base::concepts::decayed_to<Value>;
+
+    requires requires(const Algorithm* algorithm) {
+        { obj.get(algorithm) } -> base::concepts::decayed_to<Value>;
+    };
 };
 
 }  // namespace num_collect::logging::concepts
