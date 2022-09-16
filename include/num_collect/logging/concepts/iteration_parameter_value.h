@@ -19,7 +19,7 @@
  */
 #pragma once
 
-#include "num_collect/base/concepts/decayed_to.h"
+#include "num_collect/base/concepts/decayed_to.h"  // IWYU pragma: keep
 
 namespace num_collect::logging::concepts {
 
@@ -28,7 +28,7 @@ namespace num_collect::logging::concepts {
  *
  * \tparam T Type.
  * \tparam Algorithm Type of the algorithm.
- * \tparam Value Type of the value.
+ * \tparam Value Type of values.
  */
 template <typename T, typename Algorithm, typename Value>
 concept iteration_parameter_value = requires(const T& obj) {

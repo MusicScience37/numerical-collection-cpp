@@ -21,7 +21,7 @@
 
 #include <type_traits>
 
-#include "num_collect/base/concepts/decayed_to.h"
+#include "num_collect/base/concepts/decayed_to.h"  // IWYU pragma: keep
 
 namespace num_collect::logging::concepts {
 

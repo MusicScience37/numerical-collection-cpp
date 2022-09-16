@@ -19,15 +19,18 @@
  */
 #pragma once
 
+#include "num_collect/logging/concepts/formattable_iteration_parameter_value.h"  // IWYU pragma: keep
+
 namespace num_collect::logging::iterations::impl {
 
 /*!
  * \brief Class of parameters values in iterations specified by variables.
  *
  * \tparam Algorithm Type of the algorithm.
- * \tparam Value Type of the value.
+ * \tparam Value Type of values.
  */
-template <typename Algorithm, typename Value>
+template <typename Algorithm,
+    concepts::formattable_iteration_parameter_value Value>
 class variable_iteration_parameter_value {
 public:
     /*!
