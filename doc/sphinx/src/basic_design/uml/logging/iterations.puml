@@ -1,0 +1,58 @@
+@startuml iterations
+
+title Abstract model of iteration logs
+
+package logging {
+    !includesub ./logger.puml!log_tag_view
+    package sinks {
+        !includesub ./logger.puml!log_sink_base
+    }
+
+    package iterations {
+        class iteration_parameter_value<Value, ...> {
+            + get() : Value
+            + get(algorithm: Algorithm*) : Value
+        }
+        note bottom
+            This will have some variations:
+            * Function to get the current value.
+            * Member function to get the current value.
+            * Pointer to a variable.
+            * Pointer to a member variable.
+        endnote
+
+        class iteration_parameter_formatter<Value> {
+            + format(value: const Value&, buffer: fmt::memory_buffer&)
+        }
+
+        interface iteration_parameter_base {
+            {abstract} + format_label_to(buffer: fmt::memory_buffer&)
+            {abstract} + format_value_to(buffer: fmt::memory_buffer&)
+            {abstract} + format_summary_to(buffer: fmt::memory_buffer&)
+            {abstract} + label() : const string&
+        }
+
+        class iteration_parameter<Value>
+        iteration_parameter_base <|.. iteration_parameter
+        iteration_parameter o-- iteration_parameter_value
+        iteration_parameter o-- iteration_parameter_formatter
+
+        class iteration_logger<Algorithm> {
+            + start(logger: logger)
+            + append(parameter: shared_ptr<iteration_parameter_base>)
+            + append(label: string, ...) : shared_ptr<...>
+            + write_iteration()
+            + write_iteration(algorithm: Algorithm*)
+            + write_summary()
+            + write_summary(algorithm: Algorithm*)
+            - format_labels_to(buffer: fmt::memory_buffer&, algorithm: Algorithm*)
+            - format_values_to(buffer: fmt::memory_buffer&, algorithm: Algorithm*)
+            - format_summary_to(buffer: fmt::memory_buffer&, algorithm: Algorithm*)
+        }
+        iteration_logger o-- iteration_parameter_base
+        iteration_logger o-- log_tag_view
+        iteration_logger o-- log_sink_base
+    }
+}
+
+@enduml
