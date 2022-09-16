@@ -128,7 +128,7 @@ public:
      * \return This object.
      */
     auto precision(index_type value) -> iteration_parameter_formatter& {
-        if (value <= 0) {
+        if (value <= 0) [[unlikely]] {
             throw invalid_argument("Precision must be a positive number.");
         }
         precision_ = value;

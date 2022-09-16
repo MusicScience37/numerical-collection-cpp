@@ -205,7 +205,7 @@ public:
      * \return This object.
      */
     auto width(index_type value) -> iteration_parameter* {
-        if (value <= 0) {
+        if (value <= 0) [[unlikely]] {
             throw invalid_argument("Width must be a positive number.");
         }
         width_ = value;

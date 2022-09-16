@@ -52,6 +52,9 @@ TEST_CASE("num_collect::logging::iterations::iteration_parameter") {
         parameter_type parameter{label, parameter_value_type{value}};
         parameter.width(width);
 
+        CHECK(parameter.label() == label);
+        CHECK(parameter.width() == width);
+
         fmt::memory_buffer buffer;
         CHECK_NOTHROW(parameter.format_label_to(buffer));
         CHECK(std::string(buffer.data(), buffer.size()) == "    abc");
@@ -89,6 +92,9 @@ TEST_CASE("num_collect::logging::iterations::iteration_parameter") {
         parameter_type parameter{
             label, parameter_value_type{&algorithm_type::value1}};
         parameter.width(width);
+
+        CHECK(parameter.label() == label);
+        CHECK(parameter.width() == width);
 
         fmt::memory_buffer buffer;
         CHECK_NOTHROW(parameter.format_label_to(buffer));
@@ -128,6 +134,9 @@ TEST_CASE("num_collect::logging::iterations::iteration_parameter") {
         parameter_type parameter{
             label, parameter_value_type{&algorithm_type::get}};
         parameter.width(width);
+
+        CHECK(parameter.label() == label);
+        CHECK(parameter.width() == width);
 
         fmt::memory_buffer buffer;
         CHECK_NOTHROW(parameter.format_label_to(buffer));
