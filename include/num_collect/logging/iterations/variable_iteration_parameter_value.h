@@ -21,7 +21,7 @@
 
 #include "num_collect/logging/concepts/formattable_iteration_parameter_value.h"  // IWYU pragma: keep
 
-namespace num_collect::logging::iterations::impl {
+namespace num_collect::logging::iterations {
 
 /*!
  * \brief Class of parameters values in iterations specified by variables.
@@ -63,4 +63,4 @@ private:
     const Value* value_;
 };
 
-}  // namespace num_collect::logging::iterations::impl
+}  // namespace num_collect::logging::iterations

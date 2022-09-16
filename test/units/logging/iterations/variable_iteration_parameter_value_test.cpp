@@ -17,18 +17,16 @@
  * \file
  * \brief Test of variable_iteration_parameter_value class.
  */
-#include "num_collect/logging/iterations/impl/variable_iteration_parameter_value.h"
+#include "num_collect/logging/iterations/variable_iteration_parameter_value.h"
 
 #include <catch2/catch_test_macros.hpp>
 
 #include "num_collect/logging/concepts/iteration_parameter_value.h"  // IWYU pragma: keep
 
 TEST_CASE(
-    "num_collect::logging::iterations::impl::variable_iteration_parameter_"
-    "value") {
+    "num_collect::logging::iterations::variable_iteration_parameter_value") {
     using num_collect::logging::concepts::iteration_parameter_value;
-    using num_collect::logging::iterations::impl::
-        variable_iteration_parameter_value;
+    using num_collect::logging::iterations::variable_iteration_parameter_value;
 
     SECTION("check of concept") {
         using algorithm_type = void;
