@@ -52,6 +52,8 @@ class iteration_parameter_formatter;
  * \brief Class of the formatter of parameter values in iterations.
  *
  * \tparam Value Type of values.
+ *
+ * \thread_safety Not thread-safe.
  */
 template <base::concepts::formattable Value>
 class iteration_parameter_formatter<Value> {
@@ -88,6 +90,8 @@ public:
  * \brief Class of the formatter of parameter values in iterations.
  *
  * \tparam Value Type of values.
+ *
+ * \thread_safety Not thread-safe.
  */
 template <concepts::formattable_real_scalar Value>
 class iteration_parameter_formatter<Value> {

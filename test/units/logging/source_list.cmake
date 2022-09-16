@@ -17,6 +17,7 @@ set(SOURCE_FILES
     impl/log_tag_element_test.cpp
     impl/separate_top_log_tag_element_test.cpp
     iteration_logger_test.cpp
+    iterations/iteration_parameter_test.cpp
     iterations/iteration_paramter_formatter_test.cpp
     iterations/variable_iteration_parameter_value_test.cpp
     load_logging_config_test.cpp

@@ -16,6 +16,7 @@
 #include "impl/log_tag_element_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/separate_top_log_tag_element_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "iteration_logger_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "iterations/iteration_parameter_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "iterations/iteration_paramter_formatter_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "iterations/variable_iteration_parameter_value_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "load_logging_config_test.cpp"   // NOLINT(bugprone-suspicious-include)

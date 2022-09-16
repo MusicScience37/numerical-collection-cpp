@@ -28,6 +28,8 @@ namespace num_collect::logging::iterations {
  *
  * \tparam Algorithm Type of the algorithm.
  * \tparam Value Type of values.
+ *
+ * \thread_safety Not thread-safe.
  */
 template <typename Algorithm,
     concepts::formattable_iteration_parameter_value Value>
