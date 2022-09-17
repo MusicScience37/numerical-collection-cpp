@@ -70,7 +70,7 @@ TEST_CASE("num_collect::logging::iterations::iteration_logger") {
 
         constexpr int repetition = 20;
         for (int i = 0; i < repetition; ++i) {
-            value = i;
+            value = i;  // NOLINT(clang-analyzer-deadcode.DeadStores)
             iter_logger.write_iteration();
         }
         iter_logger.write_summary();
