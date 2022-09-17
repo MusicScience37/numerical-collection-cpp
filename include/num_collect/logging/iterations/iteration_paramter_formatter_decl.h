@@ -27,6 +27,6 @@ namespace num_collect::logging::iterations {
  * \tparam Value Type of values.
  */
 template <typename Value>
-class iteration_parameter_formatter;
+class iteration_parameter_formatter;  // IWYU pragma: keep
 
 }  // namespace num_collect::logging::iterations

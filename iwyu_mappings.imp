@@ -32,6 +32,7 @@
   { include: ["@<__chrono/.*>", private, "<chrono>", public ] },
   { include: ["@<__filesystem/.*>", private, "<filesystem>", public ] },
   { include: ["@<__algorithm/.*>", private, "<algorithm>", public ] },
+  { include: ["@<__variant/.*>", private, "<variant>", public ] },
   { include: ["<__tuple>", private, "<tuple>", public ] },
   { include: ["<__tuple>", private, "<utility>", public ] },
   { include: ["<__tuple>", private, "<unordered_map>", public ] },

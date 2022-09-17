@@ -19,7 +19,9 @@
  */
 #include "num_collect/logging/iterations/function_iteration_parameter_value.h"
 
+#include <string>
 #include <type_traits>
+#include <utility>
 
 #include <catch2/catch_test_macros.hpp>
 

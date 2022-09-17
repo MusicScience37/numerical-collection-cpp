@@ -19,11 +19,12 @@
  */
 #include "num_collect/logging/iterations/member_variable_iteration_parameter_value.h"
 
+#include <string>
+
 #include <catch2/catch_test_macros.hpp>
 
 #include "mock_algorithm.h"
 #include "num_collect/logging/concepts/iteration_parameter_value.h"  // IWYU pragma: keep
-#include "trompeloeil_catch2.h"
 
 TEST_CASE(
     "num_collect::logging::iterations::member_variable_iteration_parameter_"

@@ -19,11 +19,16 @@
  */
 #pragma once
 
+#include <chrono>
 #include <memory>
+#include <string>
+#include <string_view>
 #include <type_traits>
 #include <utility>
 #include <variant>
 #include <vector>
+
+#include <fmt/format.h>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/concepts/formattable_iteration_parameter_value.h"  // IWYU pragma: keep
@@ -35,9 +40,12 @@
 #include "num_collect/logging/iterations/member_function_iteration_parameter_value.h"
 #include "num_collect/logging/iterations/member_variable_iteration_parameter_value.h"
 #include "num_collect/logging/iterations/variable_iteration_parameter_value.h"
+#include "num_collect/logging/log_level.h"
+#include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/logging/sinks/log_sink_base.h"
+#include "num_collect/util/source_info_view.h"
 
 namespace num_collect::logging::iterations {
 

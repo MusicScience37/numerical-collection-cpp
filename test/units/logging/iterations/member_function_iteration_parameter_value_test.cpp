@@ -19,6 +19,8 @@
  */
 #include "num_collect/logging/iterations/member_function_iteration_parameter_value.h"
 
+#include <string>
+
 #include <catch2/catch_test_macros.hpp>
 
 #include "mock_algorithm.h"

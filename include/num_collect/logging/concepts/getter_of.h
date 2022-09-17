@@ -19,7 +19,7 @@
  */
 #pragma once
 
-#include <type_traits>
+#include <type_traits>  // IWYU pragma: keep
 
 #include "num_collect/base/concepts/decayed_to.h"  // IWYU pragma: keep
 

@@ -28,7 +28,9 @@
 
 #include "../mock_log_sink.h"
 #include "mock_algorithm.h"
+#include "num_collect/logging/iterations/iteration_paramter_formatter.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "trompeloeil_catch2.h"
 
 TEST_CASE("num_collect::logging::iterations::iteration_logger") {
     using num_collect::logging::iterations::iteration_logger;

@@ -22,7 +22,6 @@
 #include <atomic>
 #include <memory>
 #include <type_traits>
-#include <utility>
 
 namespace num_collect::logging::impl {
 
