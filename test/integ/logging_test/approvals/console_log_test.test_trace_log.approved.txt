@@ -18,23 +18,23 @@ stdout:
 [<time-stamp>] [38;2;255;069;000m[warning][0m [] warning[38;2;128;128;128m (writer.cpp:65, write_to_default_tag)[0m
 [<time-stamp>] [1m[38;2;255;000;000m[error][0m [] [1m[38;2;255;000;000merror[0m[38;2;128;128;128m (writer.cpp:66, write_to_default_tag)[0m
 [<time-stamp>] [1m[38;2;255;000;000m[48;2;255;255;000m[critical][0m [] [1m[38;2;255;000;000m[48;2;255;255;000mcritical[0m[38;2;128;128;128m (writer.cpp:67, write_to_default_tag)[0m
-[<time-stamp>] [iteration] [example tag] [1m[38;2;128;128;128m        val1        val2        val3[0m[38;2;128;128;128m (writer.cpp:93, write_iterations)[0m
-[<time-stamp>] [iteration] [example tag]            0         abc       1.235[38;2;128;128;128m (writer.cpp:93, write_iterations)[0m
-[<time-stamp>] [iteration] [example tag]           10         abc       1.235[38;2;128;128;128m (writer.cpp:93, write_iterations)[0m
-[<time-stamp>] [iteration] [example tag]           20         abc       1.235[38;2;128;128;128m (writer.cpp:93, write_iterations)[0m
-[<time-stamp>] [iteration] [example tag]           30         abc       1.235[38;2;128;128;128m (writer.cpp:93, write_iterations)[0m
-[<time-stamp>] [iteration] [example tag]           40         abc       1.235[38;2;128;128;128m (writer.cpp:93, write_iterations)[0m
-[<time-stamp>] [iteration] [example tag]           50         abc       1.235[38;2;128;128;128m (writer.cpp:93, write_iterations)[0m
-[<time-stamp>] [iteration] [example tag]           60         abc       1.235[38;2;128;128;128m (writer.cpp:93, write_iterations)[0m
-[<time-stamp>] [iteration] [example tag]           70         abc       1.235[38;2;128;128;128m (writer.cpp:93, write_iterations)[0m
-[<time-stamp>] [iteration] [example tag]           80         abc       1.235[38;2;128;128;128m (writer.cpp:93, write_iterations)[0m
-[<time-stamp>] [iteration] [example tag]           90         abc       1.235[38;2;128;128;128m (writer.cpp:93, write_iterations)[0m
-[<time-stamp>] [iteration] [example tag]          100         abc       1.235[38;2;128;128;128m (writer.cpp:93, write_iterations)[0m
-[<time-stamp>] [iteration] [example tag]          110         abc       1.235[38;2;128;128;128m (writer.cpp:93, write_iterations)[0m
-[<time-stamp>] [iteration] [example tag]          120         abc       1.235[38;2;128;128;128m (writer.cpp:93, write_iterations)[0m
-[<time-stamp>] [38;2;000;139;139m[summary][0m [example tag] Finished iterations: val1=122, val2=abc, val3=1.235[38;2;128;128;128m (writer.cpp:97, write_iterations)[0m
-[<time-stamp>] [debug] [example tag] Write a parameter: 12345.[38;2;128;128;128m (writer.cpp:105, write_parameters)[0m
-[<time-stamp>] [38;2;000;128;000m[info][0m [example tag] Write multiple parameters: [1.234,5.678], abc[38;2;128;128;128m (writer.cpp:109, write_parameters)[0m
+[<time-stamp>] [iteration] [example tag] [1m[38;2;128;128;128m        val1        val2        val3[0m[38;2;128;128;128m (writer.cpp:94, write_iterations)[0m
+[<time-stamp>] [iteration] [example tag]            0         abc       1.235[38;2;128;128;128m (writer.cpp:94, write_iterations)[0m
+[<time-stamp>] [iteration] [example tag]           10         abc       1.235[38;2;128;128;128m (writer.cpp:94, write_iterations)[0m
+[<time-stamp>] [iteration] [example tag]           20         abc       1.235[38;2;128;128;128m (writer.cpp:94, write_iterations)[0m
+[<time-stamp>] [iteration] [example tag]           30         abc       1.235[38;2;128;128;128m (writer.cpp:94, write_iterations)[0m
+[<time-stamp>] [iteration] [example tag]           40         abc       1.235[38;2;128;128;128m (writer.cpp:94, write_iterations)[0m
+[<time-stamp>] [iteration] [example tag]           50         abc       1.235[38;2;128;128;128m (writer.cpp:94, write_iterations)[0m
+[<time-stamp>] [iteration] [example tag]           60         abc       1.235[38;2;128;128;128m (writer.cpp:94, write_iterations)[0m
+[<time-stamp>] [iteration] [example tag]           70         abc       1.235[38;2;128;128;128m (writer.cpp:94, write_iterations)[0m
+[<time-stamp>] [iteration] [example tag]           80         abc       1.235[38;2;128;128;128m (writer.cpp:94, write_iterations)[0m
+[<time-stamp>] [iteration] [example tag]           90         abc       1.235[38;2;128;128;128m (writer.cpp:94, write_iterations)[0m
+[<time-stamp>] [iteration] [example tag]          100         abc       1.235[38;2;128;128;128m (writer.cpp:94, write_iterations)[0m
+[<time-stamp>] [iteration] [example tag]          110         abc       1.235[38;2;128;128;128m (writer.cpp:94, write_iterations)[0m
+[<time-stamp>] [iteration] [example tag]          120         abc       1.235[38;2;128;128;128m (writer.cpp:94, write_iterations)[0m
+[<time-stamp>] [38;2;000;139;139m[summary][0m [example tag] Finished iterations: val1=122, val2=abc, val3=1.235[38;2;128;128;128m (writer.cpp:98, write_iterations)[0m
+[<time-stamp>] [debug] [example tag] Write a parameter: 12345.[38;2;128;128;128m (writer.cpp:106, write_parameters)[0m
+[<time-stamp>] [38;2;000;128;000m[info][0m [example tag] Write multiple parameters: [1.234,5.678], abc[38;2;128;128;128m (writer.cpp:110, write_parameters)[0m
 
 stderr:
 
