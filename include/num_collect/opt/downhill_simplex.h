@@ -29,7 +29,7 @@
 #include <Eigen/Core>
 
 #include "num_collect/base/index_type.h"
-#include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/opt/concepts/multi_variate_objective_function.h"  // IWYU pragma: keep
 #include "num_collect/opt/concepts/objective_function.h"  // IWYU pragma: keep
@@ -59,6 +59,9 @@ template <concepts::multi_variate_objective_function ObjectiveFunction>
 class downhill_simplex<ObjectiveFunction>
     : public optimizer_base<downhill_simplex<ObjectiveFunction>> {
 public:
+    //! This class.
+    using this_type = downhill_simplex<ObjectiveFunction>;
+
     //! Type of the objective function.
     using objective_function_type = ObjectiveFunction;
 
@@ -87,7 +90,7 @@ public:
      * \return Name of process.
      */
     [[nodiscard]] static auto process_name(process_type process)
-        -> std::string {
+        -> std::string_view {
         switch (process) {
         case process_type::none:
             return "none";
@@ -186,19 +189,20 @@ public:
      * \copydoc num_collect::base::iterative_solver_base::configure_iteration_logger
      */
     void configure_iteration_logger(
-        logging::iteration_logger& iteration_logger) const {
-        iteration_logger.append<index_type>(
-            "Iter.", [this] { return iterations(); });
-        iteration_logger.append<index_type>(
-            "Eval.", [this] { return evaluations(); });
-        iteration_logger.append<value_type>(
-            "Value", [this] { return opt_value(); });
-        iteration_logger.append<variable_scalar_type>(
-            "SimplexSize", [this] { return simplex_size(); });
+        logging::iterations::iteration_logger<this_type>& iteration_logger)
+        const {
+        iteration_logger.template append<index_type>(
+            "Iter.", &this_type::iterations);
+        iteration_logger.template append<index_type>(
+            "Eval.", &this_type::evaluations);
+        iteration_logger.template append<value_type>(
+            "Value", &this_type::opt_value);
+        iteration_logger.template append<variable_scalar_type>(
+            "SimplexSize", &this_type::simplex_size);
         constexpr index_type process_width = 26;
         iteration_logger
-            .append<std::string>(
-                "Process", [this] { return process_name(last_process()); })
+            .template append<std::string_view>(
+                "Process", &this_type::last_process_name)
             ->width(process_width);
     }
 
@@ -237,6 +241,15 @@ public:
      */
     [[nodiscard]] auto last_process() const noexcept -> process_type {
         return process_;
+    }
+
+    /*!
+     * \brief Get the name of the last process.
+     *
+     * \return Last process.
+     */
+    [[nodiscard]] auto last_process_name() const noexcept -> std::string_view {
+        return process_name(last_process());
     }
 
     /*!

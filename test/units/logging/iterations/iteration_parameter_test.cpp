@@ -114,46 +114,4 @@ TEST_CASE("num_collect::logging::iterations::iteration_parameter") {
         CHECK_NOTHROW(parameter.format_summary_to(buffer, &algorithm));
         CHECK(std::string(buffer.data(), buffer.size()) == "abc=12345");
     }
-
-    SECTION("use member_function_iteration_parameter_value") {
-        using value_type = int;
-        using return_type = value_type;
-        using algorithm_type = mock_algorithm<value_type, return_type>;
-        using parameter_value_type =
-            member_function_iteration_parameter_value<algorithm_type,
-                value_type, return_type>;
-        using parameter_type = iteration_parameter<algorithm_type, value_type,
-            parameter_value_type>;
-
-        const std::string label = "abc";
-        value_type value = 12345;     // NOLINT
-        algorithm_type algorithm{0};  // NOLINT
-        // NOLINTNEXTLINE
-        ALLOW_CALL(algorithm, get_impl()).RETURN(value);
-        constexpr num_collect::index_type width = 7;
-        parameter_type parameter{
-            label, parameter_value_type{&algorithm_type::get}};
-        parameter.width(width);
-
-        CHECK(parameter.label() == label);
-        CHECK(parameter.width() == width);
-
-        fmt::memory_buffer buffer;
-        CHECK_NOTHROW(parameter.format_label_to(buffer));
-        CHECK(std::string(buffer.data(), buffer.size()) == "    abc");
-
-        buffer.clear();
-        CHECK_THROWS(parameter.format_value_to(buffer));
-
-        buffer.clear();
-        CHECK_THROWS(parameter.format_summary_to(buffer));
-
-        buffer.clear();
-        CHECK_NOTHROW(parameter.format_value_to(buffer, &algorithm));
-        CHECK(std::string(buffer.data(), buffer.size()) == "  12345");
-
-        buffer.clear();
-        CHECK_NOTHROW(parameter.format_summary_to(buffer, &algorithm));
-        CHECK(std::string(buffer.data(), buffer.size()) == "abc=12345");
-    }
 }

@@ -19,9 +19,11 @@
  */
 #pragma once
 
-#include "num_collect/base/concepts/decayed_to.h"
+#include <functional>
+
 #include "num_collect/base/exception.h"
 #include "num_collect/logging/concepts/formattable_iteration_parameter_value.h"  // IWYU pragma: keep
+#include "num_collect/logging/concepts/member_getter_of.h"  // IWYU pragma: keep
 
 namespace num_collect::logging::iterations {
 
@@ -31,23 +33,25 @@ namespace num_collect::logging::iterations {
  *
  * \tparam Algorithm Type of the algorithm.
  * \tparam Value Type of values.
- * \tparam ReturnType Type of returned value.
+ * \tparam Function Type of the function.
  *
  * \thread_safety Not thread-safe.
  */
 template <typename Algorithm,
     concepts::formattable_iteration_parameter_value Value,
-    base::concepts::decayed_to<Value> ReturnType>
+    concepts::member_getter_of<Value, Algorithm> Function>
 class member_function_iteration_parameter_value {
 public:
+    //! Type returned by the function.
+    using return_type = std::invoke_result_t<Function, Algorithm*>;
+
     /*!
      * \brief Constructor.
      *
-     * \param[in] func Pointer to the member function.
+     * \param[in] function Pointer to the member function.
      */
-    explicit member_function_iteration_parameter_value(
-        ReturnType (Algorithm::*func)() const)
-        : func_(func) {}
+    explicit member_function_iteration_parameter_value(Function function)
+        : function_(function) {}
 
     /*!
      * \brief Get the current value.
@@ -56,7 +60,7 @@ public:
      *
      * \warning This function always throws an exception.
      */
-    [[nodiscard]] auto get() const -> ReturnType {
+    [[nodiscard]] auto get() const -> return_type {
         throw invalid_argument(
             "Evaluation of this parameter value requires the pointer to the "
             "algorithm.");
@@ -69,13 +73,13 @@ public:
      * \return Value.
      */
     [[nodiscard]] auto get(const Algorithm* algorithm) const noexcept
-        -> ReturnType {
-        return (algorithm->*func_)();
+        -> return_type {
+        return (algorithm->*function_)();
     }
 
 private:
-    //! Pointer to the member function.
-    ReturnType (Algorithm::*func_)() const;
+    //! Function.
+    Function function_;
 };
 
 }  // namespace num_collect::logging::iterations

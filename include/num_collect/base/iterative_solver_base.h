@@ -19,7 +19,7 @@
  */
 #pragma once
 
-#include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_mixin.h"
 
@@ -70,14 +70,15 @@ public:
      * to have been done.
      */
     void solve() {
-        logging::iteration_logger iter_logger{this->logger()};
+        logging::iterations::iteration_logger<Derived> iter_logger{
+            this->logger()};
         configure_iteration_logger(iter_logger);
-        iter_logger.write_iteration();
+        iter_logger.write_iteration(&derived());
         while (!is_stop_criteria_satisfied()) {
             iterate();
-            iter_logger.write_iteration();
+            iter_logger.write_iteration(&derived());
         }
-        iter_logger.write_summary();
+        iter_logger.write_summary(&derived());
     }
 
     /*!
@@ -86,7 +87,8 @@ public:
      * \param[in] iteration_logger Iteration logger.
      */
     void configure_iteration_logger(
-        logging::iteration_logger& iteration_logger) const {
+        logging::iterations::iteration_logger<Derived>& iteration_logger)
+        const {
         derived().configure_iteration_logger(iteration_logger);
     }
 

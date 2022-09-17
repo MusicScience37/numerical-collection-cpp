@@ -33,38 +33,21 @@ TEST_CASE(
         member_function_iteration_parameter_value;
     using num_collect_test::logging::iterations::mock_algorithm;
 
-    SECTION("check of concept for values") {
-        using value_type = int;
-        using return_type = value_type;
-        using algorithm_type = mock_algorithm<value_type, return_type>;
-        STATIC_REQUIRE(iteration_parameter_value<
-            member_function_iteration_parameter_value<algorithm_type,
-                value_type, return_type>,
-            algorithm_type, value_type>);
-    }
-
-    SECTION("check of concept for references") {
-        using value_type = int;
-        using return_type = const value_type&;
-        using algorithm_type = mock_algorithm<value_type, return_type>;
-        STATIC_REQUIRE(iteration_parameter_value<
-            member_function_iteration_parameter_value<algorithm_type,
-                value_type, return_type>,
-            algorithm_type, value_type>);
-    }
-
     SECTION("get values") {
         using value_type = int;
         using return_type = value_type;
         using algorithm_type = mock_algorithm<value_type, return_type>;
-        using parameter_value_type =
-            member_function_iteration_parameter_value<algorithm_type,
-                value_type, return_type>;
 
         value_type value = 123;       // NOLINT
         algorithm_type algorithm{0};  // NOLINT
         // NOLINTNEXTLINE
         ALLOW_CALL(algorithm, get_impl()).RETURN(value);
+
+        using parameter_value_type =
+            member_function_iteration_parameter_value<algorithm_type,
+                value_type, decltype(&algorithm_type::get)>;
+        STATIC_REQUIRE(iteration_parameter_value<parameter_value_type,
+            algorithm_type, value_type>);
 
         const parameter_value_type param_value{&algorithm_type::get};
         CHECK(param_value.get(&algorithm) == 123);  // NOLINT
@@ -76,14 +59,17 @@ TEST_CASE(
         using value_type = int;
         using return_type = const value_type&;
         using algorithm_type = mock_algorithm<value_type, return_type>;
-        using parameter_value_type =
-            member_function_iteration_parameter_value<algorithm_type,
-                value_type, return_type>;
 
         value_type value = 123;       // NOLINT
         algorithm_type algorithm{0};  // NOLINT
         // NOLINTNEXTLINE
         ALLOW_CALL(algorithm, get_impl()).RETURN(value);
+
+        using parameter_value_type =
+            member_function_iteration_parameter_value<algorithm_type,
+                value_type, decltype(&algorithm_type::get)>;
+        STATIC_REQUIRE(iteration_parameter_value<parameter_value_type,
+            algorithm_type, value_type>);
 
         const parameter_value_type param_value{&algorithm_type::get};
         CHECK(param_value.get(&algorithm) == 123);  // NOLINT

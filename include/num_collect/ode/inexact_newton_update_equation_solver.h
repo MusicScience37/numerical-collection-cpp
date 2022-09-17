@@ -29,7 +29,7 @@
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/iterative_solver_base.h"
-#include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/concepts/differentiable_problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/concepts/multi_variate_differentiable_problem.h"  // IWYU pragma: keep
@@ -84,6 +84,9 @@ class inexact_newton_update_equation_solver<Problem>
     : public iterative_solver_base<
           inexact_newton_update_equation_solver<Problem>> {
 public:
+    //! This class.
+    using this_type = inexact_newton_update_equation_solver<Problem>;
+
     //! Type of problem.
     using problem_type = Problem;
 
@@ -231,11 +234,12 @@ public:
      * \param[in] iteration_logger Iteration logger.
      */
     void configure_iteration_logger(
-        logging::iteration_logger& iteration_logger) const {
-        iteration_logger.append<index_type>(
-            "Iter.", [this] { return iterations(); });
-        iteration_logger.append<scalar_type>(
-            "Update", [this] { return update_norm(); });
+        logging::iterations::iteration_logger<this_type>& iteration_logger)
+        const {
+        iteration_logger.template append<index_type>(
+            "Iter.", &this_type::iterations);
+        iteration_logger.template append<scalar_type>(
+            "Update", &this_type::update_norm);
     }
 
     /*!
@@ -363,6 +367,9 @@ class inexact_newton_update_equation_solver<Problem>
     : public iterative_solver_base<
           inexact_newton_update_equation_solver<Problem>> {
 public:
+    //! This class.
+    using this_type = inexact_newton_update_equation_solver<Problem>;
+
     //! Type of problem.
     using problem_type = Problem;
 
@@ -522,12 +529,13 @@ public:
      *
      * \param[in] iteration_logger Iteration logger.
      */
-    void configure_iteration_logger(
-        logging::iteration_logger& iteration_logger) const {
-        iteration_logger.append<index_type>(
-            "Iter.", [this] { return iterations(); });
-        iteration_logger.append<scalar_type>(
-            "Update", [this] { return update_norm(); });
+    void configure_iteration_logger(logging::iterations::iteration_logger<
+        inexact_newton_update_equation_solver<Problem>>& iteration_logger)
+        const {
+        iteration_logger.template append<index_type>(
+            "Iter.", &this_type::iterations);
+        iteration_logger.template append<scalar_type>(
+            "Update", &this_type::update_norm);
     }
 
     /*!

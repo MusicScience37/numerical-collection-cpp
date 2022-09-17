@@ -29,6 +29,7 @@
 #include "num_collect/logging/concepts/formattable_iteration_parameter_value.h"  // IWYU pragma: keep
 #include "num_collect/logging/concepts/getter_of.h"  // IWYU pragma: keep
 #include "num_collect/logging/concepts/iteration_parameter_value.h"  // IWYU pragma: keep
+#include "num_collect/logging/concepts/member_getter_of.h"  // IWYU pragma: keep
 #include "num_collect/logging/iterations/function_iteration_parameter_value.h"
 #include "num_collect/logging/iterations/iteration_parameter.h"
 #include "num_collect/logging/iterations/member_function_iteration_parameter_value.h"
@@ -160,20 +161,20 @@ public:
      * \brief Append a parameter specified by member functions.
      *
      * \tparam Value Type of values.
-     * \tparam ReturnType Type of returned value.
+     * \tparam Function Type of the function.
      * \param[in] label Label.
-     * \param[in] func Pointer to the member function.
+     * \param[in] function Pointer to the member function.
      * \return Parameter.
      */
     template <concepts::formattable_iteration_parameter_value Value,
-        base::concepts::decayed_to<Value> ReturnType>
-    auto append(std::string label, ReturnType (Algorithm::*func)() const)
+        concepts::member_getter_of<Value, Algorithm> Function>
+    auto append(std::string label, Function&& function)
         -> std::shared_ptr<iteration_parameter<Algorithm, Value,
             member_function_iteration_parameter_value<Algorithm, Value,
-                ReturnType>>> {
+                std::decay_t<Function>>>> {
         return append<Value>(std::move(label),
             member_function_iteration_parameter_value<Algorithm, Value,
-                ReturnType>(func));
+                std::decay_t<Function>>(std::forward<Function>(function)));
     }
 
     /*!

@@ -37,7 +37,7 @@
 
 #include "num_collect/base/concepts/invocable.h"
 #include "num_collect/logging/config/toml/toml_log_config_parser.h"
-#include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/logging/logging_mixin.h"
@@ -167,7 +167,7 @@ private:
     static constexpr std::size_t samples = 100;
     static constexpr auto cool_time = std::chrono::milliseconds(10);
 
-    num_collect::logging::iteration_logger iter_logger_;
+    num_collect::logging::iterations::iteration_logger<> iter_logger_;
     std::string log_sink_name_{};
     std::string log_type_name_{};
     double mean_time_sec_{};

@@ -41,7 +41,7 @@
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/norm.h"
-#include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_config.h"
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
@@ -333,7 +333,7 @@ public:
 
 private:
     //! Iteration logger.
-    num_collect::logging::iteration_logger iter_logger_;
+    num_collect::logging::iterations::iteration_logger<> iter_logger_;
 
     //! Result.
     bench_result result_{};

@@ -19,7 +19,7 @@
  */
 #pragma once
 
-#include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/regularization/implicit_regularized_solver_base.h"
 
@@ -82,11 +82,11 @@ public:
      * \brief Configure an iteration logger.
      *
      * \param[in] iteration_logger Iteration logger.
-     * \param[in] solution Solution.
      */
-    void configure_iteration_logger(logging::iteration_logger& iteration_logger,
-        const data_type& solution) const {
-        derived().configure_iteration_logger(iteration_logger, solution);
+    void configure_iteration_logger(
+        logging::iterations::iteration_logger<Derived>& iteration_logger)
+        const {
+        derived().configure_iteration_logger(iteration_logger);
     }
 
     /*!
@@ -101,16 +101,17 @@ public:
     void solve(const scalar_type& param, data_type& solution) {
         init(param, solution);
 
-        logging::iteration_logger iter_logger{this->logger()};
-        configure_iteration_logger(iter_logger, solution);
-        iter_logger.write_iteration();
+        logging::iterations::iteration_logger<Derived> iter_logger{
+            this->logger()};
+        configure_iteration_logger(iter_logger);
+        iter_logger.write_iteration(&derived());
 
         while (!is_stop_criteria_satisfied(solution)) {
             iterate(param, solution);
-            iter_logger.write_iteration();
+            iter_logger.write_iteration(&derived());
         }
 
-        iter_logger.write_summary();
+        iter_logger.write_summary(&derived());
     }
 
 protected:

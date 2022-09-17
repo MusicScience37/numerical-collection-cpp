@@ -23,7 +23,7 @@
 #include <type_traits>  // IWYU pragma: keep
 
 #include "num_collect/base/index_type.h"
-#include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/opt/concepts/multi_variate_objective_function.h"  // IWYU pragma: keep
 #include "num_collect/opt/concepts/objective_function.h"  // IWYU pragma: keep
@@ -57,6 +57,9 @@ template <concepts::single_variate_objective_function ObjectiveFunction>
 class heuristic_global_optimizer<ObjectiveFunction>
     : public optimizer_base<heuristic_global_optimizer<ObjectiveFunction>> {
 public:
+    //! This class.
+    using this_type = heuristic_global_optimizer<ObjectiveFunction>;
+
     //! Type of the objective function.
     using objective_function_type = ObjectiveFunction;
 
@@ -107,13 +110,14 @@ public:
      * \copydoc num_collect::base::iterative_solver_base::configure_iteration_logger
      */
     void configure_iteration_logger(
-        logging::iteration_logger& iteration_logger) const {
-        iteration_logger.append<index_type>(
-            "Iter.", [this] { return iterations(); });
-        iteration_logger.append<index_type>(
-            "Eval.", [this] { return evaluations(); });
-        iteration_logger.append<value_type>(
-            "Value", [this] { return opt_value(); });
+        logging::iterations::iteration_logger<this_type>& iteration_logger)
+        const {
+        iteration_logger.template append<index_type>(
+            "Iter.", &this_type::iterations);
+        iteration_logger.template append<index_type>(
+            "Eval.", &this_type::evaluations);
+        iteration_logger.template append<value_type>(
+            "Value", &this_type::opt_value);
     }
 
     /*!
@@ -162,6 +166,9 @@ template <concepts::multi_variate_objective_function ObjectiveFunction>
 class heuristic_global_optimizer<ObjectiveFunction>
     : public optimizer_base<heuristic_global_optimizer<ObjectiveFunction>> {
 public:
+    //! This class.
+    using this_type = heuristic_global_optimizer<ObjectiveFunction>;
+
     //! Type of the objective function.
     using objective_function_type = ObjectiveFunction;
 
@@ -228,15 +235,16 @@ public:
      * \copydoc num_collect::base::iterative_solver_base::configure_iteration_logger
      */
     void configure_iteration_logger(
-        logging::iteration_logger& iteration_logger) const {
-        iteration_logger.append<index_type>(
-            "Iter.", [this] { return iterations(); });
-        iteration_logger.append<index_type>(
-            "Eval.", [this] { return evaluations(); });
-        iteration_logger.append<value_type>(
-            "Value", [this] { return opt_value(); });
-        iteration_logger.append<index_type>(
-            "Stage", [this] { return this->current_optimizer_index_; });
+        logging::iterations::iteration_logger<this_type>& iteration_logger)
+        const {
+        iteration_logger.template append<index_type>(
+            "Iter.", &this_type::iterations);
+        iteration_logger.template append<index_type>(
+            "Eval.", &this_type::evaluations);
+        iteration_logger.template append<value_type>(
+            "Value", &this_type::opt_value);
+        iteration_logger.template append<index_type>(
+            "Stage", &this_type::current_optimizer_index_);
     }
 
     /*!
