@@ -199,7 +199,7 @@ public:
 
 private:
     //! String to express null.
-    static constexpr std::string_view null_string{"---"};
+    static constexpr std::string_view null_string{"null"};
 };
 
 }  // namespace num_collect::logging::iterations

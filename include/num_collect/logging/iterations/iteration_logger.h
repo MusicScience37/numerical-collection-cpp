@@ -20,13 +20,16 @@
 #pragma once
 
 #include <memory>
+#include <type_traits>
 #include <utility>
 #include <variant>
 #include <vector>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/concepts/formattable_iteration_parameter_value.h"  // IWYU pragma: keep
+#include "num_collect/logging/concepts/getter_of.h"  // IWYU pragma: keep
 #include "num_collect/logging/concepts/iteration_parameter_value.h"  // IWYU pragma: keep
+#include "num_collect/logging/iterations/function_iteration_parameter_value.h"
 #include "num_collect/logging/iterations/iteration_parameter.h"
 #include "num_collect/logging/iterations/member_function_iteration_parameter_value.h"
 #include "num_collect/logging/iterations/member_variable_iteration_parameter_value.h"
@@ -118,7 +121,27 @@ public:
     }
 
     /*!
-     * \brief Append a parameter specified by variables.
+     * \brief Append a parameter specified by functions.
+     *
+     * \tparam Value Type of values.
+     * \tparam Function Type of the function.
+     * \param[in] label Label.
+     * \param[in] function Function to get values.
+     * \return Parameter.
+     */
+    template <concepts::formattable_iteration_parameter_value Value,
+        concepts::getter_of<Value> Function>
+    auto append(std::string label, Function&& function)
+        -> std::shared_ptr<iteration_parameter<Algorithm, Value,
+            function_iteration_parameter_value<Algorithm, Value,
+                std::decay_t<Function>>>> {
+        return append<Value>(std::move(label),
+            function_iteration_parameter_value<Algorithm, Value,
+                std::decay_t<Function>>(std::forward<Function>(function)));
+    }
+
+    /*!
+     * \brief Append a parameter specified by member variables.
      *
      * \tparam Value Type of values.
      * \param[in] label Label.
@@ -134,7 +157,7 @@ public:
     }
 
     /*!
-     * \brief Append a parameter specified by variables.
+     * \brief Append a parameter specified by member functions.
      *
      * \tparam Value Type of values.
      * \tparam ReturnType Type of returned value.

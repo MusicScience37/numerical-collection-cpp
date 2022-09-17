@@ -19,6 +19,7 @@
  */
 #include "num_collect/logging/iterations/iteration_logger.h"
 
+#include <optional>
 #include <string>
 
 #include <ApprovalTests.hpp>
@@ -57,20 +58,22 @@ TEST_CASE("num_collect::logging::iterations::iteration_logger") {
         .LR_SIDE_EFFECT(logs.append(static_cast<std::string>(_5) + '\n'));
 
     SECTION("write iterations without an algorithm") {
-        using value_type = int;
+        using value1_type = int;
         using iteration_logger_type = iteration_logger<>;
 
         iteration_logger_type iter_logger{logger};
 
-        value_type value{0};
+        value1_type value1{0};
+        auto value2_func = []() -> double { return 1.234; };  // NOLINT
 
-        iter_logger.append<value_type>("value", value);
+        iter_logger.append<value1_type>("value1", value1);
+        iter_logger.append<double>("value2", value2_func);
 
         iter_logger.start(logger);
 
         constexpr int repetition = 20;
         for (int i = 0; i < repetition; ++i) {
-            value = i;  // NOLINT(clang-analyzer-deadcode.DeadStores)
+            value1 = i;  // NOLINT(clang-analyzer-deadcode.DeadStores)
             iter_logger.write_iteration();
         }
         iter_logger.write_summary();
@@ -82,6 +85,7 @@ TEST_CASE("num_collect::logging::iterations::iteration_logger") {
         using value1_type = int;
         using value2_type = std::string;
         using value3_type = double;
+        using value4_type = std::optional<int>;
         using return2_type = const value2_type&;
         using algorithm_type = mock_algorithm<value1_type, return2_type>;
         using iteration_logger_type = iteration_logger<algorithm_type>;
@@ -93,12 +97,14 @@ TEST_CASE("num_collect::logging::iterations::iteration_logger") {
         // NOLINTNEXTLINE
         ALLOW_CALL(algorithm, get_impl()).RETURN(value2);
         value3_type value3{1.234};  // NOLINT
+        auto value4_func = []() -> value4_type { return std::nullopt; };
 
         iter_logger.append<value1_type>("value1", &algorithm_type::value1);
         iter_logger.append<value2_type>("value2", &algorithm_type::get);
         iter_logger.append<value3_type>("value3", value3)
             ->formatter()
             .precision(3);
+        iter_logger.append<value4_type>("value4", value4_func);
 
         iter_logger.start(logger);
 

@@ -106,10 +106,10 @@ TEST_CASE("num_collect::logging::iterations::iteration_parameter_formatter") {
         const std::optional<int> null_val{};
         buffer.clear();
         CHECK_NOTHROW(formatter.format(null_val, buffer));
-        CHECK(std::string(buffer.data(), buffer.size()) == "---");
+        CHECK(std::string(buffer.data(), buffer.size()) == "null");
 
         buffer.clear();
         CHECK_NOTHROW(formatter.format_with_alignment(null_val, width, buffer));
-        CHECK(std::string(buffer.data(), buffer.size()) == "    ---");
+        CHECK(std::string(buffer.data(), buffer.size()) == "   null");
     }
 }
