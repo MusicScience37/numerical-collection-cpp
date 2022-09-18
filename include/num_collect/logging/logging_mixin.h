@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include "num_collect/base/concepts/reference_of.h"  // IWYU pragma: keep
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
 
@@ -55,6 +56,19 @@ public:
      */
     [[nodiscard]] auto logger() noexcept -> num_collect::logging::logger& {
         return logger_;
+    }
+
+    /*!
+     * \brief Configure a logger of a child algorithm if exists.
+     *
+     * \tparam Child Type of the child algorithm.
+     * \param[in] child Child algorithm.
+     */
+    template <typename Child>
+    void configure_child_algorithm_logger_if_exists(Child& child) {
+        if constexpr (requires(Child & obj) { obj.logger(); }) {
+            this->logger().initialize_child_algorithm_logger(child.logger());
+        }
     }
 
 private:

@@ -20,6 +20,7 @@
 #pragma once
 
 #include "num_collect/logging/iterations/iteration_logger.h"
+#include "num_collect/logging/iterations/iteration_logger_mixin.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/regularization/implicit_regularized_solver_base.h"
 
@@ -33,13 +34,16 @@ namespace num_collect::regularization {
  */
 template <typename Derived, base::concepts::dense_matrix Data>
 class iterative_regularized_solver_base
-    : public implicit_regularized_solver_base<Derived, Data> {
+    : public implicit_regularized_solver_base<Derived, Data>,
+      public logging::iterations::iteration_logger_mixin<Derived> {
 public:
     //! Type of data.
     using typename implicit_regularized_solver_base<Derived, Data>::data_type;
 
     //! Type of scalars.
     using typename implicit_regularized_solver_base<Derived, Data>::scalar_type;
+
+    using implicit_regularized_solver_base<Derived, Data>::logger;
 
     /*!
      * \brief Initialize.
@@ -79,17 +83,6 @@ public:
     }
 
     /*!
-     * \brief Configure an iteration logger.
-     *
-     * \param[in] iteration_logger Iteration logger.
-     */
-    void configure_iteration_logger(
-        logging::iterations::iteration_logger<Derived>& iteration_logger)
-        const {
-        derived().configure_iteration_logger(iteration_logger);
-    }
-
-    /*!
      * \brief Solve for a regularization parameter.
      *
      * \param[in] param Regularization parameter.
@@ -101,9 +94,7 @@ public:
     void solve(const scalar_type& param, data_type& solution) {
         init(param, solution);
 
-        logging::iterations::iteration_logger<Derived> iter_logger{
-            this->logger()};
-        configure_iteration_logger(iter_logger);
+        auto& iter_logger = this->initialize_iteration_logger();
         iter_logger.write_iteration(&derived());
 
         while (!is_stop_criteria_satisfied(solution)) {
@@ -116,7 +107,6 @@ public:
 
 protected:
     using implicit_regularized_solver_base<Derived, Data>::derived;
-    using implicit_regularized_solver_base<Derived, Data>::logger;
 
     /*!
      * \brief Constructor.
@@ -124,7 +114,9 @@ protected:
      * \param[in] tag Log tag.
      */
     explicit iterative_regularized_solver_base(logging::log_tag_view tag)
-        : implicit_regularized_solver_base<Derived, Data>(tag) {}
+        : implicit_regularized_solver_base<Derived, Data>(tag) {
+        this->logger().set_iterative();
+    }
 };
 
 }  // namespace num_collect::regularization
