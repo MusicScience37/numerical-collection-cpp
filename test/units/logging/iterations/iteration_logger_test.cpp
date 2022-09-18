@@ -29,29 +29,32 @@
 #include "../mock_log_sink.h"
 #include "mock_algorithm.h"
 #include "num_collect/logging/iterations/iteration_paramter_formatter.h"
+#include "num_collect/logging/log_level.h"
+#include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logger.h"
 #include "trompeloeil_catch2.h"
 
 TEST_CASE("num_collect::logging::iterations::iteration_logger") {
+    using num_collect::logging::log_level;
+    using num_collect::logging::log_tag_config;
+    using num_collect::logging::log_tag_view;
     using num_collect::logging::iterations::iteration_logger;
+    using num_collect_test::logging::mock_log_sink;
     using num_collect_test::logging::iterations::mock_algorithm;
     using ::trompeloeil::_;
 
     constexpr num_collect::index_type iteration_output_period = 2;
     constexpr num_collect::index_type iteration_label_period = 3;
 
-    constexpr auto tag = num_collect::logging::log_tag_view(
-        "num_collect::logging::iterations::iteration_logger_test");
-    const auto sink =
-        std::make_shared<num_collect_test::logging::mock_log_sink>();
-    const auto config =
-        num_collect::logging::log_tag_config()
-            .output_log_level(num_collect::logging::log_level::trace)
-            .output_log_level_in_child_iterations(
-                num_collect::logging::log_level::summary)
-            .iteration_output_period(iteration_output_period)
-            .iteration_label_period(iteration_label_period)
-            .sink(sink);
+    constexpr auto tag =
+        log_tag_view("num_collect::logging::iterations::iteration_logger_test");
+    const auto sink = std::make_shared<mock_log_sink>();
+    const auto config = log_tag_config()
+                            .output_log_level(log_level::trace)
+                            .iteration_output_period(iteration_output_period)
+                            .iteration_label_period(iteration_label_period)
+                            .sink(sink);
     auto logger = num_collect::logging::logger(tag, config);
 
     fmt::memory_buffer logs;
@@ -116,6 +119,85 @@ TEST_CASE("num_collect::logging::iterations::iteration_logger") {
             iter_logger.write_iteration(&algorithm);
         }
         iter_logger.write_summary(&algorithm);
+
+        ApprovalTests::Approvals::verify(std::string(logs.data(), logs.size()));
+    }
+
+    SECTION("write only a summary") {
+        using value1_type = int;
+        using iteration_logger_type = iteration_logger<>;
+
+        logger = num_collect::logging::logger(
+            tag, log_tag_config{config}.output_log_level(log_level::summary));
+        iteration_logger_type iter_logger{logger};
+
+        value1_type value1{0};
+        auto value2_func = []() -> double { return 1.234; };  // NOLINT
+
+        iter_logger.append<value1_type>("value1", value1);
+        iter_logger.append<double>("value2", value2_func);
+
+        iter_logger.start(logger);
+
+        constexpr int repetition = 20;
+        for (int i = 0; i < repetition; ++i) {
+            value1 = i;  // NOLINT(clang-analyzer-deadcode.DeadStores)
+            iter_logger.write_iteration();
+        }
+        iter_logger.write_summary();
+
+        ApprovalTests::Approvals::verify(std::string(logs.data(), logs.size()));
+    }
+
+    SECTION("write no log") {
+        using value1_type = int;
+        using iteration_logger_type = iteration_logger<>;
+
+        logger = num_collect::logging::logger(
+            tag, log_tag_config{config}.output_log_level(log_level::info));
+        iteration_logger_type iter_logger{logger};
+
+        value1_type value1{0};
+        auto value2_func = []() -> double { return 1.234; };  // NOLINT
+
+        iter_logger.append<value1_type>("value1", value1);
+        iter_logger.append<double>("value2", value2_func);
+
+        iter_logger.start(logger);
+
+        constexpr int repetition = 20;
+        for (int i = 0; i < repetition; ++i) {
+            value1 = i;  // NOLINT(clang-analyzer-deadcode.DeadStores)
+            iter_logger.write_iteration();
+        }
+        iter_logger.write_summary();
+
+        ApprovalTests::Approvals::verify(std::string(logs.data(), logs.size()));
+    }
+
+    SECTION("reuse") {
+        using value1_type = int;
+        using iteration_logger_type = iteration_logger<>;
+
+        iteration_logger_type iter_logger{logger};
+
+        value1_type value1{0};
+        auto value2_func = []() -> double { return 1.234; };  // NOLINT
+
+        iter_logger.append<value1_type>("value1", value1);
+        iter_logger.append<double>("value2", value2_func);
+
+        constexpr int reuse = 3;
+        for (int j = 0; j < reuse; ++j) {
+            iter_logger.start(logger);
+
+            constexpr int repetition = 20;
+            for (int i = 0; i < repetition; ++i) {
+                value1 = i;  // NOLINT(clang-analyzer-deadcode.DeadStores)
+                iter_logger.write_iteration();
+            }
+            iter_logger.write_summary();
+        }
 
         ApprovalTests::Approvals::verify(std::string(logs.data(), logs.size()));
     }
