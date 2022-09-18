@@ -42,27 +42,6 @@ public:
      */
     iteration_logger_mixin() = default;
 
-    iteration_logger_mixin(const iteration_logger_mixin&) = delete;
-    auto operator=(const iteration_logger_mixin&) = delete;
-
-    /*!
-     * \brief Move constructor.
-     */
-    iteration_logger_mixin(iteration_logger_mixin&& /*obj*/) noexcept = default;
-
-    /*!
-     * \brief Move assignment operator.
-     *
-     * \return This.
-     */
-    auto operator=(iteration_logger_mixin&& /*obj*/) noexcept
-        -> iteration_logger_mixin& = default;
-
-    /*!
-     * \brief Destructor.
-     */
-    ~iteration_logger_mixin() = default;
-
     /*!
      * \brief Configure an iteration logger.
      *
