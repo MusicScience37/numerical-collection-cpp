@@ -45,6 +45,7 @@
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/logging/sinks/log_sink_base.h"
+#include "num_collect/util/iteration_period_checker.h"
 #include "num_collect/util/source_info_view.h"
 
 namespace num_collect::logging::iterations {
@@ -66,8 +67,10 @@ public:
     explicit iteration_logger(logger& logger)
         : tag_(logger.tag()),
           sink_(logger.config().sink()),
-          iteration_output_period_(logger.config().iteration_output_period()),
-          iteration_label_period_(logger.config().iteration_label_period()) {
+          iteration_output_period_checker_(
+              logger.config().iteration_output_period()),
+          iteration_label_period_checker_(
+              logger.config().iteration_label_period()) {
         start(logger);
     }
 
@@ -79,7 +82,8 @@ public:
     void start(logger& logger) {
         write_iterations_ = logger.should_log(log_level::iteration);
         write_summaries_ = logger.should_log(log_level::summary);
-        iterations_ = 0;
+        iteration_output_period_checker_.reset();
+        iteration_label_period_checker_.reset();
     }
 
     /*!
@@ -206,7 +210,7 @@ public:
             log_level::iteration, source,
             std::string_view(buffer_.data(), buffer_.size()));
 
-        ++iterations_;
+        ++iteration_output_period_checker_;
     }
 
     /*!
@@ -231,7 +235,7 @@ public:
             log_level::iteration, source,
             std::string_view(buffer_.data(), buffer_.size()));
 
-        ++iterations_;
+        ++iteration_output_period_checker_;
     }
 
     /*!
@@ -282,8 +286,8 @@ private:
             return false;
         }
 
-        if ((iterations_ % iteration_output_period_) != 0) [[likely]] {
-            ++iterations_;
+        if (!iteration_output_period_checker_) [[likely]] {
+            ++iteration_output_period_checker_;
             return false;
         }
 
@@ -296,14 +300,14 @@ private:
      * \param[in] source Information of the source code.
      */
     void write_label_if_needed(util::source_info_view source) {
-        if ((iterations_ %
-                (iteration_label_period_ * iteration_output_period_)) == 0) {
+        if (iteration_label_period_checker_) {
             buffer_.clear();
             format_labels_to(buffer_);
             sink_->write(std::chrono::system_clock::now(), tag_.name(),
                 log_level::iteration_label, source,
                 std::string_view(buffer_.data(), buffer_.size()));
         }
+        ++iteration_label_period_checker_;
     }
 
     /*!
@@ -396,18 +400,15 @@ private:
     //! Log sink.
     std::shared_ptr<sinks::log_sink_base> sink_;
 
-    //! Period to write iteration logs.
-    index_type iteration_output_period_;
+    //! Checker of periods to write iteration logs.
+    util::iteration_period_checker iteration_output_period_checker_;
 
-    //! Period to write labels of iteration logs.
-    index_type iteration_label_period_;
+    //! Checker of periods to write labels of iteration logs.
+    util::iteration_period_checker iteration_label_period_checker_;
 
     //! Parameters.
     std::vector<std::shared_ptr<iteration_parameter_base<Algorithm>>>
         parameters_{};
-
-    //! Current number of iterations.
-    index_type iterations_{0};
 
     //! Buffer of logging data.
     fmt::memory_buffer buffer_{};
