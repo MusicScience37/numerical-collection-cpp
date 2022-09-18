@@ -154,7 +154,12 @@ namespace num_collect {
          */
 
         //! Namespace of iteration logs.
-        namespace iterations {}
+        namespace iterations {
+
+            //! Namespace of internal implementations.
+            namespace impl {}
+
+        }  // namespace iterations
 
         /*!
          * \dir num_collect/logging/impl
