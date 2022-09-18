@@ -13,11 +13,13 @@ package logging {
         + name() : const string&
     }
 
+    !startsub log_tag_view
     class log_tag_view {
         - name_ : string_view
         + log_tag(name: string_view)
         + name() : string_view
     }
+    !endsub
 
     package formatters {
         interface log_formatter_base {
@@ -75,6 +77,7 @@ package logging {
         + operator()(format: fmt::format_string, args...)
     }
 
+    !startsub logger
     class logger {
         + logger(tag: log_tag_view)
         + logger(tag: log_tag_view, config: log_tag_config)
@@ -95,6 +98,7 @@ package logging {
         + error(source: source_info_view = source_info_view()) : logging_proxy
         + critical(source: source_info_view = source_info_view()) : logging_proxy
     }
+    !endsub
     logger o-- log_tag
     logger o-- log_tag_config
     logger ..> log_tag_view

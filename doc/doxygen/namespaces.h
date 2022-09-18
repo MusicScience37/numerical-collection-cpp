@@ -149,6 +149,19 @@ namespace num_collect {
         }  // namespace config
 
         /*!
+         * \dir num_collect/logging/iterations
+         * \brief Directory of iteration logs.
+         */
+
+        //! Namespace of iteration logs.
+        namespace iterations {
+
+            //! Namespace of internal implementations.
+            namespace impl {}
+
+        }  // namespace iterations
+
+        /*!
          * \dir num_collect/logging/impl
          * \brief Directory of implementation.
          */

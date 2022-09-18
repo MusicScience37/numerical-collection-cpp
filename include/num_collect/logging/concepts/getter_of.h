@@ -19,18 +19,11 @@
  */
 #pragma once
 
-#include <type_traits>
+#include <type_traits>  // IWYU pragma: keep
+
+#include "num_collect/base/concepts/decayed_to.h"  // IWYU pragma: keep
 
 namespace num_collect::logging::concepts {
-
-/*!
- * \brief Concept of types decayed to the given type.
- *
- * \tparam From Type decayed from.
- * \tparam To Type decayed to.
- */
-template <typename From, typename To>
-concept decayed_to = std::is_same_v<std::decay_t<From>, To>;
 
 /*!
  * \brief Concept of getter functions.
@@ -40,7 +33,7 @@ concept decayed_to = std::is_same_v<std::decay_t<From>, To>;
  */
 template <typename Func, typename Value>
 concept getter_of = requires(const Func& func) {
-    { func() } -> decayed_to<Value>;
+    { func() } -> base::concepts::decayed_to<Value>;
 };
 
 }  // namespace num_collect::logging::concepts

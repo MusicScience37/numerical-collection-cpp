@@ -28,7 +28,7 @@
 
 #include <fmt/format.h>
 
-#include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/load_logging_config.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
@@ -72,12 +72,13 @@ static void write_iterations() {
     auto logger = num_collect::logging::logger(my_tag);
 
     // Configure.
-    auto iteration_logger = num_collect::logging::iteration_logger(logger);
+    auto iteration_logger =
+        num_collect::logging::iterations::iteration_logger(logger);
     int val1 = 0;
     iteration_logger.append("val1", val1);  // Reference is hold here.
     std::string val2;
     iteration_logger.append("val2", val2);
-    iteration_logger.append<double>("val3", [] {
+    iteration_logger.template append<double>("val3", [] {
         // Use a function to return the value.
         return 1.23456;  // NOLINT
     });

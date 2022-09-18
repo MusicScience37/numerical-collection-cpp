@@ -25,7 +25,7 @@
 #include <utility>
 
 #include "num_collect/base/index_type.h"
-#include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/regularization/impl/coeff_param.h"  // IWYU pragma: keep
 #include "num_collect/regularization/iterative_regularized_solver_base.h"
@@ -52,9 +52,11 @@ template <typename Coeff, typename Data>
 class fista
     : public iterative_regularized_solver_base<fista<Coeff, Data>, Data> {
 public:
+    //! This type.
+    using this_type = fista<Coeff, Data>;
+
     //! Type of the base class.
-    using base_type =
-        iterative_regularized_solver_base<fista<Coeff, Data>, Data>;
+    using base_type = iterative_regularized_solver_base<this_type, Data>;
 
     using typename base_type::data_type;
     using typename base_type::scalar_type;
@@ -166,15 +168,15 @@ public:
     }
 
     //! \copydoc num_collect::regularization::iterative_regularized_solver_base::configure_iteration_logger
-    void configure_iteration_logger(logging::iteration_logger& iteration_logger,
-        const data_type& solution) const {
-        iteration_logger.append<index_type>(
-            "Iter.", [this] { return iterations(); });
-        iteration_logger.append<scalar_type>(
-            "Update", [this] { return update(); });
-        iteration_logger.append<scalar_type>("Res.Rate", [this, &solution] {
-            return residual_norm(solution) / data_->squaredNorm();
-        });
+    void configure_iteration_logger(
+        logging::iterations::iteration_logger<this_type>& iteration_logger)
+        const {
+        iteration_logger.template append<index_type>(
+            "Iter.", &this_type::iterations);
+        iteration_logger.template append<scalar_type>(
+            "Update", &this_type::update);
+        iteration_logger.template append<scalar_type>(
+            "Res.Rate", &this_type::residual_norm_rate);
     }
 
     //! \copydoc num_collect::regularization::implicit_regularized_solver_base::residual_norm
@@ -218,6 +220,15 @@ public:
      */
     [[nodiscard]] auto update() const noexcept -> scalar_type {
         return update_;
+    }
+
+    /*!
+     * \brief Get the rate of the last residual norm.
+     *
+     * \return Rate of the residual norm.
+     */
+    [[nodiscard]] auto residual_norm_rate() const -> scalar_type {
+        return residual_.squaredNorm() / data_->squaredNorm();
     }
 
     /*!

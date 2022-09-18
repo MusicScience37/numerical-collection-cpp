@@ -34,7 +34,7 @@
 #include "num_collect/base/get_size.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/norm.h"
-#include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/opt/concepts/objective_function.h"  // IWYU pragma: keep
 #include "num_collect/opt/optimizer_base.h"
@@ -58,6 +58,9 @@ template <concepts::objective_function ObjectiveFunction>
 class dividing_rectangles
     : public optimizer_base<dividing_rectangles<ObjectiveFunction>> {
 public:
+    //! This class.
+    using this_type = dividing_rectangles<ObjectiveFunction>;
+
     //! Type of the objective function.
     using objective_function_type = ObjectiveFunction;
 
@@ -138,13 +141,14 @@ public:
      * \copydoc num_collect::base::iterative_solver_base::configure_iteration_logger
      */
     void configure_iteration_logger(
-        logging::iteration_logger& iteration_logger) const {
-        iteration_logger.append<index_type>(
-            "Iter.", [this] { return iterations(); });
-        iteration_logger.append<index_type>(
-            "Eval.", [this] { return evaluations(); });
-        iteration_logger.append<value_type>(
-            "Value", [this] { return opt_value(); });
+        logging::iterations::iteration_logger<this_type>& iteration_logger)
+        const {
+        iteration_logger.template append<index_type>(
+            "Iter.", &this_type::iterations);
+        iteration_logger.template append<index_type>(
+            "Eval.", &this_type::evaluations);
+        iteration_logger.template append<value_type>(
+            "Value", &this_type::opt_value);
     }
 
     /*!

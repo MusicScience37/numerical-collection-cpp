@@ -237,7 +237,7 @@ public:
 
 private:
     //! Iteration logger.
-    num_collect::logging::iteration_logger iter_logger_;
+    num_collect::logging::iterations::iteration_logger<> iter_logger_;
 
     //! Result.
     bench_result result_{};
