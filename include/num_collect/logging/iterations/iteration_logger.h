@@ -108,13 +108,14 @@ public:
      */
     template <concepts::formattable_iteration_parameter_value Value,
         concepts::iteration_parameter_value<Algorithm, Value> ParameterValue>
-    auto append(std::string label, ParameterValue value) -> std::shared_ptr<
-        iteration_parameter<Algorithm, Value, ParameterValue>> {
+    auto append(std::string label, ParameterValue value)
+        -> iteration_parameter<Algorithm, Value, ParameterValue>* {
         auto parameter = std::make_shared<
             iteration_parameter<Algorithm, Value, ParameterValue>>(
             std::move(label), std::move(value));
-        append(parameter);
-        return parameter;
+        auto* raw_ptr = parameter.get();
+        append(std::move(parameter));
+        return raw_ptr;
     }
 
     /*!
@@ -127,8 +128,8 @@ public:
      */
     template <concepts::formattable_iteration_parameter_value Value>
     auto append(std::string label, const Value& value)
-        -> std::shared_ptr<iteration_parameter<Algorithm, Value,
-            variable_iteration_parameter_value<Algorithm, Value>>> {
+        -> iteration_parameter<Algorithm, Value,
+            variable_iteration_parameter_value<Algorithm, Value>>* {
         return append<Value>(std::move(label),
             variable_iteration_parameter_value<Algorithm, Value>(value));
     }
@@ -145,9 +146,9 @@ public:
     template <concepts::formattable_iteration_parameter_value Value,
         concepts::getter_of<Value> Function>
     auto append(std::string label, Function&& function)
-        -> std::shared_ptr<iteration_parameter<Algorithm, Value,
+        -> iteration_parameter<Algorithm, Value,
             function_iteration_parameter_value<Algorithm, Value,
-                std::decay_t<Function>>>> {
+                std::decay_t<Function>>>* {
         return append<Value>(std::move(label),
             function_iteration_parameter_value<Algorithm, Value,
                 std::decay_t<Function>>(std::forward<Function>(function)));
@@ -163,8 +164,8 @@ public:
      */
     template <concepts::formattable_iteration_parameter_value Value>
     auto append(std::string label, const Value Algorithm::*ptr)
-        -> std::shared_ptr<iteration_parameter<Algorithm, Value,
-            member_variable_iteration_parameter_value<Algorithm, Value>>> {
+        -> iteration_parameter<Algorithm, Value,
+            member_variable_iteration_parameter_value<Algorithm, Value>>* {
         return append<Value>(std::move(label),
             member_variable_iteration_parameter_value<Algorithm, Value>(ptr));
     }
@@ -181,9 +182,9 @@ public:
     template <concepts::formattable_iteration_parameter_value Value,
         concepts::member_getter_of<Value, Algorithm> Function>
     auto append(std::string label, Function&& function)
-        -> std::shared_ptr<iteration_parameter<Algorithm, Value,
+        -> iteration_parameter<Algorithm, Value,
             member_function_iteration_parameter_value<Algorithm, Value,
-                std::decay_t<Function>>>> {
+                std::decay_t<Function>>>* {
         return append<Value>(std::move(label),
             member_function_iteration_parameter_value<Algorithm, Value,
                 std::decay_t<Function>>(std::forward<Function>(function)));
