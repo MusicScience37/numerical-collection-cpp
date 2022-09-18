@@ -244,7 +244,7 @@ public:
         iteration_logger.template append<value_type>(
             "Value", &this_type::opt_value);
         iteration_logger.template append<index_type>(
-            "Stage", &this_type::current_optimizer_index_);
+            "Stage", &this_type::current_optimizer_index);
     }
 
     /*!
@@ -345,6 +345,15 @@ public:
     }
 
 private:
+    /*!
+     * \brief Get the current optimizer index.
+     *
+     * \return Current optimizer index.
+     */
+    [[nodiscard]] auto current_optimizer_index() const noexcept -> index_type {
+        return current_optimizer_index_;
+    }
+
     //! First optimizer.
     dividing_rectangles<ObjectiveFunction> opt1_;
 
