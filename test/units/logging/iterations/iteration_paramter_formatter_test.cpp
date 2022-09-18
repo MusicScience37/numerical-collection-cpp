@@ -85,6 +85,10 @@ TEST_CASE("num_collect::logging::iterations::iteration_parameter_formatter") {
         buffer.clear();
         CHECK_NOTHROW(formatter.format(val3, buffer));
         CHECK(std::string(buffer.data(), buffer.size()) == "3.14159");
+
+        CHECK_THROWS(formatter.precision(-1));
+        CHECK_THROWS(formatter.precision(0));
+        CHECK_NOTHROW(formatter.precision(1));
     }
 
     SECTION("optional<int>") {
@@ -111,5 +115,38 @@ TEST_CASE("num_collect::logging::iterations::iteration_parameter_formatter") {
         buffer.clear();
         CHECK_NOTHROW(formatter.format_with_alignment(null_val, width, buffer));
         CHECK(std::string(buffer.data(), buffer.size()) == "   null");
+    }
+
+    SECTION("optional<double>") {
+        STATIC_REQUIRE(
+            formattable_iteration_parameter_value<std::optional<double>>);
+
+        iteration_parameter_formatter<std::optional<double>> formatter;
+        const std::optional<double> val1 = 1.234;
+        fmt::memory_buffer buffer;
+        CHECK_NOTHROW(formatter.format(val1, buffer));
+        CHECK(std::string(buffer.data(), buffer.size()) == "1.234");
+
+        const std::optional<double> val2 = -2.345;
+        constexpr num_collect::index_type width = 7;
+        buffer.clear();
+        CHECK_NOTHROW(formatter.format_with_alignment(val2, width, buffer));
+        CHECK(std::string(buffer.data(), buffer.size()) == " -2.345");
+
+        const std::optional<double> val3 = 3.141592;
+        constexpr num_collect::index_type precision = 6;
+        formatter.precision(precision);
+        buffer.clear();
+        CHECK_NOTHROW(formatter.format(val3, buffer));
+        CHECK(std::string(buffer.data(), buffer.size()) == "3.14159");
+
+        const std::optional<double> val4{};
+        buffer.clear();
+        CHECK_NOTHROW(formatter.format(val4, buffer));
+        CHECK(std::string(buffer.data(), buffer.size()) == "null");
+
+        CHECK_THROWS(formatter.precision(-1));
+        CHECK_THROWS(formatter.precision(0));
+        CHECK_NOTHROW(formatter.precision(1));
     }
 }

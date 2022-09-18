@@ -114,4 +114,21 @@ TEST_CASE("num_collect::logging::iterations::iteration_parameter") {
         CHECK_NOTHROW(parameter.format_summary_to(buffer, &algorithm));
         CHECK(std::string(buffer.data(), buffer.size()) == "abc=12345");
     }
+
+    SECTION("use invalid width") {
+        using algorithm_type = void;
+        using value_type = int;
+        using parameter_value_type =
+            variable_iteration_parameter_value<algorithm_type, value_type>;
+        using parameter_type = iteration_parameter<algorithm_type, value_type,
+            parameter_value_type>;
+
+        const std::string label = "abc";
+        value_type value = 12345;  // NOLINT
+        parameter_type parameter{label, parameter_value_type{value}};
+
+        CHECK_THROWS(parameter.width(-1));
+        CHECK_THROWS(parameter.width(0));
+        CHECK_NOTHROW(parameter.width(1));
+    }
 }
