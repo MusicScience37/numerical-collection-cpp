@@ -29,6 +29,9 @@ namespace num_collect::logging::iterations {
  * \tparam Algorithm Type of the algorithm.
  * \tparam Value Type of values.
  *
+ * \note User should not use this class directly.
+ * Use num_collect::logging::iterations::iteration_logger.
+ *
  * \thread_safety Not thread-safe.
  */
 template <typename Algorithm,

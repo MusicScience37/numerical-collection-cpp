@@ -46,6 +46,9 @@ inline constexpr index_type iteration_parameter_default_width = 11;
  * \brief Base class of parameters in iterations.
  *
  * \tparam Algorithm Type of the algorithm.
+ *
+ * \note User should not use this class directly.
+ * Use num_collect::logging::iterations::iteration_logger.
  */
 template <typename Algorithm>
 class iteration_parameter_base {
@@ -122,6 +125,9 @@ protected:
  * \tparam Value Type of values.
  * \tparam ParameterValue Class of parameters values in iterations
  * specified by variables.
+ *
+ * \note User should not use this class directly.
+ * Use num_collect::logging::iterations::iteration_logger.
  *
  * \thread_safety Not thread-safe.
  */

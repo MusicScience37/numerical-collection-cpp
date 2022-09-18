@@ -49,6 +49,9 @@ inline constexpr index_type iteration_parameter_formatter_default_precision = 4;
  *
  * \tparam Value Type of values.
  *
+ * \note User should not use this class directly.
+ * Use num_collect::logging::iterations::iteration_logger.
+ *
  * \thread_safety Not thread-safe.
  */
 template <base::concepts::formattable Value>
@@ -86,6 +89,9 @@ public:
  * \brief Class of the formatter of parameter values in iterations.
  *
  * \tparam Value Type of values.
+ *
+ * \note User should not use this class directly.
+ * Use num_collect::logging::iterations::iteration_logger.
  *
  * \thread_safety Not thread-safe.
  */
@@ -152,6 +158,9 @@ private:
  * \brief Class of the formatter of parameter values in iterations.
  *
  * \tparam Value Type of values.
+ *
+ * \note User should not use this class directly.
+ * Use num_collect::logging::iterations::iteration_logger.
  *
  * \thread_safety Not thread-safe.
  */
