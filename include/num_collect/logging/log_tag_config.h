@@ -55,8 +55,6 @@ class log_tag_config {
 public:
     /*!
      * \brief Constructor.
-     *
-     * \param[in] sink Log sink.
      */
     log_tag_config() = default;
 
