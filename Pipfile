@@ -4,9 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [packages]
-conan = "*"
-# Pin version to prevent import errors in Sphinx.
-jinja2 = "==3.0.3"
+conan = ">=1.53.0"
 
 [dev-packages]
 adr-tools-python = "*"
@@ -34,4 +32,4 @@ pytest = "*"
 pytest-approvaltests = "*"
 
 [requires]
-python_version = "3.9"
+python_version = "3.10"
