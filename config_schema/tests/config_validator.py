@@ -2,19 +2,24 @@
 
 import json
 import typing
+import os
 
 import fastjsonschema
 import pytomlpp
 
-from constants import SCHEMA_FILEPATH, FILE_ENCODING
+from constants import SCHEMA_DIR, FILE_ENCODING
 
 
 class ConfigValidator:
     """Validator of configurations."""
 
-    def __init__(self, *, meta_schema_url: typing.Optional[str] = None):
+    def __init__(
+        self, *, schema_filename: str, meta_schema_url: typing.Optional[str] = None
+    ):
         """Constructor."""
-        with open(SCHEMA_FILEPATH, mode="r", encoding=FILE_ENCODING) as file:
+        with open(
+            os.path.join(SCHEMA_DIR, schema_filename), mode="r", encoding=FILE_ENCODING
+        ) as file:
             schema = json.load(file)
         if meta_schema_url:
             schema["$schema"] = meta_schema_url

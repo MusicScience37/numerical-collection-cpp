@@ -4,7 +4,7 @@ import os
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 
-SCHEMA_FILEPATH = os.path.join(os.path.dirname(THIS_DIR), "v1", "config_schema.json")
+SCHEMA_DIR = os.path.join(os.path.dirname(THIS_DIR), "v1")
 
 ROOT_DIR = os.path.dirname(os.path.dirname(THIS_DIR))
 
