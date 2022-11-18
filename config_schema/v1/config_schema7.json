@@ -59,8 +59,13 @@
       "type": "object",
       "properties": {
         "name": {
-          "description": "Name of the log sink. The name \"default\" is reserved for default log sink in the library.",
-          "allOf": [{ "type": "string" }, { "not": { "const": "default" } }]
+          "allOf": [
+            {
+              "description": "Name of the log sink. The name \"default\" is reserved for default log sink in the library.",
+              "type": "string"
+            },
+            { "not": { "const": "default" } }
+          ]
         },
         "type": {
           "description": "Type of the log sink.",
