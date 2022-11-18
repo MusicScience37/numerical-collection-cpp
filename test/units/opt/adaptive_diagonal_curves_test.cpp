@@ -122,11 +122,11 @@ TEST_CASE("num_collect::opt::impl::adc_sample_dict") {
         const Eigen::VectorXd var3 =
             (Eigen::VectorXd(2) << 0.0, 0.0).finished();
         constexpr double value3 = 0.0;
-        constexpr double mergin = 1e-12;
-        REQUIRE_THAT(dict(point), Catch::Matchers::WithinAbs(value3, mergin));
+        constexpr double margin = 1e-12;
+        REQUIRE_THAT(dict(point), Catch::Matchers::WithinAbs(value3, margin));
         REQUIRE_THAT(dict.opt_variable(), eigen_approx(var3));
         REQUIRE_THAT(
-            dict.opt_value(), Catch::Matchers::WithinAbs(value3, mergin));
+            dict.opt_value(), Catch::Matchers::WithinAbs(value3, margin));
         REQUIRE(dict.evaluations() == 3);
     }
 }

@@ -64,7 +64,7 @@ private:
  * \param[in] vec Vector.
  * \return Expression for formatting using fmt library.
  *
- * \note Format of each element can be specified in fmt's formatt strings.
+ * \note Format of each element can be specified in fmt's format strings.
  */
 template <typename Vector>
 [[nodiscard]] inline auto format_dense_vector(

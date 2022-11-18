@@ -17,7 +17,7 @@
  * \file
  * \brief Test of iteration_parameter_formatter class.
  */
-#include "num_collect/logging/iterations/iteration_paramter_formatter.h"
+#include "num_collect/logging/iterations/iteration_parameter_formatter.h"
 
 #include <optional>
 #include <string>

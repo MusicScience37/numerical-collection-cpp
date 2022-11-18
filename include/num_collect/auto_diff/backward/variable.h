@@ -80,7 +80,7 @@ public:
      *
      * \param[in] value Value.
      */
-    variable(const scalar_type& value)  // NOLINT: implicit convertion required
+    variable(const scalar_type& value)  // NOLINT: implicit conversion required
         : variable(value, constant_tag()) {}
 
     /*!

@@ -52,7 +52,7 @@ class newton_raphson;
 /*!
  * \brief Class of Newton-Raphson method.
  *
- * This version is used when variable type is a floting-point number type.
+ * This version is used when variable type is a floating-point number type.
  *
  * \tparam Function Type of the function of equation.
  */

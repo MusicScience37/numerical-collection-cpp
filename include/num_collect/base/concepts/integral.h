@@ -45,7 +45,7 @@ template <typename T>
 constexpr bool is_integral_v = is_integral<T>::value;
 
 /*!
- * \brief Concept of ingegers.
+ * \brief Concept of integers.
  *
  * \tparam T Type.
  */

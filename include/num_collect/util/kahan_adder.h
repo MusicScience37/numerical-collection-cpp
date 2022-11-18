@@ -111,7 +111,7 @@ public:
      *
      * \return Sum.
      */
-    operator T() const {  // NOLINT: Allow implicit convertion.
+    operator T() const {  // NOLINT: Allow implicit conversion.
         return sum_;
     }
 

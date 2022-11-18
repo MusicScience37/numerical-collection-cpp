@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Test of mathemttical functions for variable class.
+ * \brief Test of mathematical functions for variable class.
  */
 #include "num_collect/auto_diff/backward/variable_math.h"
 

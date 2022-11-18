@@ -14,48 +14,48 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
-import textwrap
-
 # -- Project information -----------------------------------------------------
 
-project = 'numerical-collection-cpp'
-release = 'unknown'  # inserted in command line
+project = "numerical-collection-cpp"
+release = "unknown"  # inserted in command line
 
-copyright = '2021, MusicScience37 (Kenta Kabashima). '
-author = 'MusicScience37'
+copyright = "2021, MusicScience37 (Kenta Kabashima). "
+author = "MusicScience37"
 
 # -- General configuration ---------------------------------------------------
 
 extensions = [
-    'sphinx.ext.todo',
-    'myst_parser',
+    "sphinx.ext.todo",
+    "myst_parser",
 ]
 
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 exclude_patterns = []
 
 # -- Options for PlantUML ----------------------------------------------------
 
-extensions += ['sphinxcontrib.plantuml']
+extensions += ["sphinxcontrib.plantuml"]
 
-plantuml_output_format = 'svg'
+plantuml_output_format = "svg"
 plantuml_syntax_error_image = True
 
 # -- Options for mathjax -----------------------------------------------------
 
-extensions += ['sphinx.ext.mathjax']
+extensions += ["sphinx.ext.mathjax"]
 # force to use MathJax 2 for compatibility with Plotly
-mathjax_path = 'https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
+mathjax_path = (
+    "https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+)
 mathjax_config = {
-    'TeX': {
-        'Macros': {
-            'bm': ['{\\boldsymbol{#1}}', 1],
+    "TeX": {
+        "Macros": {
+            "bm": ["{\\boldsymbol{#1}}", 1],
         },
     },
 }
 
 # -- Options for HTML output -------------------------------------------------
 
-html_theme = 'sphinx_rtd_theme'
-html_static_path = ['_static']
+html_theme = "sphinx_rtd_theme"
+html_static_path = ["_static"]
