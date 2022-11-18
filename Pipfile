@@ -30,6 +30,9 @@ lcov-cobertura = "*"
 clang-tidy-checker = "*"
 pytest = "*"
 pytest-approvaltests = "*"
+fastjsonschema = "*"
+pytomlpp = "*"
+genson = "*"
 
 [requires]
 python_version = "3.10"

@@ -107,6 +107,8 @@ if(NUM_COLLECT_BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif()
 
+add_subdirectory(config_schema)
+
 if(NUM_COLLECT_ENABLE_PROFILING)
     add_subdirectory(profiling)
 endif()
