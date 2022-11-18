@@ -84,6 +84,26 @@ pre-commit:
       - .venv
   interruptible: true
 
+spell check:
+  stage: test
+  needs: []
+  image: node
+  script:
+    - npm install -g cspell
+    - cspell lint
+      "**/*.h"
+      "**/*.cpp"
+      "**/*.py"
+      "**/*.cmake"
+      "**/*.txt"
+      "**/*.md"
+      "**/*.rst"
+      "**/*.bib"
+      "**/*.yaml"
+      "**/*.json"
+      "**/*.sh"
+  interruptible: true
+
 .release-test-base:
   extends: .retry setting
   stage: test
