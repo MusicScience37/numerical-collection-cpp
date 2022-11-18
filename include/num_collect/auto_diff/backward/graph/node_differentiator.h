@@ -130,7 +130,7 @@ private:
         }
     }
 
-    //! Dictionally of information of nodes.
+    //! Dictionary of information of nodes.
     std::unordered_map<node_ptr<scalar_type>, node_info> info_dict_{};
 
     //! Queue of remaining nodes.

@@ -313,7 +313,7 @@ private:
     }
 
     /*!
-     * \brief Generate Jacobi-Kronrod matrix as in a pseudocode in the appendix
+     * \brief Generate Jacobi-Kronrod matrix as in a pseudo-code in the appendix
      * of \cite Laurie1997.
      *
      * \param[in] a Diagonal coefficients in Jacobi matrix.

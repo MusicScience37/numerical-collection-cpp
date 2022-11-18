@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of mathemttical functions for variable class.
+ * \brief Definition of mathematical functions for variable class.
  */
 #pragma once
 
