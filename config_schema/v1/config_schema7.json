@@ -1,33 +1,17 @@
 {
   "$schema": "https://json-schema.org/draft-07/schema",
   "title": "numerical-collection-cpp configuration schema.",
-  "description": "Schema of configuration in numerical-collection-cpp project for JSON Schema Draft 7.",
+  "description": "Schema of configurations in numerical-collection-cpp project for JSON Schema Draft 7.",
   "type": "object",
   "definitions": {
-    "log_tag": {
-      "$comment": "TODO: Rule for log tags.",
-      "type": "string"
-    },
-    "log_level": {
-      "$comment": "Log levels.",
-      "enum": [
-        "trace",
-        "debug",
-        "iteration",
-        "summary",
-        "info",
-        "warning",
-        "error",
-        "critical",
-        "off"
-      ]
-    },
     "log_tag_config": {
+      "description": "Configuration of a log tag.",
       "type": "object",
       "properties": {
         "tag": {
           "description": "Log tag. Empty string specifies the default configuration.",
-          "$ref": "#/definitions/log_tag"
+          "$comment": "TODO: Rule for log tags.",
+          "type": "string"
         },
         "sink": {
           "description": "Name of a log sink. Log sink with this name must be configured in num_collect.logging.sinks configuration in the same file, or use \"default\" log sink in this library.",
@@ -35,11 +19,31 @@
         },
         "output_log_level": {
           "description": "Name of a log sink.",
-          "$ref": "#/definitions/log_level"
+          "enum": [
+            "trace",
+            "debug",
+            "iteration",
+            "summary",
+            "info",
+            "warning",
+            "error",
+            "critical",
+            "off"
+          ]
         },
         "output_log_level_in_child_iterations": {
           "description": "Minimum log level to output in child iterations.",
-          "$ref": "#/definitions/log_level"
+          "enum": [
+            "trace",
+            "debug",
+            "iteration",
+            "summary",
+            "info",
+            "warning",
+            "error",
+            "critical",
+            "off"
+          ]
         },
         "iteration_output_period": {
           "description": "Period to write iteration logs.",
@@ -56,6 +60,7 @@
       "additionalProperties": false
     },
     "log_sink": {
+      "description": "Configuration of a log sink.",
       "type": "object",
       "properties": {
         "name": {
@@ -148,7 +153,17 @@
                 "description": "Minimum log levels to output. Number of elements must be same with inner_sink_names.",
                 "type": "array",
                 "items": {
-                  "$ref": "#/definitions/log_level"
+                  "enum": [
+                    "trace",
+                    "debug",
+                    "iteration",
+                    "summary",
+                    "info",
+                    "warning",
+                    "error",
+                    "critical",
+                    "off"
+                  ]
                 }
               }
             },
@@ -166,16 +181,20 @@
   },
   "properties": {
     "num_collect": {
+      "description": "Configurations of numerical-collection-cpp.",
       "type": "object",
       "properties": {
         "logging": {
+          "description": "Configurations of logging.",
           "type": "object",
           "properties": {
             "tag_configs": {
+              "description": "Configurations of log tags.",
               "type": "array",
               "items": { "$ref": "#/definitions/log_tag_config" }
             },
             "sinks": {
+              "description": "Configurations of log sinks.",
               "type": "array",
               "items": {
                 "$ref": "#/definitions/log_sink"
