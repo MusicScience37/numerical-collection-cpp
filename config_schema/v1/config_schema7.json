@@ -60,7 +60,7 @@
       "properties": {
         "name": {
           "description": "Name of the log sink. The name \"default\" is reserved for default log sink in the library.",
-          "allOf": [{ "type": "string" }, { "not": { "enum": ["default"] } }]
+          "allOf": [{ "type": "string" }, { "not": { "const": "default" } }]
         },
         "type": {
           "description": "Type of the log sink.",
@@ -73,7 +73,7 @@
           "$comment": "Console sink.",
           "if": {
             "properties": {
-              "type": { "enum": ["console"] }
+              "type": { "const": "console" }
             }
           },
           "then": {
@@ -90,7 +90,7 @@
           "$comment": "Single file sink.",
           "if": {
             "properties": {
-              "type": { "enum": ["single_file"] }
+              "type": { "const": "single_file" }
             }
           },
           "then": {
@@ -107,7 +107,7 @@
           "$comment": "Async sink.",
           "if": {
             "properties": {
-              "type": { "enum": ["async"] }
+              "type": { "const": "async" }
             }
           },
           "then": {
@@ -127,7 +127,7 @@
           "$comment": "Combined sink.",
           "if": {
             "properties": {
-              "type": { "enum": ["combined"] }
+              "type": { "const": "combined" }
             }
           },
           "then": {
