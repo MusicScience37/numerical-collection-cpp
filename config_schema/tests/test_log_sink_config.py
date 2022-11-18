@@ -181,12 +181,34 @@ class TestCombinedLogSinkConfig:
         with pytest.raises(fastjsonschema.JsonSchemaValueException):
             validator.validate_text(config)
 
+    def test_invalid_inner_sink_names(self, validator: ConfigValidator):
+        config = """
+        [[num_collect.logging.sinks]]
+        name = "combined sink"
+        type = "combined"
+        inner_sink_names = [[]]
+        output_log_levels = ["trace", "debug"]
+        """
+        with pytest.raises(fastjsonschema.JsonSchemaValueException):
+            validator.validate_text(config)
+
     def test_no_output_log_levels(self, validator: ConfigValidator):
         config = """
         [[num_collect.logging.sinks]]
         name = "combined sink"
         type = "combined"
         inner_sink_names = ["sink1", "sink2"]
+        """
+        with pytest.raises(fastjsonschema.JsonSchemaValueException):
+            validator.validate_text(config)
+
+    def test_invalid_output_log_levels(self, validator: ConfigValidator):
+        config = """
+        [[num_collect.logging.sinks]]
+        name = "combined sink"
+        type = "combined"
+        inner_sink_names = ["sink1", "sink2"]
+        output_log_levels = [[]]
         """
         with pytest.raises(fastjsonschema.JsonSchemaValueException):
             validator.validate_text(config)
