@@ -18,7 +18,7 @@
           "type": "string"
         },
         "output_log_level": {
-          "description": "Minimum log level to output.",
+          "description": "Minimum log level to output. Choices: trace, debug, iteration, summary, info, warning, error, critical, off.",
           "enum": [
             "trace",
             "debug",
@@ -32,7 +32,7 @@
           ]
         },
         "output_log_level_in_child_iterations": {
-          "description": "Minimum log level to output in child iterations.",
+          "description": "Minimum log level to output in child iterations. Choices: trace, debug, iteration, summary, info, warning, error, critical, off.",
           "enum": [
             "trace",
             "debug",
@@ -75,7 +75,7 @@
               ]
             },
             "type": {
-              "description": "Type of the log sink.",
+              "description": "Type of the log sink. Choices: console, single_file, async, combined.",
               "enum": ["console", "single_file", "async", "combined"]
             }
           },
@@ -152,7 +152,7 @@
                 "items": { "type": "string" }
               },
               "output_log_levels": {
-                "description": "Minimum log levels to output. Number of elements must be same with inner_sink_names.",
+                "description": "Minimum log levels to output. Number of elements must be same with inner_sink_names. Choices of each log level: trace, debug, iteration, summary, info, warning, error, critical, off.",
                 "type": "array",
                 "items": {
                   "enum": [
