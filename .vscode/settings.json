@@ -31,5 +31,5 @@
     "**/.venv/**": true
   },
   "python.formatting.provider": "black",
-  "cSpell.enableFiletypes": ["bibtex", "cmake", "shellscript"]
+  "cSpell.enableFiletypes": ["bibtex", "cmake", "plantuml", "shellscript"]
 }
