@@ -91,7 +91,7 @@ private:
  * \param[in] type Format type.
  * \return Expression for formatting using fmt library.
  *
- * \note Format of each element can be specified in fmt's formatt strings.
+ * \note Format of each element can be specified in fmt's format strings.
  */
 template <typename Matrix>
 [[nodiscard]] inline auto format_dense_matrix(

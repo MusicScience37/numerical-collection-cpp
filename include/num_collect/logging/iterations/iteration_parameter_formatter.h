@@ -30,7 +30,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/concepts/formattable_iteration_parameter_value.h"  // IWYU pragma: keep
 #include "num_collect/logging/concepts/formattable_real_scalar.h"  // IWYU pragma: keep
-#include "num_collect/logging/iterations/iteration_paramter_formatter_decl.h"
+#include "num_collect/logging/iterations/iteration_parameter_formatter_decl.h"
 
 namespace num_collect::logging::iterations {
 

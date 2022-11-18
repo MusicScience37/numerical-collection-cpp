@@ -1,11 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
 
-if(DEFINED PROJECT_NAME)
-    set(NUM_COLLECT_SUBPROJECT ON)
-else()
-    set(NUM_COLLECT_SUBPROJECT OFF)
-endif()
-
 project(
     num_collect
     VERSION 0.5.0
