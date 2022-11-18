@@ -18,7 +18,7 @@
           "type": "string"
         },
         "output_log_level": {
-          "description": "Name of a log sink.",
+          "description": "Minimum log level to output.",
           "enum": [
             "trace",
             "debug",
@@ -60,25 +60,27 @@
       "additionalProperties": false
     },
     "log_sink": {
-      "description": "Configuration of a log sink.",
       "type": "object",
-      "properties": {
-        "name": {
-          "allOf": [
-            {
-              "description": "Name of the log sink. The name \"default\" is reserved for default log sink in the library.",
-              "type": "string"
-            },
-            { "not": { "const": "default" } }
-          ]
-        },
-        "type": {
-          "description": "Type of the log sink.",
-          "enum": ["console", "single_file", "async", "combined"]
-        }
-      },
-      "required": ["name", "type"],
       "allOf": [
+        {
+          "description": "Configuration of a log sink.",
+          "properties": {
+            "name": {
+              "allOf": [
+                {
+                  "description": "Name of the log sink. The name \"default\" is reserved for default log sink in the library.",
+                  "type": "string"
+                },
+                { "not": { "const": "default" } }
+              ]
+            },
+            "type": {
+              "description": "Type of the log sink.",
+              "enum": ["console", "single_file", "async", "combined"]
+            }
+          },
+          "required": ["name", "type"]
+        },
         {
           "$comment": "Console sink.",
           "if": {
