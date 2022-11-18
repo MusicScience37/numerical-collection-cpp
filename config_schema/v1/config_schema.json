@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "Configuration of logging in num_collect",
+  "type": "object",
+  "definitions": {
+    "log_tag": { "type": "string" },
+    "log_level": {
+      "enum": [
+        "trace",
+        "debug",
+        "iteration",
+        "summary",
+        "info",
+        "warning",
+        "error",
+        "critical",
+        "off"
+      ]
+    },
+    "positive_integer": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "log_tag_config": {
+      "type": "object",
+      "properties": {
+        "tag": { "$ref": "#/definitions/log_tag" },
+        "sink": { "type": "string" },
+        "output_log_level": { "$ref": "#/definitions/log_level" },
+        "output_log_level_in_child_iterations": {
+          "$ref": "#/definitions/log_level"
+        },
+        "iteration_output_period": {
+          "$ref": "#/definitions/positive_integer"
+        },
+        "iteration_label_period": {
+          "$ref": "#/definitions/positive_integer"
+        }
+      },
+      "required": ["tag"],
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "num_collect": {
+      "type": "object",
+      "properties": {
+        "logging": {
+          "type": "object",
+          "properties": {
+            "tag_configs": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/log_tag_config" }
+            },
+            "sinks": { "type": "array" }
+          }
+        }
+      }
+    }
+  }
+}
