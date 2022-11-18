@@ -2,7 +2,7 @@ option(NUM_COLLECT_TEST_BENCHMARKS "execute benchmarks in tests" OFF)
 
 set(NUM_COLLECT_BENCH_DIR
     "${CMAKE_BINARY_DIR}/bench"
-    CACHE PATH "directory to which benchmark results are outputed" FORCE)
+    CACHE PATH "directory to which benchmark results are written" FORCE)
 file(MAKE_DIRECTORY ${NUM_COLLECT_BENCH_DIR})
 
 set(NUM_COLLECT_BENCH_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")

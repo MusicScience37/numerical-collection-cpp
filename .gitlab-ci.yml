@@ -98,10 +98,12 @@ spell check:
       "**/*.txt"
       "**/*.md"
       "**/*.rst"
+      "**/*.puml"
       "**/*.bib"
       "**/*.yaml"
       "**/*.json"
       "**/*.sh"
+      --exclude "**/*.approved.*"
   interruptible: true
 
 .release-test-base:
