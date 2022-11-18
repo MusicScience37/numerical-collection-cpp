@@ -1,4 +1,4 @@
-"""Test of validating example configurations."""
+"""Test of validating log tag configurations."""
 
 import pytest
 
@@ -8,7 +8,7 @@ from config_validator import ConfigValidator
 
 
 class TestLogTagConfigs:
-    """Test of validating example configurations."""
+    """Test of validating log tag configurations."""
 
     def test_all_params(self, validator: ConfigValidator):
         config = """
