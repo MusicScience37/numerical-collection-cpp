@@ -2,15 +2,15 @@
 
 A collection of algorithms in numerical analysis implemented in C++.
 
-[![GitLab Release](https://img.shields.io/gitlab/v/release/25109105?sort=semver)](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/releases)
+[![GitLab Release](https://img.shields.io/gitlab/v/release/25109105?sort=semver)](https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp/-/releases)
 [![C++ standard](https://img.shields.io/badge/standard-C%2B%2B20-blue?logo=c%2B%2B)](https://en.cppreference.com/w/cpp/compiler_support/20)
-[![pipeline status](https://gitlab.com/MusicScience37/numerical-collection-cpp/badges/develop/pipeline.svg)](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/commits/develop)
+[![pipeline status](https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp/badges/develop/pipeline.svg)](https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp/-/commits/develop)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
-[![coverage report](https://gitlab.com/MusicScience37/numerical-collection-cpp/badges/develop/coverage.svg)](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/commits/develop)
+[![coverage report](https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp/badges/develop/coverage.svg)](https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp/-/commits/develop)
 
 ## Repositories
 
-- Main in GitLab: [https://gitlab.com/MusicScience37/numerical-collection-cpp](https://gitlab.com/MusicScience37/numerical-collection-cpp)
+- Main in GitLab: [https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp](https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp)
 - Mirror in GitHub: [https://github.com/MusicScience37/numerical-collection-cpp](https://github.com/MusicScience37/numerical-collection-cpp)
 
 ## Documentation
@@ -23,15 +23,16 @@ A collection of algorithms in numerical analysis implemented in C++.
 
 This library is packaged with [Conan](https://conan.io/),
 and available via
-[package registry in GitLab](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/packages).
+[package registry in GitLab](https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp/-/packages).
 
 To use this library,
 add the package
-`num_collect/<version>@MusicScience37+numerical-collection-cpp/stable`
+`num_collect/<version>@MusicScience37/stable`
 with a version you want
 to your `conanfile.py` or `conanfile.txt`,
 and add the remote
-`https://gitlab.com/api/v4/packages/conan`
+`https://gitlab.com/api/v4/projects/35726343/packages/conan`,
+`https://gitlab.com/api/v4/projects/25109105/packages/conan`
 to conan command.
 
 ### Simply Including Headers
@@ -44,7 +45,7 @@ which are installed automatically when using Conan:
 
 - [fmt](https://fmt.dev/)
 - [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page)
-- [cpp-hash-tables](https://gitlab.com/MusicScience37/cpp-hash-tables)
+- [cpp-hash-tables](https://gitlab.com/MusicScience37Projects/utility-libraries/cpp-hash-tables)
 - [toml++](https://marzer.github.io/tomlplusplus/)
 
 ## How to Build in the Repository
@@ -72,7 +73,7 @@ you will require following dependencies:
     - GCC 10
     - GCC 12
     - Clang 14
-    - ~~MSVC 19~~ (Currently not tested due to an [Issue in CI](https://gitlab.com/MusicScience37/numerical-collection-cpp/-/issues/195).)
+    - ~~MSVC 19~~ (Currently not tested due to an [Issue in CI](https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp/-/issues/195).)
 
 Additionally, you will require following dependencies
 to build documentation.
@@ -99,7 +100,8 @@ execute the following commands to build:
 2. Add the Conan remote in GitLab. (Once in an environment. Already done in devcontainer of VSCode.)
 
    ```bash
-   conan remote add gitlab https://gitlab.com/api/v4/packages/conan
+   conan remote add cpp-stat-bench https://gitlab.com/api/v4/projects/32226502/packages/conan
+   conan remote add cpp-hash-tables https://gitlab.com/api/v4/projects/35726343/packages/conan
    ```
 
 3. Download and install required Conan packages.
