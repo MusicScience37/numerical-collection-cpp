@@ -7,7 +7,10 @@ stages:
 
 variables:
   NUM_COLLECT_VERSION: "0.5.0"
-  CONAN_USER: "MusicScience37+numerical-collection-cpp"
+  CONAN_USER: "MusicScience37"
+  CPP_STAT_BENCH_CONAN_REGISTRY: "https://gitlab.com/api/v4/projects/32226502/packages/conan"
+  CPP_HASH_TABLES_CONAN_REGISTRY: "https://gitlab.com/api/v4/projects/35726343/packages/conan"
+  NUM_COLLECT_CONAN_REGISTRY: "https://gitlab.com/api/v4/projects/25109105/packages/conan"
   DOCS_PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/numerical-collection-cpp-doc"
   SECURE_LOG_LEVEL: debug
 
@@ -29,7 +32,7 @@ line count:
   extends: .retry setting
   stage: test
   needs: []
-  image: registry.gitlab.com/musicscience37/cloc-docker
+  image: registry.gitlab.com/musicscience37projects/docker/cloc-docker
   script:
     - mkdir -p line_count
     - cloc ./
@@ -125,7 +128,8 @@ spell check:
     - cd $BUILD_DIR
     - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=${CONAN_STD_CPP_LIB} default
-    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan remote add -f cpp-stat-bench $CPP_STAT_BENCH_CONAN_REGISTRY
+    - pipenv run conan remote add -f cpp-hash-tables $CPP_HASH_TABLES_CONAN_REGISTRY
     - pipenv run conan install --build missing -s build_type=${CMAKE_BUILD_TYPE} -o num_collect:requirements_for_tests=True ..
     - cd ../
   script:
@@ -347,7 +351,8 @@ clang-14-conan:
     - pipenv clean
     - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libc++ default
-    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan remote add -f cpp-stat-bench $CPP_STAT_BENCH_CONAN_REGISTRY
+    - pipenv run conan remote add -f cpp-hash-tables $CPP_HASH_TABLES_CONAN_REGISTRY
     - pipenv run conan create --build missing --test-folder test/conan_package . ${CONAN_USER}/${CONAN_CHANNEL}
   interruptible: true
 
@@ -364,9 +369,11 @@ clang-14-conan-release:
     - pipenv clean
     - pipenv run conan profile new --force --detect default
     - pipenv run conan profile update settings.compiler.libcxx=libc++ default
-    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan remote add -f cpp-stat-bench $CPP_STAT_BENCH_CONAN_REGISTRY
+    - pipenv run conan remote add -f cpp-hash-tables $CPP_HASH_TABLES_CONAN_REGISTRY
+    - pipenv run conan remote add -f numerical-collection-cpp $NUM_COLLECT_CONAN_REGISTRY
     - pipenv run conan create --build missing --test-folder test/conan_package . ${CONAN_USER}/${CONAN_CHANNEL}
-    - CONAN_LOGIN_USERNAME=ci_user CONAN_PASSWORD=${CI_JOB_TOKEN} pipenv run conan upload -r gitlab num_collect/${NUM_COLLECT_VERSION}@${CONAN_USER}/${CONAN_CHANNEL} --all
+    - CONAN_LOGIN_USERNAME=ci_user CONAN_PASSWORD=${CI_JOB_TOKEN} pipenv run conan upload -r numerical-collection-cpp num_collect/${NUM_COLLECT_VERSION}@${CONAN_USER}/${CONAN_CHANNEL} --all
   only:
     - tags
 
@@ -409,7 +416,8 @@ clang-14-conan-release:
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --force --detect default
-    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan remote add -f cpp-stat-bench $CPP_STAT_BENCH_CONAN_REGISTRY
+    - pipenv run conan remote add -f cpp-hash-tables $CPP_HASH_TABLES_CONAN_REGISTRY
     - pipenv run conan install --build missing -o num_collect:requirements_for_tests=True -s build_type=Debug ..
     - cd ../
     - cmake -S ./ -B $BUILD_DIR
@@ -437,7 +445,8 @@ clang-14-conan-release:
     - mkdir $BUILD_DIR
     - cd $BUILD_DIR
     - pipenv run conan profile new --force --detect default
-    - pipenv run conan remote add -f gitlab https://gitlab.com/api/v4/packages/conan
+    - pipenv run conan remote add -f cpp-stat-bench $CPP_STAT_BENCH_CONAN_REGISTRY
+    - pipenv run conan remote add -f cpp-hash-tables $CPP_HASH_TABLES_CONAN_REGISTRY
     - pipenv run conan install --build missing -o num_collect:requirements_for_tests=True -s build_type=Release ..
     - cd ../
     - cmake -S ./ -B $BUILD_DIR
@@ -507,7 +516,7 @@ upload-document:
     - doc
   dependencies:
     - doc
-  image: registry.gitlab.com/musicscience37/my-cpp-env-docker:clang14
+  image: registry.gitlab.com/musicscience37projects/docker/my-cpp-env-docker:clang14
   rules:
     - if: $CI_COMMIT_TAG =~ /^v/
   script:
