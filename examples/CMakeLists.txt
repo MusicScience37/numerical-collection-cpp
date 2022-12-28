@@ -19,7 +19,7 @@ function(add_example_using_pybind11 TARGET)
         if(NUM_COLLECT_TEST_EXAMPLES)
             add_test(
                 NAME ${TARGET}
-                COMMAND ${PIPENV_EXECUTABLE} run $<TARGET_FILE:${TARGET}>
+                COMMAND ${POETRY_EXECUTABLE} run $<TARGET_FILE:${TARGET}>
                 WORKING_DIRECTORY ${NUM_COLLECT_SOURCE_DIR})
         endif()
     endif()
