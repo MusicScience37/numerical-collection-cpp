@@ -70,7 +70,7 @@ target_compile_options(
 find_program(
     PYTHON_EXECUTABLE
     NAMES python3 python
-    PATHS ${PIPENV_VENV_DIR}/bin ${PIPENV_VENV_DIR}/Scripts
+    PATHS ${POETRY_VENV_DIR}/bin ${POETRY_VENV_DIR}/Scripts
     NO_DEFAULT_PATH)
 if(PYTHON_EXECUTABLE)
     message(STATUS "Found Python: ${PYTHON_EXECUTABLE}")

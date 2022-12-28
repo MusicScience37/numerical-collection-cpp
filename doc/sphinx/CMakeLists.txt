@@ -13,7 +13,7 @@ set(NUM_COLLECT_SPHINX_OPTIONS -D "plantuml=java -jar ${PLANTUML_JAR_PATH}" -D
 add_custom_target(
     num_collect_doc_sphinx_html ALL
     COMMAND
-        ${PIPENV_EXECUTABLE} run sphinx-build -b html -W
+        ${POETRY_EXECUTABLE} run sphinx-build -b html -W
         ${CMAKE_CURRENT_SOURCE_DIR}/src ${NUM_COLLECT_HTML_ROOT}
         ${NUM_COLLECT_SPHINX_OPTIONS} -q
     COMMENT "Generate Sphinx html API documentation for ${FULL_PROJECT_NAME}"
