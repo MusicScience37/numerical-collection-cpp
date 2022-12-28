@@ -59,7 +59,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 include(TargetLinkSystemLibrary)
 include(CppWarningFlags)
 include(CppFlags)
-include(pipenv)
+include(poetry)
 include(ConfigureSanitizer)
 include(ConfigureCcache)
 
