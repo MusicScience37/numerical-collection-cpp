@@ -24,4 +24,4 @@ This project uses following tools for dependency management:
 
 - `Conan <https://conan.io/>`_ (C++).
 
-  - Install ``conan`` command using Pipenv.
+  - Install ``conan`` command using poetry.
