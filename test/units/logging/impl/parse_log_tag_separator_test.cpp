@@ -19,6 +19,8 @@
  */
 #include "num_collect/logging/impl/parse_log_tag_separator.h"
 
+#include <string>
+
 #include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("num_collect::logging::impl::parse_log_tag_separator") {
