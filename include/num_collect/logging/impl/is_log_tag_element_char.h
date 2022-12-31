@@ -19,9 +19,9 @@
  */
 #pragma once
 
-#include <algorithm>
 #include <array>
 #include <cstddef>
+#include <cstdint>
 
 namespace num_collect::logging::impl {
 
@@ -33,7 +33,7 @@ namespace num_collect::logging::impl {
 [[nodiscard]] inline constexpr auto create_log_tag_element_char_mask() {
     constexpr std::size_t size = 256;
     std::array<bool, size> res{};
-    std::fill(res.begin(), res.end(), false);
+    res.fill(false);
 
     constexpr auto num_begin = static_cast<char>(0x30);  // 0
     constexpr auto num_end = static_cast<char>(0x39);    // 9
