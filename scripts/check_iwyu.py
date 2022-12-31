@@ -2,13 +2,13 @@
 """Check source codes with include-what-you-use.
 """
 
+import asyncio
 import pathlib
 import random
-import signal
-import subprocess
+import typing
+import multiprocessing
 
 import click
-import trio
 import tqdm
 
 CLANG_INCLUDE_OPTION = ["-isystem", "/usr/lib/llvm-14/include/c++/v1/"]
@@ -21,12 +21,6 @@ IS_SUCCESS = True
 
 class IwyuProcessError(RuntimeError):
     pass
-
-
-async def cancel_process(process: trio.Process):
-    process.send_signal(signal.SIGTERM)
-    await trio.sleep(1)
-    process.send_signal(signal.SIGKILL)
 
 
 def remove_correct_lines(target: str) -> str:
@@ -53,32 +47,40 @@ async def apply_iwyu_to_file(
     filepath: str,
     build_dir: str,
     tqdm_obj: tqdm.tqdm,
-    limiter: trio.CapacityLimiter,
+    limiter: asyncio.Semaphore,
     stop_on_error: bool,
 ):
 
     global IS_SUCCESS
 
     async with limiter:
-        result = await trio.run_process(
+        command = (
             ["iwyu_tool.py", "-p", ".", filepath, "--"]
             + CLANG_INCLUDE_OPTION
             + ["-Xiwyu", "--error"]
             + ["-Xiwyu", f"--mapping_file={str(IWYU_MAPPING_PATH)}"]
             + ["-Xiwyu", "--no_fwd_decls"]
             + ["-Xiwyu", "--check_also=**/num_collect/**/*.h"]
-            + ["-Xiwyu", "--check_also=**/num_prob_collect/**/*.h"],
-            capture_stdout=True,
-            capture_stderr=True,
-            check=False,
-            cwd=build_dir,
-            deliver_cancel=cancel_process,
+            + ["-Xiwyu", "--check_also=**/num_prob_collect/**/*.h"]
         )
-        if result.returncode == 0:
+        process = await asyncio.create_subprocess_exec(
+            *command,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+            cwd=build_dir,
+        )
+        try:
+            stdout, stderr = await process.communicate()
+        except:
+            process.kill()
+            await process.communicate()
+            raise
+
+        if process.returncode == 0:
             tqdm_obj.write(click.style(f"> {filepath}: OK", fg="green"))
             tqdm_obj.update()
         else:
-            console = result.stdout.decode("utf8") + "\n" + result.stderr.decode("utf8")
+            console = stdout.decode("utf8") + "\n" + stderr.decode("utf8")
             console = remove_correct_lines(console)
             tqdm_obj.write(click.style(f"> {filepath}: NG", fg="red") + "\n" + console)
             IS_SUCCESS = False
@@ -103,26 +105,26 @@ async def apply_iwyu_to_files(
     global IS_SUCCESS
 
     tqdm_obj = tqdm.tqdm(total=len(filepaths), unit="file")
-    limiter = trio.CapacityLimiter(num_jobs)
+    limiter = asyncio.Semaphore(num_jobs)
+    tasks: typing.List[asyncio.Task] = []
     try:
-        async with trio.open_nursery() as nursery:
-            for filepath in filepaths:
-                nursery.start_soon(
-                    apply_iwyu_to_file,
-                    filepath,
-                    build_dir,
-                    tqdm_obj,
-                    limiter,
-                    stop_on_error,
+        for filepath in filepaths:
+            tasks.append(
+                asyncio.create_task(
+                    apply_iwyu_to_file(
+                        filepath=filepath,
+                        build_dir=build_dir,
+                        tqdm_obj=tqdm_obj,
+                        limiter=limiter,
+                        stop_on_error=stop_on_error,
+                    )
                 )
+            )
+        await asyncio.gather(*tasks)
     except IwyuProcessError:
         IS_SUCCESS = False
-        pass
-    except trio.MultiError as e:
-        IS_SUCCESS = False
-        e = trio.MultiError.filter(filter_iwyu_process_error, e)
-        if e is not None:
-            raise e
+        for task in tasks:
+            task.cancel()
     finally:
         tqdm_obj.close()
 
@@ -169,11 +171,13 @@ def check_iwyu(file_or_directory_paths: list[str], build_dir: str, num_jobs: int
     # Currently, stop on error always.
     stop_on_error = True
 
-    trio.run(apply_iwyu_to_files, filepaths, build_dir, num_jobs, stop_on_error)
+    asyncio.run(apply_iwyu_to_files(filepaths, build_dir, num_jobs, stop_on_error))
 
     if not IS_SUCCESS:
         click.echo(click.style("Some errors occurred.", fg="red"))
-        subprocess.run(["pkill", "include-what"], check=False)
+        subprocesses = multiprocessing.active_children()
+        for subprocess in subprocesses:
+            subprocess.kill()
 
 
 if __name__ == "__main__":
