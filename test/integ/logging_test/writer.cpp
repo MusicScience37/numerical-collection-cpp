@@ -33,7 +33,7 @@
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
 
-constexpr auto my_tag = num_collect::logging::log_tag_view("example tag");
+constexpr auto my_tag = num_collect::logging::log_tag_view("example_tag");
 
 static void write_logs() {
     // Create a logger with a tag.
