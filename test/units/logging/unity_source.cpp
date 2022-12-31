@@ -15,6 +15,7 @@
 #include "impl/iteration_layer_handler_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/log_tag_config_tree_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/log_tag_element_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "impl/parse_log_tag_separator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/separate_top_log_tag_element_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "iterations/function_iteration_parameter_value_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "iterations/iteration_logger_test.cpp"  // NOLINT(bugprone-suspicious-include)
