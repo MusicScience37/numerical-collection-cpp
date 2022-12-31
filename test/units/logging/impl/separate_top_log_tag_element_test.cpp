@@ -28,8 +28,16 @@
 TEST_CASE("num_collect::logging::impl::separate_top_log_tag_element") {
     using num_collect::logging::impl::separate_top_log_tag_element;
 
-    SECTION("ordinary case") {
+    SECTION("ordinary case with colons") {
         const auto tag = std::string_view("test::log::tag");
+
+        const auto [element, rem] = separate_top_log_tag_element(tag);
+        CHECK(element.name() == "test");
+        CHECK(std::string(rem) == "log::tag");
+    }
+
+    SECTION("ordinary case with a period") {
+        const auto tag = std::string_view("test.log::tag");
 
         const auto [element, rem] = separate_top_log_tag_element(tag);
         CHECK(element.name() == "test");
@@ -49,7 +57,6 @@ TEST_CASE("num_collect::logging::impl::separate_top_log_tag_element") {
         CHECK_THROWS(separate_top_log_tag_element(""));
         CHECK_THROWS(separate_top_log_tag_element("::log::tags"));
         CHECK_THROWS(separate_top_log_tag_element("test::"));
-        CHECK_THROWS(separate_top_log_tag_element("test::::tags"));
 
         // single colon
         CHECK_THROWS(separate_top_log_tag_element("test:log::tags"));

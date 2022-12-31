@@ -37,7 +37,7 @@
 #include "num_collect/logging/sinks/async_logging_worker.h"
 #include "num_collect/logging/sinks/simple_log_sink.h"
 
-constexpr auto my_tag = num_collect::logging::log_tag_view("example tag");
+constexpr auto my_tag = num_collect::logging::log_tag_view("example_tag");
 
 static void write_logs() {
     // Create a logger with a tag.

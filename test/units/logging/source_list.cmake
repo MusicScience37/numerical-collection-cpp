@@ -12,9 +12,12 @@ set(SOURCE_FILES
     formatters/detailed_log_formatter_test.cpp
     formatters/get_log_level_str_for_log_test.cpp
     formatters/iso8601_time_test.cpp
+    impl/is_log_tag_element_char_test.cpp
     impl/iteration_layer_handler_test.cpp
     impl/log_tag_config_tree_test.cpp
     impl/log_tag_element_test.cpp
+    impl/parse_log_tag_element_test.cpp
+    impl/parse_log_tag_separator_test.cpp
     impl/separate_top_log_tag_element_test.cpp
     iterations/function_iteration_parameter_value_test.cpp
     iterations/iteration_logger_test.cpp
