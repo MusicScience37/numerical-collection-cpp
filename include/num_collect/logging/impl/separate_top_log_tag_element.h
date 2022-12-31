@@ -25,7 +25,9 @@
 #include <utility>
 
 #include "num_collect/base/exception.h"
-#include "num_collect/logging/impl//log_tag_element.h"
+#include "num_collect/logging/impl/log_tag_element.h"
+#include "num_collect/logging/impl/parse_log_tag_element.h"
+#include "num_collect/logging/impl/parse_log_tag_separator.h"
 
 namespace num_collect::logging::impl {
 
@@ -37,20 +39,18 @@ namespace num_collect::logging::impl {
  */
 [[nodiscard]] inline auto separate_top_log_tag_element(std::string_view tag)
     -> std::pair<log_tag_element, std::string_view> {
-    const std::size_t size = tag.size();
-    if (tag.empty() || tag[0] == ':') {
+    const auto [element, remaining_after_elements] = parse_log_tag_element(tag);
+    if (remaining_after_elements.empty()) {
+        return {log_tag_element{std::string{element}}, std::string_view{}};
+    }
+
+    const auto remaining_elements =
+        parse_log_tag_separator(remaining_after_elements);
+    if (remaining_elements.empty()) {
         throw base::invalid_argument("Log tag format error.");
     }
-    for (std::size_t i = 1; i < size; ++i) {
-        if (tag[i] == ':') {
-            if (i + 2 < size && tag[i + 1] == ':' && tag[i + 2] != ':') {
-                return {log_tag_element(std::string(tag.substr(0, i))),
-                    tag.substr(i + 2)};
-            }
-            throw base::invalid_argument("Log tag format error.");
-        }
-    }
-    return {log_tag_element(std::string(tag)), std::string_view()};
+
+    return {log_tag_element{std::string{element}}, remaining_elements};
 }
 
 }  // namespace num_collect::logging::impl
