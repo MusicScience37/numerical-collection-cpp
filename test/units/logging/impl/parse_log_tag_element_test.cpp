@@ -19,6 +19,9 @@
  */
 #include "num_collect/logging/impl/parse_log_tag_element.h"
 
+#include <string>
+
+#include <catch2/catch_message.hpp>
 #include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("num_collect::logging::impl::parse_log_tag_element") {
