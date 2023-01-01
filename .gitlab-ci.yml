@@ -62,7 +62,10 @@ complexity:
     - poetry run lizard -o complexity/complexity_per_function.html include
     - poetry run lizard -o complexity/result.txt -E duplicate include
   cache:
-    key: cache-${CI_JOB_NAME}
+    key:
+      prefix: cache-${CI_JOB_NAME}
+      files:
+        - poetry.lock
     paths:
       - .venv
   artifacts:
@@ -81,7 +84,10 @@ pre-commit:
     - poetry install
     - poetry run pre-commit run --all-files
   cache:
-    key: cache-${CI_JOB_NAME}
+    key:
+      prefix: cache-${CI_JOB_NAME}
+      files:
+        - poetry.lock
     paths:
       - .venv
   interruptible: true
@@ -146,7 +152,10 @@ spell check:
     - cmake --build .
     - ctest -V
   cache:
-    key: cache-${CI_JOB_NAME}
+    key:
+      prefix: cache-${CI_JOB_NAME}
+      files:
+        - poetry.lock
     paths:
       - .cache
       - .conan
