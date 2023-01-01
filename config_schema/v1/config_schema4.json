@@ -5,7 +5,7 @@
   "type": "object",
   "definitions": {
     "log_tag": {
-      "$comment": "TODO: Rule for log tags.",
+      "$comment": "Log tags. (TODO)",
       "type": "string"
     },
     "log_level": {
@@ -59,7 +59,7 @@
       "type": "object",
       "allOf": [
         {
-          "$comment": "Common part.",
+          "$comment": "Available properties.",
           "properties": {
             "name": {
               "description": "Name of the log sink. The name \"default\" is reserved for default log sink in the library.",
@@ -71,9 +71,26 @@
             "type": {
               "description": "Type of the log sink.",
               "enum": ["console", "single_file", "async", "combined"]
+            },
+            "use_color": { "type": "boolean" },
+            "filepath": { "description": "Filepath.", "type": "string" },
+            "inner_sink_name": {
+              "description": "Log sink used to actual logging in asynchronous processing. A log sink with this name must be configured in the same file.",
+              "type": "string"
+            },
+            "inner_sink_names": {
+              "description": "Log sinks used to actual logging. Log sink with these names must be configured in the same file.",
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "output_log_levels": {
+              "description": "Minimum log levels to output. Number of elements must be same with inner_sink_names.",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/log_level"
+              }
             }
-          },
-          "required": ["name", "type"]
+          }
         },
         {
           "oneOf": [
@@ -82,8 +99,9 @@
               "properties": {
                 "name": {},
                 "type": { "enum": ["console"] },
-                "use_color": { "type": "boolean" }
+                "use_color": {}
               },
+              "required": ["name", "type"],
               "additionalProperties": false
             },
             {
@@ -91,7 +109,7 @@
               "properties": {
                 "name": {},
                 "type": { "enum": ["single_file"] },
-                "filepath": { "description": "Filepath.", "type": "string" }
+                "filepath": {}
               },
               "required": ["name", "type", "filepath"],
               "additionalProperties": false
@@ -101,10 +119,7 @@
               "properties": {
                 "name": {},
                 "type": { "enum": ["async"] },
-                "inner_sink_name": {
-                  "description": "Log sink used to actual logging in asynchronous processing. A log sink with this name must be configured in the same file.",
-                  "type": "string"
-                }
+                "inner_sink_name": {}
               },
               "required": ["name", "type", "inner_sink_name"],
               "additionalProperties": false
@@ -114,18 +129,8 @@
               "properties": {
                 "name": {},
                 "type": { "enum": ["combined"] },
-                "inner_sink_names": {
-                  "description": "Log sinks used to actual logging. Log sink with these names must be configured in the same file.",
-                  "type": "array",
-                  "items": { "type": "string" }
-                },
-                "output_log_levels": {
-                  "description": "Minimum log levels to output. Number of elements must be same with inner_sink_names.",
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/log_level"
-                  }
-                }
+                "inner_sink_names": {},
+                "output_log_levels": {}
               },
               "required": [
                 "name",
