@@ -1,0 +1,109 @@
+@startuml logger
+
+title Abstract model of logger
+
+package logging {
+    enum log_level {
+        {field} {abstract} (omitted here)
+    }
+
+    class log_tag {
+        - name_ : string
+        + log_tag(name: string)
+        + name() : const string&
+    }
+
+    !startsub log_tag_view
+    class log_tag_view {
+        - name_ : string_view
+        + log_tag(name: string_view)
+        + name() : string_view
+    }
+    !endsub
+
+    package formatters {
+        interface log_formatter_base {
+            {abstract} + format(fmt::memory_buffer& buffer,\n\ttime: time_point, tag: string_view, level: log_level,\n\tsource: source_info_view, body: string_view)
+        }
+        log_formatter_base ..> log_level
+
+        class xxx_log_formatter
+        log_formatter_base <|.. xxx_log_formatter
+    }
+
+    package sinks {
+        !startsub log_sink_base
+        interface log_sink_base {
+            {abstract} + write(time: time_point, tag: string_view, level: log_level,\n\tsource: source_info_view, body: string_view)
+            {abstract} + write(time: time_point, tag: string_view, level: log_level,\n\tsource: source_info_view, body: fmt::memory_buffer)
+        }
+        !endsub
+        log_sink_base ..> log_level
+
+        !startsub xxx_log_sink
+        class xxx_log_sink
+        !endsub
+        log_sink_base <|.. xxx_log_sink
+        xxx_log_sink o-- log_formatter_base
+    }
+
+    !startsub log_tag_config
+    class log_tag_config {
+        + sink() : shared_ptr<log_sink_base>
+        + output_log_level() : log_level
+        + output_log_level_in_child_iterations() : log_level
+        + iteration_output_period() : index_type
+        + iteration_label_period() : index_type
+    }
+    !endsub
+    log_tag_config o-- log_sink_base
+    log_tag_config o-- log_level
+
+    !startsub log_config
+    class log_config {
+        {static} + instance() : log_config&
+        + get_default_tag_config() : log_tag_config
+        + set_default_tag_config(config: log_tag_config)
+        + get_config_of(tag: log_tag_view) : log_tag_config
+        + set_config_of(tag: log_tag_view, config: log_tag_config)
+    }
+    !endsub
+    log_config o-- log_tag
+    log_config o-- log_tag_config
+    log_config ..> log_tag_view
+
+    class logging_proxy {
+        + operator()(body: string_view)
+        + operator()(format: fmt::format_string, args...)
+    }
+
+    !startsub logger
+    class logger {
+        + logger(tag: log_tag_view)
+        + logger(tag: log_tag_view, config: log_tag_config)
+        + logger(tag: log_tag, config: log_tag_config)
+        + tag() : const log_tag&
+        + config() : const log_tag_config&
+        + set_iterative()
+        + initialize_child_algorithm_logger(child: logger&)
+        + should_log(level: log_level) : bool
+        + log(level: log_level, source: source_info_view = source_info_view()) : logging_proxy
+        + trace(source: source_info_view = source_info_view()) : logging_proxy
+        + debug(source: source_info_view = source_info_view()) : logging_proxy
+        + iteration(source: source_info_view = source_info_view()) : logging_proxy
+        + iteration_label(source: source_info_view = source_info_view()) : logging_proxy
+        + summary(source: source_info_view = source_info_view()) : logging_proxy
+        + info(source: source_info_view = source_info_view()) : logging_proxy
+        + warning(source: source_info_view = source_info_view()) : logging_proxy
+        + error(source: source_info_view = source_info_view()) : logging_proxy
+        + critical(source: source_info_view = source_info_view()) : logging_proxy
+    }
+    !endsub
+    logger o-- log_tag
+    logger o-- log_tag_config
+    logger ..> log_tag_view
+    logger ..> logging_proxy
+    logger ..> log_config
+}
+
+@enduml

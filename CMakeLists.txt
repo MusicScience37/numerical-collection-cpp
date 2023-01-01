@@ -1,14 +1,8 @@
 cmake_minimum_required(VERSION 3.12)
 
-if(DEFINED PROJECT_NAME)
-    set(NUM_COLLECT_SUBPROJECT ON)
-else()
-    set(NUM_COLLECT_SUBPROJECT OFF)
-endif()
-
 project(
     num_collect
-    VERSION 0.5.0
+    VERSION 0.6.0
     DESCRIPTION
         "A collection of algorithms in numerical analysis implemented in C++"
     LANGUAGES CXX)
@@ -55,7 +49,6 @@ if(NUM_COLLECT_TESTING)
     find_package(ApprovalTests REQUIRED)
     find_package(cpp_stat_bench REQUIRED)
     find_package(lyra REQUIRED)
-    find_package(Boost REQUIRED)
 endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS
@@ -66,7 +59,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 include(TargetLinkSystemLibrary)
 include(CppWarningFlags)
 include(CppFlags)
-include(pipenv)
+include(poetry)
 include(ConfigureSanitizer)
 include(ConfigureCcache)
 
@@ -77,7 +70,7 @@ target_compile_options(
 find_program(
     PYTHON_EXECUTABLE
     NAMES python3 python
-    PATHS ${PIPENV_VENV_DIR}/bin ${PIPENV_VENV_DIR}/Scripts
+    PATHS ${POETRY_VENV_DIR}/bin ${POETRY_VENV_DIR}/Scripts
     NO_DEFAULT_PATH)
 if(PYTHON_EXECUTABLE)
     message(STATUS "Found Python: ${PYTHON_EXECUTABLE}")
@@ -113,6 +106,8 @@ if(NUM_COLLECT_BUILD_EXAMPLES)
     find_package(pngpp REQUIRED)
     add_subdirectory(examples)
 endif()
+
+add_subdirectory(config_schema)
 
 if(NUM_COLLECT_ENABLE_PROFILING)
     add_subdirectory(profiling)

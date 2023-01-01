@@ -27,7 +27,6 @@
 #include <limits>
 #include <memory>
 #include <queue>
-#include <string>
 #include <string_view>
 #include <unordered_map>
 #include <utility>
@@ -36,7 +35,7 @@
 #include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/opt/concepts/multi_variate_objective_function.h"  // IWYU pragma: keep
 #include "num_collect/opt/concepts/objective_function.h"  // IWYU pragma: keep
@@ -447,6 +446,9 @@ template <concepts::objective_function ObjectiveFunction>
 class adaptive_diagonal_curves
     : public optimizer_base<adaptive_diagonal_curves<ObjectiveFunction>> {
 public:
+    //! This class.
+    using this_type = adaptive_diagonal_curves<ObjectiveFunction>;
+
     //! Type of the objective function.
     using objective_function_type = ObjectiveFunction;
 
@@ -473,7 +475,7 @@ public:
      * \param[in] state State.
      * \return Name of state.
      */
-    [[nodiscard]] static auto state_name(state_type state) -> std::string {
+    [[nodiscard]] static auto state_name(state_type state) -> std::string_view {
         switch (state) {
         case state_type::none:
             return "none";
@@ -558,17 +560,18 @@ public:
      * \copydoc num_collect::base::iterative_solver_base::configure_iteration_logger
      */
     void configure_iteration_logger(
-        logging::iteration_logger& iteration_logger) const {
-        iteration_logger.append<index_type>(
-            "Iter.", [this] { return iterations(); });
-        iteration_logger.append<index_type>(
-            "Eval.", [this] { return evaluations(); });
-        iteration_logger.append<value_type>(
-            "Value", [this] { return opt_value(); });
+        logging::iterations::iteration_logger<this_type>& iteration_logger)
+        const {
+        iteration_logger.template append<index_type>(
+            "Iter.", &this_type::iterations);
+        iteration_logger.template append<index_type>(
+            "Eval.", &this_type::evaluations);
+        iteration_logger.template append<value_type>(
+            "Value", &this_type::opt_value);
         constexpr index_type state_width = 15;
         iteration_logger
-            .append<std::string>(
-                "State", [this] { return state_name(last_state()); })
+            .template append<std::string_view>(
+                "State", &this_type::last_state_name)
             ->width(state_width);
     }
 
@@ -607,6 +610,15 @@ public:
      */
     [[nodiscard]] auto last_state() const noexcept -> state_type {
         return state_;
+    }
+
+    /*!
+     * \brief Get the name of the last state.
+     *
+     * \return Last state.
+     */
+    [[nodiscard]] auto last_state_name() const noexcept -> std::string_view {
+        return state_name(last_state());
     }
 
     /*!

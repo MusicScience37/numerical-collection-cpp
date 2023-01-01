@@ -27,6 +27,8 @@ namespace num_collect::logging {
 
 /*!
  * \brief Class of tags of logs.
+ *
+ * \thread_safety Not thread-safe.
  */
 class log_tag {
 public:

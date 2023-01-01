@@ -1,0 +1,11 @@
+[2022-08-28T17:56:14.123456] [trace] [Tag] body (path:123, function)
+[2022-08-28T17:56:14.123456] [debug] [Tag] body (path:123, function)
+[2022-08-28T17:56:14.123456] [iteration] [Tag] body (path:123, function)
+[2022-08-28T17:56:14.123456] [iteration] [Tag] body (path:123, function)
+[2022-08-28T17:56:14.123456] [summary] [Tag] body (path:123, function)
+[2022-08-28T17:56:14.123456] [info] [Tag] body (path:123, function)
+[2022-08-28T17:56:14.123456] [warning] [Tag] body (path:123, function)
+[2022-08-28T17:56:14.123456] [error] [Tag] body (path:123, function)
+[2022-08-28T17:56:14.123456] [critical] [Tag] body (path:123, function)
+[2022-08-28T17:56:14.123456] [unknown] [Tag] body (path:123, function)
+

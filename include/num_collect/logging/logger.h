@@ -32,10 +32,10 @@
 #include "num_collect/logging/impl/iteration_layer_handler.h"
 #include "num_collect/logging/log_config.h"
 #include "num_collect/logging/log_level.h"
-#include "num_collect/logging/log_sink_base.h"
 #include "num_collect/logging/log_tag.h"
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/sinks/log_sink_base.h"
 #include "num_collect/util/source_info_view.h"
 
 namespace num_collect::logging {
@@ -58,7 +58,7 @@ public:
      * \param[in] write_log Whether to write log.
      */
     logging_proxy(std::string_view tag, log_level level,
-        util::source_info_view source, log_sink_base* sink,
+        util::source_info_view source, sinks::log_sink_base* sink,
         bool write_log) noexcept
         : tag_(tag),
           level_(level),
@@ -72,11 +72,12 @@ public:
      * \param[in] body Body.
      */
     void operator()(std::string_view body) const {
-        if (!write_log_) {
+        if (!write_log_) [[likely]] {
             return;
         }
 
-        write(body);
+        sink_->write(
+            std::chrono::system_clock::now(), tag_, level_, source_, body);
     }
 
     /*!
@@ -88,27 +89,18 @@ public:
      */
     template <typename... Args>
     void operator()(fmt::format_string<Args...> format, Args&&... args) const {
-        if (!write_log_) {
+        if (!write_log_) [[likely]] {
             return;
         }
 
         fmt::memory_buffer buffer;
         fmt::format_to(
             std::back_inserter(buffer), format, std::forward<Args>(args)...);
-        write(std::string_view(buffer.data(), buffer.size()));
+        sink_->write(std::chrono::system_clock::now(), tag_, level_, source_,
+            std::string_view{buffer.data(), buffer.size()});
     }
 
 private:
-    /*!
-     * \brief Write a log.
-     *
-     * \param[in] body Body.
-     */
-    void write(std::string_view body) const {
-        sink_->write(
-            std::chrono::system_clock::now(), tag_, level_, source_, body);
-    }
-
     //! Tag.
     std::string_view tag_;
 
@@ -119,7 +111,7 @@ private:
     util::source_info_view source_;
 
     //! Log sink.
-    log_sink_base* sink_;
+    sinks::log_sink_base* sink_;
 
     //! Whether to write log.
     bool write_log_;
@@ -218,13 +210,13 @@ public:
      * \retval false Should not write logs.
      */
     [[nodiscard]] auto should_log(log_level level) const noexcept -> bool {
-        if (level < lowest_output_log_level_) {
+        if (level < lowest_output_log_level_) [[likely]] {
             return false;
         }
-        if (level >= always_output_log_level_) {
+        if (level >= always_output_log_level_) [[unlikely]] {
             return true;
         }
-        if (iteration_layer_handler_.is_upper_layer_iterative()) {
+        if (iteration_layer_handler_.is_upper_layer_iterative()) [[unlikely]] {
             return level >= config_.output_log_level_in_child_iterations();
         }
         return level >= config_.output_log_level();
@@ -260,6 +252,21 @@ public:
         util::source_info_view source = util::source_info_view()) const noexcept
         -> logging_proxy {
         return log(log_level::trace, source);
+    }
+
+    /*!
+     * \brief Write a debug log.
+     *
+     * \param[in] source Information of the source code.
+     * \return Proxy object to write log.
+     *
+     * \note Argument source should be left to be the default value if you want
+     * to write logs with the current position.
+     */
+    [[nodiscard]] auto debug(
+        util::source_info_view source = util::source_info_view()) const noexcept
+        -> logging_proxy {
+        return log(log_level::debug, source);
     }
 
     /*!
@@ -353,6 +360,21 @@ public:
         util::source_info_view source = util::source_info_view()) const noexcept
         -> logging_proxy {
         return log(log_level::error, source);
+    }
+
+    /*!
+     * \brief Write a critical log.
+     *
+     * \param[in] source Information of the source code.
+     * \return Proxy object to write log.
+     *
+     * \note Argument source should be left to be the default value if you want
+     * to write logs with the current position.
+     */
+    [[nodiscard]] auto critical(
+        util::source_info_view source = util::source_info_view()) const noexcept
+        -> logging_proxy {
+        return log(log_level::critical, source);
     }
 
 private:

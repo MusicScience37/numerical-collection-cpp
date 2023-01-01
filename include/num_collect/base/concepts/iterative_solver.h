@@ -21,7 +21,7 @@
 
 #include "num_collect/base/concepts/decayed_to.h"    // IWYU pragma: keep
 #include "num_collect/base/concepts/reference_of.h"  // IWYU pragma: keep
-#include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/logger.h"
 
 namespace num_collect {
@@ -44,7 +44,8 @@ concept iterative_solver = requires(T& solver, const T& const_solver) {
     { solver.logger() } -> reference_of<logging::logger>;
     { const_solver.logger() } -> reference_of<const logging::logger>;
 
-    requires requires(logging::iteration_logger & iteration_logger) {
+    requires requires(
+        logging::iterations::iteration_logger<T> & iteration_logger) {
         {solver.configure_iteration_logger(iteration_logger)};
     };
 };

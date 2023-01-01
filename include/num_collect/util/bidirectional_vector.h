@@ -37,7 +37,7 @@ namespace num_collect::util {
  * negative direction.
  *
  * This class generalizes `std::vector` class.
- * Indices can be positive interger, zero, or negative integer.
+ * Indices can be positive integers, zero, or negative integers.
  *
  * \tparam Value Type of values.
  * \tparam Container Type of the internal container. (Assumed to be
@@ -206,7 +206,7 @@ public:
     }
 
     /*!
-     * \brief Add a value to the beggining.
+     * \brief Add a value to the beginning.
      *
      * \param[in] value Value.
      */

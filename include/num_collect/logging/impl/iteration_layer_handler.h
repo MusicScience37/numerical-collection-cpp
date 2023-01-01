@@ -22,7 +22,6 @@
 #include <atomic>
 #include <memory>
 #include <type_traits>
-#include <utility>
 
 namespace num_collect::logging::impl {
 
@@ -38,51 +37,22 @@ public:
      */
     iteration_layer_handler() = default;
 
-    /*!
-     * \brief Copy constructor.
-     *
-     * This actually doesn't copy objects, but initialize this object as in
-     * default constructor.
-     */
-    iteration_layer_handler(const iteration_layer_handler& /*obj*/)
-        : iteration_layer_handler() {}
+    iteration_layer_handler(const iteration_layer_handler&) = delete;
+    auto operator=(const iteration_layer_handler&) = delete;
 
     /*!
      * \brief Move constructor.
-     *
-     * \param[in] obj Object to move from.
      */
-    iteration_layer_handler(iteration_layer_handler&& obj) noexcept
-        : node_(std::move(obj.node_)) {
-        node_->reset();
-    }
+    iteration_layer_handler(
+        iteration_layer_handler&& /*obj*/) noexcept = default;
 
     /*!
      * \brief Copy assignment operator.
      *
      * \return This.
-     *
-     * This actually doesn nothing.
-     */
-    auto operator=(  // NOLINT
-        const iteration_layer_handler& /*obj*/) noexcept
-        -> iteration_layer_handler& {
-        // No operation.
-        return *this;
-    }
-
-    /*!
-     * \brief Copy assignment operator.
-     *
-     * \return This.
-     *
-     * This actually doesn nothing.
      */
     auto operator=(iteration_layer_handler&& /*obj*/) noexcept
-        -> iteration_layer_handler& {
-        // No operation.
-        return *this;
-    }
+        -> iteration_layer_handler& = default;
 
     /*!
      * \brief Destructor.

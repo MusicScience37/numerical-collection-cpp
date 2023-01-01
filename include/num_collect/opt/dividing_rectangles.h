@@ -34,7 +34,7 @@
 #include "num_collect/base/get_size.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/norm.h"
-#include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/opt/concepts/objective_function.h"  // IWYU pragma: keep
 #include "num_collect/opt/optimizer_base.h"
@@ -58,6 +58,9 @@ template <concepts::objective_function ObjectiveFunction>
 class dividing_rectangles
     : public optimizer_base<dividing_rectangles<ObjectiveFunction>> {
 public:
+    //! This class.
+    using this_type = dividing_rectangles<ObjectiveFunction>;
+
     //! Type of the objective function.
     using objective_function_type = ObjectiveFunction;
 
@@ -138,13 +141,14 @@ public:
      * \copydoc num_collect::base::iterative_solver_base::configure_iteration_logger
      */
     void configure_iteration_logger(
-        logging::iteration_logger& iteration_logger) const {
-        iteration_logger.append<index_type>(
-            "Iter.", [this] { return iterations(); });
-        iteration_logger.append<index_type>(
-            "Eval.", [this] { return evaluations(); });
-        iteration_logger.append<value_type>(
-            "Value", [this] { return opt_value(); });
+        logging::iterations::iteration_logger<this_type>& iteration_logger)
+        const {
+        iteration_logger.template append<index_type>(
+            "Iter.", &this_type::iterations);
+        iteration_logger.template append<index_type>(
+            "Eval.", &this_type::evaluations);
+        iteration_logger.template append<value_type>(
+            "Value", &this_type::opt_value);
     }
 
     /*!
@@ -202,7 +206,7 @@ public:
 
 private:
     /*!
-     * \brief Class of hyper rectanble in DIRECT method.
+     * \brief Class of hyper rectangle in DIRECT method.
      */
     class rectangle {
     public:
@@ -449,21 +453,21 @@ private:
         const auto [divided_dim, lower_value, upper_value] =
             determine_divided_dimension(*origin);
         value_type divided_lowest;
-        value_type divided_uppest;
+        value_type divided_highest;
         if constexpr (is_eigen_vector_v<variable_type>) {
             divided_lowest = origin->lower()(divided_dim);
-            divided_uppest = origin->upper()(divided_dim);
+            divided_highest = origin->upper()(divided_dim);
         } else {
             divided_lowest = origin->lower();
-            divided_uppest = origin->upper();
+            divided_highest = origin->upper();
         }
         const auto [divided_lower, divided_upper] =
-            separate_section(divided_lowest, divided_uppest);
+            separate_section(divided_lowest, divided_highest);
 
         rects_[index + 1].push(origin->divide(
             divided_dim, divided_lowest, divided_lower, lower_value));
         rects_[index + 1].push(origin->divide(
-            divided_dim, divided_upper, divided_uppest, upper_value));
+            divided_dim, divided_upper, divided_highest, upper_value));
         origin->divide_in_place(
             divided_dim, divided_lower, divided_upper, origin->value());
         rects_[index + 1].push(origin);
@@ -538,12 +542,12 @@ private:
      * \brief Separate a section.
      *
      * \param[in] lowest Lower limit of the section.
-     * \param[in] uppest Upper limit of the section.
+     * \param[in] highest Upper limit of the section.
      * \return Lower, upper point to separate the section.
      */
     [[nodiscard]] static auto separate_section(value_type lowest,
-        value_type uppest) -> std::pair<value_type, value_type> {
-        const auto width = uppest - lowest;
+        value_type highest) -> std::pair<value_type, value_type> {
+        const auto width = highest - lowest;
         static const auto one_third = static_cast<value_type>(1.0 / 3.0);
         static const auto two_thirds = static_cast<value_type>(2.0 / 3.0);
         return {lowest + one_third * width, lowest + two_thirds * width};

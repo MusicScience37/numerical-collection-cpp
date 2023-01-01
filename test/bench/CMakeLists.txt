@@ -2,7 +2,7 @@ option(NUM_COLLECT_TEST_BENCHMARKS "execute benchmarks in tests" OFF)
 
 set(NUM_COLLECT_BENCH_DIR
     "${CMAKE_BINARY_DIR}/bench"
-    CACHE PATH "directory to which benchmark results are outputed" FORCE)
+    CACHE PATH "directory to which benchmark results are written" FORCE)
 file(MAKE_DIRECTORY ${NUM_COLLECT_BENCH_DIR})
 
 set(NUM_COLLECT_BENCH_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
@@ -28,7 +28,7 @@ function(add_bench_using_pybind11 TARGET)
         if(NUM_COLLECT_TEST_BENCHMARKS)
             add_test(
                 NAME ${TARGET}
-                COMMAND ${PIPENV_EXECUTABLE} run $<TARGET_FILE:${TARGET}>
+                COMMAND ${POETRY_EXECUTABLE} run $<TARGET_FILE:${TARGET}>
                         ${NUM_COLLECT_BENCH_DIR}
                 WORKING_DIRECTORY ${NUM_COLLECT_SOURCE_DIR})
         endif()

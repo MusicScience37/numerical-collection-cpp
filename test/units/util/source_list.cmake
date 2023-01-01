@@ -8,13 +8,17 @@ set(SOURCE_FILES
     concepts/rhs_comparable_test.cpp
     format_dense_matrix_test.cpp
     format_dense_vector_test.cpp
+    format_errno_test.cpp
     format_sparse_matrix_test.cpp
     hash_string_test.cpp
     impl/assertion_decomposer_test.cpp
     impl/compiler_builtins_test.cpp
     is_eigen_matrix_test.cpp
     is_eigen_vector_test.cpp
+    iteration_period_checker_test.cpp
     kahan_adder_test.cpp
+    object_storage_test.cpp
+    producer_consumer_circular_queue_test.cpp
     safe_cast_test.cpp
     source_info_view_test.cpp
 )

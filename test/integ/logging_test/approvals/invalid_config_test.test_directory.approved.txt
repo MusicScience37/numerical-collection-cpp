@@ -1,0 +1,6 @@
+exit code: 1
+stdout:
+
+stderr:
+Exception thrown: Invalid filepath to load configurations <config-filepath>. (toml_log_config_parser.h:<line>:<col>)
+

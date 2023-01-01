@@ -22,7 +22,7 @@
 #include <string_view>
 
 #include "num_collect/base/index_type.h"
-#include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/opt/backtracking_line_searcher.h"
 #include "num_collect/opt/concepts/differentiable_objective_function.h"  // IWYU pragma: keep
@@ -48,10 +48,11 @@ class steepest_descent
     : public descent_method_base<
           steepest_descent<ObjectiveFunction, LineSearcher>, LineSearcher> {
 public:
+    //! This class.
+    using this_type = steepest_descent<ObjectiveFunction, LineSearcher>;
+
     //! Type of base class.
-    using base_type =
-        descent_method_base<steepest_descent<ObjectiveFunction, LineSearcher>,
-            LineSearcher>;
+    using base_type = descent_method_base<this_type, LineSearcher>;
 
     using base_type::evaluations;
     using base_type::gradient;
@@ -82,15 +83,16 @@ public:
      * \copydoc num_collect::base::iterative_solver_base::configure_iteration_logger
      */
     void configure_iteration_logger(
-        logging::iteration_logger& iteration_logger) const {
-        iteration_logger.append<index_type>(
-            "Iter.", [this] { return iterations(); });
-        iteration_logger.append<index_type>(
-            "Eval.", [this] { return evaluations(); });
-        iteration_logger.append<value_type>(
-            "Value", [this] { return opt_value(); });
-        iteration_logger.append<value_type>(
-            "Grad.", [this] { return gradient_norm(); });
+        logging::iterations::iteration_logger<this_type>& iteration_logger)
+        const {
+        iteration_logger.template append<index_type>(
+            "Iter.", &base_type::iterations);
+        iteration_logger.template append<index_type>(
+            "Eval.", &base_type::evaluations);
+        iteration_logger.template append<value_type>(
+            "Value", &base_type::opt_value);
+        iteration_logger.template append<value_type>(
+            "Grad.", &base_type::gradient_norm);
     }
 };
 

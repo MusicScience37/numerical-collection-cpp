@@ -19,14 +19,9 @@
  */
 #pragma once
 
-#include <exception>
-#include <string>
+#include <string_view>
 
-#include <fmt/format.h>
-#include <toml++/toml.h>
-
-#include "num_collect/base/exception.h"
-#include "num_collect/logging/impl/load_logging_config_toml.h"
+#include "num_collect/logging/config/toml/toml_log_config_parser.h"
 
 namespace num_collect::logging {
 
@@ -35,13 +30,8 @@ namespace num_collect::logging {
  *
  * \param[in] filepath File path.
  */
-inline void load_logging_config(const std::string& filepath) {
-    try {
-        impl::toml_config::load_logging_config_toml(toml::parse_file(filepath));
-    } catch (const std::exception& e) {
-        throw invalid_argument(
-            fmt::format("Failed to load {}: {}", filepath, e.what()));
-    }
+inline void load_logging_config_file(std::string_view filepath) {
+    config::toml::toml_log_config_parser().parse_from_file(filepath);
 }
 
 }  // namespace num_collect::logging

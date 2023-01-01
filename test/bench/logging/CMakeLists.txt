@@ -3,3 +3,6 @@ target_add_to_benchmark(num_collect_bench_logging_iteration_logger)
 
 add_executable(num_collect_bench_logging_write_trace_logs write_trace_logs.cpp)
 target_add_to_benchmark(num_collect_bench_logging_write_trace_logs)
+
+add_executable(num_collect_bench_logging_log_sinks log_sinks_test.cpp)
+add_bench_using_pybind11(num_collect_bench_logging_log_sinks)

@@ -27,7 +27,7 @@
 #include <Eigen/LU>
 
 #include "num_collect/base/index_type.h"
-#include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/roots/concepts/differentiable_function.h"  // IWYU pragma: keep
 #include "num_collect/roots/concepts/multi_variate_differentiable_function.h"  // IWYU pragma: keep
@@ -52,7 +52,7 @@ class newton_raphson;
 /*!
  * \brief Class of Newton-Raphson method.
  *
- * This version is used when variable type is a floting-point number type.
+ * This version is used when variable type is a floating-point number type.
  *
  * \tparam Function Type of the function of equation.
  */
@@ -120,15 +120,16 @@ public:
 
     //! \copydoc num_collect::base::iterative_solver_base::configure_iteration_logger
     void configure_iteration_logger(
-        logging::iteration_logger& iteration_logger) const {
-        iteration_logger.append<index_type>(
-            "Iter.", [this] { return iterations(); });
-        iteration_logger.append<index_type>(
-            "Eval.", [this] { return evaluations(); });
-        iteration_logger.append<variable_type>(
-            "Value", [this] { return value_norm(); });
-        iteration_logger.append<variable_type>(
-            "Change", [this] { return last_change(); });
+        logging::iterations::iteration_logger<this_type>& iteration_logger)
+        const {
+        iteration_logger.template append<index_type>(
+            "Iter.", &this_type::iterations);
+        iteration_logger.template append<index_type>(
+            "Eval.", &this_type::evaluations);
+        iteration_logger.template append<variable_type>(
+            "Value", &this_type::value_norm);
+        iteration_logger.template append<variable_type>(
+            "Change", &this_type::last_change);
     }
 
     using base_type::function;
@@ -353,15 +354,16 @@ public:
 
     //! \copydoc num_collect::base::iterative_solver_base::configure_iteration_logger
     void configure_iteration_logger(
-        logging::iteration_logger& iteration_logger) const {
-        iteration_logger.append<index_type>(
-            "Iter.", [this] { return iterations(); });
-        iteration_logger.append<index_type>(
-            "Eval.", [this] { return evaluations(); });
-        iteration_logger.append<scalar_type>(
-            "Value", [this] { return value_norm(); });
-        iteration_logger.append<scalar_type>(
-            "Change", [this] { return last_change(); });
+        logging::iterations::iteration_logger<this_type>& iteration_logger)
+        const {
+        iteration_logger.template append<index_type>(
+            "Iter.", &this_type::iterations);
+        iteration_logger.template append<index_type>(
+            "Eval.", &this_type::evaluations);
+        iteration_logger.template append<scalar_type>(
+            "Value", &this_type::value_norm);
+        iteration_logger.template append<scalar_type>(
+            "Change", &this_type::last_change);
     }
 
     using base_type::function;

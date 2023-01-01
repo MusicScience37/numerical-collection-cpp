@@ -19,19 +19,29 @@
  */
 #pragma once
 
-#include "num_collect/logging/log_sink_base.h"
+#include <fmt/format.h>
+
+#include "num_collect/logging/sinks/log_sink_base.h"
 #include "trompeloeil_catch2.h"
 
 namespace num_collect_test::logging {
 
-class mock_log_sink final : public num_collect::logging::log_sink_base {
+class mock_log_sink final : public num_collect::logging::sinks::log_sink_base {
 public:
+    // NOLINTNEXTLINE(bugprone-exception-escape)
+    void write(std::chrono::system_clock::time_point time, std::string_view tag,
+        num_collect::logging::log_level level,
+        num_collect::util::source_info_view source,
+        std::string_view body) noexcept override {
+        write_impl(time, tag, level, source, body);
+    }
+
     // NOLINTNEXTLINE
-    MAKE_MOCK5(write,
+    MAKE_MOCK5(write_impl,
         void(std::chrono::system_clock::time_point time, std::string_view tag,
             num_collect::logging::log_level level,
             num_collect::util::source_info_view source, std::string_view body),
-        noexcept override);
+        noexcept);
 
     mock_log_sink() = default;
     mock_log_sink(const mock_log_sink&) = delete;

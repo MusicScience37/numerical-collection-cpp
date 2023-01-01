@@ -1,0 +1,16 @@
+      value1      value2      value3      value4
+           0         abc        1.23        null
+           2         abc        1.23        null
+           4         abc        1.23        null
+      value1      value2      value3      value4
+           6         abc        1.23        null
+           8         abc        1.23        null
+          10         abc        1.23        null
+      value1      value2      value3      value4
+          12         abc        1.23        null
+          14         abc        1.23        null
+          16         abc        1.23        null
+      value1      value2      value3      value4
+          18         abc        1.23        null
+Finished iterations: value1=19, value2=abc, value3=1.23, value4=null
+

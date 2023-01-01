@@ -255,7 +255,14 @@ TEMPLATE_TEST_CASE(
             variable_type(static_cast<scalar_type>(1.234), variable_tag());
         auto var = orig;
 
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wself-assign-overloaded"
+#endif
         var -= var;  // NOLINT
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
 
         REQUIRE(var.value() == static_cast<scalar_type>(0));
         REQUIRE(var.node() == nullptr);
@@ -434,7 +441,14 @@ TEMPLATE_TEST_CASE(
             variable_type(static_cast<scalar_type>(1.234), variable_tag());
         auto var = orig;
 
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wself-assign-overloaded"
+#endif
         var /= var;  // NOLINT
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
 
         REQUIRE(var.value() == static_cast<scalar_type>(1));
         REQUIRE(var.node() == nullptr);

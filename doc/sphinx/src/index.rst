@@ -4,7 +4,7 @@ numerical-collection-cpp
 A collection of algorithms in numerical analysis implemented in C++.
 
 Developed at
-`https://gitlab.com/MusicScience37/numerical-collection-cpp <https://gitlab.com/MusicScience37/numerical-collection-cpp>`_.
+`https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp <https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp>`_.
 
 API reference can be viewed `here <api/index.html>`_.
 
@@ -23,6 +23,7 @@ API reference can be viewed `here <api/index.html>`_.
     how_to_use
     modules
     directories
+    user_guide/index
 
 .. toctree::
     :maxdepth: 1

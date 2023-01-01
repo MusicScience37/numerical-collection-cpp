@@ -428,7 +428,7 @@ template <typename Left, typename Middle, typename ComparatorLeft,
 }
 
 /*!
- * \brief Class to decompose comprisons in assertions.
+ * \brief Class to decompose comparisons in assertions.
  */
 class assertion_decomposer {
 public:

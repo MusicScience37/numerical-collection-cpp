@@ -21,7 +21,7 @@
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/constants/zero.h"  // IWYU pragma: keep
-#include "num_collect/logging/iteration_logger.h"
+#include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/ode/concepts/formula.h"  // IWYU pragma: keep
 #include "num_collect/ode/solver_base.h"
 #include "num_collect/util/assert.h"
@@ -68,12 +68,14 @@ public:
 
     //! \copydoc ode::solver_base::configure_iteration_logger
     void configure_iteration_logger(
-        logging::iteration_logger& iteration_logger) const {
-        iteration_logger.append<index_type>(
-            "Steps", [this] { return steps(); });
-        iteration_logger.append<scalar_type>("Time", [this] { return time(); });
-        iteration_logger.append<scalar_type>(
-            "StepSize", [this] { return step_size(); });
+        logging::iterations::iteration_logger<this_type>& iteration_logger)
+        const {
+        iteration_logger.template append<index_type>(
+            "Steps", &this_type::steps);
+        iteration_logger.template append<scalar_type>("Time", &this_type::time);
+        iteration_logger.template append<scalar_type>("StepSize",
+            static_cast<scalar_type (this_type::*)() const>(
+                &this_type::step_size));
     }
 
     //! \copydoc ode::solver_base::time

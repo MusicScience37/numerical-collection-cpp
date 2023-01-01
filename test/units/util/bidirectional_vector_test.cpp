@@ -166,7 +166,7 @@ TEST_CASE("num_collect::util::bidirectional_vector") {
         }
     }
 
-    SECTION("add value to the beggining") {
+    SECTION("add value to the beginning") {
         auto vec = bidirectional_vector<int>();
 
         constexpr int value = 37;
@@ -177,7 +177,7 @@ TEST_CASE("num_collect::util::bidirectional_vector") {
         REQUIRE(vec.at(-1) == value);
     }
 
-    SECTION("add value to the beggining to fail") {
+    SECTION("add value to the beginning to fail") {
         auto vec = bidirectional_vector<int>();
         constexpr auto min_ind =
             std::numeric_limits<num_collect::index_type>::min();

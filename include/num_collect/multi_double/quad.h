@@ -153,7 +153,7 @@ inline auto operator+(const quad& left, const quad& right) -> quad {
 }
 
 /*!
- * \brief substruct a number from a number
+ * \brief subtract a number from a number
  *
  * \param[in] left left-hand-side number
  * \param[in] right right-hand-side number

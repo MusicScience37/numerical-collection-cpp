@@ -1,0 +1,222 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "numerical-collection-cpp configuration schema.",
+  "description": "Schema of configurations in numerical-collection-cpp project for JSON Schema Draft 7.",
+  "type": "object",
+  "definitions": {
+    "log_tag_config": {
+      "description": "Configuration of a log tag.",
+      "type": "object",
+      "properties": {
+        "tag": {
+          "description": "Log tag. Empty string specifies the default configuration.",
+          "type": "string",
+          "pattern": "^([0-9A-Za-z_]+((::|\\.)[0-9A-Za-z_]+)*)?$"
+        },
+        "sink": {
+          "description": "Name of a log sink. Log sink with this name must be configured in num_collect.logging.sinks configuration in the same file, or use \"default\" log sink in this library.",
+          "type": "string"
+        },
+        "output_log_level": {
+          "description": "Minimum log level to output. Choices: trace, debug, iteration, summary, info, warning, error, critical, off.",
+          "enum": [
+            "trace",
+            "debug",
+            "iteration",
+            "summary",
+            "info",
+            "warning",
+            "error",
+            "critical",
+            "off"
+          ]
+        },
+        "output_log_level_in_child_iterations": {
+          "description": "Minimum log level to output in child iterations. Choices: trace, debug, iteration, summary, info, warning, error, critical, off.",
+          "enum": [
+            "trace",
+            "debug",
+            "iteration",
+            "summary",
+            "info",
+            "warning",
+            "error",
+            "critical",
+            "off"
+          ]
+        },
+        "iteration_output_period": {
+          "description": "Period to write iteration logs.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "iteration_label_period": {
+          "description": "Period to write labels of iteration logs.",
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": ["tag"],
+      "additionalProperties": false
+    },
+    "log_sink": {
+      "type": "object",
+      "allOf": [
+        {
+          "$comment": "Available properties.",
+          "description": "Configuration of a log sink.",
+          "properties": {
+            "name": {
+              "allOf": [
+                {
+                  "description": "Name of the log sink. The name \"default\" is reserved for default log sink in the library.",
+                  "type": "string"
+                },
+                { "not": { "const": "default" } }
+              ]
+            },
+            "type": {
+              "description": "Type of the log sink. Choices: console, single_file, async, combined.",
+              "enum": ["console", "single_file", "async", "combined"]
+            },
+            "use_color": {
+              "description": "Whether to use color.",
+              "type": "boolean"
+            },
+            "filepath": { "description": "Filepath.", "type": "string" },
+            "inner_sink_name": {
+              "description": "Log sink used to actual logging in asynchronous processing. A log sink with this name must be configured in the same file.",
+              "type": "string"
+            },
+            "inner_sink_names": {
+              "description": "Log sinks used for actual logging. Log sink with these names must be configured in the same file.",
+              "type": "array",
+              "items": {
+                "description": "Log sinks used for actual logging. Log sink with these names must be configured in the same file.",
+                "type": "string"
+              }
+            },
+            "output_log_levels": {
+              "description": "Minimum log levels to output. Number of elements must be same with inner_sink_names. Choices of each log level: trace, debug, iteration, summary, info, warning, error, critical, off.",
+              "type": "array",
+              "items": {
+                "description": "Minimum log levels to output. Number of elements must be same with inner_sink_names. Choices of each log level: trace, debug, iteration, summary, info, warning, error, critical, off.",
+                "enum": [
+                  "trace",
+                  "debug",
+                  "iteration",
+                  "summary",
+                  "info",
+                  "warning",
+                  "error",
+                  "critical",
+                  "off"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "$comment": "Console sink.",
+          "if": {
+            "properties": {
+              "type": { "const": "console" }
+            }
+          },
+          "then": {
+            "properties": {
+              "name": {},
+              "type": {},
+              "use_color": {}
+            },
+            "required": ["name", "type"],
+            "additionalProperties": false
+          }
+        },
+        {
+          "$comment": "Single file sink.",
+          "if": {
+            "properties": {
+              "type": { "const": "single_file" }
+            }
+          },
+          "then": {
+            "properties": {
+              "name": {},
+              "type": {},
+              "filepath": {}
+            },
+            "required": ["name", "type", "filepath"],
+            "additionalProperties": false
+          }
+        },
+        {
+          "$comment": "Async sink.",
+          "if": {
+            "properties": {
+              "type": { "const": "async" }
+            }
+          },
+          "then": {
+            "properties": {
+              "name": {},
+              "type": {},
+              "inner_sink_name": {}
+            },
+            "required": ["name", "type", "inner_sink_name"],
+            "additionalProperties": false
+          }
+        },
+        {
+          "$comment": "Combined sink.",
+          "if": {
+            "properties": {
+              "type": { "const": "combined" }
+            }
+          },
+          "then": {
+            "properties": {
+              "name": {},
+              "type": {},
+              "inner_sink_names": {},
+              "output_log_levels": {}
+            },
+            "required": [
+              "name",
+              "type",
+              "inner_sink_names",
+              "output_log_levels"
+            ],
+            "additionalProperties": false
+          }
+        }
+      ]
+    }
+  },
+  "properties": {
+    "num_collect": {
+      "description": "Configurations of numerical-collection-cpp.",
+      "type": "object",
+      "properties": {
+        "logging": {
+          "description": "Configurations of logging.",
+          "type": "object",
+          "properties": {
+            "tag_configs": {
+              "description": "Configurations of log tags.",
+              "type": "array",
+              "items": { "$ref": "#/definitions/log_tag_config" }
+            },
+            "sinks": {
+              "description": "Configurations of log sinks.",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/log_sink"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

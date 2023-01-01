@@ -1,9 +1,9 @@
 option(NUM_COLLECT_WRITE_JUNIT
        "write JUnit XML files in tests of ${FULL_PROJECT_NAME}" OFF)
+set(NUM_COLLECT_JUNIT_DIR
+    "${CMAKE_BINARY_DIR}/junit"
+    CACHE PATH "directory to which JUnit XML files are written" FORCE)
 if(NUM_COLLECT_WRITE_JUNIT)
-    set(NUM_COLLECT_JUNIT_DIR
-        "${CMAKE_BINARY_DIR}/junit"
-        CACHE PATH "directory to which JUnit XML files are outputed" FORCE)
     file(MAKE_DIRECTORY ${NUM_COLLECT_JUNIT_DIR})
 endif()
 

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 cd ${NUM_COLLECT_SOURCE_DIR}
-pipenv run sphinx-autobuild \
+poetry run sphinx-autobuild \
     ${CMAKE_CURRENT_SOURCE_DIR}/src ${NUM_COLLECT_HTML_ROOT} \
     -D plantuml="java -jar ${PLANTUML_JAR_PATH}" \
     -D release=${PROJECT_VERSION} \
-    --port 8888
+    --port 3788

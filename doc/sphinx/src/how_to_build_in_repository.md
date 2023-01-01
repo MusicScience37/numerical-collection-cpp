@@ -10,19 +10,20 @@ you will require following dependencies:
 
 - [Python](https://www.python.org/) 3.9
   - You may want to use [pyenv](https://github.com/pyenv/pyenv).
-- [pipenv](https://pipenv.pypa.io/en/latest/)
-  - Required Python packages can be installed using pipenv.
-    Execute the command `pipenv install --dev` on this directory.
+- [poetry](https://python-poetry.org/)
+  - Required Python packages can be installed using poetry.
+    Execute the command `poetry install` on this directory.
   - [pre-commit](https://pre-commit.com/)
-    will be installed via pipenv, and used for some checks.
-    Execute `pipenv run pre-commit install` on this directory
+    will be installed via poetry, and used for some checks.
+    Execute `poetry run pre-commit install` on this directory
     if you develop this library.
 - [CMake](https://cmake.org/)
 - C++ 20 Compiler
   - Following compilers are tested in CI:
     - GCC 10
+    - GCC 12
     - Clang 14
-    - MSVC 19
+    - ~~MSVC 19~~ (Currently not tested due to an [Issue in CI](https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp/-/issues/195).)
 
 Additionally, you will require following dependencies
 to build documentation.
@@ -38,18 +39,21 @@ to build documentation.
 After installation of dependencies,
 execute the following commands to build:
 
-1. Start a shell of pipenv.
+1. Start a shell of poetry.
 
    ```bash
    cd <this-directory>
-   pipenv sync --dev
-   pipenv shell
+   poetry config virtualenvs.in-project true
+   poetry env use 3.10
+   poetry install
+   poetry shell
    ```
 
 2. Add the Conan remote in GitLab. (Once in an environment. Already done in devcontainer of VSCode.)
 
    ```bash
-   conan remote add gitlab https://gitlab.com/api/v4/packages/conan
+   conan remote add cpp-stat-bench https://gitlab.com/api/v4/projects/32226502/packages/conan
+   conan remote add cpp-hash-tables https://gitlab.com/api/v4/projects/35726343/packages/conan
    ```
 
 3. Download and install required Conan packages.

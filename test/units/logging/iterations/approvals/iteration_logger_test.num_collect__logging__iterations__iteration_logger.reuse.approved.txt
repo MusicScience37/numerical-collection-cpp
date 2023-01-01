@@ -1,0 +1,46 @@
+      value1      value2
+           0       1.234
+           2       1.234
+           4       1.234
+      value1      value2
+           6       1.234
+           8       1.234
+          10       1.234
+      value1      value2
+          12       1.234
+          14       1.234
+          16       1.234
+      value1      value2
+          18       1.234
+Finished iterations: value1=19, value2=1.234
+      value1      value2
+           0       1.234
+           2       1.234
+           4       1.234
+      value1      value2
+           6       1.234
+           8       1.234
+          10       1.234
+      value1      value2
+          12       1.234
+          14       1.234
+          16       1.234
+      value1      value2
+          18       1.234
+Finished iterations: value1=19, value2=1.234
+      value1      value2
+           0       1.234
+           2       1.234
+           4       1.234
+      value1      value2
+           6       1.234
+           8       1.234
+          10       1.234
+      value1      value2
+          12       1.234
+          14       1.234
+          16       1.234
+      value1      value2
+          18       1.234
+Finished iterations: value1=19, value2=1.234
+

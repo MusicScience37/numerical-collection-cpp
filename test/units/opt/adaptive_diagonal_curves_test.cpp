@@ -20,12 +20,14 @@
 #include "num_collect/opt/adaptive_diagonal_curves.h"
 
 #include <functional>
+#include <string>
 #include <type_traits>
 
 #include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
+#include <fmt/format.h>
 
 #include "eigen_approx.h"
 #include "num_collect/opt/concepts/box_constrained_optimizer.h"  // IWYU pragma: keep
@@ -120,11 +122,11 @@ TEST_CASE("num_collect::opt::impl::adc_sample_dict") {
         const Eigen::VectorXd var3 =
             (Eigen::VectorXd(2) << 0.0, 0.0).finished();
         constexpr double value3 = 0.0;
-        constexpr double mergin = 1e-12;
-        REQUIRE_THAT(dict(point), Catch::Matchers::WithinAbs(value3, mergin));
+        constexpr double margin = 1e-12;
+        REQUIRE_THAT(dict(point), Catch::Matchers::WithinAbs(value3, margin));
         REQUIRE_THAT(dict.opt_variable(), eigen_approx(var3));
         REQUIRE_THAT(
-            dict.opt_value(), Catch::Matchers::WithinAbs(value3, mergin));
+            dict.opt_value(), Catch::Matchers::WithinAbs(value3, margin));
         REQUIRE(dict.evaluations() == 3);
     }
 }

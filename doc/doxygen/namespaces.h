@@ -16,7 +16,6 @@
 /*!
  * \file
  * \brief Documentation of namespaces
- * \note This file must be consistent with `doc/sphinx/src/modules.rst`.
  */
 
 /*!
@@ -99,6 +98,68 @@ namespace num_collect {
 
         //! Namespace of C++ concepts.
         namespace concepts {}
+
+        /*!
+         * \dir num_collect/logging/formatters
+         * \brief Directory of formatters of logs.
+         */
+
+        //! Namespace of formatters of logs.
+        namespace formatters {
+
+            //! Namespace of internal implementations.
+            namespace impl {}
+
+        }  // namespace formatters
+
+        /*!
+         * \dir num_collect/logging/sinks
+         * \brief Directory of log sinks.
+         */
+
+        //! Namespace of log sinks.
+        namespace sinks {
+
+            //! Namespace of internal implementations.
+            namespace impl {}
+
+        }  // namespace sinks
+
+        /*!
+         * \dir num_collect/logging/config
+         * \brief Directory of logging configuration.
+         */
+
+        //! Namespace of logging configuration.
+        namespace config {
+
+            /*!
+             * \dir num_collect/logging/config/toml
+             * \brief Directory of logging configuration in TOML files.
+             */
+
+            //! Namespace of logging configuration in TOML files.
+            namespace toml {
+
+                //! Namespace of internal implementations.
+                namespace impl {}
+
+            }  // namespace toml
+
+        }  // namespace config
+
+        /*!
+         * \dir num_collect/logging/iterations
+         * \brief Directory of iteration logs.
+         */
+
+        //! Namespace of iteration logs.
+        namespace iterations {
+
+            //! Namespace of internal implementations.
+            namespace impl {}
+
+        }  // namespace iterations
 
         /*!
          * \dir num_collect/logging/impl

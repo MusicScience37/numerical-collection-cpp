@@ -30,6 +30,8 @@ namespace num_collect::logging::impl {
 
 /*!
  * \brief Class of elements in log tags.
+ *
+ * \thread_safety Not thread-safe.
  */
 class log_tag_element {
 public:

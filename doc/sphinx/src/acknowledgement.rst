@@ -23,6 +23,6 @@ This project uses the following tools:
 
 - `CMake <https://cmake.org/>`_
 - `Sphinx <https://www.sphinx-doc.org/en/master/>`_
-- `Pipenv <https://pipenv.pypa.io/>`_
+- `poetry <https://python-poetry.org/>`_
 - `Conan <https://conan.io/>`_
 - `pre-commit <https://pre-commit.com/>`_

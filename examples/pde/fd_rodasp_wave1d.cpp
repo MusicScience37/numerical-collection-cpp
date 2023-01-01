@@ -62,7 +62,8 @@ auto main(int argc, char** argv) -> int {
         if (argc == 2) {
             config_filepath = argv[1];  // NOLINT
         }
-        num_collect::logging::load_logging_config(std::string(config_filepath));
+        num_collect::logging::load_logging_config_file(
+            std::string(config_filepath));
 
         using problem_type = num_prob_collect::ode::string_wave_1d_problem;
         using solver_type =

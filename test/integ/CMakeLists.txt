@@ -1,1 +1,1 @@
-add_subdirectory(logging)
+add_subdirectory(logging_test)
