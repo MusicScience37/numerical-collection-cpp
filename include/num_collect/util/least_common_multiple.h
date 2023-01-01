@@ -19,8 +19,7 @@
  */
 #pragma once
 
-#include "num_collect/base/concepts/integral.h"
-#include "num_collect/base/exception.h"
+#include "num_collect/base/concepts/integral.h"  // IWYU pragma: keep
 #include "num_collect/util/greatest_common_divisor.h"
 #include "num_collect/util/multiply_safely.h"
 

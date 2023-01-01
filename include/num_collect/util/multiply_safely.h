@@ -19,7 +19,9 @@
  */
 #pragma once
 
-#include "num_collect/base/concepts/integral.h"
+#include <string_view>
+
+#include "num_collect/base/concepts/integral.h"  // IWYU pragma: keep
 #include "num_collect/base/exception.h"
 
 namespace num_collect::util {
