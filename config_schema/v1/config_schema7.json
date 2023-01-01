@@ -10,8 +10,8 @@
       "properties": {
         "tag": {
           "description": "Log tag. Empty string specifies the default configuration.",
-          "$comment": "Log tags. (TODO)",
-          "type": "string"
+          "type": "string",
+          "pattern": "^([0-9A-Za-z_]+((::|\\.)[0-9A-Za-z_]+)*)?$"
         },
         "sink": {
           "description": "Name of a log sink. Log sink with this name must be configured in num_collect.logging.sinks configuration in the same file, or use \"default\" log sink in this library.",

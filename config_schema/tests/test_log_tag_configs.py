@@ -45,6 +45,48 @@ class TestLogTagConfigs:
         with pytest.raises(fastjsonschema.JsonSchemaValueException):
             validator.validate_text(config)
 
+    @pytest.mark.parametrize(
+        "tag",
+        [
+            '""',
+            '"abc"',
+            '"09AZaz"',
+            '"abc::def"',
+            '"abc.def"',
+            '"abc.def::hij"',
+        ],
+    )
+    def test_valid_tags(self, validator: ConfigValidator, tag: str):
+        config = f"""
+        [[num_collect.logging.tag_configs]]
+        tag = {tag}
+        """
+        validator.validate_text(config)
+
+    @pytest.mark.parametrize(
+        "tag",
+        [
+            "[]",
+            '"abc/def"',
+            '"abc:def"',
+            '"abc@def"',
+            '"abc[def"',
+            '"abc`def"',
+            '"abc{def"',
+            '"abc::"',
+            '"::def"',
+            '"abc."',
+            '".def"',
+        ],
+    )
+    def test_invalid_tags(self, validator: ConfigValidator, tag: str):
+        config = f"""
+        [[num_collect.logging.tag_configs]]
+        tag = {tag}
+        """
+        with pytest.raises(fastjsonschema.JsonSchemaValueException):
+            validator.validate_text(config)
+
     def test_invalid_sink(self, validator: ConfigValidator):
         config = """
         [[num_collect.logging.tag_configs]]

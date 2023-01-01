@@ -5,8 +5,9 @@
   "type": "object",
   "definitions": {
     "log_tag": {
-      "$comment": "Log tags. (TODO)",
-      "type": "string"
+      "$comment": "Log tags.",
+      "type": "string",
+      "pattern": "^([0-9A-Za-z_]+((::|\\.)[0-9A-Za-z_]+)*)?$"
     },
     "log_level": {
       "$comment": "Log levels.",
