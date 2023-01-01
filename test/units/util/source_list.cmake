@@ -18,6 +18,8 @@ set(SOURCE_FILES
     is_eigen_vector_test.cpp
     iteration_period_checker_test.cpp
     kahan_adder_test.cpp
+    least_common_multiple_test.cpp
+    multiply_safely_test.cpp
     object_storage_test.cpp
     producer_consumer_circular_queue_test.cpp
     safe_cast_test.cpp

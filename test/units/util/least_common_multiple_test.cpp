@@ -15,9 +15,9 @@
  */
 /*!
  * \file
- * \brief Test of greatest_common_divisor function.
+ * \brief Test of least_common_multiple function.
  */
-#include "num_collect/util/greatest_common_divisor.h"
+#include "num_collect/util/least_common_multiple.h"
 
 #include <cstdint>
 #include <numeric>
@@ -26,28 +26,28 @@
 #include <catch2/generators/catch_generators_adapters.hpp>
 #include <catch2/generators/catch_generators_random.hpp>
 
-TEST_CASE("num_collect::util::greatest_common_divisor") {
-    using num_collect::util::greatest_common_divisor;
+TEST_CASE("num_collect::util::least_common_multiple") {
+    using num_collect::util::least_common_multiple;
 
     SECTION("calculate at runtime") {
         const int a = 234;
         const int b = 12;
-        const int expected = std::gcd(a, b);
-        const int result = greatest_common_divisor(a, b);
+        const int expected = std::lcm(a, b);
+        const int result = least_common_multiple(a, b);
         CHECK(result == expected);
     }
 
     SECTION("calculate at compile-time") {
         constexpr int a = 234;
         constexpr int b = 12;
-        constexpr int expected = std::gcd(a, b);
-        constexpr int result = greatest_common_divisor(a, b);
+        constexpr int expected = std::lcm(a, b);
+        constexpr int result = least_common_multiple(a, b);
         CHECK(result == expected);
     }
 
     SECTION("calculate random problems") {
         static constexpr std::int32_t min_input = 1;
-        static constexpr std::int32_t max_input = 0x10000;
+        static constexpr std::int32_t max_input = 0x7FFF;
         static constexpr std::int32_t num_inputs = 10;
 
         const std::int32_t a = GENERATE(Catch::Generators::take(
@@ -55,22 +55,23 @@ TEST_CASE("num_collect::util::greatest_common_divisor") {
         const std::int32_t b = GENERATE(Catch::Generators::take(
             num_inputs, Catch::Generators::random(min_input, max_input)));
 
-        const std::int32_t expected = std::gcd(a, b);
-        const std::int32_t result = greatest_common_divisor(a, b);
+        const std::int32_t expected = std::lcm(a, b);
+        const std::int32_t result = least_common_multiple(a, b);
         CHECK(result == expected);
     }
 
     SECTION("validation of inputs") {
-        CHECK(greatest_common_divisor(1, 1) == 1);
-        CHECK(greatest_common_divisor(static_cast<std::uint32_t>(0xFFFFFFFF),
-                  static_cast<std::uint32_t>(0xFFFFFFFE)) ==
-            std::gcd(static_cast<std::uint32_t>(0xFFFFFFFF),
-                static_cast<std::uint32_t>(0xFFFFFFFE)));
+        CHECK(least_common_multiple(1, 1) == 1);
+        CHECK_THROWS((void)least_common_multiple(1, 0));
+        CHECK_THROWS((void)least_common_multiple(0, 1));
+        CHECK_THROWS((void)least_common_multiple(0, 0));
+        CHECK_THROWS((void)least_common_multiple(-1, 1));
+        CHECK_THROWS((void)least_common_multiple(1, -1));
+    }
 
-        CHECK_THROWS((void)greatest_common_divisor(1, 0));
-        CHECK_THROWS((void)greatest_common_divisor(0, 1));
-        CHECK_THROWS((void)greatest_common_divisor(0, 0));
-        CHECK_THROWS((void)greatest_common_divisor(-1, 1));
-        CHECK_THROWS((void)greatest_common_divisor(1, -1));
+    SECTION("check of overflow") {
+        CHECK_THROWS(
+            (void)least_common_multiple(static_cast<std::uint32_t>(0x10000),
+                static_cast<std::uint32_t>(0x10001)));
     }
 }
