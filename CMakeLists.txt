@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.12)
 
 project(
     num_collect
-    VERSION 0.5.0
+    VERSION 0.6.0
     DESCRIPTION
         "A collection of algorithms in numerical analysis implemented in C++"
     LANGUAGES CXX)

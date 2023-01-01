@@ -10,6 +10,7 @@ set(SOURCE_FILES
     format_dense_vector_test.cpp
     format_errno_test.cpp
     format_sparse_matrix_test.cpp
+    greatest_common_divisor_test.cpp
     hash_string_test.cpp
     impl/assertion_decomposer_test.cpp
     impl/compiler_builtins_test.cpp
@@ -17,6 +18,8 @@ set(SOURCE_FILES
     is_eigen_vector_test.cpp
     iteration_period_checker_test.cpp
     kahan_adder_test.cpp
+    least_common_multiple_test.cpp
+    multiply_safely_test.cpp
     object_storage_test.cpp
     producer_consumer_circular_queue_test.cpp
     safe_cast_test.cpp
