@@ -24,8 +24,8 @@
 #include <Eigen/IterativeLinearSolvers>
 #include <Eigen/SparseCore>
 #include <Eigen/src/IterativeLinearSolvers/BiCGSTAB.h>
-#include <stat_bench/bench/invocation_context.h>
 #include <stat_bench/benchmark_macros.h>
+#include <stat_bench/invocation_context.h>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/constants/pi.h"
@@ -51,7 +51,7 @@ public:
             ;
     }
 
-    void setup(stat_bench::bench::InvocationContext& context) override {
+    void setup(stat_bench::InvocationContext& context) override {
         size_ = context.get_param<int>("dim");
         std::vector<Eigen::Triplet<double>> triplets;
         triplets.emplace_back(0, 0, 1.0);
@@ -76,7 +76,7 @@ public:
         sol_ = Eigen::VectorXd::Zero(size_);
     }
 
-    void tear_down(stat_bench::bench::InvocationContext& context) override {
+    void tear_down(stat_bench::InvocationContext& context) override {
         context.add_custom_output(
             "error", (coeff_ * sol_ - rhs_).norm() / rhs_.norm());
         context.add_custom_output("iterations", iterations_);
@@ -122,7 +122,7 @@ public:
             ;
     }
 
-    void setup(stat_bench::bench::InvocationContext& context) override {
+    void setup(stat_bench::InvocationContext& context) override {
         sparse_linear_equation_test_fixture::setup(context);
         subspace_size_ = context.get_param<int>("sub_dim");
     }

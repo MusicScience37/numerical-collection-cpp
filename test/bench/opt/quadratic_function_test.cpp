@@ -21,8 +21,8 @@
 
 #include <utility>
 
-#include <stat_bench/bench/invocation_context.h>
 #include <stat_bench/benchmark_macros.h>
+#include <stat_bench/invocation_context.h>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/opt/dividing_rectangles.h"
@@ -46,7 +46,7 @@ public:
         evaluations_ = optimizer.evaluations();
     }
 
-    void tear_down(stat_bench::bench::InvocationContext& context) override {
+    void tear_down(stat_bench::InvocationContext& context) override {
         context.add_custom_output(
             "iterations", static_cast<double>(iterations_));
         context.add_custom_output(
