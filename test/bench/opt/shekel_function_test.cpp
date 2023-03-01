@@ -24,8 +24,8 @@
 #include <type_traits>
 #include <utility>
 
-#include <stat_bench/bench/invocation_context.h>
 #include <stat_bench/benchmark_macros.h>
+#include <stat_bench/invocation_context.h>
 #include <stat_bench/param/parameter_value_vector.h>
 
 #include "num_collect/base/exception.h"
@@ -46,7 +46,7 @@ public:
             ;
     }
 
-    void setup(stat_bench::bench::InvocationContext& context) override {
+    void setup(stat_bench::InvocationContext& context) override {
         num_terms_ = context.get_param<int>("num_terms");
     }
 
@@ -90,7 +90,7 @@ public:
         evaluations_ = optimizer.evaluations();
     }
 
-    void tear_down(stat_bench::bench::InvocationContext& context) override {
+    void tear_down(stat_bench::InvocationContext& context) override {
         context.add_custom_output(
             "iterations", static_cast<double>(iterations_));
         context.add_custom_output(

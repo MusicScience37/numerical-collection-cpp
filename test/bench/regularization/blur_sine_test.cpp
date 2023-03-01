@@ -23,8 +23,8 @@
 #include <random>
 
 #include <Eigen/Core>
-#include <stat_bench/bench/invocation_context.h>
 #include <stat_bench/benchmark_macros.h>
+#include <stat_bench/invocation_context.h>
 
 #include "num_collect/regularization/explicit_gcv.h"
 #include "num_collect/regularization/explicit_l_curve.h"
@@ -45,7 +45,7 @@ public:
             ;
     }
 
-    void setup(stat_bench::bench::InvocationContext& context) override {
+    void setup(stat_bench::InvocationContext& context) override {
         noise_rate_ = context.get_param<double>("noise_rate");
         std::mt19937 engine;  // NOLINT
         const double sigma = std::sqrt(prob_.data().squaredNorm() /
@@ -64,7 +64,7 @@ public:
 
     void set_param(double val) { reg_param_ = val; }
 
-    void tear_down(stat_bench::bench::InvocationContext& context) override {
+    void tear_down(stat_bench::InvocationContext& context) override {
         context.add_custom_output("error_rate", error_rate_);
         context.add_custom_output("reg_param", reg_param_);
     }
