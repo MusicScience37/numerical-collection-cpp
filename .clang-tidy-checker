@@ -14,5 +14,6 @@ file_patterns:
   - test/units/functions/unity_source.cpp
   - test/units/integration/unity_source.cpp
   - test/units/ode/unity_source.cpp
-extra_args:
-  - "--extra-arg=-isystem/usr/lib/llvm-14/include/c++/v1"
+# Enable below when libc++ is used.
+#extra_args:
+#  - "--extra-arg=-isystem/usr/lib/llvm-14/include/c++/v1"

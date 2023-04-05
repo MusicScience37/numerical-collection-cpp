@@ -26,29 +26,27 @@ set(CMAKE_CXX_STANDARD
     20
     CACHE STRING "C++ standard")
 
+include(GNUInstallDirs)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY $<1:${CMAKE_BINARY_DIR}/lib>)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY $<1:${CMAKE_BINARY_DIR}/lib>)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY $<1:${CMAKE_BINARY_DIR}/bin>)
 
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-set(CONAN_COMPILER ${CONAN_SETTINGS_COMPILER})
-set(CONAN_COMPILER_VERSION ${CONAN_SETTINGS_COMPILER_VERSION})
-set(CONAN_LIBCXX ${CONAN_SETTINGS_COMPILER_LIBCXX})
-conan_basic_setup()
-
-# find packages installed with Conan
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
-list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
 find_package(fmt REQUIRED)
 find_package(Eigen3 REQUIRED)
-find_package(cpp_hash_tables REQUIRED)
+find_package(cpp-hash-tables REQUIRED)
 find_package(tomlplusplus REQUIRED)
 if(NUM_COLLECT_TESTING)
     find_package(Catch2 REQUIRED)
     find_package(trompeloeil REQUIRED)
-    find_package(ApprovalTests REQUIRED)
-    find_package(cpp_stat_bench REQUIRED)
+    find_package(cpp-stat-bench REQUIRED)
     find_package(lyra REQUIRED)
+
+    # ApprovalTests.
+    find_path(APPROVAL_TESTS_CPP_INCLUDE_DIRS "ApprovalTests.hpp")
+    add_library(ApprovalTests_ApprovalTests INTERFACE)
+    target_include_directories(ApprovalTests_ApprovalTests
+                               INTERFACE ${APPROVAL_TESTS_CPP_INCLUDE_DIRS})
+    add_library(ApprovalTests::ApprovalTests ALIAS ApprovalTests_ApprovalTests)
 endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS
@@ -72,8 +70,13 @@ find_program(
     NAMES python3 python
     PATHS ${POETRY_VENV_DIR}/bin ${POETRY_VENV_DIR}/Scripts
     NO_DEFAULT_PATH)
-if(PYTHON_EXECUTABLE)
+if(PYTHON_EXECUTABLE AND POETRY_EXECUTABLE)
     message(STATUS "Found Python: ${PYTHON_EXECUTABLE}")
+    execute_process(
+        COMMAND "${POETRY_EXECUTABLE}" run pybind11-config --cmakedir
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        OUTPUT_VARIABLE pybind11_DIR
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
     find_package(pybind11 REQUIRED)
 else()
     message(STATUS "Python not found for Python interface")
@@ -86,7 +89,7 @@ target_include_directories(num_collect
                            INTERFACE ${NUM_COLLECT_SOURCE_DIR}/include)
 target_link_libraries(
     num_collect
-    INTERFACE fmt::fmt Eigen3::Eigen cpp_hash_tables::cpp_hash_tables
+    INTERFACE fmt::fmt Eigen3::Eigen cpp_hash_tables::hash_tables
               tomlplusplus::tomlplusplus num_collect_cpp_warnings
               num_collect_cpp_flags)
 
@@ -103,7 +106,15 @@ if(NUM_COLLECT_TESTING)
 endif()
 
 if(NUM_COLLECT_BUILD_EXAMPLES)
-    find_package(pngpp REQUIRED)
+    # pngpp
+    find_path(PNGPP_INCLUDE_DIRS "png++/color.hpp")
+    add_library(pngpp_pngpp INTERFACE)
+    target_include_directories(pngpp_pngpp SYSTEM
+                               INTERFACE ${PNGPP_INCLUDE_DIRS})
+    find_package(libpng REQUIRED)
+    target_link_libraries(pngpp_pngpp INTERFACE png_static)
+    add_library(pngpp::pngpp ALIAS pngpp_pngpp)
+
     add_subdirectory(examples)
 endif()
 
