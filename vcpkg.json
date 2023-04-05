@@ -1,0 +1,16 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "dependencies": [
+    "fmt",
+    "eigen3",
+    "cpp-hash-tables",
+    "tomlplusplus",
+    "catch2",
+    "trompeloeil",
+    "cpp-stat-bench",
+    "pybind11",
+    "approval-tests-cpp",
+    "pngpp",
+    "bfgroup-lyra"
+  ]
+}
