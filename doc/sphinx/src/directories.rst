@@ -21,7 +21,6 @@ Directory Structure
     +++ scripts                 | Helper scripts in development.
     +++ test                    | Tests.
     ++++ bench                  | Benchmarks.
-    ++++ conan_package          | Test of Conan package.
     ++++ include                | Include directory of common headers in tests.
     ++++ units                  | Unit tests.
     }

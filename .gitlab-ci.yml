@@ -117,10 +117,8 @@ test release:
     matrix:
       - COMPILER_TYPE: ["gcc10", "gcc12"]
         IMAGE_PATH: "musicscience37/gcc-ci"
-        CONAN_LIBCXX: libstdc++11
       - COMPILER_TYPE: ["clang14"]
         IMAGE_PATH: "musicscience37/clang-ci"
-        CONAN_LIBCXX: libc++
   image: ${IMAGE_PATH}:${COMPILER_TYPE}
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -128,7 +126,6 @@ test release:
     BUILD_DIR: build_${COMPILER_TYPE}_release
     CCACHE_DIR: ${CI_PROJECT_DIR}/.cache
     CCACHE_COMPILERCHECK: content
-    CONAN_USER_HOME: ${CI_PROJECT_DIR}
   before_script:
     - poetry config virtualenvs.in-project true
     - poetry env use 3.10
@@ -181,10 +178,8 @@ test debug:
     matrix:
       - COMPILER_TYPE: ["gcc10", "gcc12"]
         IMAGE_PATH: "musicscience37/gcc-ci"
-        CONAN_LIBCXX: libstdc++11
       - COMPILER_TYPE: ["clang14"]
         IMAGE_PATH: "musicscience37/clang-ci"
-        CONAN_LIBCXX: libc++
   variables:
     BUILD_TYPE: Debug
     BUILD_DIR: build_${COMPILER_TYPE}_debug
@@ -195,10 +190,8 @@ test bench:
     matrix:
       - COMPILER_TYPE: ["gcc10", "gcc12"]
         IMAGE_PATH: "musicscience37/gcc-ci"
-        CONAN_LIBCXX: libstdc++11
       - COMPILER_TYPE: ["clang14"]
         IMAGE_PATH: "musicscience37/clang-ci"
-        CONAN_LIBCXX: libc++
   variables:
     BUILD_DIR: build_${COMPILER_TYPE}_bench
   script:
@@ -224,7 +217,6 @@ static analysis:
     matrix:
       - COMPILER_TYPE: ["clang14"]
         IMAGE_PATH: "musicscience37/clang-ci"
-        CONAN_LIBCXX: libc++
   variables:
     BUILD_TYPE: Debug
     BUILD_DIR: build_static_analysis
@@ -246,7 +238,6 @@ clang coverage:
     matrix:
       - COMPILER_TYPE: ["clang14"]
         IMAGE_PATH: "musicscience37/clang-ci"
-        CONAN_LIBCXX: libc++
   variables:
     BUILD_TYPE: Debug
     BUILD_DIR: build_clang_coverage
@@ -292,7 +283,6 @@ test asan ubsan:
     matrix:
       - COMPILER_TYPE: ["clang14"]
         IMAGE_PATH: "musicscience37/clang-ci"
-        CONAN_LIBCXX: libc++
   variables:
     BUILD_TYPE: Debug
     BUILD_DIR: build_clang_asan_ubsan
@@ -366,7 +356,6 @@ doc:
     matrix:
       - COMPILER_TYPE: ["clang14"]
         IMAGE_PATH: "musicscience37/sphinx-doxygen"
-        CONAN_LIBCXX: libc++
   variables:
     BUILD_TYPE: Release
     BUILD_DIR: build_doc
