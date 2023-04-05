@@ -377,13 +377,13 @@ pages:
   only:
     - develop
   needs:
-    - "doc: [clang14, musicscience37/sphinx-doxygen, libc++]"
-    - "clang coverage: [clang14, musicscience37/clang-ci, libc++]"
+    - "doc: [clang14, musicscience37/sphinx-doxygen]"
+    - "clang coverage: [clang14, musicscience37/clang-ci]"
     - line count
     - complexity
   dependencies:
-    - "doc: [clang14, musicscience37/sphinx-doxygen, libc++]"
-    - "clang coverage: [clang14, musicscience37/clang-ci, libc++]"
+    - "doc: [clang14, musicscience37/sphinx-doxygen]"
+    - "clang coverage: [clang14, musicscience37/clang-ci]"
     - line count
     - complexity
   image: alpine
