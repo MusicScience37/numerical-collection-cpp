@@ -1176,6 +1176,21 @@ pyyaml = ">=5.1"
 virtualenv = ">=20.10.0"
 
 [[package]]
+name = "pybind11"
+version = "2.10.4"
+description = "Seamless operability between C++11 and Python"
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "pybind11-2.10.4-py3-none-any.whl", hash = "sha256:ec9be0c45061c829648d7e8c98a7d041768b768c934acd15196e0f1943d9a818"},
+    {file = "pybind11-2.10.4.tar.gz", hash = "sha256:0bb621d3c45a049aa5923debb87c5c0e2668227905c55ebe8af722608d8ed927"},
+]
+
+[package.extras]
+global = ["pybind11-global (==2.10.4)"]
+
+[[package]]
 name = "pycparser"
 version = "2.21"
 description = "C parser in Python"
@@ -1993,4 +2008,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.11"
-content-hash = "abe7771b5b0aeb4724d202d2c01a94cd2bd63ea35f3d10b2c6dbf0cc3b9fc5a3"
+content-hash = "e21a4c912b45157aad60d1f29a89d8fbeffdb34edb06491931fe0d4c435abbbb"

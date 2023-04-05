@@ -70,8 +70,13 @@ find_program(
     NAMES python3 python
     PATHS ${POETRY_VENV_DIR}/bin ${POETRY_VENV_DIR}/Scripts
     NO_DEFAULT_PATH)
-if(PYTHON_EXECUTABLE)
+if(PYTHON_EXECUTABLE AND POETRY_EXECUTABLE)
     message(STATUS "Found Python: ${PYTHON_EXECUTABLE}")
+    execute_process(
+        COMMAND "${POETRY_EXECUTABLE}" run pybind11-config --cmakedir
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        OUTPUT_VARIABLE pybind11_DIR
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
     find_package(pybind11 REQUIRED)
 else()
     message(STATUS "Python not found for Python interface")
