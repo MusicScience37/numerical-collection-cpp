@@ -7,10 +7,6 @@ stages:
 
 variables:
   NUM_COLLECT_VERSION: "0.6.0"
-  CONAN_USER: "MusicScience37"
-  CPP_STAT_BENCH_CONAN_REGISTRY: "https://gitlab.com/api/v4/projects/32226502/packages/conan"
-  CPP_HASH_TABLES_CONAN_REGISTRY: "https://gitlab.com/api/v4/projects/35726343/packages/conan"
-  NUM_COLLECT_CONAN_REGISTRY: "https://gitlab.com/api/v4/projects/25109105/packages/conan"
   DOCS_PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/numerical-collection-cpp-doc"
   SECURE_LOG_LEVEL: debug
 
@@ -127,6 +123,7 @@ test release:
         CONAN_LIBCXX: libc++
   image: ${IMAGE_PATH}:${COMPILER_TYPE}
   variables:
+    GIT_SUBMODULE_STRATEGY: recursive
     BUILD_TYPE: Release
     BUILD_DIR: build_${COMPILER_TYPE}_release
     CCACHE_DIR: ${CI_PROJECT_DIR}/.cache
@@ -136,16 +133,14 @@ test release:
     - poetry config virtualenvs.in-project true
     - poetry env use 3.10
     - poetry install
+    - apt-get update
+    - apt-get install -y --no-install-recommends curl zip unzip tar
+    - ./vcpkg/bootstrap-vcpkg.sh
     - mkdir $BUILD_DIR
-    - cd $BUILD_DIR
-    - poetry run conan profile new --force --detect default
-    - poetry run conan profile update settings.compiler.libcxx=${CONAN_LIBCXX} default
-    - poetry run conan remote add -f cpp-stat-bench $CPP_STAT_BENCH_CONAN_REGISTRY
-    - poetry run conan remote add -f cpp-hash-tables $CPP_HASH_TABLES_CONAN_REGISTRY
-    - poetry run conan install --build missing -s build_type=${BUILD_TYPE} -o num_collect:requirements_for_tests=True ..
-    - cd ../
   script:
-    - cmake -S ./ -B $BUILD_DIR
+    - cd $BUILD_DIR
+    - cmake ..
+      -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake
       -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
       -DNUM_COLLECT_TESTING:BOOL=ON
       -DNUM_COLLECT_ENABLE_UNIT_TESTS=ON
@@ -155,7 +150,6 @@ test release:
       -DNUM_COLLECT_BUILD_EXAMPLES=OFF
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
       -DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON
-    - cd $BUILD_DIR
     - cmake --build .
     - ctest -V
   cache:
@@ -165,7 +159,6 @@ test release:
         - poetry.lock
     paths:
       - .cache
-      - .conan
       - .venv
   artifacts:
     paths:
@@ -209,7 +202,9 @@ test bench:
   variables:
     BUILD_DIR: build_${COMPILER_TYPE}_bench
   script:
-    - cmake -S ./ -B $BUILD_DIR
+    - cd $BUILD_DIR
+    - cmake ..
+      -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake
       -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
       -DNUM_COLLECT_TESTING:BOOL=ON
       -DNUM_COLLECT_ENABLE_UNIT_TESTS=OFF
@@ -220,7 +215,6 @@ test bench:
       -DNUM_COLLECT_TEST_EXAMPLES=ON
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
       -DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON
-    - cd $BUILD_DIR
     - cmake --build .
     - ctest -V
 
@@ -235,12 +229,15 @@ static analysis:
     BUILD_TYPE: Debug
     BUILD_DIR: build_static_analysis
   script:
-    - cmake -S ./ -B ${BUILD_DIR}
+    - cd $BUILD_DIR
+    - cmake ..
+      -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake
       -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
       -DNUM_COLLECT_TESTING:BOOL=ON
       -DNUM_COLLECT_ENABLE_BENCH=ON
       -DNUM_COLLECT_BUILD_EXAMPLES=ON
       -DNUM_COLLECT_ENABLE_CPP_WARNINGS:BOOL=ON
+    - cd ..
     - poetry run clang-tidy-checker -b ${BUILD_DIR}
 
 clang coverage:
@@ -254,14 +251,15 @@ clang coverage:
     BUILD_TYPE: Debug
     BUILD_DIR: build_clang_coverage
   script:
-    - cmake -S ./ -B $BUILD_DIR
+    - cd $BUILD_DIR
+    - cmake ..
+      -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake
       -DCMAKE_BUILD_TYPE=Debug
       -DNUM_COLLECT_TESTING:BOOL=ON
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
       "-DCMAKE_CXX_FLAGS=-fprofile-instr-generate -fcoverage-mapping"
       "-DCMAKE_MODULE_LINKER_FLAGS=-fprofile-instr-generate -fcoverage-mapping"
       -DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON
-    - cd $BUILD_DIR
     - mkdir coverage
     - export LLVM_PROFILE_FILE=$(pwd)/coverage/coverage_%p.profraw
     - cmake --build .
@@ -300,61 +298,16 @@ test asan ubsan:
     BUILD_DIR: build_clang_asan_ubsan
     ASAN_OPTIONS: "alloc_dealloc_mismatch=0"
   script:
-    - cmake -S ./ -B $BUILD_DIR
+    - cd $BUILD_DIR
+    - cmake ..
+      -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake
       -DCMAKE_BUILD_TYPE=Debug
       -DNUM_COLLECT_TESTING:BOOL=ON
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
       -DNUM_COLLECT_ENABLE_AUSAN:BOOL=ON
       -DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON
-    - cd $BUILD_DIR
     - cmake --build .
     - ctest -V
-
-test conan:
-  stage: test
-  needs: []
-  parallel:
-    matrix:
-      - COMPILER_TYPE: ["clang14"]
-        IMAGE_PATH: "musicscience37/clang-ci"
-        CONAN_LIBCXX: libc++
-  image: ${IMAGE_PATH}:${COMPILER_TYPE}
-  variables:
-    CONAN_CHANNEL: "testing"
-  script:
-    - poetry config virtualenvs.in-project true
-    - poetry env use 3.10
-    - poetry install
-    - poetry run conan profile new --force --detect default
-    - poetry run conan profile update settings.compiler.libcxx=${CONAN_LIBCXX} default
-    - poetry run conan remote add -f cpp-stat-bench $CPP_STAT_BENCH_CONAN_REGISTRY
-    - poetry run conan remote add -f cpp-hash-tables $CPP_HASH_TABLES_CONAN_REGISTRY
-    - poetry run conan create --build missing --test-folder test/conan_package . ${CONAN_USER}/${CONAN_CHANNEL}
-  interruptible: true
-
-release conan:
-  stage: deploy
-  needs: []
-  parallel:
-    matrix:
-      - COMPILER_TYPE: ["clang14"]
-        IMAGE_PATH: "musicscience37/clang-ci"
-        CONAN_LIBCXX: libc++
-  variables:
-    CONAN_CHANNEL: "stable"
-  script:
-    - poetry config virtualenvs.in-project true
-    - poetry env use 3.10
-    - poetry install
-    - poetry run conan profile new --force --detect default
-    - poetry run conan profile update settings.compiler.libcxx=${CONAN_LIBCXX} default
-    - poetry run conan remote add -f cpp-stat-bench $CPP_STAT_BENCH_CONAN_REGISTRY
-    - poetry run conan remote add -f cpp-hash-tables $CPP_HASH_TABLES_CONAN_REGISTRY
-    - poetry run conan remote add -f numerical-collection-cpp $NUM_COLLECT_CONAN_REGISTRY
-    - poetry run conan create --build missing --test-folder test/conan_package . ${CONAN_USER}/${CONAN_CHANNEL}
-    - CONAN_LOGIN_USERNAME=ci_user CONAN_PASSWORD=${CI_JOB_TOKEN} poetry run conan upload -r numerical-collection-cpp num_collect/${NUM_COLLECT_VERSION}@${CONAN_USER}/${CONAN_CHANNEL} --all
-  only:
-    - tags
 
 # TODO
 .test msvc:
@@ -418,9 +371,11 @@ doc:
     BUILD_TYPE: Release
     BUILD_DIR: build_doc
   script:
-    - cmake -S ./ -B build_doc
+    - cd $BUILD_DIR
+    - cmake ..
+      -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake
       -DNUM_COLLECT_BUILD_DOC:BOOL=ON
-    - cmake --build build_doc --target num_collect_doc
+    - cmake --build . --target num_collect_doc
   artifacts:
     paths:
       - build_doc/doc
@@ -456,8 +411,7 @@ pages:
 release:
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   stage: release
-  needs:
-    - "release conan: [clang14, musicscience37/clang-ci, libc++]"
+  needs: []
   rules:
     - if: $CI_COMMIT_TAG =~ /^v/
   script:
