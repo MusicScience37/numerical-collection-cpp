@@ -22,10 +22,6 @@ option(NUM_COLLECT_TESTING "enable tests of ${FULL_PROJECT_NAME}" OFF)
 option(NUM_COLLECT_BUILD_EXAMPLES "build examples of ${FULL_PROJECT_NAME}" OFF)
 option(NUM_COLLECT_ENABLE_PROFILING "enable profiling" OFF)
 
-set(CMAKE_CXX_STANDARD
-    20
-    CACHE STRING "C++ standard")
-
 include(GNUInstallDirs)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY $<1:${CMAKE_BINARY_DIR}/lib>)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY $<1:${CMAKE_BINARY_DIR}/lib>)
@@ -92,6 +88,7 @@ target_link_libraries(
     INTERFACE fmt::fmt Eigen3::Eigen cpp_hash_tables::hash_tables
               tomlplusplus::tomlplusplus num_collect_cpp_warnings
               num_collect_cpp_flags)
+target_compile_features(num_collect INTERFACE cxx_std_20)
 
 if(NUM_COLLECT_BUILD_DOC)
     add_subdirectory(doc)
