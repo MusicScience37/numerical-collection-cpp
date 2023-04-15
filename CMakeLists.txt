@@ -1,8 +1,13 @@
 cmake_minimum_required(VERSION 3.12)
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(ParseVersion)
+parse_version(${CMAKE_CURRENT_SOURCE_DIR}/include/num_collect/version.h
+              NUM_COLLECT)
+
 project(
     num_collect
-    VERSION 0.6.0
+    VERSION ${NUM_COLLECT_VERSION}
     DESCRIPTION
         "A collection of algorithms in numerical analysis implemented in C++"
     LANGUAGES CXX)
@@ -21,12 +26,15 @@ option(NUM_COLLECT_BUILD_DOC "build documentation of ${FULL_PROJECT_NAME}" OFF)
 option(NUM_COLLECT_TESTING "enable tests of ${FULL_PROJECT_NAME}" OFF)
 option(NUM_COLLECT_BUILD_EXAMPLES "build examples of ${FULL_PROJECT_NAME}" OFF)
 option(NUM_COLLECT_ENABLE_PROFILING "enable profiling" OFF)
+option(NUM_COLLECT_ENABLE_INSTALL
+       "enable CMake target to install ${FULL_PROJECT_NAME}" ON)
 
 include(GNUInstallDirs)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY $<1:${CMAKE_BINARY_DIR}/lib>)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY $<1:${CMAKE_BINARY_DIR}/lib>)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY $<1:${CMAKE_BINARY_DIR}/bin>)
 
+find_package(Threads REQUIRED)
 find_package(fmt REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(cpp-hash-tables REQUIRED)
@@ -49,7 +57,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS
     ON
     CACHE BOOL "export compile commands" FORCE)
 
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 include(TargetLinkSystemLibrary)
 include(CppWarningFlags)
 include(CppFlags)
@@ -81,13 +88,18 @@ endif()
 set(NUM_COLLECT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_library(num_collect INTERFACE)
-target_include_directories(num_collect
-                           INTERFACE ${NUM_COLLECT_SOURCE_DIR}/include)
+target_include_directories(
+    num_collect INTERFACE $<BUILD_INTERFACE:${NUM_COLLECT_SOURCE_DIR}/include>
+                          $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_link_libraries(
     num_collect
-    INTERFACE fmt::fmt Eigen3::Eigen cpp_hash_tables::hash_tables
-              tomlplusplus::tomlplusplus num_collect_cpp_warnings
-              num_collect_cpp_flags)
+    INTERFACE Threads::Threads
+              fmt::fmt
+              Eigen3::Eigen
+              cpp_hash_tables::hash_tables
+              tomlplusplus::tomlplusplus
+              $<BUILD_INTERFACE:num_collect_cpp_warnings>
+              $<BUILD_INTERFACE:num_collect_cpp_flags>)
 target_compile_features(num_collect INTERFACE cxx_std_20)
 
 if(NUM_COLLECT_BUILD_DOC)
@@ -119,4 +131,34 @@ add_subdirectory(config_schema)
 
 if(NUM_COLLECT_ENABLE_PROFILING)
     add_subdirectory(profiling)
+endif()
+
+if(NUM_COLLECT_ENABLE_INSTALL)
+    install(
+        TARGETS num_collect
+        EXPORT num-collect-targets
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        FRAMEWORK DESTINATION ${CMAKE_INSTALL_PREFIX})
+
+    install(
+        DIRECTORY ${NUM_COLLECT_SOURCE_DIR}/include/num_collect
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        FILES_MATCHING
+        PATTERN "*.h*")
+
+    install(
+        EXPORT num-collect-targets
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/num-collect
+        NAMESPACE num_collect::)
+
+    include(CMakePackageConfigHelpers)
+    configure_package_config_file(
+        cmake/num-collect-config.cmake.in
+        "${CMAKE_CURRENT_BINARY_DIR}/num-collect-config.cmake"
+        INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/num-collect")
+
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/num-collect-config.cmake"
+            DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/num-collect")
 endif()

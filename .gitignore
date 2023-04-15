@@ -662,3 +662,6 @@ FodyWeavers.xsd
 
 # Ccache
 /.ccache/
+
+# Install directory of CMake
+/install/
