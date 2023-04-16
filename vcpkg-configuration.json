@@ -9,7 +9,7 @@
     {
       "kind": "git",
       "repository": "https://gitlab.com/MusicScience37Projects/vcpkg-registry",
-      "baseline": "dfcfbe1a2958a43d0dd70de9a7cd703361d5f58f",
+      "baseline": "ae86a1e8960b188e80f1e7f27db75647dd71a72e",
       "packages": ["cpp-stat-bench", "cpp-hash-tables"]
     }
   ],
