@@ -32,6 +32,8 @@
 #include <utility>
 #include <vector>
 
+#include <hash_tables/maps/multi_open_address_map_st.h>
+
 #include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
@@ -86,7 +88,10 @@ public:
      */
     explicit adc_sample_dict(
         const objective_function_type& obj_fun = objective_function_type())
-        : obj_fun_(obj_fun) {}
+        : obj_fun_(obj_fun) {
+        constexpr std::size_t initial_space = 10000;
+        value_dict_.reserve_approx(initial_space);
+    }
 
     /*!
      * \brief Initialize this object.
@@ -112,27 +117,8 @@ public:
      * \return Function value.
      */
     [[nodiscard]] auto operator()(const ternary_vector& point) -> value_type {
-        if (const auto iter = value_dict_.find(point);
-            iter != value_dict_.end()) {
-            return iter->second;
-        }
-
-        NUM_COLLECT_DEBUG_ASSERT(point.dim() == dim_);
-        auto var = variable_type(dim_);
-        for (index_type i = 0; i < dim_; ++i) {
-            var(i) = lower_(i) +
-                width_(i) * point.elem_as<typename variable_type::Scalar>(i);
-        }
-        obj_fun_.evaluate_on(var);
-        value_dict_.try_emplace(point, obj_fun_.value());
-
-        if (evaluations() == 1 || obj_fun_.value() < opt_value_) {
-            opt_point_ = point;
-            opt_variable_ = var;
-            opt_value_ = obj_fun_.value();
-        }
-
-        return obj_fun_.value();
+        return value_dict_.get_or_create_with_factory(
+            point, [this, &point] { return evaluate_on(point); });
     }
 
     /*!
@@ -174,6 +160,32 @@ public:
     }
 
 private:
+    /*!
+     * \brief Evaluate function value.
+     *
+     * \warning This function assumes that init() has already been called.
+     *
+     * \param[in] point Point in the unit hyper-cube.
+     * \return Function value.
+     */
+    [[nodiscard]] auto evaluate_on(const ternary_vector& point) -> value_type {
+        NUM_COLLECT_DEBUG_ASSERT(point.dim() == dim_);
+        auto var = variable_type(dim_);
+        for (index_type i = 0; i < dim_; ++i) {
+            var(i) = lower_(i) +
+                width_(i) * point.elem_as<typename variable_type::Scalar>(i);
+        }
+        obj_fun_.evaluate_on(var);
+
+        if (value_dict_.empty() || obj_fun_.value() < opt_value_) {
+            opt_point_ = point;
+            opt_variable_ = var;
+            opt_value_ = obj_fun_.value();
+        }
+
+        return obj_fun_.value();
+    }
+
     //! Objective function.
     objective_function_type obj_fun_;
 
@@ -187,7 +199,9 @@ private:
     index_type dim_{0};
 
     //! Dictionary of sampled points.
-    std::unordered_map<impl::ternary_vector, value_type> value_dict_{};
+    hash_tables::maps::multi_open_address_map_st<impl::ternary_vector,
+        value_type>
+        value_dict_{};
 
     //! Point in the unit hyper-cube for the current optimal variable.
     ternary_vector opt_point_{};
