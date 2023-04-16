@@ -117,22 +117,9 @@ public:
             return iter->second;
         }
 
-        NUM_COLLECT_DEBUG_ASSERT(point.dim() == dim_);
-        auto var = variable_type(dim_);
-        for (index_type i = 0; i < dim_; ++i) {
-            var(i) = lower_(i) +
-                width_(i) * point.elem_as<typename variable_type::Scalar>(i);
-        }
-        obj_fun_.evaluate_on(var);
-        value_dict_.try_emplace(point, obj_fun_.value());
-
-        if (evaluations() == 1 || obj_fun_.value() < opt_value_) {
-            opt_point_ = point;
-            opt_variable_ = var;
-            opt_value_ = obj_fun_.value();
-        }
-
-        return obj_fun_.value();
+        auto value = evaluate_on(point);
+        value_dict_.try_emplace(point, value);
+        return value;
     }
 
     /*!
@@ -174,6 +161,32 @@ public:
     }
 
 private:
+    /*!
+     * \brief Evaluate function value.
+     *
+     * \warning This function assumes that init() has already been called.
+     *
+     * \param[in] point Point in the unit hyper-cube.
+     * \return Function value.
+     */
+    [[nodiscard]] auto evaluate_on(const ternary_vector& point) -> value_type {
+        NUM_COLLECT_DEBUG_ASSERT(point.dim() == dim_);
+        auto var = variable_type(dim_);
+        for (index_type i = 0; i < dim_; ++i) {
+            var(i) = lower_(i) +
+                width_(i) * point.elem_as<typename variable_type::Scalar>(i);
+        }
+        obj_fun_.evaluate_on(var);
+
+        if (value_dict_.empty() || obj_fun_.value() < opt_value_) {
+            opt_point_ = point;
+            opt_variable_ = var;
+            opt_value_ = obj_fun_.value();
+        }
+
+        return obj_fun_.value();
+    }
+
     //! Objective function.
     objective_function_type obj_fun_;
 
