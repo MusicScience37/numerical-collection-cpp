@@ -65,14 +65,38 @@ TEMPLATE_TEST_CASE(
     }
 
     SECTION("normalize") {
-        const auto numerator = static_cast<integer_type>(-4);
-        const auto denominator = static_cast<integer_type>(-6);
-        auto frac = fraction_type(numerator, denominator);
+        SECTION("ordinary case") {
+            const auto numerator = static_cast<integer_type>(-4);
+            const auto denominator = static_cast<integer_type>(-6);
+            auto frac = fraction_type(numerator, denominator);
 
-        frac.normalize();
+            frac.normalize();
 
-        CHECK(frac.numerator() == 2);
-        CHECK(frac.denominator() == 3);
+            CHECK(frac.numerator() == 2);
+            CHECK(frac.denominator() == 3);
+        }
+
+        SECTION("when an integer is positive and another is negative") {
+            const auto numerator = static_cast<integer_type>(4);
+            const auto denominator = static_cast<integer_type>(-6);
+            auto frac = fraction_type(numerator, denominator);
+
+            frac.normalize();
+
+            CHECK(frac.numerator() == -2);
+            CHECK(frac.denominator() == 3);
+        }
+
+        SECTION("when the numerator is zero") {
+            const auto numerator = static_cast<integer_type>(0);
+            const auto denominator = static_cast<integer_type>(-6);
+            auto frac = fraction_type(numerator, denominator);
+
+            frac.normalize();
+
+            CHECK(frac.numerator() == 0);
+            CHECK(frac.denominator() == 1);
+        }
     }
 }
 
@@ -116,13 +140,26 @@ TEMPLATE_TEST_CASE("num_collect::numbers::fraction (unsigned)", "",
     }
 
     SECTION("normalize") {
-        const auto numerator = static_cast<integer_type>(4);
-        const auto denominator = static_cast<integer_type>(6);
-        auto frac = fraction_type(numerator, denominator);
+        SECTION("ordinary case") {
+            const auto numerator = static_cast<integer_type>(4);
+            const auto denominator = static_cast<integer_type>(6);
+            auto frac = fraction_type(numerator, denominator);
 
-        frac.normalize();
+            frac.normalize();
 
-        CHECK(frac.numerator() == 2U);
-        CHECK(frac.denominator() == 3U);
+            CHECK(frac.numerator() == 2U);
+            CHECK(frac.denominator() == 3U);
+        }
+
+        SECTION("when the numerator is zero") {
+            const auto numerator = static_cast<integer_type>(0);
+            const auto denominator = static_cast<integer_type>(6);
+            auto frac = fraction_type(numerator, denominator);
+
+            frac.normalize();
+
+            CHECK(frac.numerator() == 0U);
+            CHECK(frac.denominator() == 1U);
+        }
     }
 }
