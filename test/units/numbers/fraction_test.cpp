@@ -127,6 +127,30 @@ TEMPLATE_TEST_CASE(
             CHECK(res.denominator() == 2);
         }
     }
+
+    SECTION("compare with operator==") {
+        const auto frac1 = fraction_type(3, 5);
+        const auto frac2 = fraction_type(6, 10);
+        const auto frac3 = fraction_type(4, 5);
+        const auto frac4 = fraction_type(3, 4);
+
+        CHECK(frac1 == frac1);
+        CHECK(frac1 == frac2);
+        CHECK_FALSE(frac1 == frac3);
+        CHECK_FALSE(frac1 == frac4);
+    }
+
+    SECTION("compare with operator!=") {
+        const auto frac1 = fraction_type(3, 5);
+        const auto frac2 = fraction_type(6, 10);
+        const auto frac3 = fraction_type(4, 5);
+        const auto frac4 = fraction_type(3, 4);
+
+        CHECK_FALSE(frac1 != frac1);
+        CHECK_FALSE(frac1 != frac2);
+        CHECK(frac1 != frac3);
+        CHECK(frac1 != frac4);
+    }
 }
 
 TEMPLATE_TEST_CASE("num_collect::numbers::fraction (unsigned)", "",
@@ -220,5 +244,29 @@ TEMPLATE_TEST_CASE("num_collect::numbers::fraction (unsigned)", "",
             CHECK(res.numerator() == 1U);
             CHECK(res.denominator() == 2U);
         }
+    }
+
+    SECTION("compare with operator==") {
+        const auto frac1 = fraction_type(3, 5);
+        const auto frac2 = fraction_type(6, 10);
+        const auto frac3 = fraction_type(4, 5);
+        const auto frac4 = fraction_type(3, 4);
+
+        CHECK(frac1 == frac1);
+        CHECK(frac1 == frac2);
+        CHECK_FALSE(frac1 == frac3);
+        CHECK_FALSE(frac1 == frac4);
+    }
+
+    SECTION("compare with operator!=") {
+        const auto frac1 = fraction_type(3, 5);
+        const auto frac2 = fraction_type(6, 10);
+        const auto frac3 = fraction_type(4, 5);
+        const auto frac4 = fraction_type(3, 4);
+
+        CHECK_FALSE(frac1 != frac1);
+        CHECK_FALSE(frac1 != frac2);
+        CHECK(frac1 != frac3);
+        CHECK(frac1 != frac4);
     }
 }

@@ -130,7 +130,7 @@ public:
      * \param[in] right Right-hand-side object.
      * \return This fraction after addition.
      */
-    auto operator+=(const fraction& right) -> fraction& {
+    constexpr auto operator+=(const fraction& right) -> fraction& {
         add_safely(right);
         return *this;
     }
@@ -141,22 +141,16 @@ public:
      * \param[in] right Right-hand-side object.
      * \return This fraction after addition.
      */
-    auto add_safely(const fraction& right) -> fraction& {
+    constexpr auto add_safely(const fraction& right) -> fraction& {
         if (denominator_ == right.denominator_) {
             numerator_ += right.numerator_;
         } else {
-            NUM_COLLECT_DEBUG_ASSERT(
-                denominator_ > static_cast<integer_type>(0));
-            NUM_COLLECT_DEBUG_ASSERT(
-                right.denominator_ > static_cast<integer_type>(0));
             const integer_type common_divisor =
                 util::greatest_common_divisor(denominator_, right.denominator_);
             const integer_type right_coeff = denominator_ / common_divisor;
             const integer_type my_coeff = right.denominator_ / common_divisor;
 
             denominator_ = util::multiply_safely(denominator_, my_coeff);
-            NUM_COLLECT_DEBUG_ASSERT(
-                right_coeff * right.denominator_ == denominator_);
 
             // TODO: Add safely.
             numerator_ = util::multiply_safely(numerator_, my_coeff) +
@@ -171,20 +165,23 @@ public:
      *
      * \param[in] right Right-hand-side object.
      * \retval true This fraction is same with the given fraction.
+     * \retval false This fraction is different from the given fraction.
      */
-    auto operator==(const fraction& right) const -> bool {
-        if (denominator_ == right.denominator_) {
-            return numerator_ == right.numerator_;
-        }
-        NUM_COLLECT_DEBUG_ASSERT(denominator_ > static_cast<integer_type>(0));
-        NUM_COLLECT_DEBUG_ASSERT(
-            right.denominator_ > static_cast<integer_type>(0));
-        const auto common_divisor =
-            util::greatest_common_divisor(denominator_, right.denominator_);
-        const integer_type right_coeff = denominator_ / common_divisor;
-        const integer_type my_coeff = right.denominator_ / common_divisor;
-        return util::multiply_safely(numerator_, my_coeff) ==
-            util::multiply_safely(right.numerator_, right_coeff);
+    constexpr auto operator==(const fraction& right) const noexcept -> bool {
+        // This fraction is always normalized, so simple comparison is enough.
+        return denominator_ == right.denominator_ &&
+            numerator_ == right.numerator_;
+    }
+
+    /*!
+     * \brief Compare this fraction with another fraction.
+     *
+     * \param[in] right Right-hand-side object.
+     * \retval true This fraction is different from the given fraction.
+     * \retval false This fraction is same with the given fraction.
+     */
+    constexpr auto operator!=(const fraction& right) const noexcept -> bool {
+        return !operator==(right);
     }
 
 private:
