@@ -97,6 +97,12 @@ TEMPLATE_TEST_CASE(
         }
     }
 
+    SECTION("check denominator in constructor") {
+        CHECK_NOTHROW((void)fraction_type(1, 1));
+        CHECK_NOTHROW((void)fraction_type(1, -1));
+        CHECK_THROWS((void)fraction_type(1, 0));
+    }
+
     SECTION("add with operator+=") {
         SECTION("when denominator is same") {
             const auto left = fraction_type(2, 5);
@@ -326,6 +332,12 @@ TEMPLATE_TEST_CASE("num_collect::numbers::fraction (unsigned)", "",
             CHECK(frac.numerator() == 0U);
             CHECK(frac.denominator() == 1U);
         }
+    }
+
+    SECTION("check denominator in constructor") {
+        CHECK_NOTHROW((void)fraction_type(1, 1));
+        CHECK_NOTHROW((void)fraction_type(1, -1));
+        CHECK_THROWS((void)fraction_type(1, 0));
     }
 
     SECTION("add with operator+=") {
