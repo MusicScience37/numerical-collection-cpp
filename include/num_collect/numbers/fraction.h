@@ -29,43 +29,6 @@
 
 namespace num_collect::numbers {
 
-namespace impl {
-
-/*!
- * \brief Compute the common divisor of two integers for fractions.
- *
- * \tparam Integer Type of integers.
- * \param[in] a Integer.
- * \param[in] b Integer.
- * \return Common divisor.
- */
-template <base::concepts::integral Integer>
-[[nodiscard]] static constexpr auto common_divisor_for_fraction(
-    Integer a, Integer b) {
-    if (a == static_cast<Integer>(0)) {
-        if (b == static_cast<Integer>(0)) {
-            return static_cast<Integer>(1);
-        }
-        return b;
-    }
-    if (b == static_cast<Integer>(0)) {
-        return a;
-    }
-
-    if constexpr (std::is_signed_v<Integer>) {
-        if (a < static_cast<Integer>(0)) {
-            a = -a;
-        }
-        if (b < static_cast<Integer>(0)) {
-            b = -b;
-        }
-    }
-
-    return util::greatest_common_divisor(a, b);
-}
-
-}  // namespace impl
-
 /*!
  * \brief Class of fractions.
  *
@@ -196,10 +159,33 @@ private:
             }
         }
 
+        if (numerator_ == static_cast<integer_type>(0)) {
+            denominator_ = static_cast<integer_type>(1);
+            return;
+        }
+
         const auto common_divisor =
-            impl::common_divisor_for_fraction(numerator_, denominator_);
+            util::greatest_common_divisor(int_abs(numerator_), denominator_);
         numerator_ /= common_divisor;
         denominator_ /= common_divisor;
+    }
+
+    /*!
+     * \brief Get the absolute value of an integer.
+     *
+     * \param[in] x Integer.
+     * \return Absolute value.
+     */
+    static constexpr auto int_abs(integer_type x) noexcept -> integer_type {
+        // TODO: move to utility or base.
+        if constexpr (std::is_unsigned_v<integer_type>) {
+            return x;
+        } else {
+            if (x < static_cast<integer_type>(0)) {
+                return -x;
+            }
+            return x;
+        }
     }
 
     //! Numerator.
