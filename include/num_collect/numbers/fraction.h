@@ -89,6 +89,7 @@ public:
             throw invalid_argument(
                 "The denominator of a fraction must not be zero.");
         }
+        normalize();
     }
 
     /*!
@@ -104,23 +105,6 @@ public:
      * \brief Constructor. (Initialize to zero.)
      */
     constexpr fraction() noexcept : fraction(static_cast<integer_type>(0)) {}
-
-    /*!
-     * \brief Normalize this fraction.
-     */
-    constexpr void normalize() {
-        if constexpr (std::is_signed_v<integer_type>) {
-            if (denominator_ < static_cast<integer_type>(0)) {
-                numerator_ = -numerator_;
-                denominator_ = -denominator_;
-            }
-        }
-
-        const auto common_divisor =
-            impl::common_divisor_for_fraction(numerator_, denominator_);
-        numerator_ /= common_divisor;
-        denominator_ /= common_divisor;
-    }
 
     /*!
      * \brief Get the numerator.
@@ -204,6 +188,23 @@ public:
     }
 
 private:
+    /*!
+     * \brief Normalize this fraction.
+     */
+    constexpr void normalize() {
+        if constexpr (std::is_signed_v<integer_type>) {
+            if (denominator_ < static_cast<integer_type>(0)) {
+                numerator_ = -numerator_;
+                denominator_ = -denominator_;
+            }
+        }
+
+        const auto common_divisor =
+            impl::common_divisor_for_fraction(numerator_, denominator_);
+        numerator_ /= common_divisor;
+        denominator_ /= common_divisor;
+    }
+
     //! Numerator.
     integer_type numerator_;
 
