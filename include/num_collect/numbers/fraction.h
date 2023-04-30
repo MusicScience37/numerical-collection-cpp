@@ -110,6 +110,7 @@ public:
      */
     constexpr auto add_safely(const fraction& right) -> fraction& {
         if (denominator_ == right.denominator_) {
+            // TODO: Add safely.
             numerator_ += right.numerator_;
         } else {
             const integer_type common_divisor =
@@ -121,6 +122,43 @@ public:
 
             // TODO: Add safely.
             numerator_ = util::multiply_safely(numerator_, my_coeff) +
+                util::multiply_safely(right.numerator_, right_coeff);
+        }
+        normalize();
+        return *this;
+    }
+
+    /*!
+     * \brief Subtract a fraction from this fraction.
+     *
+     * \param[in] right Right-hand-side object.
+     * \return This fraction after subtraction.
+     */
+    constexpr auto operator-=(const fraction& right) -> fraction& {
+        subtract_safely(right);
+        return *this;
+    }
+
+    /*!
+     * \brief Subtract a fraction from this fraction.
+     *
+     * \param[in] right Right-hand-side object.
+     * \return This fraction after subtraction.
+     */
+    constexpr auto subtract_safely(const fraction& right) -> fraction& {
+        if (denominator_ == right.denominator_) {
+            // TODO: Subtract safely.
+            numerator_ -= right.numerator_;
+        } else {
+            const integer_type common_divisor =
+                util::greatest_common_divisor(denominator_, right.denominator_);
+            const integer_type right_coeff = denominator_ / common_divisor;
+            const integer_type my_coeff = right.denominator_ / common_divisor;
+
+            denominator_ = util::multiply_safely(denominator_, my_coeff);
+
+            // TODO: Subtract safely.
+            numerator_ = util::multiply_safely(numerator_, my_coeff) -
                 util::multiply_safely(right.numerator_, right_coeff);
         }
         normalize();
@@ -211,6 +249,20 @@ template <num_collect::base::concepts::integral Integer>
 inline constexpr auto operator+(const fraction<Integer>& left,
     const fraction<Integer>& right) -> fraction<Integer> {
     return fraction<Integer>(left) += right;
+}
+
+/*!
+ * \brief Subtract a fraction from another fraction.
+ *
+ * \tparam Integer Type of integers in the fractions.
+ * \param[in] left Left-hand-side value.
+ * \param[in] right Right-hand-side value.
+ * \return Difference of the fractions.
+ */
+template <num_collect::base::concepts::integral Integer>
+inline constexpr auto operator-(const fraction<Integer>& left,
+    const fraction<Integer>& right) -> fraction<Integer> {
+    return fraction<Integer>(left) -= right;
 }
 
 }  // namespace num_collect::numbers
