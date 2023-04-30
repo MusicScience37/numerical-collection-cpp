@@ -40,7 +40,7 @@ namespace impl {
  */
 template <base::concepts::integral Integer>
 [[nodiscard]] static constexpr auto common_divisor_for_fraction(
-    Integer a, Integer b) noexcept {
+    Integer a, Integer b) {
     if (a == static_cast<Integer>(0)) {
         if (b == static_cast<Integer>(0)) {
             return static_cast<Integer>(1);
