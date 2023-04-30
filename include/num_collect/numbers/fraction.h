@@ -19,7 +19,11 @@
  */
 #pragma once
 
+#include <ostream>
 #include <type_traits>
+
+#include <fmt/format.h>
+#include <fmt/ostream.h>
 
 #include "num_collect/base/concepts/integral.h"
 #include "num_collect/base/exception.h"
@@ -194,5 +198,63 @@ private:
     //! Denominator.
     integer_type denominator_;
 };
+
+}  // namespace num_collect::numbers
+
+namespace fmt {
+
+/*!
+ * \brief fmt::formatter for num_collect::numbers::fraction.
+ *
+ * \tparam Integer Type of integers in fractions.
+ */
+template <num_collect::base::concepts::integral Integer>
+struct formatter<num_collect::numbers::fraction<Integer>> {
+public:
+    /*!
+     * \brief Parse format specifications.
+     *
+     * \param[in] context Context.
+     * \return Iterator.
+     */
+    constexpr auto parse(format_parse_context& context)  // NOLINT
+        -> decltype(context.begin()) {
+        return context.end();
+    }
+
+    /*!
+     * \brief Format a value.
+     *
+     * \tparam FormatContext Type of the context.
+     * \param[in] val Value.
+     * \param[in] context Context.
+     * \return Output iterator after formatting.
+     */
+    template <typename FormatContext>
+    auto format(
+        num_collect::numbers::fraction<Integer> val, FormatContext& context) {
+        return fmt::format_to(
+            context.out(), "{} / {}", val.numerator(), val.denominator());
+    }
+};
+
+}  // namespace fmt
+
+namespace num_collect::numbers {
+
+/*!
+ * \brief Format a fraction.
+ *
+ * \tparam Integer Type of integers in the fraction.
+ * \param[in] stream Output stream.
+ * \param[in] val Fraction value.
+ * \return Output stream.
+ */
+template <num_collect::base::concepts::integral Integer>
+auto operator<<(std::ostream& stream, const fraction<Integer>& val)
+    -> std::ostream& {
+    fmt::print(stream, "{}", val);
+    return stream;
+}
 
 }  // namespace num_collect::numbers

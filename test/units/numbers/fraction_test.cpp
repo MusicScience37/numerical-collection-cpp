@@ -20,6 +20,7 @@
 #include "num_collect/numbers/fraction.h"
 
 #include <cstdint>
+#include <sstream>
 #include <type_traits>
 
 #include <catch2/catch_template_test_macros.hpp>
@@ -151,6 +152,23 @@ TEMPLATE_TEST_CASE(
         CHECK(frac1 != frac3);
         CHECK(frac1 != frac4);
     }
+
+    SECTION("format using fmt library") {
+        const auto frac = fraction_type(-2, 3);
+
+        const auto str = fmt::format("{}", frac);
+
+        CHECK(str == "-2 / 3");
+    }
+
+    SECTION("format using std::ostream") {
+        const auto frac = fraction_type(-2, 3);
+
+        std::ostringstream stream;
+        stream << frac;
+
+        CHECK(stream.str() == "-2 / 3");
+    }
 }
 
 TEMPLATE_TEST_CASE("num_collect::numbers::fraction (unsigned)", "",
@@ -247,10 +265,10 @@ TEMPLATE_TEST_CASE("num_collect::numbers::fraction (unsigned)", "",
     }
 
     SECTION("compare with operator==") {
-        const auto frac1 = fraction_type(3, 5);
-        const auto frac2 = fraction_type(6, 10);
-        const auto frac3 = fraction_type(4, 5);
-        const auto frac4 = fraction_type(3, 4);
+        const auto frac1 = fraction_type(3U, 5U);
+        const auto frac2 = fraction_type(6U, 10U);
+        const auto frac3 = fraction_type(4U, 5U);
+        const auto frac4 = fraction_type(3U, 4U);
 
         CHECK(frac1 == frac1);
         CHECK(frac1 == frac2);
@@ -259,14 +277,31 @@ TEMPLATE_TEST_CASE("num_collect::numbers::fraction (unsigned)", "",
     }
 
     SECTION("compare with operator!=") {
-        const auto frac1 = fraction_type(3, 5);
-        const auto frac2 = fraction_type(6, 10);
-        const auto frac3 = fraction_type(4, 5);
-        const auto frac4 = fraction_type(3, 4);
+        const auto frac1 = fraction_type(3U, 5U);
+        const auto frac2 = fraction_type(6U, 10U);
+        const auto frac3 = fraction_type(4U, 5U);
+        const auto frac4 = fraction_type(3U, 4U);
 
         CHECK_FALSE(frac1 != frac1);
         CHECK_FALSE(frac1 != frac2);
         CHECK(frac1 != frac3);
         CHECK(frac1 != frac4);
+    }
+
+    SECTION("format using fmt library") {
+        const auto frac = fraction_type(2U, 3U);
+
+        const auto str = fmt::format("{}", frac);
+
+        CHECK(str == "2 / 3");
+    }
+
+    SECTION("format using std::ostream") {
+        const auto frac = fraction_type(2U, 3U);
+
+        std::ostringstream stream;
+        stream << frac;
+
+        CHECK(stream.str() == "2 / 3");
     }
 }
