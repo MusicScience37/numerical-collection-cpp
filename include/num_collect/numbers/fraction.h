@@ -199,6 +199,20 @@ private:
     integer_type denominator_;
 };
 
+/*!
+ * \brief Add two fractions.
+ *
+ * \tparam Integer Type of integers in the fractions.
+ * \param[in] left Left-hand-side value.
+ * \param[in] right Right-hand-side value.
+ * \return Sum of the fractions.
+ */
+template <num_collect::base::concepts::integral Integer>
+inline constexpr auto operator+(const fraction<Integer>& left,
+    const fraction<Integer>& right) -> fraction<Integer> {
+    return fraction<Integer>(left) += right;
+}
+
 }  // namespace num_collect::numbers
 
 namespace fmt {
@@ -251,7 +265,7 @@ namespace num_collect::numbers {
  * \return Output stream.
  */
 template <num_collect::base::concepts::integral Integer>
-auto operator<<(std::ostream& stream, const fraction<Integer>& val)
+inline auto operator<<(std::ostream& stream, const fraction<Integer>& val)
     -> std::ostream& {
     fmt::print(stream, "{}", val);
     return stream;

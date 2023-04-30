@@ -129,6 +129,38 @@ TEMPLATE_TEST_CASE(
         }
     }
 
+    SECTION("add with operator+") {
+        SECTION("when denominator is same") {
+            const auto left = fraction_type(2, 5);
+            const auto right = fraction_type(4, 5);
+
+            const auto res = left + right;
+
+            CHECK(res.numerator() == 6);
+            CHECK(res.denominator() == 5);
+        }
+
+        SECTION("when denominator is different") {
+            const auto left = fraction_type(1, 2);
+            const auto right = fraction_type(1, 3);
+
+            const auto res = left + right;
+
+            CHECK(res.numerator() == 5);
+            CHECK(res.denominator() == 6);
+        }
+
+        SECTION("when normalization after addition is needed") {
+            const auto left = fraction_type(1, 3);
+            const auto right = fraction_type(1, 6);
+
+            const auto res = left + right;
+
+            CHECK(res.numerator() == 1);
+            CHECK(res.denominator() == 2);
+        }
+    }
+
     SECTION("compare with operator==") {
         const auto frac1 = fraction_type(3, 5);
         const auto frac2 = fraction_type(6, 10);
@@ -258,6 +290,38 @@ TEMPLATE_TEST_CASE("num_collect::numbers::fraction (unsigned)", "",
             const auto right = fraction_type(1U, 6U);
 
             const auto res = fraction_type(left) += right;
+
+            CHECK(res.numerator() == 1U);
+            CHECK(res.denominator() == 2U);
+        }
+    }
+
+    SECTION("add with operator+") {
+        SECTION("when denominator is same") {
+            const auto left = fraction_type(2U, 5U);
+            const auto right = fraction_type(4U, 5U);
+
+            const auto res = left + right;
+
+            CHECK(res.numerator() == 6U);
+            CHECK(res.denominator() == 5U);
+        }
+
+        SECTION("when denominator is different") {
+            const auto left = fraction_type(1U, 2U);
+            const auto right = fraction_type(1U, 3U);
+
+            const auto res = left + right;
+
+            CHECK(res.numerator() == 5U);
+            CHECK(res.denominator() == 6U);
+        }
+
+        SECTION("when normalization after addition is needed") {
+            const auto left = fraction_type(1U, 3U);
+            const auto right = fraction_type(1U, 6U);
+
+            const auto res = left + right;
 
             CHECK(res.numerator() == 1U);
             CHECK(res.denominator() == 2U);
