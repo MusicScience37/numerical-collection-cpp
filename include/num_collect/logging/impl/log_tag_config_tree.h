@@ -26,8 +26,7 @@
 #include <utility>
 
 #include <hash_tables/hashes/std_hash.h>
-#include <hash_tables/maps/separate_shared_chain_map_mt.h>
-#include <hash_tables/tables/separate_shared_chain_table_mt.h>
+#include <hash_tables/maps/multi_open_address_map_mt.h>
 
 #include "num_collect/logging/impl/log_tag_element.h"
 #include "num_collect/logging/impl/separate_top_log_tag_element.h"
@@ -59,13 +58,20 @@ public:
      */
     [[nodiscard]] auto get_config_of(std::string_view tag) -> log_tag_config {
         if (tag.empty()) {
-            std::unique_lock<std::mutex> lock(mutex_);
-            return config_;
+            return get_my_config();
+        }
+
+        if (child_nodes_.empty()) {
+            return get_my_config();
         }
 
         const auto [next_element, remaining] =
             separate_top_log_tag_element(tag);
-        return get_or_create_child_node(next_element)->get_config_of(remaining);
+        const auto child_node = child_nodes_.try_get(next_element);
+        if (!child_node) {
+            return get_my_config();
+        }
+        return (*child_node)->get_config_of(remaining);
     }
 
     /*!
@@ -97,16 +103,25 @@ private:
     [[nodiscard]] auto get_or_create_child_node(const log_tag_element& element)
         -> std::shared_ptr<log_tag_config_tree_node> {
         return child_nodes_.get_or_create_with_factory(element, [this] {
-            std::unique_lock<std::mutex> lock(mutex_);
-            return std::make_shared<log_tag_config_tree_node>(config_);
+            return std::make_shared<log_tag_config_tree_node>(get_my_config());
         });
+    }
+
+    /*!
+     * \brief Get the configuration for this node.
+     *
+     * \return Configuration.
+     */
+    [[nodiscard]] auto get_my_config() -> log_tag_config {
+        std::unique_lock<std::mutex> lock(mutex_);
+        return config_;
     }
 
     //! Configuration for this node.
     log_tag_config config_;
 
     //! Child nodes.
-    hash_tables::maps::separate_shared_chain_map_mt<log_tag_element,
+    hash_tables::maps::multi_open_address_map_mt<log_tag_element,
         std::shared_ptr<log_tag_config_tree_node>>
         child_nodes_{};
 

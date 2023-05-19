@@ -8,7 +8,7 @@ A development environment including dependencies can be created using
 To build this repository,
 you will require following dependencies:
 
-- [Python](https://www.python.org/) 3.9
+- [Python](https://www.python.org/) 3.11
   - You may want to use [pyenv](https://github.com/pyenv/pyenv).
 - [poetry](https://python-poetry.org/)
   - Required Python packages can be installed using poetry.
@@ -43,38 +43,42 @@ execute the following commands to build:
 
    ```bash
    cd <this-directory>
-   poetry config virtualenvs.in-project true
-   poetry env use 3.10
    poetry install
    poetry shell
    ```
 
-2. Add the Conan remote in GitLab. (Once in an environment. Already done in devcontainer of VSCode.)
+2. Download vcpkg if you haven't already.
 
    ```bash
-   conan remote add cpp-stat-bench https://gitlab.com/api/v4/projects/32226502/packages/conan
-   conan remote add cpp-hash-tables https://gitlab.com/api/v4/projects/35726343/packages/conan
+   git submodule update --init
    ```
 
-3. Download and install required Conan packages.
+3. Build vcpkg.
 
-   ```bash
-   python3 ./scripts/install_conan_dependencies.py <build_type>
-   ```
+   - On Windows:
 
-   `build_type` can be `Debug`, `RelWithDebInfo`, or `Release`.
+     ```bat
+     .\vcpkg\bootstrap-vcpkg.bat
+     ```
+
+   - On Linux:
+
+     ```bash
+     ./vcpkg/bootstrap-vcpkg.sh
+     ```
 
 4. Configure.
 
    ```bash
+   mkdir build
    cd build
-   cmake ..
+   cmake .. -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake
    ```
 
 5. Optionally edit options.
 
    ```bash
-   <some_editor> CMakeCache.txt
+   <some-editor> CMakeCache.txt
    ```
 
 6. Build.

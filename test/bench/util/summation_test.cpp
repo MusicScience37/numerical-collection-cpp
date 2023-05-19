@@ -21,8 +21,8 @@
 #include <cstddef>
 #include <limits>
 
-#include <stat_bench/bench/invocation_context.h>
 #include <stat_bench/benchmark_macros.h>
+#include <stat_bench/invocation_context.h>
 
 #include "num_collect/constants/pi.h"
 #include "num_collect/multi_double/quad.h"
@@ -40,7 +40,7 @@ public:
         error_ = error;
     }
 
-    void tear_down(stat_bench::bench::InvocationContext& context) override {
+    void tear_down(stat_bench::InvocationContext& context) override {
         context.add_custom_output("error", error_);
     }
 

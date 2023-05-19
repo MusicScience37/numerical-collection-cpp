@@ -22,8 +22,8 @@
 #include <vector>
 
 #include <Eigen/Core>
-#include <stat_bench/bench/invocation_context.h>
 #include <stat_bench/benchmark_macros.h>
+#include <stat_bench/invocation_context.h>
 #include <stat_bench/param/parameter_value_vector.h>
 
 #include "auto_diff_fixture.h"
@@ -40,7 +40,7 @@ public:
         add_param<num_collect::index_type>("size")->add(2)->add(5)->add(10);
     }
 
-    void setup(stat_bench::bench::InvocationContext& context) override {
+    void setup(stat_bench::InvocationContext& context) override {
         size_ = context.get_param<num_collect::index_type>("size");
     }
 

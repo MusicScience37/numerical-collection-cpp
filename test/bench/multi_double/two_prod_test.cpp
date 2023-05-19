@@ -20,7 +20,7 @@
 #include <tuple>
 
 #include <stat_bench/benchmark_macros.h>
-#include <stat_bench/util/do_not_optimize.h>
+#include <stat_bench/do_not_optimize.h>
 
 #include "num_collect/multi_double/impl/basic_operations.h"
 
@@ -33,7 +33,7 @@ constexpr double b = 0x1.0000008p-2;
 STAT_BENCH_CASE("multi_double_two_prod", "two_prod_no_fma") {
     using num_collect::multi_double::impl::two_prod_no_fma;
     STAT_BENCH_MEASURE() {
-        stat_bench::util::do_not_optimize(two_prod_no_fma(a, b));
+        stat_bench::do_not_optimize(two_prod_no_fma(a, b));
     };
 }
 
@@ -41,8 +41,6 @@ STAT_BENCH_CASE("multi_double_two_prod", "two_prod_no_fma") {
 // NOLINTNEXTLINE
 STAT_BENCH_CASE("multi_double_two_prod", "two_prod_fma") {
     using num_collect::multi_double::impl::two_prod_fma;
-    STAT_BENCH_MEASURE() {
-        stat_bench::util::do_not_optimize(two_prod_fma(a, b));
-    };
+    STAT_BENCH_MEASURE() { stat_bench::do_not_optimize(two_prod_fma(a, b)); };
 }
 #endif

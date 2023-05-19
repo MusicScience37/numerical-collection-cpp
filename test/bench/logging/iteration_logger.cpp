@@ -21,8 +21,8 @@
 
 #include <string>
 
-#include <stat_bench/bench/invocation_context.h>
 #include <stat_bench/benchmark_macros.h>
+#include <stat_bench/invocation_context.h>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_config.h"
@@ -36,8 +36,7 @@ STAT_BENCH_MAIN
 
 static constexpr auto tag = num_collect::logging::log_tag_view("benchmark");
 
-static void perform(
-    stat_bench::bench::InvocationContext& STAT_BENCH_CONTEXT_NAME) {
+static void perform() {
     auto logger = num_collect::logging::logger(tag);
     auto iteration_logger =
         num_collect::logging::iterations::iteration_logger(logger);
@@ -63,7 +62,7 @@ STAT_BENCH_CASE("iteration_logger", "write no log") {
         num_collect::logging::sinks::create_single_file_sink(log_file_path));
     num_collect::logging::log_config::instance().set_config_of(tag, config);
 
-    perform(STAT_BENCH_CONTEXT_NAME);
+    perform();
 }
 
 // NOLINTNEXTLINE
@@ -77,5 +76,5 @@ STAT_BENCH_CASE("iteration_logger", "write log") {
             .output_log_level(num_collect::logging::log_level::trace);
     num_collect::logging::log_config::instance().set_config_of(tag, config);
 
-    perform(STAT_BENCH_CONTEXT_NAME);
+    perform();
 }

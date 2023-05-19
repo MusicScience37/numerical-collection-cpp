@@ -22,8 +22,9 @@
 #include <unordered_set>
 #include <vector>
 
-#include <stat_bench/bench/invocation_context.h>
 #include <stat_bench/benchmark_macros.h>
+#include <stat_bench/current_invocation_context.h>
+#include <stat_bench/invocation_context.h>
 
 #include "num_collect/integration/de_finite_integrator.h"
 #include "num_collect/integration/gauss_legendre_integrator.h"
@@ -32,14 +33,13 @@
 STAT_BENCH_MAIN
 
 template <typename Integrator>
-void perform(stat_bench::bench::InvocationContext& STAT_BENCH_CONTEXT_NAME,
-    const Integrator& integrator) {
+void perform(const Integrator& integrator) {
     double val{};
     STAT_BENCH_MEASURE() {
         val = integrator([](double x) { return std::exp(x); }, 0.0, 1.0);
     };
     const double true_val = std::exp(1.0) - 1.0;
-    STAT_BENCH_CONTEXT_NAME.add_custom_output(
+    stat_bench::current_invocation_context().add_custom_output(
         "error", std::abs(val - true_val));
 }
 
@@ -47,28 +47,28 @@ void perform(stat_bench::bench::InvocationContext& STAT_BENCH_CONTEXT_NAME,
 STAT_BENCH_CASE("integ_exp", "gauss_legendre_5") {
     const auto integrator =
         num_collect::integration::gauss_legendre_integrator<double(double)>(5);
-    perform(STAT_BENCH_CONTEXT_NAME, integrator);
+    perform(integrator);
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE("integ_exp", "gauss_legendre_10") {
     const auto integrator =
         num_collect::integration::gauss_legendre_integrator<double(double)>(10);
-    perform(STAT_BENCH_CONTEXT_NAME, integrator);
+    perform(integrator);
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE("integ_exp", "gauss_legendre_20") {
     const auto integrator =
         num_collect::integration::gauss_legendre_integrator<double(double)>(20);
-    perform(STAT_BENCH_CONTEXT_NAME, integrator);
+    perform(integrator);
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE("integ_exp", "gauss_legendre_50") {
     const auto integrator =
         num_collect::integration::gauss_legendre_integrator<double(double)>(50);
-    perform(STAT_BENCH_CONTEXT_NAME, integrator);
+    perform(integrator);
 }
 
 // NOLINTNEXTLINE
@@ -76,7 +76,7 @@ STAT_BENCH_CASE("integ_exp", "gauss_legendre_kronrod_3") {
     const auto integrator =
         num_collect::integration::gauss_legendre_kronrod_integrator<double(
             double)>(3);
-    perform(STAT_BENCH_CONTEXT_NAME, integrator);
+    perform(integrator);
 }
 
 // NOLINTNEXTLINE
@@ -84,7 +84,7 @@ STAT_BENCH_CASE("integ_exp", "gauss_legendre_kronrod_5") {
     const auto integrator =
         num_collect::integration::gauss_legendre_kronrod_integrator<double(
             double)>(5);
-    perform(STAT_BENCH_CONTEXT_NAME, integrator);
+    perform(integrator);
 }
 
 // NOLINTNEXTLINE
@@ -92,7 +92,7 @@ STAT_BENCH_CASE("integ_exp", "gauss_legendre_kronrod_7") {
     const auto integrator =
         num_collect::integration::gauss_legendre_kronrod_integrator<double(
             double)>(7);
-    perform(STAT_BENCH_CONTEXT_NAME, integrator);
+    perform(integrator);
 }
 
 // NOLINTNEXTLINE
@@ -100,7 +100,7 @@ STAT_BENCH_CASE("integ_exp", "gauss_legendre_kronrod_10") {
     const auto integrator =
         num_collect::integration::gauss_legendre_kronrod_integrator<double(
             double)>(10);
-    perform(STAT_BENCH_CONTEXT_NAME, integrator);
+    perform(integrator);
 }
 
 // NOLINTNEXTLINE
@@ -108,7 +108,7 @@ STAT_BENCH_CASE("integ_exp", "de_finite_5") {
     const auto integrator =
         num_collect::integration::de_finite_integrator<double(double)>().points(
             5);
-    perform(STAT_BENCH_CONTEXT_NAME, integrator);
+    perform(integrator);
 }
 
 // NOLINTNEXTLINE
@@ -116,7 +116,7 @@ STAT_BENCH_CASE("integ_exp", "de_finite_10") {
     const auto integrator =
         num_collect::integration::de_finite_integrator<double(double)>().points(
             10);
-    perform(STAT_BENCH_CONTEXT_NAME, integrator);
+    perform(integrator);
 }
 
 // NOLINTNEXTLINE
@@ -124,7 +124,7 @@ STAT_BENCH_CASE("integ_exp", "de_finite_20") {
     const auto integrator =
         num_collect::integration::de_finite_integrator<double(double)>().points(
             20);
-    perform(STAT_BENCH_CONTEXT_NAME, integrator);
+    perform(integrator);
 }
 
 // NOLINTNEXTLINE
@@ -132,5 +132,5 @@ STAT_BENCH_CASE("integ_exp", "de_finite_50") {
     const auto integrator =
         num_collect::integration::de_finite_integrator<double(double)>().points(
             50);
-    perform(STAT_BENCH_CONTEXT_NAME, integrator);
+    perform(integrator);
 }

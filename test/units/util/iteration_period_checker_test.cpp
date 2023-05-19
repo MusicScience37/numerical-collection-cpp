@@ -19,6 +19,8 @@
  */
 #include "num_collect/util/iteration_period_checker.h"
 
+#include <string>
+
 #include <catch2/catch_test_macros.hpp>
 
 #include "num_collect/base/index_type.h"
