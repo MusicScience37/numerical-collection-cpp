@@ -98,7 +98,7 @@ public:
      * \return This fraction after addition.
      */
     constexpr auto operator+=(const fraction& right) -> fraction& {
-        add_safely(right);
+        add(right);
         return *this;
     }
 
@@ -108,7 +108,7 @@ public:
      * \param[in] right Right-hand-side object.
      * \return This fraction after addition.
      */
-    constexpr auto add_safely(const fraction& right) -> fraction& {
+    constexpr auto add(const fraction& right) -> fraction& {
         if (denominator_ == right.denominator_) {
             // TODO: Add safely.
             numerator_ += right.numerator_;
@@ -135,7 +135,7 @@ public:
      * \return This fraction after subtraction.
      */
     constexpr auto operator-=(const fraction& right) -> fraction& {
-        subtract_safely(right);
+        subtract(right);
         return *this;
     }
 
@@ -145,7 +145,7 @@ public:
      * \param[in] right Right-hand-side object.
      * \return This fraction after subtraction.
      */
-    constexpr auto subtract_safely(const fraction& right) -> fraction& {
+    constexpr auto subtract(const fraction& right) -> fraction& {
         if (denominator_ == right.denominator_) {
             // TODO: Subtract safely.
             numerator_ -= right.numerator_;
@@ -163,6 +163,61 @@ public:
         }
         normalize();
         return *this;
+    }
+
+    /*!
+     * \brief Multiply a fraction to this fraction.
+     *
+     * \param[in] right Right-hand-side object.
+     * \return This fraction after multiplication.
+     */
+    constexpr auto operator*=(const fraction& right) -> fraction& {
+        multiply(right);
+        return *this;
+    }
+
+    /*!
+     * \brief Multiply a fraction to this fraction.
+     *
+     * \param[in] right Right-hand-side object.
+     * \return This fraction after multiplication.
+     */
+    constexpr auto multiply(const fraction& right) -> fraction& {
+        numerator_ = util::multiply_safely(numerator_, right.numerator_);
+        denominator_ = util::multiply_safely(denominator_, right.denominator_);
+        normalize();
+        return *this;
+    }
+
+    /*!
+     * \brief Divide this fraction by a fraction.
+     *
+     * \param[in] right Right-hand-side object.
+     * \return This fraction after division.
+     */
+    constexpr auto operator/=(const fraction& right) -> fraction& {
+        divide_by(right);
+        return *this;
+    }
+
+    /*!
+     * \brief Divide this fraction by a fraction.
+     *
+     * \param[in] right Right-hand-side object.
+     * \return This fraction after division.
+     */
+    constexpr auto divide_by(const fraction& right) -> fraction& {
+        multiply(right.inverse());
+        return *this;
+    }
+
+    /*!
+     * \brief Get the inverse of this fraction.
+     *
+     * \return Inverse.
+     */
+    constexpr auto inverse() const -> fraction {
+        return fraction<integer_type>(denominator_, numerator_);
     }
 
     /*!
@@ -263,6 +318,34 @@ template <num_collect::base::concepts::integral Integer>
 inline constexpr auto operator-(const fraction<Integer>& left,
     const fraction<Integer>& right) -> fraction<Integer> {
     return fraction<Integer>(left) -= right;
+}
+
+/*!
+ * \brief Multiply two fractions.
+ *
+ * \tparam Integer Type of integers in the fractions.
+ * \param[in] left Left-hand-side value.
+ * \param[in] right Right-hand-side value.
+ * \return Product of the fractions.
+ */
+template <num_collect::base::concepts::integral Integer>
+inline constexpr auto operator*(const fraction<Integer>& left,
+    const fraction<Integer>& right) -> fraction<Integer> {
+    return fraction<Integer>(left) *= right;
+}
+
+/*!
+ * \brief Divide a fraction by another fraction.
+ *
+ * \tparam Integer Type of integers in the fractions.
+ * \param[in] left Left-hand-side value.
+ * \param[in] right Right-hand-side value.
+ * \return Quotient of the fractions.
+ */
+template <num_collect::base::concepts::integral Integer>
+inline constexpr auto operator/(const fraction<Integer>& left,
+    const fraction<Integer>& right) -> fraction<Integer> {
+    return fraction<Integer>(left) /= right;
 }
 
 }  // namespace num_collect::numbers

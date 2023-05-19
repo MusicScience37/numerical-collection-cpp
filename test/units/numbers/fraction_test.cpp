@@ -231,6 +231,46 @@ TEMPLATE_TEST_CASE(
         }
     }
 
+    SECTION("multiply with operator*=") {
+        const auto left = fraction_type(2, 5);
+        const auto right = fraction_type(3, 4);
+
+        const auto res = fraction_type(left) *= right;
+
+        CHECK(res.numerator() == 3);
+        CHECK(res.denominator() == 10);
+    }
+
+    SECTION("multiply with operator*") {
+        const auto left = fraction_type(2, 5);
+        const auto right = fraction_type(3, 4);
+
+        const auto res = left * right;
+
+        CHECK(res.numerator() == 3);
+        CHECK(res.denominator() == 10);
+    }
+
+    SECTION("multiply with operator/=") {
+        const auto left = fraction_type(6, 7);
+        const auto right = fraction_type(3, 5);
+
+        const auto res = fraction_type(left) /= right;
+
+        CHECK(res.numerator() == 10);
+        CHECK(res.denominator() == 7);
+    }
+
+    SECTION("multiply with operator/") {
+        const auto left = fraction_type(6, 7);
+        const auto right = fraction_type(3, 5);
+
+        const auto res = left / right;
+
+        CHECK(res.numerator() == 10);
+        CHECK(res.denominator() == 7);
+    }
+
     SECTION("compare with operator==") {
         const auto frac1 = fraction_type(3, 5);
         const auto frac2 = fraction_type(6, 10);
@@ -466,6 +506,46 @@ TEMPLATE_TEST_CASE("num_collect::numbers::fraction (unsigned)", "",
             CHECK(res.numerator() == 1U);
             CHECK(res.denominator() == 3U);
         }
+    }
+
+    SECTION("multiply with operator*=") {
+        const auto left = fraction_type(2U, 5U);
+        const auto right = fraction_type(3U, 4U);
+
+        const auto res = fraction_type(left) *= right;
+
+        CHECK(res.numerator() == 3U);
+        CHECK(res.denominator() == 10U);
+    }
+
+    SECTION("multiply with operator*") {
+        const auto left = fraction_type(2U, 5U);
+        const auto right = fraction_type(3U, 4U);
+
+        const auto res = left * right;
+
+        CHECK(res.numerator() == 3U);
+        CHECK(res.denominator() == 10U);
+    }
+
+    SECTION("multiply with operator/=") {
+        const auto left = fraction_type(6U, 7U);
+        const auto right = fraction_type(3U, 5U);
+
+        const auto res = fraction_type(left) /= right;
+
+        CHECK(res.numerator() == 10U);
+        CHECK(res.denominator() == 7U);
+    }
+
+    SECTION("multiply with operator/") {
+        const auto left = fraction_type(6U, 7U);
+        const auto right = fraction_type(3U, 5U);
+
+        const auto res = left / right;
+
+        CHECK(res.numerator() == 10U);
+        CHECK(res.denominator() == 7U);
     }
 
     SECTION("compare with operator==") {
