@@ -216,7 +216,7 @@ public:
      *
      * \return Inverse.
      */
-    constexpr auto inverse() const -> fraction {
+    [[nodiscard]] constexpr auto inverse() const -> fraction {
         return fraction<integer_type>(denominator_, numerator_);
     }
 
