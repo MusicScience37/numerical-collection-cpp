@@ -26,4 +26,4 @@
 #define NUM_COLLECT_VERSION_MINOR 7
 
 //! Patch version of numerical-collection-cpp project.
-#define NUM_COLLECT_VERSION_PATCH 0
+#define NUM_COLLECT_VERSION_PATCH 1
