@@ -133,6 +133,7 @@
     "Kutta",
     "Laren",
     "lcov",
+    "LDLT",
     "libc",
     "libc++",
     "libcxx",

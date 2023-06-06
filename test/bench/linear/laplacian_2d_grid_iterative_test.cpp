@@ -28,9 +28,9 @@
 
 STAT_BENCH_MAIN
 
-class laplacian_2d_grid_sparse_fixture : public stat_bench::FixtureBase {
+class laplacian_2d_grid_iterative_fixture : public stat_bench::FixtureBase {
 public:
-    laplacian_2d_grid_sparse_fixture() {
+    laplacian_2d_grid_iterative_fixture() {
         add_param<num_collect::index_type>("size")
             ->add(4 * 4)    // NOLINT
             ->add(10 * 10)  // NOLINT
@@ -70,14 +70,14 @@ private:
 };
 
 STAT_BENCH_CASE_F(
-    laplacian_2d_grid_sparse_fixture, "laplacian_2d_grid", "CG(Default)") {
+    laplacian_2d_grid_iterative_fixture, "laplacian_2d_grid", "CG") {
     using mat_type = Eigen::SparseMatrix<double>;
 
     num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
         grid_rows(), grid_cols(), grid_width()};
     const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
     const Eigen::VectorXd right = grid.mat() * true_sol;
-    Eigen::ConjugateGradient<mat_type> solver;
+    Eigen::ConjugateGradient<mat_type, Eigen::Upper | Eigen::Lower> solver;
     Eigen::VectorXd sol;
 
     STAT_BENCH_MEASURE() {
@@ -88,36 +88,14 @@ STAT_BENCH_CASE_F(
 }
 
 STAT_BENCH_CASE_F(
-    laplacian_2d_grid_sparse_fixture, "laplacian_2d_grid", "CG(Identity)") {
+    laplacian_2d_grid_iterative_fixture, "laplacian_2d_grid", "BiCGstab") {
     using mat_type = Eigen::SparseMatrix<double>;
 
     num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
         grid_rows(), grid_cols(), grid_width()};
     const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
     const Eigen::VectorXd right = grid.mat() * true_sol;
-    Eigen::ConjugateGradient<mat_type, Eigen::Upper | Eigen::Lower,
-        Eigen::IdentityPreconditioner>
-        solver;
-    Eigen::VectorXd sol;
-
-    STAT_BENCH_MEASURE() {
-        solver.compute(grid.mat());
-        sol = solver.solve(right);
-        stat_bench::memory_barrier();
-    };
-}
-
-STAT_BENCH_CASE_F(
-    laplacian_2d_grid_sparse_fixture, "laplacian_2d_grid", "CG(Diagonal)") {
-    using mat_type = Eigen::SparseMatrix<double>;
-
-    num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
-        grid_rows(), grid_cols(), grid_width()};
-    const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
-    const Eigen::VectorXd right = grid.mat() * true_sol;
-    Eigen::ConjugateGradient<mat_type, Eigen::Upper | Eigen::Lower,
-        Eigen::DiagonalPreconditioner<double>>
-        solver;
+    Eigen::BiCGSTAB<mat_type> solver;
     Eigen::VectorXd sol;
 
     STAT_BENCH_MEASURE() {
