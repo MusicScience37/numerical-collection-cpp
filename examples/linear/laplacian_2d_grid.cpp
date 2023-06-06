@@ -19,6 +19,8 @@
  */
 #include "num_prob_collect/linear/laplacian_2d_grid.h"
 
+#include <algorithm>
+
 #include <Eigen/Core>
 #include <Eigen/IterativeLinearSolvers>
 #include <Eigen/SparseCore>
@@ -37,6 +39,93 @@ using grid_type = num_prob_collect::finite_element::laplacian_2d_grid<mat_type>;
 constexpr double region_size = 1.0;
 
 static auto expected_function(double x, double y) { return x * x + y * y; }
+
+static auto make_right_vec(
+    num_collect::index_type grid_size, const grid_type& grid) {
+    vec_type right_vec =
+        vec_type::Constant((grid_size - 1) * (grid_size - 1), -4.0);  // NOLINT
+
+    const double off_diag_coeff = grid.off_diag_coeff();
+
+    // x = 0
+    {
+        const double x = 0.0;
+        const num_collect::index_type xi = 0;
+        for (num_collect::index_type yj = -1, yj_end = grid_size; yj < yj_end;
+             ++yj) {
+            const double y =
+                static_cast<double>(yj + 1) / static_cast<double>(grid_size);
+            const double val = expected_function(x, y);
+            for (num_collect::index_type
+                     yi = std::max<num_collect::index_type>(yj - 1, 0),
+                     yi_end = std::min<num_collect::index_type>(
+                         yj + 2, grid_size - 1);
+                 yi < yi_end; ++yi) {
+                const num_collect::index_type i = grid.index(xi, yi);
+                right_vec(i) -= off_diag_coeff * val;
+            }
+        }
+    }
+    // x = 1
+    {
+        const double x = 1.0;
+        const num_collect::index_type xi = grid_size - 2;
+        for (num_collect::index_type yj = -1, yj_end = grid_size; yj < yj_end;
+             ++yj) {
+            const double y =
+                static_cast<double>(yj + 1) / static_cast<double>(grid_size);
+            const double val = expected_function(x, y);
+            for (num_collect::index_type
+                     yi = std::max<num_collect::index_type>(yj - 1, 0),
+                     yi_end = std::min<num_collect::index_type>(
+                         yj + 2, grid_size - 1);
+                 yi < yi_end; ++yi) {
+                const num_collect::index_type i = grid.index(xi, yi);
+                right_vec(i) -= off_diag_coeff * val;
+            }
+        }
+    }
+    // y = 0
+    {
+        const double y = 0.0;
+        const num_collect::index_type yi = 0;
+        for (num_collect::index_type xj = 0, xj_end = grid_size - 1;
+             xj < xj_end; ++xj) {
+            const double x =
+                static_cast<double>(xj + 1) / static_cast<double>(grid_size);
+            const double val = expected_function(x, y);
+            for (num_collect::index_type
+                     xi = std::max<num_collect::index_type>(xj - 1, 0),
+                     xi_end = std::min<num_collect::index_type>(
+                         xj + 2, grid_size - 1);
+                 xi < xi_end; ++xi) {
+                const num_collect::index_type i = grid.index(xi, yi);
+                right_vec(i) -= off_diag_coeff * val;
+            }
+        }
+    }
+    // y = 1
+    {
+        const double y = 1.0;
+        const num_collect::index_type yi = grid_size - 2;
+        for (num_collect::index_type xj = 0, xj_end = grid_size - 1;
+             xj < xj_end; ++xj) {
+            const double x =
+                static_cast<double>(xj + 1) / static_cast<double>(grid_size);
+            const double val = expected_function(x, y);
+            for (num_collect::index_type
+                     xi = std::max<num_collect::index_type>(xj - 1, 0),
+                     xi_end = std::min<num_collect::index_type>(
+                         xj + 2, grid_size - 1);
+                 xi < xi_end; ++xi) {
+                const num_collect::index_type i = grid.index(xi, yi);
+                right_vec(i) -= off_diag_coeff * val;
+            }
+        }
+    }
+
+    return right_vec;
+}
 
 static auto plot_result(const vec_type& expected, const vec_type& actual,
     num_collect::index_type grid_size) {
@@ -104,7 +193,7 @@ auto main(int argc, char** argv) -> int {
             }
         }
 
-        const vec_type right_vec = grid.mat() * expected_sol;
+        const vec_type right_vec = make_right_vec(grid_size, grid);
 
         logger.info()("Start preparation.");
         Eigen::ConjugateGradient<mat_type> solver;

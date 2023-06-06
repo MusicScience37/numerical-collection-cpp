@@ -137,8 +137,13 @@ private:
      * \brief Calculate matrices.
      */
     void calc() {
-        diag_coeff_ = static_cast<scalar_type>(1) / (grid_width_ * grid_width_);
-        off_diag_coeff_ = -diag_coeff_ / static_cast<scalar_type>(8);  // NOLINT
+        const scalar_type inv_area =
+            static_cast<scalar_type>(1) / (grid_width_ * grid_width_);
+        // NOLINTNEXTLINE
+        diag_coeff_ = static_cast<scalar_type>(8) /
+            static_cast<scalar_type>(3) * inv_area;
+        // NOLINTNEXTLINE
+        off_diag_coeff_ = -inv_area / static_cast<scalar_type>(3);
 
         std::vector<Eigen::Triplet<scalar_type>> triplets;
         const std::size_t approx_elements =
