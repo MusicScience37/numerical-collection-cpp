@@ -4,7 +4,7 @@ if(NOT TARGET num_collect::num_collect)
     include(CMakeFindDependencyMacro)
     find_dependency(Threads)
     find_dependency(fmt)
-    find_dependency(Eigen)
+    find_dependency(Eigen3)
     find_dependency(cpp-hash-tables)
     find_dependency(tomlplusplus)
 

@@ -80,7 +80,9 @@ if(PYTHON_EXECUTABLE AND POETRY_EXECUTABLE)
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         OUTPUT_VARIABLE pybind11_DIR
         OUTPUT_STRIP_TRAILING_WHITESPACE)
-    find_package(pybind11 REQUIRED)
+    if(NUM_COLLECT_TESTING OR NUM_COLLECT_BUILD_EXAMPLES)
+        find_package(pybind11 REQUIRED)
+    endif()
 else()
     message(STATUS "Python not found for Python interface")
 endif()
