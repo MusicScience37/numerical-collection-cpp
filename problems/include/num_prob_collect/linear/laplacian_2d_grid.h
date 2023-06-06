@@ -35,6 +35,8 @@ namespace num_prob_collect::finite_element {
 /*!
  * \brief Class to create matrices of Laplacian on a 2-dimensional grid.
  *
+ * \note Discretization is based on bilinear finite elements.
+ *
  * \tparam Matrix Type of the matrix.
  */
 template <num_collect::base::concepts::sparse_matrix Matrix>
