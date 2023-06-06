@@ -17,9 +17,8 @@
  * \file
  * \brief Benchmark of solving equations of Laplacian matrices.
  */
-#include <Eigen/Cholesky>
-#include <Eigen/Core>
-#include <Eigen/LU>
+#include <Eigen/SparseCholesky>
+#include <Eigen/src/SparseCholesky/SimplicialCholesky.h>
 #include <stat_bench/benchmark_macros.h>
 #include <stat_bench/fixture_base.h>
 #include <stat_bench/memory_barrier.h>
@@ -28,14 +27,15 @@
 #include "num_collect/base/index_type.h"
 #include "num_prob_collect/linear/laplacian_2d_grid.h"
 
-class laplacian_2d_grid_dense_fixture : public stat_bench::FixtureBase {
+class laplacian_2d_grid_sparse_direct_fixture : public stat_bench::FixtureBase {
 public:
-    laplacian_2d_grid_dense_fixture() {
+    laplacian_2d_grid_sparse_direct_fixture() {
         add_param<num_collect::index_type>("size")
             ->add(4 * 4)    // NOLINT
             ->add(10 * 10)  // NOLINT
 #ifdef NDEBUG
-            ->add(32 * 32)  // NOLINT
+            ->add(32 * 32)    // NOLINT
+            ->add(100 * 100)  // NOLINT
 #endif
             ;
     }
@@ -68,57 +68,37 @@ private:
     double grid_width_{};
 };
 
-STAT_BENCH_CASE_F(laplacian_2d_grid_dense_fixture, "laplacian_2d_grid", "LLT") {
+STAT_BENCH_CASE_F(laplacian_2d_grid_sparse_direct_fixture, "laplacian_2d_grid",
+    "SimplicialLLT") {
     using mat_type = Eigen::SparseMatrix<double>;
 
     num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
         grid_rows(), grid_cols(), grid_width()};
     const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
     const Eigen::VectorXd right = grid.mat() * true_sol;
-    const Eigen::MatrixXd dense_mat = grid.mat();
-    Eigen::LLT<Eigen::MatrixXd> solver;
+    Eigen::SimplicialLLT<mat_type> solver;
     Eigen::VectorXd sol;
 
     STAT_BENCH_MEASURE() {
-        solver.compute(dense_mat);
+        solver.compute(grid.mat());
         sol = solver.solve(right);
         stat_bench::memory_barrier();
     };
 }
 
-STAT_BENCH_CASE_F(
-    laplacian_2d_grid_dense_fixture, "laplacian_2d_grid", "LDLT") {
+STAT_BENCH_CASE_F(laplacian_2d_grid_sparse_direct_fixture, "laplacian_2d_grid",
+    "SimplicialLDLT") {
     using mat_type = Eigen::SparseMatrix<double>;
 
     num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
         grid_rows(), grid_cols(), grid_width()};
     const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
     const Eigen::VectorXd right = grid.mat() * true_sol;
-    const Eigen::MatrixXd dense_mat = grid.mat();
-    Eigen::LDLT<Eigen::MatrixXd> solver;
+    Eigen::SimplicialLDLT<mat_type> solver;
     Eigen::VectorXd sol;
 
     STAT_BENCH_MEASURE() {
-        solver.compute(dense_mat);
-        sol = solver.solve(right);
-        stat_bench::memory_barrier();
-    };
-}
-
-STAT_BENCH_CASE_F(
-    laplacian_2d_grid_dense_fixture, "laplacian_2d_grid", "PartialPivLU") {
-    using mat_type = Eigen::SparseMatrix<double>;
-
-    num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
-        grid_rows(), grid_cols(), grid_width()};
-    const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
-    const Eigen::VectorXd right = grid.mat() * true_sol;
-    const Eigen::MatrixXd dense_mat = grid.mat();
-    Eigen::PartialPivLU<Eigen::MatrixXd> solver;
-    Eigen::VectorXd sol;
-
-    STAT_BENCH_MEASURE() {
-        solver.compute(dense_mat);
+        solver.compute(grid.mat());
         sol = solver.solve(right);
         stat_bench::memory_barrier();
     };
