@@ -196,7 +196,7 @@ auto main(int argc, char** argv) -> int {
         const vec_type right_vec = make_right_vec(grid_size, grid);
 
         logger.info()("Start preparation.");
-        Eigen::ConjugateGradient<mat_type> solver;
+        Eigen::ConjugateGradient<mat_type, Eigen::Upper | Eigen::Lower> solver;
         solver.compute(grid.mat());
         logger.info()("Start to solve.");
         const vec_type sol = solver.solve(right_vec);
