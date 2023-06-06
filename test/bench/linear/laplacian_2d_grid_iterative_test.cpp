@@ -18,6 +18,7 @@
  * \brief Benchmark of solving equations of Laplacian matrices.
  */
 #include <Eigen/IterativeLinearSolvers>
+#include <Eigen/OrderingMethods>
 #include <stat_bench/benchmark_macros.h>
 #include <stat_bench/fixture_base.h>
 #include <stat_bench/memory_barrier.h>
@@ -83,6 +84,39 @@ STAT_BENCH_CASE_F(
     STAT_BENCH_MEASURE() {
         solver.compute(grid.mat());
         sol = solver.solve(right);
+        stat_bench::memory_barrier();
+    };
+}
+
+STAT_BENCH_CASE_F(
+    laplacian_2d_grid_iterative_fixture, "laplacian_2d_grid", "CG(AMD)") {
+    using mat_type = Eigen::SparseMatrix<double>;
+
+    num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
+        grid_rows(), grid_cols(), grid_width()};
+    const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
+    const Eigen::VectorXd right = grid.mat() * true_sol;
+    Eigen::ConjugateGradient<mat_type, Eigen::Upper | Eigen::Lower> solver;
+    Eigen::VectorXd sol;
+
+    Eigen::AMDOrdering<int> ordering;
+    Eigen::PermutationMatrix<Eigen::Dynamic> perm;
+    Eigen::PermutationMatrix<Eigen::Dynamic> inv_perm;
+    mat_type reordered_mat;
+    Eigen::VectorXd reordered_right;
+    Eigen::VectorXd reordered_sol;
+
+    STAT_BENCH_MEASURE() {
+        ordering(grid.mat().selfadjointView<Eigen::Lower>(), perm);
+        inv_perm = perm.inverse();
+        reordered_mat = grid.mat().twistedBy(perm);
+        reordered_right = perm * right;
+
+        solver.compute(reordered_mat);
+        reordered_sol = solver.solve(reordered_right);
+
+        sol = inv_perm * reordered_sol;
+
         stat_bench::memory_barrier();
     };
 }
