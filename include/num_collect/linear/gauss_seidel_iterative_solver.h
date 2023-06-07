@@ -70,7 +70,7 @@ public:
         coeff_ = &coeff;
         diag_ = coeff_->diagonal();
         inv_diag_ = diag_.cwiseInverse();
-        if (!diag_.array().isFinite().all()) {
+        if (!inv_diag_.array().isFinite().all()) {
             throw invalid_argument(
                 "All diagonal elements of the coefficient matrix must not be "
                 "zero.");
@@ -133,6 +133,34 @@ public:
                 break;
             }
         }
+    }
+
+    /*!
+     * \brief Set the maximum number of iterations.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto max_iterations(index_type val) -> gauss_seidel_iterative_solver& {
+        if (val <= 0) {
+            throw invalid_argument("Invalid maximum number of iterations.");
+        }
+        max_iterations_ = val;
+        return *this;
+    }
+
+    /*!
+     * \brief Set the tolerance of rate of residual.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto tol_residual_rate(scalar_type val) -> gauss_seidel_iterative_solver& {
+        if (val <= static_cast<scalar_type>(0)) {
+            throw invalid_argument("Invalid tolerance of rate of residual.");
+        }
+        tol_residual_rate_ = val;
+        return *this;
     }
 
 private:

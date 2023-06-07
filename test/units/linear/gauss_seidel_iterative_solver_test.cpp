@@ -75,4 +75,11 @@ TEMPLATE_TEST_CASE("num_collect::linear::gauss_seidel_iterative_solver", "",
             (grid.mat() * sol - right).norm() / right.norm();
         CHECK(res_rate < Eigen::NumTraits<scalar_type>::dummy_precision());
     }
+
+    SECTION("try to use invalid coefficients") {
+        matrix_type custom_mat = grid.mat();
+        custom_mat.coeffRef(1, 1) = static_cast<scalar_type>(0);
+
+        CHECK_THROWS(solver.compute(custom_mat));
+    }
 }
