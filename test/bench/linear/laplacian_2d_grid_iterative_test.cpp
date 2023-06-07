@@ -25,6 +25,7 @@
 
 #include "laplacian_2d_grid_make_sol.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/linear/gauss_seidel_iterative_solver.h"
 #include "num_prob_collect/linear/laplacian_2d_grid.h"
 
 STAT_BENCH_MAIN
@@ -38,6 +39,47 @@ public:
 #ifdef NDEBUG
             ->add(32 * 32)    // NOLINT
             ->add(100 * 100)  // NOLINT
+#endif
+            ;
+    }
+
+    void setup(stat_bench::InvocationContext& context) override {
+        size_ = context.get_param<num_collect::index_type>("size");
+        grid_rows_ = static_cast<num_collect::index_type>(std::sqrt(size_));
+        grid_width_ = 1.0 / static_cast<double>(grid_rows_ + 1);
+    }
+
+    [[nodiscard]] auto mat_size() const noexcept -> num_collect::index_type {
+        return size_;
+    }
+
+    [[nodiscard]] auto grid_rows() const noexcept -> num_collect::index_type {
+        return grid_rows_;
+    }
+
+    [[nodiscard]] auto grid_cols() const noexcept -> num_collect::index_type {
+        return grid_rows_;
+    }
+
+    [[nodiscard]] auto grid_width() const noexcept -> double {
+        return grid_width_;
+    }
+
+private:
+    num_collect::index_type size_{};
+    num_collect::index_type grid_rows_{};
+    double grid_width_{};
+};
+
+class laplacian_2d_grid_iterative_slower_fixture
+    : public stat_bench::FixtureBase {
+public:
+    laplacian_2d_grid_iterative_slower_fixture() {
+        add_param<num_collect::index_type>("size")
+            ->add(4 * 4)  // NOLINT
+#ifdef NDEBUG
+            ->add(10 * 10)  // NOLINT
+            ->add(32 * 32)  // NOLINT
 #endif
             ;
     }
@@ -135,6 +177,25 @@ STAT_BENCH_CASE_F(
     STAT_BENCH_MEASURE() {
         solver.compute(grid.mat());
         sol = solver.solve(right);
+        stat_bench::memory_barrier();
+    };
+}
+
+STAT_BENCH_CASE_F(laplacian_2d_grid_iterative_slower_fixture,
+    "laplacian_2d_grid", "Gauss-Seidel") {
+    using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
+
+    num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
+        grid_rows(), grid_cols(), grid_width()};
+    const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
+    const Eigen::VectorXd right = grid.mat() * true_sol;
+    num_collect::linear::gauss_seidel_iterative_solver<mat_type> solver;
+    Eigen::VectorXd sol;
+
+    STAT_BENCH_MEASURE() {
+        solver.compute(grid.mat());
+        sol = Eigen::VectorXd::Zero(grid.mat_size());
+        solver.solve(right, sol);
         stat_bench::memory_barrier();
     };
 }

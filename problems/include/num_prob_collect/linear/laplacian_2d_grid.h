@@ -24,7 +24,6 @@
 #include <vector>
 
 #include <Eigen/SparseCore>
-#include <Eigen/src/SparseCore/SparseUtil.h>
 
 #include "num_collect/base/concepts/sparse_matrix.h"  // IWYU pragma: keep
 #include "num_collect/base/index_type.h"

@@ -17,6 +17,7 @@ SOURCE_PATHS = [
         "integration",
         "interp",
         "logging",
+        "linear",
         "multi_double",
         "numbers",
         "ode",
