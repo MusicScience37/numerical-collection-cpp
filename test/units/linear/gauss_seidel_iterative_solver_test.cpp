@@ -27,8 +27,8 @@
 #include "num_collect/base/index_type.h"
 #include "num_prob_collect/linear/laplacian_2d_grid.h"
 
-TEMPLATE_TEST_CASE(
-    "num_collect::linear::gauss_seidel_iterative_solver", "", float, double) {
+TEMPLATE_TEST_CASE("num_collect::linear::gauss_seidel_iterative_solver", "",
+    float, double, long double) {
     using num_collect::linear::gauss_seidel_iterative_solver;
     using num_prob_collect::finite_element::laplacian_2d_grid;
 
