@@ -182,6 +182,7 @@
     "pmatrix",
     "pngpp",
     "pprof",
+    "Preconditioner",
     "profdata",
     "profraw",
     "pseudoinverse",

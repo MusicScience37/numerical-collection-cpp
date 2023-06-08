@@ -194,8 +194,7 @@ STAT_BENCH_CASE_F(laplacian_2d_grid_iterative_slower_fixture,
 
     STAT_BENCH_MEASURE() {
         solver.compute(grid.mat());
-        sol = Eigen::VectorXd::Zero(grid.mat_size());
-        solver.solve(right, sol);
+        sol = solver.solve(right);
         stat_bench::memory_barrier();
     };
 }

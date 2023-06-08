@@ -67,9 +67,18 @@ TEMPLATE_TEST_CASE("num_collect::linear::gauss_seidel_iterative_solver", "",
 
     SECTION("solve") {
         solver.compute(grid.mat());
-        vector_type sol = vector_type::Zero(true_sol.size());
 
-        solver.solve(right, sol);
+        const vector_type sol = solver.solve(right);
+
+        const scalar_type res_rate =
+            (grid.mat() * sol - right).norm() / right.norm();
+        CHECK(res_rate < Eigen::NumTraits<scalar_type>::dummy_precision());
+    }
+
+    SECTION("solve with guess") {
+        solver.compute(grid.mat());
+
+        const vector_type sol = solver.solve_with_guess(right, true_sol);
 
         const scalar_type res_rate =
             (grid.mat() * sol - right).norm() / right.norm();

@@ -30,9 +30,28 @@
 #include "num_collect/base/concepts/sparse_matrix.h"    // IWYU pragma: keep
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/linear/iterative_solver_base.h"
 #include "num_collect/util/assert.h"
 
 namespace num_collect::linear {
+
+template <base::concepts::sparse_matrix Matrix>
+class gauss_seidel_iterative_solver;
+
+namespace impl {
+
+/*!
+ * \brief Traits of gauss_seidel_iterative_solver class.
+ *
+ * \tparam Matrix Type of the matrix.
+ */
+template <base::concepts::sparse_matrix Matrix>
+struct iterative_solver_traits<gauss_seidel_iterative_solver<Matrix>> {
+    //! Type of the matrix.
+    using matrix_type = Matrix;
+};
+
+}  // namespace impl
 
 /*!
  * \brief Class to solve linear equations using Gauss-Seidel iteration
@@ -41,18 +60,26 @@ namespace num_collect::linear {
  * \tparam Matrix Type of the matrix.
  */
 template <base::concepts::sparse_matrix Matrix>
-class gauss_seidel_iterative_solver {
-public:
+class gauss_seidel_iterative_solver
+    : public iterative_solver_base<gauss_seidel_iterative_solver<Matrix>> {
     static_assert(Matrix::IsRowMajor == 1, "Row major matrix is required.");
     static_assert(base::concepts::real_scalar<typename Matrix::Scalar>,
         "Complex matrices are not supported.");
 
-    //! Type of matrices.
-    using matrix_type = Matrix;
+public:
+    //! Type of the base class.
+    using base_type =
+        iterative_solver_base<gauss_seidel_iterative_solver<Matrix>>;
 
-    //! Type of scalars.
-    using scalar_type = typename matrix_type::Scalar;
+    using typename base_type::matrix_type;
+    using typename base_type::real_scalar_type;
+    using typename base_type::scalar_type;
+    using typename base_type::storage_index_type;
 
+protected:
+    using base_type::coeff;
+
+public:
     //! Type of vectors.
     using vector_type = Eigen::VectorX<scalar_type>;
 
@@ -67,8 +94,8 @@ public:
      * \param[in] coeff Coefficient matrix.
      */
     void compute(const matrix_type& coeff) {
-        coeff_ = &coeff;
-        diag_ = coeff_->diagonal();
+        base_type::compute(coeff);
+        diag_ = coeff.diagonal();
         inv_diag_ = diag_.cwiseInverse();
         if (!inv_diag_.array().isFinite().all()) {
             throw invalid_argument(
@@ -87,16 +114,18 @@ public:
      */
     template <base::concepts::dense_vector_of<scalar_type> Right,
         base::concepts::dense_vector_of<scalar_type> Solution>
-    void iterate(const Right& right, Solution& solution) {
-        NUM_COLLECT_ASSERT(coeff_->rows() == coeff_->cols());
-        NUM_COLLECT_ASSERT(right.size() == coeff_->cols());
-        NUM_COLLECT_ASSERT(solution.size() == coeff_->cols());
+    void iterate(const Right& right, Solution& solution) const {
+        const auto& coeff_ref = coeff();
 
-        const index_type size = coeff_->rows();
+        NUM_COLLECT_ASSERT(coeff_ref.rows() == coeff_ref.cols());
+        NUM_COLLECT_ASSERT(right.size() == coeff_ref.cols());
+        NUM_COLLECT_ASSERT(solution.size() == coeff_ref.cols());
+
+        const index_type size = coeff_ref.rows();
         residual_ = static_cast<scalar_type>(0);
         for (index_type i = 0; i < size; ++i) {
             scalar_type numerator = right(i);
-            for (typename matrix_type::InnerIterator iter(*coeff_, i); iter;
+            for (typename matrix_type::InnerIterator iter(coeff_ref, i); iter;
                  ++iter) {
                 if (iter.index() != i) {
                     numerator -= iter.value() * solution(iter.index());
@@ -118,76 +147,30 @@ public:
      */
     template <base::concepts::dense_vector_of<scalar_type> Right,
         base::concepts::dense_vector_of<scalar_type> Solution>
-    void solve(const Right& right, Solution& solution) {
+    void solve_in_place(const Right& right, Solution& solution) const {
         iterations_ = 0;
         const scalar_type right_norm = right.squaredNorm();
-        const index_type size = right.size();
-        const index_type max_iterations =
-            (max_iterations_ > 0) ? max_iterations_ : size;
+        const index_type max_iterations = base_type::max_iterations();
         while (iterations_ < max_iterations) {
             iterate(right, solution);
             ++iterations_;
             using std::sqrt;
             residual_rate_ = sqrt(residual_ / right_norm);
-            if (residual_rate_ < tol_residual_rate_) {
+            if (residual_rate_ < base_type::tolerance()) {
                 break;
             }
         }
     }
 
-    /*!
-     * \brief Set the maximum number of iterations.
-     *
-     * \param[in] val Value.
-     * \return This.
-     */
-    auto max_iterations(index_type val) -> gauss_seidel_iterative_solver& {
-        if (val <= 0) {
-            throw invalid_argument("Invalid maximum number of iterations.");
-        }
-        max_iterations_ = val;
-        return *this;
-    }
-
-    /*!
-     * \brief Set the tolerance of rate of residual.
-     *
-     * \param[in] val Value.
-     * \return This.
-     */
-    auto tol_residual_rate(scalar_type val) -> gauss_seidel_iterative_solver& {
-        if (val <= static_cast<scalar_type>(0)) {
-            throw invalid_argument("Invalid tolerance of rate of residual.");
-        }
-        tol_residual_rate_ = val;
-        return *this;
-    }
-
 private:
     //! Number of iterations.
-    index_type iterations_{};
-
-    //! Default maximum number of iterations.
-    static constexpr index_type default_max_iterations = 1000;
-
-    //! Maximum number of iterations.
-    index_type max_iterations_{default_max_iterations};
+    mutable index_type iterations_{};
 
     //! Last residual.
-    scalar_type residual_{};
+    mutable scalar_type residual_{};
 
     //! Rate of last residual.
-    scalar_type residual_rate_{};
-
-    //! Default tolerance of rate of residual.
-    static constexpr auto default_tol_residual_rate =
-        Eigen::NumTraits<scalar_type>::dummy_precision();
-
-    //! Tolerance of rate of residual.
-    scalar_type tol_residual_rate_{default_tol_residual_rate};
-
-    //! Coefficient matrix.
-    const matrix_type* coeff_{nullptr};
+    mutable scalar_type residual_rate_{};
 
     //! Diagonal coefficients.
     vector_type diag_{};
