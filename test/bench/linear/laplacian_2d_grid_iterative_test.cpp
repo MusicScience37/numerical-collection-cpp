@@ -20,6 +20,7 @@
 #include <Eigen/IterativeLinearSolvers>
 #include <Eigen/OrderingMethods>
 #include <stat_bench/benchmark_macros.h>
+#include <stat_bench/current_invocation_context.h>
 #include <stat_bench/fixture_base.h>
 #include <stat_bench/memory_barrier.h>
 
@@ -65,6 +66,11 @@ public:
         return grid_width_;
     }
 
+    static void set_iterations(num_collect::index_type iterations) {
+        stat_bench::current_invocation_context().add_custom_output(
+            "iterations", static_cast<double>(iterations));
+    }
+
 private:
     num_collect::index_type size_{};
     num_collect::index_type grid_rows_{};
@@ -106,6 +112,11 @@ public:
         return grid_width_;
     }
 
+    static void set_iterations(num_collect::index_type iterations) {
+        stat_bench::current_invocation_context().add_custom_output(
+            "iterations", static_cast<double>(iterations));
+    }
+
 private:
     num_collect::index_type size_{};
     num_collect::index_type grid_rows_{};
@@ -128,6 +139,8 @@ STAT_BENCH_CASE_F(
         sol = solver.solve(right);
         stat_bench::memory_barrier();
     };
+
+    set_iterations(solver.iterations());
 }
 
 STAT_BENCH_CASE_F(
@@ -161,6 +174,8 @@ STAT_BENCH_CASE_F(
 
         stat_bench::memory_barrier();
     };
+
+    set_iterations(solver.iterations());
 }
 
 STAT_BENCH_CASE_F(
@@ -179,6 +194,8 @@ STAT_BENCH_CASE_F(
         sol = solver.solve(right);
         stat_bench::memory_barrier();
     };
+
+    set_iterations(solver.iterations());
 }
 
 STAT_BENCH_CASE_F(laplacian_2d_grid_iterative_slower_fixture,
@@ -197,4 +214,6 @@ STAT_BENCH_CASE_F(laplacian_2d_grid_iterative_slower_fixture,
         sol = solver.solve(right);
         stat_bench::memory_barrier();
     };
+
+    set_iterations(solver.iterations());
 }
