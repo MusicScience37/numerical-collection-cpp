@@ -73,6 +73,7 @@ TEMPLATE_TEST_CASE("num_collect::linear::gauss_seidel_iterative_solver", "",
         const scalar_type res_rate =
             (grid.mat() * sol - right).norm() / right.norm();
         CHECK(res_rate < Eigen::NumTraits<scalar_type>::dummy_precision());
+        CHECK(solver.iterations() > 1);
     }
 
     SECTION("solve with guess") {
@@ -83,6 +84,7 @@ TEMPLATE_TEST_CASE("num_collect::linear::gauss_seidel_iterative_solver", "",
         const scalar_type res_rate =
             (grid.mat() * sol - right).norm() / right.norm();
         CHECK(res_rate < Eigen::NumTraits<scalar_type>::dummy_precision());
+        CHECK(solver.iterations() == 1);
     }
 
     SECTION("try to use invalid coefficients") {

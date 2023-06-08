@@ -162,6 +162,28 @@ public:
         }
     }
 
+    /*!
+     * \brief Get the number of iterations.
+     *
+     * \note This value won't be updated in iterate function.
+     *
+     * \return Number of iterations.
+     */
+    [[nodiscard]] auto iterations() const noexcept -> index_type {
+        return iterations_;
+    }
+
+    /*!
+     * \brief Get the rate of the last residual.
+     *
+     * \note This value won't be updated in iterate function.
+     *
+     * \return Rate of the last residual.
+     */
+    [[nodiscard]] auto residual_rate() const noexcept -> index_type {
+        return residual_rate_;
+    }
+
 private:
     //! Number of iterations.
     mutable index_type iterations_{};
