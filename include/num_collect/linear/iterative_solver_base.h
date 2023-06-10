@@ -176,6 +176,7 @@ public:
     template <base::concepts::dense_vector_of<scalar_type> Right>
     [[nodiscard]] auto solve(const Right& right) const
         -> Eigen::Solve<Derived, Right> {
+        // TODO: Version for matrices.
         return Eigen::Solve<Derived, Right>(derived(), right);
     }
 
@@ -193,6 +194,7 @@ public:
     [[nodiscard]] auto solve_with_guess(
         const Right& right, const Solution& solution) const
         -> Eigen::SolveWithGuess<Derived, Right, Solution> {
+        // TODO: Version for matrices.
         return Eigen::SolveWithGuess<Derived, Right, Solution>(
             derived(), right, solution);
     }
@@ -210,8 +212,9 @@ public:
     void _solve_impl(  // NOLINT(readability-identifier-naming
                        // name required by Eigen.
         const Right& right, Solution& solution) const {
+        // TODO: Version for matrices.
         solution.setZero();
-        derived().solve_in_place(right, solution);
+        derived()._solve_with_guess_impl(right, solution);
     }
 
     /*!
@@ -227,7 +230,8 @@ public:
     void _solve_with_guess_impl(  // NOLINT(readability-identifier-naming
                                   // name required by Eigen.
         const Right& right, Solution& solution) const {
-        derived().solve_in_place(right, solution);
+        // TODO: Version for matrices.
+        derived().solve_vector_in_place(right, solution);
     }
 
 protected:

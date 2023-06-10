@@ -105,7 +105,7 @@ public:
     }
 
     /*!
-     * \brief Iterate once.
+     * \brief Iterate repeatedly until stop criterion is satisfied for a vector.
      *
      * \tparam Right Type of the right-hand-side vector.
      * \tparam Solution Type of the solution vector.
@@ -114,40 +114,7 @@ public:
      */
     template <base::concepts::dense_vector_of<scalar_type> Right,
         base::concepts::dense_vector_of<scalar_type> Solution>
-    void iterate(const Right& right, Solution& solution) const {
-        const auto& coeff_ref = coeff();
-
-        NUM_COLLECT_ASSERT(coeff_ref.rows() == coeff_ref.cols());
-        NUM_COLLECT_ASSERT(right.size() == coeff_ref.cols());
-        NUM_COLLECT_ASSERT(solution.size() == coeff_ref.cols());
-
-        const index_type size = coeff_ref.rows();
-        residual_ = static_cast<scalar_type>(0);
-        for (index_type i = 0; i < size; ++i) {
-            scalar_type numerator = right(i);
-            for (typename matrix_type::InnerIterator iter(coeff_ref, i); iter;
-                 ++iter) {
-                if (iter.index() != i) {
-                    numerator -= iter.value() * solution(iter.index());
-                }
-            }
-            const scalar_type row_residual = numerator - diag_(i) * solution(i);
-            solution(i) = numerator * inv_diag_(i);
-            residual_ += row_residual * row_residual;
-        }
-    }
-
-    /*!
-     * \brief Iterate repeatedly until stop criterion is satisfied.
-     *
-     * \tparam Right Type of the right-hand-side vector.
-     * \tparam Solution Type of the solution vector.
-     * \param[in] right Right-hand-side vector.
-     * \param[in,out] solution Solution vector.
-     */
-    template <base::concepts::dense_vector_of<scalar_type> Right,
-        base::concepts::dense_vector_of<scalar_type> Solution>
-    void solve_in_place(const Right& right, Solution& solution) const {
+    void solve_vector_in_place(const Right& right, Solution& solution) const {
         iterations_ = 0;
         const scalar_type right_norm = right.squaredNorm();
         const index_type max_iterations = base_type::max_iterations();
@@ -185,6 +152,39 @@ public:
     }
 
 private:
+    /*!
+     * \brief Iterate once.
+     *
+     * \tparam Right Type of the right-hand-side vector.
+     * \tparam Solution Type of the solution vector.
+     * \param[in] right Right-hand-side vector.
+     * \param[in,out] solution Solution vector.
+     */
+    template <base::concepts::dense_vector_of<scalar_type> Right,
+        base::concepts::dense_vector_of<scalar_type> Solution>
+    void iterate(const Right& right, Solution& solution) const {
+        const auto& coeff_ref = coeff();
+
+        NUM_COLLECT_ASSERT(coeff_ref.rows() == coeff_ref.cols());
+        NUM_COLLECT_ASSERT(right.size() == coeff_ref.cols());
+        NUM_COLLECT_ASSERT(solution.size() == coeff_ref.cols());
+
+        const index_type size = coeff_ref.rows();
+        residual_ = static_cast<scalar_type>(0);
+        for (index_type i = 0; i < size; ++i) {
+            scalar_type numerator = right(i);
+            for (typename matrix_type::InnerIterator iter(coeff_ref, i); iter;
+                 ++iter) {
+                if (iter.index() != i) {
+                    numerator -= iter.value() * solution(iter.index());
+                }
+            }
+            const scalar_type row_residual = numerator - diag_(i) * solution(i);
+            solution(i) = numerator * inv_diag_(i);
+            residual_ += row_residual * row_residual;
+        }
+    }
+
     //! Number of iterations.
     mutable index_type iterations_{};
 

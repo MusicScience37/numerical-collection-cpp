@@ -54,13 +54,14 @@ TEMPLATE_TEST_CASE("num_collect::linear::gauss_seidel_iterative_solver", "",
 
     gauss_seidel_iterative_solver<matrix_type> solver;
 
-    SECTION("iterate") {
+    SECTION("iterate only once") {
         solver.compute(grid.mat());
-        vector_type sol = vector_type::Zero(true_sol.size());
-        const scalar_type res0 = (grid.mat() * sol - right).squaredNorm();
+        const scalar_type res0 = right.squaredNorm();
 
-        solver.iterate(right, sol);
+        solver.max_iterations(1);
+        const vector_type sol = solver.solve(right);
 
+        CHECK(solver.iterations() == 1);
         const scalar_type res1 = (grid.mat() * sol - right).squaredNorm();
         CHECK(res1 < res0);
     }
