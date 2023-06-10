@@ -116,7 +116,8 @@ public:
                 "All diagonal elements of the coefficient matrix must not be "
                 "zero.");
         }
-        run_parallel_ = coeff.nonZeros() > 1000;  // NOLINT
+        run_parallel_ =
+            (coeff.nonZeros() / omp_get_max_threads() > 1000);  // NOLINT
     }
 
     /*!
@@ -253,9 +254,6 @@ private:
                     i, my_start_row, prev_sol_coeff);
             }
 
-#pragma omp critical
-            residual_ += my_residual;
-
 #pragma omp barrier
 
             // Backward update.
@@ -263,6 +261,9 @@ private:
                 process_row_backward(
                     coeff_ref, right, solution, i, my_last_row, prev_sol_coeff);
             }
+
+#pragma omp critical
+            residual_ += my_residual;
         }
     }
 
