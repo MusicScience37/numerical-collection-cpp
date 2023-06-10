@@ -33,5 +33,5 @@ auto main(int argc, const char** argv) -> int {
         std::max(static_cast<int>(num_procs * threads_rate), 2);
     omp_set_num_threads(num_threads);
 #endif
-    stat_bench::impl::default_main(argc, argv);
+    return stat_bench::impl::default_main(argc, argv);
 }
