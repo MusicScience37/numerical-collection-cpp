@@ -15,9 +15,9 @@
  */
 /*!
  * \file
- * \brief Definition of gauss_seidel_iterative_solver class.
+ * \brief Definition of parallel_symmetric_successive_over_relaxation class.
  */
-#include "num_collect/linear/gauss_seidel_iterative_solver.h"
+#include "num_collect/linear/parallel_symmetric_successive_over_relaxation.h"
 
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
@@ -27,9 +27,10 @@
 #include "num_collect/base/index_type.h"
 #include "num_prob_collect/linear/laplacian_2d_grid.h"
 
-TEMPLATE_TEST_CASE("num_collect::linear::gauss_seidel_iterative_solver", "",
+TEMPLATE_TEST_CASE(
+    "num_collect::linear::parallel_symmetric_successive_over_relaxation", "",
     float, double, long double) {
-    using num_collect::linear::gauss_seidel_iterative_solver;
+    using num_collect::linear::parallel_symmetric_successive_over_relaxation;
     using num_prob_collect::finite_element::laplacian_2d_grid;
 
     using scalar_type = TestType;
@@ -52,10 +53,11 @@ TEMPLATE_TEST_CASE("num_collect::linear::gauss_seidel_iterative_solver", "",
 
     const vector_type right = grid.mat() * true_sol;
 
-    gauss_seidel_iterative_solver<matrix_type> solver;
+    parallel_symmetric_successive_over_relaxation<matrix_type> solver;
 
-    SECTION("iterate only once") {
+    SECTION("iterate only once (parallel)") {
         solver.compute(grid.mat());
+        solver.run_parallel(true);
         const scalar_type res0 = right.squaredNorm();
 
         solver.max_iterations(1);
@@ -66,8 +68,34 @@ TEMPLATE_TEST_CASE("num_collect::linear::gauss_seidel_iterative_solver", "",
         CHECK(res1 < res0);
     }
 
-    SECTION("solve") {
+    SECTION("iterate only once (parallel)") {
         solver.compute(grid.mat());
+        solver.run_parallel(false);
+        const scalar_type res0 = right.squaredNorm();
+
+        solver.max_iterations(1);
+        const vector_type sol = solver.solve(right);
+
+        CHECK(solver.iterations() == 1);
+        const scalar_type res1 = (grid.mat() * sol - right).squaredNorm();
+        CHECK(res1 < res0);
+    }
+
+    SECTION("solve (parallel)") {
+        solver.compute(grid.mat());
+        solver.run_parallel(true);
+
+        const vector_type sol = solver.solve(right);
+
+        const scalar_type res_rate =
+            (grid.mat() * sol - right).norm() / right.norm();
+        CHECK(res_rate < Eigen::NumTraits<scalar_type>::dummy_precision());
+        CHECK(solver.iterations() > 1);
+    }
+
+    SECTION("solve (not parallel)") {
+        solver.compute(grid.mat());
+        solver.run_parallel(false);
 
         const vector_type sol = solver.solve(right);
 

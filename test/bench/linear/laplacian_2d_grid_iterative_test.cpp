@@ -20,15 +20,16 @@
 #include <Eigen/IterativeLinearSolvers>
 #include <Eigen/OrderingMethods>
 #include <stat_bench/benchmark_macros.h>
+#include <stat_bench/current_invocation_context.h>
 #include <stat_bench/fixture_base.h>
 #include <stat_bench/memory_barrier.h>
 
 #include "laplacian_2d_grid_make_sol.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/linear/gauss_seidel_iterative_solver.h"
+#include "num_collect/linear/parallel_symmetric_successive_over_relaxation.h"
+#include "num_collect/linear/symmetric_successive_over_relaxation.h"
 #include "num_prob_collect/linear/laplacian_2d_grid.h"
-
-STAT_BENCH_MAIN
 
 class laplacian_2d_grid_iterative_fixture : public stat_bench::FixtureBase {
 public:
@@ -63,6 +64,18 @@ public:
 
     [[nodiscard]] auto grid_width() const noexcept -> double {
         return grid_width_;
+    }
+
+    static void set_iterations(num_collect::index_type iterations) {
+        stat_bench::current_invocation_context().add_custom_output(
+            "iterations", static_cast<double>(iterations));
+    }
+
+    template <typename Matrix, typename Vector>
+    static void set_residual(
+        const Matrix& coeff, const Vector& solution, const Vector& right) {
+        stat_bench::current_invocation_context().add_custom_output(
+            "residual", (coeff * solution - right).norm() / right.norm());
     }
 
 private:
@@ -106,6 +119,18 @@ public:
         return grid_width_;
     }
 
+    static void set_iterations(num_collect::index_type iterations) {
+        stat_bench::current_invocation_context().add_custom_output(
+            "iterations", static_cast<double>(iterations));
+    }
+
+    template <typename Matrix, typename Vector>
+    static void set_residual(
+        const Matrix& coeff, const Vector& solution, const Vector& right) {
+        stat_bench::current_invocation_context().add_custom_output(
+            "residual", (coeff * solution - right).norm() / right.norm());
+    }
+
 private:
     num_collect::index_type size_{};
     num_collect::index_type grid_rows_{};
@@ -114,7 +139,7 @@ private:
 
 STAT_BENCH_CASE_F(
     laplacian_2d_grid_iterative_fixture, "laplacian_2d_grid", "CG") {
-    using mat_type = Eigen::SparseMatrix<double>;
+    using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 
     num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
         grid_rows(), grid_cols(), grid_width()};
@@ -128,44 +153,37 @@ STAT_BENCH_CASE_F(
         sol = solver.solve(right);
         stat_bench::memory_barrier();
     };
+
+    set_iterations(solver.iterations());
+    set_residual(grid.mat(), sol, right);
 }
 
 STAT_BENCH_CASE_F(
-    laplacian_2d_grid_iterative_fixture, "laplacian_2d_grid", "CG(AMD)") {
-    using mat_type = Eigen::SparseMatrix<double>;
+    laplacian_2d_grid_iterative_fixture, "laplacian_2d_grid", "ICCG") {
+    using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 
     num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
         grid_rows(), grid_cols(), grid_width()};
     const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
     const Eigen::VectorXd right = grid.mat() * true_sol;
-    Eigen::ConjugateGradient<mat_type, Eigen::Upper | Eigen::Lower> solver;
+    Eigen::ConjugateGradient<mat_type, Eigen::Upper | Eigen::Lower,
+        Eigen::IncompleteCholesky<double>>
+        solver;
     Eigen::VectorXd sol;
 
-    Eigen::AMDOrdering<int> ordering;
-    Eigen::PermutationMatrix<Eigen::Dynamic> perm;
-    Eigen::PermutationMatrix<Eigen::Dynamic> inv_perm;
-    mat_type reordered_mat;
-    Eigen::VectorXd reordered_right;
-    Eigen::VectorXd reordered_sol;
-
     STAT_BENCH_MEASURE() {
-        ordering(grid.mat().selfadjointView<Eigen::Lower>(), perm);
-        inv_perm = perm.inverse();
-        reordered_mat = grid.mat().twistedBy(perm);
-        reordered_right = perm * right;
-
-        solver.compute(reordered_mat);
-        reordered_sol = solver.solve(reordered_right);
-
-        sol = inv_perm * reordered_sol;
-
+        solver.compute(grid.mat());
+        sol = solver.solve(right);
         stat_bench::memory_barrier();
     };
+
+    set_iterations(solver.iterations());
+    set_residual(grid.mat(), sol, right);
 }
 
 STAT_BENCH_CASE_F(
     laplacian_2d_grid_iterative_fixture, "laplacian_2d_grid", "BiCGstab") {
-    using mat_type = Eigen::SparseMatrix<double>;
+    using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 
     num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
         grid_rows(), grid_cols(), grid_width()};
@@ -179,6 +197,9 @@ STAT_BENCH_CASE_F(
         sol = solver.solve(right);
         stat_bench::memory_barrier();
     };
+
+    set_iterations(solver.iterations());
+    set_residual(grid.mat(), sol, right);
 }
 
 STAT_BENCH_CASE_F(laplacian_2d_grid_iterative_slower_fixture,
@@ -194,8 +215,154 @@ STAT_BENCH_CASE_F(laplacian_2d_grid_iterative_slower_fixture,
 
     STAT_BENCH_MEASURE() {
         solver.compute(grid.mat());
-        sol = Eigen::VectorXd::Zero(grid.mat_size());
-        solver.solve(right, sol);
+        sol = solver.solve(right);
         stat_bench::memory_barrier();
     };
+
+    set_iterations(solver.iterations());
+    set_residual(grid.mat(), sol, right);
+}
+
+STAT_BENCH_CASE_F(laplacian_2d_grid_iterative_slower_fixture,
+    "laplacian_2d_grid", "SSOR(0.5)") {
+    using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
+
+    num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
+        grid_rows(), grid_cols(), grid_width()};
+    const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
+    const Eigen::VectorXd right = grid.mat() * true_sol;
+    num_collect::linear::symmetric_successive_over_relaxation<mat_type> solver;
+    Eigen::VectorXd sol;
+
+    solver.relaxation_coeff(0.5);  // NOLINT
+
+    STAT_BENCH_MEASURE() {
+        solver.compute(grid.mat());
+        sol = solver.solve(right);
+        stat_bench::memory_barrier();
+    };
+
+    set_iterations(solver.iterations());
+    set_residual(grid.mat(), sol, right);
+}
+
+STAT_BENCH_CASE_F(laplacian_2d_grid_iterative_slower_fixture,
+    "laplacian_2d_grid", "SSOR(1.0)") {
+    using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
+
+    num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
+        grid_rows(), grid_cols(), grid_width()};
+    const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
+    const Eigen::VectorXd right = grid.mat() * true_sol;
+    num_collect::linear::symmetric_successive_over_relaxation<mat_type> solver;
+    Eigen::VectorXd sol;
+
+    solver.relaxation_coeff(1.0);  // NOLINT
+
+    STAT_BENCH_MEASURE() {
+        solver.compute(grid.mat());
+        sol = solver.solve(right);
+        stat_bench::memory_barrier();
+    };
+
+    set_iterations(solver.iterations());
+    set_residual(grid.mat(), sol, right);
+}
+
+STAT_BENCH_CASE_F(laplacian_2d_grid_iterative_slower_fixture,
+    "laplacian_2d_grid", "SSOR(1.5)") {
+    using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
+
+    num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
+        grid_rows(), grid_cols(), grid_width()};
+    const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
+    const Eigen::VectorXd right = grid.mat() * true_sol;
+    num_collect::linear::symmetric_successive_over_relaxation<mat_type> solver;
+    Eigen::VectorXd sol;
+
+    solver.relaxation_coeff(1.5);  // NOLINT
+
+    STAT_BENCH_MEASURE() {
+        solver.compute(grid.mat());
+        sol = solver.solve(right);
+        stat_bench::memory_barrier();
+    };
+
+    set_iterations(solver.iterations());
+    set_residual(grid.mat(), sol, right);
+}
+
+STAT_BENCH_CASE_F(laplacian_2d_grid_iterative_slower_fixture,
+    "laplacian_2d_grid", "ParallelSSOR(0.5)") {
+    using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
+
+    num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
+        grid_rows(), grid_cols(), grid_width()};
+    const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
+    const Eigen::VectorXd right = grid.mat() * true_sol;
+    num_collect::linear::parallel_symmetric_successive_over_relaxation<mat_type>
+        solver;
+    Eigen::VectorXd sol;
+
+    solver.relaxation_coeff(0.5);  // NOLINT
+
+    STAT_BENCH_MEASURE() {
+        solver.compute(grid.mat());
+        solver.run_parallel(true);
+        sol = solver.solve(right);
+        stat_bench::memory_barrier();
+    };
+
+    set_iterations(solver.iterations());
+    set_residual(grid.mat(), sol, right);
+}
+
+STAT_BENCH_CASE_F(laplacian_2d_grid_iterative_slower_fixture,
+    "laplacian_2d_grid", "ParallelSSOR(1.0)") {
+    using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
+
+    num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
+        grid_rows(), grid_cols(), grid_width()};
+    const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
+    const Eigen::VectorXd right = grid.mat() * true_sol;
+    num_collect::linear::parallel_symmetric_successive_over_relaxation<mat_type>
+        solver;
+    Eigen::VectorXd sol;
+
+    solver.relaxation_coeff(1.0);  // NOLINT
+
+    STAT_BENCH_MEASURE() {
+        solver.compute(grid.mat());
+        solver.run_parallel(true);
+        sol = solver.solve(right);
+        stat_bench::memory_barrier();
+    };
+
+    set_iterations(solver.iterations());
+    set_residual(grid.mat(), sol, right);
+}
+
+STAT_BENCH_CASE_F(laplacian_2d_grid_iterative_slower_fixture,
+    "laplacian_2d_grid", "ParallelSSOR(1.5)") {
+    using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
+
+    num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
+        grid_rows(), grid_cols(), grid_width()};
+    const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
+    const Eigen::VectorXd right = grid.mat() * true_sol;
+    num_collect::linear::parallel_symmetric_successive_over_relaxation<mat_type>
+        solver;
+    Eigen::VectorXd sol;
+
+    solver.relaxation_coeff(1.0);  // NOLINT
+
+    STAT_BENCH_MEASURE() {
+        solver.compute(grid.mat());
+        solver.run_parallel(true);
+        sol = solver.solve(right);
+        stat_bench::memory_barrier();
+    };
+
+    set_iterations(solver.iterations());
+    set_residual(grid.mat(), sol, right);
 }

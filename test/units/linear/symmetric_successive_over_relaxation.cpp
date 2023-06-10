@@ -15,9 +15,9 @@
  */
 /*!
  * \file
- * \brief Definition of gauss_seidel_iterative_solver class.
+ * \brief Definition of symmetric_successive_over_relaxation class.
  */
-#include "num_collect/linear/gauss_seidel_iterative_solver.h"
+#include "num_collect/linear/symmetric_successive_over_relaxation.h"
 
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
@@ -27,9 +27,9 @@
 #include "num_collect/base/index_type.h"
 #include "num_prob_collect/linear/laplacian_2d_grid.h"
 
-TEMPLATE_TEST_CASE("num_collect::linear::gauss_seidel_iterative_solver", "",
-    float, double, long double) {
-    using num_collect::linear::gauss_seidel_iterative_solver;
+TEMPLATE_TEST_CASE("num_collect::linear::symmetric_successive_over_relaxation",
+    "", float, double, long double) {
+    using num_collect::linear::symmetric_successive_over_relaxation;
     using num_prob_collect::finite_element::laplacian_2d_grid;
 
     using scalar_type = TestType;
@@ -52,7 +52,7 @@ TEMPLATE_TEST_CASE("num_collect::linear::gauss_seidel_iterative_solver", "",
 
     const vector_type right = grid.mat() * true_sol;
 
-    gauss_seidel_iterative_solver<matrix_type> solver;
+    symmetric_successive_over_relaxation<matrix_type> solver;
 
     SECTION("iterate only once") {
         solver.compute(grid.mat());

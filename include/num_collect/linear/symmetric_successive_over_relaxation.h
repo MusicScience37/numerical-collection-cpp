@@ -15,11 +15,9 @@
  */
 /*!
  * \file
- * \brief Definition of gauss_seidel_iterative_solver class.
+ * \brief Definition of symmetric_successive_over_relaxation class.
  */
 #pragma once
-
-// IWYU pragma: no_include <string_view>
 
 #include <cmath>
 
@@ -36,17 +34,17 @@
 namespace num_collect::linear {
 
 template <base::concepts::sparse_matrix Matrix>
-class gauss_seidel_iterative_solver;
+class symmetric_successive_over_relaxation;
 
 namespace impl {
 
 /*!
- * \brief Traits of gauss_seidel_iterative_solver class.
+ * \brief Traits of symmetric_successive_over_relaxation class.
  *
  * \tparam Matrix Type of the matrix.
  */
 template <base::concepts::sparse_matrix Matrix>
-struct iterative_solver_traits<gauss_seidel_iterative_solver<Matrix>> {
+struct iterative_solver_traits<symmetric_successive_over_relaxation<Matrix>> {
     //! Type of the matrix.
     using matrix_type = Matrix;
 };
@@ -54,14 +52,15 @@ struct iterative_solver_traits<gauss_seidel_iterative_solver<Matrix>> {
 }  // namespace impl
 
 /*!
- * \brief Class to solve linear equations using Gauss-Seidel iteration
- * \cite Golub2013.
+ * \brief Class to solve linear equations using symmetric successive
+ * over-relaxation \cite Golub2013.
  *
  * \tparam Matrix Type of the matrix.
  */
 template <base::concepts::sparse_matrix Matrix>
-class gauss_seidel_iterative_solver
-    : public iterative_solver_base<gauss_seidel_iterative_solver<Matrix>> {
+class symmetric_successive_over_relaxation
+    : public iterative_solver_base<
+          symmetric_successive_over_relaxation<Matrix>> {
     static_assert(Matrix::IsRowMajor == 1, "Row major matrix is required.");
     static_assert(base::concepts::real_scalar<typename Matrix::Scalar>,
         "Complex matrices are not supported.");
@@ -69,7 +68,7 @@ class gauss_seidel_iterative_solver
 public:
     //! Type of the base class.
     using base_type =
-        iterative_solver_base<gauss_seidel_iterative_solver<Matrix>>;
+        iterative_solver_base<symmetric_successive_over_relaxation<Matrix>>;
 
     using typename base_type::matrix_type;
     using typename base_type::real_scalar_type;
@@ -86,7 +85,7 @@ public:
     /*!
      * \brief Constructor.
      */
-    gauss_seidel_iterative_solver() = default;
+    symmetric_successive_over_relaxation() = default;
 
     /*!
      * \brief Prepare to solve.
@@ -97,6 +96,7 @@ public:
         base_type::compute(coeff);
         diag_ = coeff.diagonal();
         inv_diag_ = diag_.cwiseInverse();
+        intermidiate_solution_.resize(coeff.cols());
         if (!inv_diag_.array().isFinite().all()) {
             throw invalid_argument(
                 "All diagonal elements of the coefficient matrix must not be "
@@ -126,6 +126,11 @@ public:
         const index_type max_iterations = base_type::max_iterations();
         while (iterations_ < max_iterations) {
             iterate(coeff_ref, right, solution);
+            if (!std::isfinite(residual_)) {
+                throw algorithm_failure(
+                    "Failure in "
+                    "symmetric_successive_over_relaxation.");
+            }
             ++iterations_;
             using std::sqrt;
             residual_rate_ = sqrt(residual_ / right_norm);
@@ -157,6 +162,22 @@ public:
         return residual_rate_;
     }
 
+    /*!
+     * \brief Set the relaxation coefficient.
+     *
+     * \param[in] val Relaxation coefficient.
+     * \return This.
+     */
+    auto relaxation_coeff(const scalar_type& val)
+        -> symmetric_successive_over_relaxation& {
+        if (val <= static_cast<scalar_type>(0) ||
+            static_cast<scalar_type>(2) <= val) {
+            throw invalid_argument("Invalid relaxation coefficient.");
+        }
+        relaxation_coeff_ = val;
+        return *this;
+    }
+
 private:
     /*!
      * \brief Iterate once.
@@ -172,18 +193,43 @@ private:
     void iterate(const matrix_type& coeff_ref, const Right& right,
         Solution& solution) const {
         const index_type size = coeff_ref.rows();
+        const scalar_type prev_sol_coeff =
+            static_cast<scalar_type>(1) - relaxation_coeff_;
         residual_ = static_cast<scalar_type>(0);
+
+        // Forward update.
         for (index_type i = 0; i < size; ++i) {
             scalar_type numerator = right(i);
             for (typename matrix_type::InnerIterator iter(coeff_ref, i); iter;
                  ++iter) {
-                if (iter.index() != i) {
+                if (iter.index() < i) {
+                    numerator -=
+                        iter.value() * intermidiate_solution_(iter.index());
+                } else if (iter.index() > i) {
                     numerator -= iter.value() * solution(iter.index());
                 }
             }
             const scalar_type row_residual = numerator - diag_(i) * solution(i);
-            solution(i) = numerator * inv_diag_(i);
+            intermidiate_solution_(i) =
+                relaxation_coeff_ * numerator * inv_diag_(i) +
+                prev_sol_coeff * solution(i);
             residual_ += row_residual * row_residual;
+        }
+
+        // Backward update.
+        for (index_type i = size - 1; i >= 0; --i) {
+            scalar_type numerator = right(i);
+            for (typename matrix_type::InnerIterator iter(coeff_ref, i); iter;
+                 ++iter) {
+                if (iter.index() < i) {
+                    numerator -=
+                        iter.value() * intermidiate_solution_(iter.index());
+                } else if (iter.index() > i) {
+                    numerator -= iter.value() * solution(iter.index());
+                }
+            }
+            solution(i) = relaxation_coeff_ * numerator * inv_diag_(i) +
+                prev_sol_coeff * intermidiate_solution_(i);
         }
     }
 
@@ -196,11 +242,17 @@ private:
     //! Rate of last residual.
     mutable scalar_type residual_rate_{};
 
+    //! Relaxation coefficient.
+    scalar_type relaxation_coeff_{static_cast<scalar_type>(1)};
+
     //! Diagonal coefficients.
     vector_type diag_{};
 
     //! Inverse of diagonal coefficients.
     vector_type inv_diag_{};
+
+    //! Intermidiate solution vector.
+    mutable vector_type intermidiate_solution_{};
 };
 
 }  // namespace num_collect::linear

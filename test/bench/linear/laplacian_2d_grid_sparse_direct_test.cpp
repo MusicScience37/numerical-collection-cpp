@@ -62,6 +62,13 @@ public:
         return grid_width_;
     }
 
+    template <typename Matrix, typename Vector>
+    static void set_residual(
+        const Matrix& coeff, const Vector& solution, const Vector& right) {
+        stat_bench::current_invocation_context().add_custom_output(
+            "residual", (coeff * solution - right).norm() / right.norm());
+    }
+
 private:
     num_collect::index_type size_{};
     num_collect::index_type grid_rows_{};
@@ -84,6 +91,8 @@ STAT_BENCH_CASE_F(laplacian_2d_grid_sparse_direct_fixture, "laplacian_2d_grid",
         sol = solver.solve(right);
         stat_bench::memory_barrier();
     };
+
+    set_residual(grid.mat(), sol, right);
 }
 
 STAT_BENCH_CASE_F(laplacian_2d_grid_sparse_direct_fixture, "laplacian_2d_grid",
@@ -102,4 +111,6 @@ STAT_BENCH_CASE_F(laplacian_2d_grid_sparse_direct_fixture, "laplacian_2d_grid",
         sol = solver.solve(right);
         stat_bench::memory_barrier();
     };
+
+    set_residual(grid.mat(), sol, right);
 }
