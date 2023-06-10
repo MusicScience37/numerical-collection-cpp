@@ -39,7 +39,7 @@ class symmetric_successive_over_relaxation;
 namespace impl {
 
 /*!
- * \brief Traits of gauss_seidel_iterative_solver class.
+ * \brief Traits of symmetric_successive_over_relaxation class.
  *
  * \tparam Matrix Type of the matrix.
  */
@@ -126,6 +126,11 @@ public:
         const index_type max_iterations = base_type::max_iterations();
         while (iterations_ < max_iterations) {
             iterate(coeff_ref, right, solution);
+            if (!std::isfinite(residual_)) {
+                throw algorithm_failure(
+                    "Failure in "
+                    "symmetric_successive_over_relaxation.");
+            }
             ++iterations_;
             using std::sqrt;
             residual_rate_ = sqrt(residual_ / right_norm);

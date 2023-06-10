@@ -29,6 +29,7 @@ Checks: >
   concurrency-*,
   boost-*,
   openmp-*,
+    -openmp-use-default-none,
 
 # Ignored checks:
 #
@@ -44,6 +45,7 @@ Checks: >
 # - cert-err58-cpp produces warnings in all tests due to Catch2 library.
 # - cppcoreguidelines-avoid-non-const-global-variables produces warnings in all tests due to Catch2 library.
 # - readability-identifier-length prevent traditional codes.
+# - openmp-use-default-none cannot be fixed when class members are used as usual in object-oriented programming.
 
 CheckOptions:
   # Naming Conventions
