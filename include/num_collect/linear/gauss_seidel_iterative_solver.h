@@ -115,11 +115,17 @@ public:
     template <base::concepts::dense_vector_of<scalar_type> Right,
         base::concepts::dense_vector_of<scalar_type> Solution>
     void solve_vector_in_place(const Right& right, Solution& solution) const {
+        const auto& coeff_ref = coeff();
+
+        NUM_COLLECT_ASSERT(coeff_ref.rows() == coeff_ref.cols());
+        NUM_COLLECT_ASSERT(right.size() == coeff_ref.cols());
+        NUM_COLLECT_ASSERT(solution.size() == coeff_ref.cols());
+
         iterations_ = 0;
         const scalar_type right_norm = right.squaredNorm();
         const index_type max_iterations = base_type::max_iterations();
         while (iterations_ < max_iterations) {
-            iterate(right, solution);
+            iterate(coeff_ref, right, solution);
             ++iterations_;
             using std::sqrt;
             residual_rate_ = sqrt(residual_ / right_norm);
@@ -157,18 +163,14 @@ private:
      *
      * \tparam Right Type of the right-hand-side vector.
      * \tparam Solution Type of the solution vector.
+     * \param[in] coeff_ref Coefficient matrix.
      * \param[in] right Right-hand-side vector.
      * \param[in,out] solution Solution vector.
      */
     template <base::concepts::dense_vector_of<scalar_type> Right,
         base::concepts::dense_vector_of<scalar_type> Solution>
-    void iterate(const Right& right, Solution& solution) const {
-        const auto& coeff_ref = coeff();
-
-        NUM_COLLECT_ASSERT(coeff_ref.rows() == coeff_ref.cols());
-        NUM_COLLECT_ASSERT(right.size() == coeff_ref.cols());
-        NUM_COLLECT_ASSERT(solution.size() == coeff_ref.cols());
-
+    void iterate(const matrix_type& coeff_ref, const Right& right,
+        Solution& solution) const {
         const index_type size = coeff_ref.rows();
         residual_ = static_cast<scalar_type>(0);
         for (index_type i = 0; i < size; ++i) {
