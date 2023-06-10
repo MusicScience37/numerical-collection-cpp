@@ -55,8 +55,9 @@ TEMPLATE_TEST_CASE(
 
     parallel_symmetric_successive_over_relaxation<matrix_type> solver;
 
-    SECTION("iterate only once") {
+    SECTION("iterate only once (parallel)") {
         solver.compute(grid.mat());
+        solver.run_parallel(true);
         const scalar_type res0 = right.squaredNorm();
 
         solver.max_iterations(1);
@@ -67,8 +68,34 @@ TEMPLATE_TEST_CASE(
         CHECK(res1 < res0);
     }
 
-    SECTION("solve") {
+    SECTION("iterate only once (parallel)") {
         solver.compute(grid.mat());
+        solver.run_parallel(false);
+        const scalar_type res0 = right.squaredNorm();
+
+        solver.max_iterations(1);
+        const vector_type sol = solver.solve(right);
+
+        CHECK(solver.iterations() == 1);
+        const scalar_type res1 = (grid.mat() * sol - right).squaredNorm();
+        CHECK(res1 < res0);
+    }
+
+    SECTION("solve (parallel)") {
+        solver.compute(grid.mat());
+        solver.run_parallel(true);
+
+        const vector_type sol = solver.solve(right);
+
+        const scalar_type res_rate =
+            (grid.mat() * sol - right).norm() / right.norm();
+        CHECK(res_rate < Eigen::NumTraits<scalar_type>::dummy_precision());
+        CHECK(solver.iterations() > 1);
+    }
+
+    SECTION("solve (not parallel)") {
+        solver.compute(grid.mat());
+        solver.run_parallel(false);
 
         const vector_type sol = solver.solve(right);
 
