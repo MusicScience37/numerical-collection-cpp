@@ -222,6 +222,9 @@ static analysis:
     - cd $BUILD_DIR
     - cmake ..
       -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake
+      -DVCPKG_TARGET_TRIPLET=x64-linux-llvm
+      -DVCPKG_HOST_TRIPLET=x64-linux-llvm
+      -DCMAKE_CXX_FLAGS=-stdlib=libc++
       -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
       -DNUM_COLLECT_TESTING:BOOL=ON
       -DNUM_COLLECT_ENABLE_BENCH=ON
@@ -243,10 +246,12 @@ clang coverage:
     - cd $BUILD_DIR
     - cmake ..
       -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake
+      -DVCPKG_TARGET_TRIPLET=x64-linux-llvm
+      -DVCPKG_HOST_TRIPLET=x64-linux-llvm
       -DCMAKE_BUILD_TYPE=Debug
       -DNUM_COLLECT_TESTING:BOOL=ON
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
-      "-DCMAKE_CXX_FLAGS=-fprofile-instr-generate -fcoverage-mapping"
+      "-DCMAKE_CXX_FLAGS=-stdlib=libc++ -fprofile-instr-generate -fcoverage-mapping"
       "-DCMAKE_MODULE_LINKER_FLAGS=-fprofile-instr-generate -fcoverage-mapping"
       -DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON
     - mkdir coverage
@@ -289,6 +294,9 @@ test asan ubsan:
     - cd $BUILD_DIR
     - cmake ..
       -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake
+      -DVCPKG_TARGET_TRIPLET=x64-linux-llvm
+      -DVCPKG_HOST_TRIPLET=x64-linux-llvm
+      -DCMAKE_CXX_FLAGS=-stdlib=libc++
       -DCMAKE_BUILD_TYPE=Debug
       -DNUM_COLLECT_TESTING:BOOL=ON
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON

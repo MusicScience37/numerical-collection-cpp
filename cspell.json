@@ -73,6 +73,7 @@
     "Doxyfile",
     "doxygen",
     "doxylink",
+    "DVCPKG",
     "Eigen",
     "Elden",
     "endfunction",
