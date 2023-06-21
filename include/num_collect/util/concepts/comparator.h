@@ -32,7 +32,7 @@ namespace num_collect::util::concepts {
  */
 template <typename C, typename T, typename U>
 concept comparator = requires(const C& c, const T& t, const U& u) {
-    { c(t, u) } -> base::concepts::decayed_to<bool>;
-};
+                         { c(t, u) } -> base::concepts::decayed_to<bool>;
+                     };
 
 }  // namespace num_collect::util::concepts

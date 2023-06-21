@@ -26,15 +26,17 @@
 namespace num_collect::ode::concepts {
 
 template <typename T>
-concept time_differentiable_problem = problem<T> && requires() {
-    requires T::allowed_evaluations.allows(
-        evaluation_type{.time_derivative = true});
+concept time_differentiable_problem =
+    problem<T> && requires() {
+                      requires T::allowed_evaluations.allows(
+                          evaluation_type{.time_derivative = true});
 
-    requires requires(const T& obj) {
-        {
-            obj.time_derivative()
-            } -> base::concepts::const_reference_of<typename T::variable_type>;
-    };
-};
+                      requires requires(const T& obj) {
+                                   {
+                                       obj.time_derivative()
+                                       } -> base::concepts::const_reference_of<
+                                           typename T::variable_type>;
+                               };
+                  };
 
 }  // namespace num_collect::ode::concepts

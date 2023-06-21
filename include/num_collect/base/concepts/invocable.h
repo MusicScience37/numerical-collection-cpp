@@ -33,9 +33,10 @@ namespace concepts {
  * \tparam Args Type of arguments.
  */
 template <typename Func, typename... Args>
-concept invocable = requires(Func&& func, Args&&... args) {
-    std::invoke(std::forward<Func>(func), std::forward<Args>(args)...);
-};
+concept invocable =
+    requires(Func&& func, Args&&... args) {
+        std::invoke(std::forward<Func>(func), std::forward<Args>(args)...);
+    };
 
 }  // namespace concepts
 }  // namespace base
