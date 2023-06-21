@@ -31,10 +31,11 @@ namespace concepts {
  * \tparam T Type.
  */
 template <typename T>
-concept dense_vector = dense_matrix<T> && requires {
-    T::ColsAtCompileTime;
-    requires T::ColsAtCompileTime == 1;
-};
+concept dense_vector =
+    dense_matrix<T> && requires {
+                           T::ColsAtCompileTime;
+                           requires T::ColsAtCompileTime == 1;
+                       };
 
 }  // namespace concepts
 }  // namespace base

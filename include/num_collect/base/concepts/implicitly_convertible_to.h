@@ -30,9 +30,8 @@ namespace concepts {
  * \tparam To Type to convert to.
  */
 template <typename From, typename To>
-concept implicitly_convertible_to = requires(const From& from, To& to) {
-    to = from;
-};
+concept implicitly_convertible_to =
+    requires(const From& from, To& to) { to = from; };
 
 }  // namespace concepts
 }  // namespace base

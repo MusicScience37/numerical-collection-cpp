@@ -43,8 +43,8 @@ constexpr auto default_step_size_upper_limit = static_cast<Scalar>(1);
  * \tparam Scalar Type of scalars.
  */
 template <base::concepts::real_scalar Scalar>
-constexpr Scalar default_step_size_lower_limit = constants::sqrt(
-    std::numeric_limits<Scalar>::epsilon());
+constexpr Scalar default_step_size_lower_limit =
+    constants::sqrt(std::numeric_limits<Scalar>::epsilon());
 
 }  // namespace impl
 

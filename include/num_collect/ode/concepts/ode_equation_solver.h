@@ -36,30 +36,30 @@ namespace num_collect::ode::concepts {
 template <typename T>
 concept ode_equation_solver = base::concepts::iterative_solver<T> &&
     requires() {
-    typename T::problem_type;
-    requires problem<typename T::problem_type>;
+        typename T::problem_type;
+        requires problem<typename T::problem_type>;
 
-    typename T::variable_type;
-    requires std::is_same_v<typename T::variable_type,
-        typename T::problem_type::variable_type>;
+        typename T::variable_type;
+        requires std::is_same_v<typename T::variable_type,
+            typename T::problem_type::variable_type>;
 
-    typename T::scalar_type;
-    requires std::is_same_v<typename T::scalar_type,
-        typename T::problem_type::scalar_type>;
+        typename T::scalar_type;
+        requires std::is_same_v<typename T::scalar_type,
+            typename T::problem_type::scalar_type>;
 
-    T();
+        T();
 
-    requires requires(
-        T & obj, const error_tolerances<typename T::variable_type>& val) {
-        obj.tolerances(val);
+        requires requires(
+            T & obj, const error_tolerances<typename T::variable_type>& val) {
+                     obj.tolerances(val);
+                 };
+
+        requires requires(const T& obj) {
+                     {
+                         obj.tolerances()
+                         } -> base::concepts::const_reference_of<
+                             error_tolerances<typename T::variable_type>>;
+                 };
     };
-
-    requires requires(const T& obj) {
-        {
-            obj.tolerances()
-            } -> base::concepts::const_reference_of<
-                error_tolerances<typename T::variable_type>>;
-    };
-};
 
 }  // namespace num_collect::ode::concepts

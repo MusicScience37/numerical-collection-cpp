@@ -33,9 +33,9 @@ namespace num_collect::opt::concepts {
 template <typename T>
 concept differentiable_objective_function = objective_function<T> &&
     requires(const T& obj) {
-    {
-        obj.gradient()
-        } -> base::concepts::const_reference_of<typename T::variable_type>;
-};
+        {
+            obj.gradient()
+            } -> base::concepts::const_reference_of<typename T::variable_type>;
+    };
 
 }  // namespace num_collect::opt::concepts

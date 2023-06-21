@@ -34,10 +34,11 @@ namespace concepts {
  * \tparam Scalar Type of the scalars.
  */
 template <typename T, typename Scalar>
-concept dense_vector_of = dense_vector<T> && requires {
-    typename T::Scalar;
-    requires std::is_same_v<typename T::Scalar, Scalar>;
-};
+concept dense_vector_of =
+    dense_vector<T> && requires {
+                           typename T::Scalar;
+                           requires std::is_same_v<typename T::Scalar, Scalar>;
+                       };
 
 }  // namespace concepts
 }  // namespace base

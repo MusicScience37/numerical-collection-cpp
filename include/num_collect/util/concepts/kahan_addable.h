@@ -28,9 +28,9 @@ namespace num_collect::util::concepts {
  */
 template <typename T>
 concept kahan_addable = requires(T& a, const T& b, const T& c) {
-    a += b;
-    a -= b;
-    a = b - c;
-};
+                            a += b;
+                            a -= b;
+                            a = b - c;
+                        };
 
 }  // namespace num_collect::util::concepts

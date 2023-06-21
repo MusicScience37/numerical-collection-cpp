@@ -30,14 +30,15 @@ namespace num_collect::roots::concepts {
  * \tparam T Type.
  */
 template <typename T>
-concept differentiable_function = requires(const T& const_obj, T& obj) {
-    requires function<T>;
+concept differentiable_function =
+    requires(const T& const_obj, T& obj) {
+        requires function<T>;
 
-    typename T::jacobian_type;
+        typename T::jacobian_type;
 
-    {
-        const_obj.jacobian()
-        } -> base::concepts::const_reference_of<typename T::jacobian_type>;
-};
+        {
+            const_obj.jacobian()
+            } -> base::concepts::const_reference_of<typename T::jacobian_type>;
+    };
 
 }  // namespace num_collect::roots::concepts

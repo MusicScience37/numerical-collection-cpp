@@ -40,11 +40,12 @@ namespace impl {
  * \tparam Args Type of the result.
  */
 template <typename Func, typename Result, typename... Args>
-concept invocable_as_impl = requires(Func&& func, Args&&... args) {
-    {
-        std::invoke(std::forward<Func>(func), std::forward<Args>(args)...)
-        } -> implicitly_convertible_to<Result>;
-};
+concept invocable_as_impl =
+    requires(Func&& func, Args&&... args) {
+        {
+            std::invoke(std::forward<Func>(func), std::forward<Args>(args)...)
+            } -> implicitly_convertible_to<Result>;
+    };
 
 }  // namespace impl
 
