@@ -29,6 +29,7 @@
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/linear/cuthill_mckee_ordering.h"
+#include "num_collect/linear/reverse_cuthill_mckee_ordering.h"
 #include "num_collect/logging/logger.h"
 #include "num_prob_collect/linear/laplacian_2d_grid.h"
 
@@ -107,6 +108,8 @@ auto main() -> int {
     test_ordering<Eigen::COLAMDOrdering<int>>(matrix, "colamd", logger);
     test_ordering<num_collect::linear::cuthill_mckee_ordering<int>>(
         matrix, "cuthill_mckee", logger);
+    test_ordering<num_collect::linear::reverse_cuthill_mckee_ordering<int>>(
+        matrix, "reverse_cuthill_mckee", logger);
 
     return 0;
 }
