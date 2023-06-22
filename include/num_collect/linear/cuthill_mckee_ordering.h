@@ -25,7 +25,6 @@
 #include <utility>
 
 #include <Eigen/Core>
-#include <Eigen/src/Core/util/Constants.h>
 #include <hash_tables/maps/open_address_map_st.h>
 
 #include "num_collect/base/concepts/sparse_matrix.h"

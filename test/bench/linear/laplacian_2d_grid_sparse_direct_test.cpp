@@ -18,7 +18,6 @@
  * \brief Benchmark of solving equations of Laplacian matrices.
  */
 #include <Eigen/SparseCholesky>
-#include <Eigen/src/SparseCholesky/SimplicialCholesky.h>
 #include <stat_bench/benchmark_macros.h>
 #include <stat_bench/fixture_base.h>
 #include <stat_bench/memory_barrier.h>
