@@ -63,4 +63,26 @@ TEST_CASE("num_collect::linear::cuthill_mckee_ordering") {
                 calculate_sparse_matrix_profile(matrix),
                 calculate_sparse_matrix_profile(twisted)));
     }
+
+    SECTION("validate ordering") {
+        constexpr num_collect::index_type grid_size = 10;
+        constexpr auto grid_width = static_cast<scalar_type>(0.1);
+        laplacian_2d_grid<matrix_type> grid{grid_size, grid_size, grid_width};
+        const matrix_type& matrix = grid.mat();
+
+        permutation_type permutation;
+        ordering_type()(matrix, permutation);
+
+        auto indices = std::vector<int>(
+            permutation.indices().begin(), permutation.indices().end());
+        std::sort(indices.begin(), indices.end());
+
+        std::vector<int> expected;
+        expected.reserve(static_cast<std::size_t>(matrix.rows()));
+        for (int i = 0, size = static_cast<int>(matrix.rows()); i < size; ++i) {
+            expected.push_back(i);
+        }
+
+        CHECK(indices == expected);
+    }
 }

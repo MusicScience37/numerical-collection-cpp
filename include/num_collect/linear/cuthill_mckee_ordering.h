@@ -74,9 +74,9 @@ public:
 
 private:
     /*!
-     * \brief Struct of data of processed indices.
+     * \brief Struct of data of indices processed next.
      */
-    struct processed_index_data {
+    struct next_index_data {
     public:
         //! Index.
         storage_index_type index;
@@ -84,14 +84,14 @@ private:
         //! Degree.
         storage_index_type degree;
 
-        //! Level.
-        storage_index_type level;
+        //! Order in the previous level.
+        storage_index_type previous_level_order;
     };
 
     /*!
-     * \brief Function object to compare processed_index_data_less objects.
+     * \brief Function object to compare next_index_data objects.
      */
-    struct processed_index_data_less {
+    struct next_index_data_less {
     public:
         /*!
          * \brief Compare two objects.
@@ -100,10 +100,10 @@ private:
          * \param[in] right Right-hand-side object.
          * \return Whether left is less than right.
          */
-        [[nodiscard]] auto operator()(const processed_index_data& left,
-            const processed_index_data& right) const noexcept -> bool {
-            if (left.level != right.level) {
-                return left.level < right.level;
+        [[nodiscard]] auto operator()(const next_index_data& left,
+            const next_index_data& right) const noexcept -> bool {
+            if (left.previous_level_order != right.previous_level_order) {
+                return left.previous_level_order < right.previous_level_order;
             }
             if (left.degree != right.degree) {
                 return left.degree < right.degree;
@@ -155,45 +155,52 @@ private:
     template <base::concepts::sparse_matrix MatrixType>
     void process_indices(
         const MatrixType& matrix, storage_index_type first_index) {
-        process_one_index(matrix, first_index, 0);
+        processed_indices_.clear();
+        processed_indices_.reserve(static_cast<std::size_t>(matrix.rows()));
+        next_indices_.clear();
+        next_indices_.emplace(next_index_data{
+            .index = first_index, .degree = 0, .previous_level_order = 0});
 
-        while (!next_index_level_pairs_.empty()) {
-            const auto& [index, level] = next_index_level_pairs_.front();
-            process_one_index(matrix, index, level);
-            next_index_level_pairs_.pop();
+        while (!next_indices_.empty()) {
+            std::swap(current_indices_, next_indices_);
+            next_indices_.clear();
+
+            // Remove from unused indices before checking adjacent indices.
+            // Also, duplicated indices are removed.
+            for (auto iter = current_indices_.begin();
+                 iter != current_indices_.end();) {
+                if (unused_index_to_degree_.erase(iter->index)) {
+                    ++iter;
+                } else {
+                    iter = current_indices_.erase(iter);
+                }
+            }
+
+            // Now add indices to processed indices, and search for indices in
+            // the next level.
+            storage_index_type order = 0;
+            for (const next_index_data& data : current_indices_) {
+                processed_indices_.push_back(data.index);
+
+                for (typename MatrixType::InnerIterator iter(
+                         matrix, data.index);
+                     iter; ++iter) {
+                    const storage_index_type* degree =
+                        unused_index_to_degree_.try_get(iter.index());
+                    if (degree == nullptr) {
+                        continue;
+                    }
+                    next_indices_.emplace(next_index_data{.index = iter.index(),
+                        .degree = *degree,
+                        .previous_level_order = order});
+                }
+
+                ++order;
+            }
         }
 
         if (!unused_index_to_degree_.empty()) {
             throw algorithm_failure("Unused indices exist.");
-        }
-    }
-
-    /*!
-     * \brief Process an index.
-     *
-     * \tparam MatrixType Type of the input matrix.
-     * \param[in] matrix Input matrix.
-     * \param[in] index Index.
-     * \param[in] level Level.
-     */
-    template <base::concepts::sparse_matrix MatrixType>
-    void process_one_index(const MatrixType& matrix, storage_index_type index,
-        storage_index_type level) {
-        const auto* degree = unused_index_to_degree_.try_get(index);
-        if (degree == nullptr) {
-            return;
-        }
-
-        processed_indices_.emplace(processed_index_data{
-            .index = index, .degree = *degree, .level = level});
-        unused_index_to_degree_.erase(index);
-
-        for (typename MatrixType::InnerIterator iter(matrix, index); iter;
-             ++iter) {
-            const storage_index_type next_index = iter.index();
-            if (unused_index_to_degree_.has(next_index)) {
-                next_index_level_pairs_.emplace(next_index, level + 1);
-            }
         }
     }
 
@@ -207,8 +214,8 @@ private:
         permutation_type& permutation, storage_index_type size) {
         permutation.resize(size);
         storage_index_type moved_index = 0;
-        for (const processed_index_data& data : processed_indices_) {
-            permutation.indices()(data.index) = moved_index;
+        for (const storage_index_type& index : processed_indices_) {
+            permutation.indices()(index) = moved_index;
             ++moved_index;
         }
     }
@@ -218,13 +225,14 @@ private:
         storage_index_type>
         unused_index_to_degree_{};
 
-    //! Processed indices.
-    std::set<processed_index_data, processed_index_data_less>
-        processed_indices_{};
+    //! Indices processed in the current level.
+    std::set<next_index_data, next_index_data_less> current_indices_{};
 
-    //! Indices processed next.
-    std::queue<std::pair<storage_index_type, storage_index_type>>
-        next_index_level_pairs_{};
+    //! Indices processed in the next level.
+    std::set<next_index_data, next_index_data_less> next_indices_{};
+
+    //! Processed indices.
+    std::vector<storage_index_type> processed_indices_{};
 };
 
 }  // namespace impl
