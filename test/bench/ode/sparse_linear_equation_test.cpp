@@ -23,7 +23,6 @@
 
 #include <Eigen/IterativeLinearSolvers>
 #include <Eigen/SparseCore>
-#include <Eigen/src/IterativeLinearSolvers/BiCGSTAB.h>
 #include <stat_bench/benchmark_macros.h>
 #include <stat_bench/invocation_context.h>
 
