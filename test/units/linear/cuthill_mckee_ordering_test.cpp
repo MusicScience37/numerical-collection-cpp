@@ -21,6 +21,7 @@
 
 #include <ApprovalTests.hpp>
 #include <Eigen/SparseCore>
+#include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <fmt/format.h>
 
@@ -29,11 +30,11 @@
 #include "num_collect/base/index_type.h"
 #include "num_prob_collect/linear/laplacian_2d_grid.h"
 
-TEST_CASE("num_collect::linear::cuthill_mckee_ordering") {
+TEMPLATE_TEST_CASE("num_collect::linear::cuthill_mckee_ordering", "", float,
+    double, long double) {
     using num_collect::linear::cuthill_mckee_ordering;
     using num_prob_collect::finite_element::laplacian_2d_grid;
 
-    using TestType = double;  // TODO
     using scalar_type = TestType;
     using matrix_type = Eigen::SparseMatrix<scalar_type>;
     using storage_index_type = typename matrix_type::StorageIndex;
