@@ -30,6 +30,7 @@
 #include "eigen_approx.h"
 #include "num_collect/ode/concepts/rosenbrock_equation_solver.h"  // IWYU pragma: keep
 #include "num_prob_collect/ode/external_force_vibration_problem.h"
+#include "num_prob_collect/ode/implicit_kaps_problem.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
 
 TEST_CASE("num_collect::ode::rosenbrock::lu_rosenbrock_equation_solver") {
@@ -121,5 +122,31 @@ TEST_CASE("num_collect::ode::rosenbrock::lu_rosenbrock_equation_solver") {
         CHECK_THAT(target(0),
             Catch::Matchers::WithinRel(step_size * coeff * std::cos(time)));
         CHECK(target(1) == 0.0);
+    }
+
+    SECTION("use mass if exists") {
+        using problem_type = num_prob_collect::ode::implicit_kaps_problem;
+        using solver_type =
+            num_collect::ode::rosenbrock::lu_rosenbrock_equation_solver<
+                problem_type>;
+
+        constexpr double inverted_jacobian_coeff = 0.2;
+        solver_type solver{inverted_jacobian_coeff};
+
+        constexpr double epsilon = 0.1;
+        problem_type problem{epsilon};
+        constexpr double time = 0.0;
+        const Eigen::Vector2d variable = Eigen::Vector2d(1.0, 1.0);
+        constexpr double step_size = 0.01;
+        solver.evaluate_and_update_jacobian(problem, time, step_size, variable);
+
+        const Eigen::Vector2d expected_result = Eigen::Vector2d(0.123, -0.234);
+        const Eigen::Vector2d rhs = problem.mass() * expected_result -
+            step_size * inverted_jacobian_coeff * problem.jacobian() *
+                expected_result;
+        Eigen::Vector2d result;
+        solver.solve(rhs, result);
+
+        CHECK_THAT(result, eigen_approx(expected_result));
     }
 }
