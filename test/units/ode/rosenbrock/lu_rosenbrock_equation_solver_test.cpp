@@ -136,7 +136,7 @@ TEST_CASE("num_collect::ode::rosenbrock::lu_rosenbrock_equation_solver") {
         constexpr double epsilon = 0.1;
         problem_type problem{epsilon};
         constexpr double time = 0.0;
-        const Eigen::Vector2d variable = Eigen::Vector2d(1.0, 0.0);
+        const Eigen::Vector2d variable = Eigen::Vector2d(1.0, 1.0);
         constexpr double step_size = 0.01;
         solver.evaluate_and_update_jacobian(problem, time, step_size, variable);
 
