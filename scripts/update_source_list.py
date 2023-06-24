@@ -16,8 +16,8 @@ SOURCE_PATHS = [
         "functions",
         "integration",
         "interp",
-        "logging",
         "linear",
+        "logging",
         "multi_double",
         "numbers",
         "ode",
@@ -26,7 +26,7 @@ SOURCE_PATHS = [
         "roots",
         "util",
     ]
-]
+] + [THIS_DIR.parent / "test" / "integ" / "ode_comb"]
 
 UNITY_SRC_SUFFIX = "unity_source.cpp"
 SOURCE_LIST_CMAKE_SUFFIX = "source_list.cmake"
