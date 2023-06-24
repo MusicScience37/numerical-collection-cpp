@@ -27,39 +27,14 @@
 #include "../solve_and_check.h"
 #include "comparison_approvals.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/ode/rosenbrock/rodasp_formula.h"
-#include "num_collect/ode/rosenbrock/rodaspr_formula.h"
-#include "num_collect/ode/rosenbrock/ros34pw3_formula.h"
-#include "num_collect/ode/rosenbrock/ros3w_formula.h"
-#include "num_collect/ode/runge_kutta/ark43_erk_formula.h"
-#include "num_collect/ode/runge_kutta/ark43_esdirk_formula.h"
-#include "num_collect/ode/runge_kutta/ark54_esdirk_formula.h"
-#include "num_collect/ode/runge_kutta/dopri5_formula.h"
-#include "num_collect/ode/runge_kutta/esdirk45_formula.h"
-#include "num_collect/ode/runge_kutta/rkf45_formula.h"
-#include "num_collect/ode/runge_kutta/sdirk4_formula.h"
-#include "num_collect/ode/runge_kutta/tanaka1_formula.h"
-#include "num_collect/ode/runge_kutta/tanaka2_formula.h"
+#include "num_collect/ode/runge_kutta/implicit_euler_formula.h"
+#include "num_collect/ode/runge_kutta/rk4_formula.h"
 #include "num_prob_collect/ode/exponential_problem.h"
 
 // NOLINTNEXTLINE
-TEMPLATE_PRODUCT_TEST_CASE("exponential_problem with embedded formulas", "",
-    (
-        // embedded Runge-Kutta method.
-        num_collect::ode::runge_kutta::ark43_erk_solver,
-        num_collect::ode::runge_kutta::ark43_esdirk_solver,
-        num_collect::ode::runge_kutta::ark54_esdirk_solver,
-        num_collect::ode::runge_kutta::dopri5_solver,
-        num_collect::ode::runge_kutta::esdirk45_solver,
-        num_collect::ode::runge_kutta::rkf45_solver,
-        num_collect::ode::runge_kutta::sdirk4_solver,
-        num_collect::ode::runge_kutta::tanaka1_solver,
-        num_collect::ode::runge_kutta::tanaka2_solver,
-        // embedded Rosenbrock method.
-        num_collect::ode::rosenbrock::rodasp_solver,
-        num_collect::ode::rosenbrock::rodaspr_solver,
-        num_collect::ode::rosenbrock::ros34pw3_solver,
-        num_collect::ode::rosenbrock::ros3w_solver),
+TEMPLATE_PRODUCT_TEST_CASE("exponential_problem with non-embedded formulas", "",
+    (num_collect::ode::runge_kutta::implicit_euler_solver,
+        num_collect::ode::runge_kutta::rk4_solver),
     (num_prob_collect::ode::exponential_problem)) {
     using problem_type = num_prob_collect::ode::exponential_problem;
     using solver_type = TestType;
