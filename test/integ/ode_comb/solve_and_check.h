@@ -19,6 +19,8 @@
  */
 #pragma once
 
+#include <limits>
+
 #include "num_collect/base/concepts/invocable_as.h"
 #include "num_collect/base/index_type.h"
 #include "ode_approvals.h"
@@ -31,7 +33,9 @@ inline void solve_and_check_with_reference(Solver& solver,
     typename Solver::scalar_type init_time,
     typename Solver::scalar_type finish_time,
     num_collect::index_type num_time_samples,
-    const ReferenceFunction& reference_function) {
+    const ReferenceFunction& reference_function,
+    num_collect::index_type precision =
+        (std::numeric_limits<typename Solver::scalar_type>::digits10 / 2)) {
     using scalar_type = typename Solver::scalar_type;
     using variable_type = typename Solver::variable_type;
 
@@ -61,5 +65,5 @@ inline void solve_and_check_with_reference(Solver& solver,
     }
 
     ode_approvals::verify_with_reference(
-        time_list, actual_variable_list, reference_variable_list);
+        time_list, actual_variable_list, reference_variable_list, precision);
 }

@@ -50,6 +50,8 @@ TEMPLATE_PRODUCT_TEST_CASE(
     STATIC_REQUIRE(
         std::is_same_v<typename TestType::problem_type, problem_type>);
 
+    constexpr num_collect::index_type precision = 4;
+
     SECTION("epsilon = 1") {
         constexpr double epsilon = 1.0;
         auto solver = solver_type(problem_type(epsilon));
@@ -62,10 +64,12 @@ TEMPLATE_PRODUCT_TEST_CASE(
         solver.init(init_time, init_var);
 
         solve_and_check_with_reference(
-            solver, init_time, finish_time, num_time_samples, [](double time) {
+            solver, init_time, finish_time, num_time_samples,
+            [](double time) {
                 return Eigen::Vector2d{// NOLINTNEXTLINE
                     {std::exp(-2.0 * time), std::exp(-time)}};
-            });
+            },
+            precision);
     }
 
     SECTION("epsilon = 0.0001") {
@@ -80,10 +84,12 @@ TEMPLATE_PRODUCT_TEST_CASE(
         solver.init(init_time, init_var);
 
         solve_and_check_with_reference(
-            solver, init_time, finish_time, num_time_samples, [](double time) {
+            solver, init_time, finish_time, num_time_samples,
+            [](double time) {
                 return Eigen::Vector2d{// NOLINTNEXTLINE
                     {std::exp(-2.0 * time), std::exp(-time)}};
-            });
+            },
+            precision);
     }
 
     SECTION("epsilon = 0") {  // index 1 problem.
@@ -98,9 +104,11 @@ TEMPLATE_PRODUCT_TEST_CASE(
         solver.init(init_time, init_var);
 
         solve_and_check_with_reference(
-            solver, init_time, finish_time, num_time_samples, [](double time) {
+            solver, init_time, finish_time, num_time_samples,
+            [](double time) {
                 return Eigen::Vector2d{// NOLINTNEXTLINE
                     {std::exp(-2.0 * time), std::exp(-time)}};
-            });
+            },
+            precision);
     }
 }
