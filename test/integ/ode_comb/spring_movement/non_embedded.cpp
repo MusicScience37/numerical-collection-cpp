@@ -64,7 +64,7 @@ TEMPLATE_PRODUCT_TEST_CASE("spring_movement_problem with non-embedded formulas",
         const Eigen::Vector2d init_var = Eigen::Vector2d(1.0, 0.0);
         solver.init(init_time, init_var);
 
-        constexpr double step_size = 1e-3;
+        constexpr double step_size = 1e-2;
         solver.step_size(step_size);
 
         solve_and_check_with_reference(

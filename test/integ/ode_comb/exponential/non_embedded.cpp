@@ -52,7 +52,7 @@ TEMPLATE_PRODUCT_TEST_CASE("exponential_problem with non-embedded formulas", "",
         constexpr double init_var = 1.0;
         solver.init(init_time, init_var);
 
-        constexpr double step_size = 1e-3;
+        constexpr double step_size = 1e-2;
         solver.step_size(step_size);
 
         solve_and_check_with_reference(solver, init_time, finish_time,
