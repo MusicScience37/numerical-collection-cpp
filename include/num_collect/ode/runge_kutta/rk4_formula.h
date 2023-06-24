@@ -26,6 +26,7 @@
 #include "num_collect/ode/concepts/problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/evaluation_type.h"
 #include "num_collect/ode/formula_base.h"
+#include "num_collect/ode/non_embedded_formula_wrapper.h"
 #include "num_collect/ode/simple_solver.h"
 
 namespace num_collect::ode::runge_kutta {
@@ -136,5 +137,14 @@ private:
  */
 template <concepts::problem Problem>
 using rk4_solver = simple_solver<rk4_formula<Problem>>;
+
+/*!
+ * \brief Class of solver using Runge-Kutta 4 formula (classic Runge-Kutta
+ * method) with automatic step sizes.
+ *
+ * \tparam Problem Type of problem.
+ */
+template <concepts::problem Problem>
+using rk4_auto_solver = non_embedded_auto_solver<rk4_formula<Problem>>;
 
 }  // namespace num_collect::ode::runge_kutta

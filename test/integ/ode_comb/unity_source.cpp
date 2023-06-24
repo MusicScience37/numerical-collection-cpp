@@ -7,3 +7,4 @@
 #include "no_jacobian_implicit_kaps_problem/embedded.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "spring_movement/embedded.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "spring_movement/non_embedded.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "spring_movement/wrapped_non_embedded.cpp"  // NOLINT(bugprone-suspicious-include)

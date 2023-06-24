@@ -8,4 +8,5 @@ set(SOURCE_FILES
     no_jacobian_implicit_kaps_problem/embedded.cpp
     spring_movement/embedded.cpp
     spring_movement/non_embedded.cpp
+    spring_movement/wrapped_non_embedded.cpp
 )
