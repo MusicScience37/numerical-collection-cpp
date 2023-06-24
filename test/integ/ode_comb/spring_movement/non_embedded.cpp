@@ -27,16 +27,28 @@
 #include "../solve_and_check.h"
 #include "comparison_approvals.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/ode/avf/avf2_formula.h"
+#include "num_collect/ode/avf/avf3_formula.h"
+#include "num_collect/ode/avf/avf4_formula.h"
 #include "num_collect/ode/runge_kutta/implicit_euler_formula.h"
 #include "num_collect/ode/runge_kutta/rk4_formula.h"
-#include "num_prob_collect/ode/exponential_problem.h"
+#include "num_collect/ode/symplectic/leap_frog_formula.h"
+#include "num_collect/ode/symplectic/symplectic_forest4_formula.h"
+#include "num_prob_collect/ode/spring_movement_problem.h"
 
 // NOLINTNEXTLINE
-TEMPLATE_PRODUCT_TEST_CASE("exponential_problem with non-embedded formulas", "",
+TEMPLATE_PRODUCT_TEST_CASE("spring_movement_problem with non-embedded formulas",
+    "",
     (num_collect::ode::runge_kutta::implicit_euler_solver,
-        num_collect::ode::runge_kutta::rk4_solver),
-    (num_prob_collect::ode::exponential_problem)) {
-    using problem_type = num_prob_collect::ode::exponential_problem;
+        num_collect::ode::runge_kutta::rk4_solver,
+        // AVF methods.
+        num_collect::ode::avf::avf2_solver, num_collect::ode::avf::avf3_solver,
+        num_collect::ode::avf::avf4_solver,
+        // Symplectic methods.
+        num_collect::ode::symplectic::leap_frog_solver,
+        num_collect::ode::symplectic::symplectic_forest4_solver),
+    (num_prob_collect::ode::spring_movement_problem)) {
+    using problem_type = num_prob_collect::ode::spring_movement_problem;
     using solver_type = TestType;
 
     STATIC_REQUIRE(
@@ -49,13 +61,15 @@ TEMPLATE_PRODUCT_TEST_CASE("exponential_problem with non-embedded formulas", "",
         constexpr double finish_time = 3.0;
         constexpr num_collect::index_type num_time_samples = 10;
 
-        constexpr double init_var = 1.0;
+        const Eigen::Vector2d init_var = Eigen::Vector2d(1.0, 0.0);
         solver.init(init_time, init_var);
 
         constexpr double step_size = 1e-3;
         solver.step_size(step_size);
 
-        solve_and_check_with_reference(solver, init_time, finish_time,
-            num_time_samples, [](double time) { return std::exp(time); });
+        solve_and_check_with_reference(
+            solver, init_time, finish_time, num_time_samples, [](double time) {
+                return Eigen::Vector2d(std::cos(time), std::sin(time));
+            });
     }
 }

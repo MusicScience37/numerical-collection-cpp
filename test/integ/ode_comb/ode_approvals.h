@@ -78,7 +78,7 @@ public:
         REQUIRE(reference.size() == actual.size());
         REQUIRE(reference.size() == time.size());
 
-        const num_collect::index_type width = precision + 5;
+        const num_collect::index_type width = precision + 10;
         const num_collect::index_type dimension = actual.at(0).size();
         const num_collect::index_type lines = actual.size();
 
