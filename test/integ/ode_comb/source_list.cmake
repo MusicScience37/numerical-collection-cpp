@@ -5,6 +5,7 @@ set(SOURCE_FILES
     external_force_vibration_problem.h/non_embedded.cpp
     implicit_exponential/embedded.cpp
     implicit_kaps/embedded.cpp
+    no_jacobian_implicit_kaps_problem/embedded.cpp
     spring_movement/embedded.cpp
     spring_movement/non_embedded.cpp
 )
