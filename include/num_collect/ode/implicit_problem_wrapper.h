@@ -15,11 +15,14 @@
  */
 /*!
  * \file
- * \brief Definition of implicit_problem_wrapper class.
+ * \brief Definition of classes to wrap implicit problems to use as explicit
+ * problems.
  */
 #pragma once
 
 #include <utility>
+
+#include <Eigen/LU>
 
 #include "num_collect/ode/concepts/mass_problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/concepts/multi_variate_problem.h"  // IWYU pragma: keep
@@ -35,7 +38,7 @@ namespace num_collect::ode {
  */
 template <concepts::single_variate_problem Problem>
     requires concepts::mass_problem<Problem>
-class implicit_problem_wrapper {
+class single_variate_implicit_problem_wrapper {
 public:
     //! Type of variables.
     using variable_type = typename Problem::variable_type;
@@ -52,7 +55,7 @@ public:
      *
      * \param[in] problem Problem.
      */
-    explicit implicit_problem_wrapper(Problem problem)
+    explicit single_variate_implicit_problem_wrapper(Problem problem)
         : problem_(std::move(problem)) {}
 
     /*!
@@ -86,6 +89,71 @@ private:
 };
 
 /*!
+ * \brief Class to wrap implicit problems to use as explicit problems.
+ *
+ * \tparam Problem Type of the problem.
+ * \tparam LinearEquationSolver Type of the solver of linear equations.
+ */
+template <concepts::multi_variate_problem Problem,
+    // TODO: Concept of solvers in Eigen.
+    typename LinearEquationSolver =
+        Eigen::PartialPivLU<typename Problem::mass_type>>
+    requires concepts::mass_problem<Problem>
+class multi_variate_implicit_problem_wrapper {
+public:
+    //! Type of variables.
+    using variable_type = typename Problem::variable_type;
+
+    //! Type of scalars.
+    using scalar_type = typename Problem::scalar_type;
+
+    //! Allowed evaluations.
+    static constexpr auto allowed_evaluations =
+        num_collect::ode::evaluation_type{.diff_coeff = true};
+
+    /*!
+     * \brief Constructor.
+     *
+     * \param[in] problem Problem.
+     */
+    explicit multi_variate_implicit_problem_wrapper(Problem problem)
+        : problem_(std::move(problem)) {}
+
+    /*!
+     * \brief Evaluate on a (time, variable) pair.
+     *
+     * \param[in] time Time.
+     * \param[in] variable Variable.
+     */
+    void evaluate_on(const scalar_type& time, const variable_type& variable,
+        evaluation_type /*evaluations*/) {
+        problem_.evaluate_on(
+            time, variable, evaluation_type{.diff_coeff = true, .mass = true});
+        solver_.compute(problem_.mass());
+        diff_coeff_ = solver_.solve(problem_.diff_coeff());
+    }
+
+    /*!
+     * \brief Get the differential coefficient.
+     *
+     * \return Differential coefficient.
+     */
+    [[nodiscard]] auto diff_coeff() const noexcept -> const variable_type& {
+        return diff_coeff_;
+    }
+
+private:
+    //! Problem.
+    Problem problem_;
+
+    //! Differential coefficient.
+    variable_type diff_coeff_{};
+
+    //! Solver of linear equations.
+    LinearEquationSolver solver_{};
+};
+
+/*!
  * \brief Wrap an implicit problem to use as an explicit problem.
  *
  * \tparam Problem Type of the problem.
@@ -95,8 +163,26 @@ private:
 template <concepts::single_variate_problem Problem>
     requires concepts::mass_problem<Problem>
 [[nodiscard]] auto wrap_implicit_problem(Problem problem)
-    -> implicit_problem_wrapper<Problem> {
-    return implicit_problem_wrapper<Problem>(problem);
+    -> single_variate_implicit_problem_wrapper<Problem> {
+    return single_variate_implicit_problem_wrapper<Problem>(problem);
 }
+
+#ifndef NUM_COLLECT_DOCUMENTATION
+// This function causes errors in Doxygen.
+
+/*!
+ * \brief Wrap an implicit problem to use as an explicit problem.
+ *
+ * \tparam Problem Type of the problem.
+ * \param[in] problem Problem.
+ * \return Wrapped problem.
+ */
+template <concepts::multi_variate_problem Problem>
+    requires concepts::mass_problem<Problem>
+[[nodiscard]] auto wrap_implicit_problem(Problem problem)
+    -> multi_variate_implicit_problem_wrapper<Problem> {
+    return multi_variate_implicit_problem_wrapper<Problem>(problem);
+}
+#endif
 
 }  // namespace num_collect::ode

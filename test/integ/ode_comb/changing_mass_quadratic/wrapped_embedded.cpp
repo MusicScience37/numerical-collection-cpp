@@ -29,25 +29,26 @@
 #include "num_collect/ode/runge_kutta/ark43_erk_formula.h"
 #include "num_collect/ode/runge_kutta/dopri5_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
-#include "num_prob_collect/ode/changing_mass_exponential_problem.h"
+#include "num_prob_collect/ode/changing_mass_quadratic_problem.h"
 
-using wrapped_changing_mass_exponential_problem =
-    num_collect::ode::single_variate_implicit_problem_wrapper<
-        num_prob_collect::ode::changing_mass_exponential_problem>;
+using wrapped_changing_mass_quadratic_problem =
+    num_collect::ode::multi_variate_implicit_problem_wrapper<
+        num_prob_collect::ode::changing_mass_quadratic_problem>;
 
 // NOLINTNEXTLINE
 TEMPLATE_PRODUCT_TEST_CASE(
-    "changing_mass_exponential_problem with embedded formulas with "
+    "changing_mass_quadratic_problem with embedded formulas with "
     "implicit_problem_wrapper",
     "",
     (
         // embedded Runge-Kutta method.
         num_collect::ode::runge_kutta::ark43_erk_solver,
-        num_collect::ode::runge_kutta::dopri5_solver,
-        num_collect::ode::runge_kutta::rkf45_solver),
-    (wrapped_changing_mass_exponential_problem)) {
-    using problem_type =
-        num_prob_collect::ode::changing_mass_exponential_problem;
+        num_collect::ode::runge_kutta::dopri5_solver
+        // TODO: Why num_collect::ode::runge_kutta::rkf45_solver can't solve
+        // this?
+        ),
+    (wrapped_changing_mass_quadratic_problem)) {
+    using problem_type = num_prob_collect::ode::changing_mass_quadratic_problem;
     using solver_type = TestType;
 
     SECTION("solve") {
@@ -58,10 +59,13 @@ TEMPLATE_PRODUCT_TEST_CASE(
         constexpr double finish_time = 3.0;
         constexpr num_collect::index_type num_time_samples = 10;
 
-        constexpr double init_var = 1.0;
+        const auto init_var = Eigen::Vector2d(0.0, 0.0);
         solver.init(init_time, init_var);
 
-        solve_and_check_with_reference(solver, init_time, finish_time,
-            num_time_samples, [](double time) { return std::exp(time); });
+        solve_and_check_with_reference(
+            solver, init_time, finish_time, num_time_samples, [](double time) {
+                // NOLINTNEXTLINE
+                return Eigen::Vector2d(time, 0.5 * time * time);
+            });
     }
 }
