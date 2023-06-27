@@ -24,7 +24,8 @@
 
 #include <Eigen/LU>
 
-#include "num_collect/ode/concepts/mass_problem.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/eigen_solver_of.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/mass_problem.h"      // IWYU pragma: keep
 #include "num_collect/ode/concepts/multi_variate_problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/concepts/single_variate_problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/evaluation_type.h"
@@ -95,9 +96,9 @@ private:
  * \tparam LinearEquationSolver Type of the solver of linear equations.
  */
 template <concepts::multi_variate_problem Problem,
-    // TODO: Concept of solvers in Eigen.
-    typename LinearEquationSolver =
-        Eigen::PartialPivLU<typename Problem::mass_type>>
+    base::concepts::eigen_solver_of<typename Problem::mass_type,
+        typename Problem::variable_type>
+        LinearEquationSolver = Eigen::PartialPivLU<typename Problem::mass_type>>
     requires concepts::mass_problem<Problem>
 class multi_variate_implicit_problem_wrapper {
 public:
