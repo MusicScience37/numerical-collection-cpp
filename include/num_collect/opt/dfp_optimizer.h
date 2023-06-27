@@ -53,7 +53,8 @@ template <
     concepts::multi_variate_differentiable_objective_function ObjectiveFunction,
     concepts::line_searcher LineSearcher =
         backtracking_line_searcher<ObjectiveFunction>,
-    base::concepts::real_scalar_dense_matrix Hessian = Eigen::MatrixXd>
+    base::concepts::real_scalar_dense_matrix Hessian =
+        Eigen::MatrixX<typename ObjectiveFunction::value_type>>
 class dfp_optimizer
     : public descent_method_base<
           dfp_optimizer<ObjectiveFunction, LineSearcher, Hessian>,
