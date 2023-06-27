@@ -1,5 +1,6 @@
 set(SOURCE_FILES
     changing_mass_exponential/embedded.cpp
+    changing_mass_exponential/wrapped_embedded.cpp
     exponential/embedded.cpp
     exponential/non_embedded.cpp
     external_force_vibration_problem.h/embedded.cpp

@@ -1,4 +1,5 @@
 #include "changing_mass_exponential/embedded.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "changing_mass_exponential/wrapped_embedded.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "exponential/embedded.cpp"      // NOLINT(bugprone-suspicious-include)
 #include "exponential/non_embedded.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "external_force_vibration_problem.h/embedded.cpp"  // NOLINT(bugprone-suspicious-include)
