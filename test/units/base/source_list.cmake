@@ -5,6 +5,7 @@ set(SOURCE_FILES
     concepts/dense_matrix_test.cpp
     concepts/dense_vector_of_test.cpp
     concepts/dense_vector_test.cpp
+    concepts/eigen_solver_of_test.cpp
     concepts/formattable_test.cpp
     concepts/implicitly_convertible_to_test.cpp
     concepts/integral_test.cpp

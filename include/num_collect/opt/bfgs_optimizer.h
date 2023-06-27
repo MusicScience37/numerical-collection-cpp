@@ -24,6 +24,7 @@
 #include <Eigen/Cholesky>
 #include <Eigen/Core>
 
+#include "num_collect/base/concepts/eigen_solver_of.h"  // IWYU pragma: keep
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
@@ -53,7 +54,11 @@ template <
     concepts::multi_variate_differentiable_objective_function ObjectiveFunction,
     concepts::line_searcher LineSearcher =
         backtracking_line_searcher<ObjectiveFunction>,
-    typename HessianSolver = Eigen::LLT<Eigen::MatrixXd>>
+    base::concepts::eigen_solver_of<
+        Eigen::MatrixX<typename ObjectiveFunction::value_type>,
+        typename ObjectiveFunction::variable_type>
+        HessianSolver =
+            Eigen::LLT<Eigen::MatrixX<typename ObjectiveFunction::value_type>>>
 class bfgs_optimizer
     : public descent_method_base<
           bfgs_optimizer<ObjectiveFunction, LineSearcher, HessianSolver>,

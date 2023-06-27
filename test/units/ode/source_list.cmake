@@ -9,6 +9,7 @@ set(SOURCE_FILES
     impl/bicgstab_test.cpp
     impl/get_least_known_order_test.cpp
     impl/gmres_test.cpp
+    implicit_problem_test.cpp
     inexact_newton_slope_equation_solver_test.cpp
     inexact_newton_update_equation_solver_test.cpp
     initial_step_size_calculator_test.cpp

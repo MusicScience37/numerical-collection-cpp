@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 MusicScience37 (Kenta Kabashima)
+ * Copyright 2023 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,26 +15,25 @@
  */
 /*!
  * \file
- * \brief Definition of single_variate_differentiable_problem concept.
+ * \brief Definition of single_variate_problem concept.
  */
 #pragma once
 
 #include <type_traits>  // IWYU pragma: keep
 
 #include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
-#include "num_collect/ode/concepts/differentiable_problem.h"  // IWYU pragma: keep
-#include "num_collect/ode/concepts/single_variate_problem.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/problem.h"       // IWYU pragma: keep
 
 namespace num_collect::ode::concepts {
 
 /*!
- * \brief Concept of problems of single-variate differentiable ordinary
- * differential equations.
+ * \brief Concept of problems of single-variate ordinary differential equations.
  *
  * \tparam T Type.
  */
 template <typename T>
-concept single_variate_differentiable_problem =
-    differentiable_problem<T> && single_variate_problem<T>;
+concept single_variate_problem =
+    problem<T> && base::concepts::real_scalar<typename T::variable_type> &&
+    std::is_same_v<typename T::variable_type, typename T::scalar_type>;
 
 }  // namespace num_collect::ode::concepts
