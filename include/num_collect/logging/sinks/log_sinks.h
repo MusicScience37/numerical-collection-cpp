@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 MusicScience37 (Kenta Kabashima)
+ * Copyright 2023 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,17 @@
  */
 /*!
  * \file
- * \brief Declaration of functions for simple log sinks.
+ * \brief Declaration of functions to create log sinks.
  */
 #pragma once
 
 #include <memory>
 #include <string_view>
+#include <utility>
+#include <vector>
 
 #include "num_collect/impl/num_collect_export.h"
+#include "num_collect/logging/log_level.h"
 #include "num_collect/logging/sinks/log_sink_base.h"
 
 namespace num_collect::logging::sinks {
@@ -51,5 +54,24 @@ namespace num_collect::logging::sinks {
  */
 [[nodiscard]] NUM_COLLECT_EXPORT auto create_non_colored_console_sink()
     -> std::shared_ptr<log_sink_base>;
+
+/*!
+ * \brief Create a log sink to write logs to multiple log sinks.
+ *
+ * \param[in] sinks Log sinks with log levels.
+ * \return Log sink to write logs to all of the given log sinks.
+ */
+[[nodiscard]] NUM_COLLECT_EXPORT auto create_combined_log_sink(
+    std::vector<std::pair<std::shared_ptr<log_sink_base>, log_level>> sinks)
+    -> std::shared_ptr<log_sink_base>;
+
+/*!
+ * \brief Create an asynchronous log sink.
+ *
+ * \param[in] sink Log sink to write logs actually.
+ * \return Asynchronous log sink.
+ */
+[[nodiscard]] NUM_COLLECT_EXPORT auto create_async_log_sink(
+    std::shared_ptr<log_sink_base> sink) -> std::shared_ptr<log_sink_base>;
 
 }  // namespace num_collect::logging::sinks

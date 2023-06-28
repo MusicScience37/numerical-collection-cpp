@@ -26,7 +26,7 @@
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/logger.h"
-#include "num_collect/logging/sinks/simple_log_sink.h"
+#include "num_collect/logging/sinks/log_sinks.h"
 
 static void test() {
     num_collect::logging::logger logger;

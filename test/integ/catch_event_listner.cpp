@@ -40,7 +40,7 @@
 #include "num_collect/logging/log_tag.h"
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/logger.h"
-#include "num_collect/logging/sinks/simple_log_sink.h"
+#include "num_collect/logging/sinks/log_sinks.h"
 #include "num_collect/opt/heuristic_global_optimizer.h"
 
 #define STRING1(STR) #STR

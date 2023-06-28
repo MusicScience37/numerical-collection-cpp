@@ -17,10 +17,9 @@
  * \file
  * \brief Test of async_log_sink class.
  */
-#include "num_collect/logging/sinks/async_log_sink.h"
-
 #include <chrono>
 #include <future>
+#include <memory>
 #include <string>
 #include <string_view>
 #include <type_traits>
@@ -32,6 +31,7 @@
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/sinks/async_logging_worker_config.h"
 #include "num_collect/logging/sinks/log_sink_base.h"
+#include "num_collect/logging/sinks/log_sinks.h"
 #include "num_collect/util/source_info_view.h"
 #include "trompeloeil_catch2.h"
 

@@ -17,8 +17,6 @@
  * \file
  * \brief Definition of functions for asynchronous loggers.
  */
-#include "num_collect/logging/sinks/async_log_sink.h"
-
 #include <chrono>
 #include <exception>
 #include <iostream>
@@ -29,6 +27,7 @@
 #include "async_logging_worker_internal.h"
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/sinks/log_sink_base.h"
+#include "num_collect/logging/sinks/log_sinks.h"
 #include "num_collect/util/source_info_view.h"
 
 namespace num_collect::logging::sinks {
