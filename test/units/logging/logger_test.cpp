@@ -29,7 +29,6 @@
 #include "trompeloeil_catch2.h"
 
 TEST_CASE("num_collect::logging::logger") {
-    using num_collect::logging::log_config;
     using num_collect::logging::log_level;
     using num_collect::logging::log_tag_config;
     using num_collect::logging::log_tag_view;
@@ -42,7 +41,7 @@ TEST_CASE("num_collect::logging::logger") {
         const num_collect::index_type iteration_label_period = 123;
         const auto config =
             log_tag_config().iteration_label_period(iteration_label_period);
-        CHECK_NOTHROW(log_config::instance().set_config_of(tag, config));
+        CHECK_NOTHROW(set_config_of(tag, config));
 
         const auto l = logger(tag);
         CHECK(l.config().iteration_label_period() == iteration_label_period);
@@ -53,7 +52,7 @@ TEST_CASE("num_collect::logging::logger") {
         const auto sink = std::make_shared<mock_log_sink>();
         const auto config =
             log_tag_config().output_log_level(log_level::trace).sink(sink);
-        CHECK_NOTHROW(log_config::instance().set_config_of(tag, config));
+        CHECK_NOTHROW(set_config_of(tag, config));
 
         REQUIRE_CALL(*sink, write_impl(_, _, _, _, _)).TIMES(9);
 
@@ -73,7 +72,7 @@ TEST_CASE("num_collect::logging::logger") {
         constexpr auto tag = log_tag_view("num_collect::logging::logger_test3");
         const auto sink = std::make_shared<mock_log_sink>();
         const auto config = log_tag_config().sink(sink);
-        CHECK_NOTHROW(log_config::instance().set_config_of(tag, config));
+        CHECK_NOTHROW(set_config_of(tag, config));
 
         REQUIRE_CALL(*sink,
             write_impl(_, std::string_view(tag.name()), log_level::info, _,

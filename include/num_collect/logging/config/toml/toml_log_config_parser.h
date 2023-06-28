@@ -285,11 +285,11 @@ private:
                 "a string");
             const auto tag = log_tag(tag_string);
 
-            auto config = log_config::instance().get_config_of(tag);
+            auto config = get_config_of(tag);
 
             impl::parse_log_tag_config_to(config, *elem_table, sinks);
 
-            log_config::instance().set_config_of(tag, config);
+            set_config_of(tag, config);
         }
     }
 

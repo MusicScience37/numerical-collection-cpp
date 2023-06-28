@@ -361,11 +361,11 @@ private:
  * \brief Configure logging for benchmarks.
  */
 inline void configure_logging() {
-    num_collect::logging::log_config::instance().set_default_tag_config(
+    num_collect::logging::set_default_tag_config(
         num_collect::logging::log_tag_config().output_log_level(
             num_collect::logging::log_level::info));
 
-    num_collect::logging::log_config::instance().set_config_of(benchmark_tag,
+    num_collect::logging::set_config_of(benchmark_tag,
         num_collect::logging::log_tag_config()
             .output_log_level(num_collect::logging::log_level::iteration)
             .iteration_output_period(1));

@@ -37,7 +37,7 @@ static void test() {
 }
 
 auto main() -> int {
-    num_collect::logging::log_config::instance().set_default_tag_config(
+    num_collect::logging::set_default_tag_config(
         num_collect::logging::log_tag_config()
             .sink(std::make_shared<num_collect::logging::simple_log_sink>(
                 "num_collect_prof_write_trace_logs_out.log"))

@@ -124,11 +124,9 @@ auto main(int argc, char** argv) -> int {
         if (config_filepath.empty()) {
             // Use custom configuration to show all logs.
             const auto config =
-                num_collect::logging::log_config::instance()
-                    .get_default_tag_config()
-                    .output_log_level(num_collect::logging::log_level::trace);
-            num_collect::logging::log_config::instance().set_default_tag_config(
-                config);
+                num_collect::logging::get_default_tag_config().output_log_level(
+                    num_collect::logging::log_level::trace);
+            num_collect::logging::set_default_tag_config(config);
         } else {
             // Use the give configuration file.
             num_collect::logging::load_logging_config_file(config_filepath);

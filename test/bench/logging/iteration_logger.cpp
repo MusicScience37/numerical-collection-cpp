@@ -60,7 +60,7 @@ STAT_BENCH_CASE("iteration_logger", "write no log") {
         "num_collect_bench_logging_iteration_logger.log";
     const auto config = num_collect::logging::log_tag_config().sink(
         num_collect::logging::sinks::create_single_file_sink(log_file_path));
-    num_collect::logging::log_config::instance().set_config_of(tag, config);
+    num_collect::logging::set_config_of(tag, config);
 
     perform();
 }
@@ -74,7 +74,7 @@ STAT_BENCH_CASE("iteration_logger", "write log") {
             .sink(num_collect::logging::sinks::create_single_file_sink(
                 log_file_path))
             .output_log_level(num_collect::logging::log_level::trace);
-    num_collect::logging::log_config::instance().set_config_of(tag, config);
+    num_collect::logging::set_config_of(tag, config);
 
     perform();
 }

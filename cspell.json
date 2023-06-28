@@ -117,6 +117,7 @@
     "immintrin",
     "INCLUDEDIR",
     "includesub",
+    "INLINES",
     "installargs",
     "INTEG",
     "interp",
