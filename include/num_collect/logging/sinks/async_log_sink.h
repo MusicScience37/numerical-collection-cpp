@@ -15,73 +15,24 @@
  */
 /*!
  * \file
- * \brief Definition of async_log_sink class.
+ * \brief Definition of functions for asynchronous loggers.
  */
 #pragma once
 
-#include <chrono>
-#include <exception>
-#include <iostream>
 #include <memory>
-#include <string_view>
-#include <utility>
 
-#include "num_collect/logging/log_level.h"
-#include "num_collect/logging/sinks/async_logging_worker.h"
+#include "num_collect/impl/num_collect_export.h"
 #include "num_collect/logging/sinks/log_sink_base.h"
-#include "num_collect/util/source_info_view.h"
 
 namespace num_collect::logging::sinks {
 
 /*!
- * \brief Class of log sinks to write logs asynchronously.
+ * \brief Create an asynchronous log sink.
  *
- * \thread_safety Thread-safe for all operations.
+ * \param[in] sink Log sink to write logs actually.
+ * \return Asynchronous log sink.
  */
-class async_log_sink final : public log_sink_base {
-public:
-    /*!
-     * \brief Constructor.
-     *
-     * \param[in] sink Log sink to write logs actually.
-     */
-    explicit async_log_sink(std::shared_ptr<log_sink_base> sink)
-        : sink_(std::move(sink)), worker_(async_logging_worker::instance()) {}
-
-    /*!
-     * \brief Destructor.
-     */
-    ~async_log_sink() override = default;
-
-    async_log_sink(const async_log_sink&) = delete;
-    async_log_sink(async_log_sink&&) = delete;
-    auto operator=(const async_log_sink&) -> async_log_sink& = delete;
-    auto operator=(async_log_sink&&) -> async_log_sink& = delete;
-
-    //! \copydoc num_collect::logging::sinks::log_sink_base::write
-    void write(std::chrono::system_clock::time_point time, std::string_view tag,
-        log_level level, util::source_info_view source,
-        std::string_view body) noexcept override {
-        if (!is_enabled_) [[unlikely]] {
-            return;
-        }
-        try {
-            worker_.async_write(sink_, time, tag, level, source, body);
-        } catch (const std::exception& e) {
-            std::cerr << "ERROR IN LOGGING: " << e.what() << std::endl;
-            is_enabled_ = false;
-        }
-    }
-
-private:
-    //! Log sink to write logs actually.
-    std::shared_ptr<log_sink_base> sink_;
-
-    //! Worker.
-    async_logging_worker& worker_;
-
-    //! Whether this object is enabled.
-    bool is_enabled_{true};
-};
+[[nodiscard]] NUM_COLLECT_EXPORT auto create_async_log_sink(
+    std::shared_ptr<log_sink_base> sink) -> std::shared_ptr<log_sink_base>;
 
 }  // namespace num_collect::logging::sinks

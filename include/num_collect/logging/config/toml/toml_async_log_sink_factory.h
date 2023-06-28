@@ -54,8 +54,7 @@ public:
     //! \copydoc num_collect::logging::config::log_sink_factory_base::create
     [[nodiscard]] auto create(log_sink_factory_table& sinks)
         -> std::shared_ptr<sinks::log_sink_base> override {
-        return std::make_shared<sinks::async_log_sink>(
-            sinks.get(inner_sink_name_));
+        return sinks::create_async_log_sink(sinks.get(inner_sink_name_));
     }
 
     /*!

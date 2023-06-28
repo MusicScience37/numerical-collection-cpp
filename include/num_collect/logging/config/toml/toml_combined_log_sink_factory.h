@@ -124,8 +124,7 @@ public:
             inner_sinks.emplace_back(
                 sinks.get(inner_sink_names_[i]), output_log_levels_[i]);
         }
-        return std::make_shared<sinks::combined_log_sink>(
-            std::move(inner_sinks));
+        return sinks::create_combined_log_sink(std::move(inner_sinks));
     }
 
     /*!

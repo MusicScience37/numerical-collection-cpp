@@ -32,8 +32,8 @@
 
 TEST_CASE("num_collect::logging::sinks::async_log_sink") {
     using num_collect::logging::log_level;
-    using num_collect::logging::sinks::async_log_sink;
     using num_collect::logging::sinks::async_logging_worker_config;
+    using num_collect::logging::sinks::create_async_log_sink;
     using num_collect::logging::sinks::impl::async_log_request;
     using num_collect::util::source_info_view;
     using num_collect_test::logging::mock_log_sink;
@@ -67,8 +67,8 @@ TEST_CASE("num_collect::logging::sinks::async_log_sink") {
             source_info_view(file_path, line, column, function_name);
         const auto body = std::string("body");
 
-        async_log_sink async_sink{inner_sink};
-        async_sink.write(time, tag, level, source, body);
+        const auto async_sink = create_async_log_sink(inner_sink);
+        async_sink->write(time, tag, level, source, body);
 
         REQUIRE(request_future.wait_for(std::chrono::seconds(1)) ==
             std::future_status::ready);

@@ -20,6 +20,7 @@
 #include "num_prob_collect/linear/laplacian_2d_grid.h"
 
 #include <algorithm>
+#include <iostream>
 
 #include <Eigen/Core>
 #include <Eigen/IterativeLinearSolvers>

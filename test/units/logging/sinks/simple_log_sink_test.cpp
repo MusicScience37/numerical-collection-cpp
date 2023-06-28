@@ -19,6 +19,8 @@
  */
 #include "num_collect/logging/sinks/simple_log_sink.h"
 
+#include <filesystem>
+
 #include <catch2/catch_test_macros.hpp>
 
 #include "num_collect/base/index_type.h"
