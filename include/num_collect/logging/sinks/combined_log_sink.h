@@ -24,6 +24,7 @@
 #include <vector>
 
 #include "num_collect/impl/num_collect_export.h"
+#include "num_collect/logging/log_level.h"
 #include "num_collect/logging/sinks/log_sink_base.h"
 
 namespace num_collect::logging::sinks {

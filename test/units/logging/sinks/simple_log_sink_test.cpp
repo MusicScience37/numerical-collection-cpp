@@ -19,11 +19,16 @@
  */
 #include "num_collect/logging/sinks/simple_log_sink.h"
 
+#include <chrono>
 #include <filesystem>
+#include <string>
+#include <type_traits>
 
 #include <catch2/catch_test_macros.hpp>
 
 #include "num_collect/base/index_type.h"
+#include "num_collect/logging/log_level.h"
+#include "num_collect/util/source_info_view.h"
 
 TEST_CASE("num_collect::logging::sinks::create_single_file_sink") {
     using num_collect::index_type;

@@ -21,6 +21,7 @@
 
 #include <chrono>
 #include <limits>
+#include <string>
 
 #include <fmt/format.h>
 

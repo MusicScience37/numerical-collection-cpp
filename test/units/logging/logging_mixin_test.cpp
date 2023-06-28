@@ -19,7 +19,6 @@
  */
 #include "num_collect/logging/logging_mixin.h"
 
-#include <string>
 #include <string_view>
 
 #include <catch2/catch_test_macros.hpp>

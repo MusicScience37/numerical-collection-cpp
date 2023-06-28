@@ -20,7 +20,6 @@
 #include "num_collect/logging/impl/is_log_tag_element_char.h"
 
 #include <cctype>
-#include <string>
 
 #include <catch2/catch_message.hpp>
 #include <catch2/catch_test_macros.hpp>

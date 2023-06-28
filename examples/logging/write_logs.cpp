@@ -18,7 +18,6 @@
  * \brief Example to write logs.
  */
 #include <exception>
-#include <functional>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -26,6 +25,7 @@
 
 #include <lyra/cli.hpp>
 #include <lyra/opt.hpp>
+#include <lyra/parser.hpp>
 
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/load_logging_config.h"
@@ -34,7 +34,6 @@
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
-#include "num_collect/logging/sinks/simple_log_sink.h"
 
 constexpr auto my_tag = num_collect::logging::log_tag_view("example_tag");
 

@@ -17,9 +17,10 @@
  * \file
  * \brief Benchmark of writing trace logs.
  */
-#include <fmt/format.h>
+#include <exception>
+#include <memory>
+
 #include <stat_bench/benchmark_macros.h>
-#include <stat_bench/invocation_context.h>
 
 #include "num_collect/logging/log_config.h"
 #include "num_collect/logging/log_level.h"

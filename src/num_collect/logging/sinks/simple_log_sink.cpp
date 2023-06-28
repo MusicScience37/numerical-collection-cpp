@@ -27,6 +27,7 @@
 #include <mutex>
 #include <string>
 #include <string_view>
+#include <type_traits>
 #include <utility>
 
 #include <fmt/format.h>

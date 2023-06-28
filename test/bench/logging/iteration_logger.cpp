@@ -19,10 +19,10 @@
  */
 #include "num_collect/logging/iterations/iteration_logger.h"
 
+#include <exception>
 #include <string>
 
 #include <stat_bench/benchmark_macros.h>
-#include <stat_bench/invocation_context.h>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_config.h"

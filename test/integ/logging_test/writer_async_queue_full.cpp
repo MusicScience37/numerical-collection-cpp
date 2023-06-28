@@ -28,6 +28,7 @@
 #include "num_collect/logging/load_logging_config.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/logging/sinks/async_logging_worker.h"
+#include "num_collect/logging/sinks/async_logging_worker_config.h"
 
 auto main(int argc, char** argv) -> int {
     try {

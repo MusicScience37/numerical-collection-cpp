@@ -24,7 +24,6 @@
 #include <chrono>
 #include <exception>
 #include <iostream>
-#include <limits>
 #include <memory>
 #include <mutex>
 #include <optional>
@@ -35,8 +34,6 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
-
-#include <fmt/format.h>
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"

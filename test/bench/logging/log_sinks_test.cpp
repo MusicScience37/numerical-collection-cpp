@@ -18,12 +18,14 @@
  * \brief Test of log sinks.
  */
 #include <algorithm>
+#include <array>
 #include <atomic>
 #include <chrono>
 #include <cmath>
 #include <cstddef>
 #include <exception>
 #include <filesystem>
+#include <functional>
 #include <iostream>
 #include <string>
 #include <string_view>
@@ -32,14 +34,19 @@
 #include <vector>
 
 #include <fmt/format.h>
+#include <pybind11/cast.h>
 #include <pybind11/embed.h>
+#include <pybind11/gil.h>
 #include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
+#include <pybind11/pytypes.h>
+#include <pybind11/stl.h>  // IWYU pragma: keep
 
 #include "num_collect/base/concepts/invocable.h"
 #include "num_collect/logging/config/toml/toml_log_config_parser.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
+#include "num_collect/logging/iterations/iteration_parameter.h"
 #include "num_collect/logging/log_tag.h"
+#include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/logging/logging_mixin.h"
 

@@ -19,7 +19,9 @@
  */
 #include "num_collect/logging/sinks/combined_log_sink.h"
 
+#include <chrono>
 #include <string>
+#include <string_view>
 #include <type_traits>
 
 #include <catch2/catch_test_macros.hpp>
@@ -28,6 +30,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/sinks/log_sink_base.h"
+#include "num_collect/util/source_info_view.h"
 #include "trompeloeil_catch2.h"
 
 TEST_CASE("num_collect::logging::sinks::combined_log_sink") {
