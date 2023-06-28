@@ -145,6 +145,7 @@ test release:
       -DNUM_COLLECT_BUILD_EXAMPLES=OFF
       -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
       -DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON
+      -DBUILD_SHARED_LIBS:BOOL=ON
     - cmake --build .
     - ctest -V
   cache:
