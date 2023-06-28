@@ -143,6 +143,12 @@ if(NUM_COLLECT_ENABLE_INSTALL)
         PATTERN "*.h*")
 
     install(
+        DIRECTORY ${NUM_COLLECT_GENERATED_HEADER_DIR}/num_collect
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        FILES_MATCHING
+        PATTERN "*.h*")
+
+    install(
         EXPORT num-collect-targets
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/num-collect
         NAMESPACE num_collect::)
