@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 MusicScience37 (Kenta Kabashima)
+ * Copyright 2023 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,16 @@
  * \file
  * \brief Definition of load_logging_config function.
  */
-#pragma once
+#include "num_collect/logging/load_logging_config.h"
 
 #include <string_view>
 
-#include "num_collect/impl/num_collect_export.h"
+#include "num_collect/logging/config/toml/toml_log_config_parser.h"
 
 namespace num_collect::logging {
 
-/*!
- * \brief Parse and apply configurations of logging from a file.
- *
- * \param[in] filepath File path.
- */
-NUM_COLLECT_EXPORT void load_logging_config_file(std::string_view filepath);
+void load_logging_config_file(std::string_view filepath) {
+    config::toml::toml_log_config_parser().parse_from_file(filepath);
+}
 
 }  // namespace num_collect::logging
