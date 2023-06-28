@@ -26,8 +26,8 @@
 #include <string_view>
 #include <utility>
 
+#include "async_logging_worker_internal.h"
 #include "num_collect/logging/log_level.h"
-#include "num_collect/logging/sinks/async_logging_worker.h"
 #include "num_collect/logging/sinks/log_sink_base.h"
 #include "num_collect/util/source_info_view.h"
 
@@ -46,7 +46,7 @@ public:
      * \param[in] sink Log sink to write logs actually.
      */
     explicit async_log_sink(std::shared_ptr<log_sink_base> sink)
-        : sink_(std::move(sink)), worker_(async_logging_worker::instance()) {}
+        : sink_(std::move(sink)) {}
 
     /*!
      * \brief Destructor.
@@ -66,7 +66,7 @@ public:
             return;
         }
         try {
-            worker_.async_write(sink_, time, tag, level, source, body);
+            async_write_log(sink_, time, tag, level, source, body);
         } catch (const std::exception& e) {
             std::cerr << "ERROR IN LOGGING: " << e.what() << std::endl;
             is_enabled_ = false;
@@ -76,9 +76,6 @@ public:
 private:
     //! Log sink to write logs actually.
     std::shared_ptr<log_sink_base> sink_;
-
-    //! Worker.
-    async_logging_worker& worker_;
 
     //! Whether this object is enabled.
     bool is_enabled_{true};

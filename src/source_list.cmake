@@ -1,6 +1,7 @@
 set(SOURCE_FILES
     num_collect/logging/log_config.cpp
     num_collect/logging/sinks/async_log_sink.cpp
+    num_collect/logging/sinks/async_logging_worker.cpp
     num_collect/logging/sinks/combined_log_sink.cpp
     num_collect/logging/sinks/simple_log_sink.cpp
 )

@@ -35,7 +35,6 @@ set(SOURCE_FILES
     logger_test.cpp
     logging_mixin_test.cpp
     sinks/async_log_sink_test.cpp
-    sinks/async_logging_worker_test.cpp
     sinks/combined_log_sink_test.cpp
     sinks/file_wrapper_test.cpp
     sinks/simple_log_sink_test.cpp

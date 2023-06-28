@@ -34,7 +34,6 @@
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
-#include "num_collect/logging/sinks/async_logging_worker.h"
 #include "num_collect/logging/sinks/simple_log_sink.h"
 
 constexpr auto my_tag = num_collect::logging::log_tag_view("example_tag");

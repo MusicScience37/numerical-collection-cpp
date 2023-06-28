@@ -20,29 +20,28 @@
  */
 #pragma once
 
-#include "num_collect/impl/num_collect_export.h"
-#include "num_collect/logging/sinks/async_logging_worker_config.h"
+#include <chrono>
+#include <memory>
+#include <string_view>
+
+#include "num_collect/logging/log_level.h"
+#include "num_collect/logging/sinks/log_sink_base.h"
+#include "num_collect/util/source_info_view.h"
 
 namespace num_collect::logging::sinks {
 
 /*!
- * \brief Initialize the worker to perform asynchronous logging.
+ * \brief Write a log asynchronously.
  *
- * \param[in] config Configuration.
- *
- * \warning Initialization will be done only in the first call to this function
- * in a process. Use of an asynchronous log sink will automatically perform
- * initialization instead of this function.
+ * \param[in] sink Log sink.
+ * \param[in] time Time.
+ * \param[in] tag Tag.
+ * \param[in] level Log level.
+ * \param[in] source Information of the source code.
+ * \param[in] body Log body.
  */
-NUM_COLLECT_EXPORT void init_async_logging_worker(
-    const async_logging_worker_config& config);
-
-/*!
- * \brief Stop the worker to perform asynchronous logging.
- *
- * \warning Once stopped, asynchronous logs won't be processed even when
- * init_async_logging_worker is called.
- */
-NUM_COLLECT_EXPORT void stop_async_logging_worker();
+void async_write_log(const std::shared_ptr<log_sink_base>& sink,
+    std::chrono::system_clock::time_point time, std::string_view tag,
+    log_level level, util::source_info_view source, std::string_view body);
 
 }  // namespace num_collect::logging::sinks

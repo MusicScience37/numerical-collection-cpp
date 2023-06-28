@@ -27,17 +27,49 @@
 
 #include "../mock_log_sink.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/logging/sinks/async_logging_worker.h"
+#include "num_collect/logging/log_level.h"
+#include "num_collect/logging/sinks/async_logging_worker_config.h"
+#include "num_collect/logging/sinks/log_sink_base.h"
 #include "trompeloeil_catch2.h"
 
 TEST_CASE("num_collect::logging::sinks::async_log_sink") {
     using num_collect::logging::log_level;
     using num_collect::logging::sinks::async_logging_worker_config;
     using num_collect::logging::sinks::create_async_log_sink;
-    using num_collect::logging::sinks::impl::async_log_request;
+    using num_collect::logging::sinks::log_sink_base;
     using num_collect::util::source_info_view;
     using num_collect_test::logging::mock_log_sink;
     using ::trompeloeil::_;
+
+    struct async_log_request {
+    public:
+        //! Time.
+        std::chrono::system_clock::time_point time;
+
+        //! Tag.
+        std::string tag;
+
+        //! Log level.
+        log_level level;
+
+        //! Filepath.
+        std::string file_path;
+
+        //! Line number.
+        num_collect::index_type line;
+
+        //! Column number.
+        num_collect::index_type column;
+
+        //! Function name.
+        std::string function_name;
+
+        //! Log body.
+        std::string body;
+
+        //! Log sink to write to.
+        std::shared_ptr<log_sink_base> sink;
+    };
 
     SECTION("asynchronously write a log") {
         const auto inner_sink = std::make_shared<mock_log_sink>();
