@@ -23,9 +23,7 @@
 #include <string>
 #include <string_view>
 
-#include <lyra/cli.hpp>
-#include <lyra/opt.hpp>
-#include <lyra/parser.hpp>
+#include <lyra/lyra.hpp>
 
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/load_logging_config.h"
