@@ -18,14 +18,12 @@
  * \brief Example to write logs.
  */
 #include <exception>
-#include <functional>
 #include <iostream>
 #include <memory>
 #include <string>
 #include <string_view>
 
-#include <lyra/cli.hpp>
-#include <lyra/opt.hpp>
+#include <lyra/lyra.hpp>
 
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/load_logging_config.h"
@@ -34,8 +32,6 @@
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
-#include "num_collect/logging/sinks/async_logging_worker.h"
-#include "num_collect/logging/sinks/simple_log_sink.h"
 
 constexpr auto my_tag = num_collect::logging::log_tag_view("example_tag");
 
@@ -124,11 +120,9 @@ auto main(int argc, char** argv) -> int {
         if (config_filepath.empty()) {
             // Use custom configuration to show all logs.
             const auto config =
-                num_collect::logging::log_config::instance()
-                    .get_default_tag_config()
-                    .output_log_level(num_collect::logging::log_level::trace);
-            num_collect::logging::log_config::instance().set_default_tag_config(
-                config);
+                num_collect::logging::get_default_tag_config().output_log_level(
+                    num_collect::logging::log_level::trace);
+            num_collect::logging::set_default_tag_config(config);
         } else {
             // Use the give configuration file.
             num_collect::logging::load_logging_config_file(config_filepath);

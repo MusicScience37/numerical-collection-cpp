@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 MusicScience37 (Kenta Kabashima)
+ * Copyright 2023 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,9 @@
  */
 /*!
  * \file
- * \brief Definition of combined_log_sink class.
+ * \brief Definition of functions of log sinks to write logs to multiple log
+ * sinks.
  */
-#pragma once
-
 #include <chrono>
 #include <memory>
 #include <string_view>
@@ -28,6 +27,7 @@
 
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/sinks/log_sink_base.h"
+#include "num_collect/logging/sinks/log_sinks.h"
 #include "num_collect/util/source_info_view.h"
 
 namespace num_collect::logging::sinks {
@@ -73,5 +73,11 @@ private:
     //! Log sinks with log levels.
     std::vector<std::pair<std::shared_ptr<log_sink_base>, log_level>> sinks_;
 };
+
+auto create_combined_log_sink(
+    std::vector<std::pair<std::shared_ptr<log_sink_base>, log_level>> sinks)
+    -> std::shared_ptr<log_sink_base> {
+    return std::make_shared<combined_log_sink>(std::move(sinks));
+}
 
 }  // namespace num_collect::logging::sinks

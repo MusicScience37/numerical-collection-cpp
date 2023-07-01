@@ -21,7 +21,6 @@
 
 #include <cstddef>
 #include <memory>
-#include <optional>
 #include <string>
 #include <string_view>
 #include <utility>
@@ -34,8 +33,8 @@
 #include "num_collect/logging/config/log_sink_factory_table.h"
 #include "num_collect/logging/config/parse_output_log_level_str.h"
 #include "num_collect/logging/log_level.h"
-#include "num_collect/logging/sinks/combined_log_sink.h"
 #include "num_collect/logging/sinks/log_sink_base.h"
+#include "num_collect/logging/sinks/log_sinks.h"
 
 namespace num_collect::logging::config::toml {
 
@@ -124,8 +123,7 @@ public:
             inner_sinks.emplace_back(
                 sinks.get(inner_sink_names_[i]), output_log_levels_[i]);
         }
-        return std::make_shared<sinks::combined_log_sink>(
-            std::move(inner_sinks));
+        return sinks::create_combined_log_sink(std::move(inner_sinks));
     }
 
     /*!

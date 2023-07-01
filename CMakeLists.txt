@@ -57,6 +57,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS
     ON
     CACHE BOOL "export compile commands" FORCE)
 
+set(BUILD_SHARED_LIBS
+    OFF
+    CACHE BOOL "build shared libraries")
+
 include(TargetLinkSystemLibrary)
 include(CppWarningFlags)
 include(CppFlags)
@@ -88,21 +92,9 @@ else()
 endif()
 
 set(NUM_COLLECT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(NUM_COLLECT_GENERATED_HEADER_DIR ${CMAKE_BINARY_DIR}/include)
 
-add_library(num_collect INTERFACE)
-target_include_directories(
-    num_collect INTERFACE $<BUILD_INTERFACE:${NUM_COLLECT_SOURCE_DIR}/include>
-                          $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-target_link_libraries(
-    num_collect
-    INTERFACE Threads::Threads
-              fmt::fmt
-              Eigen3::Eigen
-              cpp_hash_tables::hash_tables
-              tomlplusplus::tomlplusplus
-              $<BUILD_INTERFACE:num_collect_cpp_warnings>
-              $<BUILD_INTERFACE:num_collect_cpp_flags>)
-target_compile_features(num_collect INTERFACE cxx_std_20)
+add_subdirectory(src)
 
 if(NUM_COLLECT_BUILD_DOC)
     add_subdirectory(doc)
@@ -146,6 +138,12 @@ if(NUM_COLLECT_ENABLE_INSTALL)
 
     install(
         DIRECTORY ${NUM_COLLECT_SOURCE_DIR}/include/num_collect
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        FILES_MATCHING
+        PATTERN "*.h*")
+
+    install(
+        DIRECTORY ${NUM_COLLECT_GENERATED_HEADER_DIR}/num_collect
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         FILES_MATCHING
         PATTERN "*.h*")

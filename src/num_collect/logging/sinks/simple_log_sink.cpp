@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 MusicScience37 (Kenta Kabashima)
+ * Copyright 2023 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,8 @@
  */
 /*!
  * \file
- * \brief Definition of simple_log_sink class.
+ * \brief Definition of functions for simple log sinks.
  */
-#pragma once
-
-// IWYU pragma: no_include <type_traits>
-
 #include <chrono>
 #include <exception>
 #include <filesystem>
@@ -29,16 +25,19 @@
 #include <mutex>
 #include <string>
 #include <string_view>
+#include <type_traits>
 #include <utility>
 
 #include <fmt/format.h>
 
 #include "num_collect/logging/formatters/colored_compact_log_formatter.h"
+#include "num_collect/logging/formatters/compact_log_formatter.h"
 #include "num_collect/logging/formatters/detailed_log_formatter.h"
 #include "num_collect/logging/formatters/log_formatter_base.h"
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/sinks/file_wrapper.h"
 #include "num_collect/logging/sinks/log_sink_base.h"
+#include "num_collect/logging/sinks/log_sinks.h"
 #include "num_collect/util/source_info_view.h"
 
 namespace num_collect::logging::sinks {
@@ -108,30 +107,27 @@ private:
     bool is_enabled_{true};
 };
 
-/*!
- * \brief Create a log sink to write to a single file.
- *
- * \param[in] filepath Filepath.
- * \return Log sink.
- */
-[[nodiscard]] inline auto create_single_file_sink(const std::string& filepath)
+auto create_single_file_sink(std::string_view filepath)
     -> std::shared_ptr<log_sink_base> {
     const auto dir_path = std::filesystem::absolute(filepath).parent_path();
     std::filesystem::create_directories(dir_path);
-    return std::make_shared<simple_log_sink>(file_wrapper{filepath, "w"},
+    return std::make_shared<simple_log_sink>(
+        file_wrapper{std::string(filepath), "w"},
         std::make_shared<formatters::detailed_log_formatter>());
 }
 
-/*!
- * \brief Create a log sink to write to console with color.
- *
- * \return Log sink.
- */
-[[nodiscard]] inline auto create_colored_console_sink() {
+auto create_colored_console_sink() -> std::shared_ptr<log_sink_base> {
     file_wrapper file{};
     file.set_stdout();
     return std::make_shared<simple_log_sink>(std::move(file),
         std::make_shared<formatters::colored_compact_log_formatter>());
+}
+
+auto create_non_colored_console_sink() -> std::shared_ptr<log_sink_base> {
+    file_wrapper file{};
+    file.set_stdout();
+    return std::make_shared<simple_log_sink>(
+        std::move(file), std::make_shared<formatters::compact_log_formatter>());
 }
 
 }  // namespace num_collect::logging::sinks

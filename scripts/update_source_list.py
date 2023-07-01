@@ -7,26 +7,30 @@ import subprocess
 
 THIS_DIR = Path(__file__).parent.absolute()
 
-SOURCE_PATHS = [
-    THIS_DIR.parent / "test" / "units" / module_name
-    for module_name in [
-        "auto_diff",
-        "base",
-        "constants",
-        "functions",
-        "integration",
-        "interp",
-        "linear",
-        "logging",
-        "multi_double",
-        "numbers",
-        "ode",
-        "opt",
-        "regularization",
-        "roots",
-        "util",
+SOURCE_PATHS = (
+    [THIS_DIR.parent / "src"]
+    + [
+        THIS_DIR.parent / "test" / "units" / module_name
+        for module_name in [
+            "auto_diff",
+            "base",
+            "constants",
+            "functions",
+            "integration",
+            "interp",
+            "linear",
+            "logging",
+            "multi_double",
+            "numbers",
+            "ode",
+            "opt",
+            "regularization",
+            "roots",
+            "util",
+        ]
     ]
-] + [THIS_DIR.parent / "test" / "integ" / "ode_comb"]
+    + [THIS_DIR.parent / "test" / "integ" / "ode_comb"]
+)
 
 UNITY_SRC_SUFFIX = "unity_source.cpp"
 SOURCE_LIST_CMAKE_SUFFIX = "source_list.cmake"

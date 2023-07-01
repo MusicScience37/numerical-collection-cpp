@@ -20,6 +20,7 @@
 #include "num_prob_collect/linear/laplacian_2d_grid.h"
 
 #include <algorithm>
+#include <iostream>
 
 #include <Eigen/Core>
 #include <Eigen/IterativeLinearSolvers>
@@ -27,6 +28,7 @@
 #include <pybind11/eigen.h>
 #include <pybind11/embed.h>
 #include <pybind11/pybind11.h>
+#include <toml++/toml.h>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/load_logging_config.h"

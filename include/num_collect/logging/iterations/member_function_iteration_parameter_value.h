@@ -19,8 +19,10 @@
  */
 #pragma once
 
-#include <string_view>
-#include <type_traits>
+// IWYU pragma: no_include <functional>
+// IWYU pragma: no_include <string_view>
+
+#include <type_traits>  // IWYU pragma: keep
 
 #include "num_collect/base/exception.h"
 #include "num_collect/logging/concepts/formattable_iteration_parameter_value.h"  // IWYU pragma: keep

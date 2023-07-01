@@ -1,5 +1,6 @@
 build_dir: build/Debug
 file_patterns:
+  - src/unity_source.cpp
   - test/units/**/unity_source.cpp
   - test/integ/**/unity_source.cpp
 extra_args:

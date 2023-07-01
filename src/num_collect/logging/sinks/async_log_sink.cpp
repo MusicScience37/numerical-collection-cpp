@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 MusicScience37 (Kenta Kabashima)
+ * Copyright 2023 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,8 @@
  */
 /*!
  * \file
- * \brief Definition of async_log_sink class.
+ * \brief Definition of functions for asynchronous loggers.
  */
-#pragma once
-
 #include <chrono>
 #include <exception>
 #include <iostream>
@@ -26,9 +24,10 @@
 #include <string_view>
 #include <utility>
 
+#include "async_logging_worker_internal.h"
 #include "num_collect/logging/log_level.h"
-#include "num_collect/logging/sinks/async_logging_worker.h"
 #include "num_collect/logging/sinks/log_sink_base.h"
+#include "num_collect/logging/sinks/log_sinks.h"
 #include "num_collect/util/source_info_view.h"
 
 namespace num_collect::logging::sinks {
@@ -46,7 +45,7 @@ public:
      * \param[in] sink Log sink to write logs actually.
      */
     explicit async_log_sink(std::shared_ptr<log_sink_base> sink)
-        : sink_(std::move(sink)), worker_(async_logging_worker::instance()) {}
+        : sink_(std::move(sink)) {}
 
     /*!
      * \brief Destructor.
@@ -66,7 +65,7 @@ public:
             return;
         }
         try {
-            worker_.async_write(sink_, time, tag, level, source, body);
+            async_write_log(sink_, time, tag, level, source, body);
         } catch (const std::exception& e) {
             std::cerr << "ERROR IN LOGGING: " << e.what() << std::endl;
             is_enabled_ = false;
@@ -77,11 +76,13 @@ private:
     //! Log sink to write logs actually.
     std::shared_ptr<log_sink_base> sink_;
 
-    //! Worker.
-    async_logging_worker& worker_;
-
     //! Whether this object is enabled.
     bool is_enabled_{true};
 };
+
+auto create_async_log_sink(std::shared_ptr<log_sink_base> sink)
+    -> std::shared_ptr<log_sink_base> {
+    return std::make_shared<async_log_sink>(std::move(sink));
+}
 
 }  // namespace num_collect::logging::sinks

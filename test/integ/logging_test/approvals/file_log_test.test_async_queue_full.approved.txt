@@ -2,7 +2,7 @@ exit code: 0
 stdout:
 
 stderr:
-ERROR IN LOGGING: Queue of logs is full. (async_logging_worker.h:<line>:<col>)
+ERROR IN LOGGING: Queue of logs is full. (async_logging_worker.cpp:<line>:<col>)
 
 num_collect_test_integ_logging.log:
 

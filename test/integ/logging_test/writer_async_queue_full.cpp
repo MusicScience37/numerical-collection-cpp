@@ -28,6 +28,7 @@
 #include "num_collect/logging/load_logging_config.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/logging/sinks/async_logging_worker.h"
+#include "num_collect/logging/sinks/async_logging_worker_config.h"
 
 auto main(int argc, char** argv) -> int {
     try {
@@ -39,10 +40,10 @@ auto main(int argc, char** argv) -> int {
             return 1;
         }
 
-        num_collect::logging::sinks::async_logging_worker::instance(
+        num_collect::logging::sinks::init_async_logging_worker(
             num_collect::logging::sinks::async_logging_worker_config()
-                .thread_queue_size(10))  // NOLINT
-            .stop();
+                .thread_queue_size(10));  // NOLINT
+        num_collect::logging::sinks::stop_async_logging_worker();
 
         const std::string_view config_filepath =
             argv[1];  // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)

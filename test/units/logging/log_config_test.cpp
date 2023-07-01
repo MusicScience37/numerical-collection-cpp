@@ -15,11 +15,10 @@
  */
 /*!
  * \file
- * \brief Test of log_config class.
+ * \brief Test of functions to get and set logging configurations.
  */
 #include "num_collect/logging/log_config.h"
 
-#include <string>
 #include <string_view>
 
 #include <catch2/catch_test_macros.hpp>
@@ -29,14 +28,15 @@
 #include "num_collect/logging/log_tag_view.h"
 
 TEST_CASE("num_collect::logging::log_config") {
-    using num_collect::logging::log_config;
+    using num_collect::logging::get_config_of;
     using num_collect::logging::log_tag_config;
     using num_collect::logging::log_tag_view;
+    using num_collect::logging::set_config_of;
 
     SECTION("get the configuration of a non-existing tag") {
         const auto tag = log_tag_view("num_collect::logging::log_config_test1");
 
-        CHECK_NOTHROW((void)log_config::instance().get_config_of(tag));
+        CHECK_NOTHROW((void)get_config_of(tag));
     }
 
     SECTION("set the configuration of a non-existing tag") {
@@ -45,10 +45,9 @@ TEST_CASE("num_collect::logging::log_config") {
         const auto config =
             log_tag_config().iteration_label_period(iteration_label_period);
 
-        CHECK_NOTHROW(log_config::instance().set_config_of(tag, config));
-        CHECK_NOTHROW(log_config::instance()
-                          .get_config_of(tag)
-                          .iteration_label_period() == iteration_label_period);
+        CHECK_NOTHROW(set_config_of(tag, config));
+        CHECK_NOTHROW(get_config_of(tag).iteration_label_period() ==
+            iteration_label_period);
     }
 
     SECTION("set the configuration of a existing tag") {
@@ -57,10 +56,9 @@ TEST_CASE("num_collect::logging::log_config") {
         const auto config =
             log_tag_config().iteration_label_period(iteration_label_period);
 
-        CHECK_NOTHROW((void)log_config::instance().get_config_of(tag));
-        CHECK_NOTHROW(log_config::instance().set_config_of(tag, config));
-        CHECK_NOTHROW(log_config::instance()
-                          .get_config_of(tag)
-                          .iteration_label_period() == iteration_label_period);
+        CHECK_NOTHROW((void)get_config_of(tag));
+        CHECK_NOTHROW(set_config_of(tag, config));
+        CHECK_NOTHROW(get_config_of(tag).iteration_label_period() ==
+            iteration_label_period);
     }
 }
