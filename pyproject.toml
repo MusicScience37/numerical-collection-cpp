@@ -4,36 +4,36 @@ version = "0.0.0"
 description = ""
 authors = ["Kenta Kabashima <kenta_program37@hotmail.co.jp>"]
 readme = "README.md"
-packages = [{ include = "scripts" }]
+packages = []
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
 
 [tool.poetry.group.dev.dependencies]
 adr-tools-python = "^1.0.3"
-black = "^23.3.0"
-click = "^8.1.3"
+black = "^23.7.0"
+click = "^8.1.6"
 cmakelang = "^0.6.13"
 doc8 = "^0.11.2"
 kaleido = "==0.2.1"
 myst-parser = "^2.0.0"
-pandas = "^2.0.2"
+pandas = "^2.0.3"
 plotly = "^5.15.0"
 pre-commit = "^3.3.3"
-pylint = "^2.17.4"
+pylint = "^2.17.5"
 sphinx = "^6.2.1"
 sphinx-autobuild = "^2021.3.14"
 sphinx-rtd-theme = "^1.2.2"
-sphinxcontrib-plantuml = "^0.24.1"
+sphinxcontrib-plantuml = "^0.25"
 tqdm = "^4.65.0"
 lizard = "^1.17.10"
 lcov-cobertura = "^2.0.2"
 clang-tidy-checker = "^0.3.0"
-pytest = "^7.3.2"
+pytest = "^7.4.0"
 pytest-approvaltests = "^0.2.4"
-fastjsonschema = "^2.17.1"
+fastjsonschema = "^2.18.0"
 pytomlpp = "^1.0.13"
-pybind11 = "^2.10.4"
+pybind11 = "^2.11.1"
 
 [build-system]
 requires = ["poetry-core"]
