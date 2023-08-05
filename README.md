@@ -19,20 +19,43 @@ A collection of algorithms in numerical analysis implemented in C++.
 
 ## How to Use
 
-TODO: Packaging with vcpkg.
+This library can be used via [vcpkg](https://vcpkg.io/) using following configurations:
 
-### Simply Including Headers
+- Add a vcpkg registry
+  `https://gitlab.com/MusicScience37Projects/vcpkg-registry`
+  in `vcpkg-configuration.json`.
 
-This library is header-only,
-so you can simply include headers
-setting `include` directory to an include directory of compilers.
-Note that you must install additional dependencies,
-which are installed automatically when using vcpkg:
+  Example:
 
-- [fmt](https://fmt.dev/)
-- [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page)
-- [cpp-hash-tables](https://gitlab.com/MusicScience37Projects/utility-libraries/cpp-hash-tables)
-- [toml++](https://marzer.github.io/tomlplusplus/)
+  ```json
+  {
+    "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg-configuration.schema.json",
+    "default-registry": {
+      "kind": "git",
+      "repository": "https://github.com/Microsoft/vcpkg",
+      "baseline": "78b61582c9e093fda56a01ebb654be15a0033897"
+    },
+    "registries": [
+      {
+        "kind": "git",
+        "repository": "https://gitlab.com/MusicScience37Projects/vcpkg-registry",
+        "baseline": "f7fcc04f34f351a91796eaa0b386017e961a51b4",
+        "packages": ["cpp-hash-tables", "numerical-collection-cpp"]
+      }
+    ]
+  }
+  ```
+
+- Add `numerical-collection-cpp` in `vcpkg.json`
+
+  Example:
+
+  ```json
+  {
+    "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+    "dependencies": ["numerical-collection-cpp"]
+  }
+  ```
 
 ## How to Build in the Repository
 
