@@ -66,7 +66,7 @@ public:
      */
     template <typename Child>
     void configure_child_algorithm_logger_if_exists(Child& child) {
-        if constexpr (requires(Child & obj) { obj.logger(); }) {
+        if constexpr (requires(Child& obj) { obj.logger(); }) {
             this->logger().initialize_child_algorithm_logger(child.logger());
         }
     }

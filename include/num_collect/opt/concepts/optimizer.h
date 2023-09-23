@@ -35,45 +35,44 @@ namespace num_collect::opt::concepts {
  */
 template <typename T>
 concept optimizer = base::concepts::iterative_solver<T> &&
-    requires() {
-        typename T::objective_function_type;
-        requires objective_function<typename T::objective_function_type>;
+        requires()
+{
+    typename T::objective_function_type;
+    requires objective_function<typename T::objective_function_type>;
 
-        typename T::variable_type;
-        requires base::concepts::same_as<
-            typename T::objective_function_type::variable_type,
-            typename T::variable_type>;
+    typename T::variable_type;
+    requires base::concepts::same_as<
+        typename T::objective_function_type::variable_type,
+        typename T::variable_type>;
 
-        typename T::value_type;
-        requires base::concepts::same_as<
-            typename T::objective_function_type::value_type,
-            typename T::value_type>;
+    typename T::value_type;
+    requires base::concepts::same_as<
+        typename T::objective_function_type::value_type,
+        typename T::value_type>;
 
-        requires requires(const typename T::objective_function_type& obj_fun) {
-                     { T{obj_fun} };
-                 };
-
-        requires requires(const T& obj) {
-                     {
-                         obj.opt_variable()
-                         } -> base::concepts::const_reference_of<
-                             typename T::variable_type>;
-
-                     {
-                         obj.opt_value()
-                         } -> base::concepts::const_reference_of<
-                             typename T::value_type>;
-
-                     {
-                         obj.iterations()
-                         } -> base::concepts::implicitly_convertible_to<
-                             index_type>;
-
-                     {
-                         obj.evaluations()
-                         } -> base::concepts::implicitly_convertible_to<
-                             index_type>;
-                 };
+    requires requires(const typename T::objective_function_type& obj_fun) {
+        {
+            T { obj_fun }
+        };
     };
+
+    requires requires(const T& obj) {
+        {
+            obj.opt_variable()
+        } -> base::concepts::const_reference_of<typename T::variable_type>;
+
+        {
+            obj.opt_value()
+        } -> base::concepts::const_reference_of<typename T::value_type>;
+
+        {
+            obj.iterations()
+        } -> base::concepts::implicitly_convertible_to<index_type>;
+
+        {
+            obj.evaluations()
+        } -> base::concepts::implicitly_convertible_to<index_type>;
+    };
+};
 
 }  // namespace num_collect::opt::concepts

@@ -32,45 +32,42 @@ namespace num_collect::ode::concepts {
  * \tparam T Type.
  */
 template <typename T>
-concept rosenbrock_equation_solver =
-    requires() {
-        typename T::problem_type;
-        requires problem<typename T::problem_type>;
+concept rosenbrock_equation_solver = requires() {
+    typename T::problem_type;
+    requires problem<typename T::problem_type>;
 
-        typename T::variable_type;
-        requires std::is_same_v<typename T::variable_type,
-            typename T::problem_type::variable_type>;
+    typename T::variable_type;
+    requires std::is_same_v<typename T::variable_type,
+        typename T::problem_type::variable_type>;
 
-        typename T::scalar_type;
-        requires std::is_same_v<typename T::scalar_type,
-            typename T::problem_type::scalar_type>;
+    typename T::scalar_type;
+    requires std::is_same_v<typename T::scalar_type,
+        typename T::problem_type::scalar_type>;
 
-        requires requires(
-            const typename T::scalar_type& inverted_jacobian_coeff) {
-                     T(inverted_jacobian_coeff);
-                 };
-
-        requires requires(T & obj, typename T::problem_type & problem,
-            const typename T::scalar_type& time,
-            const typename T::scalar_type& step_size,
-            const typename T::variable_type& variable) {
-                     obj.evaluate_and_update_jacobian(
-                         problem, time, step_size, variable);
-                 };
-
-        requires requires(T & obj, const typename T::variable_type& target,
-            typename T::variable_type& result) {
-                     obj.apply_jacobian(target, result);
-                 };
-
-        requires requires(T & obj, const typename T::scalar_type& step_size,
-            const typename T::scalar_type& coeff,
-            typename T::variable_type& target) {
-                     obj.add_time_derivative_term(step_size, coeff, target);
-                 };
-
-        requires requires(T & obj, const typename T::variable_type& rhs,
-            typename T::variable_type& result) { obj.solve(rhs, result); };
+    requires requires(const typename T::scalar_type& inverted_jacobian_coeff) {
+        T(inverted_jacobian_coeff);
     };
+
+    requires requires(T& obj, typename T::problem_type& problem,
+        const typename T::scalar_type& time,
+        const typename T::scalar_type& step_size,
+        const typename T::variable_type& variable) {
+        obj.evaluate_and_update_jacobian(problem, time, step_size, variable);
+    };
+
+    requires requires(T& obj, const typename T::variable_type& target,
+        typename T::variable_type& result) {
+        obj.apply_jacobian(target, result);
+    };
+
+    requires requires(T& obj, const typename T::scalar_type& step_size,
+        const typename T::scalar_type& coeff,
+        typename T::variable_type& target) {
+        obj.add_time_derivative_term(step_size, coeff, target);
+    };
+
+    requires requires(T& obj, const typename T::variable_type& rhs,
+        typename T::variable_type& result) { obj.solve(rhs, result); };
+};
 
 }  // namespace num_collect::ode::concepts

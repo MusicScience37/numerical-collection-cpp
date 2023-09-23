@@ -36,7 +36,7 @@ constexpr auto get_least_known_order() -> index_type {
     if constexpr (requires() {
                       {
                           Formula::lesser_order
-                          } -> base::concepts::decayed_to<index_type>;
+                      } -> base::concepts::decayed_to<index_type>;
                   }) {
         return Formula::lesser_order;
     } else {

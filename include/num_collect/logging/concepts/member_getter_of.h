@@ -32,9 +32,7 @@ namespace num_collect::logging::concepts {
  */
 template <typename Func, typename Value, typename Object>
 concept member_getter_of = requires(const Func& func, Object* object) {
-                               {
-                                   (object->*func)()
-                                   } -> base::concepts::decayed_to<Value>;
-                           };
+    { (object->*func)() } -> base::concepts::decayed_to<Value>;
+};
 
 }  // namespace num_collect::logging::concepts

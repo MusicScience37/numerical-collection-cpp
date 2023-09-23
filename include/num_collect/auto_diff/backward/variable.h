@@ -441,13 +441,26 @@ struct NumTraits<num_collect::auto_diff::backward::variable<Scalar>> {
     using Nested = Real;
 
     enum {
-        IsInteger = 0,              // NOLINT
-        IsSigned = 1,               // NOLINT
-        IsComplex = 0,              // NOLINT
+        //! Whether this type is an integer.
+        IsInteger = 0,  // NOLINT
+
+        //! Whether this type is signed.
+        IsSigned = 1,  // NOLINT
+
+        //! Whether this type is a complex number.
+        IsComplex = 0,  // NOLINT
+
+        //! Whether this type requires initialization.
         RequireInitialization = 1,  // NOLINT
-        ReadCost = 1,               // NOLINT
-        AddCost = 2,                // NOLINT
-        MulCost = 4                 // NOLINT
+
+        //! Cost to read this value.
+        ReadCost = 1,  // NOLINT
+
+        //! Cost to add this value.
+        AddCost = 2,  // NOLINT
+
+        //! Cost to multiply this value.
+        MulCost = 4  // NOLINT
     };
 
     /*!

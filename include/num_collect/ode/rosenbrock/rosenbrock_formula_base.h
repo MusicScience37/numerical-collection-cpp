@@ -71,7 +71,7 @@ public:
      * \return This.
      */
     auto tolerances(const error_tolerances<variable_type>& val) -> Derived& {
-        if constexpr (requires(equation_solver_type & solver,
+        if constexpr (requires(equation_solver_type& solver,
                           const error_tolerances<variable_type>& val) {
                           solver.tolerances(val);
                       }) {

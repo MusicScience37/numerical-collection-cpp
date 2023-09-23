@@ -33,17 +33,14 @@ namespace num_collect::logging::concepts {
  * \tparam Value Type of values.
  */
 template <typename T, typename Algorithm, typename Value>
-concept iteration_parameter_value =
-    requires(const T& obj) {
-        requires std::is_nothrow_move_constructible_v<T>;
+concept iteration_parameter_value = requires(const T& obj) {
+    requires std::is_nothrow_move_constructible_v<T>;
 
-        { obj.get() } -> base::concepts::decayed_to<Value>;
+    { obj.get() } -> base::concepts::decayed_to<Value>;
 
-        requires requires(const Algorithm* algorithm) {
-                     {
-                         obj.get(algorithm)
-                         } -> base::concepts::decayed_to<Value>;
-                 };
+    requires requires(const Algorithm* algorithm) {
+        { obj.get(algorithm) } -> base::concepts::decayed_to<Value>;
     };
+};
 
 }  // namespace num_collect::logging::concepts

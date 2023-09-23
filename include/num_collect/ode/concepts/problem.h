@@ -32,29 +32,25 @@ namespace num_collect::ode::concepts {
  * \tparam T Type.
  */
 template <typename T>
-concept problem =
-    requires(T& obj, const T& const_obj) {
-        typename T::variable_type;
-        typename T::scalar_type;
+concept problem = requires(T& obj, const T& const_obj) {
+    typename T::variable_type;
+    typename T::scalar_type;
 
-        requires base::concepts::real_scalar<typename T::scalar_type>;
-        requires requires(typename T::variable_type & var,
-            const typename T::scalar_type& coeff) { var = var + coeff * var; };
+    requires base::concepts::real_scalar<typename T::scalar_type>;
+    requires requires(typename T::variable_type& var,
+        const typename T::scalar_type& coeff) { var = var + coeff * var; };
 
-        {
-            T::allowed_evaluations
-            } -> base::concepts::decayed_to<evaluation_type>;
-        requires T::allowed_evaluations.allows(
-            evaluation_type{.diff_coeff = true});
+    { T::allowed_evaluations } -> base::concepts::decayed_to<evaluation_type>;
+    requires T::allowed_evaluations.allows(evaluation_type{.diff_coeff = true});
 
-        requires requires(const typename T::scalar_type& time,
-            const typename T::variable_type& var, evaluation_type evaluations) {
-                     obj.evaluate_on(time, var, evaluations);
-                 };
-
-        {
-            const_obj.diff_coeff()
-            } -> base::concepts::const_reference_of<typename T::variable_type>;
+    requires requires(const typename T::scalar_type& time,
+        const typename T::variable_type& var, evaluation_type evaluations) {
+        obj.evaluate_on(time, var, evaluations);
     };
+
+    {
+        const_obj.diff_coeff()
+    } -> base::concepts::const_reference_of<typename T::variable_type>;
+};
 
 }  // namespace num_collect::ode::concepts
