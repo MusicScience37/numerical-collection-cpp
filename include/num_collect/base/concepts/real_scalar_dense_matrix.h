@@ -32,11 +32,10 @@ namespace concepts {
  * \tparam T Type.
  */
 template <typename T>
-concept real_scalar_dense_matrix =
-    dense_matrix<T> && requires {
-                           typename T::Scalar;
-                           requires real_scalar<typename T::Scalar>;
-                       };
+concept real_scalar_dense_matrix = dense_matrix<T> && requires {
+    typename T::Scalar;
+    requires real_scalar<typename T::Scalar>;
+};
 
 }  // namespace concepts
 }  // namespace base

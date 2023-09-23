@@ -34,11 +34,10 @@ namespace concepts {
  * \tparam Scalar Type of the scalars.
  */
 template <typename T, typename Scalar>
-concept sparse_matrix_of =
-    sparse_matrix<T> && requires {
-                            typename T::Scalar;
-                            requires std::is_same_v<typename T::Scalar, Scalar>;
-                        };
+concept sparse_matrix_of = sparse_matrix<T> && requires {
+    typename T::Scalar;
+    requires std::is_same_v<typename T::Scalar, Scalar>;
+};
 
 }  // namespace concepts
 }  // namespace base

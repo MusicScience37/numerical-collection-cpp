@@ -32,12 +32,11 @@ namespace num_collect::interp::kernel::concepts {
  */
 template <typename T>
 concept rbf = requires(const T& obj) {
-                  typename T::arg_type;
-                  typename T::value_type;
-                  {
-                      obj(std::declval<typename T::arg_type>())
-                      } -> base::concepts::implicitly_convertible_to<
-                          typename T::value_type>;
-              };
+    typename T::arg_type;
+    typename T::value_type;
+    {
+        obj(std::declval<typename T::arg_type>())
+    } -> base::concepts::implicitly_convertible_to<typename T::value_type>;
+};
 
 }  // namespace num_collect::interp::kernel::concepts

@@ -33,20 +33,17 @@ namespace num_collect::ode::concepts {
  * \tparam T Type.
  */
 template <typename T>
-concept formula_solver =
-    requires(T& obj, const T& const_obj) {
-        typename T::problem_type;
+concept formula_solver = requires(T& obj, const T& const_obj) {
+    typename T::problem_type;
 
-        requires problem<typename T::problem_type>;
+    requires problem<typename T::problem_type>;
 
-        { T(std::declval<typename T::problem_type>()) };
+    { T(std::declval<typename T::problem_type>()) };
 
-        {
-            obj.problem()
-            } -> base::concepts::reference_of<typename T::problem_type>;
-        {
-            const_obj.problem()
-            } -> base::concepts::const_reference_of<typename T::problem_type>;
-    };
+    { obj.problem() } -> base::concepts::reference_of<typename T::problem_type>;
+    {
+        const_obj.problem()
+    } -> base::concepts::const_reference_of<typename T::problem_type>;
+};
 
 }  // namespace num_collect::ode::concepts

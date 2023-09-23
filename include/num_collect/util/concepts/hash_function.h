@@ -33,9 +33,7 @@ namespace num_collect::util::concepts {
  */
 template <typename Hash, typename Key>
 concept hash_function = requires(const Hash& hash, const Key& key) {
-                            {
-                                hash(key)
-                                } -> base::concepts::same_as<std::size_t>;
-                        };
+    { hash(key) } -> base::concepts::same_as<std::size_t>;
+};
 
 }  // namespace num_collect::util::concepts

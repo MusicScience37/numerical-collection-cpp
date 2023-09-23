@@ -30,15 +30,14 @@ namespace num_collect::ode::concepts {
  */
 template <typename T>
 concept embedded_formula = formula<T> &&
-    requires() {
-        requires requires(T & obj, const typename T::scalar_type& time,
-            const typename T::scalar_type& step_size,
-            const typename T::variable_type& current,
-            typename T::variable_type& estimate,
-            typename T::variable_type& error) {
-                     obj.step_embedded(
-                         time, step_size, current, estimate, error);
-                 };
+        requires()
+{
+    requires requires(T& obj, const typename T::scalar_type& time,
+        const typename T::scalar_type& step_size,
+        const typename T::variable_type& current,
+        typename T::variable_type& estimate, typename T::variable_type& error) {
+        obj.step_embedded(time, step_size, current, estimate, error);
     };
+};
 
 }  // namespace num_collect::ode::concepts

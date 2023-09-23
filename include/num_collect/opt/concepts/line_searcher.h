@@ -36,62 +36,55 @@ namespace num_collect::opt::concepts {
  * \tparam T Type.
  */
 template <typename T>
-concept line_searcher =
-    requires() {
-        typename T::objective_function_type;
-        requires differentiable_objective_function<
+concept line_searcher = requires() {
+    typename T::objective_function_type;
+    requires differentiable_objective_function<
+        typename T::objective_function_type>;
+
+    typename T::variable_type;
+    requires std::is_same_v<typename T::variable_type,
+        typename T::objective_function_type::variable_type>;
+
+    typename T::value_type;
+    requires std::is_same_v<typename T::value_type,
+        typename T::objective_function_type::value_type>;
+
+    requires requires(T& obj, const typename T::variable_type& init_variable) {
+        { obj.init(init_variable) };
+    };
+
+    requires requires(T& obj, const typename T::variable_type& direction) {
+        { obj.search(direction) };
+    };
+
+    requires requires(T& obj) {
+        {
+            obj.obj_fun()
+        } -> base::concepts::reference_of<typename T::objective_function_type>;
+    };
+
+    requires requires(const T& obj) {
+        {
+            obj.obj_fun()
+        } -> base::concepts::const_reference_of<
             typename T::objective_function_type>;
 
-        typename T::variable_type;
-        requires std::is_same_v<typename T::variable_type,
-            typename T::objective_function_type::variable_type>;
+        {
+            obj.opt_variable()
+        } -> base::concepts::const_reference_of<typename T::variable_type>;
 
-        typename T::value_type;
-        requires std::is_same_v<typename T::value_type,
-            typename T::objective_function_type::value_type>;
+        {
+            obj.opt_value()
+        } -> base::concepts::const_reference_of<typename T::value_type>;
 
-        requires requires(
-            T & obj, const typename T::variable_type& init_variable) {
-                     { obj.init(init_variable) };
-                 };
+        {
+            obj.gradient()
+        } -> base::concepts::const_reference_of<typename T::variable_type>;
 
-        requires requires(T & obj, const typename T::variable_type& direction) {
-                     { obj.search(direction) };
-                 };
-
-        requires requires(T & obj) {
-                     {
-                         obj.obj_fun()
-                         } -> base::concepts::reference_of<
-                             typename T::objective_function_type>;
-                 };
-
-        requires requires(const T& obj) {
-                     {
-                         obj.obj_fun()
-                         } -> base::concepts::const_reference_of<
-                             typename T::objective_function_type>;
-
-                     {
-                         obj.opt_variable()
-                         } -> base::concepts::const_reference_of<
-                             typename T::variable_type>;
-
-                     {
-                         obj.opt_value()
-                         } -> base::concepts::const_reference_of<
-                             typename T::value_type>;
-
-                     {
-                         obj.gradient()
-                         } -> base::concepts::const_reference_of<
-                             typename T::variable_type>;
-
-                     {
-                         obj.evaluations()
-                         } -> base::concepts::implicitly_convertible_to<
-                             index_type>;
-                 };
+        {
+            obj.evaluations()
+        } -> base::concepts::implicitly_convertible_to<index_type>;
     };
+};
 
 }  // namespace num_collect::opt::concepts

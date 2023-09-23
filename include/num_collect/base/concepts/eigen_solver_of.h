@@ -33,9 +33,9 @@ namespace concepts {
 template <typename T, typename Matrix, typename Vector>
 concept eigen_solver_of = requires(
     T& solver, const Matrix& coeff, const Vector& right, Vector& solution) {
-                              solver.compute(coeff);
-                              solution = solver.solve(right);
-                          };
+    solver.compute(coeff);
+    solution = solver.solve(right);
+};
 
 }  // namespace concepts
 }  // namespace base

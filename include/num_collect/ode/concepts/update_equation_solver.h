@@ -41,33 +41,31 @@ namespace num_collect::ode::concepts {
  */
 template <typename T>
 concept update_equation_solver = ode::concepts::ode_equation_solver<T> &&
-    requires() {
-        requires requires(T & obj, typename T::problem_type & problem,
-            typename T::scalar_type time, typename T::scalar_type step_size,
-            const typename T::variable_type& variable,
-            typename T::scalar_type solution_coeff) {
-                     obj.update_jacobian(
-                         problem, time, step_size, variable, solution_coeff);
-                 };
-
-        requires requires(T & obj,
-            const typename T::variable_type& solution_offset,
-            typename T::variable_type& solution) {
-                     obj.init(solution_offset, solution);
-                 };
-
-        requires requires(const typename T::scalar_type& time, T& obj,
-            const typename T::variable_type& solution_offset,
-            typename T::variable_type& solution) {
-                     obj.init(time, solution_offset, solution);
-                 };
-
-        requires requires(const T& obj) {
-                     {
-                         obj.solution_offset()
-                         } -> base::concepts::const_reference_of<
-                             typename T::variable_type>;
-                 };
+        requires()
+{
+    requires requires(T& obj, typename T::problem_type& problem,
+        typename T::scalar_type time, typename T::scalar_type step_size,
+        const typename T::variable_type& variable,
+        typename T::scalar_type solution_coeff) {
+        obj.update_jacobian(problem, time, step_size, variable, solution_coeff);
     };
+
+    requires requires(T& obj, const typename T::variable_type& solution_offset,
+        typename T::variable_type& solution) {
+        obj.init(solution_offset, solution);
+    };
+
+    requires requires(const typename T::scalar_type& time, T& obj,
+        const typename T::variable_type& solution_offset,
+        typename T::variable_type& solution) {
+        obj.init(time, solution_offset, solution);
+    };
+
+    requires requires(const T& obj) {
+        {
+            obj.solution_offset()
+        } -> base::concepts::const_reference_of<typename T::variable_type>;
+    };
+};
 
 }  // namespace num_collect::ode::concepts

@@ -49,7 +49,7 @@ Checks: >
 # - readability-identifier-length prevent traditional codes.
 # - openmp-use-default-none cannot be fixed when class members are used as usual in object-oriented programming.
 # - bugprone-exception-escape has a bug.
-# - bugprone-unchecked-optional-access complains even when std::optional::value function is used.
+# - bugprone-unchecked-optional-access complains even when std::optional::value function is used and has a bug as in https://github.com/clangd/clangd/issues/1700..
 
 CheckOptions:
   # Naming Conventions

@@ -31,10 +31,8 @@ namespace num_collect::util::concepts {
  */
 template <typename T, typename U>
 concept less_than_comparable = requires(const T& t, const U& u) {
-                                   {
-                                       t < u
-                                       } -> base::concepts::decayed_to<bool>;
-                               };
+    { t < u } -> base::concepts::decayed_to<bool>;
+};
 
 /*!
  * \brief Concept of comparable types with `operator<=`.
@@ -43,10 +41,9 @@ concept less_than_comparable = requires(const T& t, const U& u) {
  * \tparam U Right-hand-side type.
  */
 template <typename T, typename U>
-concept less_than_or_equal_to_comparable =
-    requires(const T& t, const U& u) {
-        { t <= u } -> base::concepts::decayed_to<bool>;
-    };
+concept less_than_or_equal_to_comparable = requires(const T& t, const U& u) {
+    { t <= u } -> base::concepts::decayed_to<bool>;
+};
 
 /*!
  * \brief Concept of comparable types with `operator>`.
@@ -56,10 +53,8 @@ concept less_than_or_equal_to_comparable =
  */
 template <typename T, typename U>
 concept greater_than_comparable = requires(const T& t, const U& u) {
-                                      {
-                                          t > u
-                                          } -> base::concepts::decayed_to<bool>;
-                                  };
+    { t > u } -> base::concepts::decayed_to<bool>;
+};
 
 /*!
  * \brief Concept of comparable types with `operator>=`.
@@ -68,10 +63,9 @@ concept greater_than_comparable = requires(const T& t, const U& u) {
  * \tparam U Right-hand-side type.
  */
 template <typename T, typename U>
-concept greater_than_or_equal_to_comparable =
-    requires(const T& t, const U& u) {
-        { t >= u } -> base::concepts::decayed_to<bool>;
-    };
+concept greater_than_or_equal_to_comparable = requires(const T& t, const U& u) {
+    { t >= u } -> base::concepts::decayed_to<bool>;
+};
 
 /*!
  * \brief Concept of comparable types with `operator==`.
@@ -81,10 +75,8 @@ concept greater_than_or_equal_to_comparable =
  */
 template <typename T, typename U>
 concept equal_to_comparable = requires(const T& t, const U& u) {
-                                  {
-                                      t == u
-                                      } -> base::concepts::decayed_to<bool>;
-                              };
+    { t == u } -> base::concepts::decayed_to<bool>;
+};
 
 /*!
  * \brief Concept of comparable types with `operator!=`.
@@ -94,10 +86,8 @@ concept equal_to_comparable = requires(const T& t, const U& u) {
  */
 template <typename T, typename U>
 concept not_equal_to_comparable = requires(const T& t, const U& u) {
-                                      {
-                                          t != u
-                                          } -> base::concepts::decayed_to<bool>;
-                                  };
+    { t != u } -> base::concepts::decayed_to<bool>;
+};
 
 /*!
  * \brief Concept of comparable types.

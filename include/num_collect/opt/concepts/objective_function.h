@@ -30,23 +30,21 @@ namespace num_collect::opt::concepts {
  * \tparam T Type.
  */
 template <typename T>
-concept objective_function =
-    requires() {
-        typename T::variable_type;
-        typename T::value_type;
+concept objective_function = requires() {
+    typename T::variable_type;
+    typename T::value_type;
 
-        requires base::concepts::real_scalar<typename T::value_type>;
+    requires base::concepts::real_scalar<typename T::value_type>;
 
-        requires requires(T & obj, const typename T::variable_type& var) {
-                     { obj.evaluate_on(var) };
-                 };
-
-        requires requires(const T& obj) {
-                     {
-                         obj.value()
-                         } -> base::concepts::const_reference_of<
-                             typename T::value_type>;
-                 };
+    requires requires(T& obj, const typename T::variable_type& var) {
+        { obj.evaluate_on(var) };
     };
+
+    requires requires(const T& obj) {
+        {
+            obj.value()
+        } -> base::concepts::const_reference_of<typename T::value_type>;
+    };
+};
 
 }  // namespace num_collect::opt::concepts
