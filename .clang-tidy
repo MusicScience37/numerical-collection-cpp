@@ -8,6 +8,7 @@ Checks: >
     -cppcoreguidelines-owning-memory,
     -cppcoreguidelines-pro-bounds-constant-array-index,
     -cppcoreguidelines-avoid-non-const-global-variables,
+    -cppcoreguidelines-avoid-const-or-ref-data-members,
   google-*,
     -google-runtime-references,
     -google-readability-todo,
@@ -49,7 +50,8 @@ Checks: >
 # - readability-identifier-length prevent traditional codes.
 # - openmp-use-default-none cannot be fixed when class members are used as usual in object-oriented programming.
 # - bugprone-exception-escape has a bug.
-# - bugprone-unchecked-optional-access complains even when std::optional::value function is used and has a bug as in https://github.com/clangd/clangd/issues/1700..
+# - bugprone-unchecked-optional-access complains even when std::optional::value function is used and has a bug as in https://github.com/clangd/clangd/issues/1700.
+# - cppcoreguidelines-avoid-const-or-ref-data-members prevents expression templates.
 
 CheckOptions:
   # Naming Conventions
