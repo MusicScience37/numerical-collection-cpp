@@ -15,6 +15,9 @@ set(FULL_PROJECT_NAME "numerical-collection-cpp")
 message(STATUS "${FULL_PROJECT_NAME} version ${PROJECT_VERSION}")
 message(STATUS "build type: ${CMAKE_BUILD_TYPE}")
 
+# ##############################################################################
+# Configuration of CTest
+# ##############################################################################
 set(BUILDNAME
     "${CMAKE_HOST_SYSTEM_NAME}-${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}-${CMAKE_BUILD_TYPE}"
 )
@@ -22,23 +25,43 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CTestCustom.cmake
                ${CMAKE_BINARY_DIR}/CTestCustom.cmake)
 include(CTest)
 
+# ##############################################################################
+# Options
+# ##############################################################################
 option(NUM_COLLECT_BUILD_DOC "build documentation of ${FULL_PROJECT_NAME}" OFF)
 option(NUM_COLLECT_TESTING "enable tests of ${FULL_PROJECT_NAME}" OFF)
 option(NUM_COLLECT_BUILD_EXAMPLES "build examples of ${FULL_PROJECT_NAME}" OFF)
 option(NUM_COLLECT_ENABLE_PROFILING "enable profiling" OFF)
 option(NUM_COLLECT_ENABLE_INSTALL
        "enable CMake target to install ${FULL_PROJECT_NAME}" ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS
+    ON
+    CACHE BOOL "export compile commands" FORCE)
+set(BUILD_SHARED_LIBS
+    OFF
+    CACHE BOOL "build shared libraries")
 
+# ##############################################################################
+# Directory of binaries
+# ##############################################################################
 include(GNUInstallDirs)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY $<1:${CMAKE_BINARY_DIR}/lib>)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY $<1:${CMAKE_BINARY_DIR}/lib>)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY $<1:${CMAKE_BINARY_DIR}/bin>)
 
+# ##############################################################################
+# Dependencies
+# ##############################################################################
 find_package(Threads REQUIRED)
 find_package(fmt REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(cpp-hash-tables REQUIRED)
-find_package(tomlplusplus REQUIRED)
+
+# toml++
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(tomlplusplus REQUIRED IMPORTED_TARGET tomlplusplus)
+add_library(tomlplusplus::tomlplusplus ALIAS PkgConfig::tomlplusplus)
+
 if(NUM_COLLECT_TESTING)
     find_package(Catch2 REQUIRED)
     find_package(trompeloeil REQUIRED)
@@ -53,14 +76,20 @@ if(NUM_COLLECT_TESTING)
     add_library(ApprovalTests::ApprovalTests ALIAS ApprovalTests_ApprovalTests)
 endif()
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS
-    ON
-    CACHE BOOL "export compile commands" FORCE)
+if(NUM_COLLECT_BUILD_EXAMPLES)
+    # pngpp
+    find_path(PNGPP_INCLUDE_DIRS "png++/color.hpp")
+    add_library(pngpp_pngpp INTERFACE)
+    target_include_directories(pngpp_pngpp SYSTEM
+                               INTERFACE ${PNGPP_INCLUDE_DIRS})
+    find_package(PNG REQUIRED)
+    target_link_libraries(pngpp_pngpp INTERFACE PNG::PNG)
+    add_library(pngpp::pngpp ALIAS pngpp_pngpp)
+endif()
 
-set(BUILD_SHARED_LIBS
-    OFF
-    CACHE BOOL "build shared libraries")
-
+# ##############################################################################
+# Import modules for configurations
+# ##############################################################################
 include(TargetLinkSystemLibrary)
 include(CppWarningFlags)
 include(CppFlags)
@@ -68,12 +97,16 @@ include(poetry)
 include(ConfigureSanitizer)
 include(ConfigureCcache)
 
+# Fix a configuration in a module
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(
         num_collect_cpp_warnings INTERFACE # For macro of fmt library.
                                            -Wno-unused-local-typedef)
 endif()
 
+# ##############################################################################
+# Configure Python
+# ##############################################################################
 find_program(
     PYTHON_EXECUTABLE
     NAMES python3 python
@@ -93,9 +126,15 @@ else()
     message(STATUS "Python not found for Python interface")
 endif()
 
+# ##############################################################################
+# Directories of source codes
+# ##############################################################################
 set(NUM_COLLECT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(NUM_COLLECT_GENERATED_HEADER_DIR ${CMAKE_BINARY_DIR}/include)
 
+# ##############################################################################
+# Include subdirectories
+# ##############################################################################
 add_subdirectory(src)
 
 if(NUM_COLLECT_BUILD_DOC)
@@ -111,15 +150,6 @@ if(NUM_COLLECT_TESTING)
 endif()
 
 if(NUM_COLLECT_BUILD_EXAMPLES)
-    # pngpp
-    find_path(PNGPP_INCLUDE_DIRS "png++/color.hpp")
-    add_library(pngpp_pngpp INTERFACE)
-    target_include_directories(pngpp_pngpp SYSTEM
-                               INTERFACE ${PNGPP_INCLUDE_DIRS})
-    find_package(PNG REQUIRED)
-    target_link_libraries(pngpp_pngpp INTERFACE PNG::PNG)
-    add_library(pngpp::pngpp ALIAS pngpp_pngpp)
-
     add_subdirectory(examples)
 endif()
 
@@ -129,6 +159,9 @@ if(NUM_COLLECT_ENABLE_PROFILING)
     add_subdirectory(profiling)
 endif()
 
+# ##############################################################################
+# Installation
+# ##############################################################################
 if(NUM_COLLECT_ENABLE_INSTALL)
     install(
         TARGETS num_collect
