@@ -68,9 +68,11 @@ include(poetry)
 include(ConfigureSanitizer)
 include(ConfigureCcache)
 
-target_compile_options(
-    num_collect_cpp_warnings INTERFACE # For macro of fmt library.
-                                       -Wno-unused-local-typedef)
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(
+        num_collect_cpp_warnings INTERFACE # For macro of fmt library.
+                                           -Wno-unused-local-typedef)
+endif()
 
 find_program(
     PYTHON_EXECUTABLE
@@ -114,8 +116,8 @@ if(NUM_COLLECT_BUILD_EXAMPLES)
     add_library(pngpp_pngpp INTERFACE)
     target_include_directories(pngpp_pngpp SYSTEM
                                INTERFACE ${PNGPP_INCLUDE_DIRS})
-    find_package(libpng REQUIRED)
-    target_link_libraries(pngpp_pngpp INTERFACE png_static)
+    find_package(PNG REQUIRED)
+    target_link_libraries(pngpp_pngpp INTERFACE PNG::PNG)
     add_library(pngpp::pngpp ALIAS pngpp_pngpp)
 
     add_subdirectory(examples)
