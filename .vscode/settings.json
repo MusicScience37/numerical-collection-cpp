@@ -37,7 +37,6 @@
     "**/.ccache/**": true,
     "**/.venv/**": true
   },
-  "python.formatting.provider": "black",
   "cSpell.enableFiletypes": ["bibtex", "cmake", "plantuml", "shellscript"],
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
