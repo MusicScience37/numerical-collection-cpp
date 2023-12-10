@@ -4,9 +4,9 @@ A collection of algorithms in numerical analysis implemented in C++.
 
 [![GitLab Release](https://img.shields.io/gitlab/v/release/25109105?sort=semver)](https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp/-/releases)
 [![C++ standard](https://img.shields.io/badge/standard-C%2B%2B20-blue?logo=c%2B%2B)](https://en.cppreference.com/w/cpp/compiler_support/20)
-[![pipeline status](https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp/badges/develop/pipeline.svg)](https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp/-/commits/develop)
+[![pipeline status](https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp/badges/main/pipeline.svg)](https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp/-/commits/main)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
-[![coverage report](https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp/badges/develop/coverage.svg)](https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp/-/commits/develop)
+[![coverage report](https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp/badges/main/coverage.svg)](https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp/-/commits/main)
 
 ## Repositories
 
@@ -15,7 +15,7 @@ A collection of algorithms in numerical analysis implemented in C++.
 
 ## Documentation
 
-- [Documentation built on develop branch](https://numcollect.musicscience37.com/)
+- [Documentation built on main branch](https://numcollect.musicscience37.com/)
 
 ## How to Use
 
