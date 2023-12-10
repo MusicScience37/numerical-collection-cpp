@@ -19,8 +19,6 @@
  */
 #include "num_collect/logging/log_tag_config.h"
 
-#include <ostream>
-#include <string>
 #include <vector>
 
 #include <catch2/catch_message.hpp>

@@ -19,7 +19,6 @@
  */
 #include "num_collect/logging/logging_mixin.h"
 
-#include <string>
 #include <string_view>
 
 #include <catch2/catch_test_macros.hpp>
@@ -29,7 +28,6 @@
 #include "num_collect/logging/log_tag_config.h"
 
 TEST_CASE("num_collect::logging::logging_mixin") {
-    using num_collect::logging::log_config;
     using num_collect::logging::log_tag_config;
     using num_collect::logging::log_tag_view;
     using num_collect::logging::logging_mixin;
@@ -40,7 +38,7 @@ TEST_CASE("num_collect::logging::logging_mixin") {
         const num_collect::index_type iteration_label_period = 123;
         const auto config =
             log_tag_config().iteration_label_period(iteration_label_period);
-        CHECK_NOTHROW(log_config::instance().set_config_of(tag, config));
+        CHECK_NOTHROW(set_config_of(tag, config));
 
         const auto mixin = logging_mixin(tag);
         CHECK(mixin.logger().config().iteration_label_period() ==

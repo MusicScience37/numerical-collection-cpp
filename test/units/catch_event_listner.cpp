@@ -40,7 +40,7 @@
 #include "num_collect/logging/log_tag.h"
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/logger.h"
-#include "num_collect/logging/sinks/simple_log_sink.h"
+#include "num_collect/logging/sinks/log_sinks.h"
 #include "num_collect/opt/heuristic_global_optimizer.h"
 
 #define STRING1(STR) #STR
@@ -63,8 +63,7 @@ public:
                 .output_log_level(num_collect::logging::log_level::trace)
                 .output_log_level_in_child_iterations(
                     num_collect::logging::log_level::summary);
-        num_collect::logging::log_config::instance().set_default_tag_config(
-            config);
+        num_collect::logging::set_default_tag_config(config);
 
         logger_ = num_collect::logging::logger();
         logger_.value().info()(std::string(line_length, '='));

@@ -37,7 +37,7 @@ concept differentiable_function = requires(const T& const_obj, T& obj) {
 
     {
         const_obj.jacobian()
-        } -> base::concepts::const_reference_of<typename T::jacobian_type>;
+    } -> base::concepts::const_reference_of<typename T::jacobian_type>;
 };
 
 }  // namespace num_collect::roots::concepts

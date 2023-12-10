@@ -29,6 +29,7 @@
 
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"  // IWYU pragma: keep
 #include "num_collect/base/exception.h"
+#include "num_collect/ode/concepts/mass_problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/concepts/multi_variate_problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/concepts/time_differentiable_problem.h"  // IWYU pragma: keep
 #include "num_collect/ode/error_tolerances.h"
@@ -58,9 +59,8 @@ public:
     static constexpr bool use_time_derivative =
         concepts::time_differentiable_problem<problem_type>;
 
-    static_assert(!problem_type::allowed_evaluations.mass,
-        "Mass matrix is not supported.");
-    // TODO: Support.
+    //! Whether to use mass.
+    static constexpr bool use_mass = concepts::mass_problem<problem_type>;
 
     /*!
      * \brief Constructor.
@@ -89,8 +89,9 @@ public:
         variable_ = variable;
 
         problem.evaluate_on(time, variable,
-            evaluation_type{
-                .diff_coeff = true, .time_derivative = use_time_derivative});
+            evaluation_type{.diff_coeff = true,
+                .time_derivative = use_time_derivative,
+                .mass = use_mass});
         if constexpr (use_time_derivative) {
             time_derivative_ = problem.time_derivative();
         }
@@ -155,7 +156,11 @@ public:
         const auto coeff_function = [this](const auto& target, auto& result) {
             this->apply_jacobian(target, result);
             result *= -step_size_ * inverted_jacobian_coeff_;
-            result += target;
+            if constexpr (use_mass) {
+                result += problem_->mass() * target;
+            } else {
+                result += target;
+            }
         };
         result = variable_type::Zero(rhs.size());
         bicgstab_.solve(coeff_function, rhs, result);

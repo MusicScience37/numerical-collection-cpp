@@ -33,5 +33,5 @@ inline void configure_logging(
         num_collect::logging::log_tag_config()
             .output_log_level(num_collect::logging::log_level::iteration)
             .iteration_output_period(iteration_output_period);
-    num_collect::logging::log_config::instance().set_default_tag_config(config);
+    set_default_tag_config(config);
 }

@@ -19,7 +19,6 @@
  */
 #include <chrono>
 #include <exception>
-#include <functional>
 #include <iostream>
 #include <string>
 #include <string_view>

@@ -32,29 +32,30 @@ namespace num_collect::opt::concepts {
  * \tparam T Type.
  */
 template <typename T>
-concept descent_method = optimizer<T> && requires() {
+concept descent_method = optimizer<T> &&
+        requires()
+{
     typename T::line_searcher_type;
     requires line_searcher<typename T::line_searcher_type>;
 
-    requires requires(T & solver, const typename T::variable_type& init_var) {
-        {solver.init(init_var)};
+    requires requires(T& solver, const typename T::variable_type& init_var) {
+        { solver.init(init_var) };
     };
 
-    requires requires(T & solver) {
+    requires requires(T& solver) {
         {
             solver.line_searcher()
-            } -> base::concepts::reference_of<typename T::line_searcher_type>;
+        } -> base::concepts::reference_of<typename T::line_searcher_type>;
     };
 
     requires requires(const T& solver) {
         {
             solver.line_searcher()
-            } -> base::concepts::const_reference_of<
-                typename T::line_searcher_type>;
+        } -> base::concepts::const_reference_of<typename T::line_searcher_type>;
 
         {
             solver.gradient()
-            } -> base::concepts::const_reference_of<typename T::variable_type>;
+        } -> base::concepts::const_reference_of<typename T::variable_type>;
     };
 };
 

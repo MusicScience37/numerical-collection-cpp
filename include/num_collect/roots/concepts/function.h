@@ -34,10 +34,10 @@ template <typename T>
 concept function = requires(const T& const_obj, T& obj) {
     typename T::variable_type;
 
-    {obj.evaluate_on(std::declval<typename T::variable_type>())};
+    { obj.evaluate_on(std::declval<typename T::variable_type>()) };
     {
         const_obj.value()
-        } -> base::concepts::const_reference_of<typename T::variable_type>;
+    } -> base::concepts::const_reference_of<typename T::variable_type>;
 };
 
 }  // namespace num_collect::roots::concepts

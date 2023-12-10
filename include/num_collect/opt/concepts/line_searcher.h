@@ -49,42 +49,41 @@ concept line_searcher = requires() {
     requires std::is_same_v<typename T::value_type,
         typename T::objective_function_type::value_type>;
 
-    requires requires(T & obj, const typename T::variable_type& init_variable) {
-        {obj.init(init_variable)};
+    requires requires(T& obj, const typename T::variable_type& init_variable) {
+        { obj.init(init_variable) };
     };
 
-    requires requires(T & obj, const typename T::variable_type& direction) {
-        {obj.search(direction)};
+    requires requires(T& obj, const typename T::variable_type& direction) {
+        { obj.search(direction) };
     };
 
-    requires requires(T & obj) {
+    requires requires(T& obj) {
         {
             obj.obj_fun()
-            } -> base::concepts::reference_of<
-                typename T::objective_function_type>;
+        } -> base::concepts::reference_of<typename T::objective_function_type>;
     };
 
     requires requires(const T& obj) {
         {
             obj.obj_fun()
-            } -> base::concepts::const_reference_of<
-                typename T::objective_function_type>;
+        } -> base::concepts::const_reference_of<
+            typename T::objective_function_type>;
 
         {
             obj.opt_variable()
-            } -> base::concepts::const_reference_of<typename T::variable_type>;
+        } -> base::concepts::const_reference_of<typename T::variable_type>;
 
         {
             obj.opt_value()
-            } -> base::concepts::const_reference_of<typename T::value_type>;
+        } -> base::concepts::const_reference_of<typename T::value_type>;
 
         {
             obj.gradient()
-            } -> base::concepts::const_reference_of<typename T::variable_type>;
+        } -> base::concepts::const_reference_of<typename T::variable_type>;
 
         {
             obj.evaluations()
-            } -> base::concepts::implicitly_convertible_to<index_type>;
+        } -> base::concepts::implicitly_convertible_to<index_type>;
     };
 };
 

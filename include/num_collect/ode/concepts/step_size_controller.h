@@ -55,38 +55,38 @@ concept step_size_controller = requires() {
 
     requires requires() { T(); };
 
-    requires requires(T & obj) { obj.init(); };
+    requires requires(T& obj) { obj.init(); };
 
-    requires requires(T & obj, typename T::scalar_type & step_size,
+    requires requires(T& obj, typename T::scalar_type& step_size,
         const typename T::variable_type& variable,
         const typename T::variable_type& error) {
         {
             obj.check_and_calc_next(step_size, variable, error)
-            } -> base::concepts::decayed_to<bool>;
+        } -> base::concepts::decayed_to<bool>;
     };
 
     requires requires(
-        T & obj, const step_size_limits<typename T::scalar_type>& limits) {
+        T& obj, const step_size_limits<typename T::scalar_type>& limits) {
         obj.limits(limits);
     };
 
     requires requires(const T& obj) {
         {
             obj.limits()
-            } -> base::concepts::const_reference_of<
-                step_size_limits<typename T::scalar_type>>;
+        } -> base::concepts::const_reference_of<
+            step_size_limits<typename T::scalar_type>>;
     };
 
-    requires requires(T & obj,
-        const error_tolerances<typename T::variable_type>& tolerances) {
+    requires requires(
+        T& obj, const error_tolerances<typename T::variable_type>& tolerances) {
         obj.tolerances(tolerances);
     };
 
     requires requires(const T& obj) {
         {
             obj.tolerances()
-            } -> base::concepts::const_reference_of<
-                error_tolerances<typename T::variable_type>>;
+        } -> base::concepts::const_reference_of<
+            error_tolerances<typename T::variable_type>>;
     };
 };
 

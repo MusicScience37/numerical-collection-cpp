@@ -141,8 +141,7 @@ public:
      *
      * \param[in] tag Tag.
      */
-    explicit logger(log_tag_view tag)
-        : logger(tag, log_config::instance().get_config_of(tag)) {}
+    explicit logger(log_tag_view tag) : logger(tag, get_config_of(tag)) {}
 
     /*!
      * \brief Constructor.

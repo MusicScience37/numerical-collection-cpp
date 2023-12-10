@@ -37,7 +37,7 @@ concept distance = requires(const T& obj) {
     {
         obj(std::declval<typename T::variable_type>(),
             std::declval<typename T::variable_type>())
-        } -> base::concepts::implicitly_convertible_to<typename T::value_type>;
+    } -> base::concepts::implicitly_convertible_to<typename T::value_type>;
 };
 
 }  // namespace num_collect::interp::kernel::concepts

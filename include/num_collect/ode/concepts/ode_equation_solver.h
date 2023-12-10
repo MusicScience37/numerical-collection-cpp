@@ -35,7 +35,8 @@ namespace num_collect::ode::concepts {
  */
 template <typename T>
 concept ode_equation_solver = base::concepts::iterative_solver<T> &&
-    requires() {
+        requires()
+{
     typename T::problem_type;
     requires problem<typename T::problem_type>;
 
@@ -50,15 +51,15 @@ concept ode_equation_solver = base::concepts::iterative_solver<T> &&
     T();
 
     requires requires(
-        T & obj, const error_tolerances<typename T::variable_type>& val) {
+        T& obj, const error_tolerances<typename T::variable_type>& val) {
         obj.tolerances(val);
     };
 
     requires requires(const T& obj) {
         {
             obj.tolerances()
-            } -> base::concepts::const_reference_of<
-                error_tolerances<typename T::variable_type>>;
+        } -> base::concepts::const_reference_of<
+            error_tolerances<typename T::variable_type>>;
     };
 };
 

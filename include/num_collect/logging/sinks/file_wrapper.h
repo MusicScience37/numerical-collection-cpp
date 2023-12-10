@@ -25,8 +25,6 @@
 #include <string_view>
 #include <utility>
 
-#include <fmt/format.h>
-
 #include "num_collect/base/exception.h"
 #include "num_collect/util/format_errno.h"
 

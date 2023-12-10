@@ -20,19 +20,14 @@
 #pragma once
 
 #include <memory>
-#include <utility>
 
 #include <toml++/toml.h>
 
 #include "num_collect/logging/config/log_sink_factory_base.h"
 #include "num_collect/logging/config/log_sink_factory_table.h"
 #include "num_collect/logging/config/toml/toml_helper.h"
-#include "num_collect/logging/formatters/colored_compact_log_formatter.h"
-#include "num_collect/logging/formatters/compact_log_formatter.h"
-#include "num_collect/logging/formatters/log_formatter_base.h"
-#include "num_collect/logging/sinks/file_wrapper.h"
 #include "num_collect/logging/sinks/log_sink_base.h"
-#include "num_collect/logging/sinks/simple_log_sink.h"
+#include "num_collect/logging/sinks/log_sinks.h"
 
 namespace num_collect::logging::config::toml {
 
@@ -60,11 +55,10 @@ public:
     [[nodiscard]] auto create(log_sink_factory_table& sinks)
         -> std::shared_ptr<sinks::log_sink_base> override {
         (void)sinks;
-
-        sinks::file_wrapper file{};
-        file.set_stdout();
-        return std::make_shared<sinks::simple_log_sink>(
-            std::move(file), create_formatter());
+        if (use_color_) {
+            return sinks::create_colored_console_sink();
+        }
+        return sinks::create_non_colored_console_sink();
     }
 
     /*!
@@ -81,20 +75,6 @@ public:
         -> toml_console_log_sink_factory& = delete;
 
 private:
-    /*!
-     * \brief Create a formatter.
-     *
-     * \return Formatter.
-     */
-    [[nodiscard]] auto create_formatter() const
-        -> std::shared_ptr<formatters::log_formatter_base> {
-        if (use_color_) {
-            return std::make_shared<
-                formatters::colored_compact_log_formatter>();
-        }
-        return std::make_shared<formatters::compact_log_formatter>();
-    }
-
     //! Whether to use color.
     bool use_color_{true};
 };

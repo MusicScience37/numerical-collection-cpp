@@ -48,28 +48,26 @@ concept rosenbrock_equation_solver = requires() {
         T(inverted_jacobian_coeff);
     };
 
-    requires requires(T & obj, typename T::problem_type & problem,
+    requires requires(T& obj, typename T::problem_type& problem,
         const typename T::scalar_type& time,
         const typename T::scalar_type& step_size,
         const typename T::variable_type& variable) {
         obj.evaluate_and_update_jacobian(problem, time, step_size, variable);
     };
 
-    requires requires(T & obj, const typename T::variable_type& target,
+    requires requires(T& obj, const typename T::variable_type& target,
         typename T::variable_type& result) {
         obj.apply_jacobian(target, result);
     };
 
-    requires requires(T & obj, const typename T::scalar_type& step_size,
+    requires requires(T& obj, const typename T::scalar_type& step_size,
         const typename T::scalar_type& coeff,
         typename T::variable_type& target) {
         obj.add_time_derivative_term(step_size, coeff, target);
     };
 
-    requires requires(T & obj, const typename T::variable_type& rhs,
-        typename T::variable_type& result) {
-        obj.solve(rhs, result);
-    };
+    requires requires(T& obj, const typename T::variable_type& rhs,
+        typename T::variable_type& result) { obj.solve(rhs, result); };
 };
 
 }  // namespace num_collect::ode::concepts

@@ -45,50 +45,48 @@ concept explicit_regularized_solver = requires() {
     requires std::is_same_v<typename T::scalar_type,
         typename Eigen::NumTraits<typename T::data_type::Scalar>::Real>;
 
-    requires requires(T & solver, const typename T::scalar_type& param,
-        typename T::data_type& solution) {
-        solver.solve(param, solution);
-    };
+    requires requires(T& solver, const typename T::scalar_type& param,
+        typename T::data_type& solution) { solver.solve(param, solution); };
 
-    requires requires(T & solver, const typename T::scalar_type& param) {
+    requires requires(T& solver, const typename T::scalar_type& param) {
         {
             solver.residual_norm(param)
-            } -> base::concepts::decayed_to<typename T::scalar_type>;
+        } -> base::concepts::decayed_to<typename T::scalar_type>;
         {
             solver.regularization_term(param)
-            } -> base::concepts::decayed_to<typename T::scalar_type>;
+        } -> base::concepts::decayed_to<typename T::scalar_type>;
 
         {
             solver.first_derivative_of_residual_norm(param)
-            } -> base::concepts::decayed_to<typename T::scalar_type>;
+        } -> base::concepts::decayed_to<typename T::scalar_type>;
         {
             solver.first_derivative_of_regularization_term(param)
-            } -> base::concepts::decayed_to<typename T::scalar_type>;
+        } -> base::concepts::decayed_to<typename T::scalar_type>;
 
         {
             solver.second_derivative_of_residual_norm(param)
-            } -> base::concepts::decayed_to<typename T::scalar_type>;
+        } -> base::concepts::decayed_to<typename T::scalar_type>;
         {
             solver.second_derivative_of_regularization_term(param)
-            } -> base::concepts::decayed_to<typename T::scalar_type>;
+        } -> base::concepts::decayed_to<typename T::scalar_type>;
 
         {
             solver.sum_of_filter_factor(param)
-            } -> base::concepts::decayed_to<typename T::scalar_type>;
+        } -> base::concepts::decayed_to<typename T::scalar_type>;
 
         { solver.data_size() } -> base::concepts::decayed_to<index_type>;
 
         {
             solver.param_search_region()
-            } -> base::concepts::decayed_to<
-                std::pair<typename T::scalar_type, typename T::scalar_type>>;
+        } -> base::concepts::decayed_to<
+            std::pair<typename T::scalar_type, typename T::scalar_type>>;
 
         {
             solver.l_curve_curvature(param)
-            } -> base::concepts::decayed_to<typename T::scalar_type>;
+        } -> base::concepts::decayed_to<typename T::scalar_type>;
         {
             solver.gcv(param)
-            } -> base::concepts::decayed_to<typename T::scalar_type>;
+        } -> base::concepts::decayed_to<typename T::scalar_type>;
     };
 };
 

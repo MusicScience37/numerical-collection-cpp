@@ -21,7 +21,7 @@
 
 #include <string_view>
 
-#include "num_collect/logging/config/toml/toml_log_config_parser.h"
+#include "num_collect/impl/num_collect_export.h"
 
 namespace num_collect::logging {
 
@@ -30,8 +30,6 @@ namespace num_collect::logging {
  *
  * \param[in] filepath File path.
  */
-inline void load_logging_config_file(std::string_view filepath) {
-    config::toml::toml_log_config_parser().parse_from_file(filepath);
-}
+NUM_COLLECT_EXPORT void load_logging_config_file(std::string_view filepath);
 
 }  // namespace num_collect::logging

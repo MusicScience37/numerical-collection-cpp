@@ -35,18 +35,18 @@ namespace concepts {
  */
 template <typename T>
 concept iterative_solver = requires(T& solver, const T& const_solver) {
-    {solver.iterate()};
+    { solver.iterate() };
 
     { const_solver.is_stop_criteria_satisfied() } -> decayed_to<bool>;
 
-    {solver.solve()};
+    { solver.solve() };
 
     { solver.logger() } -> reference_of<logging::logger>;
     { const_solver.logger() } -> reference_of<const logging::logger>;
 
     requires requires(
-        logging::iterations::iteration_logger<T> & iteration_logger) {
-        {solver.configure_iteration_logger(iteration_logger)};
+        logging::iterations::iteration_logger<T>& iteration_logger) {
+        { solver.configure_iteration_logger(iteration_logger) };
     };
 };
 

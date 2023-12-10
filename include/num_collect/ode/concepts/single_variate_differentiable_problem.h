@@ -23,6 +23,7 @@
 
 #include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
 #include "num_collect/ode/concepts/differentiable_problem.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/single_variate_problem.h"  // IWYU pragma: keep
 
 namespace num_collect::ode::concepts {
 
@@ -33,9 +34,7 @@ namespace num_collect::ode::concepts {
  * \tparam T Type.
  */
 template <typename T>
-concept single_variate_differentiable_problem = differentiable_problem<T> &&
-    base::concepts::real_scalar<typename T::variable_type> &&
-    std::is_same_v<typename T::variable_type, typename T::scalar_type> &&
-    std::is_same_v<typename T::variable_type, typename T::jacobian_type>;
+concept single_variate_differentiable_problem =
+    differentiable_problem<T> && single_variate_problem<T>;
 
 }  // namespace num_collect::ode::concepts

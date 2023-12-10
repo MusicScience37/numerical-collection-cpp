@@ -19,10 +19,13 @@
  */
 #pragma once
 
+// IWYU pragma: no_include <vector>
+// IWYU pragma: no_include <optional>
+// IWYU pragma: no_include <type_traits>
+
 #include <memory>
 #include <mutex>
 #include <string_view>
-#include <type_traits>
 #include <utility>
 
 #include <hash_tables/hashes/std_hash.h>

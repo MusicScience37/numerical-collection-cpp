@@ -37,6 +37,7 @@ endfunction()
 
 add_subdirectory(util)
 add_subdirectory(logging)
+add_subdirectory(linear)
 add_subdirectory(auto_diff)
 add_subdirectory(opt)
 add_subdirectory(multi_double)

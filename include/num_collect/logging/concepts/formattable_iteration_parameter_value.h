@@ -37,9 +37,8 @@ concept formattable_iteration_parameter_value = requires() {
     iterations::iteration_parameter_formatter<T>{};
 
     requires requires(const iterations::iteration_parameter_formatter<T>& obj,
-        const T& value, fmt::memory_buffer& buffer) {
-        obj.format(value, buffer);
-    };
+        const T& value,
+        fmt::memory_buffer& buffer) { obj.format(value, buffer); };
 
     requires requires(const iterations::iteration_parameter_formatter<T>& obj,
         const T& value, index_type width, fmt::memory_buffer& buffer) {

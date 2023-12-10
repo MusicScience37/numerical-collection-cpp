@@ -45,10 +45,10 @@ struct evaluation_type {
      * \retval false Otherwise.
      */
     [[nodiscard]] constexpr auto allows(evaluation_type request) const -> bool {
-        return !(!this->diff_coeff && request.diff_coeff) &&
-            !(!this->jacobian && request.jacobian) &&
-            !(!this->time_derivative && request.time_derivative) &&
-            !(!this->mass && request.mass);
+        return (this->diff_coeff || !request.diff_coeff) &&
+            (this->jacobian || !request.jacobian) &&
+            (this->time_derivative || !request.time_derivative) &&
+            (this->mass || !request.mass);
     }
 };
 

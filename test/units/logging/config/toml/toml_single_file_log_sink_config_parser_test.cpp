@@ -19,7 +19,6 @@
  */
 #include "num_collect/logging/config/toml/toml_single_file_log_sink_config_parser.h"
 
-#include <string>
 #include <string_view>
 #include <type_traits>
 

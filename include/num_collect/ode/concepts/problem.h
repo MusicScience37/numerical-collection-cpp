@@ -37,10 +37,8 @@ concept problem = requires(T& obj, const T& const_obj) {
     typename T::scalar_type;
 
     requires base::concepts::real_scalar<typename T::scalar_type>;
-    requires requires(
-        typename T::variable_type & var, const typename T::scalar_type& coeff) {
-        var = var + coeff * var;
-    };
+    requires requires(typename T::variable_type& var,
+        const typename T::scalar_type& coeff) { var = var + coeff * var; };
 
     { T::allowed_evaluations } -> base::concepts::decayed_to<evaluation_type>;
     requires T::allowed_evaluations.allows(evaluation_type{.diff_coeff = true});
@@ -52,7 +50,7 @@ concept problem = requires(T& obj, const T& const_obj) {
 
     {
         const_obj.diff_coeff()
-        } -> base::concepts::const_reference_of<typename T::variable_type>;
+    } -> base::concepts::const_reference_of<typename T::variable_type>;
 };
 
 }  // namespace num_collect::ode::concepts

@@ -17,15 +17,16 @@
  * \file
  * \brief Benchmark of writing trace logs.
  */
-#include <fmt/format.h>
+#include <exception>
+#include <memory>
+
 #include <stat_bench/benchmark_macros.h>
-#include <stat_bench/invocation_context.h>
 
 #include "num_collect/logging/log_config.h"
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/logger.h"
-#include "num_collect/logging/sinks/simple_log_sink.h"
+#include "num_collect/logging/sinks/log_sinks.h"
 
 STAT_BENCH_MAIN
 
@@ -38,7 +39,7 @@ static void perform() {
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE("trace_logs", "write no log") {
-    num_collect::logging::log_config::instance().set_default_tag_config(
+    num_collect::logging::set_default_tag_config(
         num_collect::logging::log_tag_config()
             .sink(num_collect::logging::sinks::create_single_file_sink(
                 "num_collect_bench_logging_write_trace_logs.log"))
@@ -49,7 +50,7 @@ STAT_BENCH_CASE("trace_logs", "write no log") {
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE("trace_logs", "write log") {
-    num_collect::logging::log_config::instance().set_default_tag_config(
+    num_collect::logging::set_default_tag_config(
         num_collect::logging::log_tag_config()
             .sink(num_collect::logging::sinks::create_single_file_sink(
                 "num_collect_bench_logging_write_trace_logs.log"))

@@ -31,20 +31,21 @@ namespace num_collect::ode::concepts {
  * \tparam T Type.
  */
 template <typename T>
-concept differentiable_problem = problem<T> &&
-    requires(T& obj, const T& const_obj) {
-    typename T::jacobian_type;
+concept differentiable_problem =
+    problem<T> && requires(T& obj, const T& const_obj) {
+        typename T::jacobian_type;
 
-    requires requires(typename T::variable_type & var,
-        const typename T::jacobian_type& coeff) {
-        var = var + coeff * var;
-    };
+        requires requires(typename T::variable_type& var,
+            const typename T::jacobian_type& coeff) {
+            var = var + coeff * var;
+        };
 
-    requires T::allowed_evaluations.allows(evaluation_type{.jacobian = true});
+        requires T::allowed_evaluations.allows(
+            evaluation_type{.jacobian = true});
 
-    {
-        const_obj.jacobian()
+        {
+            const_obj.jacobian()
         } -> base::concepts::const_reference_of<typename T::jacobian_type>;
-};
+    };
 
 }  // namespace num_collect::ode::concepts

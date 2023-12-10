@@ -52,17 +52,19 @@ concept formula = requires(T& obj, const T& const_obj) {
     { T::order } -> base::concepts::decayed_to<index_type>;
     { T::log_tag } -> base::concepts::decayed_to<logging::log_tag_view>;
 
-    {T(std::declval<typename T::problem_type>())};
+    { T(std::declval<typename T::problem_type>()) };
 
-    {obj.step(std::declval<typename T::scalar_type>() /*time*/,
-        std::declval<typename T::scalar_type>() /*step_size*/,
-        std::declval<typename T::variable_type>() /*current*/,
-        std::declval<typename T::variable_type&>() /*estimate*/)};
+    {
+        obj.step(std::declval<typename T::scalar_type>() /*time*/,
+            std::declval<typename T::scalar_type>() /*step_size*/,
+            std::declval<typename T::variable_type>() /*current*/,
+            std::declval<typename T::variable_type&>() /*estimate*/)
+    };
 
     { obj.problem() } -> base::concepts::reference_of<typename T::problem_type>;
     {
         const_obj.problem()
-        } -> base::concepts::const_reference_of<typename T::problem_type>;
+    } -> base::concepts::const_reference_of<typename T::problem_type>;
 };
 
 }  // namespace num_collect::ode::concepts

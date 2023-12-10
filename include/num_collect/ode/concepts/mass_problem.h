@@ -34,16 +34,14 @@ template <typename T>
 concept mass_problem = problem<T> && requires(T& obj, const T& const_obj) {
     typename T::mass_type;
 
-    requires requires(
-        typename T::variable_type & var, const typename T::mass_type& coeff) {
-        var = var + coeff * var;
-    };
+    requires requires(typename T::variable_type& var,
+        const typename T::mass_type& coeff) { var = var + coeff * var; };
 
     requires T::allowed_evaluations.allows(evaluation_type{.mass = true});
 
     {
         const_obj.mass()
-        } -> base::concepts::const_reference_of<typename T::mass_type>;
+    } -> base::concepts::const_reference_of<typename T::mass_type>;
 };
 
 }  // namespace num_collect::ode::concepts

@@ -30,9 +30,8 @@ namespace concepts {
  * \tparam To Type to convert to.
  */
 template <typename From, typename To>
-concept convertible_to = requires(const From& from, To& to) {
-    to = static_cast<To>(from);
-};
+concept convertible_to =
+    requires(const From& from, To& to) { to = static_cast<To>(from); };
 
 }  // namespace concepts
 }  // namespace base

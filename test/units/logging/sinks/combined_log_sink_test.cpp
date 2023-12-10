@@ -17,10 +17,13 @@
  * \file
  * \brief Test of combined_log_sink class.
  */
-#include "num_collect/logging/sinks/combined_log_sink.h"
-
+#include <chrono>
+#include <memory>
 #include <string>
+#include <string_view>
 #include <type_traits>
+#include <utility>
+#include <vector>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -28,11 +31,13 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/sinks/log_sink_base.h"
+#include "num_collect/logging/sinks/log_sinks.h"
+#include "num_collect/util/source_info_view.h"
 #include "trompeloeil_catch2.h"
 
 TEST_CASE("num_collect::logging::sinks::combined_log_sink") {
     using num_collect::logging::log_level;
-    using num_collect::logging::sinks::combined_log_sink;
+    using num_collect::logging::sinks::create_combined_log_sink;
     using num_collect::logging::sinks::log_sink_base;
     using num_collect::util::source_info_view;
     using num_collect_test::logging::mock_log_sink;
@@ -52,36 +57,36 @@ TEST_CASE("num_collect::logging::sinks::combined_log_sink") {
         const auto inner_sink1 = std::make_shared<mock_log_sink>();
         const auto inner_sink2 = std::make_shared<mock_log_sink>();
 
-        combined_log_sink combined_sink{
+        const auto combined_sink = create_combined_log_sink(
             std::vector<std::pair<std::shared_ptr<log_sink_base>, log_level>>{
                 {inner_sink1, log_level::info},
                 {inner_sink2, log_level::debug},
-            }};
+            });
 
         {
             FORBID_CALL(*inner_sink1, write_impl(_, _, _, _, _));
             FORBID_CALL(*inner_sink2, write_impl(_, _, _, _, _));
-            combined_sink.write(time, tag, log_level::trace, source, body);
+            combined_sink->write(time, tag, log_level::trace, source, body);
         }
         {
             FORBID_CALL(*inner_sink1, write_impl(_, _, _, _, _));
             REQUIRE_CALL(*inner_sink2, write_impl(_, _, _, _, _)).TIMES(1);
-            combined_sink.write(time, tag, log_level::debug, source, body);
+            combined_sink->write(time, tag, log_level::debug, source, body);
         }
         {
             FORBID_CALL(*inner_sink1, write_impl(_, _, _, _, _));
             REQUIRE_CALL(*inner_sink2, write_impl(_, _, _, _, _)).TIMES(1);
-            combined_sink.write(time, tag, log_level::summary, source, body);
+            combined_sink->write(time, tag, log_level::summary, source, body);
         }
         {
             REQUIRE_CALL(*inner_sink1, write_impl(_, _, _, _, _)).TIMES(1);
             REQUIRE_CALL(*inner_sink2, write_impl(_, _, _, _, _)).TIMES(1);
-            combined_sink.write(time, tag, log_level::info, source, body);
+            combined_sink->write(time, tag, log_level::info, source, body);
         }
         {
             REQUIRE_CALL(*inner_sink1, write_impl(_, _, _, _, _)).TIMES(1);
             REQUIRE_CALL(*inner_sink2, write_impl(_, _, _, _, _)).TIMES(1);
-            combined_sink.write(time, tag, log_level::warning, source, body);
+            combined_sink->write(time, tag, log_level::warning, source, body);
         }
     }
 }

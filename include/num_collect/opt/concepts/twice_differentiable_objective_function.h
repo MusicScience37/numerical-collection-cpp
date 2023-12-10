@@ -33,11 +33,11 @@ namespace num_collect::opt::concepts {
 template <typename T>
 concept twice_differentiable_objective_function =
     differentiable_objective_function<T> && requires(const T& obj) {
-    typename T::hessian_type;
+        typename T::hessian_type;
 
-    {
-        obj.hessian()
+        {
+            obj.hessian()
         } -> base::concepts::const_reference_of<typename T::hessian_type>;
-};
+    };
 
 }  // namespace num_collect::opt::concepts

@@ -98,10 +98,15 @@ public:
         iter_logger.write_iteration(&derived());
         while (time() < end_time) {
             const scalar_type max_step_size = end_time - time();
-            if (step_size() > max_step_size) {
+            const scalar_type current_step_size = step_size();
+            const bool rewrite_step_size = current_step_size > max_step_size;
+            if (rewrite_step_size) {
                 step_size(max_step_size);
             }
             step();
+            if (rewrite_step_size && (step_size() >= max_step_size)) {
+                step_size(current_step_size);
+            }
             iter_logger.write_iteration(&derived());
         }
         iter_logger.write_summary(&derived());

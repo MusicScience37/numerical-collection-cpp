@@ -9,11 +9,10 @@ set(SOURCE_FILES
     impl/bicgstab_test.cpp
     impl/get_least_known_order_test.cpp
     impl/gmres_test.cpp
+    implicit_problem_test.cpp
     inexact_newton_slope_equation_solver_test.cpp
     inexact_newton_update_equation_solver_test.cpp
     initial_step_size_calculator_test.cpp
-    integ/implicit_exponential_problem_test.cpp
-    integ/implicit_kaps_problem_test.cpp
     non_embedded_formula_wrapper_test.cpp
     pi_step_size_controller_test.cpp
     rosenbrock/bicgstab_rosenbrock_equation_solver_test.cpp

@@ -32,7 +32,7 @@ namespace concepts {
  */
 template <typename T>
 concept assertion_condition = requires(T&& obj) {
-    {(!std::forward<T>(obj)) ? 0 : 1};
+    { (!std::forward<T>(obj)) ? 0 : 1 };
 };
 
 }  // namespace concepts

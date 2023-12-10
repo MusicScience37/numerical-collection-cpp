@@ -34,7 +34,9 @@ namespace num_collect::opt::concepts {
  * \tparam T Type.
  */
 template <typename T>
-concept optimizer = base::concepts::iterative_solver<T> && requires() {
+concept optimizer = base::concepts::iterative_solver<T> &&
+        requires()
+{
     typename T::objective_function_type;
     requires objective_function<typename T::objective_function_type>;
 
@@ -49,25 +51,27 @@ concept optimizer = base::concepts::iterative_solver<T> && requires() {
         typename T::value_type>;
 
     requires requires(const typename T::objective_function_type& obj_fun) {
-        {T{obj_fun}};
+        {
+            T { obj_fun }
+        };
     };
 
     requires requires(const T& obj) {
         {
             obj.opt_variable()
-            } -> base::concepts::const_reference_of<typename T::variable_type>;
+        } -> base::concepts::const_reference_of<typename T::variable_type>;
 
         {
             obj.opt_value()
-            } -> base::concepts::const_reference_of<typename T::value_type>;
+        } -> base::concepts::const_reference_of<typename T::value_type>;
 
         {
             obj.iterations()
-            } -> base::concepts::implicitly_convertible_to<index_type>;
+        } -> base::concepts::implicitly_convertible_to<index_type>;
 
         {
             obj.evaluations()
-            } -> base::concepts::implicitly_convertible_to<index_type>;
+        } -> base::concepts::implicitly_convertible_to<index_type>;
     };
 };
 
