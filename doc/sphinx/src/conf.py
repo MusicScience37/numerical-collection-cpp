@@ -33,23 +33,16 @@ templates_path = ["_templates"]
 
 exclude_patterns = []
 
-# -- Options for PlantUML ----------------------------------------------------
-
+# setting of PlantUML
 extensions += ["sphinxcontrib.plantuml"]
-
 plantuml_output_format = "svg"
 plantuml_syntax_error_image = True
 
-# -- Options for mathjax -----------------------------------------------------
-
+# setting of mathjax
 extensions += ["sphinx.ext.mathjax"]
-# force to use MathJax 2 for compatibility with Plotly
-mathjax_path = (
-    "https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
-)
-mathjax_config = {
-    "TeX": {
-        "Macros": {
+mathjax3_config = {
+    "tex": {
+        "macros": {
             "bm": ["{\\boldsymbol{#1}}", 1],
         },
     },
@@ -57,5 +50,16 @@ mathjax_config = {
 
 # -- Options for HTML output -------------------------------------------------
 
-html_theme = "sphinx_rtd_theme"
+html_theme = "sphinx_orange_book_theme"
 html_static_path = ["_static"]
+html_title = project
+html_theme_options = {
+    "show_prev_next": False,
+    "logo": {
+        "text": html_title,
+    },
+    "pygment_light_style": "gruvbox-light",
+    "pygment_dark_style": "native",
+    "repository_url": "https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp",
+    "use_repository_button": True,
+}
