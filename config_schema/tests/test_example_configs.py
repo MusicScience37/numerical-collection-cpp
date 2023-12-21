@@ -11,8 +11,6 @@ from config_validator import ConfigValidator
 @pytest.mark.parametrize(
     "filename",
     [
-        "async_write_to_console_and_file.toml",
-        "use_async_log_sink.toml",
         "use_default_log_sink.toml",
         "write_to_console_and_file.toml",
         "write_to_single_file.toml",

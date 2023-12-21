@@ -65,13 +65,4 @@ namespace num_collect::logging::sinks {
     std::vector<std::pair<std::shared_ptr<log_sink_base>, log_level>> sinks)
     -> std::shared_ptr<log_sink_base>;
 
-/*!
- * \brief Create an asynchronous log sink.
- *
- * \param[in] sink Log sink to write logs actually.
- * \return Asynchronous log sink.
- */
-[[nodiscard]] NUM_COLLECT_EXPORT auto create_async_log_sink(
-    std::shared_ptr<log_sink_base> sink) -> std::shared_ptr<log_sink_base>;
-
 }  // namespace num_collect::logging::sinks

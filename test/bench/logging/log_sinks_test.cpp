@@ -207,16 +207,6 @@ output_log_level = "trace"
 name = "single_file"
 type = "single_file"
 filepath = "{0}/temp/num_collect_bench_logging_log_sinks.log"
-
-[[num_collect.logging.tag_configs]]
-tag = "async_single_file"
-sink = "async_single_file"
-output_log_level = "trace"
-
-[[num_collect.logging.sinks]]
-name = "async_single_file"
-type = "async"
-inner_sink_name = "single_file"
 )",
         output_directory);
 
@@ -239,7 +229,6 @@ auto main(int argc, char** argv) -> int {
 
         bench_executor executor;
         executor.measure("single_file", "single_file sink");
-        executor.measure("async_single_file", "async single_file sink");
         executor.write_result(output_directory);
 
         return 0;

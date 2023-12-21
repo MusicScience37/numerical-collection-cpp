@@ -43,7 +43,7 @@ TEST_CASE("num_collect::logging::sinks::combined_log_sink") {
     using num_collect_test::logging::mock_log_sink;
     using ::trompeloeil::_;
 
-    SECTION("asynchronously write a log") {
+    SECTION("write a log") {
         const auto time = std::chrono::system_clock::now();
         const auto tag = std::string("Tag");
         const auto file_path = std::string("filepath");

@@ -136,28 +136,6 @@ class TestSingleFileLogSinkConfig:
             validator.validate_text(config)
 
 
-class TestAsyncLogSinkConfig:
-    """Test of validating configurations of asynchronous log sinks."""
-
-    def test_all_params(self, validator: ConfigValidator):
-        config = """
-        [[num_collect.logging.sinks]]
-        name = "async sink"
-        type = "async"
-        inner_sink_name = "console sink"
-        """
-        validator.validate_text(config)
-
-    def test_no_inner_sink_name(self, validator: ConfigValidator):
-        config = """
-        [[num_collect.logging.sinks]]
-        name = "async sink"
-        type = "async"
-        """
-        with pytest.raises(fastjsonschema.JsonSchemaValueException):
-            validator.validate_text(config)
-
-
 class TestCombinedLogSinkConfig:
     """Test of validating configurations of combined log sinks."""
 

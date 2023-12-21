@@ -71,23 +71,6 @@ Configuration of a log sink to write to a single file
     # Filepath. (Required.)
     filepath = "num_collect_test_integ_logging.log"
 
-Configuration of a log sink to write to a log sink asynchronously
--------------------------------------------------------------------------
-
-.. code-block:: toml
-
-    [[num_collect.logging.sinks]]
-
-    # Name of the log sink. (Required.)
-    name = "async sink"
-
-    # Type of the log sink. (Required.)
-    type = "async"
-
-    # Log sink used to actual logging in asynchronous processing. (Required.)
-    # A log sink with this name must be configured in the same file.
-    inner_sink_name = "another log sink"
-
 Configuration of a log sink to write to multiple log sinks
 -----------------------------------------------------------------
 

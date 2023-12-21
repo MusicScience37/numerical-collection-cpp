@@ -3,14 +3,6 @@ target_link_libraries(num_collect_test_integ_logging_write_log_writer
                       PRIVATE num_collect bfg::lyra)
 target_add_ausan(num_collect_test_integ_logging_write_log_writer)
 
-add_executable(num_collect_test_integ_logging_write_log_writer_async_queue_full
-               writer_async_queue_full.cpp)
-target_link_libraries(
-    num_collect_test_integ_logging_write_log_writer_async_queue_full
-    PRIVATE num_collect bfg::lyra)
-target_add_ausan(
-    num_collect_test_integ_logging_write_log_writer_async_queue_full)
-
 add_test(
     NAME num_collect_test_integ_logging
     COMMAND
