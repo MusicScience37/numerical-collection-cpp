@@ -21,7 +21,7 @@
 
 #include <memory>
 
-#include "num_collect/logging/sinks/log_sink_base.h"
+#include "num_collect/logging/sinks/log_sink.h"
 
 namespace num_collect::logging::config {
 
@@ -39,7 +39,7 @@ public:
      * \return Created log sink.
      */
     [[nodiscard]] virtual auto create(log_sink_factory_table& sinks)
-        -> std::shared_ptr<sinks::log_sink_base> = 0;
+        -> sinks::log_sink = 0;
 
     log_sink_factory_base(const log_sink_factory_base&) = delete;
     log_sink_factory_base(log_sink_factory_base&&) = delete;

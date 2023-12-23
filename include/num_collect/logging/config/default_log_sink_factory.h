@@ -22,8 +22,8 @@
 #include <memory>
 
 #include "num_collect/logging/config/log_sink_factory_base.h"
-#include "num_collect/logging/log_tag_config.h"
-#include "num_collect/logging/sinks/log_sink_base.h"
+#include "num_collect/logging/sinks/default_log_sink.h"
+#include "num_collect/logging/sinks/log_sink.h"
 
 namespace num_collect::logging::config {
 
@@ -41,10 +41,10 @@ public:
 
     //! \copydoc num_collect::logging::config::log_sink_factory_base::create
     [[nodiscard]] auto create(log_sink_factory_table& sinks)
-        -> std::shared_ptr<sinks::log_sink_base> override {
+        -> sinks::log_sink override {
         (void)sinks;
 
-        return ::num_collect::logging::impl::get_default_log_sink();
+        return sinks::get_default_log_sink();
     }
 
     /*!

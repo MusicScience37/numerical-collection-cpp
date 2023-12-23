@@ -36,7 +36,7 @@
 #include "num_collect/logging/formatters/log_formatter_base.h"
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/sinks/file_wrapper.h"
-#include "num_collect/logging/sinks/log_sink_base.h"
+#include "num_collect/logging/sinks/log_sink.h"
 #include "num_collect/logging/sinks/log_sinks.h"
 #include "num_collect/util/source_info_view.h"
 
@@ -47,7 +47,7 @@ namespace num_collect::logging::sinks {
  *
  * \thread_safety Thread-safe for all operations.
  */
-class simple_log_sink : public log_sink_base {
+class simple_log_sink {
 public:
     /*!
      * \brief Constructor.
@@ -64,10 +64,19 @@ public:
     auto operator=(const simple_log_sink&) -> simple_log_sink& = delete;
     auto operator=(simple_log_sink&&) -> simple_log_sink& = delete;
 
-    //! \copydoc num_collect::logging::sinks::log_sink_base::write
-    void write(std::chrono::system_clock::time_point time, std::string_view tag,
-        log_level level, util::source_info_view source,
-        std::string_view body) noexcept override {
+    /*!
+     * \brief Write a log.
+     *
+     * \param[in] time Time.
+     * \param[in] tag Tag.
+     * \param[in] level Log level.
+     * \param[in] source Information of the source code.
+     * \param[in] body Log body.
+     *
+     * \note This function can be called from multiple threads.
+     */
+    void write(time_stamp time, std::string_view tag, log_level level,
+        util::source_info_view source, std::string_view body) noexcept {
         if (!is_enabled_) [[unlikely]] {
             return;
         }
@@ -88,7 +97,7 @@ public:
     /*!
      * \brief Destructor.
      */
-    ~simple_log_sink() override = default;
+    ~simple_log_sink() = default;
 
 private:
     //! File.
@@ -107,27 +116,32 @@ private:
     bool is_enabled_{true};
 };
 
-auto create_single_file_sink(std::string_view filepath)
-    -> std::shared_ptr<log_sink_base> {
+auto create_single_file_sink(std::string_view filepath) -> log_sink {
     const auto dir_path = std::filesystem::absolute(filepath).parent_path();
     std::filesystem::create_directories(dir_path);
-    return std::make_shared<simple_log_sink>(
+    return create_log_sink<simple_log_sink>(
         file_wrapper{std::string(filepath), "w"},
         std::make_shared<formatters::detailed_log_formatter>());
 }
 
-auto create_colored_console_sink() -> std::shared_ptr<log_sink_base> {
+auto create_stdout_file_wrapper() -> file_wrapper {
     file_wrapper file{};
     file.set_stdout();
-    return std::make_shared<simple_log_sink>(std::move(file),
-        std::make_shared<formatters::colored_compact_log_formatter>());
+    return file;
 }
 
-auto create_non_colored_console_sink() -> std::shared_ptr<log_sink_base> {
-    file_wrapper file{};
-    file.set_stdout();
-    return std::make_shared<simple_log_sink>(
-        std::move(file), std::make_shared<formatters::compact_log_formatter>());
+auto create_colored_console_sink() -> log_sink {
+    static auto sink =
+        create_log_sink<simple_log_sink>(create_stdout_file_wrapper(),
+            std::make_shared<formatters::colored_compact_log_formatter>());
+    return sink;
+}
+
+auto create_non_colored_console_sink() -> log_sink {
+    static auto sink =
+        create_log_sink<simple_log_sink>(create_stdout_file_wrapper(),
+            std::make_shared<formatters::compact_log_formatter>());
+    return sink;
 }
 
 }  // namespace num_collect::logging::sinks

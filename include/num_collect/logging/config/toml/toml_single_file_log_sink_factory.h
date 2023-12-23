@@ -27,7 +27,7 @@
 #include "num_collect/logging/config/log_sink_factory_base.h"
 #include "num_collect/logging/config/log_sink_factory_table.h"
 #include "num_collect/logging/config/toml/toml_helper.h"
-#include "num_collect/logging/sinks/log_sink_base.h"
+#include "num_collect/logging/sinks/log_sink.h"
 #include "num_collect/logging/sinks/log_sinks.h"
 
 namespace num_collect::logging::config::toml {
@@ -54,7 +54,7 @@ public:
 
     //! \copydoc num_collect::logging::config::log_sink_factory_base::create
     [[nodiscard]] auto create(log_sink_factory_table& sinks)
-        -> std::shared_ptr<sinks::log_sink_base> override {
+        -> sinks::log_sink override {
         (void)sinks;
         return sinks::create_single_file_sink(filepath_);
     }

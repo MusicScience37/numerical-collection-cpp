@@ -22,7 +22,7 @@
 #include <memory>
 
 #include "num_collect/logging/config/log_sink_factory_base.h"
-#include "num_collect/logging/sinks/log_sink_base.h"
+#include "num_collect/logging/sinks/log_sink.h"
 #include "trompeloeil_catch2.h"
 
 namespace num_collect_test::logging::config {
@@ -32,7 +32,7 @@ class mock_log_sink_factory final
 public:
     // NOLINTNEXTLINE
     MAKE_MOCK1(create,
-        std::shared_ptr<num_collect::logging::sinks::log_sink_base>(
+        num_collect::logging::sinks::log_sink(
             num_collect::logging::config::log_sink_factory_table&),
         override);
 

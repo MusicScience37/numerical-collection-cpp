@@ -33,7 +33,7 @@
 #include "num_collect/logging/config/log_sink_factory_table.h"
 #include "num_collect/logging/config/parse_output_log_level_str.h"
 #include "num_collect/logging/log_level.h"
-#include "num_collect/logging/sinks/log_sink_base.h"
+#include "num_collect/logging/sinks/log_sink.h"
 #include "num_collect/logging/sinks/log_sinks.h"
 
 namespace num_collect::logging::config::toml {
@@ -115,9 +115,8 @@ public:
 
     //! \copydoc num_collect::logging::config::log_sink_factory_base::create
     [[nodiscard]] auto create(log_sink_factory_table& sinks)
-        -> std::shared_ptr<sinks::log_sink_base> override {
-        std::vector<std::pair<std::shared_ptr<sinks::log_sink_base>, log_level>>
-            inner_sinks;
+        -> sinks::log_sink override {
+        std::vector<std::pair<sinks::log_sink, log_level>> inner_sinks;
         inner_sinks.reserve(inner_sink_names_.size());
         for (std::size_t i = 0; i < inner_sink_names_.size(); ++i) {
             inner_sinks.emplace_back(

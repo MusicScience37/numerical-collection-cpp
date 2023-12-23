@@ -36,7 +36,6 @@ TEST_CASE("num_collect::logging::log_tag_config") {
     SECTION("default config") {
         const auto config = log_tag_config();
 
-        CHECK(config.sink() != nullptr);
         CHECK(config.output_log_level() == log_level::info);
         CHECK(config.iteration_output_period() > 0);
         CHECK(config.iteration_label_period() > 0);
@@ -46,12 +45,9 @@ TEST_CASE("num_collect::logging::log_tag_config") {
         auto config = log_tag_config();
 
         SECTION("sink") {
-            CHECK_THROWS(config.sink(nullptr));
-            CHECK(config.sink() != nullptr);
-
             const auto sink =
                 std::make_shared<num_collect_test::logging::mock_log_sink>();
-            CHECK(config.sink(sink).sink() == sink);
+            CHECK_NOTHROW(config.sink(sink->to_log_sink()));
         }
 
         SECTION("output_log_level") {

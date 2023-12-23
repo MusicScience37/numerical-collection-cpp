@@ -43,7 +43,8 @@
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
-#include "num_collect/logging/sinks/log_sink_base.h"
+#include "num_collect/logging/sinks/log_sink.h"
+#include "num_collect/logging/time_stamp.h"
 #include "num_collect/util/iteration_period_checker.h"
 #include "num_collect/util/source_info_view.h"
 
@@ -206,9 +207,8 @@ public:
 
         buffer_.clear();
         format_values_to(buffer_);
-        sink_->write(std::chrono::system_clock::now(), tag_.name(),
-            log_level::iteration, source,
-            std::string_view(buffer_.data(), buffer_.size()));
+        sink_.write(time_stamp::now(), tag_.name(), log_level::iteration,
+            source, std::string_view(buffer_.data(), buffer_.size()));
 
         ++iteration_output_period_checker_;
     }
@@ -231,9 +231,8 @@ public:
 
         buffer_.clear();
         format_values_to(buffer_, algorithm);
-        sink_->write(std::chrono::system_clock::now(), tag_.name(),
-            log_level::iteration, source,
-            std::string_view(buffer_.data(), buffer_.size()));
+        sink_.write(time_stamp::now(), tag_.name(), log_level::iteration,
+            source, std::string_view(buffer_.data(), buffer_.size()));
 
         ++iteration_output_period_checker_;
     }
@@ -251,8 +250,7 @@ public:
 
         buffer_.clear();
         format_summary_to(buffer_);
-        sink_->write(std::chrono::system_clock::now(), tag_.name(),
-            log_level::summary, source,
+        sink_.write(time_stamp::now(), tag_.name(), log_level::summary, source,
             std::string_view(buffer_.data(), buffer_.size()));
     }
 
@@ -270,8 +268,7 @@ public:
 
         buffer_.clear();
         format_summary_to(buffer_, algorithm);
-        sink_->write(std::chrono::system_clock::now(), tag_.name(),
-            log_level::summary, source,
+        sink_.write(time_stamp::now(), tag_.name(), log_level::summary, source,
             std::string_view(buffer_.data(), buffer_.size()));
     }
 
@@ -303,7 +300,7 @@ private:
         if (iteration_label_period_checker_) {
             buffer_.clear();
             format_labels_to(buffer_);
-            sink_->write(std::chrono::system_clock::now(), tag_.name(),
+            sink_.write(time_stamp::now(), tag_.name(),
                 log_level::iteration_label, source,
                 std::string_view(buffer_.data(), buffer_.size()));
         }
@@ -398,7 +395,7 @@ private:
     bool write_summaries_{false};
 
     //! Log sink.
-    std::shared_ptr<sinks::log_sink_base> sink_;
+    sinks::log_sink sink_;
 
     //! Checker of periods to write iteration logs.
     util::iteration_period_checker iteration_output_period_checker_;

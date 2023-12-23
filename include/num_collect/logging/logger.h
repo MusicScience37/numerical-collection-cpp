@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of log_sink_base class.
+ * \brief Definition of logger class.
  */
 #pragma once
 
@@ -35,7 +35,8 @@
 #include "num_collect/logging/log_tag.h"
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/logging/sinks/log_sink_base.h"
+#include "num_collect/logging/sinks/log_sink.h"
+#include "num_collect/logging/time_stamp.h"
 #include "num_collect/util/source_info_view.h"
 
 namespace num_collect::logging {
@@ -58,7 +59,7 @@ public:
      * \param[in] write_log Whether to write log.
      */
     logging_proxy(std::string_view tag, log_level level,
-        util::source_info_view source, sinks::log_sink_base* sink,
+        util::source_info_view source, const sinks::log_sink* sink,
         bool write_log) noexcept
         : tag_(tag),
           level_(level),
@@ -76,8 +77,7 @@ public:
             return;
         }
 
-        sink_->write(
-            std::chrono::system_clock::now(), tag_, level_, source_, body);
+        sink_->write(time_stamp::now(), tag_, level_, source_, body);
     }
 
     /*!
@@ -96,7 +96,7 @@ public:
         fmt::memory_buffer buffer;
         fmt::format_to(
             std::back_inserter(buffer), format, std::forward<Args>(args)...);
-        sink_->write(std::chrono::system_clock::now(), tag_, level_, source_,
+        sink_->write(time_stamp::now(), tag_, level_, source_,
             std::string_view{buffer.data(), buffer.size()});
     }
 
@@ -111,7 +111,7 @@ private:
     util::source_info_view source_;
 
     //! Log sink.
-    sinks::log_sink_base* sink_;
+    const sinks::log_sink* sink_;
 
     //! Whether to write log.
     bool write_log_;
@@ -234,8 +234,8 @@ public:
     [[nodiscard]] auto log(log_level level,
         util::source_info_view source = util::source_info_view()) const noexcept
         -> logging_proxy {
-        return logging_proxy(tag_.name(), level, source, config_.sink().get(),
-            should_log(level));
+        return logging_proxy(
+            tag_.name(), level, source, &config_.sink(), should_log(level));
     }
 
     /*!

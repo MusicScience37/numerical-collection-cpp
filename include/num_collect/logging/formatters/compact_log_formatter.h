@@ -27,7 +27,6 @@
 #include <fmt/format.h>
 
 #include "num_collect/logging/formatters/get_log_level_str_for_log.h"
-#include "num_collect/logging/formatters/iso8601_time.h"
 #include "num_collect/logging/formatters/log_formatter_base.h"
 #include "num_collect/logging/log_level.h"
 #include "num_collect/util/source_info_view.h"
@@ -44,9 +43,8 @@ namespace num_collect::logging::formatters {
 class compact_log_formatter : public log_formatter_base {
 public:
     //! \copydoc num_collect::logging::formatters::log_formatter_base::format
-    void format(fmt::memory_buffer& buffer,
-        std::chrono::system_clock::time_point time, std::string_view tag,
-        log_level level, util::source_info_view source,
+    void format(fmt::memory_buffer& buffer, time_stamp time,
+        std::string_view tag, log_level level, util::source_info_view source,
         std::string_view body) override {
         std::string_view filename = source.file_path();
         const std::size_t last_separator_pos = filename.find_last_of("/\\");
@@ -55,7 +53,7 @@ public:
         }
 
         fmt::format_to(std::back_inserter(buffer),
-            FMT_STRING("[{}] [{}] [{}] {} ({}:{}, {})"), iso8601_time(time),
+            FMT_STRING("[{}] [{}] [{}] {} ({}:{}, {})"), time,
             get_output_log_level_str(level), tag, body, filename, source.line(),
             source.function_name());
     }

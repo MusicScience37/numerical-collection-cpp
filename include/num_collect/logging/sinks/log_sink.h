@@ -132,4 +132,25 @@ private:
     reference_count* reference_count_;
 };
 
+/*!
+ * \brief Create a log sink.
+ *
+ * \tparam T Class with write function which has the same signature as log_sink
+ * class.
+ * \tparam Args Types of arguments.
+ * \param[in] args Arguments.
+ * \return Log sink.
+ */
+template <typename T, typename... Args>
+[[nodiscard]] auto create_log_sink(Args&&... args) -> log_sink {
+    T* ptr = new T(std::forward<Args>(args)...);
+    return log_sink(
+        ptr,
+        [](void* ptr, time_stamp time, std::string_view tag, log_level level,
+            util::source_info_view source, std::string_view body) noexcept {
+            static_cast<T*>(ptr)->write(time, tag, level, source, body);
+        },
+        [](void* ptr) noexcept { delete static_cast<T*>(ptr); });
+}
+
 }  // namespace num_collect::logging::sinks
