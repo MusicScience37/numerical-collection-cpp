@@ -20,7 +20,6 @@
 #include "num_collect/logging/logger.h"
 
 #include <memory>
-#include <type_traits>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -50,8 +49,9 @@ TEST_CASE("num_collect::logging::logger") {
     SECTION("write logs with various log levels") {
         constexpr auto tag = log_tag_view("num_collect::logging::logger_test2");
         const auto sink = std::make_shared<mock_log_sink>();
-        const auto config =
-            log_tag_config().output_log_level(log_level::trace).sink(sink);
+        const auto config = log_tag_config()
+                                .output_log_level(log_level::trace)
+                                .sink(sink->to_log_sink());
         CHECK_NOTHROW(set_config_of(tag, config));
 
         REQUIRE_CALL(*sink, write_impl(_, _, _, _, _)).TIMES(9);
@@ -71,7 +71,7 @@ TEST_CASE("num_collect::logging::logger") {
     SECTION("write logs with formatting") {
         constexpr auto tag = log_tag_view("num_collect::logging::logger_test3");
         const auto sink = std::make_shared<mock_log_sink>();
-        const auto config = log_tag_config().sink(sink);
+        const auto config = log_tag_config().sink(sink->to_log_sink());
         CHECK_NOTHROW(set_config_of(tag, config));
 
         REQUIRE_CALL(*sink,
@@ -85,7 +85,7 @@ TEST_CASE("num_collect::logging::logger") {
     SECTION("skip logging using configuration") {
         constexpr auto tag = log_tag_view("num_collect::logging::logger_test4");
         const auto sink = std::make_shared<mock_log_sink>();
-        const auto config = log_tag_config().sink(sink);
+        const auto config = log_tag_config().sink(sink->to_log_sink());
 
         FORBID_CALL(*sink, write_impl(_, _, _, _, _));
 
@@ -102,7 +102,7 @@ TEST_CASE("num_collect::logging::logger") {
         const auto sink = std::make_shared<mock_log_sink>();
         const auto config =
             log_tag_config()
-                .sink(sink)
+                .sink(sink->to_log_sink())
                 .output_log_level(log_level::summary)
                 .output_log_level_in_child_iterations(log_level::info);
 

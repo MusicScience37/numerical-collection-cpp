@@ -19,12 +19,12 @@
  */
 #pragma once
 
-#include <chrono>
 #include <string_view>
 
 #include <fmt/format.h>
 
 #include "num_collect/logging/log_level.h"
+#include "num_collect/logging/time_stamp.h"
 #include "num_collect/util/source_info_view.h"
 
 namespace num_collect::logging::formatters {
@@ -44,9 +44,8 @@ public:
      * \param[in] source Information of the source code.
      * \param[in] body Log body.
      */
-    virtual void format(fmt::memory_buffer& buffer,
-        std::chrono::system_clock::time_point time, std::string_view tag,
-        log_level level, util::source_info_view source,
+    virtual void format(fmt::memory_buffer& buffer, time_stamp time,
+        std::string_view tag, log_level level, util::source_info_view source,
         std::string_view body) = 0;
 
     //! Destructor.

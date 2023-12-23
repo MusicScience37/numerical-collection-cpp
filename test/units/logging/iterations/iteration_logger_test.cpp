@@ -55,7 +55,7 @@ TEST_CASE("num_collect::logging::iterations::iteration_logger") {
                             .output_log_level(log_level::trace)
                             .iteration_output_period(iteration_output_period)
                             .iteration_label_period(iteration_label_period)
-                            .sink(sink);
+                            .sink(sink->to_log_sink());
     auto logger = num_collect::logging::logger(tag, config);
 
     fmt::memory_buffer logs;

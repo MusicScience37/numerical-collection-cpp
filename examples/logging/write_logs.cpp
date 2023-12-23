@@ -19,9 +19,7 @@
  */
 #include <exception>
 #include <iostream>
-#include <memory>
 #include <string>
-#include <string_view>
 
 #include <lyra/lyra.hpp>
 

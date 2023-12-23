@@ -21,10 +21,10 @@
 
 #include <functional>
 #include <memory>
+#include <optional>
 #include <stdexcept>
 #include <string>
 #include <string_view>
-#include <type_traits>
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
@@ -34,7 +34,7 @@
 #include "num_collect/base/exception.h"
 #include "num_collect/logging/config/default_log_sink_factory.h"
 #include "num_collect/logging/config/log_sink_factory_base.h"
-#include "num_collect/logging/sinks/log_sink_base.h"
+#include "num_collect/logging/sinks/log_sink.h"
 
 namespace num_collect::logging::config {
 
@@ -74,8 +74,7 @@ public:
      * \param[in] name Name of the log sink.
      * \return Log sink.
      */
-    [[nodiscard]] auto get(const std::string& name)
-        -> std::shared_ptr<sinks::log_sink_base> {
+    [[nodiscard]] auto get(const std::string& name) -> sinks::log_sink {
         check_sink_reference_loop(name);
         const auto iter = caches_.find(name);
         if (iter == caches_.end()) {
@@ -106,11 +105,11 @@ private:
          * \return Sink.
          */
         [[nodiscard]] auto get(log_sink_factory_table& sinks)
-            -> std::shared_ptr<sinks::log_sink_base> {
+            -> sinks::log_sink {
             if (!sink_) {
                 sink_ = factory_->create(sinks);
             }
-            return sink_;
+            return *sink_;
         }
 
     private:
@@ -118,7 +117,7 @@ private:
         std::shared_ptr<log_sink_factory_base> factory_;
 
         //! Log sink.
-        std::shared_ptr<sinks::log_sink_base> sink_{};
+        std::optional<sinks::log_sink> sink_;
     };
 
     /*!

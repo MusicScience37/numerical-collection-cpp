@@ -19,32 +19,15 @@
  */
 #pragma once
 
-#include <memory>
-#include <string_view>
 #include <utility>
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_level.h"
-#include "num_collect/logging/sinks/log_sink_base.h"
-#include "num_collect/logging/sinks/log_sinks.h"
+#include "num_collect/logging/sinks/default_log_sink.h"
+#include "num_collect/logging/sinks/log_sink.h"
 
 namespace num_collect::logging {
-
-namespace impl {
-
-/*!
- * \brief Get the default log sink.
- *
- * \return Log sink.
- */
-[[nodiscard]] inline auto get_default_log_sink()
-    -> std::shared_ptr<sinks::log_sink_base> {
-    static auto sink = sinks::create_colored_console_sink();
-    return sink;
-}
-
-}  // namespace impl
 
 /*!
  * \brief Class to hold configurations for log tags.
@@ -63,8 +46,7 @@ public:
      *
      * \return Log sink.
      */
-    [[nodiscard]] auto sink() const noexcept
-        -> std::shared_ptr<sinks::log_sink_base> {
+    [[nodiscard]] auto sink() const noexcept -> const sinks::log_sink& {
         return sink_;
     }
 
@@ -74,10 +56,7 @@ public:
      * \param[in] val Log sink.
      * \return This.
      */
-    auto sink(std::shared_ptr<sinks::log_sink_base> val) -> log_tag_config& {
-        if (!val) {
-            throw invalid_argument("Null sink.");
-        }
+    auto sink(sinks::log_sink val) -> log_tag_config& {
         sink_ = std::move(val);
         return *this;
     }
@@ -202,7 +181,7 @@ public:
 
 private:
     //! Log sink.
-    std::shared_ptr<sinks::log_sink_base> sink_{impl::get_default_log_sink()};
+    sinks::log_sink sink_{sinks::get_default_log_sink()};
 
     //! Minimum log level to output.
     log_level output_log_level_{log_level::info};

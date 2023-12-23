@@ -19,36 +19,41 @@
  */
 #pragma once
 
+#include <string_view>
+
 #include <fmt/format.h>
 
-#include "num_collect/logging/sinks/log_sink_base.h"
+#include "num_collect/logging/log_level.h"
+#include "num_collect/logging/sinks/log_sink.h"
+#include "num_collect/logging/time_stamp.h"
+#include "num_collect/util/source_info_view.h"
 #include "trompeloeil_catch2.h"
 
 namespace num_collect_test::logging {
 
-class mock_log_sink final : public num_collect::logging::sinks::log_sink_base {
+class mock_log_sink {
 public:
-    // NOLINTNEXTLINE(bugprone-exception-escape)
-    void write(std::chrono::system_clock::time_point time, std::string_view tag,
-        num_collect::logging::log_level level,
-        num_collect::util::source_info_view source,
-        std::string_view body) noexcept override {
-        write_impl(time, tag, level, source, body);
-    }
-
     // NOLINTNEXTLINE
     MAKE_MOCK5(write_impl,
-        void(std::chrono::system_clock::time_point time, std::string_view tag,
+        void(num_collect::logging::time_stamp time, std::string_view tag,
             num_collect::logging::log_level level,
             num_collect::util::source_info_view source, std::string_view body),
         noexcept);
 
-    mock_log_sink() = default;
-    mock_log_sink(const mock_log_sink&) = delete;
-    mock_log_sink(mock_log_sink&&) = delete;
-    auto operator=(const mock_log_sink&) -> mock_log_sink& = delete;
-    auto operator=(mock_log_sink&&) -> mock_log_sink& = delete;
-    ~mock_log_sink() override = default;
+    [[nodiscard]] auto to_log_sink() -> num_collect::logging::sinks::log_sink {
+        return num_collect::logging::sinks::log_sink(
+            this,
+            [](void* ptr, num_collect::logging::time_stamp time,
+                std::string_view tag, num_collect::logging::log_level level,
+                num_collect::util::source_info_view source,
+                std::string_view body) noexcept {
+                static_cast<mock_log_sink*>(ptr)->write_impl(
+                    time, tag, level, source, body);
+            },
+            [](void* /*ptr*/) noexcept {
+                // NOP
+            });
+    }
 };
 
 }  // namespace num_collect_test::logging

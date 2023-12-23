@@ -17,23 +17,23 @@
  * \file
  * \brief Test of simple_log_sink class.
  */
-#include <chrono>
 #include <filesystem>
-#include <memory>
 #include <string>
 #include <string_view>
-#include <type_traits>
 
 #include <catch2/catch_test_macros.hpp>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_level.h"
-#include "num_collect/logging/sinks/log_sinks.h"
+#include "num_collect/logging/sinks/file_log_sink.h"
+#include "num_collect/logging/sinks/log_sink.h"
+#include "num_collect/logging/time_stamp.h"
 #include "num_collect/util/source_info_view.h"
 
 TEST_CASE("num_collect::logging::sinks::create_single_file_sink") {
     using num_collect::index_type;
     using num_collect::logging::log_level;
+    using num_collect::logging::time_stamp;
     using num_collect::logging::sinks::create_single_file_sink;
     using num_collect::util::source_info_view;
 
@@ -44,7 +44,7 @@ TEST_CASE("num_collect::logging::sinks::create_single_file_sink") {
     const auto sink = create_single_file_sink(filepath);
 
     SECTION("write") {
-        const auto time = std::chrono::system_clock::now();
+        const auto time = time_stamp::now();
         const auto tag = std::string_view("Tag");
         const auto level = log_level::summary;
         const auto file_path = std::string_view("filepath");
@@ -55,6 +55,6 @@ TEST_CASE("num_collect::logging::sinks::create_single_file_sink") {
             source_info_view(file_path, line, column, function_name);
         const auto body = std::string_view("body");
 
-        REQUIRE_NOTHROW(sink->write(time, tag, level, source, body));
+        REQUIRE_NOTHROW(sink.write(time, tag, level, source, body));
     }
 }

@@ -15,19 +15,17 @@
  */
 /*!
  * \file
- * \brief Definition of functions of log sinks to write logs to multiple log
- * sinks.
+ * \brief Declaration of functions to create combined log sinks.
  */
-#include <chrono>
-#include <memory>
+#pragma once
+
 #include <string_view>
-#include <type_traits>
 #include <utility>
 #include <vector>
 
 #include "num_collect/logging/log_level.h"
-#include "num_collect/logging/sinks/log_sink_base.h"
-#include "num_collect/logging/sinks/log_sinks.h"
+#include "num_collect/logging/sinks/log_sink.h"
+#include "num_collect/logging/time_stamp.h"
 #include "num_collect/util/source_info_view.h"
 
 namespace num_collect::logging::sinks {
@@ -37,7 +35,7 @@ namespace num_collect::logging::sinks {
  *
  * \thread_safety Thread-safe for all operations.
  */
-class combined_log_sink final : public log_sink_base {
+class combined_log_sink {
 public:
     /*!
      * \brief Constructor.
@@ -45,39 +43,53 @@ public:
      * \param[in] sinks Log sinks with log levels.
      */
     explicit combined_log_sink(
-        std::vector<std::pair<std::shared_ptr<log_sink_base>, log_level>> sinks)
+        std::vector<std::pair<log_sink, log_level>> sinks)
         : sinks_(std::move(sinks)) {}
 
     /*!
      * \brief Destructor.
      */
-    ~combined_log_sink() override = default;
+    ~combined_log_sink() = default;
 
     combined_log_sink(const combined_log_sink&) = delete;
     combined_log_sink(combined_log_sink&&) = delete;
     auto operator=(const combined_log_sink&) -> combined_log_sink& = delete;
     auto operator=(combined_log_sink&&) -> combined_log_sink& = delete;
 
-    //! \copydoc num_collect::logging::sinks::log_sink_base::write
-    void write(std::chrono::system_clock::time_point time, std::string_view tag,
-        log_level level, util::source_info_view source,
-        std::string_view body) noexcept override {
+    /*!
+     * \brief Write a log.
+     *
+     * \param[in] time Time.
+     * \param[in] tag Tag.
+     * \param[in] level Log level.
+     * \param[in] source Information of the source code.
+     * \param[in] body Log body.
+     *
+     * \note This function can be called from multiple threads.
+     */
+    void write(time_stamp time, std::string_view tag, log_level level,
+        util::source_info_view source, std::string_view body) noexcept {
         for (const auto& [sink, output_log_level] : sinks_) {
             if (level >= output_log_level) {
-                sink->write(time, tag, level, source, body);
+                sink.write(time, tag, level, source, body);
             }
         }
     }
 
 private:
     //! Log sinks with log levels.
-    std::vector<std::pair<std::shared_ptr<log_sink_base>, log_level>> sinks_;
+    std::vector<std::pair<log_sink, log_level>> sinks_;
 };
 
-auto create_combined_log_sink(
-    std::vector<std::pair<std::shared_ptr<log_sink_base>, log_level>> sinks)
-    -> std::shared_ptr<log_sink_base> {
-    return std::make_shared<combined_log_sink>(std::move(sinks));
+/*!
+ * \brief Create a log sink to write logs to multiple log sinks.
+ *
+ * \param[in] sinks Log sinks with log levels.
+ * \return Log sink to write logs to all of the given log sinks.
+ */
+[[nodiscard]] inline auto create_combined_log_sink(
+    std::vector<std::pair<log_sink, log_level>> sinks) -> log_sink {
+    return create_log_sink<combined_log_sink>(std::move(sinks));
 }
 
 }  // namespace num_collect::logging::sinks

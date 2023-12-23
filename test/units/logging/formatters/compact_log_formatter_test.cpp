@@ -31,17 +31,15 @@
 TEST_CASE("num_collect::logging::formatters::compact_log_formatter") {
     using num_collect::index_type;
     using num_collect::logging::log_level;
+    using num_collect::logging::time_stamp;
     using num_collect::logging::formatters::compact_log_formatter;
     using num_collect::util::source_info_view;
 
     compact_log_formatter formatter{};
 
     SECTION("format") {
-        // 2022/8/28 17:56:14.123456
-        const auto time_since_epoch = std::chrono::seconds{1661709374} +
-            std::chrono::microseconds{123456};
-        const auto time =
-            std::chrono::system_clock::time_point(time_since_epoch);
+        // 2022/8/28 17:56:14.123456789
+        const auto time = time_stamp(1661709374, 123456789);
         const auto tag = std::string_view("Tag");
         const auto file_path = std::string_view("/file/path");
         const index_type line = 123;

@@ -18,7 +18,6 @@
  * \brief Test of log sinks.
  */
 #include <algorithm>
-#include <array>
 #include <atomic>
 #include <chrono>
 #include <cmath>
@@ -45,6 +44,7 @@
 #include "num_collect/logging/config/toml/toml_log_config_parser.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/iterations/iteration_parameter.h"
+#include "num_collect/logging/iterations/variable_iteration_parameter_value.h"
 #include "num_collect/logging/log_tag.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"

@@ -15,9 +15,12 @@
  */
 /*!
  * \file
- * \brief Benchmark of writing trace logs.
+ * \brief Profiling of ignore logs.
  */
-#include <stat_bench/benchmark_macros.h>
+#include <chrono>
+#include <memory>
+
+#include <gperftools/profiler.h>
 
 #include "num_collect/logging/log_config.h"
 #include "num_collect/logging/log_level.h"
@@ -25,33 +28,26 @@
 #include "num_collect/logging/logger.h"
 #include "num_collect/logging/sinks/file_log_sink.h"
 
-STAT_BENCH_MAIN
-
-static void perform() {
+static void test() {
     num_collect::logging::logger logger;
-    STAT_BENCH_MEASURE_INDEXED(/*thread_ind*/, /*sample_ind*/, i) {
+    constexpr std::size_t num_logs = 1000000;
+    for (std::size_t i = 0; i < num_logs; ++i) {
         logger.trace()("Test trace logs. i={}", i);
-    };
+    }
 }
 
-// NOLINTNEXTLINE
-STAT_BENCH_CASE("trace_logs", "write no log") {
+auto main() -> int {
     num_collect::logging::set_default_tag_config(
         num_collect::logging::log_tag_config()
             .sink(num_collect::logging::sinks::create_single_file_sink(
-                "num_collect_bench_logging_write_trace_logs.log"))
-            .output_log_level(num_collect::logging::log_level::iteration));
+                "num_collect_prof_ignore_logs_out.log"))
+            .output_log_level(num_collect::logging::log_level::info));
 
-    perform();
-}
-
-// NOLINTNEXTLINE
-STAT_BENCH_CASE("trace_logs", "write log") {
-    num_collect::logging::set_default_tag_config(
-        num_collect::logging::log_tag_config()
-            .sink(num_collect::logging::sinks::create_single_file_sink(
-                "num_collect_bench_logging_write_trace_logs.log"))
-            .output_log_level(num_collect::logging::log_level::trace));
-
-    perform();
+    constexpr std::size_t repetition = 100;
+    ProfilerStart("num_collect_prof_ignore_logs.prof");
+    for (std::size_t i = 0; i < repetition; ++i) {
+        test();
+    }
+    ProfilerStop();
+    return 0;
 }

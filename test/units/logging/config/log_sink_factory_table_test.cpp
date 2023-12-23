@@ -20,21 +20,22 @@
 #include "num_collect/logging/config/log_sink_factory_table.h"
 
 #include <memory>
+#include <optional>
 #include <string>
 
 #include <catch2/catch_test_macros.hpp>
 
 #include "../mock_log_sink.h"
 #include "mock_log_sink_factory.h"
-#include "num_collect/logging/log_tag_config.h"
-#include "num_collect/logging/sinks/log_sink_base.h"
+#include "num_collect/logging/sinks/default_log_sink.h"
+#include "num_collect/logging/sinks/log_sink.h"
 #include "trompeloeil_catch2.h"
 
 TEST_CASE("num_collect::logging::config::log_sink_factory_table") {
     using num_collect::logging::config::default_log_sink_name;
     using num_collect::logging::config::log_sink_factory_table;
-    using num_collect::logging::impl::get_default_log_sink;
-    using num_collect::logging::sinks::log_sink_base;
+    using num_collect::logging::sinks::get_default_log_sink;
+    using num_collect::logging::sinks::log_sink;
     using num_collect_test::logging::mock_log_sink;
     using num_collect_test::logging::config::mock_log_sink_factory;
     using trompeloeil::_;
@@ -54,22 +55,22 @@ TEST_CASE("num_collect::logging::config::log_sink_factory_table") {
 
         {
             // NOLINTNEXTLINE
-            REQUIRE_CALL(*factory1, create(_)).TIMES(1).RETURN(sink1);
+            REQUIRE_CALL(*factory1, create(_))
+                .TIMES(1)
+                .RETURN(sink1->to_log_sink());
 
-            std::shared_ptr<log_sink_base> sink;
+            std::optional<log_sink> sink;
             CHECK_NOTHROW(sink = table.get(name1));
-            CHECK(static_cast<void*>(sink.get()) ==
-                static_cast<void*>(sink1.get()));
         }
 
         {
             // NOLINTNEXTLINE
-            REQUIRE_CALL(*factory2, create(_)).TIMES(1).RETURN(sink2);
+            REQUIRE_CALL(*factory2, create(_))
+                .TIMES(1)
+                .RETURN(sink2->to_log_sink());
 
-            std::shared_ptr<log_sink_base> sink;
+            std::optional<log_sink> sink;
             CHECK_NOTHROW(sink = table.get(name2));
-            CHECK(static_cast<void*>(sink.get()) ==
-                static_cast<void*>(sink2.get()));
         }
     }
 
@@ -88,32 +89,28 @@ TEST_CASE("num_collect::logging::config::log_sink_factory_table") {
 
         {
             // NOLINTNEXTLINE
-            REQUIRE_CALL(*factory1, create(_)).TIMES(1).RETURN(sink1);
+            REQUIRE_CALL(*factory1, create(_))
+                .TIMES(1)
+                .RETURN(sink1->to_log_sink());
 
-            std::shared_ptr<log_sink_base> sink;
+            std::optional<log_sink> sink;
             CHECK_NOTHROW(sink = table.get(name1));
-            CHECK(static_cast<void*>(sink.get()) ==
-                static_cast<void*>(sink1.get()));
         }
 
         {
             // NOLINTNEXTLINE
             FORBID_CALL(*factory1, create(_));
 
-            std::shared_ptr<log_sink_base> sink;
+            std::optional<log_sink> sink;
             CHECK_NOTHROW(sink = table.get(name1));
-            CHECK(static_cast<void*>(sink.get()) ==
-                static_cast<void*>(sink1.get()));
         }
     }
 
     SECTION("get default log sink") {
         log_sink_factory_table table;
 
-        std::shared_ptr<log_sink_base> sink;
+        std::optional<log_sink> sink;
         CHECK_NOTHROW(sink = table.get(std::string{default_log_sink_name}));
-        CHECK(static_cast<void*>(sink.get()) ==
-            static_cast<void*>(get_default_log_sink().get()));
     }
 
     SECTION("duplicate name of log sinks") {
@@ -140,21 +137,17 @@ TEST_CASE("num_collect::logging::config::log_sink_factory_table") {
         table.append(name2, factory2);
 
         {
-            std::shared_ptr<log_sink_base> inner_sink;
+            std::optional<log_sink> inner_sink;
             REQUIRE_CALL(*factory1, create(_))
                 .TIMES(1)
                 .LR_SIDE_EFFECT(inner_sink = _1.get(name2))  // NOLINT
-                .RETURN(sink1);                              // NOLINT
+                .RETURN(sink1->to_log_sink());               // NOLINT
             REQUIRE_CALL(*factory2, create(_))
                 .TIMES(1)
-                .RETURN(sink2);  // NOLINT
+                .RETURN(sink2->to_log_sink());  // NOLINT
 
-            std::shared_ptr<log_sink_base> sink;
+            std::optional<log_sink> sink;
             CHECK_NOTHROW(sink = table.get(name1));
-            CHECK(static_cast<void*>(sink.get()) ==
-                static_cast<void*>(sink1.get()));
-            CHECK(static_cast<void*>(inner_sink.get()) ==
-                static_cast<void*>(sink2.get()));
         }
     }
 
@@ -174,10 +167,10 @@ TEST_CASE("num_collect::logging::config::log_sink_factory_table") {
         {
             ALLOW_CALL(*factory1, create(_))
                 .SIDE_EFFECT((void)_1.get(name2))  // NOLINT
-                .RETURN(sink1);                    // NOLINT
+                .RETURN(sink1->to_log_sink());     // NOLINT
             ALLOW_CALL(*factory2, create(_))
                 .SIDE_EFFECT((void)_1.get(name1))  // NOLINT
-                .RETURN(sink2);                    // NOLINT
+                .RETURN(sink2->to_log_sink());     // NOLINT
 
             CHECK_THROWS(table.get(name1));
             CHECK_THROWS(table.get(name2));

@@ -19,8 +19,6 @@
  */
 #pragma once
 
-#include <string_view>
-
 #include "num_collect/base/exception.h"
 #include "num_collect/logging/concepts/formattable_iteration_parameter_value.h"  // IWYU pragma: keep
 

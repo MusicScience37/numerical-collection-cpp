@@ -21,7 +21,6 @@
 
 #include <string>
 #include <string_view>
-#include <type_traits>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -47,14 +46,14 @@ TEST_CASE(
     const auto factory1 = std::make_shared<mock_log_sink_factory>();
     sinks.append(name1, factory1);
     // NOLINTNEXTLINE
-    ALLOW_CALL(*factory1, create(_)).RETURN(sink1);
+    ALLOW_CALL(*factory1, create(_)).RETURN(sink1->to_log_sink());
 
     const auto name2 = std::string("sink2");
     const auto sink2 = std::make_shared<mock_log_sink>();
     const auto factory2 = std::make_shared<mock_log_sink_factory>();
     sinks.append(name2, factory2);
     // NOLINTNEXTLINE
-    ALLOW_CALL(*factory2, create(_)).RETURN(sink2);
+    ALLOW_CALL(*factory2, create(_)).RETURN(sink2->to_log_sink());
 
     SECTION("create from a configuration") {
         const auto test_toml = std::string_view(R"(

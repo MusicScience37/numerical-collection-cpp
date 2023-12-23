@@ -15,37 +15,21 @@
  */
 /*!
  * \file
- * \brief Declaration of functions to create log sinks.
+ * \brief Declaration of functions to create console log sinks.
  */
 #pragma once
 
-#include <memory>
-#include <string_view>
-#include <utility>
-#include <vector>
-
 #include "num_collect/impl/num_collect_export.h"
-#include "num_collect/logging/log_level.h"
-#include "num_collect/logging/sinks/log_sink_base.h"
+#include "num_collect/logging/sinks/log_sink.h"
 
 namespace num_collect::logging::sinks {
-
-/*!
- * \brief Create a log sink to write to a single file.
- *
- * \param[in] filepath Filepath.
- * \return Log sink.
- */
-[[nodiscard]] NUM_COLLECT_EXPORT auto create_single_file_sink(
-    std::string_view filepath) -> std::shared_ptr<log_sink_base>;
 
 /*!
  * \brief Create a log sink to write to console with color.
  *
  * \return Log sink.
  */
-[[nodiscard]] NUM_COLLECT_EXPORT auto create_colored_console_sink()
-    -> std::shared_ptr<log_sink_base>;
+[[nodiscard]] NUM_COLLECT_EXPORT auto create_colored_console_sink() -> log_sink;
 
 /*!
  * \brief Create a log sink to write to console without color.
@@ -53,16 +37,6 @@ namespace num_collect::logging::sinks {
  * \return Log sink.
  */
 [[nodiscard]] NUM_COLLECT_EXPORT auto create_non_colored_console_sink()
-    -> std::shared_ptr<log_sink_base>;
-
-/*!
- * \brief Create a log sink to write logs to multiple log sinks.
- *
- * \param[in] sinks Log sinks with log levels.
- * \return Log sink to write logs to all of the given log sinks.
- */
-[[nodiscard]] NUM_COLLECT_EXPORT auto create_combined_log_sink(
-    std::vector<std::pair<std::shared_ptr<log_sink_base>, log_level>> sinks)
-    -> std::shared_ptr<log_sink_base>;
+    -> log_sink;
 
 }  // namespace num_collect::logging::sinks
