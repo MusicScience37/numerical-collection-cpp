@@ -26,7 +26,7 @@
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/logger.h"
-#include "num_collect/logging/sinks/log_sinks.h"
+#include "num_collect/logging/sinks/file_log_sink.h"
 
 static void test() {
     num_collect::logging::logger logger;
@@ -39,7 +39,7 @@ static void test() {
 auto main() -> int {
     num_collect::logging::set_default_tag_config(
         num_collect::logging::log_tag_config()
-            .sink(std::make_shared<num_collect::logging::simple_log_sink>(
+            .sink(num_collect::logging::sinks::create_single_file_sink(
                 "num_collect_prof_write_trace_logs_out.log"))
             .output_log_level(num_collect::logging::log_level::trace));
 
