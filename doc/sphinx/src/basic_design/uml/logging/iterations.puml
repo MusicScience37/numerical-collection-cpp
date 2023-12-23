@@ -5,7 +5,7 @@ title Abstract model of iteration logs
 package logging {
     !includesub ./logger.puml!log_tag_view
     package sinks {
-        !includesub ./logger.puml!log_sink_base
+        !includesub ./logger.puml!log_sink
     }
 
     package iterations {
@@ -51,7 +51,7 @@ package logging {
         }
         iteration_logger o-- iteration_parameter_base
         iteration_logger o-- log_tag_view
-        iteration_logger o-- log_sink_base
+        iteration_logger o-- log_sink
     }
 }
 

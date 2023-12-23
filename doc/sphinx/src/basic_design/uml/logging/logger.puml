@@ -32,31 +32,30 @@ package logging {
     }
 
     package sinks {
-        !startsub log_sink_base
-        interface log_sink_base {
-            {abstract} + write(time: time_point, tag: string_view, level: log_level,\n\tsource: source_info_view, body: string_view)
-            {abstract} + write(time: time_point, tag: string_view, level: log_level,\n\tsource: source_info_view, body: fmt::memory_buffer)
+        !startsub log_sink
+        class log_sink {
+            + write(time: time_point, tag: string_view, level: log_level,\n\tsource: source_info_view, body: string_view)
         }
         !endsub
-        log_sink_base ..> log_level
+        log_sink ..> log_level
 
         !startsub xxx_log_sink
         class xxx_log_sink
         !endsub
-        log_sink_base <|.. xxx_log_sink
+        log_sink o-- xxx_log_sink
         xxx_log_sink o-- log_formatter_base
     }
 
     !startsub log_tag_config
     class log_tag_config {
-        + sink() : shared_ptr<log_sink_base>
+        + sink() : shared_ptr<log_sink>
         + output_log_level() : log_level
         + output_log_level_in_child_iterations() : log_level
         + iteration_output_period() : index_type
         + iteration_label_period() : index_type
     }
     !endsub
-    log_tag_config o-- log_sink_base
+    log_tag_config o-- log_sink
     log_tag_config o-- log_level
 
     !startsub log_config

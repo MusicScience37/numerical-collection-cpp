@@ -4,27 +4,27 @@ title Abstract model of configurations of logging
 
 package logging {
     package sinks {
-        !includesub ./logger.puml!log_sink_base
+        !includesub ./logger.puml!log_sink
         !includesub ./logger.puml!xxx_log_sink
-        log_sink_base <|.. xxx_log_sink
+        log_sink o-- xxx_log_sink
     }
     !includesub ./logger.puml!log_tag_config
-    log_tag_config o-- log_sink_base
+    log_tag_config o-- log_sink
     !includesub ./logger.puml!log_config
     log_config o-- log_tag_config
 
     package config {
         interface log_sink_factory_base {
-            {abstract} + create(sinks: log_sink_factory_table&) : shared_ptr<log_sink_base>
+            {abstract} + create(sinks: log_sink_factory_table&) : log_sink
         }
-        log_sink_factory_base ..> log_sink_base
+        log_sink_factory_base ..> log_sink
 
         class log_sink_factory_table {
             + append(name: string,\n\tsink_factory: shared_ptr<log_sink_factory_base>)
-            + get(name: string) : shared_ptr<log_sink_base>
+            + get(name: string) : log_sink
         }
         log_sink_factory_table o-- log_sink_factory_base
-        log_sink_factory_table o-- log_sink_base
+        log_sink_factory_table o-- log_sink
         log_sink_factory_base .up.> log_sink_factory_table
 
         interface log_config_parser_base {
