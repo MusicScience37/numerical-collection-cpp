@@ -82,10 +82,10 @@ public:
         }
         try {
             std::unique_lock<std::mutex> lock(mutex_);
-            buffer_.clear();
-            formatter_->format(buffer_, time, tag, level, source, body);
-            buffer_.push_back('\n');
-            file_.write(std::string_view(buffer_.data(), buffer_.size()));
+            fmt::memory_buffer buffer;
+            formatter_->format(buffer, time, tag, level, source, body);
+            buffer.push_back('\n');
+            file_.write(std::string_view(buffer.data(), buffer.size()));
             file_.flush();
         } catch (const std::exception& e) {
             std::cerr << "ERROR IN LOGGING: " << e.what() << std::endl;
@@ -108,9 +108,6 @@ private:
 
     //! Mutex.
     std::mutex mutex_{};
-
-    //! Buffer.
-    fmt::memory_buffer buffer_{};
 
     //! Whether this object is enabled.
     bool is_enabled_{true};
