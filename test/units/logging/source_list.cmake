@@ -35,6 +35,7 @@ set(SOURCE_FILES
     logging_mixin_test.cpp
     sinks/combined_log_sink_test.cpp
     sinks/file_wrapper_test.cpp
+    sinks/log_sink_test.cpp
     sinks/simple_log_sink_test.cpp
     time_stamp_test.cpp
 )

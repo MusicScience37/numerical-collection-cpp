@@ -34,5 +34,6 @@
 #include "logging_mixin_test.cpp"        // NOLINT(bugprone-suspicious-include)
 #include "sinks/combined_log_sink_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "sinks/file_wrapper_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "sinks/log_sink_test.cpp"      // NOLINT(bugprone-suspicious-include)
 #include "sinks/simple_log_sink_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "time_stamp_test.cpp"  // NOLINT(bugprone-suspicious-include)
