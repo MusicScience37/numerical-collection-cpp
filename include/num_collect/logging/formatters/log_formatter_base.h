@@ -19,7 +19,6 @@
  */
 #pragma once
 
-#include <chrono>
 #include <string_view>
 
 #include <fmt/format.h>

@@ -17,16 +17,13 @@
  * \file
  * \brief Benchmark of writing trace logs.
  */
-#include <exception>
-#include <memory>
-
 #include <stat_bench/benchmark_macros.h>
 
 #include "num_collect/logging/log_config.h"
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/logger.h"
-#include "num_collect/logging/sinks/log_sinks.h"
+#include "num_collect/logging/sinks/file_log_sink.h"
 
 STAT_BENCH_MAIN
 

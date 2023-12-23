@@ -18,16 +18,15 @@
  * \brief Definition of functions of log sinks to write logs to multiple log
  * sinks.
  */
-#include <chrono>
-#include <memory>
+#include "num_collect/logging/sinks/combined_log_sink.h"
+
 #include <string_view>
-#include <type_traits>
 #include <utility>
 #include <vector>
 
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/sinks/log_sink.h"
-#include "num_collect/logging/sinks/log_sinks.h"
+#include "num_collect/logging/time_stamp.h"
 #include "num_collect/util/source_info_view.h"
 
 namespace num_collect::logging::sinks {

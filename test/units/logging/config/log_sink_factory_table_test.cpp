@@ -27,7 +27,6 @@
 
 #include "../mock_log_sink.h"
 #include "mock_log_sink_factory.h"
-#include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/sinks/default_log_sink.h"
 #include "num_collect/logging/sinks/log_sink.h"
 #include "trompeloeil_catch2.h"

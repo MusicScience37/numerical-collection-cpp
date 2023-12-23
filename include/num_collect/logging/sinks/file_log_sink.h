@@ -15,16 +15,24 @@
  */
 /*!
  * \file
- * \brief Definition of the function to get the default log sink.
+ * \brief Declaration of functions to create file log sinks.
  */
-#include "num_collect/logging/sinks/default_log_sink.h"
+#pragma once
 
-#include "num_collect/logging/sinks/console_log_sink.h"
+#include <string_view>
+
+#include "num_collect/impl/num_collect_export.h"
+#include "num_collect/logging/sinks/log_sink.h"
 
 namespace num_collect::logging::sinks {
 
-auto get_default_log_sink() -> log_sink {
-    return create_colored_console_sink();
-}
+/*!
+ * \brief Create a log sink to write to a single file.
+ *
+ * \param[in] filepath Filepath.
+ * \return Log sink.
+ */
+[[nodiscard]] NUM_COLLECT_EXPORT auto create_single_file_sink(
+    std::string_view filepath) -> log_sink;
 
 }  // namespace num_collect::logging::sinks

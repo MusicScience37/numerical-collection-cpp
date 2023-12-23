@@ -17,7 +17,6 @@
  * \file
  * \brief Definition of functions for simple log sinks.
  */
-#include <chrono>
 #include <exception>
 #include <filesystem>
 #include <iostream>
@@ -25,7 +24,6 @@
 #include <mutex>
 #include <string>
 #include <string_view>
-#include <type_traits>
 #include <utility>
 
 #include <fmt/format.h>
@@ -35,9 +33,11 @@
 #include "num_collect/logging/formatters/detailed_log_formatter.h"
 #include "num_collect/logging/formatters/log_formatter_base.h"
 #include "num_collect/logging/log_level.h"
+#include "num_collect/logging/sinks/console_log_sink.h"
+#include "num_collect/logging/sinks/file_log_sink.h"
 #include "num_collect/logging/sinks/file_wrapper.h"
 #include "num_collect/logging/sinks/log_sink.h"
-#include "num_collect/logging/sinks/log_sinks.h"
+#include "num_collect/logging/time_stamp.h"
 #include "num_collect/util/source_info_view.h"
 
 namespace num_collect::logging::sinks {

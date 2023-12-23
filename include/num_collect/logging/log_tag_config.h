@@ -19,8 +19,6 @@
  */
 #pragma once
 
-#include <memory>
-#include <string_view>
 #include <utility>
 
 #include "num_collect/base/exception.h"
@@ -28,7 +26,6 @@
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/sinks/default_log_sink.h"
 #include "num_collect/logging/sinks/log_sink.h"
-#include "num_collect/logging/sinks/log_sinks.h"
 
 namespace num_collect::logging {
 

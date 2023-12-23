@@ -67,4 +67,8 @@
   # Custom (Pybind11)
   { include: ["<cast.h>", private, "<pybind11/pybind11.h>", public ] },
   { include: ["<pytypes.h>", private, "<pybind11/pybind11.h>", public ] },
+  # Custom (lyra)
+  { include: ["<lyra/cli.hpp>", private, "<lyra/lyra.hpp>", public ] },
+  { include: ["<lyra/opt.hpp>", private, "<lyra/lyra.hpp>", public ] },
+  { include: ["<lyra/parser.hpp>", private, "<lyra/lyra.hpp>", public ] },
 ]

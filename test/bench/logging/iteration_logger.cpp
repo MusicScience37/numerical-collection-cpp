@@ -19,7 +19,6 @@
  */
 #include "num_collect/logging/iterations/iteration_logger.h"
 
-#include <exception>
 #include <string>
 
 #include <stat_bench/benchmark_macros.h>
@@ -30,7 +29,7 @@
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
-#include "num_collect/logging/sinks/log_sinks.h"
+#include "num_collect/logging/sinks/file_log_sink.h"
 
 STAT_BENCH_MAIN
 

@@ -20,7 +20,6 @@
 #include "num_collect/logging/logger.h"
 
 #include <memory>
-#include <type_traits>
 
 #include <catch2/catch_test_macros.hpp>
 

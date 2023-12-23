@@ -19,10 +19,12 @@
  */
 #include "num_collect/logging/sinks/log_sink.h"
 
+#include <string>
 #include <string_view>
 
 #include <catch2/catch_test_macros.hpp>
 
+#include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/time_stamp.h"
 #include "num_collect/util/source_info_view.h"

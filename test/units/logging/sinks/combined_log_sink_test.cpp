@@ -17,11 +17,9 @@
  * \file
  * \brief Test of combined_log_sink class.
  */
-#include <chrono>
-#include <memory>
+#include "num_collect/logging/sinks/combined_log_sink.h"
+
 #include <string>
-#include <string_view>
-#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -31,7 +29,6 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/sinks/log_sink.h"
-#include "num_collect/logging/sinks/log_sinks.h"
 #include "num_collect/logging/time_stamp.h"
 #include "num_collect/util/source_info_view.h"
 #include "trompeloeil_catch2.h"

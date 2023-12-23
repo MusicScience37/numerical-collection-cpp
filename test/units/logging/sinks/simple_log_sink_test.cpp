@@ -17,18 +17,16 @@
  * \file
  * \brief Test of simple_log_sink class.
  */
-#include <chrono>
 #include <filesystem>
-#include <memory>
 #include <string>
 #include <string_view>
-#include <type_traits>
 
 #include <catch2/catch_test_macros.hpp>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_level.h"
-#include "num_collect/logging/sinks/log_sinks.h"
+#include "num_collect/logging/sinks/file_log_sink.h"
+#include "num_collect/logging/sinks/log_sink.h"
 #include "num_collect/logging/time_stamp.h"
 #include "num_collect/util/source_info_view.h"
 

@@ -22,8 +22,9 @@
 #include <chrono>
 #include <cstdint>
 #include <ctime>
+#include <ratio>
+#include <string>
 
-#include <__chrono/time_point.h>
 #include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("num_collect::logging::time_stamp") {

@@ -19,8 +19,6 @@
  */
 #pragma once
 
-#include <memory>
-
 #include "num_collect/logging/sinks/log_sink.h"
 
 namespace num_collect::logging::config {

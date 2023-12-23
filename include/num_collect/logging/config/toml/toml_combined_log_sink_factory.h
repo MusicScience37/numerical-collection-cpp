@@ -20,9 +20,7 @@
 #pragma once
 
 #include <cstddef>
-#include <memory>
 #include <string>
-#include <string_view>
 #include <utility>
 #include <vector>
 
@@ -33,8 +31,8 @@
 #include "num_collect/logging/config/log_sink_factory_table.h"
 #include "num_collect/logging/config/parse_output_log_level_str.h"
 #include "num_collect/logging/log_level.h"
+#include "num_collect/logging/sinks/combined_log_sink.h"
 #include "num_collect/logging/sinks/log_sink.h"
-#include "num_collect/logging/sinks/log_sinks.h"
 
 namespace num_collect::logging::config::toml {
 

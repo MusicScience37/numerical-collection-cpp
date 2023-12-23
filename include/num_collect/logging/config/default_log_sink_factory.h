@@ -19,8 +19,6 @@
  */
 #pragma once
 
-#include <memory>
-
 #include "num_collect/logging/config/log_sink_factory_base.h"
 #include "num_collect/logging/sinks/default_log_sink.h"
 #include "num_collect/logging/sinks/log_sink.h"

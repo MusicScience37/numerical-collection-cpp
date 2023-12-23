@@ -19,7 +19,6 @@
  */
 #pragma once
 
-#include <chrono>
 #include <cstddef>
 #include <iterator>
 #include <string_view>
@@ -30,6 +29,7 @@
 #include "num_collect/logging/formatters/get_log_level_str_for_log.h"
 #include "num_collect/logging/formatters/log_formatter_base.h"
 #include "num_collect/logging/log_level.h"
+#include "num_collect/logging/time_stamp.h"
 #include "num_collect/util/source_info_view.h"
 
 namespace num_collect::logging::formatters {

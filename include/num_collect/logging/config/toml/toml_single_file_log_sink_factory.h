@@ -19,7 +19,6 @@
  */
 #pragma once
 
-#include <memory>
 #include <string>
 
 #include <toml++/toml.h>
@@ -27,8 +26,8 @@
 #include "num_collect/logging/config/log_sink_factory_base.h"
 #include "num_collect/logging/config/log_sink_factory_table.h"
 #include "num_collect/logging/config/toml/toml_helper.h"
+#include "num_collect/logging/sinks/file_log_sink.h"
 #include "num_collect/logging/sinks/log_sink.h"
-#include "num_collect/logging/sinks/log_sinks.h"
 
 namespace num_collect::logging::config::toml {
 

@@ -15,12 +15,10 @@
  */
 /*!
  * \file
- * \brief Declaration of functions to create log sinks.
+ * \brief Declaration of functions to create combined log sinks.
  */
 #pragma once
 
-#include <memory>
-#include <string_view>
 #include <utility>
 #include <vector>
 
@@ -29,30 +27,6 @@
 #include "num_collect/logging/sinks/log_sink.h"
 
 namespace num_collect::logging::sinks {
-
-/*!
- * \brief Create a log sink to write to a single file.
- *
- * \param[in] filepath Filepath.
- * \return Log sink.
- */
-[[nodiscard]] NUM_COLLECT_EXPORT auto create_single_file_sink(
-    std::string_view filepath) -> log_sink;
-
-/*!
- * \brief Create a log sink to write to console with color.
- *
- * \return Log sink.
- */
-[[nodiscard]] NUM_COLLECT_EXPORT auto create_colored_console_sink() -> log_sink;
-
-/*!
- * \brief Create a log sink to write to console without color.
- *
- * \return Log sink.
- */
-[[nodiscard]] NUM_COLLECT_EXPORT auto create_non_colored_console_sink()
-    -> log_sink;
 
 /*!
  * \brief Create a log sink to write logs to multiple log sinks.

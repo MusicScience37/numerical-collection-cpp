@@ -15,16 +15,28 @@
  */
 /*!
  * \file
- * \brief Definition of the function to get the default log sink.
+ * \brief Declaration of functions to create console log sinks.
  */
-#include "num_collect/logging/sinks/default_log_sink.h"
+#pragma once
 
-#include "num_collect/logging/sinks/console_log_sink.h"
+#include "num_collect/impl/num_collect_export.h"
+#include "num_collect/logging/sinks/log_sink.h"
 
 namespace num_collect::logging::sinks {
 
-auto get_default_log_sink() -> log_sink {
-    return create_colored_console_sink();
-}
+/*!
+ * \brief Create a log sink to write to console with color.
+ *
+ * \return Log sink.
+ */
+[[nodiscard]] NUM_COLLECT_EXPORT auto create_colored_console_sink() -> log_sink;
+
+/*!
+ * \brief Create a log sink to write to console without color.
+ *
+ * \return Log sink.
+ */
+[[nodiscard]] NUM_COLLECT_EXPORT auto create_non_colored_console_sink()
+    -> log_sink;
 
 }  // namespace num_collect::logging::sinks

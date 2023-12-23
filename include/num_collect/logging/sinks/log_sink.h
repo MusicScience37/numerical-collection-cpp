@@ -20,6 +20,7 @@
 #pragma once
 
 #include <string_view>
+#include <utility>
 
 #include "num_collect/impl/num_collect_export.h"
 #include "num_collect/logging/log_level.h"
