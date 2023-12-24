@@ -1,6 +1,6 @@
-add_executable(num_collect_bench_opt_multi_quadratic_function
-               multi_quadratic_function_test.cpp)
-target_add_to_benchmark(num_collect_bench_opt_multi_quadratic_function)
+add_executable(num_collect_bench_opt_random_multi_quadratic_function
+               random_multi_quadratic_function_test.cpp)
+target_add_to_benchmark(num_collect_bench_opt_random_multi_quadratic_function)
 
 add_executable(num_collect_bench_opt_powell4_function powell4_function_test.cpp)
 target_add_to_benchmark(num_collect_bench_opt_powell4_function)
