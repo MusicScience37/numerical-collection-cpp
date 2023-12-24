@@ -42,9 +42,15 @@ TEMPLATE_TEST_CASE("Solver Laplacian equation in 2-dimensional grid", "",
         Eigen::Upper | Eigen::Lower,
         Eigen::IncompleteCholesky<double, Eigen::Lower,
             num_collect::linear::cuthill_mckee_ordering<int>>>),
+    (Eigen::ConjugateGradient<Eigen::SparseMatrix<double>,
+        Eigen::Upper | Eigen::Lower,
+        Eigen::IncompleteCholesky<double, Eigen::Lower,
+            num_collect::linear::reverse_cuthill_mckee_ordering<int>>>),
     (Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>, Eigen::Lower>),
     (Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>, Eigen::Lower,
         num_collect::linear::cuthill_mckee_ordering<int>>),
+    (Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>, Eigen::Lower,
+        num_collect::linear::reverse_cuthill_mckee_ordering<int>>),
     (num_collect::linear::gauss_seidel_iterative_solver<
         Eigen::SparseMatrix<double, Eigen::RowMajor>>),
     (num_collect::linear::symmetric_successive_over_relaxation<
@@ -90,29 +96,46 @@ TEMPLATE_TEST_CASE("Solver Laplacian equation in 2-dimensional grid", "",
         constexpr double threshold = 1e-10;
         CHECK(max_error < threshold);
     }
+}
 
-    SECTION("use cuthill_mckee_ordering") {
-        num_collect::linear::cuthill_mckee_ordering<int> ordering;
-        Eigen::PermutationMatrix<Eigen::Dynamic> permutation;
-        ordering(grid.mat(), permutation);
-        mat_type ordered_matrix;
-        ordered_matrix = grid.mat().twistedBy(permutation);
-        const vec_type ordered_right_vector = permutation * right_vector;
+TEMPLATE_TEST_CASE(
+    "Solver Laplacian equation in 2-dimensional grid with ordering", "",
+    (num_collect::linear::cuthill_mckee_ordering<int>),
+    (num_collect::linear::reverse_cuthill_mckee_ordering<int>)) {
+    using solver_type = Eigen::ConjugateGradient<Eigen::SparseMatrix<double>,
+        Eigen::Upper | Eigen::Lower>;
+    using mat_type = typename solver_type::MatrixType;
+    using vec_type = Eigen::VectorXd;
+    using grid_type =
+        num_prob_collect::finite_element::laplacian_2d_grid<mat_type>;
+    using ordering_type = TestType;
 
-        solver_type solver;
-        solver.compute(ordered_matrix);
-        const vec_type ordered_solution = solver.solve(ordered_right_vector);
-        const vec_type solution = permutation.inverse() * ordered_solution;
+    constexpr double region_size = 1.0;
+    constexpr num_collect::index_type grid_size = 5;
 
-        const double max_error =
-            (solution - expected_solution).cwiseAbs().maxCoeff();
-        logger.info()("Maximum error: {}", max_error);
-        constexpr double threshold = 1e-10;
-        CHECK(max_error < threshold);
+    const auto expected_function = [](double x, double y) {
+        return x * x + y * y;
+    };
+
+    num_collect::logging::logger logger;
+
+    const double grid_width = region_size / static_cast<double>(grid_size);
+    grid_type grid{grid_size - 1, grid_size - 1, grid_width};
+    vec_type expected_solution(grid.mat_size());
+    for (num_collect::index_type xi = 0; xi < grid_size - 1; ++xi) {
+        const double x =
+            static_cast<double>(xi + 1) / static_cast<double>(grid_size);
+        for (num_collect::index_type yi = 0; yi < grid_size - 1; ++yi) {
+            const double y =
+                static_cast<double>(yi + 1) / static_cast<double>(grid_size);
+            const num_collect::index_type vector_index = grid.index(xi, yi);
+            expected_solution(vector_index) = expected_function(x, y);
+        }
     }
+    const vec_type right_vector = grid.mat() * expected_solution;
 
-    SECTION("use reverse_cuthill_mckee_ordering") {
-        num_collect::linear::reverse_cuthill_mckee_ordering<int> ordering;
+    SECTION("solver a problem") {
+        ordering_type ordering;
         Eigen::PermutationMatrix<Eigen::Dynamic> permutation;
         ordering(grid.mat(), permutation);
         mat_type ordered_matrix;
