@@ -94,10 +94,10 @@ private:
  */
 class random_quadratic_function_generator {
 public:
-    //! Maximum optimal variable.
+    //! Minimum optimal variable.
     static constexpr double min_variable = -10.0;
 
-    //! Minimum optimal variable.
+    //! Maximum optimal variable.
     static constexpr double max_variable = 10.0;
 
     /*!
