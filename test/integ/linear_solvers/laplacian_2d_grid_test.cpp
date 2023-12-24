@@ -21,6 +21,7 @@
 
 #include <Eigen/Core>
 #include <Eigen/IterativeLinearSolvers>
+#include <Eigen/SparseCholesky>
 #include <Eigen/SparseCore>
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
@@ -37,6 +38,13 @@ TEMPLATE_TEST_CASE("Solver Laplacian equation in 2-dimensional grid", "",
         Eigen::Upper | Eigen::Lower>),
     (Eigen::ConjugateGradient<Eigen::SparseMatrix<double>,
         Eigen::Upper | Eigen::Lower, Eigen::IncompleteCholesky<double>>),
+    (Eigen::ConjugateGradient<Eigen::SparseMatrix<double>,
+        Eigen::Upper | Eigen::Lower,
+        Eigen::IncompleteCholesky<double, Eigen::Lower,
+            num_collect::linear::cuthill_mckee_ordering<int>>>),
+    (Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>, Eigen::Lower>),
+    (Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>, Eigen::Lower,
+        num_collect::linear::cuthill_mckee_ordering<int>>),
     (num_collect::linear::gauss_seidel_iterative_solver<
         Eigen::SparseMatrix<double, Eigen::RowMajor>>),
     (num_collect::linear::symmetric_successive_over_relaxation<

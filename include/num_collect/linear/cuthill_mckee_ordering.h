@@ -250,6 +250,9 @@ public:
     using permutation_type = Eigen::PermutationMatrix<Eigen::Dynamic,
         Eigen::Dynamic, storage_index_type>;
 
+    //! Type of permutations (for Eigen library).
+    using PermutationType = permutation_type;
+
     //! Constructor.
     cuthill_mckee_ordering() = default;
 
@@ -264,6 +267,24 @@ public:
     void operator()(const MatrixType& matrix, permutation_type& permutation) {
         impl::cuthill_mckee_ordering_impl<storage_index_type>()(
             matrix, permutation);
+    }
+
+    /*!
+     * \brief Create a permutation matrix from SparseSelfAdjointView object.
+     *
+     * \tparam MatrixType Type of the input matrix.
+     * \tparam Mode Mode of the input matrix.
+     * \param[in] matrix Input matrix.
+     * \param[in] permutation Permutation matrix.
+     */
+    template <typename MatrixType, unsigned int Mode>
+    void operator()(
+        const Eigen::SparseSelfAdjointView<MatrixType, Mode>& matrix,
+        permutation_type& permutation) {
+        Eigen::SparseMatrix<typename MatrixType::Scalar, Eigen::ColMajor,
+            storage_index_type>
+            matrix_as_ordinary_matrix = matrix;
+        operator()(matrix_as_ordinary_matrix, permutation);
     }
 };
 
