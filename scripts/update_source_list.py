@@ -29,7 +29,10 @@ SOURCE_PATHS = (
             "util",
         ]
     ]
-    + [THIS_DIR.parent / "test" / "integ" / "ode_comb"]
+    + [
+        THIS_DIR.parent / "test" / "integ" / "ode_comb",
+        THIS_DIR.parent / "test" / "integ" / "linear_solvers",
+    ]
 )
 
 UNITY_SRC_SUFFIX = "unity_source.cpp"
