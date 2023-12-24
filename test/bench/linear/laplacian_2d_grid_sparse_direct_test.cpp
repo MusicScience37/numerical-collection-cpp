@@ -24,6 +24,7 @@
 
 #include "laplacian_2d_grid_make_sol.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/linear/reverse_cuthill_mckee_ordering.h"
 #include "num_prob_collect/linear/laplacian_2d_grid.h"
 
 class laplacian_2d_grid_sparse_direct_fixture : public stat_bench::FixtureBase {

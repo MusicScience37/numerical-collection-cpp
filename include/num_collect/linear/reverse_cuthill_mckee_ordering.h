@@ -20,6 +20,7 @@
 #pragma once
 
 #include <Eigen/Core>
+#include <Eigen/SparseCore>
 
 #include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/index_type.h"
@@ -41,6 +42,9 @@ public:
     using permutation_type = Eigen::PermutationMatrix<Eigen::Dynamic,
         Eigen::Dynamic, storage_index_type>;
 
+    //! Type of permutations (for Eigen library).
+    using PermutationType = permutation_type;
+
     //! Constructor.
     reverse_cuthill_mckee_ordering() = default;
 
@@ -59,6 +63,24 @@ public:
         for (storage_index_type& index : permutation.indices()) {
             index = size_minus_one - index;
         }
+    }
+
+    /*!
+     * \brief Create a permutation matrix from SparseSelfAdjointView object.
+     *
+     * \tparam MatrixType Type of the input matrix.
+     * \tparam Mode Mode of the input matrix.
+     * \param[in] matrix Input matrix.
+     * \param[in] permutation Permutation matrix.
+     */
+    template <typename MatrixType, unsigned int Mode>
+    void operator()(
+        const Eigen::SparseSelfAdjointView<MatrixType, Mode>& matrix,
+        permutation_type& permutation) {
+        Eigen::SparseMatrix<typename MatrixType::Scalar, Eigen::ColMajor,
+            storage_index_type>
+            matrix_as_ordinary_matrix = matrix;
+        operator()(matrix_as_ordinary_matrix, permutation);
     }
 };
 
