@@ -26,7 +26,7 @@
 namespace num_collect::linear::impl {
 
 /*!
- * \brief Compute a list of strong connections in a matrix.
+ * \brief Compute a list of strong connections in a matrix \cite Ruge1987.
  *
  * \tparam Matrix Type of the matrix.
  * \param[in] matrix Matrix.
