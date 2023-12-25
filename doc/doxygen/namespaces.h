@@ -473,6 +473,24 @@ namespace num_collect {
 
     }  // namespace ode
 
+    /*!
+     * \dir num_collect/linear
+     * \brief Directory of solvers of linear equations.
+     */
+
+    //! Namespace of solvers of linear equations.
+    namespace linear {
+
+        /*!
+         * \dir num_collect/linear/impl
+         * \brief Directory of internal implementations.
+         */
+
+        //! Namespace of internal implementations.
+        namespace impl {}
+
+    }  // namespace linear
+
 }  // namespace num_collect
 
 //! Namespace of Eigen library.
