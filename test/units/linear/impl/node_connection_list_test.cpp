@@ -55,4 +55,25 @@ TEST_CASE("num_collect::linear::impl::node_connection_list") {
                 Catch::Matchers::RangeEquals(std::vector<int>{}));
         }
     }
+
+    SECTION("transpose a list") {
+        node_connection_list<> list;
+        list.push_back(1);
+        list.push_back(2);
+        list.finish_current_node();
+        list.push_back(2);
+        list.finish_current_node();
+        list.push_back(1);
+        list.finish_current_node();
+
+        const auto transposed = list.transpose();
+
+        CHECK(transposed.num_nodes() == 3);
+        CHECK_THAT(transposed.connected_nodes_to(0),
+            Catch::Matchers::RangeEquals(std::vector<int>{}));
+        CHECK_THAT(transposed.connected_nodes_to(1),
+            Catch::Matchers::RangeEquals(std::vector<int>{0, 2}));
+        CHECK_THAT(transposed.connected_nodes_to(2),
+            Catch::Matchers::RangeEquals(std::vector<int>{0, 1}));
+    }
 }

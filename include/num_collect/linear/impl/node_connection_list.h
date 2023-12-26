@@ -23,6 +23,7 @@
 #include <vector>
 
 #include "num_collect/base/index_type.h"
+#include "num_collect/util/assert.h"
 
 namespace num_collect::linear::impl {
 
@@ -118,7 +119,61 @@ public:
 
     ///@}
 
+    /*!
+     * \brief Make a transposed list.
+     *
+     * If \f$i\f$-th node is connected to \f$j\f$-th node, the transposed list
+     * connects \f$j\f$-th node to \f$i\f$-th node.
+     *
+     * \return Transposed list.
+     */
+    [[nodiscard]] auto transpose() const
+        -> node_connection_list<storage_index_type> {
+        const auto num_nodes_cached =
+            static_cast<storage_index_type>(num_nodes());
+
+        std::vector<storage_index_type> begin_indices(
+            begin_indices_.size(), static_cast<storage_index_type>(0));
+        for (const storage_index_type index : node_indices_) {
+            NUM_COLLECT_DEBUG_ASSERT(index < num_nodes_cached);
+            ++begin_indices[static_cast<std::size_t>(index + 1)];
+        }
+        for (std::size_t i = 1; i < begin_indices.size() - 1U; ++i) {
+            begin_indices[i + 1] += begin_indices[i];
+        }
+        NUM_COLLECT_DEBUG_ASSERT(
+            static_cast<std::size_t>(begin_indices_.back()) ==
+            node_indices_.size());
+
+        std::vector<storage_index_type> node_indices(node_indices_.size());
+        std::vector<storage_index_type> next_index = begin_indices;
+        for (storage_index_type i = 0; i < num_nodes_cached; ++i) {
+            for (const storage_index_type j : connected_nodes_to(i)) {
+                auto& index = next_index[static_cast<std::size_t>(j)];
+                NUM_COLLECT_DEBUG_ASSERT(
+                    index < begin_indices[static_cast<std::size_t>(j + 1)]);
+                node_indices[static_cast<std::size_t>(index)] = i;
+                ++index;
+            }
+        }
+
+        return node_connection_list<storage_index_type>(
+            std::move(node_indices), std::move(begin_indices));
+    }
+
 private:
+    /*!
+     * \brief Constructor.
+     *
+     * \param[in] node_indices Indices of connected nodes.
+     * \param[in] begin_indices List of indices of beginning of the list of
+     * connected nodes per node.
+     */
+    node_connection_list(std::vector<storage_index_type> node_indices,
+        std::vector<storage_index_type> begin_indices)
+        : node_indices_(std::move(node_indices)),
+          begin_indices_(std::move(begin_indices)) {}
+
     //! Indices of connected nodes.
     std::vector<storage_index_type> node_indices_{};
 
