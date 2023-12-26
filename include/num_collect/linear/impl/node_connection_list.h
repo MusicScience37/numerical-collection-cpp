@@ -107,8 +107,11 @@ public:
      */
     [[nodiscard]] auto connected_nodes_to(index_type node_index) const
         -> std::span<const storage_index_type> {
-        return std::span<const storage_index_type>(node_indices_.data() +
+        return std::span<const storage_index_type>(
+            // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+            node_indices_.data() +
                 begin_indices_[static_cast<std::size_t>(node_index)],
+            // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
             node_indices_.data() +
                 begin_indices_[static_cast<std::size_t>(node_index + 1)]);
     }
