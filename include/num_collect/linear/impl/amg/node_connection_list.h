@@ -25,7 +25,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/util/assert.h"
 
-namespace num_collect::linear::impl {
+namespace num_collect::linear::impl::amg {
 
 /*!
  * \brief Class of lists of connected nodes per node.
@@ -181,4 +181,4 @@ private:
     std::vector<storage_index_type> begin_indices_{};
 };
 
-}  // namespace num_collect::linear::impl
+}  // namespace num_collect::linear::impl::amg

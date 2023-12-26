@@ -17,13 +17,13 @@
  * \file
  * \brief Test of node_connection_list class.
  */
-#include "num_collect/linear/impl/node_connection_list.h"
+#include "num_collect/linear/impl/amg/node_connection_list.h"
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_range_equals.hpp>
 
-TEST_CASE("num_collect::linear::impl::node_connection_list") {
-    using num_collect::linear::impl::node_connection_list;
+TEST_CASE("num_collect::linear::impl::amg::node_connection_list") {
+    using num_collect::linear::impl::amg::node_connection_list;
 
     SECTION("create a list") {
         node_connection_list<> list;

@@ -487,7 +487,18 @@ namespace num_collect {
          */
 
         //! Namespace of internal implementations.
-        namespace impl {}
+        namespace impl {
+
+            /*!
+             * \dir num_collect/linear/impl/amg
+             * \brief Directory of internal implementations of algebraic
+             * multigrid method \cite Ruge1987.
+             */
+
+            //! Namespace of internal implementations of algebraic multigrid method \cite Ruge1987.
+            namespace amg {}
+
+        }  // namespace impl
 
     }  // namespace linear
 

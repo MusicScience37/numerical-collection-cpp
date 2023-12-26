@@ -21,9 +21,9 @@
 
 #include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/linear/impl/node_connection_list.h"
+#include "num_collect/linear/impl/amg/node_connection_list.h"
 
-namespace num_collect::linear::impl {
+namespace num_collect::linear::impl::amg {
 
 /*!
  * \brief Compute a list of strong connections in a matrix \cite Ruge1987.
@@ -66,4 +66,4 @@ inline auto compute_strong_connection_list(
     return list;
 }
 
-}  // namespace num_collect::linear::impl
+}  // namespace num_collect::linear::impl::amg
