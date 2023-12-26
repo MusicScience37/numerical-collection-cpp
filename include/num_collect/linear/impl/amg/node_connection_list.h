@@ -136,7 +136,7 @@ public:
             begin_indices_.size(), static_cast<storage_index_type>(0));
         for (const storage_index_type index : node_indices_) {
             NUM_COLLECT_DEBUG_ASSERT(index < num_nodes_cached);
-            ++begin_indices[static_cast<std::size_t>(index + 1)];
+            ++begin_indices[static_cast<std::size_t>(index) + 1U];
         }
         for (std::size_t i = 1; i < begin_indices.size() - 1U; ++i) {
             begin_indices[i + 1] += begin_indices[i];
@@ -151,7 +151,7 @@ public:
             for (const storage_index_type j : connected_nodes_to(i)) {
                 auto& index = next_index[static_cast<std::size_t>(j)];
                 NUM_COLLECT_DEBUG_ASSERT(
-                    index < begin_indices[static_cast<std::size_t>(j + 1)]);
+                    index < begin_indices[static_cast<std::size_t>(j) + 1U]);
                 node_indices[static_cast<std::size_t>(index)] = i;
                 ++index;
             }
