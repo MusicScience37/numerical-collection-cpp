@@ -1,0 +1,11 @@
+Classification:
+o o o o o o o o o o 
+o x o x o x o x o x 
+o o o o o o o o o o 
+o x o x o x o x o x 
+o o o o o o o o o o 
+o x o x o x o x o x 
+o o o o o o o o o o 
+o x o x o x o x o x 
+o o o o o o o o o o 
+o x o x o x o x o x 

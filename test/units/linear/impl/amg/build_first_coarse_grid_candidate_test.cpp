@@ -19,10 +19,17 @@
  */
 #include "num_collect/linear/impl/amg/build_first_coarse_grid_candidate.h"
 
-#include <catch2/catch_test_macros.hpp>
+#include <iterator>
+#include <string_view>
 
+#include <ApprovalTests.hpp>
+#include <catch2/catch_test_macros.hpp>
+#include <fmt/format.h>
+
+#include "num_collect/linear/impl/amg/compute_strong_connection_list.h"
 #include "num_collect/linear/impl/amg/grid_type.h"
 #include "num_collect/linear/impl/amg/node_connection_list.h"
+#include "num_prob_collect/linear/laplacian_2d_grid.h"
 
 TEST_CASE("num_collect::linear::impl::amg::compute_node_scores") {
     using num_collect::linear::impl::amg::compute_node_scores;
@@ -164,5 +171,41 @@ TEST_CASE("num_collect::linear::impl::amg::build_first_coarse_grid_candidate") {
         CHECK(candidate ==
             std::vector{grid_type::coarse, grid_type::coarse, grid_type::fine,
                 grid_type::fine, grid_type::fine});
+    }
+
+    SECTION("build a candidate for laplacian_2d_grid") {
+        using num_prob_collect::finite_element::laplacian_2d_grid;
+        using scalar_type = double;
+        using matrix_type = Eigen::SparseMatrix<scalar_type>;
+        using storage_index_type = typename matrix_type::StorageIndex;
+        using num_collect::linear::impl::amg::compute_strong_connection_list;
+
+        constexpr num_collect::index_type grid_size = 10;
+        constexpr auto grid_width = static_cast<scalar_type>(0.1);
+        constexpr auto strong_coeff_rate_threshold =
+            static_cast<scalar_type>(0.5);
+        laplacian_2d_grid<matrix_type> grid{grid_size, grid_size, grid_width};
+        const matrix_type& matrix = grid.mat();
+        const auto connections =
+            compute_strong_connection_list(matrix, strong_coeff_rate_threshold);
+        const auto transposed_connections = connections.transpose();
+
+        const auto candidate = build_first_coarse_grid_candidate(
+            connections, transposed_connections);
+        fmt::memory_buffer buffer;
+        buffer.append(std::string_view("Classification:"));
+        for (std::size_t i = 0; i < candidate.size(); ++i) {
+            if (i % static_cast<std::size_t>(grid_size) == 0U) {
+                buffer.push_back('\n');
+            }
+            if (candidate[i] == grid_type::coarse) {
+                buffer.push_back('x');
+            } else {
+                buffer.push_back('o');
+            }
+            buffer.push_back(' ');
+        }
+        ApprovalTests::Approvals::verify(
+            std::string(buffer.data(), buffer.size()));
     }
 }
