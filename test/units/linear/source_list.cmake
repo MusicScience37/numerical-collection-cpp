@@ -1,6 +1,7 @@
 set(SOURCE_FILES
     cuthill_mckee_ordering_test.cpp
     gauss_seidel_iterative_solver_test.cpp
+    impl/amg/build_first_coarse_grid_candidate_test.cpp
     impl/amg/compute_strong_connection_list_test.cpp
     impl/amg/node_connection_list_test.cpp
     parallel_symmetric_successive_over_relaxation.cpp

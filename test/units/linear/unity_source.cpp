@@ -1,5 +1,6 @@
 #include "cuthill_mckee_ordering_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "gauss_seidel_iterative_solver_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "impl/amg/build_first_coarse_grid_candidate_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/amg/compute_strong_connection_list_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/amg/node_connection_list_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "parallel_symmetric_successive_over_relaxation.cpp"  // NOLINT(bugprone-suspicious-include)
