@@ -33,7 +33,7 @@
 TEMPLATE_TEST_CASE("num_collect::linear::reverse_cuthill_mckee_ordering", "",
     float, double, long double) {
     using num_collect::linear::reverse_cuthill_mckee_ordering;
-    using num_prob_collect::finite_element::laplacian_2d_grid;
+    using num_prob_collect::linear::laplacian_2d_grid;
 
     using scalar_type = TestType;
     using matrix_type = Eigen::SparseMatrix<scalar_type>;

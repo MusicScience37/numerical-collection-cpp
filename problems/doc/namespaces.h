@@ -20,15 +20,25 @@
 
 //! Namespace of problems for test of num_collect.
 namespace num_prob_collect {
+
     //! Namespace of optimization problems.
     namespace opt {}
+
     //! Namespace of ordinary differential equation problems.
     namespace ode {}
+
     //! Namespace of root-finding problems.
     namespace roots {}
+
     //! Namespace of regularization.
     namespace regularization {
+
         //! Namespace of implementations.
         namespace impl {}
+
     }  // namespace regularization
+
+    //! Namespace of linear equations.
+    namespace linear {}
+
 }  // namespace num_prob_collect

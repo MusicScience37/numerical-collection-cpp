@@ -30,7 +30,7 @@
 TEMPLATE_TEST_CASE("num_collect::linear::gauss_seidel_iterative_solver", "",
     float, double, long double) {
     using num_collect::linear::gauss_seidel_iterative_solver;
-    using num_prob_collect::finite_element::laplacian_2d_grid;
+    using num_prob_collect::linear::laplacian_2d_grid;
 
     using scalar_type = TestType;
     using vector_type = Eigen::VectorX<scalar_type>;

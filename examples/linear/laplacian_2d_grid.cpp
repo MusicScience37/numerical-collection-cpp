@@ -36,7 +36,7 @@
 
 using mat_type = Eigen::SparseMatrix<double>;
 using vec_type = Eigen::VectorXd;
-using grid_type = num_prob_collect::finite_element::laplacian_2d_grid<mat_type>;
+using grid_type = num_prob_collect::linear::laplacian_2d_grid<mat_type>;
 
 constexpr double region_size = 1.0;
 

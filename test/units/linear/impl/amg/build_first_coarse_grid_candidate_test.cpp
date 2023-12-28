@@ -174,7 +174,7 @@ TEST_CASE("num_collect::linear::impl::amg::build_first_coarse_grid_candidate") {
     }
 
     SECTION("build a candidate for laplacian_2d_grid") {
-        using num_prob_collect::finite_element::laplacian_2d_grid;
+        using num_prob_collect::linear::laplacian_2d_grid;
         using scalar_type = double;
         using matrix_type = Eigen::SparseMatrix<scalar_type>;
         using storage_index_type = typename matrix_type::StorageIndex;

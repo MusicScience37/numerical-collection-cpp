@@ -79,7 +79,7 @@ STAT_BENCH_CASE_F(laplacian_2d_grid_sparse_direct_fixture, "laplacian_2d_grid",
     "SimplicialLLT") {
     using mat_type = Eigen::SparseMatrix<double>;
 
-    num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
+    num_prob_collect::linear::laplacian_2d_grid<mat_type> grid{
         grid_rows(), grid_cols(), grid_width()};
     const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
     const Eigen::VectorXd right = grid.mat() * true_sol;
@@ -99,7 +99,7 @@ STAT_BENCH_CASE_F(laplacian_2d_grid_sparse_direct_fixture, "laplacian_2d_grid",
     "SimplicialLDLT") {
     using mat_type = Eigen::SparseMatrix<double>;
 
-    num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
+    num_prob_collect::linear::laplacian_2d_grid<mat_type> grid{
         grid_rows(), grid_cols(), grid_width()};
     const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
     const Eigen::VectorXd right = grid.mat() * true_sol;

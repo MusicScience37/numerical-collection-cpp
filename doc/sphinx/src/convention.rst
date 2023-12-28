@@ -11,7 +11,9 @@ This project uses following linters:
 This project uses following formatters:
 
 - `clang-format <https://clang.llvm.org/docs/ClangFormat.html>`_ for C++,
-- `cmake-format <https://github.com/cheshirekow/cmake_format>`_ for CMake.
+- `cmake-format <https://github.com/cheshirekow/cmake_format>`_ for CMake,
+- `Black <https://black.readthedocs.io/en/stable/>`_ for Python,
+- `Prettier <https://prettier.io/>`_ for Markdown, YAML, JSON.
 
 This project uses following tools for documentation:
 
@@ -21,4 +23,4 @@ This project uses following tools for documentation:
 This project uses following tools for dependency management:
 
 - `poetry <https://python-poetry.org/>`_ (Python),
-- `vcpkg <https://vcpkg.io>`_
+- `vcpkg <https://vcpkg.io>`_ (C++).

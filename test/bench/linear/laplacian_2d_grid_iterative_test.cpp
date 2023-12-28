@@ -143,7 +143,7 @@ STAT_BENCH_CASE_F(
     laplacian_2d_grid_iterative_fixture, "laplacian_2d_grid", "CG") {
     using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 
-    num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
+    num_prob_collect::linear::laplacian_2d_grid<mat_type> grid{
         grid_rows(), grid_cols(), grid_width()};
     const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
     const Eigen::VectorXd right = grid.mat() * true_sol;
@@ -164,7 +164,7 @@ STAT_BENCH_CASE_F(
     laplacian_2d_grid_iterative_fixture, "laplacian_2d_grid", "ICCG") {
     using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 
-    num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
+    num_prob_collect::linear::laplacian_2d_grid<mat_type> grid{
         grid_rows(), grid_cols(), grid_width()};
     const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
     const Eigen::VectorXd right = grid.mat() * true_sol;
@@ -187,7 +187,7 @@ STAT_BENCH_CASE_F(
     laplacian_2d_grid_iterative_fixture, "laplacian_2d_grid", "ICCG(RCM)") {
     using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 
-    num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
+    num_prob_collect::linear::laplacian_2d_grid<mat_type> grid{
         grid_rows(), grid_cols(), grid_width()};
     const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
     const Eigen::VectorXd right = grid.mat() * true_sol;
@@ -211,7 +211,7 @@ STAT_BENCH_CASE_F(
     laplacian_2d_grid_iterative_fixture, "laplacian_2d_grid", "CG(CM)") {
     using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 
-    num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
+    num_prob_collect::linear::laplacian_2d_grid<mat_type> grid{
         grid_rows(), grid_cols(), grid_width()};
     const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
     const Eigen::VectorXd right = grid.mat() * true_sol;
@@ -243,7 +243,7 @@ STAT_BENCH_CASE_F(
     laplacian_2d_grid_iterative_fixture, "laplacian_2d_grid", "CG(RCM)") {
     using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 
-    num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
+    num_prob_collect::linear::laplacian_2d_grid<mat_type> grid{
         grid_rows(), grid_cols(), grid_width()};
     const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
     const Eigen::VectorXd right = grid.mat() * true_sol;
@@ -275,7 +275,7 @@ STAT_BENCH_CASE_F(
     laplacian_2d_grid_iterative_fixture, "laplacian_2d_grid", "BiCGstab") {
     using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 
-    num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
+    num_prob_collect::linear::laplacian_2d_grid<mat_type> grid{
         grid_rows(), grid_cols(), grid_width()};
     const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
     const Eigen::VectorXd right = grid.mat() * true_sol;
@@ -296,7 +296,7 @@ STAT_BENCH_CASE_F(laplacian_2d_grid_iterative_slower_fixture,
     "laplacian_2d_grid", "Gauss-Seidel") {
     using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 
-    num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
+    num_prob_collect::linear::laplacian_2d_grid<mat_type> grid{
         grid_rows(), grid_cols(), grid_width()};
     const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
     const Eigen::VectorXd right = grid.mat() * true_sol;
@@ -317,7 +317,7 @@ STAT_BENCH_CASE_F(laplacian_2d_grid_iterative_slower_fixture,
     "laplacian_2d_grid", "SSOR(0.5)") {
     using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 
-    num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
+    num_prob_collect::linear::laplacian_2d_grid<mat_type> grid{
         grid_rows(), grid_cols(), grid_width()};
     const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
     const Eigen::VectorXd right = grid.mat() * true_sol;
@@ -340,7 +340,7 @@ STAT_BENCH_CASE_F(laplacian_2d_grid_iterative_slower_fixture,
     "laplacian_2d_grid", "SSOR(1.0)") {
     using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 
-    num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
+    num_prob_collect::linear::laplacian_2d_grid<mat_type> grid{
         grid_rows(), grid_cols(), grid_width()};
     const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
     const Eigen::VectorXd right = grid.mat() * true_sol;
@@ -363,7 +363,7 @@ STAT_BENCH_CASE_F(laplacian_2d_grid_iterative_slower_fixture,
     "laplacian_2d_grid", "SSOR(1.5)") {
     using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 
-    num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
+    num_prob_collect::linear::laplacian_2d_grid<mat_type> grid{
         grid_rows(), grid_cols(), grid_width()};
     const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
     const Eigen::VectorXd right = grid.mat() * true_sol;
@@ -386,7 +386,7 @@ STAT_BENCH_CASE_F(laplacian_2d_grid_iterative_slower_fixture,
     "laplacian_2d_grid", "ParallelSSOR(0.5)") {
     using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 
-    num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
+    num_prob_collect::linear::laplacian_2d_grid<mat_type> grid{
         grid_rows(), grid_cols(), grid_width()};
     const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
     const Eigen::VectorXd right = grid.mat() * true_sol;
@@ -411,7 +411,7 @@ STAT_BENCH_CASE_F(laplacian_2d_grid_iterative_slower_fixture,
     "laplacian_2d_grid", "ParallelSSOR(1.0)") {
     using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 
-    num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
+    num_prob_collect::linear::laplacian_2d_grid<mat_type> grid{
         grid_rows(), grid_cols(), grid_width()};
     const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
     const Eigen::VectorXd right = grid.mat() * true_sol;
@@ -436,7 +436,7 @@ STAT_BENCH_CASE_F(laplacian_2d_grid_iterative_slower_fixture,
     "laplacian_2d_grid", "ParallelSSOR(1.5)") {
     using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 
-    num_prob_collect::finite_element::laplacian_2d_grid<mat_type> grid{
+    num_prob_collect::linear::laplacian_2d_grid<mat_type> grid{
         grid_rows(), grid_cols(), grid_width()};
     const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
     const Eigen::VectorXd right = grid.mat() * true_sol;

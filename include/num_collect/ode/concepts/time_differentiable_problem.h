@@ -25,6 +25,12 @@
 
 namespace num_collect::ode::concepts {
 
+/*!
+ * \brief Concept of problems of ordinary differential equations differentiable
+ * by time variable.
+ *
+ * \tparam T Type.
+ */
 template <typename T>
 concept time_differentiable_problem = problem<T> &&
         requires()
