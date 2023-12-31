@@ -58,8 +58,7 @@ TEMPLATE_TEST_CASE("Solver Laplacian equation in 2-dimensional grid", "",
     using solver_type = TestType;
     using mat_type = typename solver_type::MatrixType;
     using vec_type = Eigen::VectorXd;
-    using grid_type =
-        num_prob_collect::finite_element::laplacian_2d_grid<mat_type>;
+    using grid_type = num_prob_collect::linear::laplacian_2d_grid<mat_type>;
 
     constexpr double region_size = 1.0;
     constexpr num_collect::index_type grid_size = 5;
@@ -106,8 +105,7 @@ TEMPLATE_TEST_CASE(
         Eigen::Upper | Eigen::Lower>;
     using mat_type = typename solver_type::MatrixType;
     using vec_type = Eigen::VectorXd;
-    using grid_type =
-        num_prob_collect::finite_element::laplacian_2d_grid<mat_type>;
+    using grid_type = num_prob_collect::linear::laplacian_2d_grid<mat_type>;
     using ordering_type = TestType;
 
     constexpr double region_size = 1.0;

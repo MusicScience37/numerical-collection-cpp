@@ -26,7 +26,7 @@
 
 template <typename Matrix>
 [[nodiscard]] inline auto laplacian_2d_grid_make_sol(
-    const num_prob_collect::finite_element::laplacian_2d_grid<Matrix>& grid)
+    const num_prob_collect::linear::laplacian_2d_grid<Matrix>& grid)
     -> Eigen::VectorXd {
     const num_collect::index_type grid_size = grid.grid_rows() + 1;
     Eigen::VectorXd expected_sol(grid.mat_size());

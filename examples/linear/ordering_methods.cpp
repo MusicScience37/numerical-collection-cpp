@@ -35,7 +35,7 @@
 
 using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 using vec_type = Eigen::VectorXd;
-using grid_type = num_prob_collect::finite_element::laplacian_2d_grid<mat_type>;
+using grid_type = num_prob_collect::linear::laplacian_2d_grid<mat_type>;
 
 static void write_image(const mat_type& matrix, const std::string& filepath,
     const num_collect::logging::logger& logger) {

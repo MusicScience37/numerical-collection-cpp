@@ -29,7 +29,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/util/assert.h"
 
-namespace num_prob_collect::finite_element {
+namespace num_prob_collect::linear {
 
 /*!
  * \brief Class to create matrices of Laplacian on a 2-dimensional grid.
@@ -198,4 +198,4 @@ private:
     Matrix mat_;
 };
 
-}  // namespace num_prob_collect::finite_element
+}  // namespace num_prob_collect::linear
