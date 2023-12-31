@@ -19,8 +19,12 @@
  */
 #include "num_collect/linear/impl/amg/compute_strong_connection_list.h"
 
+#include <vector>
+
+#include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_range_equals.hpp>
 
 #include "num_collect/linear/impl/amg/node_connection_list.h"

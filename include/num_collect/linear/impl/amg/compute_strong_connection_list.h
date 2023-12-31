@@ -19,6 +19,8 @@
  */
 #pragma once
 
+#include <cmath>
+
 #include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/linear/impl/amg/node_connection_list.h"

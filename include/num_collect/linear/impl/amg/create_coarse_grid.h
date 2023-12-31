@@ -22,7 +22,6 @@
 #include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/linear/impl/amg/build_first_coarse_grid_candidate.h"
 #include "num_collect/linear/impl/amg/compute_strong_connection_list.h"
-#include "num_collect/linear/impl/amg/node_connection_list.h"
 #include "num_collect/linear/impl/amg/node_layer.h"
 #include "num_collect/linear/impl/amg/tune_coarse_grid_selection.h"
 #include "num_collect/util/vector.h"

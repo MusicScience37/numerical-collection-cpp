@@ -19,11 +19,14 @@
  */
 #include "num_collect/linear/impl/amg/build_first_coarse_grid_candidate.h"
 
-#include <iterator>
+#include <string>
 #include <string_view>
+#include <vector>
 
 #include <ApprovalTests.hpp>
+#include <Eigen/SparseCore>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_range_equals.hpp>
 #include <fmt/format.h>
 

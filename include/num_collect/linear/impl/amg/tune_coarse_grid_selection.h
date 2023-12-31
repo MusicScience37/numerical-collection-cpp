@@ -20,17 +20,14 @@
 #pragma once
 
 #include <algorithm>
-#include <cstddef>
 #include <optional>
 #include <unordered_set>
-#include <vector>
-
-#include <__algorithm/ranges_none_of.h>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/linear/impl/amg/node_connection_list.h"
 #include "num_collect/linear/impl/amg/node_layer.h"
 #include "num_collect/util/assert.h"
+#include "num_collect/util/vector.h"
 
 namespace num_collect::linear::impl::amg {
 
