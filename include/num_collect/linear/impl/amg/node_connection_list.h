@@ -20,10 +20,10 @@
 #pragma once
 
 #include <span>
-#include <vector>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/util/assert.h"
+#include "num_collect/util/vector.h"
 
 namespace num_collect::linear::impl::amg {
 
@@ -110,11 +110,9 @@ public:
         -> std::span<const storage_index_type> {
         return std::span<const storage_index_type>(
             // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-            node_indices_.data() +
-                begin_indices_[static_cast<std::size_t>(node_index)],
+            node_indices_.data() + begin_indices_[node_index],
             // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-            node_indices_.data() +
-                begin_indices_[static_cast<std::size_t>(node_index + 1)]);
+            node_indices_.data() + begin_indices_[node_index + 1]);
     }
 
     ///@}
@@ -132,27 +130,24 @@ public:
         const auto num_nodes_cached =
             static_cast<storage_index_type>(num_nodes());
 
-        std::vector<storage_index_type> begin_indices(
+        util::vector<storage_index_type> begin_indices(
             begin_indices_.size(), static_cast<storage_index_type>(0));
         for (const storage_index_type index : node_indices_) {
             NUM_COLLECT_DEBUG_ASSERT(index < num_nodes_cached);
-            ++begin_indices[static_cast<std::size_t>(index) + 1U];
+            ++begin_indices[index + 1];
         }
-        for (std::size_t i = 1; i < begin_indices.size() - 1U; ++i) {
+        for (index_type i = 1; i < begin_indices.size() - 1; ++i) {
             begin_indices[i + 1] += begin_indices[i];
         }
-        NUM_COLLECT_DEBUG_ASSERT(
-            static_cast<std::size_t>(begin_indices_.back()) ==
-            node_indices_.size());
+        NUM_COLLECT_DEBUG_ASSERT(begin_indices_.back() == node_indices_.size());
 
-        std::vector<storage_index_type> node_indices(node_indices_.size());
-        std::vector<storage_index_type> next_index = begin_indices;
+        util::vector<storage_index_type> node_indices(node_indices_.size());
+        util::vector<storage_index_type> next_index = begin_indices;
         for (storage_index_type i = 0; i < num_nodes_cached; ++i) {
             for (const storage_index_type j : connected_nodes_to(i)) {
-                auto& index = next_index[static_cast<std::size_t>(j)];
-                NUM_COLLECT_DEBUG_ASSERT(
-                    index < begin_indices[static_cast<std::size_t>(j) + 1U]);
-                node_indices[static_cast<std::size_t>(index)] = i;
+                auto& index = next_index[j];
+                NUM_COLLECT_DEBUG_ASSERT(index < begin_indices[j + 1]);
+                node_indices[index] = i;
                 ++index;
             }
         }
@@ -169,16 +164,16 @@ private:
      * \param[in] begin_indices List of indices of beginning of the list of
      * connected nodes per node.
      */
-    node_connection_list(std::vector<storage_index_type> node_indices,
-        std::vector<storage_index_type> begin_indices)
+    node_connection_list(util::vector<storage_index_type> node_indices,
+        util::vector<storage_index_type> begin_indices)
         : node_indices_(std::move(node_indices)),
           begin_indices_(std::move(begin_indices)) {}
 
     //! Indices of connected nodes.
-    std::vector<storage_index_type> node_indices_{};
+    util::vector<storage_index_type> node_indices_{};
 
     //! List of indices of beginning of the list of connected nodes per node.
-    std::vector<storage_index_type> begin_indices_{};
+    util::vector<storage_index_type> begin_indices_{};
 };
 
 }  // namespace num_collect::linear::impl::amg

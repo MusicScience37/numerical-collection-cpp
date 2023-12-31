@@ -24,8 +24,10 @@
 
 #include <ApprovalTests.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_range_equals.hpp>
 #include <fmt/format.h>
 
+#include "num_collect/base/index_type.h"
 #include "num_collect/linear/impl/amg/compute_strong_connection_list.h"
 #include "num_collect/linear/impl/amg/grid_type.h"
 #include "num_collect/linear/impl/amg/node_connection_list.h"
@@ -58,7 +60,8 @@ TEST_CASE("num_collect::linear::impl::amg::compute_node_scores") {
 
         const auto scores = compute_node_scores(transposed_connections);
 
-        CHECK(scores == std::vector<int>{1, 2, 1, 2, 0});
+        CHECK_THAT(scores,
+            Catch::Matchers::RangeEquals(std::vector<int>{1, 2, 1, 2, 0}));
     }
 }
 
@@ -102,9 +105,10 @@ TEST_CASE("num_collect::linear::impl::amg::build_first_coarse_grid_candidate") {
         const auto candidate = build_first_coarse_grid_candidate(
             connections, transposed_connections);
 
-        CHECK(candidate ==
-            std::vector{grid_type::coarse, grid_type::coarse, grid_type::fine,
-                grid_type::fine, grid_type::fine});
+        CHECK_THAT(candidate,
+            Catch::Matchers::RangeEquals(
+                std::vector{grid_type::coarse, grid_type::coarse,
+                    grid_type::fine, grid_type::fine, grid_type::fine}));
     }
 
     SECTION("build a candidate of another grid") {
@@ -136,9 +140,10 @@ TEST_CASE("num_collect::linear::impl::amg::build_first_coarse_grid_candidate") {
         const auto candidate = build_first_coarse_grid_candidate(
             connections, transposed_connections);
 
-        CHECK(candidate ==
-            std::vector{grid_type::coarse, grid_type::coarse, grid_type::fine,
-                grid_type::fine, grid_type::coarse});
+        CHECK_THAT(candidate,
+            Catch::Matchers::RangeEquals(
+                std::vector{grid_type::coarse, grid_type::coarse,
+                    grid_type::fine, grid_type::fine, grid_type::coarse}));
     }
 
     SECTION("build a candidate of more another grid") {
@@ -168,9 +173,10 @@ TEST_CASE("num_collect::linear::impl::amg::build_first_coarse_grid_candidate") {
         const auto candidate = build_first_coarse_grid_candidate(
             connections, transposed_connections);
 
-        CHECK(candidate ==
-            std::vector{grid_type::coarse, grid_type::coarse, grid_type::fine,
-                grid_type::fine, grid_type::fine});
+        CHECK_THAT(candidate,
+            Catch::Matchers::RangeEquals(
+                std::vector{grid_type::coarse, grid_type::coarse,
+                    grid_type::fine, grid_type::fine, grid_type::fine}));
     }
 
     SECTION("build a candidate for laplacian_2d_grid") {
@@ -194,8 +200,8 @@ TEST_CASE("num_collect::linear::impl::amg::build_first_coarse_grid_candidate") {
             connections, transposed_connections);
         fmt::memory_buffer buffer;
         buffer.append(std::string_view("Classification:"));
-        for (std::size_t i = 0; i < candidate.size(); ++i) {
-            if (i % static_cast<std::size_t>(grid_size) == 0U) {
+        for (num_collect::index_type i = 0; i < candidate.size(); ++i) {
+            if (i % grid_size == 0U) {
                 buffer.push_back('\n');
             }
             if (candidate[i] == grid_type::coarse) {

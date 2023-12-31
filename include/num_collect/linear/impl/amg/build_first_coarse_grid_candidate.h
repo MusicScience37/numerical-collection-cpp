@@ -19,12 +19,12 @@
  */
 #pragma once
 
-#include <cstddef>
 #include <optional>
-#include <vector>
 
+#include "num_collect/base/index_type.h"
 #include "num_collect/linear/impl/amg/grid_type.h"
 #include "num_collect/linear/impl/amg/node_connection_list.h"
+#include "num_collect/util/vector.h"
 
 namespace num_collect::linear::impl::amg {
 
@@ -38,9 +38,8 @@ namespace num_collect::linear::impl::amg {
 template <typename StorageIndex>
 [[nodiscard]] inline auto compute_node_scores(
     const node_connection_list<StorageIndex>& transposed_connections)
-    -> std::vector<StorageIndex> {
-    std::vector<StorageIndex> scores(
-        static_cast<std::size_t>(transposed_connections.num_nodes()));
+    -> util::vector<StorageIndex> {
+    util::vector<StorageIndex> scores(transposed_connections.num_nodes());
     for (StorageIndex i = 0; i < transposed_connections.num_nodes(); ++i) {
         scores[i] = static_cast<StorageIndex>(
             transposed_connections.connected_nodes_to(i).size());
@@ -57,12 +56,13 @@ template <typename StorageIndex>
  * \return Index. (Null if no unclassified nodes.)
  */
 template <typename StorageIndex>
-[[nodiscard]] auto find_max_score_index(const std::vector<StorageIndex>& scores,
-    const std::vector<grid_type>& classification)
-    -> std::optional<std::size_t> {
-    std::optional<std::size_t> index;
+[[nodiscard]] auto find_max_score_index(
+    const util::vector<StorageIndex>& scores,
+    const util::vector<grid_type>& classification)
+    -> std::optional<index_type> {
+    std::optional<index_type> index;
     auto score = static_cast<StorageIndex>(-1);
-    for (std::size_t i = 0; i < scores.size(); ++i) {
+    for (index_type i = 0; i < scores.size(); ++i) {
         if (classification[i] == grid_type::unclassified) {
             if (scores[i] > score) {
                 index = i;
@@ -85,12 +85,11 @@ template <typename StorageIndex>
 [[nodiscard]] inline auto build_first_coarse_grid_candidate(
     const node_connection_list<StorageIndex>& connections,
     const node_connection_list<StorageIndex>& transposed_connections)
-    -> std::vector<grid_type> {
-    std::vector<grid_type> classification(
-        static_cast<std::size_t>(connections.num_nodes()),
-        grid_type::unclassified);
+    -> util::vector<grid_type> {
+    util::vector<grid_type> classification(
+        connections.num_nodes(), grid_type::unclassified);
 
-    std::vector<StorageIndex> scores =
+    util::vector<StorageIndex> scores =
         compute_node_scores(transposed_connections);
 
     while (true) {
@@ -102,18 +101,16 @@ template <typename StorageIndex>
         classification[*selection] = grid_type::coarse;
         for (const auto j :
             transposed_connections.connected_nodes_to(*selection)) {
-            if (classification[static_cast<std::size_t>(j)] ==
-                grid_type::unclassified) {
-                classification[static_cast<std::size_t>(j)] = grid_type::fine;
+            if (classification[j] == grid_type::unclassified) {
+                classification[j] = grid_type::fine;
                 for (const auto k : connections.connected_nodes_to(j)) {
-                    scores[static_cast<std::size_t>(k)] += 1;
+                    scores[k] += 1;
                 }
             }
         }
         for (const auto j : connections.connected_nodes_to(*selection)) {
-            if (classification[static_cast<std::size_t>(j)] ==
-                grid_type::unclassified) {
-                scores[static_cast<std::size_t>(j)] -= 1;
+            if (classification[j] == grid_type::unclassified) {
+                scores[j] -= 1;
             }
         }
     }
