@@ -29,8 +29,8 @@
 namespace num_collect::linear::impl::amg {
 
 /*!
- * \brief Create a coarse grid from a sparse matrix using an algorithm in \cite
- * Ruge1987.
+ * \brief Create a coarse grid from a sparse matrix using an algorithm in
+ * \cite Ruge1987.
  *
  * \tparam Matrix Type of the matrix.
  * \param[in] matrix Matrix.
