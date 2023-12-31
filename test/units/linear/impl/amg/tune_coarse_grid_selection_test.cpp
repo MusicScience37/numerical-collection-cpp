@@ -211,7 +211,6 @@ TEST_CASE("num_collect::linear::impl::amg::tune_coarse_grid_selection") {
         auto node_classification = build_first_coarse_grid_candidate(
             connections, transposed_connections);
 
-        node_classification[11] = node_layer::fine;  // NOLINT
         node_classification[57] = node_layer::fine;  // NOLINT
 
         tune_coarse_grid_selection(connections, node_classification);
