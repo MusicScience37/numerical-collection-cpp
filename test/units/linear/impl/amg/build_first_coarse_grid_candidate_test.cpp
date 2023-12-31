@@ -29,8 +29,8 @@
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/linear/impl/amg/compute_strong_connection_list.h"
-#include "num_collect/linear/impl/amg/grid_type.h"
 #include "num_collect/linear/impl/amg/node_connection_list.h"
+#include "num_collect/linear/impl/amg/node_layer.h"
 #include "num_prob_collect/linear/laplacian_2d_grid.h"
 
 TEST_CASE("num_collect::linear::impl::amg::compute_node_scores") {
@@ -67,8 +67,8 @@ TEST_CASE("num_collect::linear::impl::amg::compute_node_scores") {
 
 TEST_CASE("num_collect::linear::impl::amg::build_first_coarse_grid_candidate") {
     using num_collect::linear::impl::amg::build_first_coarse_grid_candidate;
-    using num_collect::linear::impl::amg::grid_type;
     using num_collect::linear::impl::amg::node_connection_list;
+    using num_collect::linear::impl::amg::node_layer;
 
     SECTION("build a candidate") {
         /*
@@ -107,8 +107,8 @@ TEST_CASE("num_collect::linear::impl::amg::build_first_coarse_grid_candidate") {
 
         CHECK_THAT(candidate,
             Catch::Matchers::RangeEquals(
-                std::vector{grid_type::coarse, grid_type::coarse,
-                    grid_type::fine, grid_type::fine, grid_type::fine}));
+                std::vector{node_layer::coarse, node_layer::coarse,
+                    node_layer::fine, node_layer::fine, node_layer::fine}));
     }
 
     SECTION("build a candidate of another grid") {
@@ -142,8 +142,8 @@ TEST_CASE("num_collect::linear::impl::amg::build_first_coarse_grid_candidate") {
 
         CHECK_THAT(candidate,
             Catch::Matchers::RangeEquals(
-                std::vector{grid_type::coarse, grid_type::coarse,
-                    grid_type::fine, grid_type::fine, grid_type::coarse}));
+                std::vector{node_layer::coarse, node_layer::coarse,
+                    node_layer::fine, node_layer::fine, node_layer::coarse}));
     }
 
     SECTION("build a candidate of more another grid") {
@@ -175,8 +175,8 @@ TEST_CASE("num_collect::linear::impl::amg::build_first_coarse_grid_candidate") {
 
         CHECK_THAT(candidate,
             Catch::Matchers::RangeEquals(
-                std::vector{grid_type::coarse, grid_type::coarse,
-                    grid_type::fine, grid_type::fine, grid_type::fine}));
+                std::vector{node_layer::coarse, node_layer::coarse,
+                    node_layer::fine, node_layer::fine, node_layer::fine}));
     }
 
     SECTION("build a candidate for laplacian_2d_grid") {
@@ -204,7 +204,7 @@ TEST_CASE("num_collect::linear::impl::amg::build_first_coarse_grid_candidate") {
             if (i % grid_size == 0U) {
                 buffer.push_back('\n');
             }
-            if (candidate[i] == grid_type::coarse) {
+            if (candidate[i] == node_layer::coarse) {
                 buffer.push_back('x');
             } else {
                 buffer.push_back('o');

@@ -22,8 +22,8 @@
 #include <optional>
 
 #include "num_collect/base/index_type.h"
-#include "num_collect/linear/impl/amg/grid_type.h"
 #include "num_collect/linear/impl/amg/node_connection_list.h"
+#include "num_collect/linear/impl/amg/node_layer.h"
 #include "num_collect/util/vector.h"
 
 namespace num_collect::linear::impl::amg {
@@ -58,12 +58,12 @@ template <typename StorageIndex>
 template <typename StorageIndex>
 [[nodiscard]] auto find_max_score_index(
     const util::vector<StorageIndex>& scores,
-    const util::vector<grid_type>& classification)
+    const util::vector<node_layer>& classification)
     -> std::optional<index_type> {
     std::optional<index_type> index;
     auto score = static_cast<StorageIndex>(-1);
     for (index_type i = 0; i < scores.size(); ++i) {
-        if (classification[i] == grid_type::unclassified) {
+        if (classification[i] == node_layer::unclassified) {
             if (scores[i] > score) {
                 index = i;
                 score = scores[i];
@@ -85,9 +85,9 @@ template <typename StorageIndex>
 [[nodiscard]] inline auto build_first_coarse_grid_candidate(
     const node_connection_list<StorageIndex>& connections,
     const node_connection_list<StorageIndex>& transposed_connections)
-    -> util::vector<grid_type> {
-    util::vector<grid_type> classification(
-        connections.num_nodes(), grid_type::unclassified);
+    -> util::vector<node_layer> {
+    util::vector<node_layer> classification(
+        connections.num_nodes(), node_layer::unclassified);
 
     util::vector<StorageIndex> scores =
         compute_node_scores(transposed_connections);
@@ -98,18 +98,18 @@ template <typename StorageIndex>
             break;
         }
 
-        classification[*selection] = grid_type::coarse;
+        classification[*selection] = node_layer::coarse;
         for (const auto j :
             transposed_connections.connected_nodes_to(*selection)) {
-            if (classification[j] == grid_type::unclassified) {
-                classification[j] = grid_type::fine;
+            if (classification[j] == node_layer::unclassified) {
+                classification[j] = node_layer::fine;
                 for (const auto k : connections.connected_nodes_to(j)) {
                     scores[k] += 1;
                 }
             }
         }
         for (const auto j : connections.connected_nodes_to(*selection)) {
-            if (classification[j] == grid_type::unclassified) {
+            if (classification[j] == node_layer::unclassified) {
                 scores[j] -= 1;
             }
         }

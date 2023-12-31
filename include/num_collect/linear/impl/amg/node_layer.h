@@ -15,16 +15,18 @@
  */
 /*!
  * \file
- * \brief Definition of grid_type enumeration.
+ * \brief Definition of node_class enumeration.
  */
 #pragma once
+
+#include <cstdint>
 
 namespace num_collect::linear::impl::amg {
 
 /*!
  * \brief Enumeration of types of grids which nodes belong to in AMG method.
  */
-enum grid_type {
+enum node_layer : std::uint8_t {
     //! Unclassified.
     unclassified,
 

@@ -20,6 +20,7 @@
 #pragma once
 
 #include <cstddef>
+#include <initializer_list>
 #include <vector>
 
 #include "num_collect/base/index_type.h"
@@ -87,6 +88,13 @@ public:
      */
     explicit vector(index_type size, value_type value = value_type())
         : vector_(static_cast<std::size_t>(size), value) {}
+
+    /*!
+     * \brief Constructor.
+     *
+     * \param[in] values Initializer list of values.
+     */
+    vector(std::initializer_list<value_type> values) : vector_(values) {}
 
     /*!
      * \brief Access to an element.
