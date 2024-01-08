@@ -1,0 +1,41 @@
+@startuml rbf
+
+title Abstract model of RBF interpolation
+
+package rbf {
+
+    interface distance_function <Variable, Value> <<Concept>> {
+        {abstract} + using arg_type = Variable
+        {abstract} + using result_type = Value
+        {abstract} + operator()(var1: arg_type, var2: arg_type) : result_type
+    }
+
+    class euclidean_distance_function<Variable>
+    distance_function <|.. euclidean_distance_function
+
+    interface rbf <Scalar> <<Concept>> {
+        {abstract} + using arg_type = Scalar
+        {abstract} + using result_type = Scalar
+        {abstract} + operator()(distance_rate: arg_type) : result_type
+    }
+
+    class gaussian_rbf<Scalar>
+    rbf <|.. gaussian_rbf
+
+    package operations {
+
+        class differentiate
+        note bottom : Classes of tags specifying\nmathematical operators.
+
+    }
+
+    class apply_operation <Operation, Function> {
+        + using result_type = <implementation-dependent-type>
+    }
+    apply_operation ..> distance_function
+    apply_operation ..> rbf
+    apply_operation ..> operations
+
+}
+
+@enduml
