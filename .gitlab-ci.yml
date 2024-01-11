@@ -385,9 +385,11 @@ test msvc release:
     - pip install poetry==1.3.2
     - poetry config virtualenvs.in-project true
     - poetry install --only test
+    - .\vcpkg\bootstrap-vcpkg.bat
+    - mkdir $BUILD_DIR
   script:
-    # TODO
-    - echo "TODO"
+    - cd $BUILD_DIR
+    - cmd.exe /C ..\scripts\ci_win.cmd
   cache:
     key:
       prefix: cache-${CI_JOB_NAME}
