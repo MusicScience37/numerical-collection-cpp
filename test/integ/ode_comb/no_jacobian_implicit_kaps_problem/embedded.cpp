@@ -69,7 +69,7 @@ TEMPLATE_PRODUCT_TEST_CASE(
                 return Eigen::Vector2d{// NOLINTNEXTLINE
                     {std::exp(-2.0 * time), std::exp(-time)}};
             },
-            precision);
+            "epsilon1", precision);
     }
 
     SECTION("epsilon = 0.0001") {
@@ -89,7 +89,7 @@ TEMPLATE_PRODUCT_TEST_CASE(
                 return Eigen::Vector2d{// NOLINTNEXTLINE
                     {std::exp(-2.0 * time), std::exp(-time)}};
             },
-            precision);
+            "epsilon1e-4", precision);
     }
 
     SECTION("epsilon = 0") {  // index 1 problem.
@@ -109,6 +109,6 @@ TEMPLATE_PRODUCT_TEST_CASE(
                 return Eigen::Vector2d{// NOLINTNEXTLINE
                     {std::exp(-2.0 * time), std::exp(-time)}};
             },
-            precision);
+            "epsilon0", precision);
     }
 }

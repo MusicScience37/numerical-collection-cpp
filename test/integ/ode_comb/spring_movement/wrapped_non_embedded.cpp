@@ -67,8 +67,10 @@ TEMPLATE_PRODUCT_TEST_CASE(
                               .tol_abs_error(tolerance));
 
         solve_and_check_with_reference(
-            solver, init_time, finish_time, num_time_samples, [](double time) {
+            solver, init_time, finish_time, num_time_samples,
+            [](double time) {
                 return Eigen::Vector2d(std::cos(time), std::sin(time));
-            });
+            },
+            "auto");
     }
 }

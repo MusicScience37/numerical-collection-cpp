@@ -60,10 +60,12 @@ TEMPLATE_PRODUCT_TEST_CASE("implicit_kaps_problem with embedded formulas", "",
         solver.init(init_time, init_var);
 
         solve_and_check_with_reference(
-            solver, init_time, finish_time, num_time_samples, [](double time) {
+            solver, init_time, finish_time, num_time_samples,
+            [](double time) {
                 return Eigen::Vector2d{// NOLINTNEXTLINE
                     {std::exp(-2.0 * time), std::exp(-time)}};
-            });
+            },
+            "epsilon1");
     }
 
     SECTION("epsilon = 0.0001") {
@@ -78,10 +80,12 @@ TEMPLATE_PRODUCT_TEST_CASE("implicit_kaps_problem with embedded formulas", "",
         solver.init(init_time, init_var);
 
         solve_and_check_with_reference(
-            solver, init_time, finish_time, num_time_samples, [](double time) {
+            solver, init_time, finish_time, num_time_samples,
+            [](double time) {
                 return Eigen::Vector2d{// NOLINTNEXTLINE
                     {std::exp(-2.0 * time), std::exp(-time)}};
-            });
+            },
+            "epsilon1e-4");
     }
 
     SECTION("epsilon = 0") {  // index 1 problem.
@@ -96,9 +100,11 @@ TEMPLATE_PRODUCT_TEST_CASE("implicit_kaps_problem with embedded formulas", "",
         solver.init(init_time, init_var);
 
         solve_and_check_with_reference(
-            solver, init_time, finish_time, num_time_samples, [](double time) {
+            solver, init_time, finish_time, num_time_samples,
+            [](double time) {
                 return Eigen::Vector2d{// NOLINTNEXTLINE
                     {std::exp(-2.0 * time), std::exp(-time)}};
-            });
+            },
+            "epsilon0");
     }
 }
