@@ -13,3 +13,5 @@ cmake .. ^
     -DNUM_COLLECT_BUILD_EXAMPLES=OFF ^
     -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON ^
     -DBUILD_SHARED_LIBS:BOOL=ON
+
+cmake --build . --config Release --parallel
