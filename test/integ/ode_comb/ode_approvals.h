@@ -35,9 +35,10 @@
 
 class ode_approvals {
 public:
-    template <num_collect::concepts::real_scalar Scalar>
+    template <typename Solver, num_collect::concepts::real_scalar Scalar>
     static void verify_with_reference(const std::vector<Scalar>& time,
         const std::vector<Scalar>& actual, const std::vector<Scalar>& reference,
+        std::string_view problem_condition,
         num_collect::index_type precision =
             (std::numeric_limits<Scalar>::digits10 / 2)) {
         REQUIRE(actual.size() > 0);
@@ -65,13 +66,18 @@ public:
         }
 
         ApprovalTests::Approvals::verify(
-            std::string_view(buffer.data(), buffer.size()));
+            std::string_view(buffer.data(), buffer.size()),
+            ApprovalTests::Options().withNamer(
+                ApprovalTests::TemplatedCustomNamer::create(
+                    generate_approval_file_path_template<Solver>(
+                        problem_condition))));
     }
 
-    template <num_collect::concepts::real_scalar Scalar,
+    template <typename Solver, num_collect::concepts::real_scalar Scalar,
         num_collect::concepts::dense_vector_of<Scalar> Vector>
     static void verify_with_reference(const std::vector<Scalar>& time,
         const std::vector<Vector>& actual, const std::vector<Vector>& reference,
+        std::string_view problem_condition,
         num_collect::index_type precision =
             (std::numeric_limits<Scalar>::digits10 / 2)) {
         REQUIRE(actual.size() > 0);
@@ -105,6 +111,34 @@ public:
         }
 
         ApprovalTests::Approvals::verify(
-            std::string_view(buffer.data(), buffer.size()));
+            std::string_view(buffer.data(), buffer.size()),
+            ApprovalTests::Options().withNamer(
+                ApprovalTests::TemplatedCustomNamer::create(
+                    generate_approval_file_path_template<Solver>(
+                        problem_condition))));
+    }
+
+private:
+    template <typename Solver>
+    [[nodiscard]] static auto generate_approval_file_path_template(
+        std::string_view problem_condition) -> std::string {
+        fmt::memory_buffer buffer;
+        buffer.append(
+            std::string_view("{TestSourceDirectory}/{ApprovalsSubdirectory}/"));
+        if (!problem_condition.empty()) {
+            fmt::format_to(
+                std::back_inserter(buffer), "{}_", problem_condition);
+        }
+        const std::string_view formula_name =
+            Solver::formula_type::log_tag.name();
+        if (auto pos = formula_name.find_last_of(':');
+            pos != std::string_view::npos) {
+            buffer.append(formula_name.substr(pos + 1U));
+        } else {
+            buffer.append(formula_name);
+        }
+        buffer.append(
+            std::string_view(".{ApprovedOrReceived}.{FileExtension}"));
+        return std::string(buffer.data(), buffer.size());
     }
 };

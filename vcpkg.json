@@ -11,6 +11,7 @@
     "approval-tests-cpp",
     "pngpp",
     "libpng",
-    "bfgroup-lyra"
+    "bfgroup-lyra",
+    "pkgconf"
   ]
 }

@@ -20,6 +20,7 @@
 #pragma once
 
 #include <limits>
+#include <string_view>
 
 #include "num_collect/base/concepts/invocable_as.h"
 #include "num_collect/base/index_type.h"
@@ -34,6 +35,7 @@ inline void solve_and_check_with_reference(Solver& solver,
     typename Solver::scalar_type finish_time,
     num_collect::index_type num_time_samples,
     const ReferenceFunction& reference_function,
+    std::string_view problem_condition = "",
     num_collect::index_type precision =
         (std::numeric_limits<typename Solver::scalar_type>::digits10 / 2)) {
     using scalar_type = typename Solver::scalar_type;
@@ -64,6 +66,7 @@ inline void solve_and_check_with_reference(Solver& solver,
         reference_variable_list.push_back(reference_function(time));
     }
 
-    ode_approvals::verify_with_reference(
-        time_list, actual_variable_list, reference_variable_list, precision);
+    ode_approvals::verify_with_reference<Solver>(time_list,
+        actual_variable_list, reference_variable_list, problem_condition,
+        precision);
 }
