@@ -15,3 +15,5 @@ cmake .. ^
     -DBUILD_SHARED_LIBS:BOOL=ON
 
 cmake --build . --config Release --parallel
+
+ctest -V --build-config Release
