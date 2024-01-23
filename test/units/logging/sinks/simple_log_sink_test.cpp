@@ -39,7 +39,9 @@ TEST_CASE("num_collect::logging::sinks::create_single_file_sink") {
 
     const std::string dir_path = "./logging";
     const std::string filepath = "./logging/simple_log_sink_test.log";
-    std::filesystem::remove_all(dir_path);
+    if (std::filesystem::exists(dir_path)) {
+        std::filesystem::remove_all(dir_path);
+    }
 
     const auto sink = create_single_file_sink(filepath);
 
