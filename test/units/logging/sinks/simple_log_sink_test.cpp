@@ -17,7 +17,6 @@
  * \file
  * \brief Test of simple_log_sink class.
  */
-#include <filesystem>
 #include <string>
 #include <string_view>
 
@@ -37,9 +36,7 @@ TEST_CASE("num_collect::logging::sinks::create_single_file_sink") {
     using num_collect::logging::sinks::create_single_file_sink;
     using num_collect::util::source_info_view;
 
-    const std::string dir_path = "./logging";
     const std::string filepath = "./logging/simple_log_sink_test.log";
-    std::filesystem::remove_all(dir_path);
 
     const auto sink = create_single_file_sink(filepath);
 
