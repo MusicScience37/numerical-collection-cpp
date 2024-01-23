@@ -17,6 +17,7 @@ pytest = "^7.4.4"
 pytest-approvaltests = "^0.2.4"
 fastjsonschema = "^2.19.1"
 pybind11 = "^2.11.1"
+pytomlpp = "^1.0.13"
 
 [tool.poetry.group.doc.dependencies]
 adr-tools-python = "^1.0.3"
@@ -24,7 +25,6 @@ myst-parser = "^2.0.0"
 sphinx = "^7.2.6"
 sphinx-orange-book-theme = "^0.2.0"
 sphinxcontrib-plantuml = "^0.27"
-pytomlpp = "^1.0.13"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.12.1"
