@@ -30,3 +30,20 @@ generate_export_header(
     EXPORT_FILE_NAME
         "${NUM_COLLECT_GENERATED_HEADER_DIR}/num_collect/impl/num_collect_export.h"
 )
+
+add_library(num_collect_unity EXCLUDE_FROM_ALL unity_source.cpp)
+target_include_directories(
+    num_collect_unity
+    PUBLIC $<BUILD_INTERFACE:${NUM_COLLECT_SOURCE_DIR}/include>
+           $<BUILD_INTERFACE:${NUM_COLLECT_GENERATED_HEADER_DIR}>
+           $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_link_libraries(
+    num_collect_unity
+    PUBLIC Threads::Threads
+           fmt::fmt
+           Eigen3::Eigen
+           cpp_hash_tables::hash_tables
+           tomlplusplus::tomlplusplus
+           $<BUILD_INTERFACE:num_collect_cpp_warnings>
+           $<BUILD_INTERFACE:num_collect_cpp_flags>)
+target_compile_features(num_collect_unity PUBLIC cxx_std_20)

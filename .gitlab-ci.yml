@@ -232,7 +232,17 @@ static analysis:
       -DNUM_COLLECT_BUILD_EXAMPLES=ON
       -DNUM_COLLECT_ENABLE_CPP_WARNINGS:BOOL=ON
     - cd ..
-    - poetry run clang-tidy-checker -b ${BUILD_DIR}
+    - poetry run clang-tidy-checker -b ${BUILD_DIR} --cache_dir ./.clang-tidy-cache
+  cache:
+    key:
+      prefix: cache-${CI_JOB_NAME}
+      files:
+        - poetry.lock
+    paths:
+      - .cache
+      - .venv
+      - .vcpkg-cache
+      - .clang-tidy-cache
 
 clang coverage:
   extends: test release
