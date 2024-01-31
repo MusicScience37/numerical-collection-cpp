@@ -41,7 +41,8 @@
         "tamasfe.even-better-toml",
         "james-yu.latex-workshop",
         "redhat.vscode-yaml",
-        "ms-python.black-formatter"
+        "ms-python.black-formatter",
+        "ms-python.isort"
       ],
       "settings": {
         "cmakeFormat.exePath": "/workspaces/numerical-collection-cpp/.venv/bin/cmake-format",
