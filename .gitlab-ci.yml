@@ -316,57 +316,6 @@ test asan ubsan:
     - cmake --build .
     - ctest -V
 
-# TODO
-.test msvc:
-  extends: test release
-  tags:
-    - shared-windows
-    - windows
-    - windows-1809
-  parallel:
-    matrix:
-      - BUILD_TYPE: ["Debug", "Release"]
-  variables:
-    BUILD_DIR: build_msvc_${BUILD_TYPE}
-    CONAN_USER_HOME: C:\Users\gitlab_runner
-  before_script:
-    - (mv ${CI_PROJECT_DIR}/.conan C:\Users\gitlab_runner -Force)
-    - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
-    - choco install cmake -y --installargs 'ADD_CMAKE_TO_PATH=System'
-    - choco install python --version=3.11.3 -y
-    - choco install ccache -y
-    - RefreshEnv
-    - ccache --version
-    - pip install poetry
-    - poetry install
-  script:
-    - mkdir $BUILD_DIR
-    - cd $BUILD_DIR
-    - poetry run conan profile new --force --detect default
-    - poetry run conan remote add -f cpp-stat-bench $CPP_STAT_BENCH_CONAN_REGISTRY
-    - poetry run conan remote add -f cpp-hash-tables $CPP_HASH_TABLES_CONAN_REGISTRY
-    - poetry run conan install --build missing -o num_collect:requirements_for_tests=True -s build_type=${BUILD_TYPE} ..
-    - cd ../
-    - cmake -S ./ -B $BUILD_DIR
-      -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
-      -DNUM_COLLECT_TESTING:BOOL=ON
-      -DNUM_COLLECT_ENABLE_UNIT_TESTS=ON
-      -DNUM_COLLECT_ENABLE_INTEG_TESTS=OFF
-      -DNUM_COLLECT_ENABLE_BENCH=OFF
-      -DNUM_COLLECT_TEST_BENCHMARKS=OFF
-      -DNUM_COLLECT_BUILD_EXAMPLES=OFF
-      -DNUM_COLLECT_TEST_EXAMPLES=OFF
-      -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
-      -DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON
-      "-DCMAKE_CXX_FLAGS=/DFMT_USE_NONTYPE_TEMPLATE_PARAMETERS=0"
-    - cd $BUILD_DIR
-    - cmake --build . --config ${BUILD_TYPE} --parallel 3
-    - ctest -V --build-config ${BUILD_TYPE}
-  after_script:
-    - (mv C:\Users\gitlab_runner\.conan ${CI_PROJECT_DIR} -Force)
-  allow_failure: true
-  interruptible: true
-
 test msvc release:
   stage: test
   needs: []
@@ -378,8 +327,9 @@ test msvc release:
     GIT_SUBMODULE_STRATEGY: recursive
     BUILD_TYPE: Release
     BUILD_DIR: build_msvc_release
-    CCACHE_DIR: ${CI_PROJECT_DIR}/.cache
+    CCACHE_DIR: ${CI_PROJECT_DIR}/.ccache
     CCACHE_COMPILERCHECK: content
+    CCACHE_MAXSIZE: 1G
     VCPKG_DEFAULT_BINARY_CACHE: ${CI_PROJECT_DIR}/.vcpkg-cache
     # workaround in https://github.com/python-poetry/poetry/issues/1917#issuecomment-1235998997
     PYTHON_KEYRING_BACKEND: keyring.backends.null.Keyring
@@ -401,14 +351,21 @@ test msvc release:
     - cd $BUILD_DIR
     - cmd.exe /C ..\scripts\ci_win.cmd
   cache:
-    key:
-      prefix: cache-${CI_JOB_NAME}
-      files:
-        - poetry.lock
-    paths:
-      - .cache
-      - .vcpkg-cache
-      - .poetry-cache
+    - key:
+        prefix: poetry-${CI_JOB_NAME}
+        files:
+          - poetry.lock
+      paths:
+        - .poetry-cache
+    - key:
+        prefix: vcpkg-${CI_JOB_NAME}
+        files:
+          - vcpkg-configuration.json
+      paths:
+        - .vcpkg-cache
+    - key: ccache-${CI_JOB_NAME}
+      paths:
+        - .ccache
   artifacts:
     paths:
       - $BUILD_DIR/bench
