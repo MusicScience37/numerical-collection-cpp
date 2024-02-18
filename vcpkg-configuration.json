@@ -3,14 +3,14 @@
   "default-registry": {
     "kind": "git",
     "repository": "https://github.com/Microsoft/vcpkg",
-    "baseline": "1f619be01b436b796dab797dd1e1721c5676f8ac"
+    "baseline": "13bde2ff13192e1b2fdd37bd9b475c7665ae6ae5"
   },
   "registries": [
     {
       "kind": "git",
       "repository": "https://gitlab.com/MusicScience37Projects/vcpkg-registry",
-      "baseline": "65af9db9a6bd094b4b1f475aab3e692630bb288a",
-      "packages": ["cpp-stat-bench", "cpp-hash-tables"]
+      "baseline": "70fb6d7d9d95ad17fc02dc4aef839b9a4824ac23",
+      "packages": ["cpp-hash-tables", "cpp-msgpack-light", "cpp-stat-bench"]
     }
   ],
   "overlay-triplets": ["./vcpkg_conf/triplets"]
