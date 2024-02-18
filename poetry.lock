@@ -15,19 +15,6 @@ files = [
 pygments = ">=1.5"
 
 [[package]]
-name = "adr-tools-python"
-version = "1.0.3"
-description = "A package to provide adr-tools to python"
-optional = false
-python-versions = ">=3"
-files = [
-    {file = "adr_tools_python-1.0.3-py3-none-any.whl", hash = "sha256:0bbd23ea47ec72559f16bd9e4237c1ff3ee848fd2b8a03f31e2b976ba185ecfd"},
-]
-
-[package.dependencies]
-argparse = "*"
-
-[[package]]
 name = "alabaster"
 version = "0.7.16"
 description = "A light, configurable Sphinx theme"
@@ -85,17 +72,6 @@ pyperclip = ">=1.5.29"
 pytest = ">=4.0.0"
 testfixtures = ">=7.1.0"
 typing-extensions = ">=3.6.2"
-
-[[package]]
-name = "argparse"
-version = "1.4.0"
-description = "Python command-line parsing library"
-optional = false
-python-versions = "*"
-files = [
-    {file = "argparse-1.4.0-py2.py3-none-any.whl", hash = "sha256:c31647edb69fd3d465a847ea3157d37bed1f95f19760b11a47aa91c04b666314"},
-    {file = "argparse-1.4.0.tar.gz", hash = "sha256:62b089a55be1d8949cd2bc7e0df0bddb9e028faefc8c32038cc84862aefdd6e4"},
-]
 
 [[package]]
 name = "babel"
@@ -1741,4 +1717,4 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "3e098d448f5f8f374d012c9e9c1c76a789d9ec3376a56fd2bf2353630556265d"
+content-hash = "5c3b99478c2d27cc125b0a2a426945d54c8d112240be54b3ea8bb18aca735836"

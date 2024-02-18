@@ -1,4 +1,4 @@
-# How to Use
+# Installation
 
 This library can be used via [vcpkg](https://vcpkg.io/) using following configurations:
 

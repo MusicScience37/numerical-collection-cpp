@@ -24,7 +24,7 @@ you will require following dependencies:
     - GCC 12
     - Clang 15
     - Clang 16
-    - ~~MSVC 19~~ (Currently not tested due to an [Issue in CI](https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp/-/issues/195).)
+    - MSVC 19
 
 Additionally, you will require following dependencies
 to build documentation.

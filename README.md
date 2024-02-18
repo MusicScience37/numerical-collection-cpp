@@ -8,16 +8,16 @@ A collection of algorithms in numerical analysis implemented in C++.
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![coverage report](https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp/badges/main/coverage.svg)](https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp/-/commits/main)
 
+## Documentation
+
+- [Documentation built on main branch](https://numcollect.musicscience37.com/)
+
 ## Repositories
 
 - Main in GitLab: [https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp](https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp)
 - Mirror in GitHub: [https://github.com/MusicScience37/numerical-collection-cpp](https://github.com/MusicScience37/numerical-collection-cpp)
 
-## Documentation
-
-- [Documentation built on main branch](https://numcollect.musicscience37.com/)
-
-## How to Use
+## Installation
 
 This library can be used via [vcpkg](https://vcpkg.io/) using following configurations:
 
@@ -83,7 +83,7 @@ you will require following dependencies:
     - GCC 12
     - Clang 15
     - Clang 16
-    - ~~MSVC 19~~ (Currently not tested due to an [Issue in CI](https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp/-/issues/195).)
+    - MSVC 19
 
 Additionally, you will require following dependencies
 to build documentation.
