@@ -22,8 +22,6 @@
   "doxdocgen.c.triggerSequence": "/*!",
   "doxdocgen.cpp.ctorText": "Constructor",
   "doxdocgen.cpp.dtorText": "Destructor",
-  "cmake.ctest.allowParallelJobs": true,
-  "cmake.ctest.parallelJobs": 2,
   "C_Cpp.intelliSenseEngine": "disabled",
   "C_Cpp.autocomplete": "disabled",
   "C_Cpp.errorSquiggles": "disabled",
