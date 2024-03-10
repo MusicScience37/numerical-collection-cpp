@@ -77,7 +77,7 @@ def check_tests_for_condition(
             "-DCMAKE_CXX_FLAGS=-stdlib=libc++",
         ]
     command = command + ["-DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON"]
-    for key, value in TEST_TYPE_VARIABLES[test_type]:
+    for key, value in TEST_TYPE_VARIABLES[test_type].items():
         command = command + [f"-D{key}={value}"]
     execute_command(command, cwd=build_dir)
 
