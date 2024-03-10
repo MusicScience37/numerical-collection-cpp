@@ -11,6 +11,7 @@ BUILD_TYPE_DICT = {
     "debug": "Debug",
     "release": "Release",
     "bench": "Release",
+    "asan_ubsan": "Debug",
 }
 
 
@@ -42,6 +43,16 @@ TEST_TYPE_VARIABLES = {
         "NUM_COLLECT_BUILD_EXAMPLES": "ON",
         "NUM_COLLECT_TEST_EXAMPLES": "ON",
         "NUM_COLLECT_WRITE_JUNIT": "ON",
+        "BUILD_SHARED_LIBS": "OFF",
+    },
+    "asan_ubsan": {
+        "NUM_COLLECT_TESTING": "ON",
+        "NUM_COLLECT_ENABLE_UNIT_TESTS": "ON",
+        "NUM_COLLECT_ENABLE_INTEG_TESTS": "ON",
+        "NUM_COLLECT_ENABLE_BENCH": "OFF",
+        "NUM_COLLECT_BUILD_EXAMPLES": "OFF",
+        "NUM_COLLECT_WRITE_JUNIT": "ON",
+        "NUM_COLLECT_ENABLE_AUSAN": "ON",
     },
 }
 

@@ -285,23 +285,10 @@ test asan ubsan:
         IMAGE_PATH: "musicscience37/clang-ci"
         TEST_TYPE: "asan_ubsan"
   variables:
-    BUILD_TYPE: Debug
-    BUILD_DIR: build_clang_asan_ubsan
     ASAN_OPTIONS: "alloc_dealloc_mismatch=0"
   script:
-    - cd $BUILD_DIR
-    - cmake ..
-      -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake
-      -DVCPKG_TARGET_TRIPLET=x64-linux-llvm
-      -DVCPKG_HOST_TRIPLET=x64-linux-llvm
-      -DCMAKE_CXX_FLAGS=-stdlib=libc++
-      -DCMAKE_BUILD_TYPE=Debug
-      -DNUM_COLLECT_TESTING:BOOL=ON
-      -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
-      -DNUM_COLLECT_ENABLE_AUSAN:BOOL=ON
-      -DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON
-    - cmake --build .
-    - ctest -V
+    - poetry run python ./scripts/ci_linux_test.py
+      --compiler_type $COMPILER_TYPE --test_type $TEST_TYPE --build_dir $BUILD_DIR
 
 test msvc release:
   stage: test
