@@ -23,17 +23,16 @@ line count:
   extends: .retry setting
   stage: test
   needs: []
-  image: registry.gitlab.com/musicscience37projects/docker/cloc-docker
+  image: registry.gitlab.com/musicscience37projects/docker/scc-docker
   script:
     - mkdir -p line_count
-    - cloc ./
-      --exclude-dir=extern,line_count
-      --force-lang=C++,h
-      --json --out=line_count/line_count.json
-    - cloc ./
-      --exclude-dir=extern,line_count,bench,cmake,doc,example,scripts,test
-      --force-lang=C++,h
-      --json --out=line_count/src_line_count.json
+    - scc
+      --format-multi "tabular:stdout,html:line_count/line_count.html,openmetrics:line_count/line_count.txt"
+      .
+    - scc
+      --format-multi "tabular:stdout,html:line_count/src_line_count.html"
+      --by-file -s complexity
+      include src
   artifacts:
     paths:
       - line_count
