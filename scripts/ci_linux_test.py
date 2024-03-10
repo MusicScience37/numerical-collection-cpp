@@ -47,7 +47,7 @@ TEST_TYPE_VARIABLES = {
 
 
 def execute_command(command: typing.List[str], cwd: str) -> None:
-    click.echo(click.style(f">> {command}", bold=True))
+    click.echo(click.style(f">> {command}", bold=True, fg="green"))
     subprocess.run(command, check=True, cwd=cwd)
 
 
