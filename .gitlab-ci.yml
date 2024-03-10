@@ -174,16 +174,10 @@ test linux:
         TEST_TYPE: "debug"
       - COMPILER_TYPE: "gcc12"
         IMAGE_PATH: "musicscience37/gcc-ci"
-        TEST_TYPE: "release"
+        TEST_TYPE: ["release", "bench"]
       - COMPILER_TYPE: "clang16"
         IMAGE_PATH: "musicscience37/clang-ci"
-        TEST_TYPE: "release"
-      - COMPILER_TYPE: "gcc12"
-        IMAGE_PATH: "musicscience37/gcc-ci"
-        TEST_TYPE: "bench"
-      - COMPILER_TYPE: "clang16"
-        IMAGE_PATH: "musicscience37/clang-ci"
-        TEST_TYPE: "bench"
+        TEST_TYPE: ["release", "bench"]
   script:
     - poetry run python ./scripts/ci_linux_test.py
       --compiler_type $COMPILER_TYPE --test_type $TEST_TYPE --build_dir $BUILD_DIR
