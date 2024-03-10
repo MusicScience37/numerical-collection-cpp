@@ -120,6 +120,8 @@ if(PYTHON_EXECUTABLE AND POETRY_EXECUTABLE)
         OUTPUT_VARIABLE pybind11_DIR
         OUTPUT_STRIP_TRAILING_WHITESPACE)
     if(NUM_COLLECT_TESTING OR NUM_COLLECT_BUILD_EXAMPLES)
+        set(Python_EXECUTABLE ${PYTHON_EXECUTABLE})
+        find_package(Python REQUIRED COMPONENTS Interpreter Development)
         find_package(pybind11 REQUIRED)
     endif()
 else()

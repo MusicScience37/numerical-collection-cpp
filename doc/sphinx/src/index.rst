@@ -14,7 +14,7 @@ A collection of algorithms in numerical analysis implemented in C++.
     :maxdepth: 1
     :caption: Usage
 
-    how_to_use
+    installation
     modules
     user_guide/index
     API Reference <https://numcollect.musicscience37.com/api/index.html>
