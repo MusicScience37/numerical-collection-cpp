@@ -36,6 +36,9 @@ line count:
   artifacts:
     paths:
       - line_count
+    reports:
+      metrics:
+        - "line_count/line_count.txt"
     expire_in: "1 mos"
   interruptible: true
 
