@@ -290,7 +290,9 @@ test msvc release:
   stage: test
   needs: []
   tags:
-    - saas-windows-medium-amd64
+    - shared-windows
+    - windows
+    - windows-1809
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
     BUILD_TYPE: Release
