@@ -1,4 +1,4 @@
-FROM registry.gitlab.com/musicscience37projects/docker/my-cpp-env-docker:clang16
+FROM registry.gitlab.com/musicscience37projects/docker/my-cpp-env-docker:clang17
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -9,7 +9,7 @@ RUN apt-get update && \
     git-lfs \
     sudo \
     && \
-    apt-get autoremove && \
+    apt-get autoremove -y && \
     apt-get autoclean && \
     rm -r /var/lib/apt/lists/* && \
     # Make ubuntu user able to use sudo command.
