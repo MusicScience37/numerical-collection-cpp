@@ -1,6 +1,7 @@
 HeaderFilterRegex: "include/num_collect/|test/"
 Checks: >
   clang-diagnostic-*,
+    -clang-diagnostic-unknown-pragmas,
   clang-analyzer-*,
     -clang-analyzer-core.UndefinedBinaryOperatorResult,
     -clang-analyzer-optin.performance.Padding,
@@ -58,6 +59,7 @@ Checks: >
 # - readability-avoid-unconditional-preprocessor-if generates warnings to automatically generated files which cannot be fixed.
 # - cppcoreguidelines-missing-std-forward cannot be fixed sometimes.
 # - modernize-concat-nested-namespaces will be fixed later.
+# - clang-diagnostic-unknown-pragmas generates false positives for "#pragma omp" even with flags for OpenMP.
 
 CheckOptions:
   # Naming Conventions
