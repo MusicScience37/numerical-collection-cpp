@@ -34,8 +34,8 @@ namespace num_collect::ode::concepts {
  * \tparam T Type.
  */
 template <typename T>
-concept ode_equation_solver = base::concepts::iterative_solver<T> &&
-        requires()
+concept ode_equation_solver = base::concepts::iterative_solver<T>&&
+    requires()
 {
     typename T::problem_type;
     requires problem<typename T::problem_type>;

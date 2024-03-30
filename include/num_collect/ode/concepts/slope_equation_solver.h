@@ -36,8 +36,8 @@ namespace num_collect::ode::concepts {
  * \tparam T Type.
  */
 template <typename T>
-concept slope_equation_solver = ode::concepts::ode_equation_solver<T> &&
-        requires()
+concept slope_equation_solver = ode::concepts::ode_equation_solver<T>&&
+    requires()
 {
     requires requires(T& obj, typename T::problem_type& problem,
         typename T::scalar_type time, typename T::scalar_type step_size,
