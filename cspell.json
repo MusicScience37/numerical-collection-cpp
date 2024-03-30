@@ -52,6 +52,7 @@
     "coloraxis",
     "COMPILERCHECK",
     "conanfile",
+    "concat",
     "constexpr",
     "copydoc",
     "COPYONLY",

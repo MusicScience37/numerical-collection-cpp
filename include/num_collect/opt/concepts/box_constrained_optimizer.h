@@ -29,8 +29,8 @@ namespace num_collect::opt::concepts {
  * \tparam T Type.
  */
 template <typename T>
-concept box_constrained_optimizer = optimizer<T> &&
-        requires()
+concept box_constrained_optimizer = optimizer<T>&&
+    requires()
 {
     requires requires(T& solver, const typename T::variable_type& min_var,
         const typename T::variable_type& max_var) {

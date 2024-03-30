@@ -1,6 +1,7 @@
 HeaderFilterRegex: "include/num_collect/|test/"
 Checks: >
   clang-diagnostic-*,
+    -clang-diagnostic-unknown-pragmas,
   clang-analyzer-*,
     -clang-analyzer-core.UndefinedBinaryOperatorResult,
     -clang-analyzer-optin.performance.Padding,
@@ -9,6 +10,7 @@ Checks: >
     -cppcoreguidelines-pro-bounds-constant-array-index,
     -cppcoreguidelines-avoid-non-const-global-variables,
     -cppcoreguidelines-avoid-const-or-ref-data-members,
+    -cppcoreguidelines-missing-std-forward,
   google-*,
     -google-runtime-references,
     -google-readability-todo,
@@ -19,9 +21,11 @@ Checks: >
     -readability-identifier-length,
     -readability-function-cognitive-complexity,
     -readability-suspicious-call-argument,
+    -readability-avoid-unconditional-preprocessor-if,
   modernize-*,
     -modernize-pass-by-value,
     -modernize-return-braced-init-list,
+    -modernize-concat-nested-namespaces,
   hicpp-*,
   cert-*,
     -cert-err58-cpp,
@@ -52,6 +56,10 @@ Checks: >
 # - bugprone-exception-escape has a bug.
 # - bugprone-unchecked-optional-access complains even when std::optional::value function is used and has a bug as in https://github.com/clangd/clangd/issues/1700.
 # - cppcoreguidelines-avoid-const-or-ref-data-members prevents expression templates.
+# - readability-avoid-unconditional-preprocessor-if generates warnings to automatically generated files which cannot be fixed.
+# - cppcoreguidelines-missing-std-forward cannot be fixed sometimes.
+# - modernize-concat-nested-namespaces will be fixed later.
+# - clang-diagnostic-unknown-pragmas generates false positives for "#pragma omp" even with flags for OpenMP.
 
 CheckOptions:
   # Naming Conventions
