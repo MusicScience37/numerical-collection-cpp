@@ -35,7 +35,7 @@ sphinx-autobuild = "^2024.2.4"
 tqdm = "^4.66.2"
 lizard = "^1.17.10"
 lcov-cobertura = "^2.0.2"
-clang-tidy-checker = "^0.4.0"
+clang-tidy-checker = "^0.5.0"
 isort = "^5.13.2"
 
 [build-system]
