@@ -28,10 +28,11 @@
 #include <catch2/catch_test_macros.hpp>
 #include <fmt/format.h>
 
-#include "num_collect/base/concepts/dense_vector_of.h"
-#include "num_collect/base/concepts/real_scalar.h"
-#include "num_collect/base/concepts/real_scalar_dense_vector.h"
+#include "num_collect/base/concepts/dense_vector_of.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/real_scalar.h"      // IWYU pragma: keep
+#include "num_collect/base/concepts/real_scalar_dense_vector.h"  // IWYU pragma: keep
 #include "num_collect/base/index_type.h"
+#include "table_comparator.h"
 
 class ode_approvals {
 public:
@@ -45,7 +46,9 @@ public:
         REQUIRE(reference.size() == actual.size());
         REQUIRE(reference.size() == time.size());
 
-        const num_collect::index_type width = precision + 10;
+        constexpr num_collect::index_type whole_precision =
+            std::numeric_limits<Scalar>::digits10 - 2;
+        constexpr num_collect::index_type width = whole_precision + 10;
         const num_collect::index_type lines = actual.size();
 
         fmt::memory_buffer buffer;
@@ -53,17 +56,26 @@ public:
         fmt::format_to(std::back_inserter(buffer), "{1:>{0}}", width, "Actual");
         fmt::format_to(
             std::back_inserter(buffer), "{1:>{0}}", width, "Reference");
+        fmt::format_to(std::back_inserter(buffer), "{1:>{0}}", width, "Error");
         buffer.push_back('\n');
 
         for (num_collect::index_type l = 0; l < lines; ++l) {
             fmt::format_to(std::back_inserter(buffer), "{2:> {1}.{0}e}",
-                precision, width, time.at(l));
+                whole_precision, width, time.at(l));
             fmt::format_to(std::back_inserter(buffer), "{2:> {1}.{0}e}",
-                precision, width, actual.at(l));
+                whole_precision, width, actual.at(l));
             fmt::format_to(std::back_inserter(buffer), "{2:> {1}.{0}e}",
-                precision, width, reference.at(l));
+                whole_precision, width, reference.at(l));
+            fmt::format_to(std::back_inserter(buffer), "{2:> {1}.{0}e}",
+                whole_precision, width, actual.at(l) - reference.at(l));
             buffer.push_back('\n');
         }
+
+        const std::vector<bool> checked_columns{true, true, true, false};
+        auto disposer =
+            ApprovalTests::FileApprover::registerComparatorForExtension(".txt",
+                std::make_shared<table_comparator>(
+                    checked_columns, lines, precision));
 
         ApprovalTests::Approvals::verify(
             std::string_view(buffer.data(), buffer.size()),
@@ -84,7 +96,9 @@ public:
         REQUIRE(reference.size() == actual.size());
         REQUIRE(reference.size() == time.size());
 
-        const num_collect::index_type width = precision + 10;
+        constexpr num_collect::index_type whole_precision =
+            std::numeric_limits<Scalar>::digits10 - 2;
+        const num_collect::index_type width = whole_precision + 10;
         const num_collect::index_type dimension = actual.at(0).size();
         const num_collect::index_type lines = actual.size();
 
@@ -95,20 +109,37 @@ public:
                 fmt::format("Actual{}", i));
             fmt::format_to(std::back_inserter(buffer), "{1:>{0}}", width,
                 fmt::format("Reference{}", i));
+            fmt::format_to(std::back_inserter(buffer), "{1:>{0}}", width,
+                fmt::format("Error{}", i));
         }
         buffer.push_back('\n');
 
         for (num_collect::index_type l = 0; l < lines; ++l) {
             fmt::format_to(std::back_inserter(buffer), "{2:> {1}.{0}e}",
-                precision, width, time.at(l));
+                whole_precision, width, time.at(l));
             for (num_collect::index_type i = 0; i < dimension; ++i) {
                 fmt::format_to(std::back_inserter(buffer), "{2:> {1}.{0}e}",
-                    precision, width, actual.at(l)(i));
+                    whole_precision, width, actual.at(l)(i));
                 fmt::format_to(std::back_inserter(buffer), "{2:> {1}.{0}e}",
-                    precision, width, reference.at(l)(i));
+                    whole_precision, width, reference.at(l)(i));
+                fmt::format_to(std::back_inserter(buffer), "{2:> {1}.{0}e}",
+                    whole_precision, width,
+                    actual.at(l)(i) - reference.at(l)(i));
             }
             buffer.push_back('\n');
         }
+
+        std::vector<bool> checked_columns;
+        checked_columns.push_back(true);  // Time
+        for (num_collect::index_type i = 0; i < dimension; ++i) {
+            checked_columns.push_back(true);   // Actual
+            checked_columns.push_back(true);   // Reference
+            checked_columns.push_back(false);  // Error
+        }
+        auto disposer =
+            ApprovalTests::FileApprover::registerComparatorForExtension(".txt",
+                std::make_shared<table_comparator>(
+                    checked_columns, lines, precision));
 
         ApprovalTests::Approvals::verify(
             std::string_view(buffer.data(), buffer.size()),

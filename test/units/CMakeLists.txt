@@ -15,9 +15,8 @@ function(add_unit_test_for MODULE_NAME)
     target_link_libraries(
         num_collect_test_units_${MODULE_NAME}_unity
         PRIVATE Catch2::Catch2WithMain trompeloeil::trompeloeil
-                ApprovalTests::ApprovalTests num_collect num_prob_collect)
-    target_include_directories(num_collect_test_units_${MODULE_NAME}_unity
-                               PRIVATE ${NUM_COLLECT_TEST_INCLUDE_DIR})
+                ApprovalTests::ApprovalTests num_collect num_prob_collect
+                num_collect_test_utils)
 endfunction()
 
 add_subdirectory(base)
