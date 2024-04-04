@@ -48,7 +48,7 @@ public:
 
         constexpr num_collect::index_type whole_precision =
             std::numeric_limits<Scalar>::digits10 - 2;
-        const num_collect::index_type width = whole_precision + 10;
+        constexpr num_collect::index_type width = whole_precision + 10;
         const num_collect::index_type lines = actual.size();
 
         fmt::memory_buffer buffer;
