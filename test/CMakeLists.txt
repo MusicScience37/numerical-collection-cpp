@@ -12,9 +12,7 @@ set(NUM_COLLECT_TEMP_TEST_DIR
     CACHE PATH "directory used in test" FORCE)
 file(MAKE_DIRECTORY ${NUM_COLLECT_TEMP_TEST_DIR})
 
-add_library(num_collect_test_utils INTERFACE)
-target_include_directories(num_collect_test_utils
-                           INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+add_subdirectory(utils)
 
 macro(target_add_catch2 TARGET)
     target_link_libraries(
