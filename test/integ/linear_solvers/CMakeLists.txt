@@ -11,6 +11,5 @@ add_executable(num_collect_test_integ_linear_solvers_unity EXCLUDE_FROM_ALL
 target_link_libraries(
     num_collect_test_integ_linear_solvers_unity
     PRIVATE Catch2::Catch2WithMain trompeloeil::trompeloeil
-            ApprovalTests::ApprovalTests num_collect num_prob_collect)
-target_include_directories(num_collect_test_integ_linear_solvers_unity
-                           PRIVATE ${NUM_COLLECT_TEST_INCLUDE_DIR})
+            ApprovalTests::ApprovalTests num_collect num_prob_collect
+            num_collect_test_utils)

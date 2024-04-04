@@ -12,15 +12,16 @@ set(NUM_COLLECT_TEMP_TEST_DIR
     CACHE PATH "directory used in test" FORCE)
 file(MAKE_DIRECTORY ${NUM_COLLECT_TEMP_TEST_DIR})
 
-set(NUM_COLLECT_TEST_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
+add_library(num_collect_test_utils INTERFACE)
+target_include_directories(num_collect_test_utils
+                           INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 macro(target_add_catch2 TARGET)
     target_link_libraries(
         ${TARGET}
         PRIVATE Catch2::Catch2WithMain trompeloeil::trompeloeil
-                ApprovalTests::ApprovalTests num_collect num_prob_collect)
-    target_include_directories(${TARGET}
-                               PRIVATE ${NUM_COLLECT_TEST_INCLUDE_DIR})
+                ApprovalTests::ApprovalTests num_collect num_prob_collect
+                num_collect_test_utils)
 
     if(NUM_COLLECT_WRITE_JUNIT)
         set(CATCH2_REPORT_OPTIONS -r junit -o
