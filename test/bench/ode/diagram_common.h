@@ -20,11 +20,7 @@
 #pragma once
 
 #include <algorithm>
-#include <array>
-#include <atomic>
 #include <chrono>
-#include <exception>
-#include <filesystem>
 #include <limits>
 #include <string>
 #include <string_view>
@@ -33,25 +29,16 @@
 
 #include <Eigen/Core>
 #include <fmt/format.h>
-#include <pybind11/embed.h>
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
 
-#include "num_collect/base/concepts/real_scalar.h"
-#include "num_collect/base/concepts/real_scalar_dense_vector.h"
+#include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/real_scalar_dense_vector.h"  // IWYU pragma: keep
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/norm.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
-#include "num_collect/logging/log_config.h"
-#include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/logging/logger.h"
 #include "num_collect/logging/logging_mixin.h"
 #include "num_collect/ode/error_tolerances.h"
-#include "num_collect/ode/rosenbrock/rodasp_formula.h"
-#include "num_collect/ode/runge_kutta/rkf45_formula.h"
 #include "num_collect/ode/step_size_limits.h"
-#include "num_prob_collect/ode/external_force_vibration_problem.h"
 
 constexpr auto benchmark_tag = num_collect::logging::log_tag_view("benchmark");
 
@@ -59,9 +46,7 @@ constexpr auto benchmark_tag = num_collect::logging::log_tag_view("benchmark");
  * \brief Prevent ordering of instructions over the position calling this
  * function.
  */
-inline void prevent_ordering() {
-    std::atomic_signal_fence(std::memory_order_seq_cst);
-}
+void prevent_ordering();
 
 /*!
  * \brief Create a constant.
@@ -96,40 +81,7 @@ template <num_collect::base::concepts::real_scalar_dense_vector T>
  * \return Map.
  */
 [[nodiscard]] auto create_line_dash_map()
-    -> std::unordered_map<std::string, std::string> {
-    return std::unordered_map<std::string, std::string>{
-        // Explicit Runge-Kutta.
-        {"RKF45", "solid"}, {"DOPRI5", "solid"}, {"ARK4(3)-ERK", "solid"},
-        {"RK4", "solid"},
-        // Implicit Runge-Kutta.
-        {"Tanaka1", "dot"}, {"Tanaka2", "dot"}, {"SDIRK4", "dot"},
-        {"ARK4(3)-ESDIRK", "dot"}, {"ARK5(4)-ESDIRK", "dot"},
-        {"ESDIRK45c", "dot"},
-        // Rosenbrock.
-        {"ROS3w", "longdash"}, {"ROS34PW3", "longdash"}, {"RODASP", "longdash"},
-        {"RODASPR", "longdash"},
-        // AVF.
-        {"AVF2", "dashdot"}, {"AVF3", "dashdot"}, {"AVF4", "dashdot"},
-        // Symplectic.
-        {"LeapFrog", "longdash"}, {"Forest4", "longdash"},
-        // LU in Rosenbrock.
-        {"ROS3w_lu", "solid"}, {"ROS34PW3_lu", "solid"}, {"RODASP_lu", "solid"},
-        // Broyden in Rosenbrock.
-        {"ROS3w_broyden", "longdash"}, {"ROS34PW3_broyden", "longdash"},
-        // GMRES in Rosenbrock.
-        {"ROS3w_gmres", "dashdot"}, {"ROS34PW3_gmres", "dashdot"},
-        {"RODASP_gmres", "dashdot"},
-        // BiCGstab in Rosenbrock.
-        {"ROS3w_bicgstab", "dot"}, {"ROS34PW3_bicgstab", "dot"},
-        {"RODASP_bicgstab", "dot"},
-        // Basic step size controller.
-        {"RKF45_basic", "solid"}, {"ROS3w_basic", "solid"},
-        {"RODASP_basic", "solid"},
-        // PI step size controller.
-        {"RKF45_pi", "dot"}, {"ROS3w_pi", "dot"}, {"RODASP_pi", "dot"},
-        //
-    };
-}
+    -> std::unordered_map<std::string, std::string>;
 
 /*!
  * \brief Class to perform benchmark.
@@ -154,17 +106,7 @@ public:
     };
 
     //! Constructor.
-    bench_executor()
-        : num_collect::logging::logging_mixin(benchmark_tag),
-          iter_logger_(this->logger()) {
-        iter_logger_.append("Solver", solver_name_)->width(20);  // NOLINT
-        iter_logger_.append("Tol.", tol_);
-        iter_logger_.append("Steps", steps_);
-        iter_logger_.append<double>("Time [us]", [this] {
-            return mean_processing_time_sec_ * 1e+6;  // NOLINT
-        });
-        iter_logger_.append("Error Rate", error_rate_);
-    }
+    bench_executor();
 
     /*!
      * \brief Perform a benchmark.
@@ -265,61 +207,7 @@ public:
      */
     void write_result(std::string_view problem_name,
         std::string_view problem_description,
-        std::string_view output_directory) {
-        this->logger().info()("Write results.");
-
-        static pybind11::scoped_interpreter interpreter;
-        pybind11::gil_scoped_acquire gil;
-        try {
-            auto pd = pybind11::module::import("pandas");
-            auto px = pybind11::module::import("plotly.express");
-
-            const std::string solver_key = "Solver";
-            const std::string tolerance_key = "Err. Tol.";
-            const std::string error_key = "Error Rate";
-            const std::string time_key = "Time [sec]";
-
-            std::unordered_map<std::string, pybind11::object> data;
-            data.try_emplace(solver_key, pybind11::cast(result_.solver_list));
-            data.try_emplace(
-                tolerance_key, pybind11::cast(result_.tolerance_list));
-            data.try_emplace(
-                error_key, pybind11::cast(result_.error_rate_list));
-            data.try_emplace(time_key, pybind11::cast(result_.time_list));
-
-            const auto line_dash_map = create_line_dash_map();
-
-            auto fig = px.attr("line")(              //
-                pybind11::arg("data_frame") = data,  //
-                pybind11::arg("x") = time_key,
-                pybind11::arg("y") = error_key,                  //
-                pybind11::arg("color") = solver_key,             //
-                pybind11::arg("line_dash") = solver_key,         //
-                pybind11::arg("line_dash_map") = line_dash_map,  //
-                pybind11::arg("hover_data") =
-                    std::vector<std::string>{
-                        solver_key, tolerance_key, error_key, time_key},  //
-                pybind11::arg("markers") = true,                          //
-                pybind11::arg("log_x") = true,                            //
-                pybind11::arg("log_y") = true,                            //
-                pybind11::arg("title") = fmt::format(
-                    "Work-Error Diagram of {}.", problem_description));
-
-            const std::string base_name =
-                fmt::format("{}/diagrams/{}", output_directory, problem_name);
-            std::filesystem::create_directories(
-                std::filesystem::path(base_name).parent_path());
-
-            fig.attr("write_html")(fmt::format("{}.html", base_name));
-            fig.attr("write_image")(fmt::format("{}.png", base_name));
-
-            this->logger().info()("Wrote results to {}.", base_name);
-        } catch (const std::exception& e) {
-            this->logger().error()(
-                "Exception in writing the result: {}", e.what());
-            PyErr_Clear();
-        }
-    }
+        std::string_view output_directory);
 
     /*!
      * \brief Change the limits of step sizes.
@@ -327,9 +215,7 @@ public:
      * \param[in] limits Limits.
      */
     void step_size_limits(
-        const num_collect::ode::step_size_limits<double>& limits) {
-        step_size_limits_ = limits;
-    }
+        const num_collect::ode::step_size_limits<double>& limits);
 
 private:
     //! Iteration logger.
@@ -360,13 +246,4 @@ private:
 /*!
  * \brief Configure logging for benchmarks.
  */
-inline void configure_logging() {
-    num_collect::logging::set_default_tag_config(
-        num_collect::logging::log_tag_config().output_log_level(
-            num_collect::logging::log_level::info));
-
-    num_collect::logging::set_config_of(benchmark_tag,
-        num_collect::logging::log_tag_config()
-            .output_log_level(num_collect::logging::log_level::iteration)
-            .iteration_output_period(1));
-}
+void configure_logging();

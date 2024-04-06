@@ -37,6 +37,7 @@ auto time_stamp::now() noexcept -> time_stamp {
     std::timespec spec{};
     const auto result = std::timespec_get(&spec, TIME_UTC);
     assert(result == TIME_UTC);
+    (void)result;
     return time_stamp(spec.tv_sec, spec.tv_nsec);
 }
 

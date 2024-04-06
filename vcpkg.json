@@ -8,6 +8,7 @@
     "catch2",
     "trompeloeil",
     "cpp-msgpack-light",
+    "zlib",
     "cpp-stat-bench",
     "approval-tests-cpp",
     "pngpp",
