@@ -28,11 +28,15 @@
 #include <vector>
 
 #include <Eigen/Core>
+#include <fmt/core.h>
 #include <fmt/format.h>
+#include <msgpack_light/serialize.h>
+#include <msgpack_light/type_support/struct.h>
 #include <pybind11/embed.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
+#include "gzip_msgpack_output_stream.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_config.h"
 #include "num_collect/logging/log_tag_config.h"
@@ -40,6 +44,9 @@
 #include "num_collect/logging/logger.h"
 #include "num_collect/logging/logging_mixin.h"
 #include "num_collect/ode/step_size_limits.h"
+
+MSGPACK_LIGHT_STRUCT_MAP(bench_executor::bench_result, solver_list,
+    tolerance_list, error_rate_list, time_list);
 
 void prevent_ordering() { std::atomic_signal_fence(std::memory_order_seq_cst); }
 
@@ -141,6 +148,10 @@ void bench_executor::write_result(std::string_view problem_name,
         this->logger().error()("Exception in writing the result: {}", e.what());
         PyErr_Clear();
     }
+
+    gzip_msgpack_output_stream stream{
+        fmt::format("{}/diagrams/{}.data", output_directory, problem_name)};
+    msgpack_light::serialize_to(stream, result_);
 }
 
 void bench_executor::step_size_limits(

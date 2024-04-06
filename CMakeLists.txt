@@ -67,6 +67,8 @@ if(NUM_COLLECT_TESTING)
     find_package(trompeloeil REQUIRED)
     find_package(cpp-stat-bench REQUIRED)
     find_package(lyra REQUIRED)
+    find_package(cpp-msgpack-light REQUIRED)
+    find_package(ZLIB REQUIRED)
 
     # ApprovalTests.
     find_path(APPROVAL_TESTS_CPP_INCLUDE_DIRS "ApprovalTests.hpp")

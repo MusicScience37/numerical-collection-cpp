@@ -27,16 +27,23 @@
 #include <vector>
 
 #include <Eigen/Core>
+#include <fmt/core.h>
 #include <fmt/format.h>
+#include <msgpack_light/serialize.h>
+#include <msgpack_light/type_support/struct.h>
 #include <pybind11/embed.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
 #include "diagram_common.h"
+#include "gzip_msgpack_output_stream.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/logging/logging_mixin.h"
+
+MSGPACK_LIGHT_STRUCT_MAP(fixed_step_bench_executor::bench_result, solver_list,
+    step_size_list, error_rate_list, energy_change_list, time_list);
 
 fixed_step_bench_executor::fixed_step_bench_executor()
     : num_collect::logging::logging_mixin(benchmark_tag),
@@ -123,4 +130,8 @@ void fixed_step_bench_executor::write_result(std::string_view problem_name,
         this->logger().error()("Exception in writing the result: {}", e.what());
         PyErr_Clear();
     }
+
+    gzip_msgpack_output_stream stream{
+        fmt::format("{}/diagrams/{}.data", output_directory, problem_name)};
+    msgpack_light::serialize_to(stream, result_);
 }
