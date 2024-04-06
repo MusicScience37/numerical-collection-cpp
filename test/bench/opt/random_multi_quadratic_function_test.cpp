@@ -130,6 +130,7 @@ public:
             ->add(20)   // NOLINT
             ->add(50)   // NOLINT
             ->add(100)  // NOLINT
+            ->add(200)  // NOLINT
 #endif
             ;
     }

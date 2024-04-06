@@ -179,7 +179,7 @@ private:
         generator_{};  // NOLINT(cert-msc32-c,cert-msc51-cpp): For reproducibility.
 
     //! Distribution of coefficients.
-    std::uniform_real_distribution<double> coeff_dist_{0.5, 3.0};  // NOLINT
+    std::uniform_real_distribution<double> coeff_dist_{0.5, 20.0};  // NOLINT
 
     //! Distribution of optimal variables.
     std::uniform_real_distribution<double> optimal_variable_dist_{
