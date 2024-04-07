@@ -18,14 +18,13 @@
  * \brief Test of integration of exponential function.
  */
 #include <cmath>
-#include <exception>
-#include <unordered_set>
-#include <vector>
 
 #include <stat_bench/benchmark_macros.h>
 #include <stat_bench/current_invocation_context.h>
 #include <stat_bench/invocation_context.h>
 
+#include "fixtures.h"
+#include "num_collect/base/index_type.h"
 #include "num_collect/integration/de_finite_integrator.h"
 #include "num_collect/integration/gauss_legendre_integrator.h"
 #include "num_collect/integration/gauss_legendre_kronrod_integrator.h"
@@ -44,93 +43,32 @@ void perform(const Integrator& integrator) {
 }
 
 // NOLINTNEXTLINE
-STAT_BENCH_CASE("integ_exp", "gauss_legendre_5") {
+STAT_BENCH_CASE_F(gauss_legendre_fixture, "integ_exp", "gauss_legendre") {
+    const auto degree = stat_bench::current_invocation_context()
+                            .get_param<num_collect::index_type>("degree");
     const auto integrator =
-        num_collect::integration::gauss_legendre_integrator<double(double)>(5);
+        num_collect::integration::gauss_legendre_integrator<double(double)>(
+            degree);
     perform(integrator);
 }
 
 // NOLINTNEXTLINE
-STAT_BENCH_CASE("integ_exp", "gauss_legendre_10") {
-    const auto integrator =
-        num_collect::integration::gauss_legendre_integrator<double(double)>(10);
-    perform(integrator);
-}
-
-// NOLINTNEXTLINE
-STAT_BENCH_CASE("integ_exp", "gauss_legendre_20") {
-    const auto integrator =
-        num_collect::integration::gauss_legendre_integrator<double(double)>(20);
-    perform(integrator);
-}
-
-// NOLINTNEXTLINE
-STAT_BENCH_CASE("integ_exp", "gauss_legendre_50") {
-    const auto integrator =
-        num_collect::integration::gauss_legendre_integrator<double(double)>(50);
-    perform(integrator);
-}
-
-// NOLINTNEXTLINE
-STAT_BENCH_CASE("integ_exp", "gauss_legendre_kronrod_3") {
+STAT_BENCH_CASE_F(
+    gauss_legendre_kronrod_fixture, "integ_exp", "gauss_legendre_kronrod") {
+    const auto degree = stat_bench::current_invocation_context()
+                            .get_param<num_collect::index_type>("degree");
     const auto integrator =
         num_collect::integration::gauss_legendre_kronrod_integrator<double(
-            double)>(3);
+            double)>(degree);
     perform(integrator);
 }
 
 // NOLINTNEXTLINE
-STAT_BENCH_CASE("integ_exp", "gauss_legendre_kronrod_5") {
-    const auto integrator =
-        num_collect::integration::gauss_legendre_kronrod_integrator<double(
-            double)>(5);
-    perform(integrator);
-}
-
-// NOLINTNEXTLINE
-STAT_BENCH_CASE("integ_exp", "gauss_legendre_kronrod_7") {
-    const auto integrator =
-        num_collect::integration::gauss_legendre_kronrod_integrator<double(
-            double)>(7);
-    perform(integrator);
-}
-
-// NOLINTNEXTLINE
-STAT_BENCH_CASE("integ_exp", "gauss_legendre_kronrod_10") {
-    const auto integrator =
-        num_collect::integration::gauss_legendre_kronrod_integrator<double(
-            double)>(10);
-    perform(integrator);
-}
-
-// NOLINTNEXTLINE
-STAT_BENCH_CASE("integ_exp", "de_finite_5") {
+STAT_BENCH_CASE_F(de_finite_fixture, "integ_exp", "de_finite") {
+    const auto points = stat_bench::current_invocation_context()
+                            .get_param<num_collect::index_type>("points");
     const auto integrator =
         num_collect::integration::de_finite_integrator<double(double)>().points(
-            5);
-    perform(integrator);
-}
-
-// NOLINTNEXTLINE
-STAT_BENCH_CASE("integ_exp", "de_finite_10") {
-    const auto integrator =
-        num_collect::integration::de_finite_integrator<double(double)>().points(
-            10);
-    perform(integrator);
-}
-
-// NOLINTNEXTLINE
-STAT_BENCH_CASE("integ_exp", "de_finite_20") {
-    const auto integrator =
-        num_collect::integration::de_finite_integrator<double(double)>().points(
-            20);
-    perform(integrator);
-}
-
-// NOLINTNEXTLINE
-STAT_BENCH_CASE("integ_exp", "de_finite_50") {
-    const auto integrator =
-        num_collect::integration::de_finite_integrator<double(double)>().points(
-            50);
+            points);
     perform(integrator);
 }
