@@ -29,6 +29,7 @@
 #include "num_collect/integration/de_finite_integrator.h"
 #include "num_collect/integration/gauss_legendre_integrator.h"
 #include "num_collect/integration/gauss_legendre_kronrod_integrator.h"
+#include "num_collect/integration/tanh_finite_integrator.h"
 
 STAT_BENCH_MAIN
 
@@ -73,5 +74,15 @@ STAT_BENCH_CASE_F(de_finite_fixture, "integ_inv_sqrt_1mx2", "de_finite") {
     const auto integrator =
         num_collect::integration::de_finite_integrator<double(double)>().points(
             points);
+    perform(integrator);
+}
+
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(tanh_finite_fixture, "integ_inv_sqrt_1mx2", "tanh_finite") {
+    const auto points = stat_bench::current_invocation_context()
+                            .get_param<num_collect::index_type>("points");
+    const auto integrator =
+        num_collect::integration::tanh_finite_integrator<double(double)>()
+            .points(points);
     perform(integrator);
 }
