@@ -56,7 +56,7 @@ template <>
 struct tanh_finite_integrator_traits<float> {
 public:
     //! Default maximum point in changed variable.
-    static constexpr double default_max_point = 7.0F;
+    static constexpr double default_max_point = 10.0F;
 };
 
 /*!
@@ -66,7 +66,7 @@ template <>
 struct tanh_finite_integrator_traits<double> {
 public:
     //! Default maximum point in changed variable.
-    static constexpr double default_max_point = 16.0;
+    static constexpr double default_max_point = 20.0;
 };
 
 }  // namespace impl
@@ -150,6 +150,59 @@ public:
     /*!
      * \brief Integrate a function.
      *
+     * \tparam LeftBoundaryFunction Type of the function centered at the left
+     * boundary.
+     * \tparam RightBoundaryFunction Type of the function centered at the right
+     * boundary.
+     * \param[in] left_boundary_function Function centered at the left boundary.
+     * \param[in] right_boundary_function Function centered at the right
+     * boundary.
+     * \param[in] left Left boundary.
+     * \param[in] right Right boundary.
+     * \return Result.
+     */
+    template <base::concepts::invocable_as<result_type(variable_type)>
+                  LeftBoundaryFunction,
+        base::concepts::invocable_as<result_type(variable_type)>
+            RightBoundaryFunction>
+    [[nodiscard]] auto integrate(
+        const LeftBoundaryFunction& left_boundary_function,
+        const RightBoundaryFunction& right_boundary_function,
+        variable_type left, variable_type right) const -> result_type {
+        using constants::half;
+
+        const variable_type width = right - left;
+        const variable_type half_width = half<variable_type> * width;
+
+        constexpr auto center_weight_rate = static_cast<variable_type>(0.5);
+        const variable_type center_weight = width * center_weight_rate;
+        util::kahan_adder<result_type> sum;
+        sum += left_boundary_function(half_width) * center_weight;
+
+        for (index_type i = 0; i < points_; ++i) {
+            const variable_type variable_distance =
+                width * variable_rate_list_[static_cast<std::size_t>(i)];
+            const variable_type weight =
+                width * weight_rate_list_[static_cast<std::size_t>(i)];
+
+            const result_type function_values =
+                left_boundary_function(variable_distance) +
+                right_boundary_function(-variable_distance);
+            if (!base::isfinite(function_values)) [[unlikely]] {
+                this->logger().warning()(
+                    "A function value was not a finite value. "
+                    "Stopped numerical integration.");
+                break;
+            }
+            sum += function_values * weight;
+        }
+
+        return sum.sum() * interval_;
+    }
+
+    /*!
+     * \brief Integrate a function.
+     *
      * \tparam Function Type of function.
      * \param[in] function Function.
      * \param[in] left Left boundary.
@@ -160,6 +213,32 @@ public:
     [[nodiscard]] auto operator()(const Function& function, variable_type left,
         variable_type right) const -> result_type {
         return integrate(function, left, right);
+    }
+
+    /*!
+     * \brief Integrate a function.
+     *
+     * \tparam LeftBoundaryFunction Type of the function centered at the left
+     * boundary.
+     * \tparam RightBoundaryFunction Type of the function centered at the right
+     * boundary.
+     * \param[in] left_boundary_function Function centered at the left boundary.
+     * \param[in] right_boundary_function Function centered at the right
+     * boundary.
+     * \param[in] left Left boundary.
+     * \param[in] right Right boundary.
+     * \return Result.
+     */
+    template <base::concepts::invocable_as<result_type(variable_type)>
+                  LeftBoundaryFunction,
+        base::concepts::invocable_as<result_type(variable_type)>
+            RightBoundaryFunction>
+    [[nodiscard]] auto operator()(
+        const LeftBoundaryFunction& left_boundary_function,
+        const RightBoundaryFunction& right_boundary_function,
+        variable_type left, variable_type right) const -> result_type {
+        return integrate(
+            left_boundary_function, right_boundary_function, left, right);
     }
 
     /*!

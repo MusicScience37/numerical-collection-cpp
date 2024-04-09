@@ -79,6 +79,7 @@ public:
             ->add(5)   // NOLINT
             ->add(7)   // NOLINT
             ->add(10)  // NOLINT
+            ->add(15)  // NOLINT
             ->add(20)  // NOLINT
             ->add(30)  // NOLINT
             ->add(50)  // NOLINT
@@ -92,20 +93,17 @@ public:
     tanh_finite_fixture() {
         this->add_param<num_collect::index_type>("points")
 #ifndef NDEBUG
-            ->add(5)    // NOLINT
             ->add(10)   // NOLINT
             ->add(50)   // NOLINT
             ->add(100)  // NOLINT
 #else
-            ->add(3)    // NOLINT
-            ->add(5)    // NOLINT
-            ->add(7)    // NOLINT
             ->add(10)   // NOLINT
             ->add(20)   // NOLINT
             ->add(30)   // NOLINT
             ->add(50)   // NOLINT
             ->add(70)   // NOLINT
             ->add(100)  // NOLINT
+            ->add(150)  // NOLINT
             ->add(200)  // NOLINT
 #endif
             ;

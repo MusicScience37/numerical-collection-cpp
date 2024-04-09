@@ -108,8 +108,6 @@ TEMPLATE_TEST_CASE(
     SECTION("integrate exp(ix)") {
         auto integrator = num_collect::integration::tanh_finite_integrator<
             std::complex<TestType>(TestType)>();
-        constexpr num_collect::index_type points = 30;
-        integrator.points(points);
 
         constexpr auto left = static_cast<TestType>(0);
         constexpr auto right =
@@ -128,25 +126,45 @@ TEMPLATE_TEST_CASE(
             Catch::Matchers::WithinAbs(static_cast<TestType>(0), tol));
     }
 
-    // For float, the precision of the result is too low.
-    if constexpr (!std::is_same_v<TestType, float>) {
-        SECTION("integrate 1/sqrt(1-x^2)") {
-            auto integrator =
-                num_collect::integration::tanh_finite_integrator<TestType(
-                    TestType)>();
+    SECTION("integrate 1/sqrt(1-x^2)") {
+        auto integrator =
+            num_collect::integration::tanh_finite_integrator<TestType(
+                TestType)>();
 
-            constexpr auto left = static_cast<TestType>(-1);
-            constexpr auto right = static_cast<TestType>(1);
-            const auto val = integrator(
-                [](TestType x) {
-                    return static_cast<TestType>(1) /
-                        std::sqrt(static_cast<TestType>(1) - x * x);
-                },
-                left, right);
+        constexpr auto left = static_cast<TestType>(-1);
+        constexpr auto right = static_cast<TestType>(1);
+        const auto val = integrator(
+            [](TestType x) {
+                return static_cast<TestType>(1) /
+                    std::sqrt((static_cast<TestType>(2) - x) * x);
+            },
+            [](TestType x) {
+                return static_cast<TestType>(1) /
+                    std::sqrt((static_cast<TestType>(-2) - x) * x);
+            },
+            left, right);
 
-            const auto true_val = num_collect::constants::pi<TestType>;
-            constexpr auto tol = static_cast<TestType>(1e-4);
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val, tol));
-        }
+        const auto true_val = num_collect::constants::pi<TestType>;
+        constexpr auto tol = static_cast<TestType>(1e-4);
+        REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val, tol));
+    }
+
+    SECTION("handle infinity and NAN correctly") {
+        auto integrator =
+            num_collect::integration::tanh_finite_integrator<TestType(
+                TestType)>();
+
+        constexpr auto left = static_cast<TestType>(-1);
+        constexpr auto right = static_cast<TestType>(1);
+        const auto val = integrator(
+            [](TestType x) {
+                return static_cast<TestType>(1) /
+                    std::sqrt(static_cast<TestType>(1) - x * x);
+            },
+            left, right);
+
+        const auto true_val = num_collect::constants::pi<TestType>;
+        constexpr auto tol = static_cast<TestType>(1e-2);
+        REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val, tol));
     }
 }
