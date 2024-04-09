@@ -33,40 +33,9 @@
 #include "num_collect/constants/two.h"   // IWYU pragma: keep
 #include "num_collect/constants/zero.h"  // IWYU pragma: keep
 #include "num_collect/util/assert.h"
+#include "num_collect/util/kahan_adder.h"
 
 namespace num_collect::integration {
-
-namespace impl {
-
-/*!
- * \brief Helper class of constants for use in de_finite_integrator class.
- *
- * \tparam Variable Type of variables.
- */
-template <typename Variable>
-struct de_finite_integrator_traits;
-
-/*!
- * \brief Implementation of de_finite_integrator_traits for float.
- */
-template <>
-struct de_finite_integrator_traits<float> {
-public:
-    //! Default maximum point in changed variable.
-    static constexpr float default_max_point = 2.4F;
-};
-
-/*!
- * \brief Implementation of de_finite_integrator_traits for float.
- */
-template <>
-struct de_finite_integrator_traits<double> {
-public:
-    //! Default maximum point in changed variable.
-    static constexpr double default_max_point = 3.0;
-};
-
-}  // namespace impl
 
 /*!
  * \brief Class to perform numerical integration on finite range using double
@@ -111,6 +80,7 @@ public:
     [[nodiscard]] auto integrate(const Function& function, variable_type left,
         variable_type right) const -> result_type {
         using constants::pi;
+
         const variable_type center =
             constants::half<variable_type> * (left + right);
         const variable_type width = right - left;
@@ -118,7 +88,8 @@ public:
         constexpr variable_type center_weight_rate =
             pi<variable_type> / static_cast<variable_type>(4);
         const variable_type center_weight = width * center_weight_rate;
-        result_type sum = function(center) * center_weight;
+        util::kahan_adder<result_type> sum;
+        sum += function(center) * center_weight;
 
         for (index_type i = 0; i < points_; ++i) {
             const variable_type variable_distance =
@@ -131,7 +102,55 @@ public:
             sum += (function(var_plus) + function(var_minus)) * weight;
         }
 
-        return sum * interval_;
+        return sum.sum() * interval_;
+    }
+
+    /*!
+     * \brief Integrate a function.
+     *
+     * \tparam LeftBoundaryFunction Type of the function centered at the left
+     * boundary.
+     * \tparam RightBoundaryFunction Type of the function centered at the right
+     * boundary.
+     * \param[in] left_boundary_function Function centered at the left boundary.
+     * \param[in] right_boundary_function Function centered at the right
+     * boundary.
+     * \param[in] left Left boundary.
+     * \param[in] right Right boundary.
+     * \return Result.
+     */
+    template <base::concepts::invocable_as<result_type(variable_type)>
+                  LeftBoundaryFunction,
+        base::concepts::invocable_as<result_type(variable_type)>
+            RightBoundaryFunction>
+    [[nodiscard]] auto integrate(
+        const LeftBoundaryFunction& left_boundary_function,
+        const RightBoundaryFunction& right_boundary_function,
+        variable_type left, variable_type right) const -> result_type {
+        using constants::half;
+        using constants::pi;
+
+        const variable_type width = right - left;
+        const variable_type half_width = half<variable_type> * width;
+
+        constexpr variable_type center_weight_rate =
+            pi<variable_type> / static_cast<variable_type>(4);
+        const variable_type center_weight = width * center_weight_rate;
+        util::kahan_adder<result_type> sum;
+        sum += left_boundary_function(half_width) * center_weight;
+
+        for (index_type i = 0; i < points_; ++i) {
+            const variable_type variable_distance =
+                width * variable_rate_list_[static_cast<std::size_t>(i)];
+            const variable_type weight =
+                width * weight_rate_list_[static_cast<std::size_t>(i)];
+
+            sum += (left_boundary_function(variable_distance) +
+                       right_boundary_function(-variable_distance)) *
+                weight;
+        }
+
+        return sum.sum() * interval_;
     }
 
     /*!
@@ -147,6 +166,32 @@ public:
     [[nodiscard]] auto operator()(const Function& function, variable_type left,
         variable_type right) const -> result_type {
         return integrate(function, left, right);
+    }
+
+    /*!
+     * \brief Integrate a function.
+     *
+     * \tparam LeftBoundaryFunction Type of the function centered at the left
+     * boundary.
+     * \tparam RightBoundaryFunction Type of the function centered at the right
+     * boundary.
+     * \param[in] left_boundary_function Function centered at the left boundary.
+     * \param[in] right_boundary_function Function centered at the right
+     * boundary.
+     * \param[in] left Left boundary.
+     * \param[in] right Right boundary.
+     * \return Result.
+     */
+    template <base::concepts::invocable_as<result_type(variable_type)>
+                  LeftBoundaryFunction,
+        base::concepts::invocable_as<result_type(variable_type)>
+            RightBoundaryFunction>
+    [[nodiscard]] auto operator()(
+        const LeftBoundaryFunction& left_boundary_function,
+        const RightBoundaryFunction& right_boundary_function,
+        variable_type left, variable_type right) const -> result_type {
+        return integrate(
+            left_boundary_function, right_boundary_function, left, right);
     }
 
     /*!
@@ -225,8 +270,7 @@ private:
     }
 
     //! Default maximum point in changed variable.
-    static constexpr auto default_max_point =
-        impl::de_finite_integrator_traits<Variable>::default_max_point;
+    static constexpr auto default_max_point = static_cast<variable_type>(4);
 
     //! Maximum point in changed variable.
     variable_type max_point_{default_max_point};

@@ -22,8 +22,6 @@
 #include <cmath>
 #include <complex>
 #include <limits>
-#include <ostream>
-#include <string>
 
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
@@ -145,12 +143,17 @@ TEMPLATE_TEST_CASE(
         const auto val = integrator(
             [](TestType x) {
                 return static_cast<TestType>(1) /
-                    std::sqrt(static_cast<TestType>(1) - x * x);
+                    std::sqrt((static_cast<TestType>(2) - x) * x);
+            },
+            [](TestType x) {
+                return static_cast<TestType>(1) /
+                    std::sqrt((static_cast<TestType>(-2) - x) * x);
             },
             left, right);
 
         const auto true_val = num_collect::constants::pi<TestType>;
-        constexpr auto tol = static_cast<TestType>(1e-4);
+        constexpr auto tol = std::numeric_limits<TestType>::epsilon() *
+            static_cast<TestType>(1e+4);
         REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val, tol));
     }
 }
