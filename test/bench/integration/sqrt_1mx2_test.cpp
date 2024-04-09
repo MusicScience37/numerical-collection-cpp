@@ -70,9 +70,8 @@ STAT_BENCH_CASE_F(gauss_legendre_kronrod_fixture, "integ_sqrt_1mx2",
 STAT_BENCH_CASE_F(de_finite_fixture, "integ_sqrt_1mx2", "de_finite") {
     const auto points = stat_bench::current_invocation_context()
                             .get_param<num_collect::index_type>("points");
-    const auto integrator =
-        num_collect::integration::de_finite_integrator<double(double)>().points(
-            points);
+    num_collect::integration::de_finite_integrator<double(double)> integrator;
+    integrator.points(points);
     perform(integrator);
 }
 
@@ -80,8 +79,7 @@ STAT_BENCH_CASE_F(de_finite_fixture, "integ_sqrt_1mx2", "de_finite") {
 STAT_BENCH_CASE_F(tanh_finite_fixture, "integ_sqrt_1mx2", "tanh_finite") {
     const auto points = stat_bench::current_invocation_context()
                             .get_param<num_collect::index_type>("points");
-    const auto integrator =
-        num_collect::integration::tanh_finite_integrator<double(double)>()
-            .points(points);
+    num_collect::integration::de_finite_integrator<double(double)> integrator;
+    integrator.points(points);
     perform(integrator);
 }

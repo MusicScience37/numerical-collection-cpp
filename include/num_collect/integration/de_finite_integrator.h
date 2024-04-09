@@ -27,15 +27,22 @@
 #include "num_collect/base/concepts/invocable_as.h"  // IWYU pragma: keep
 #include "num_collect/base/concepts/real_scalar.h"   // IWYU pragma: keep
 #include "num_collect/base/index_type.h"
+#include "num_collect/base/isfinite.h"
 #include "num_collect/constants/half.h"  // IWYU pragma: keep
 #include "num_collect/constants/one.h"   // IWYU pragma: keep
 #include "num_collect/constants/pi.h"    // IWYU pragma: keep
 #include "num_collect/constants/two.h"   // IWYU pragma: keep
 #include "num_collect/constants/zero.h"  // IWYU pragma: keep
+#include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_mixin.h"
 #include "num_collect/util/assert.h"
 #include "num_collect/util/kahan_adder.h"
 
 namespace num_collect::integration {
+
+//! Tag of de_finite_integrator.
+inline constexpr auto de_finite_integrator_tag =
+    logging::log_tag_view("num_collect::integration::de_finite_integrator");
 
 /*!
  * \brief Class to perform numerical integration on finite range using double
@@ -54,7 +61,7 @@ class de_finite_integrator;
  * \tparam Variable Type of variables.
  */
 template <typename Result, base::concepts::real_scalar Variable>
-class de_finite_integrator<Result(Variable)> {
+class de_finite_integrator<Result(Variable)> : public logging::logging_mixin {
 public:
     //! Type of variables.
     using variable_type = std::decay_t<Variable>;
@@ -65,7 +72,9 @@ public:
     /*!
      * \brief Constructor.
      */
-    de_finite_integrator() { calculate_coefficients(); }
+    de_finite_integrator() : logging::logging_mixin(de_finite_integrator_tag) {
+        calculate_coefficients();
+    }
 
     /*!
      * \brief Integrate a function.
@@ -99,7 +108,15 @@ public:
 
             const variable_type var_plus = right - variable_distance;
             const variable_type var_minus = left + variable_distance;
-            sum += (function(var_plus) + function(var_minus)) * weight;
+            const result_type function_values =
+                function(var_plus) + function(var_minus);
+            if (!base::isfinite(function_values)) [[unlikely]] {
+                this->logger().warning()(
+                    "A function value was not a finite value. "
+                    "Stopped numerical integration.");
+                break;
+            }
+            sum += function_values * weight;
         }
 
         return sum.sum() * interval_;
@@ -145,9 +162,16 @@ public:
             const variable_type weight =
                 width * weight_rate_list_[static_cast<std::size_t>(i)];
 
-            sum += (left_boundary_function(variable_distance) +
-                       right_boundary_function(-variable_distance)) *
-                weight;
+            const result_type function_values =
+                left_boundary_function(variable_distance) +
+                right_boundary_function(-variable_distance);
+            if (!base::isfinite(function_values)) [[unlikely]] {
+                this->logger().warning()(
+                    "A function value was not a finite value. "
+                    "Stopped numerical integration.");
+                break;
+            }
+            sum += function_values * weight;
         }
 
         return sum.sum() * interval_;
