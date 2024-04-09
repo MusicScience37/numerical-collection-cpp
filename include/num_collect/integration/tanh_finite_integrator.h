@@ -24,12 +24,20 @@
 #include "num_collect/base/concepts/invocable_as.h"  // IWYU pragma: keep
 #include "num_collect/base/concepts/real_scalar.h"   // IWYU pragma: keep
 #include "num_collect/base/index_type.h"
+#include "num_collect/base/isfinite.h"
 #include "num_collect/constants/half.h"
 #include "num_collect/constants/one.h"
 #include "num_collect/constants/zero.h"
+#include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_mixin.h"
 #include "num_collect/util/assert.h"
+#include "num_collect/util/kahan_adder.h"
 
 namespace num_collect::integration {
+
+//! Tag of de_finite_integrator.
+inline constexpr auto tanh_finite_integrator_tag =
+    logging::log_tag_view("num_collect::integration::tanh_finite_integrator");
 
 namespace impl {
 
@@ -80,7 +88,7 @@ class tanh_finite_integrator;
  * \tparam Variable Type of variables.
  */
 template <typename Result, base::concepts::real_scalar Variable>
-class tanh_finite_integrator<Result(Variable)> {
+class tanh_finite_integrator<Result(Variable)> : public logging::logging_mixin {
 public:
     //! Type of variables.
     using variable_type = std::decay_t<Variable>;
@@ -91,7 +99,10 @@ public:
     /*!
      * \brief Constructor.
      */
-    tanh_finite_integrator() = default;
+    tanh_finite_integrator()
+        : logging::logging_mixin(tanh_finite_integrator_tag) {
+        calculate_coefficients();
+    }
 
     /*!
      * \brief Integrate a function.
@@ -107,28 +118,33 @@ public:
         variable_type right) const -> result_type {
         const variable_type center =
             constants::half<variable_type> * (left + right);
-        const variable_type half_width =
-            constants::half<variable_type> * (right - left);
-        const variable_type interval =
-            max_point_ / static_cast<variable_type>(points_);
+        const variable_type width = right - left;
 
-        const variable_type diff_coeff_center = half_width;
-        result_type sum = function(center) * diff_coeff_center;
+        constexpr auto center_weight_rate = static_cast<variable_type>(0.5);
+        const variable_type center_weight = width * center_weight_rate;
+        util::kahan_adder<result_type> sum;
+        sum += function(center) * center_weight;
 
-        for (index_type i = 1; i <= points_; ++i) {
-            const variable_type changed_var =
-                interval * static_cast<variable_type>(i);
-            const variable_type tanh_value = std::tanh(changed_var);
-            const variable_type var_plus = center + half_width * tanh_value;
-            const variable_type var_minus = center - half_width * tanh_value;
-            const variable_type diff_coeff_value = half_width *
-                (constants::one<variable_type> - tanh_value) *
-                (constants::one<variable_type> + tanh_value);
-            sum += function(var_plus) * diff_coeff_value;
-            sum += function(var_minus) * diff_coeff_value;
+        for (index_type i = 0; i < points_; ++i) {
+            const variable_type variable_distance =
+                width * variable_rate_list_[static_cast<std::size_t>(i)];
+            const variable_type weight =
+                width * weight_rate_list_[static_cast<std::size_t>(i)];
+
+            const variable_type var_plus = right - variable_distance;
+            const variable_type var_minus = left + variable_distance;
+            const result_type function_values =
+                function(var_plus) + function(var_minus);
+            if (!base::isfinite(function_values)) [[unlikely]] {
+                this->logger().warning()(
+                    "A function value was not a finite value. "
+                    "Stopped numerical integration.");
+                break;
+            }
+            sum += function_values * weight;
         }
 
-        return sum * interval;
+        return sum.sum() * interval_;
     }
 
     /*!
@@ -155,6 +171,7 @@ public:
     auto max_point(variable_type val) -> tanh_finite_integrator& {
         NUM_COLLECT_ASSERT(val > constants::zero<variable_type>);
         max_point_ = val;
+        calculate_coefficients();
         return *this;
     }
 
@@ -167,10 +184,37 @@ public:
     auto points(index_type val) -> tanh_finite_integrator& {
         NUM_COLLECT_ASSERT(val > constants::zero<index_type>);
         points_ = val;
+        calculate_coefficients();
         return *this;
     }
 
 private:
+    /*!
+     * \brief Calculate coefficients for integration.
+     *
+     * \note Set points_ before calling this function.
+     */
+    void calculate_coefficients() {
+        using constants::one;
+
+        variable_rate_list_.clear();
+        variable_rate_list_.reserve(static_cast<std::size_t>(points_));
+        weight_rate_list_.clear();
+        weight_rate_list_.reserve(static_cast<std::size_t>(points_));
+
+        interval_ = max_point_ / static_cast<variable_type>(points_);
+        for (index_type i = 1; i <= points_; ++i) {
+            const variable_type changed_variable =
+                interval_ * static_cast<variable_type>(i);
+            const variable_type exp_value =
+                std::exp(static_cast<variable_type>(-2) * changed_variable);
+            const variable_type denominator = one<variable_type> + exp_value;
+            variable_rate_list_.push_back(exp_value / denominator);
+            weight_rate_list_.push_back(static_cast<variable_type>(2) *
+                exp_value / (denominator * denominator));
+        }
+    }
+
     //! Default maximum point in changed variable.
     static constexpr auto default_max_point =
         impl::tanh_finite_integrator_traits<Variable>::default_max_point;
@@ -183,6 +227,15 @@ private:
 
     //! Number of points.
     index_type points_{default_points};
+
+    //! Interval of changed variable.
+    variable_type interval_{};
+
+    //! List of rates of distances of points from the upper bound.
+    std::vector<variable_type> variable_rate_list_{};
+
+    //! List of rates of weights of points.
+    std::vector<variable_type> weight_rate_list_{};
 };
 
 }  // namespace num_collect::integration
