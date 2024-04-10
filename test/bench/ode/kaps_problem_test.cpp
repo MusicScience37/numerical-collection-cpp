@@ -58,7 +58,7 @@ inline void bench_one(
     const Eigen::Vector2d reference{
         {std::exp(-2.0 * end_time), std::exp(-end_time)}};
 
-#ifndef NDEBUG
+#ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
     constexpr num_collect::index_type repetitions = 10;
 #else
     num_collect::index_type repetitions = 1000;  // NOLINT
@@ -94,7 +94,7 @@ auto main(int argc, char** argv) -> int {
 
     configure_logging();
 
-#ifndef NDEBUG
+#ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
     constexpr std::array<double, 2> epsilon_list{1.0, 1e-3};
 #else
     constexpr std::array<double, 3> epsilon_list{1.0, 1e-3, 1e-6};

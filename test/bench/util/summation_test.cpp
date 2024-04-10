@@ -48,7 +48,7 @@ private:
     double error_{};
 };
 
-#ifndef NDEBUG
+#ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
 constexpr std::size_t zeta4_terms = 100;
 #else
 constexpr std::size_t zeta4_terms = 100000;

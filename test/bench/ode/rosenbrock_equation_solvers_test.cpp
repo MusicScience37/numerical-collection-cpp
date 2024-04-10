@@ -46,7 +46,7 @@ inline void bench_one(
     const std::string& solver_name, bench_executor& executor) {
     constexpr double epsilon = 1e-3;
     constexpr double init_time = 0.0;
-#ifndef NDEBUG
+#ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
     constexpr double end_time = 0.1;
 #else
     constexpr double end_time = 1.0;
@@ -55,7 +55,7 @@ inline void bench_one(
     const Eigen::Vector2d reference{
         {std::exp(-2.0 * end_time), std::exp(-end_time)}};
 
-#ifndef NDEBUG
+#ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
     constexpr num_collect::index_type repetitions = 10;  // NOLINT
 #else
     constexpr num_collect::index_type repetitions = 1000;  // NOLINT

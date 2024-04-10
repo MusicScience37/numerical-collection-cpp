@@ -27,7 +27,7 @@ class gauss_legendre_fixture : public stat_bench::FixtureBase {
 public:
     gauss_legendre_fixture() {
         this->add_param<num_collect::index_type>("degree")
-#ifndef NDEBUG
+#ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
             ->add(5)   // NOLINT
             ->add(10)  // NOLINT
             ->add(50)  // NOLINT
@@ -48,7 +48,7 @@ class gauss_legendre_kronrod_fixture : public stat_bench::FixtureBase {
 public:
     gauss_legendre_kronrod_fixture() {
         this->add_param<num_collect::index_type>("degree")
-#ifndef NDEBUG
+#ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
             ->add(5)   // NOLINT
             ->add(10)  // NOLINT
 #else
@@ -70,7 +70,7 @@ class de_finite_fixture : public stat_bench::FixtureBase {
 public:
     de_finite_fixture() {
         this->add_param<num_collect::index_type>("points")
-#ifndef NDEBUG
+#ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
             ->add(5)   // NOLINT
             ->add(10)  // NOLINT
             ->add(50)  // NOLINT
@@ -92,7 +92,7 @@ class tanh_finite_fixture : public stat_bench::FixtureBase {
 public:
     tanh_finite_fixture() {
         this->add_param<num_collect::index_type>("points")
-#ifndef NDEBUG
+#ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
             ->add(10)   // NOLINT
             ->add(50)   // NOLINT
             ->add(100)  // NOLINT

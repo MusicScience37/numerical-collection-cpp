@@ -87,7 +87,7 @@ private:
     double error_rate_{};
     double reg_param_{};
 
-#ifndef NDEBUG
+#ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
     static constexpr num_collect::index_type solution_size = 30;
     static constexpr num_collect::index_type data_size = solution_size;
 #else

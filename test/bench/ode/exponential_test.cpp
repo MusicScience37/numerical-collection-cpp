@@ -58,7 +58,7 @@ inline void bench_one(
     constexpr double init_var = 1.0;
     const double reference = std::exp(end_time);
 
-#ifndef NDEBUG
+#ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
     constexpr num_collect::index_type repetitions = 10;
 #else
     constexpr num_collect::index_type repetitions = 1000;
