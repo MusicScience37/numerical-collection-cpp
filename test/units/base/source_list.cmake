@@ -17,5 +17,6 @@ set(SOURCE_FILES
     concepts/sparse_matrix_test.cpp
     exception_test.cpp
     get_size_test.cpp
+    isfinite_test.cpp
     norm_test.cpp
 )
