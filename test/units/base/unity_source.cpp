@@ -16,4 +16,5 @@
 #include "concepts/sparse_matrix_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "exception_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "get_size_test.cpp"   // NOLINT(bugprone-suspicious-include)
+#include "isfinite_test.cpp"   // NOLINT(bugprone-suspicious-include)
 #include "norm_test.cpp"       // NOLINT(bugprone-suspicious-include)

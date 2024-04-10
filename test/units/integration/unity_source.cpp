@@ -3,3 +3,4 @@
 #include "de_semi_infinite_integrator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "gauss_legendre_integrator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "gauss_legendre_kronrod_integrator_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "tanh_finite_integrator_test.cpp"  // NOLINT(bugprone-suspicious-include)

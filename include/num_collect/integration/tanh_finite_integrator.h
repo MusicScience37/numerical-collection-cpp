@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 MusicScience37 (Kenta Kabashima)
+ * Copyright 2024 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,24 +15,19 @@
  */
 /*!
  * \file
- * \brief Definition of de_finite_integrator function.
+ * \brief Definition of tanh_finite_integrator class.
  */
 #pragma once
 
 #include <cmath>
-#include <cstddef>
-#include <type_traits>
-#include <vector>
 
 #include "num_collect/base/concepts/invocable_as.h"  // IWYU pragma: keep
 #include "num_collect/base/concepts/real_scalar.h"   // IWYU pragma: keep
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/isfinite.h"
-#include "num_collect/constants/half.h"  // IWYU pragma: keep
-#include "num_collect/constants/one.h"   // IWYU pragma: keep
-#include "num_collect/constants/pi.h"    // IWYU pragma: keep
-#include "num_collect/constants/two.h"   // IWYU pragma: keep
-#include "num_collect/constants/zero.h"  // IWYU pragma: keep
+#include "num_collect/constants/half.h"
+#include "num_collect/constants/one.h"
+#include "num_collect/constants/zero.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_mixin.h"
 #include "num_collect/util/assert.h"
@@ -41,27 +36,59 @@
 namespace num_collect::integration {
 
 //! Tag of de_finite_integrator.
-inline constexpr auto de_finite_integrator_tag =
-    logging::log_tag_view("num_collect::integration::de_finite_integrator");
+inline constexpr auto tanh_finite_integrator_tag =
+    logging::log_tag_view("num_collect::integration::tanh_finite_integrator");
+
+namespace impl {
 
 /*!
- * \brief Class to perform numerical integration on finite range using double
- * exponential rule.
+ * \brief Helper class of constants for use in tanh_finite_integrator class.
+ *
+ * \tparam Variable Type of variables.
+ */
+template <typename Variable>
+struct tanh_finite_integrator_traits;
+
+/*!
+ * \brief Implementation of tanh_finite_integrator_traits for float.
+ */
+template <>
+struct tanh_finite_integrator_traits<float> {
+public:
+    //! Default maximum point in changed variable.
+    static constexpr double default_max_point = 10.0F;
+};
+
+/*!
+ * \brief Implementation of tanh_finite_integrator_traits for double.
+ */
+template <>
+struct tanh_finite_integrator_traits<double> {
+public:
+    //! Default maximum point in changed variable.
+    static constexpr double default_max_point = 20.0;
+};
+
+}  // namespace impl
+
+/*!
+ * \brief Class to perform numerical integration on finite range using TANH
+ * rule.
  *
  * \tparam Signature Function signature.
  */
 template <typename Signature>
-class de_finite_integrator;
+class tanh_finite_integrator;
 
 /*!
- * \brief Class to perform numerical integration on finite range using double
- * exponential rule.
+ * \brief Class to perform numerical integration on finite range using TANH
+ * rule.
  *
  * \tparam Result Type of results.
  * \tparam Variable Type of variables.
  */
 template <typename Result, base::concepts::real_scalar Variable>
-class de_finite_integrator<Result(Variable)> : public logging::logging_mixin {
+class tanh_finite_integrator<Result(Variable)> : public logging::logging_mixin {
 public:
     //! Type of variables.
     using variable_type = std::decay_t<Variable>;
@@ -72,7 +99,8 @@ public:
     /*!
      * \brief Constructor.
      */
-    de_finite_integrator() : logging::logging_mixin(de_finite_integrator_tag) {
+    tanh_finite_integrator()
+        : logging::logging_mixin(tanh_finite_integrator_tag) {
         calculate_coefficients();
     }
 
@@ -88,14 +116,11 @@ public:
     template <base::concepts::invocable_as<result_type(variable_type)> Function>
     [[nodiscard]] auto integrate(const Function& function, variable_type left,
         variable_type right) const -> result_type {
-        using constants::pi;
-
         const variable_type center =
             constants::half<variable_type> * (left + right);
         const variable_type width = right - left;
 
-        constexpr variable_type center_weight_rate =
-            pi<variable_type> / static_cast<variable_type>(4);
+        constexpr auto center_weight_rate = static_cast<variable_type>(0.5);
         const variable_type center_weight = width * center_weight_rate;
         util::kahan_adder<result_type> sum;
         sum += function(center) * center_weight;
@@ -145,13 +170,11 @@ public:
         const RightBoundaryFunction& right_boundary_function,
         variable_type left, variable_type right) const -> result_type {
         using constants::half;
-        using constants::pi;
 
         const variable_type width = right - left;
         const variable_type half_width = half<variable_type> * width;
 
-        constexpr variable_type center_weight_rate =
-            pi<variable_type> / static_cast<variable_type>(4);
+        constexpr auto center_weight_rate = static_cast<variable_type>(0.5);
         const variable_type center_weight = width * center_weight_rate;
         util::kahan_adder<result_type> sum;
         sum += left_boundary_function(half_width) * center_weight;
@@ -224,7 +247,7 @@ public:
      * \param[in] val Value.
      * \return This.
      */
-    auto max_point(variable_type val) -> de_finite_integrator& {
+    auto max_point(variable_type val) -> tanh_finite_integrator& {
         NUM_COLLECT_ASSERT(val > constants::zero<variable_type>);
         max_point_ = val;
         calculate_coefficients();
@@ -237,7 +260,7 @@ public:
      * \param[in] val Value.
      * \return This.
      */
-    auto points(index_type val) -> de_finite_integrator& {
+    auto points(index_type val) -> tanh_finite_integrator& {
         NUM_COLLECT_ASSERT(val > constants::zero<index_type>);
         points_ = val;
         calculate_coefficients();
@@ -246,33 +269,12 @@ public:
 
 private:
     /*!
-     * \brief Calculate differential coefficient for change of variable.
-     *
-     * \note This assumes that input is a positive number.
-     *
-     * \param[in] changed_var Changed variable.
-     * \param[in] half_width Half of width of the range to integrate on.
-     * \return Differential coefficient.
-     */
-    [[nodiscard]] static auto diff_coeff(
-        variable_type changed_var, variable_type half_width) -> variable_type {
-        const variable_type exp_value =
-            std::exp(-constants::pi<variable_type> * std::sinh(changed_var));
-        const variable_type exp_value_p1 =
-            constants::one<variable_type> + exp_value;
-        return constants::two<variable_type> * constants::pi<variable_type> *
-            half_width * std::cosh(changed_var) * exp_value /
-            (exp_value_p1 * exp_value_p1);
-    }
-
-    /*!
      * \brief Calculate coefficients for integration.
      *
      * \note Set points_ before calling this function.
      */
     void calculate_coefficients() {
         using constants::one;
-        using constants::pi;
 
         variable_rate_list_.clear();
         variable_rate_list_.reserve(static_cast<std::size_t>(points_));
@@ -284,23 +286,23 @@ private:
             const variable_type changed_variable =
                 interval_ * static_cast<variable_type>(i);
             const variable_type exp_value =
-                std::exp(-pi<variable_type> * std::sinh(changed_variable));
+                std::exp(static_cast<variable_type>(-2) * changed_variable);
             const variable_type denominator = one<variable_type> + exp_value;
             variable_rate_list_.push_back(exp_value / denominator);
-            weight_rate_list_.push_back(pi<variable_type> *
-                std::cosh(changed_variable) * exp_value /
-                (denominator * denominator));
+            weight_rate_list_.push_back(static_cast<variable_type>(2) *
+                exp_value / (denominator * denominator));
         }
     }
 
     //! Default maximum point in changed variable.
-    static constexpr auto default_max_point = static_cast<variable_type>(4);
+    static constexpr auto default_max_point =
+        impl::tanh_finite_integrator_traits<Variable>::default_max_point;
 
     //! Maximum point in changed variable.
     variable_type max_point_{default_max_point};
 
     //! Default number of points.
-    static constexpr index_type default_points = 20;
+    static constexpr index_type default_points = 50;
 
     //! Number of points.
     index_type points_{default_points};
