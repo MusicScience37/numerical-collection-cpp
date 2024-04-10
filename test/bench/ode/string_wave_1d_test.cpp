@@ -55,7 +55,7 @@ inline void bench_one(
     const std::string& solver_name, bench_executor& executor) {
     constexpr double init_time = 0.0;
 
-#ifndef NDEBUG
+#ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
     constexpr double end_time = 0.1;
     constexpr num_collect::index_type num_points = 11;
     constexpr num_collect::index_type repetitions = 10;

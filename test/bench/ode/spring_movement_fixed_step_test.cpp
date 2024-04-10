@@ -40,7 +40,7 @@ template <typename Solver>
 inline void bench_one(
     const std::string& solver_name, fixed_step_bench_executor& executor) {
     constexpr double init_time = 0.0;
-#ifndef NDEBUG
+#ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
     constexpr double end_time = 10.0;
 #else
     constexpr double end_time = 100.0;
@@ -52,14 +52,14 @@ inline void bench_one(
         return var.squaredNorm();
     };
 
-#ifndef NDEBUG
+#ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
     constexpr std::array<double, 3> step_size_list{1e-1, 1e-2, 1e-3};
 #else
     constexpr std::array<double, 4> step_size_list{1e-1, 1e-2, 1e-3, 1e-4};
 #endif
 
     for (const double step_size : step_size_list) {
-#ifndef NDEBUG
+#ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
         constexpr num_collect::index_type repetitions = 10;
 #else
         const auto repetitions =

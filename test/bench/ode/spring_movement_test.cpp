@@ -61,7 +61,7 @@ inline void bench_one(
     const Eigen::Vector2d reference =
         Eigen::Vector2d(std::cos(end_time), std::sin(end_time));
 
-#ifndef NDEBUG
+#ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
     constexpr num_collect::index_type repetitions = 10;
 #else
     constexpr num_collect::index_type repetitions = 1000;

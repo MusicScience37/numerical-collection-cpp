@@ -5,14 +5,25 @@ set(NUM_COLLECT_BENCH_DIR
     CACHE PATH "directory to which benchmark results are written" FORCE)
 file(MAKE_DIRECTORY ${NUM_COLLECT_BENCH_DIR})
 
-set(NUM_COLLECT_BENCH_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+    set(NUM_COLLECT_ENABLE_HEAVY_BENCH_DEFAULT OFF)
+else()
+    set(NUM_COLLECT_ENABLE_HEAVY_BENCH_DEFAULT ON)
+endif()
+option(NUM_COLLECT_ENABLE_HEAVY_BENCH "enable heavy benchmarks"
+       ${NUM_COLLECT_ENABLE_HEAVY_BENCH_DEFAULT})
+
+add_library(num_collect_bench_common INTERFACE)
+if(NUM_COLLECT_ENABLE_HEAVY_BENCH)
+    target_compile_definitions(num_collect_bench_common
+                               INTERFACE NUM_COLLECT_ENABLE_HEAVY_BENCH=1)
+endif()
 
 function(target_add_to_benchmark TARGET)
     target_link_libraries(
-        ${TARGET} PRIVATE cpp_stat_bench::stat_bench num_collect
-                          num_prob_collect num_collect_test_utils)
-    target_include_directories(${TARGET}
-                               PRIVATE ${NUM_COLLECT_BENCH_INCLUDE_DIR})
+        ${TARGET}
+        PRIVATE cpp_stat_bench::stat_bench num_collect num_prob_collect
+                num_collect_test_utils num_collect_bench_common)
 
     if(NUM_COLLECT_TEST_BENCHMARKS)
         add_test(
@@ -25,8 +36,9 @@ endfunction()
 function(add_bench_using_pybind11 TARGET)
     if(PYTHON_EXECUTABLE)
         target_link_libraries(
-            ${TARGET} PRIVATE num_collect num_prob_collect
-                              num_collect_test_utils pybind11::embed)
+            ${TARGET}
+            PRIVATE num_collect num_prob_collect num_collect_test_utils
+                    num_collect_bench_common pybind11::embed)
         if(NUM_COLLECT_TEST_BENCHMARKS)
             add_test(
                 NAME ${TARGET}
