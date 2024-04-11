@@ -25,7 +25,6 @@
 #include <cmath>
 #include <cstddef>
 #include <limits>
-#include <stack>
 #include <type_traits>
 #include <unordered_set>
 #include <utility>
@@ -44,6 +43,7 @@
 #include "num_collect/constants/zero.h"  // IWYU pragma: keep
 #include "num_collect/util/assert.h"
 #include "num_collect/util/safe_cast.h"
+#include "num_collect/util/static_stack.h"
 
 namespace num_collect::integration {
 
@@ -154,7 +154,9 @@ public:
             function(constants::half<variable_type> * (left + right)) *
             constants::zero<variable_type>;
 
-        std::stack<variable_type> remaining_right;
+        constexpr auto stack_size = static_cast<std::size_t>(
+            std::numeric_limits<variable_type>::digits);
+        util::static_stack<variable_type, stack_size> remaining_right;
         variable_type cur_left = left;
         variable_type cur_right = right;
 
@@ -233,7 +235,7 @@ public:
      * \return This.
      */
     auto min_div_rate(variable_type val) -> gauss_legendre_kronrod_integrator& {
-        NUM_COLLECT_ASSERT(val > 0);
+        NUM_COLLECT_ASSERT(val > std::numeric_limits<variable_type>::epsilon);
         min_div_rate_ = val;
         return *this;
     }
