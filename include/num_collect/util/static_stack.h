@@ -26,6 +26,8 @@
 
 namespace num_collect::util {
 
+// NOLINTBEGIN(cppcoreguidelines-pro-bounds-pointer-arithmetic,*-avoid-c-arrays): This class is a container.
+
 /*!
  * \brief Class of stacks using static arrays.
  *
@@ -111,12 +113,8 @@ public:
     }
 
 private:
-    // NOLINTBEGIN(*-avoid-c-arrays)
-
     //! Buffer for stack.
     alignas(alignof(T)) char buffer_[sizeof(T[StaticArraySize])]{};
-
-    // NOLINTEND(*-avoid-c-arrays)
 
     //! Pointer to the first element in the buffer.
     T* begin_;
@@ -127,5 +125,7 @@ private:
     //! Pointer to the past-the-end storage in the buffer.
     T* storage_end_;
 };
+
+// NOLINTEND(cppcoreguidelines-pro-bounds-pointer-arithmetic,*-avoid-c-arrays)
 
 }  // namespace num_collect::util
