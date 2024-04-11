@@ -646,11 +646,12 @@ FodyWeavers.xsd
 # Configuration of VSCode shared between environments
 !/.vscode/cmake-variants.yaml
 
-# Output of examples
+# Output of examples and benchmarks
 /*.html
 /*.png
 **/diagrams/*.html
 **/diagrams/*.png
+**/diagrams/*.data
 
 # Temporary output of ApprovalTests
 *.received.*

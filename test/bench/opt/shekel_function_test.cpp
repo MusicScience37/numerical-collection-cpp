@@ -74,7 +74,7 @@ public:
     void test_optimizer(Optimizer& optimizer) {
         constexpr double tol_value = 1e-4;
         const auto value_bound = minimum_value() + tol_value;
-#ifndef NDEBUG
+#ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
         constexpr num_collect::index_type max_evaluations = 1000;
 #else
         constexpr num_collect::index_type max_evaluations = 100000;

@@ -126,10 +126,11 @@ public:
             ->add(2)   // NOLINT
             ->add(5)   // NOLINT
             ->add(10)  // NOLINT
-#ifdef NDEBUG
+#ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
             ->add(20)   // NOLINT
             ->add(50)   // NOLINT
             ->add(100)  // NOLINT
+            ->add(200)  // NOLINT
 #endif
             ;
     }

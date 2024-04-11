@@ -52,7 +52,7 @@ static auto calculate_reference(double init_time, double end_time,
     const Eigen::Vector2d& init_var) -> Eigen::Vector2d {
     num_collect::ode::runge_kutta::rk4_solver<problem_type> solver{
         problem_type{}};
-#ifndef NDEBUG
+#ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
     constexpr double step_size = 1e-4;
 #else
     constexpr double step_size = 1e-6;
@@ -64,7 +64,7 @@ static auto calculate_reference(double init_time, double end_time,
 }
 
 static constexpr double init_time = 0.0;
-#ifndef NDEBUG
+#ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
 static constexpr double end_time = 1.0;
 #else
 static constexpr double end_time = 10.0;
@@ -77,7 +77,7 @@ static const Eigen::Vector2d reference =
 template <typename Solver>
 inline void bench_one(
     const std::string& solver_name, bench_executor& executor) {
-#ifndef NDEBUG
+#ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
     constexpr num_collect::index_type repetitions = 10;
 #else
     constexpr num_collect::index_type repetitions = 1000;

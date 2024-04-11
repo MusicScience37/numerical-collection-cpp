@@ -23,3 +23,4 @@
 #include "producer_consumer_circular_queue_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "safe_cast_test.cpp"         // NOLINT(bugprone-suspicious-include)
 #include "source_info_view_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "static_stack_test.cpp"      // NOLINT(bugprone-suspicious-include)

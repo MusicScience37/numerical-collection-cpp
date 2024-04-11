@@ -41,7 +41,7 @@ public:
             ->add(100)  // NOLINT
             ->add(200)  // NOLINT
             ->add(500)  // NOLINT
-#ifdef NDEBUG
+#ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
             ->add(1000)   // NOLINT
             ->add(2000)   // NOLINT
             ->add(5000)   // NOLINT

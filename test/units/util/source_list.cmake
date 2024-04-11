@@ -24,4 +24,5 @@ set(SOURCE_FILES
     producer_consumer_circular_queue_test.cpp
     safe_cast_test.cpp
     source_info_view_test.cpp
+    static_stack_test.cpp
 )

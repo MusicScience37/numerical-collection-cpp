@@ -25,7 +25,6 @@
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "../solve_and_check.h"
-#include "comparison_approvals.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/ode/rosenbrock/rodasp_formula.h"
 #include "num_collect/ode/rosenbrock/rodaspr_formula.h"

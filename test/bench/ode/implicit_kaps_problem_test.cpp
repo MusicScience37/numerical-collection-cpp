@@ -48,7 +48,7 @@ inline void bench_one(
     const Eigen::Vector2d reference{
         {std::exp(-2.0 * end_time), std::exp(-end_time)}};
 
-#ifndef NDEBUG
+#ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
     constexpr num_collect::index_type repetitions = 10;
 #else
     constexpr num_collect::index_type repetitions = 1000;

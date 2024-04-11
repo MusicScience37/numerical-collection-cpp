@@ -41,7 +41,7 @@ public:
     multi_variate_multi_optima_function_fixture() {
         add_param<num_collect::index_type>("dimension")
             ->add(2)  // NOLINT
-#ifdef NDEBUG
+#ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
             ->add(3)  // NOLINT
             ->add(4)  // NOLINT
             ->add(5)  // NOLINT
