@@ -47,6 +47,9 @@ public:
     //! Type of scalars.
     using scalar_type = typename DistanceFunction::value_type;
 
+    //! Whether this calculator uses the globally fixed length parameters.
+    static constexpr bool uses_global_length_parameter = true;
+
     /*!
      * \brief Constructor.
      */

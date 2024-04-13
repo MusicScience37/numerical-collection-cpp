@@ -24,9 +24,11 @@
 
 #include "num_collect/base/concepts/dense_matrix.h"  // IWYU pragma: keep
 #include "num_collect/base/index_type.h"
+#include "num_collect/constants/zero.h"
 #include "num_collect/rbf/concepts/distance_function.h"  // IWYU pragma: keep
 #include "num_collect/rbf/concepts/length_parameter_calculator.h"  // IWYU pragma: keep
 #include "num_collect/rbf/concepts/rbf.h"  // IWYU pragma: keep
+#include "num_collect/util/assert.h"
 
 namespace num_collect::rbf {
 
@@ -53,23 +55,38 @@ template <concepts::distance_function DistanceFunction, concepts::rbf RBF,
     std::is_same_v<typename DistanceFunction::value_type,
         typename RBF::scalar_type> &&
     std::is_same_v<typename DistanceFunction::value_type,
-        typename KernelMatrix::Scalar>
+        typename KernelMatrix::Scalar> &&
+    LengthParameterCalculator::uses_global_length_parameter
 inline void compute_kernel_matrix(const DistanceFunction& distance_function,
     const RBF& rbf, LengthParameterCalculator& length_parameter_calculator,
     const std::vector<typename DistanceFunction::variable_type>& variables,
     KernelMatrix& kernel_matrix) {
+    using scalar_type = typename KernelMatrix::Scalar;
+
     length_parameter_calculator.compute(variables, distance_function);
+
+    const scalar_type length_parameter =
+        length_parameter_calculator.length_parameter_at(
+            static_cast<index_type>(0));
+    NUM_COLLECT_ASSERT(length_parameter > static_cast<scalar_type>(0));
+
+    const scalar_type diagonal_coeff = rbf(constants::zero<scalar_type>);
 
     const std::size_t num_variables = variables.size();
     kernel_matrix.resize(static_cast<index_type>(num_variables),
         static_cast<index_type>(num_variables));
+
     for (std::size_t i = 0; i < num_variables; ++i) {
-        for (std::size_t j = 0; j < num_variables; ++j) {
-            kernel_matrix(
-                static_cast<index_type>(i), static_cast<index_type>(j)) =
+        kernel_matrix(static_cast<index_type>(i), static_cast<index_type>(i)) =
+            diagonal_coeff;
+        for (std::size_t j = i + 1; j < num_variables; ++j) {
+            const scalar_type value =
                 rbf(distance_function(variables[i], variables[j]) /
-                    length_parameter_calculator.length_parameter_at(
-                        static_cast<index_type>(j)));
+                    length_parameter);
+            kernel_matrix(
+                static_cast<index_type>(i), static_cast<index_type>(j)) = value;
+            kernel_matrix(
+                static_cast<index_type>(j), static_cast<index_type>(i)) = value;
         }
     }
 }
