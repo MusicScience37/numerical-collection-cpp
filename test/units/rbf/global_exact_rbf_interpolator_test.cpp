@@ -15,14 +15,14 @@
  */
 /*!
  * \file
- * \brief Test of exact_rbf_interpolator class.
+ * \brief Test of global_exact_rbf_interpolator class.
  */
-#include "num_collect/rbf/exact_rbf_interpolator.h"
+#include "num_collect/rbf/global_exact_rbf_interpolator.h"
 
 #include <cmath>
 #include <tuple>
 
-#include <Eigen/src/Core/Matrix.h>
+#include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
 
 #include "comparison_approvals.h"
@@ -30,14 +30,12 @@
 #include "num_collect/constants/pi.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
 
-TEST_CASE("num_collect::rbf::exact_rbf_interpolator") {
+TEST_CASE("num_collect::rbf::global_exact_rbf_interpolator") {
     using num_collect::rbf::global_exact_rbf_interpolator;
     using num_collect::rbf::rbfs::gaussian_rbf;
 
     using variable_type = double;
-    using rbf_type = gaussian_rbf<double>;
-    using rbf_interpolator_type =
-        global_exact_rbf_interpolator<rbf_type, variable_type>;
+    using rbf_interpolator_type = global_exact_rbf_interpolator<variable_type>;
 
     rbf_interpolator_type interpolator;
 

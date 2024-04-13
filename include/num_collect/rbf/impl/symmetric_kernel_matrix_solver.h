@@ -27,7 +27,7 @@
 #include "num_collect/base/concepts/dense_vector.h"  // IWYU pragma: keep
 #include "num_collect/base/concepts/real_scalar_dense_matrix.h"  // IWYU pragma: keep
 
-namespace num_collect::rbf {
+namespace num_collect::rbf::impl {
 
 /*!
  * \brief Class to solve linear equations with kernel matrices.
@@ -186,4 +186,4 @@ private:
     Vector spectre_;
 };
 
-}  // namespace num_collect::rbf
+}  // namespace num_collect::rbf::impl

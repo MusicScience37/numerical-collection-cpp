@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of exact_rbf_interpolator class.
+ * \brief Definition of global_exact_rbf_interpolator class.
  */
 #pragma once
 
@@ -26,39 +26,34 @@
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/rbf/compute_kernel_matrix.h"
-#include "num_collect/rbf/concepts/distance_function.h"     // IWYU pragma: keep
-#include "num_collect/rbf/concepts/kernel_matrix_solver.h"  // IWYU pragma: keep
+#include "num_collect/rbf/concepts/distance_function.h"  // IWYU pragma: keep
 #include "num_collect/rbf/concepts/length_parameter_calculator.h"  // IWYU pragma: keep
 #include "num_collect/rbf/concepts/rbf.h"  // IWYU pragma: keep
 #include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
+#include "num_collect/rbf/impl/symmetric_kernel_matrix_solver.h"
 #include "num_collect/rbf/length_parameter_calculators/global_length_parameter_calculator.h"
-#include "num_collect/rbf/symmetric_kernel_matrix_solver.h"
+#include "num_collect/rbf/rbfs/gaussian_rbf.h"
 
 namespace num_collect::rbf {
 
 /*!
  * \brief Class to interpolate using RBF without regularization.
  *
+ * \tparam Variable Type of variables.
+ * \tparam FunctionValue Type of function values.
  * \tparam RBF Type of the RBF.
  * \tparam DistanceFunction Type of the distance function.
- * \tparam LengthParameterCalculator Type of the calculator of length
- * parameters.
- * \tparam KernelMatrixSolver Type of the solver of the linear equation of
- * kernel matrix.
- * \tparam DistanceFunction::value_type Type of function values.
  */
-template <concepts::rbf RBF, concepts::distance_function DistanceFunction,
-    concepts::length_parameter_calculator LengthParameterCalculator,
-    concepts::kernel_matrix_solver KernelMatrixSolver,
-    typename FunctionValue = typename DistanceFunction::value_type>
-    requires std::is_same_v<
-                 typename LengthParameterCalculator::distance_function_type,
-                 DistanceFunction> &&
-    std::is_same_v<typename DistanceFunction::value_type,
-        typename RBF::scalar_type> &&
-    std::is_same_v<typename DistanceFunction::value_type,
-        typename KernelMatrixSolver::scalar_type>
-class exact_rbf_interpolator {
+template <typename Variable,
+    typename FunctionValue = typename distance_functions::
+        euclidean_distance_function<Variable>::value_type,
+    concepts::rbf RBF = rbfs::gaussian_rbf<typename distance_functions::
+            euclidean_distance_function<Variable>::value_type>,
+    concepts::distance_function DistanceFunction =
+        distance_functions::euclidean_distance_function<Variable>>
+    requires std::is_same_v<typename DistanceFunction::value_type,
+        typename RBF::scalar_type>
+class global_exact_rbf_interpolator {
 public:
     //! Type of the distance function.
     using distance_function_type = DistanceFunction;
@@ -67,7 +62,9 @@ public:
     using rbf_type = RBF;
 
     //! Type of the calculator of length parameters.
-    using length_parameter_calculator_type = LengthParameterCalculator;
+    using length_parameter_calculator_type =
+        length_parameter_calculators::global_length_parameter_calculator<
+            distance_function_type>;
 
     //! Type of variables.
     using variable_type = typename DistanceFunction::variable_type;
@@ -77,9 +74,6 @@ public:
 
     //! Type of kernel matrices.
     using kernel_matrix_type = Eigen::MatrixX<kernel_value_type>;
-
-    //! Type of the solver of the linear equation of kernel matrix.
-    using kernel_matrix_solver_type = KernelMatrixSolver;
 
     //! Type of function values.
     using function_value_type = FunctionValue;
@@ -93,7 +87,7 @@ public:
      * \param[in] distance_function Distance function.
      * \param[in] rbf RBF.
      */
-    explicit exact_rbf_interpolator(
+    explicit global_exact_rbf_interpolator(
         distance_function_type distance_function = distance_function_type(),
         rbf_type rbf = rbf_type())
         : distance_function_(std::move(distance_function)),
@@ -199,7 +193,9 @@ private:
     kernel_matrix_type kernel_matrix_{};
 
     //! Solver of the linear equation of kernel matrix.
-    kernel_matrix_solver_type kernel_matrix_solver_{};
+    impl::symmetric_kernel_matrix_solver<kernel_matrix_type,
+        function_value_vector_type>
+        kernel_matrix_solver_{};
 
     //! Coefficients for sample points.
     function_value_vector_type coeffs_{};
@@ -207,25 +203,5 @@ private:
     //! Common coefficients for RBF.
     function_value_type common_coeff_{};
 };
-
-/*!
- * \brief Class to interpolate using RBF without regularization.
- *
- * \tparam RBF Type of the RBF.
- * \tparam Variable Type of variables.
- * \tparam FunctionValue Type of function values.
- * \tparam DistanceFunction Type of the distance function.
- */
-template <concepts::rbf RBF, typename Variable,
-    typename FunctionValue = typename RBF::scalar_type,
-    concepts::distance_function DistanceFunction =
-        distance_functions::euclidean_distance_function<Variable>>
-using global_exact_rbf_interpolator =
-    exact_rbf_interpolator<RBF, DistanceFunction,
-        length_parameter_calculators::global_length_parameter_calculator<
-            DistanceFunction>,
-        symmetric_kernel_matrix_solver<
-            Eigen::MatrixX<typename DistanceFunction::value_type>,
-            Eigen::VectorX<FunctionValue>>>;
 
 }  // namespace num_collect::rbf
