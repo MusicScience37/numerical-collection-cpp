@@ -1,0 +1,78 @@
+@startuml rbf
+
+title Abstract model of RBF interpolation
+
+together {
+    interface distance_function <Variable, Value> <<Concept>> {
+        {abstract} + using variable_type = Variable
+        {abstract} + using value_type = Value
+        {abstract} + operator()(var1: variable_type, var2: variable_type) : value_type
+    }
+
+    interface distance_function_operator <DistanceFunction> <<Concept>>
+}
+distance_function_operator .> distance_function
+distance_function <|. distance_function_operator
+
+package distance_functions {
+    class euclidean_distance_function<Variable>
+    distance_function <|.. euclidean_distance_function
+
+    class differentiated_by_first <Function>
+    distance_function_operator <|.. differentiated_by_first
+}
+
+together {
+    interface rbf <Scalar> <<Concept>> {
+        {abstract} + using scalar_type = Scalar
+        {abstract} + operator()(distance_rate: scalar_type) : scalar_type
+    }
+
+    interface rbf_operator <RBF> <<Concept>>
+}
+rbf_operator .> rbf
+rbf <|. rbf_operator
+
+package rbfs {
+    class gaussian_rbf <Scalar>
+    rbf <|.. gaussian_rbf
+
+    class differentiated <Function>
+    rbf_operator <|.. differentiated
+}
+
+interface length_parameter_calculator <Distance, DistanceFunction> <<Concept>> {
+    {abstract} + using variable_type = DistanceFunction::variable_type
+    {abstract} + using scalar_type = Distance
+    {abstract} + using distance_function_type = DistanceFunction
+    {abstract} + scale() : scalar_type
+    {abstract} + scale(value: scalar_type) : void
+    {abstract} + compute(variables: vector<variable_type>) : void
+    {abstract} + length_parameter_at(index: index_type) : scalar_type
+}
+length_parameter_calculator ..> distance_function
+
+package length_parameter_calculators {
+    class global_length_parameter_calculator <Distance, DistanceFunction>
+    length_parameter_calculator <|.. global_length_parameter_calculator
+}
+
+interface rbf_kernel <DistanceFunction, RBF> <<Concept>> {
+    {abstract} + using variable_type = DistanceFunction::variable_type
+    {abstract} + using length_parameter_type = RBF::scalar_type
+    {abstract} + using result_type = RBF::scalar_type
+    {abstract} + operator()(var1: variable_type, var2: variable_type,\n\tlen_param: length_parameter_type) : result_type
+}
+rbf_kernel ..> distance_function
+rbf_kernel ..> rbf
+
+class "rbf_kernel" as rbf_kernel_impl <DistanceFunction, RBF>
+rbf_kernel <|.. rbf_kernel_impl
+
+class "(Free function)" as kernel_matrix_calculator {
+    compute_kernel_matrix<RBFKernel, LengthParameterCalculator>(kernel: RBFKernel,\n\tlength_parameter_calculator: LengthParameterCalculator,\n\tvariables: vector<RBFKernel::variable_type>) : <matrix-expression>
+}
+kernel_matrix_calculator ..> rbf_kernel
+kernel_matrix_calculator ..> length_parameter_calculator
+
+@enduml

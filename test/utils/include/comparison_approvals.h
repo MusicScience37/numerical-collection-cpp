@@ -133,6 +133,54 @@ public:
             std::string_view(buffer.data(), buffer.size()));
     }
 
+    template <num_collect::concepts::real_scalar_dense_vector Vector>
+    static void verify_with_reference_and_error(const Vector& actual,
+        const Vector& est_error, const Vector& reference,
+        num_collect::index_type precision =
+            (std::numeric_limits<typename Vector::Scalar>::digits10 / 2)) {
+        REQUIRE(actual.size() > 0);
+        REQUIRE(reference.size() == actual.size());
+
+        constexpr num_collect::index_type whole_precision =
+            std::numeric_limits<typename Vector::Scalar>::digits10 - 2;
+        constexpr num_collect::index_type width = whole_precision + 10;
+        const num_collect::index_type lines = actual.size();
+
+        fmt::memory_buffer buffer;
+        fmt::format_to(std::back_inserter(buffer), "{1:>{0}}", width, "Index");
+        fmt::format_to(std::back_inserter(buffer), "{1:>{0}}", width, "Actual");
+        fmt::format_to(
+            std::back_inserter(buffer), "{1:>{0}}", width, "Reference");
+        fmt::format_to(
+            std::back_inserter(buffer), "{1:>{0}}", width, "Est. Error");
+        fmt::format_to(
+            std::back_inserter(buffer), "{1:>{0}}", width, "Actual Error");
+        buffer.push_back('\n');
+
+        for (num_collect::index_type l = 0; l < lines; ++l) {
+            fmt::format_to(std::back_inserter(buffer), "{2:> {1}}",
+                whole_precision, width, l);
+            fmt::format_to(std::back_inserter(buffer), "{2:> {1}.{0}e}",
+                whole_precision, width, actual(l));
+            fmt::format_to(std::back_inserter(buffer), "{2:> {1}.{0}e}",
+                whole_precision, width, reference(l));
+            fmt::format_to(std::back_inserter(buffer), "{2:> {1}.{0}e}",
+                whole_precision, width, est_error(l));
+            fmt::format_to(std::back_inserter(buffer), "{2:> {1}.{0}e}",
+                whole_precision, width, actual(l) - reference(l));
+            buffer.push_back('\n');
+        }
+
+        const std::vector<bool> checked_columns{true, true, true, true, false};
+        auto disposer =
+            ApprovalTests::FileApprover::registerComparatorForExtension(".txt",
+                std::make_shared<table_comparator>(
+                    checked_columns, lines, precision));
+
+        ApprovalTests::Approvals::verify(
+            std::string_view(buffer.data(), buffer.size()));
+    }
+
     template <num_collect::concepts::real_scalar_dense_matrix Matrix>
     static void verify_with_reference(const Matrix& actual,
         const Matrix& reference,
