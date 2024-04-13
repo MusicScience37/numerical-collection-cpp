@@ -44,6 +44,8 @@ concept length_parameter_calculator = requires() {
     requires distance_function<typename T::distance_function_type>;
     requires base::concepts::real_scalar<typename T::scalar_type>;
 
+    T();
+
     requires requires(T& obj,
         const std::vector<typename T::variable_type>& variables,
         const typename T::distance_function_type& distance_function) {
