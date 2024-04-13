@@ -76,7 +76,7 @@ public:
      * \param[in] reg_param Regularization parameter.
      */
     template <base::concepts::dense_vector Coefficients>
-    void solve(Coefficients& coefficients, scalar_type reg_param) {
+    void solve(Coefficients& coefficients, scalar_type reg_param) const {
         coefficients = decomposition_.eigenvectors() *
             (decomposition_.eigenvalues().array() + reg_param)
                 .inverse()

@@ -26,7 +26,8 @@
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/rbf/compute_kernel_matrix.h"
-#include "num_collect/rbf/concepts/distance_function.h"  // IWYU pragma: keep
+#include "num_collect/rbf/concepts/distance_function.h"     // IWYU pragma: keep
+#include "num_collect/rbf/concepts/kernel_matrix_solver.h"  // IWYU pragma: keep
 #include "num_collect/rbf/concepts/length_parameter_calculator.h"  // IWYU pragma: keep
 #include "num_collect/rbf/concepts/rbf.h"  // IWYU pragma: keep
 #include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
@@ -48,7 +49,7 @@ namespace num_collect::rbf {
  */
 template <concepts::rbf RBF, concepts::distance_function DistanceFunction,
     concepts::length_parameter_calculator LengthParameterCalculator,
-    typename KernelMatrixSolver,
+    concepts::kernel_matrix_solver KernelMatrixSolver,
     typename FunctionValue = typename DistanceFunction::value_type>
     requires std::is_same_v<
                  typename LengthParameterCalculator::distance_function_type,
