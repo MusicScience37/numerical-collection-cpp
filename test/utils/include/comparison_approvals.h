@@ -171,7 +171,7 @@ public:
             buffer.push_back('\n');
         }
 
-        const std::vector<bool> checked_columns{true, true, true, false};
+        const std::vector<bool> checked_columns{true, true, true, true, false};
         auto disposer =
             ApprovalTests::FileApprover::registerComparatorForExtension(".txt",
                 std::make_shared<table_comparator>(
