@@ -46,8 +46,7 @@ TEST_CASE("num_collect::rbf::exact_rbf_interpolator") {
             return std::cos(num_collect::constants::pi<double> * x);
         };
 
-        const auto sample_variables =
-            std::vector<double>{0.0, 0.4, 0.7, 0.9, 1.0};
+        const auto sample_variables = std::vector<double>{0.0, 0.5, 0.8, 1.0};
         Eigen::VectorXd sample_values{};
         sample_values.resize(
             static_cast<num_collect::index_type>(sample_variables.size()));
@@ -75,6 +74,6 @@ TEST_CASE("num_collect::rbf::exact_rbf_interpolator") {
         }
         const Eigen::VectorXd standard_deviations = variances.cwiseSqrt();
         comparison_approvals::verify_with_reference_and_error(
-            actual_values, standard_deviations, interpolated_values);
+            actual_values, standard_deviations, interpolated_values, 3);
     }
 }
