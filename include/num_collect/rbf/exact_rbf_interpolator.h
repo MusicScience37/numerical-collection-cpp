@@ -109,7 +109,8 @@ public:
         compute_kernel_matrix(distance_function_, rbf_,
             length_parameter_calculator_, variables, kernel_matrix_);
         kernel_matrix_solver_.compute(kernel_matrix_, function_values);
-        kernel_matrix_solver_.solve(coeffs_);
+        kernel_matrix_solver_.solve(coeffs_, reg_param);
+        common_coeff_ = kernel_matrix_solver_.calc_common_coeff(reg_param);
     }
 
     /*!
@@ -136,6 +137,41 @@ public:
     }
 
     /*!
+     * \brief Evaluate mean and variance in the gaussian process for a variable.
+     *
+     * \param[in] variable Variable on which the function value is interpolated.
+     * \param[in] variables_for_kernel Variables used in compute() function.
+     * \return Mean and variance.
+     *
+     * \note If variables_for_kernel is different from variables given in
+     * compute() function, the behaivior is undefined.
+     */
+    [[nodiscard]] auto evaluate_mean_and_variance_on(
+        const variable_type& variable,
+        const std::vector<variable_type>& variables_for_kernel) const
+        -> std::pair<function_value_type, function_value_type>
+        requires length_parameter_calculator_type::uses_global_length_parameter
+    {
+        Eigen::VectorXd kernel_vec;
+        kernel_vec.resize(static_cast<index_type>(variables_for_kernel.size()));
+        for (std::size_t i = 0; i < variables_for_kernel.size(); ++i) {
+            kernel_vec(static_cast<index_type>(i)) =
+                rbf_(distance_function_(variable, variables_for_kernel[i]) /
+                    length_parameter_calculator_.length_parameter_at(
+                        static_cast<index_type>(i)));
+        }
+
+        const function_value_type mean = kernel_vec.dot(coeffs_);
+        const function_value_type center_rbf_value =
+            rbf_(static_cast<kernel_value_type>(0));
+        const function_value_type variance = common_coeff_ *
+            std::max<function_value_type>(center_rbf_value -
+                    kernel_matrix_solver_.calc_reg_term(kernel_vec, reg_param),
+                static_cast<function_value_type>(0));
+        return {mean, variance};
+    }
+
+    /*!
      * \brief Get the coefficients for samples points.
      *
      * \return Coefficients.
@@ -146,6 +182,9 @@ public:
     }
 
 private:
+    //! Regularization parameter.
+    static constexpr auto reg_param = static_cast<kernel_value_type>(0);
+
     //! Distance function.
     distance_function_type distance_function_;
 
@@ -163,6 +202,9 @@ private:
 
     //! Coefficients for sample points.
     function_value_vector_type coeffs_{};
+
+    //! Common coefficients for RBF.
+    function_value_type common_coeff_{};
 };
 
 /*!

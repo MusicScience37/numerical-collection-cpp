@@ -26,7 +26,6 @@
 
 #include "num_collect/base/concepts/dense_vector.h"  // IWYU pragma: keep
 #include "num_collect/base/concepts/real_scalar_dense_matrix.h"  // IWYU pragma: keep
-#include "num_collect/constants/zero.h"
 
 namespace num_collect::rbf {
 
@@ -77,8 +76,7 @@ public:
      * \param[in] reg_param Regularization parameter.
      */
     template <base::concepts::dense_vector Coefficients>
-    void solve(Coefficients& coefficients,
-        scalar_type reg_param = constants::zero<scalar_type>) {
+    void solve(Coefficients& coefficients, scalar_type reg_param) {
         coefficients = decomposition_.eigenvectors() *
             (decomposition_.eigenvalues().array() + reg_param)
                 .inverse()
@@ -124,6 +122,26 @@ public:
     [[nodiscard]] auto calc_common_coeff(const scalar_type& reg_param) const
         -> scalar_type {
         return calc_reg_term(reg_param) / spectre_.rows();
+    }
+
+    /*!
+     * \brief Calculate the regularization term for a vector.
+     *
+     * \tparam InputData Type of the input data.
+     * \param[in] reg_param Regularization parameter.
+     * \param[in] data Data vector.
+     * \return Value.
+     */
+    template <base::concepts::dense_vector InputData>
+    [[nodiscard]] auto calc_reg_term(
+        const InputData& data, scalar_type reg_param) const -> scalar_type {
+        return ((decomposition_.eigenvectors().adjoint() * data)
+                    .array()
+                    .abs2()
+                    .rowwise()
+                    .sum() /
+            (decomposition_.eigenvalues().array() + reg_param))
+            .sum();
     }
 
     /*!

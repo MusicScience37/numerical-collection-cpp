@@ -20,12 +20,14 @@
 #include "num_collect/rbf/exact_rbf_interpolator.h"
 
 #include <cmath>
+#include <tuple>
 
 #include <Eigen/src/Core/Matrix.h>
 #include <catch2/catch_test_macros.hpp>
 
 #include "comparison_approvals.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/constants/pi.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
 
 TEST_CASE("num_collect::rbf::exact_rbf_interpolator") {
@@ -40,14 +42,18 @@ TEST_CASE("num_collect::rbf::exact_rbf_interpolator") {
     rbf_interpolator_type interpolator;
 
     SECTION("interpolate") {
+        const auto function = [](double x) {
+            return std::cos(num_collect::constants::pi<double> * x);
+        };
+
         const auto sample_variables =
-            std::vector<double>{0.0, 0.3, 0.6, 0.8, 1.0};
+            std::vector<double>{0.0, 0.4, 0.7, 0.9, 1.0};
         Eigen::VectorXd sample_values{};
         sample_values.resize(
             static_cast<num_collect::index_type>(sample_variables.size()));
         for (std::size_t i = 0; i < sample_variables.size(); ++i) {
             sample_values(static_cast<num_collect::index_type>(i)) =
-                std::exp(sample_variables[i]);
+                function(sample_variables[i]);
         }
 
         interpolator.compute(sample_variables, sample_values);
@@ -58,14 +64,17 @@ TEST_CASE("num_collect::rbf::exact_rbf_interpolator") {
         interpolated_values.resize(interpolated_variables.size());
         Eigen::VectorXd actual_values;
         actual_values.resize(interpolated_variables.size());
+        Eigen::VectorXd variances;
+        variances.resize(interpolated_variables.size());
         for (num_collect::index_type i = 0; i < interpolated_variables.size();
              ++i) {
-            interpolated_values(i) = interpolator.interpolate(
-                interpolated_variables(i), sample_variables);
-            actual_values(i) = std::exp(interpolated_variables(i));
+            std::tie(interpolated_values(i), variances(i)) =
+                interpolator.evaluate_mean_and_variance_on(
+                    interpolated_variables(i), sample_variables);
+            actual_values(i) = function(interpolated_variables(i));
         }
-
-        comparison_approvals::verify_with_reference(
-            actual_values, interpolated_values);
+        const Eigen::VectorXd standard_deviations = variances.cwiseSqrt();
+        comparison_approvals::verify_with_reference_and_error(
+            actual_values, standard_deviations, interpolated_values);
     }
 }
