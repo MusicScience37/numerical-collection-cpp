@@ -19,12 +19,17 @@
  */
 #pragma once
 
+#include <cmath>
 #include <utility>
 #include <vector>
 
 #include <Eigen/Core>
 
 #include "num_collect/base/index_type.h"
+#include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_mixin.h"
+#include "num_collect/opt/function_object_wrapper.h"
+#include "num_collect/opt/sampling_optimizer.h"
 #include "num_collect/rbf/compute_kernel_matrix.h"
 #include "num_collect/rbf/concepts/distance_function.h"  // IWYU pragma: keep
 #include "num_collect/rbf/concepts/length_parameter_calculator.h"  // IWYU pragma: keep
@@ -35,6 +40,10 @@
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
 
 namespace num_collect::rbf {
+
+//! Tag of global_exact_rbf_interpolator.
+inline constexpr auto global_exact_rbf_interpolator_tag =
+    logging::log_tag_view("num_collect::rbf::global_exact_rbf_interpolator");
 
 /*!
  * \brief Class to interpolate using RBF without regularization.
@@ -53,7 +62,7 @@ template <typename Variable,
         distance_functions::euclidean_distance_function<Variable>>
     requires std::is_same_v<typename DistanceFunction::value_type,
         typename RBF::scalar_type>
-class global_exact_rbf_interpolator {
+class global_exact_rbf_interpolator : public logging::logging_mixin {
 public:
     //! Type of the distance function.
     using distance_function_type = DistanceFunction;
@@ -90,7 +99,8 @@ public:
     explicit global_exact_rbf_interpolator(
         distance_function_type distance_function = distance_function_type(),
         rbf_type rbf = rbf_type())
-        : distance_function_(std::move(distance_function)),
+        : logging::logging_mixin(global_exact_rbf_interpolator_tag),
+          distance_function_(std::move(distance_function)),
           rbf_(std::move(rbf)) {}
 
     /*!
@@ -164,6 +174,64 @@ public:
                     kernel_matrix_solver_.calc_reg_term(kernel_vec, reg_param),
                 static_cast<function_value_type>(0));
         return {mean, variance};
+    }
+
+    /*!
+     * \brief Set the scale of length parameters to a fixed value.
+     *
+     * \param[in] value Value.
+     */
+    void fix_length_parameter_scale(kernel_value_type value) {
+        length_parameter_calculator_.scale(value);
+    }
+
+    /*!
+     * \brief Set the scale of length parameters with optimization.
+     *
+     * \param[in] variables Variables.
+     * \param[in] function_values Function values.
+     *
+     * \note After call of this function, call compute() for calculation of
+     * internal parameter.
+     */
+    void optimize_length_parameter_scale(
+        const std::vector<variable_type>& variables,
+        const function_value_vector_type& function_values) {
+        static constexpr auto base = static_cast<kernel_value_type>(10);
+
+        auto objective_function =
+            [this, &variables, &function_values](
+                kernel_value_type log_scale) -> kernel_value_type {
+            const kernel_value_type scale = std::pow(base, log_scale);
+            this->length_parameter_calculator_.scale(scale);
+            compute_kernel_matrix(this->distance_function_, this->rbf_,
+                this->length_parameter_calculator_, variables,
+                this->kernel_matrix_);
+            this->kernel_matrix_solver_.compute(
+                this->kernel_matrix_, function_values);
+            return std::log10(
+                this->kernel_matrix_solver_.calc_mle_objective(reg_param));
+        };
+
+        using objective_function_object_type = decltype(objective_function);
+        using objective_function_wrapper_type =
+            opt::function_object_wrapper<kernel_value_type(kernel_value_type),
+                objective_function_object_type>;
+        using optimizer_type =
+            opt::sampling_optimizer<objective_function_wrapper_type>;
+
+        optimizer_type optimizer{
+            objective_function_wrapper_type{objective_function}};
+        constexpr auto lower_boundary = static_cast<kernel_value_type>(-1);
+        constexpr auto upper_boundary = static_cast<kernel_value_type>(2);
+        optimizer.init(lower_boundary, upper_boundary);
+        optimizer.iterate();
+
+        const kernel_value_type log_scale = optimizer.opt_variable();
+        const kernel_value_type scale = std::pow(base, log_scale);
+        this->logger().debug()(
+            "Selected an optimized scale of length parameters: {}", scale);
+        this->length_parameter_calculator_.scale(scale);
     }
 
     /*!
