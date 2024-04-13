@@ -21,6 +21,8 @@
 
 #include <cmath>
 
+#include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
+
 namespace num_collect::rbf::rbfs {
 
 /*!
@@ -28,7 +30,7 @@ namespace num_collect::rbf::rbfs {
  *
  * \tparam Scalar Type of scalars.
  */
-template <typename Scalar>
+template <base::concepts::real_scalar Scalar>
 class gaussian_rbf {
 public:
     //! Type of scalars.

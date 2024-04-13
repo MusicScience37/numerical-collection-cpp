@@ -22,7 +22,11 @@
 #include <vector>
 
 #include "num_collect/base/concepts/implicitly_convertible_to.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/real_scalar_dense_vector.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/same_as.h"  // IWYU pragma: keep
 #include "num_collect/base/index_type.h"
+#include "num_collect/rbf/concepts/distance_function.h"  // IWYU pragma: keep
 
 namespace num_collect::rbf::concepts {
 
@@ -36,6 +40,9 @@ concept length_parameter_calculator = requires() {
     typename T::distance_function_type;
     typename T::variable_type;
     typename T::scalar_type;
+
+    requires distance_function<typename T::distance_function_type>;
+    requires base::concepts::real_scalar<typename T::scalar_type>;
 
     requires requires(T& obj,
         const std::vector<typename T::variable_type>& variables,

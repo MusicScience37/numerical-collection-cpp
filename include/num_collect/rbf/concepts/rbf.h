@@ -19,7 +19,8 @@
  */
 #pragma once
 
-#include "num_collect/base/concepts/same_as.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/same_as.h"      // IWYU pragma: keep
 
 namespace num_collect::rbf::concepts {
 
@@ -31,6 +32,8 @@ namespace num_collect::rbf::concepts {
 template <typename T>
 concept rbf = requires() {
     typename T::scalar_type;
+
+    requires base::concepts::real_scalar<typename T::scalar_type>;
 
     requires requires(
         const T& obj, const typename T::scalar_type& distance_rate) {

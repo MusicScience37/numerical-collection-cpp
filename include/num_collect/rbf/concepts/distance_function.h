@@ -19,6 +19,8 @@
  */
 #pragma once
 
+#include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/real_scalar_dense_vector.h"  // IWYU pragma: keep
 #include "num_collect/base/concepts/same_as.h"  // IWYU pragma: keep
 
 namespace num_collect::rbf::concepts {
@@ -32,6 +34,8 @@ template <typename T>
 concept distance_function = requires() {
     typename T::variable_type;
     typename T::value_type;
+
+    requires base::concepts::real_scalar<typename T::value_type>;
 
     requires requires(const T& obj, const typename T::variable_type& var1,
         const typename T::variable_type& var2) {
