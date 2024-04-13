@@ -28,8 +28,8 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_mixin.h"
+#include "num_collect/opt/dividing_rectangles.h"
 #include "num_collect/opt/function_object_wrapper.h"
-#include "num_collect/opt/sampling_optimizer.h"
 #include "num_collect/rbf/compute_kernel_matrix.h"
 #include "num_collect/rbf/concepts/distance_function.h"  // IWYU pragma: keep
 #include "num_collect/rbf/concepts/length_parameter_calculator.h"  // IWYU pragma: keep
@@ -89,6 +89,9 @@ public:
 
     //! Type of vectors of function values.
     using function_value_vector_type = Eigen::VectorX<function_value_type>;
+
+    //! Default value of maximum number of evaluations of objective functions in MLE.
+    static constexpr index_type default_max_mle_evaluations = 20;
 
     /*!
      * \brief Constructor.
@@ -190,13 +193,16 @@ public:
      *
      * \param[in] variables Variables.
      * \param[in] function_values Function values.
+     * \param[in] max_mle_evaluations Maximum number of evaluations of objective
+     * functions in MLE.
      *
      * \note After call of this function, call compute() for calculation of
      * internal parameter.
      */
     void optimize_length_parameter_scale(
         const std::vector<variable_type>& variables,
-        const function_value_vector_type& function_values) {
+        const function_value_vector_type& function_values,
+        index_type max_mle_evaluations = default_max_mle_evaluations) {
         static constexpr auto base = static_cast<kernel_value_type>(10);
 
         auto objective_function =
@@ -218,14 +224,16 @@ public:
             opt::function_object_wrapper<kernel_value_type(kernel_value_type),
                 objective_function_object_type>;
         using optimizer_type =
-            opt::sampling_optimizer<objective_function_wrapper_type>;
+            opt::dividing_rectangles<objective_function_wrapper_type>;
 
         optimizer_type optimizer{
             objective_function_wrapper_type{objective_function}};
+        configure_child_algorithm_logger_if_exists(optimizer);
         constexpr auto lower_boundary = static_cast<kernel_value_type>(-1);
         constexpr auto upper_boundary = static_cast<kernel_value_type>(2);
+        optimizer.max_evaluations(max_mle_evaluations);
         optimizer.init(lower_boundary, upper_boundary);
-        optimizer.iterate();
+        optimizer.solve();
 
         const kernel_value_type log_scale = optimizer.opt_variable();
         const kernel_value_type scale = std::pow(base, log_scale);
