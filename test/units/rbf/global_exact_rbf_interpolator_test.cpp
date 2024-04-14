@@ -15,14 +15,14 @@
  */
 /*!
  * \file
- * \brief Test of exact_rbf_interpolator class.
+ * \brief Test of global_exact_rbf_interpolator class.
  */
-#include "num_collect/rbf/exact_rbf_interpolator.h"
+#include "num_collect/rbf/global_exact_rbf_interpolator.h"
 
 #include <cmath>
 #include <tuple>
 
-#include <Eigen/src/Core/Matrix.h>
+#include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
 
 #include "comparison_approvals.h"
@@ -30,18 +30,16 @@
 #include "num_collect/constants/pi.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
 
-TEST_CASE("num_collect::rbf::exact_rbf_interpolator") {
+TEST_CASE("num_collect::rbf::global_exact_rbf_interpolator") {
     using num_collect::rbf::global_exact_rbf_interpolator;
     using num_collect::rbf::rbfs::gaussian_rbf;
 
     using variable_type = double;
-    using rbf_type = gaussian_rbf<double>;
-    using rbf_interpolator_type =
-        global_exact_rbf_interpolator<rbf_type, variable_type>;
+    using rbf_interpolator_type = global_exact_rbf_interpolator<variable_type>;
 
     rbf_interpolator_type interpolator;
 
-    SECTION("interpolate") {
+    SECTION("interpolate with a fixed scale") {
         const auto function = [](double x) {
             return std::cos(num_collect::constants::pi<double> * x);
         };
@@ -55,6 +53,46 @@ TEST_CASE("num_collect::rbf::exact_rbf_interpolator") {
                 function(sample_variables[i]);
         }
 
+        constexpr double length_parameter_scale = 2.0;
+        interpolator.fix_length_parameter_scale(length_parameter_scale);
+        interpolator.compute(sample_variables, sample_values);
+
+        const Eigen::VectorXd interpolated_variables =
+            Eigen::VectorXd::LinSpaced(11, 0.0, 1.0);
+        Eigen::VectorXd interpolated_values;
+        interpolated_values.resize(interpolated_variables.size());
+        Eigen::VectorXd actual_values;
+        actual_values.resize(interpolated_variables.size());
+        Eigen::VectorXd variances;
+        variances.resize(interpolated_variables.size());
+        for (num_collect::index_type i = 0; i < interpolated_variables.size();
+             ++i) {
+            std::tie(interpolated_values(i), variances(i)) =
+                interpolator.evaluate_mean_and_variance_on(
+                    interpolated_variables(i), sample_variables);
+            actual_values(i) = function(interpolated_variables(i));
+        }
+        const Eigen::VectorXd standard_deviations = variances.cwiseSqrt();
+        comparison_approvals::verify_with_reference_and_error(
+            actual_values, standard_deviations, interpolated_values, 2);
+    }
+
+    SECTION("interpolate with a optimal scale") {
+        const auto function = [](double x) {
+            return std::cos(num_collect::constants::pi<double> * x);
+        };
+
+        const auto sample_variables = std::vector<double>{0.0, 0.5, 0.8, 1.0};
+        Eigen::VectorXd sample_values{};
+        sample_values.resize(
+            static_cast<num_collect::index_type>(sample_variables.size()));
+        for (std::size_t i = 0; i < sample_variables.size(); ++i) {
+            sample_values(static_cast<num_collect::index_type>(i)) =
+                function(sample_variables[i]);
+        }
+
+        interpolator.optimize_length_parameter_scale(
+            sample_variables, sample_values);
         interpolator.compute(sample_variables, sample_values);
 
         const Eigen::VectorXd interpolated_variables =

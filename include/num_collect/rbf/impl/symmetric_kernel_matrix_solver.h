@@ -27,7 +27,7 @@
 #include "num_collect/base/concepts/dense_vector.h"  // IWYU pragma: keep
 #include "num_collect/base/concepts/real_scalar_dense_matrix.h"  // IWYU pragma: keep
 
-namespace num_collect::rbf {
+namespace num_collect::rbf::impl {
 
 /*!
  * \brief Class to solve linear equations with kernel matrices.
@@ -77,6 +77,8 @@ public:
      */
     template <base::concepts::dense_vector Coefficients>
     void solve(Coefficients& coefficients, scalar_type reg_param) const {
+        reg_param = correct_reg_param_if_needed(reg_param);
+
         coefficients = decomposition_.eigenvectors() *
             (decomposition_.eigenvalues().array() + reg_param)
                 .inverse()
@@ -96,6 +98,8 @@ public:
      */
     [[nodiscard]] auto calc_mle_objective(scalar_type reg_param) const
         -> scalar_type {
+        reg_param = correct_reg_param_if_needed(reg_param);
+
         constexpr scalar_type limit = std::numeric_limits<scalar_type>::max() *
             static_cast<scalar_type>(1e-20);
         if (decomposition_.eigenvalues()(0) + reg_param <=
@@ -119,8 +123,10 @@ public:
      * \param[in] reg_param Regularization parameter.
      * \return Value.
      */
-    [[nodiscard]] auto calc_common_coeff(const scalar_type& reg_param) const
+    [[nodiscard]] auto calc_common_coeff(scalar_type reg_param) const
         -> scalar_type {
+        reg_param = correct_reg_param_if_needed(reg_param);
+
         return calc_reg_term(reg_param) / spectre_.rows();
     }
 
@@ -135,6 +141,8 @@ public:
     template <base::concepts::dense_vector InputData>
     [[nodiscard]] auto calc_reg_term(
         const InputData& data, scalar_type reg_param) const -> scalar_type {
+        reg_param = correct_reg_param_if_needed(reg_param);
+
         return ((decomposition_.eigenvectors().adjoint() * data)
                     .array()
                     .abs2()
@@ -179,6 +187,28 @@ private:
         return (decomposition_.eigenvalues().array() + reg_param).log().sum();
     }
 
+    /*!
+     * \brief Correct regularization parameter if needed.
+     *
+     * \param[in] reg_param Regularization parameter.
+     * \return Corrected parameter value.
+     */
+    [[nodiscard]] auto correct_reg_param_if_needed(
+        const scalar_type& reg_param) const noexcept -> scalar_type {
+        const scalar_type smallest_eigenvalue = decomposition_.eigenvalues()(0);
+        const scalar_type largest_eigenvalue = decomposition_.eigenvalues()(
+            decomposition_.eigenvalues().size() - 1);
+        const scalar_type eigenvalue_safe_limit =
+            largest_eigenvalue * std::numeric_limits<scalar_type>::epsilon();
+        const scalar_type reg_param_safe_limit =
+            eigenvalue_safe_limit - smallest_eigenvalue;
+
+        if (reg_param < reg_param_safe_limit) {
+            return reg_param_safe_limit;
+        }
+        return reg_param;
+    }
+
     //! Eigen decomposition of the kernel matrix.
     Eigen::SelfAdjointEigenSolver<KernelMatrix> decomposition_;
 
@@ -186,4 +216,4 @@ private:
     Vector spectre_;
 };
 
-}  // namespace num_collect::rbf
+}  // namespace num_collect::rbf::impl

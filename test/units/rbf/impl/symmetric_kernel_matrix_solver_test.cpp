@@ -17,22 +17,21 @@
  * \file
  * \brief Test of symmetric_kernel_matrix_solver class.
  */
-#include "num_collect/rbf/symmetric_kernel_matrix_solver.h"
+#include "num_collect/rbf/impl/symmetric_kernel_matrix_solver.h"
 
 #include <catch2/catch_test_macros.hpp>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/constants/pi.h"
 #include "num_collect/rbf/compute_kernel_matrix.h"
-#include "num_collect/rbf/concepts/kernel_matrix_solver.h"  // IWYU pragma: keep
 #include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
 #include "num_collect/rbf/length_parameter_calculators/global_length_parameter_calculator.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
 
-TEST_CASE("num_collect::rbf::symmetric_kernel_matrix_solver") {
+TEST_CASE("num_collect::rbf::impl::symmetric_kernel_matrix_solver") {
     using num_collect::rbf::compute_kernel_matrix;
-    using num_collect::rbf::symmetric_kernel_matrix_solver;
     using num_collect::rbf::distance_functions::euclidean_distance_function;
+    using num_collect::rbf::impl::symmetric_kernel_matrix_solver;
     using num_collect::rbf::length_parameter_calculators::
         global_length_parameter_calculator;
     using num_collect::rbf::rbfs::gaussian_rbf;
@@ -47,9 +46,6 @@ TEST_CASE("num_collect::rbf::symmetric_kernel_matrix_solver") {
         symmetric_kernel_matrix_solver<Eigen::MatrixXd, Eigen::VectorXd>;
 
     kernel_matrix_solver_type solver;
-
-    STATIC_REQUIRE(num_collect::rbf::concepts::kernel_matrix_solver<
-        kernel_matrix_solver_type>);
 
     const auto function = [](double x) {
         return std::cos(num_collect::constants::pi<double> * x);

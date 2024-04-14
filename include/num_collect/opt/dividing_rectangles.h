@@ -33,6 +33,7 @@
 
 #include "num_collect/base/get_size.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/base/isfinite.h"
 #include "num_collect/base/norm.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
@@ -100,7 +101,7 @@ public:
         const variable_type first_var = half * width_ + lower_;
         obj_fun_.evaluate_on(first_var);
         opt_variable_ = first_var;
-        opt_value_ = obj_fun_.value();
+        opt_value_ = correct_value_if_needed(obj_fun_.value());
 
         iterations_ = 0;
         evaluations_ = 1;
@@ -368,12 +369,13 @@ private:
             actual_var = variable * width_ + lower_;
         }
         obj_fun_.evaluate_on(actual_var);
-        if (obj_fun_.value() < opt_value_) {
+        const value_type value = correct_value_if_needed(obj_fun_.value());
+        if (value < opt_value_) {
             opt_variable_ = actual_var;
-            opt_value_ = obj_fun_.value();
+            opt_value_ = value;
         }
         ++evaluations_;
-        return obj_fun_.value();
+        return value;
     }
 
     /*!
@@ -551,6 +553,22 @@ private:
         static const auto one_third = static_cast<value_type>(1.0 / 3.0);
         static const auto two_thirds = static_cast<value_type>(2.0 / 3.0);
         return {lowest + one_third * width, lowest + two_thirds * width};
+    }
+
+    /*!
+     * \brief Correct function values if needed.
+     *
+     * \param[in] value Function value.
+     * \return Corrected value.
+     */
+    [[nodiscard]] static auto correct_value_if_needed(value_type value) noexcept
+        -> value_type {
+        constexpr auto safe_limit =
+            std::numeric_limits<value_type>::max() * 1e-2;
+        if (!isfinite(value) || value > safe_limit) {
+            return safe_limit;
+        }
+        return value;
     }
 
     //! Objective function.
