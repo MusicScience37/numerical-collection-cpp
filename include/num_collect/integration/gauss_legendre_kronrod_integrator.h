@@ -72,28 +72,29 @@ public:
     //! Type of results.
     using result_type = std::decay_t<Result>;
 
-    //! Default order.
-    static constexpr index_type default_order = 5;
+    //! Default degree.
+    static constexpr index_type default_degree = 5;
 
     /*!
      * \brief Constructor.
      *
-     * \param[in] order Order.
+     * \param[in] degree Degree.
      */
-    explicit gauss_legendre_kronrod_integrator(index_type order = default_order)
-        : order_(order) {
-        NUM_COLLECT_ASSERT(order > 0);
+    explicit gauss_legendre_kronrod_integrator(
+        index_type degree = default_degree)
+        : degree_(degree) {
+        NUM_COLLECT_ASSERT(degree > 0);
         compute_parameters();
     }
 
     /*!
      * \brief Prepare internal parameters.
      *
-     * \param[in] order Order.
+     * \param[in] degree Degree.
      */
-    void prepare(index_type order) {
-        NUM_COLLECT_ASSERT(order > 0);
-        order_ = order;
+    void prepare(index_type degree) {
+        NUM_COLLECT_ASSERT(degree > 0);
+        degree_ = degree;
         compute_parameters();
     }
 
@@ -252,7 +253,7 @@ private:
      * \brief Compute internal parameters.
      */
     void compute_parameters() {
-        const index_type n = order_;
+        const index_type n = degree_;
         const index_type extended_size = n * 2 + 1;
         vector_type a = vector_type::Zero(extended_size);
         vector_type b = vector_type::Zero(extended_size);
@@ -265,7 +266,7 @@ private:
                 static_cast<variable_type>(2 * i - 1);
             b[i] = temp;
         }
-        jacobi2gauss(a, b, order_, nodes_gauss_, weights_gauss_);
+        jacobi2gauss(a, b, degree_, nodes_gauss_, weights_gauss_);
         NUM_COLLECT_ASSERT(nodes_gauss_.allFinite());
         NUM_COLLECT_ASSERT(weights_gauss_.allFinite());
 
@@ -284,8 +285,8 @@ private:
         for (index_type i = 0; i < extended_size; ++i) {
             additional_nodes_index.insert(i);
         }
-        weights_gauss_for_kronrod_ = vector_type::Zero(order_);
-        for (index_type i = 0; i < order_; ++i) {
+        weights_gauss_for_kronrod_ = vector_type::Zero(degree_);
+        for (index_type i = 0; i < degree_; ++i) {
             variable_type min_dist =
                 std::numeric_limits<variable_type>::infinity();
             index_type min_ind = -1;
@@ -322,7 +323,7 @@ private:
      * \param[in] b Square of second diagonal coefficients in Jacobi matrix.
      */
     void generate_jacobi_kronrod_matrix(vector_type& a, vector_type& b) {
-        const index_type n = order_;
+        const index_type n = degree_;
         vector_type s = vector_type::Zero(n / 2 + 2);
         vector_type t = vector_type::Zero(n / 2 + 2);
         t[1] = b[n + 1];
@@ -398,8 +399,8 @@ private:
         weights = b[0] * eig.eigenvectors().row(0).transpose().cwiseAbs2();
     }
 
-    //! Order.
-    index_type order_;
+    //! Degree.
+    index_type degree_;
 
     //! Nodes for Gauss quadrature.
     vector_type nodes_gauss_{};

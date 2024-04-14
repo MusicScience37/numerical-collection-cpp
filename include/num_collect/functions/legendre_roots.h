@@ -55,10 +55,10 @@ public:
     /*!
      * \brief Constructor.
      *
-     * \param[in] order Order of Legendre function.
+     * \param[in] degree Degree of Legendre function.
      */
-    explicit legendre_for_newton(index_type order) : order_(order) {
-        NUM_COLLECT_ASSERT(order > 0);
+    explicit legendre_for_newton(index_type degree) : degree_(degree) {
+        NUM_COLLECT_ASSERT(degree > 0);
     }
 
     /*!
@@ -67,7 +67,7 @@ public:
      * \param[in] variable Variable.
      */
     void evaluate_on(const variable_type& variable) {
-        std::tie(value_, jacobian_) = legendre_with_diff(variable, order_);
+        std::tie(value_, jacobian_) = legendre_with_diff(variable, degree_);
     }
 
     /*!
@@ -89,8 +89,8 @@ public:
     }
 
 private:
-    //! Order of Legendre function.
-    index_type order_;
+    //! Degree of Legendre function.
+    index_type degree_;
 
     //! Function value.
     variable_type value_{};
@@ -115,31 +115,31 @@ public:
     /*!
      * \brief Constructor.
      *
-     * \param[in] order Order of Legendre function.
+     * \param[in] degree Degree of Legendre function.
      */
-    explicit legendre_roots(index_type order = 0) : order_(order) {
-        if (order == 0) {
+    explicit legendre_roots(index_type degree = 0) : degree_(degree) {
+        if (degree == 0) {
             roots_.resize(0);
             return;
         }
-        compute(order);
+        compute(degree);
     }
 
     /*!
      * \brief Compute roots of Legendre function.
      *
-     * \param[in] order Order of Legendre function.
+     * \param[in] degree Degree of Legendre function.
      */
-    void compute(index_type order) {
-        NUM_COLLECT_ASSERT(order > 0);
-        order_ = order;
+    void compute(index_type degree) {
+        NUM_COLLECT_ASSERT(degree > 0);
+        degree_ = degree;
 
-        roots_.resize(order_);
-        const index_type roots_to_solve = order_ / 2;
+        roots_.resize(degree_);
+        const index_type roots_to_solve = degree_ / 2;
 
         using function_type = impl::legendre_for_newton<variable_type>;
         using solver_type = roots::newton_raphson<function_type>;
-        auto solver = solver_type(function_type(order_));
+        auto solver = solver_type(function_type(degree_));
         constexpr auto tol_last_change =
             std::numeric_limits<variable_type>::epsilon() *
             static_cast<variable_type>(1e+2);
@@ -155,27 +155,27 @@ public:
             constexpr auto offset_in_den = static_cast<variable_type>(0.5);
             const variable_type init_var = cos(constants::pi<variable_type> *
                 (static_cast<variable_type>(i) + offset_in_num) /
-                (static_cast<variable_type>(order_) + offset_in_den));
+                (static_cast<variable_type>(degree_) + offset_in_den));
 
             solver.init(init_var);
             solver.solve();
             roots_[i] = solver.variable();
         }
-        const index_type center = (order_ - 1) / 2;
-        if (order_ % 2 == 1) {
+        const index_type center = (degree_ - 1) / 2;
+        if (degree_ % 2 == 1) {
             roots_[center] = constants::zero<variable_type>;
         }
-        for (index_type i = center + 1; i < order_; ++i) {
-            roots_[i] = -roots_[order_ - 1 - i];
+        for (index_type i = center + 1; i < degree_; ++i) {
+            roots_[i] = -roots_[degree_ - 1 - i];
         }
     }
 
     /*!
-     * \brief Get the order of Legendre function.
+     * \brief Get the degree of Legendre function.
      *
-     * \return Order of Legendre function.
+     * \return Degree of Legendre function.
      */
-    [[nodiscard]] auto order() const noexcept -> index_type { return order_; }
+    [[nodiscard]] auto degree() const noexcept -> index_type { return degree_; }
 
     /*!
      * \brief Get the number of roots.
@@ -209,8 +209,8 @@ public:
     }
 
 private:
-    //! Order of Legendre function.
-    index_type order_;
+    //! Degree of Legendre function.
+    index_type degree_;
 
     //! List of roots.
     Eigen::Matrix<variable_type, Eigen::Dynamic, 1> roots_{};

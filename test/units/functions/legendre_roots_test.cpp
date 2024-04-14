@@ -34,15 +34,15 @@
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::functions::legendre_roots", "", float, double) {
-    const num_collect::index_type order =
+    const num_collect::index_type degree =
         // NOLINTNEXTLINE
         GENERATE(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50);
-    SECTION("construct with order") {
+    SECTION("construct with degree") {
         const auto roots =
-            num_collect::functions::legendre_roots<TestType>(order);
+            num_collect::functions::legendre_roots<TestType>(degree);
 
-        REQUIRE(roots.order() == order);
-        REQUIRE(roots.size() == order);
+        REQUIRE(roots.degree() == degree);
+        REQUIRE(roots.size() == degree);
 
         REQUIRE(roots[0] < static_cast<TestType>(1));
         for (num_collect::index_type i = 1; i < roots.size(); ++i) {
@@ -51,7 +51,7 @@ TEMPLATE_TEST_CASE(
 
             constexpr auto tol = std::numeric_limits<TestType>::epsilon() *
                 static_cast<TestType>(1e+4);
-            REQUIRE_THAT(num_collect::functions::legendre(roots[i], order),
+            REQUIRE_THAT(num_collect::functions::legendre(roots[i], degree),
                 Catch::Matchers::WithinAbs(static_cast<TestType>(0), tol));
         }
         REQUIRE(roots[roots.size() - 1] > static_cast<TestType>(-1));
@@ -59,13 +59,13 @@ TEMPLATE_TEST_CASE(
 
     SECTION("compute") {
         auto roots = num_collect::functions::legendre_roots<TestType>();
-        REQUIRE(roots.order() == 0);
+        REQUIRE(roots.degree() == 0);
         REQUIRE(roots.size() == 0);
 
-        roots.compute(order);
+        roots.compute(degree);
 
-        REQUIRE(roots.order() == order);
-        REQUIRE(roots.size() == order);
+        REQUIRE(roots.degree() == degree);
+        REQUIRE(roots.size() == degree);
 
         REQUIRE(roots[0] < static_cast<TestType>(1));
         for (num_collect::index_type i = 1; i < roots.size(); ++i) {
@@ -74,7 +74,7 @@ TEMPLATE_TEST_CASE(
 
             constexpr auto tol = std::numeric_limits<TestType>::epsilon() *
                 static_cast<TestType>(1e+4);
-            REQUIRE_THAT(num_collect::functions::legendre(roots[i], order),
+            REQUIRE_THAT(num_collect::functions::legendre(roots[i], degree),
                 Catch::Matchers::WithinAbs(static_cast<TestType>(0), tol));
         }
         REQUIRE(roots[roots.size() - 1] > static_cast<TestType>(-1));

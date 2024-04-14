@@ -60,28 +60,28 @@ public:
     //! Type of results.
     using result_type = std::decay_t<Result>;
 
-    //! Default order.
-    static constexpr index_type default_order = 20;
+    //! Default degree.
+    static constexpr index_type default_degree = 20;
 
     /*!
      * \brief Constructor.
      *
-     * \param[in] order Order.
+     * \param[in] degree Degree.
      */
-    explicit gauss_legendre_integrator(index_type order = default_order)
-        : roots_(order) {
-        NUM_COLLECT_ASSERT(order > 0);
+    explicit gauss_legendre_integrator(index_type degree = default_degree)
+        : roots_(degree) {
+        NUM_COLLECT_ASSERT(degree > 0);
         update_weight();
     }
 
     /*!
      * \brief Compute internal variables for integration.
      *
-     * \param[in] order Order.
+     * \param[in] degree Degree.
      */
-    void prepare(index_type order) {
-        NUM_COLLECT_ASSERT(order > 0);
-        roots_.compute(order);
+    void prepare(index_type degree) {
+        NUM_COLLECT_ASSERT(degree > 0);
+        roots_.compute(degree);
         update_weight();
     }
 
@@ -97,11 +97,11 @@ public:
     template <base::concepts::invocable_as<result_type(variable_type)> Function>
     [[nodiscard]] auto integrate(const Function& function, variable_type left,
         variable_type right) const -> result_type {
-        const auto order = roots_.order();
+        const auto degree = roots_.degree();
         const auto mean = constants::half<variable_type> * (left + right);
         const auto half_width = constants::half<variable_type> * (right - left);
         Result sum = function(mean) * constants::zero<variable_type>;
-        for (index_type i = 0; i < order; ++i) {
+        for (index_type i = 0; i < degree; ++i) {
             const variable_type x = mean + half_width * roots_[i];
             const variable_type weight = weights_[i];
             sum += weight * function(x);
@@ -129,12 +129,12 @@ private:
      * \brief Update weight for roots.
      */
     void update_weight() {
-        const auto order = roots_.order();
-        weights_.resize(order);
-        for (index_type i = 0; i < order; ++i) {
+        const auto degree = roots_.degree();
+        weights_.resize(degree);
+        for (index_type i = 0; i < degree; ++i) {
             const variable_type x = roots_[i];
-            const auto temp = static_cast<variable_type>(order) *
-                functions::legendre(x, order - 1);
+            const auto temp = static_cast<variable_type>(degree) *
+                functions::legendre(x, degree - 1);
             weights_[i] = constants::two<variable_type> *
                 (constants::one<variable_type> - x * x) / (temp * temp);
         }

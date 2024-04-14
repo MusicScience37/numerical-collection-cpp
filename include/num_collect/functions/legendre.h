@@ -37,7 +37,7 @@ namespace num_collect::functions {
  * \tparam F Type of x (floating-point number).
  * \tparam I Type of n (integer).
  * \param[in] x Variable.
- * \param[in] n Order of the Legendre function.
+ * \param[in] n Degree of the Legendre function.
  * \return Value of n-thLegendre function of x.
  */
 template <base::concepts::real_scalar F, base::concepts::integral I>
@@ -73,7 +73,7 @@ constexpr auto legendre(F x, I n) -> F {
  * \tparam F Type of x (floating-point number).
  * \tparam I Type of n (integer).
  * \param[in] x Variable.
- * \param[in] n Order of the Legendre function.
+ * \param[in] n Degree of the Legendre function.
  * \return n-thLegendre function and its differential coefficient of x.
  */
 template <base::concepts::real_scalar F, base::concepts::integral I>

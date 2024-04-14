@@ -39,22 +39,23 @@ TEMPLATE_TEST_CASE(
     "num_collect::integration::gauss_legendre_kronrod_integrator", "", float,
     double) {
     // NOLINTNEXTLINE
-    const num_collect::index_type order = GENERATE(3, 4, 5, 6, 7, 8, 9, 10, 20);
+    const num_collect::index_type degree =
+        GENERATE(3, 4, 5, 6, 7, 8, 9, 10, 20);
 
-    SECTION("construct with order") {
+    SECTION("construct with degree") {
         std::shared_ptr<num_collect::integration::
                 gauss_legendre_kronrod_integrator<TestType(TestType)>>
             ptr;
         REQUIRE_NOTHROW(
             ptr = std::make_shared<num_collect::integration::
                     gauss_legendre_kronrod_integrator<TestType(TestType)>>(
-                order));
+                degree));
     }
 
     SECTION("integrate_once") {
         const auto integrator =
             num_collect::integration::gauss_legendre_kronrod_integrator<
-                TestType(TestType)>(order);
+                TestType(TestType)>(degree);
 
         constexpr auto left = static_cast<TestType>(0);
         constexpr auto right =
@@ -76,7 +77,7 @@ TEMPLATE_TEST_CASE(
     SECTION("integrate cos") {
         const auto integrator =
             num_collect::integration::gauss_legendre_kronrod_integrator<
-                TestType(TestType)>(order);
+                TestType(TestType)>(degree);
 
         constexpr auto left = static_cast<TestType>(0);
         constexpr auto right =
@@ -93,7 +94,7 @@ TEMPLATE_TEST_CASE(
     SECTION("integrate exp") {
         const auto integrator =
             num_collect::integration::gauss_legendre_kronrod_integrator<
-                TestType(TestType)>(order);
+                TestType(TestType)>(degree);
 
         constexpr auto left = static_cast<TestType>(0);
         constexpr auto right = static_cast<TestType>(1);
@@ -110,7 +111,7 @@ TEMPLATE_TEST_CASE(
     SECTION("integrate x^(3/2)") {
         const auto integrator =
             num_collect::integration::gauss_legendre_kronrod_integrator<
-                TestType(TestType)>(order);
+                TestType(TestType)>(degree);
 
         constexpr auto left = static_cast<TestType>(0);
         constexpr auto right = static_cast<TestType>(1);
@@ -130,7 +131,7 @@ TEMPLATE_TEST_CASE(
     SECTION("integrate half circle") {
         const auto integrator =
             num_collect::integration::gauss_legendre_kronrod_integrator<
-                TestType(TestType)>(order);
+                TestType(TestType)>(degree);
 
         constexpr auto left = static_cast<TestType>(-1);
         constexpr auto right = static_cast<TestType>(1);
@@ -150,7 +151,7 @@ TEMPLATE_TEST_CASE(
     SECTION("integrate exp(ix)") {
         const auto integrator =
             num_collect::integration::gauss_legendre_kronrod_integrator<
-                std::complex<TestType>(TestType)>(order);
+                std::complex<TestType>(TestType)>(degree);
 
         constexpr auto left = static_cast<TestType>(0);
         constexpr auto right =

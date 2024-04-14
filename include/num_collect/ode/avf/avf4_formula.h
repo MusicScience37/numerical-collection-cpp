@@ -156,12 +156,12 @@ private:
     //! Integrand.
     impl::avf_integrand<problem_type> integrand_;
 
-    //! Order of integrator.
-    static constexpr index_type integrator_order = 5;
+    //! Degree of integrator.
+    static constexpr index_type integrator_degree = 5;
 
     //! Integrator.
     integration::gauss_legendre_integrator<variable_type(scalar_type)>
-        integrator_{integrator_order};
+        integrator_{integrator_degree};
 
     //! Default tolerance of residual norm.
     static constexpr auto default_tol_residual_norm =
