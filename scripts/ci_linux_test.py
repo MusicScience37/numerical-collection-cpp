@@ -22,7 +22,7 @@ TEST_TYPE_VARIABLES = {
         "NUM_COLLECT_ENABLE_INTEG_TESTS": "ON",
         "NUM_COLLECT_ENABLE_BENCH": "OFF",
         "NUM_COLLECT_BUILD_EXAMPLES": "OFF",
-        "NUM_COLLECT_WRITE_JUNIT": "ON",
+        # "NUM_COLLECT_WRITE_JUNIT": "ON",
         "BUILD_SHARED_LIBS": "ON",
     },
     "release": {
@@ -31,7 +31,7 @@ TEST_TYPE_VARIABLES = {
         "NUM_COLLECT_ENABLE_INTEG_TESTS": "ON",
         "NUM_COLLECT_ENABLE_BENCH": "OFF",
         "NUM_COLLECT_BUILD_EXAMPLES": "OFF",
-        "NUM_COLLECT_WRITE_JUNIT": "ON",
+        # "NUM_COLLECT_WRITE_JUNIT": "ON",
         "BUILD_SHARED_LIBS": "ON",
     },
     "bench": {
@@ -43,7 +43,7 @@ TEST_TYPE_VARIABLES = {
         "NUM_COLLECT_TEST_BENCHMARKS": "ON",
         "NUM_COLLECT_BUILD_EXAMPLES": "ON",
         "NUM_COLLECT_TEST_EXAMPLES": "ON",
-        "NUM_COLLECT_WRITE_JUNIT": "ON",
+        # "NUM_COLLECT_WRITE_JUNIT": "ON",
         "BUILD_SHARED_LIBS": "OFF",
     },
     "asan_ubsan": {
@@ -52,7 +52,7 @@ TEST_TYPE_VARIABLES = {
         "NUM_COLLECT_ENABLE_INTEG_TESTS": "ON",
         "NUM_COLLECT_ENABLE_BENCH": "OFF",
         "NUM_COLLECT_BUILD_EXAMPLES": "OFF",
-        "NUM_COLLECT_WRITE_JUNIT": "ON",
+        # "NUM_COLLECT_WRITE_JUNIT": "ON",
         "NUM_COLLECT_ENABLE_AUSAN": "ON",
     },
 }
