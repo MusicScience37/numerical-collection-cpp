@@ -70,10 +70,10 @@ TEMPLATE_TEST_CASE(
     }
 
     SECTION("integrate x^(3/2)") {
-        constexpr num_collect::index_type order = 50;
+        constexpr num_collect::index_type degree = 50;
         const auto integrator =
             num_collect::integration::gauss_legendre_integrator<TestType(
-                TestType)>(order);
+                TestType)>(degree);
 
         constexpr auto left = static_cast<TestType>(0);
         constexpr auto right = static_cast<TestType>(1);
@@ -93,8 +93,8 @@ TEMPLATE_TEST_CASE(
         auto integrator =
             num_collect::integration::gauss_legendre_integrator<TestType(
                 TestType)>();
-        constexpr num_collect::index_type order = 50;
-        integrator.prepare(order);
+        constexpr num_collect::index_type degree = 50;
+        integrator.prepare(degree);
 
         constexpr auto left = static_cast<TestType>(-1);
         constexpr auto right = static_cast<TestType>(1);
