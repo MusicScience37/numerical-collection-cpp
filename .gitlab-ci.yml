@@ -175,7 +175,7 @@ test linux:
       - COMPILER_TYPE: ["gcc10", "gcc11", "gcc12"]
         IMAGE_PATH: "musicscience37/gcc-ci"
         TEST_TYPE: "debug"
-      - COMPILER_TYPE: ["clang16", "clang17"]
+      - COMPILER_TYPE: ["clang16", "clang17", "clang18"]
         IMAGE_PATH: "musicscience37/clang-ci"
         TEST_TYPE: "debug"
       - COMPILER_TYPE: "gcc12"
