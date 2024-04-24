@@ -386,7 +386,7 @@ private:
         jacobi(0, 0) = a[0];
         for (index_type i = 1; i < size; ++i) {
             jacobi(i, i) = a[i];
-            double temp = std::sqrt(b[i]);
+            const variable_type temp = std::sqrt(b[i]);
             jacobi(i - 1, i) = temp;
             jacobi(i, i - 1) = temp;
         }

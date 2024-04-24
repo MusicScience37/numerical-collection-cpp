@@ -57,10 +57,10 @@ public:
             optimizer.iterate();
         }
         constexpr std::size_t thread_index = 0;
-        iterations_stat_->add(
-            thread_index, sample_index, optimizer.iterations());
-        evaluations_stat_->add(
-            thread_index, sample_index, optimizer.evaluations());
+        iterations_stat_->add(thread_index, sample_index,
+            static_cast<double>(optimizer.iterations()));
+        evaluations_stat_->add(thread_index, sample_index,
+            static_cast<double>(optimizer.evaluations()));
     }
 
     void setup(stat_bench::InvocationContext& context) override {

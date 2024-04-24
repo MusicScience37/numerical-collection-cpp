@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <cstddef>
 #include <limits>
 #include <string_view>
 
@@ -44,9 +45,11 @@ inline void solve_and_check_with_reference(Solver& solver,
     std::vector<scalar_type> time_list;
     std::vector<variable_type> actual_variable_list;
     std::vector<variable_type> reference_variable_list;
-    time_list.reserve(num_time_samples + 1);
-    actual_variable_list.reserve(num_time_samples + 1);
-    reference_variable_list.reserve(num_time_samples + 1);
+    time_list.reserve(static_cast<std::size_t>(num_time_samples + 1));
+    actual_variable_list.reserve(
+        static_cast<std::size_t>(num_time_samples + 1));
+    reference_variable_list.reserve(
+        static_cast<std::size_t>(num_time_samples + 1));
 
     {
         // initial solution.

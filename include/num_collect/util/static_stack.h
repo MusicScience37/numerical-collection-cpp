@@ -109,7 +109,7 @@ public:
      * \return Current number of values.
      */
     [[nodiscard]] auto size() const noexcept -> std::size_t {
-        return end_ - begin_;
+        return static_cast<std::size_t>(end_ - begin_);
     }
 
 private:

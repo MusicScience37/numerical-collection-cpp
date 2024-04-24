@@ -376,7 +376,6 @@ TEMPLATE_TEST_CASE("num_collect::numbers::fraction (unsigned)", "",
 
     SECTION("check denominator in constructor") {
         CHECK_NOTHROW((void)fraction_type(1, 1));
-        CHECK_NOTHROW((void)fraction_type(1, -1));
         CHECK_THROWS((void)fraction_type(1, 0));
     }
 

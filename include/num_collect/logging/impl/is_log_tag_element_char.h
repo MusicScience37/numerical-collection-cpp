@@ -38,22 +38,22 @@ namespace num_collect::logging::impl {
     constexpr auto num_begin = static_cast<char>(0x30);  // 0
     constexpr auto num_end = static_cast<char>(0x39);    // 9
     for (char c = num_begin; c <= num_end; ++c) {
-        res[c] = true;
+        res[static_cast<unsigned char>(c)] = true;
     }
 
     constexpr auto large_alpha_begin = static_cast<char>(0x41);  // A
     constexpr auto large_alpha_end = static_cast<char>(0x5A);    // Z
     for (char c = large_alpha_begin; c <= large_alpha_end; ++c) {
-        res[c] = true;
+        res[static_cast<unsigned char>(c)] = true;
     }
 
     constexpr auto small_alpha_begin = static_cast<char>(0x61);  // a
     constexpr auto small_alpha_end = static_cast<char>(0x7A);    // z
     for (char c = small_alpha_begin; c <= small_alpha_end; ++c) {
-        res[c] = true;
+        res[static_cast<unsigned char>(c)] = true;
     }
 
-    constexpr auto underscore = 0x5F;  // _
+    constexpr auto underscore = 0x5FU;  // _
     res[underscore] = true;
 
     return res;

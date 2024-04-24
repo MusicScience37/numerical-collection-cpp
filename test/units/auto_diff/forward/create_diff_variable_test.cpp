@@ -80,7 +80,9 @@ TEMPLATE_TEST_CASE(
                 value_vector_type>;
 
         const value_vector_type value_vec =
-            (value_vector_type(3) << 1.234, 2.345, 3.456).finished();
+            (value_vector_type(3) << static_cast<TestType>(1.234),
+                static_cast<TestType>(2.345), static_cast<TestType>(3.456))
+                .finished();
         const variable_vector_type var =
             num_collect::auto_diff::forward::create_diff_variable_vector(
                 value_vec);

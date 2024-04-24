@@ -122,8 +122,8 @@ public:
         }
 
         using std::log;
-        const scalar_type value =
-            spectre_.rows() * log(calc_reg_term(reg_param)) +
+        const scalar_type value = static_cast<scalar_type>(spectre_.rows()) *
+                log(calc_reg_term(reg_param)) +
             calc_log_determinant(reg_param);
         if (value < limit) {
             return value;
@@ -139,7 +139,8 @@ public:
      */
     [[nodiscard]] auto calc_common_coeff(const scalar_type& reg_param) const
         -> scalar_type {
-        return calc_reg_term(reg_param) / spectre_.rows();
+        return calc_reg_term(reg_param) /
+            static_cast<scalar_type>(spectre_.rows());
     }
 
     /*!

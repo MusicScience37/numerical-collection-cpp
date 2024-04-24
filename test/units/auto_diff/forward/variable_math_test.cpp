@@ -49,7 +49,7 @@ TEMPLATE_TEST_CASE("num_collect::auto_diff::forward::exp", "", float, double) {
     }
 
     SECTION("process an argument without a differential coefficient") {
-        const auto var = variable_type(1.234);
+        const auto var = variable_type(static_cast<value_type>(1.234));
 
         const variable_type res = exp(var);
         REQUIRE_THAT(
@@ -78,7 +78,7 @@ TEMPLATE_TEST_CASE("num_collect::auto_diff::forward::log", "", float, double) {
     }
 
     SECTION("process an argument without a differential coefficient") {
-        const auto var = variable_type(1.234);
+        const auto var = variable_type(static_cast<value_type>(1.234));
 
         const variable_type res = log(var);
         REQUIRE_THAT(
@@ -109,7 +109,7 @@ TEMPLATE_TEST_CASE("num_collect::auto_diff::forward::sqrt", "", float, double) {
     }
 
     SECTION("process an argument without a differential coefficient") {
-        const auto var = variable_type(1.234);
+        const auto var = variable_type(static_cast<value_type>(1.234));
 
         const variable_type res = sqrt(var);
         REQUIRE_THAT(

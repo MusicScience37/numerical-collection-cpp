@@ -44,7 +44,9 @@ TEMPLATE_TEST_CASE(
     SECTION("make Jacobian") {
         const variable_vector_type vars =
             num_collect::auto_diff::forward::create_diff_variable_vector(
-                (diff_type(2) << 1.234, 2.345).finished());
+                (diff_type(2) << static_cast<value_type>(1.234),
+                    static_cast<value_type>(2.345))
+                    .finished());
         const variable_vector_type res =
             (variable_vector_type(3) << vars(0) + vars(1), vars(0) - vars(1),
                 vars(0) * vars(1))

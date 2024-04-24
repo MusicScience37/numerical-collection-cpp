@@ -41,7 +41,8 @@ TEMPLATE_TEST_CASE("num_collect::auto_diff::backward::exp", "", float, double) {
     using num_collect::auto_diff::backward::variable_tag;
 
     SECTION("process an argument with node") {
-        const auto var = variable_type(1.234, variable_tag());
+        const auto var =
+            variable_type(static_cast<scalar_type>(1.234), variable_tag());
 
         const variable_type res = exp(var);
         REQUIRE_THAT(
@@ -53,7 +54,8 @@ TEMPLATE_TEST_CASE("num_collect::auto_diff::backward::exp", "", float, double) {
     }
 
     SECTION("process an argument without node") {
-        const auto var = variable_type(1.234, constant_tag());
+        const auto var =
+            variable_type(static_cast<scalar_type>(1.234), constant_tag());
 
         const variable_type res = exp(var);
         REQUIRE_THAT(
@@ -72,7 +74,8 @@ TEMPLATE_TEST_CASE("num_collect::auto_diff::backward::log", "", float, double) {
     using num_collect::auto_diff::backward::variable_tag;
 
     SECTION("process an argument with node") {
-        const auto var = variable_type(1.234, variable_tag());
+        const auto var =
+            variable_type(static_cast<scalar_type>(1.234), variable_tag());
 
         const variable_type res = log(var);
         REQUIRE_THAT(
@@ -84,7 +87,8 @@ TEMPLATE_TEST_CASE("num_collect::auto_diff::backward::log", "", float, double) {
     }
 
     SECTION("process an argument without node") {
-        const auto var = variable_type(1.234, constant_tag());
+        const auto var =
+            variable_type(static_cast<scalar_type>(1.234), constant_tag());
 
         const variable_type res = log(var);
         REQUIRE_THAT(
@@ -104,7 +108,8 @@ TEMPLATE_TEST_CASE(
     using num_collect::auto_diff::backward::variable_tag;
 
     SECTION("process an argument with node") {
-        const auto var = variable_type(1.234, variable_tag());
+        const auto var =
+            variable_type(static_cast<scalar_type>(1.234), variable_tag());
 
         const variable_type res = sqrt(var);
         REQUIRE_THAT(
@@ -118,7 +123,8 @@ TEMPLATE_TEST_CASE(
     }
 
     SECTION("process an argument without node") {
-        const auto var = variable_type(1.234, constant_tag());
+        const auto var =
+            variable_type(static_cast<scalar_type>(1.234), constant_tag());
 
         const variable_type res = log(var);
         REQUIRE_THAT(
