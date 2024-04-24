@@ -38,7 +38,7 @@ auto time_stamp::now() noexcept -> time_stamp {
     const auto result = std::timespec_get(&spec, TIME_UTC);
     assert(result == TIME_UTC);
     (void)result;
-    return time_stamp(spec.tv_sec, spec.tv_nsec);
+    return time_stamp(spec.tv_sec, static_cast<std::uint32_t>(spec.tv_nsec));
 }
 
 }  // namespace num_collect::logging

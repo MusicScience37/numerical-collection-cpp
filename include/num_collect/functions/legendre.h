@@ -119,7 +119,7 @@ constexpr auto legendre_with_diff(F x, I n) -> std::pair<F, F> {
         y = y_p;
     }
 
-    F dif = n * (y_m - x * y) / (constants::one<F> - x * x);
+    F dif = static_cast<F>(n) * (y_m - x * y) / (constants::one<F> - x * x);
 
     return {y, dif};
 }

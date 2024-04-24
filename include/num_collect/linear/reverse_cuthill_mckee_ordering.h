@@ -58,7 +58,8 @@ public:
     template <base::concepts::sparse_matrix MatrixType>
     void operator()(const MatrixType& matrix, permutation_type& permutation) {
         cuthill_mckee_ordering<storage_index_type>()(matrix, permutation);
-        const storage_index_type size = permutation.indices().size();
+        const auto size =
+            static_cast<storage_index_type>(permutation.indices().size());
         const storage_index_type size_minus_one = size - 1;
         for (storage_index_type& index : permutation.indices()) {
             index = size_minus_one - index;

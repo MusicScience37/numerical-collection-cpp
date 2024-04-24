@@ -59,11 +59,12 @@ TEMPLATE_TEST_CASE("num_collect::util::kahan_adder (floating-point number)", "",
         auto adder = adder_type();
         constexpr std::size_t terms = 10000;
         for (std::size_t i = 1; i <= terms; ++i) {
-            const auto term = std::pow(static_cast<TestType>(i), -2);
+            const auto term =
+                static_cast<TestType>(std::pow(static_cast<TestType>(i), -2));
             adder += term;
         }
-        const TestType reference =
-            std::pow(num_collect::constants::pi<TestType>, 2) /
+        const auto reference = static_cast<TestType>(std::pow(
+                                   num_collect::constants::pi<TestType>, 2)) /
             static_cast<TestType>(6);
         const auto tol = static_cast<TestType>(1e-4);
         REQUIRE_THAT(adder.sum(), Catch::Matchers::WithinRel(reference, tol));

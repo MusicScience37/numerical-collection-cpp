@@ -278,7 +278,8 @@ private:
         void divide_in_place(index_type dim, value_type lower, value_type upper,
             value_type value) {
             NUM_COLLECT_DEBUG_ASSERT(lower < upper);
-            NUM_COLLECT_DEBUG_ASSERT(!is_divided_[dim]);
+            NUM_COLLECT_DEBUG_ASSERT(
+                !is_divided_[static_cast<std::size_t>(dim)]);
             if constexpr (is_eigen_vector_v<variable_type>) {
                 lower_(dim) = lower;
                 upper_(dim) = upper;
@@ -288,7 +289,7 @@ private:
             }
             dist_ = norm(lower_ - upper_) * half;
             value_ = value;
-            is_divided_[dim] = true;
+            is_divided_[static_cast<std::size_t>(dim)] = true;
             if (std::all_of(std::begin(is_divided_), std::end(is_divided_),
                     [](bool elem) { return elem; })) {
                 std::fill(

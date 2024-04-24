@@ -156,7 +156,7 @@ public:
      * \copydoc num_collect::opt::optimizer_base::evaluations
      */
     [[nodiscard]] auto evaluations() const noexcept -> index_type {
-        return value_dict_.size();
+        return static_cast<index_type>(value_dict_.size());
     }
 
 private:

@@ -49,7 +49,7 @@ public:
         constexpr num_collect::index_type whole_precision =
             std::numeric_limits<Scalar>::digits10 - 2;
         constexpr num_collect::index_type width = whole_precision + 10;
-        const num_collect::index_type lines = actual.size();
+        const std::size_t lines = actual.size();
 
         fmt::memory_buffer buffer;
         fmt::format_to(std::back_inserter(buffer), "{1:>{0}}", width, "Time");
@@ -59,7 +59,7 @@ public:
         fmt::format_to(std::back_inserter(buffer), "{1:>{0}}", width, "Error");
         buffer.push_back('\n');
 
-        for (num_collect::index_type l = 0; l < lines; ++l) {
+        for (std::size_t l = 0; l < lines; ++l) {
             fmt::format_to(std::back_inserter(buffer), "{2:> {1}.{0}e}",
                 whole_precision, width, time.at(l));
             fmt::format_to(std::back_inserter(buffer), "{2:> {1}.{0}e}",
@@ -100,7 +100,7 @@ public:
             std::numeric_limits<Scalar>::digits10 - 2;
         const num_collect::index_type width = whole_precision + 10;
         const num_collect::index_type dimension = actual.at(0).size();
-        const num_collect::index_type lines = actual.size();
+        const std::size_t lines = actual.size();
 
         fmt::memory_buffer buffer;
         fmt::format_to(std::back_inserter(buffer), "{1:>{0}}", width, "Time");
@@ -114,7 +114,7 @@ public:
         }
         buffer.push_back('\n');
 
-        for (num_collect::index_type l = 0; l < lines; ++l) {
+        for (std::size_t l = 0; l < lines; ++l) {
             fmt::format_to(std::back_inserter(buffer), "{2:> {1}.{0}e}",
                 whole_precision, width, time.at(l));
             for (num_collect::index_type i = 0; i < dimension; ++i) {

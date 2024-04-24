@@ -69,7 +69,8 @@ public:
 
         const storage_index_type first_index = calculate_degrees(matrix);
         process_indices(matrix, first_index);
-        create_permutation(permutation, matrix.rows());
+        create_permutation(
+            permutation, static_cast<storage_index_type>(matrix.rows()));
     }
 
 private:
@@ -124,7 +125,7 @@ private:
         -> storage_index_type {
         const auto size = static_cast<storage_index_type>(matrix.outerSize());
         unused_index_to_degree_.clear();
-        unused_index_to_degree_.reserve(size);
+        unused_index_to_degree_.reserve(static_cast<std::size_t>(size));
 
         storage_index_type lowest_degree =
             std::numeric_limits<storage_index_type>::max();
