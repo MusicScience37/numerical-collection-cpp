@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <algorithm>
 #include <cmath>
 #include <type_traits>
 #include <vector>
@@ -123,6 +124,7 @@ public:
             [this](const variable_type& variable) -> value_type {
             using std::log;
             using std::sqrt;
+            using std::max;
 
             const auto [mean, variance] =
                 interpolator_.evaluate_mean_and_variance_on(
@@ -132,7 +134,9 @@ public:
                     static_cast<value_type>(evaluations_) *
                     constants::pi<value_type> * constants::pi<value_type> /
                     static_cast<value_type>(0.6));
-            return mean - sqrt(variance_coeff * variance);
+            return mean -
+                sqrt(
+                    max(variance_coeff * variance, static_cast<value_type>(0)));
         };
         const auto lower_bound_objective_function =
             make_function_object_wrapper<value_type(variable_type)>(
