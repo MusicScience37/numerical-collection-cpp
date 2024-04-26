@@ -21,6 +21,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdlib>
 #include <type_traits>
 #include <vector>
 
@@ -46,7 +47,8 @@ inline constexpr auto gaussian_process_optimizer_tag =
     logging::log_tag_view("num_collect::opt::gaussian_process_optimizer");
 
 /*!
- * \brief Class of Gaussian process optimization \cite Srinivas2010.
+ * \brief Class of Gaussian process optimization
+ * \cite Srinivas2010, \cite Brochu2010.
  *
  * \tparam ObjectiveFunction Type of the objective function.
  */
@@ -120,37 +122,7 @@ public:
         interpolator_.optimize_length_parameter_scale(variables_, values_);
         interpolator_.compute(variables_, values_);
 
-        const auto lower_bound_function =
-            [this](const variable_type& variable) -> value_type {
-            using std::log;
-            using std::sqrt;
-            using std::max;
-
-            const auto [mean, variance] =
-                interpolator_.evaluate_mean_and_variance_on(
-                    variable, variables_);
-            const auto variance_coeff = static_cast<value_type>(0.4) *
-                log(static_cast<value_type>(evaluations_) *
-                    static_cast<value_type>(evaluations_) *
-                    constants::pi<value_type> * constants::pi<value_type> /
-                    static_cast<value_type>(0.6));
-            return mean -
-                sqrt(
-                    max(variance_coeff * variance, static_cast<value_type>(0)));
-        };
-        const auto lower_bound_objective_function =
-            make_function_object_wrapper<value_type(variable_type)>(
-                lower_bound_function);
-        dividing_rectangles<
-            std::decay_t<decltype(lower_bound_objective_function)>>
-            lower_bound_optimizer{lower_bound_objective_function};
-
-        this->configure_child_algorithm_logger_if_exists(lower_bound_optimizer);
-        lower_bound_optimizer.max_evaluations(max_lower_bound_evaluations_);
-        lower_bound_optimizer.init(lower_, upper_);
-        lower_bound_optimizer.solve();
-
-        evaluate_on(lower_bound_optimizer.opt_variable());
+        (void)try_find_and_evaluate_using_lower_bound();
 
         ++iterations_;
     }
@@ -268,6 +240,51 @@ private:
             return safe_limit;
         }
         return value;
+    }
+
+    /*!
+     * \brief Try to find a sample point using lower bounds and evaluate a
+     * function value for the sample point.
+     *
+     * \return Whether evaluation was performed.
+     */
+    [[nodiscard]] auto try_find_and_evaluate_using_lower_bound() -> bool {
+        const auto lower_bound_function =
+            [this](const variable_type& variable) -> value_type {
+            using std::log;
+            using std::sqrt;
+            using std::max;
+            using std::pow;
+
+            const auto [mean, variance] =
+                interpolator_.evaluate_mean_and_variance_on(
+                    variable, variables_);
+            const auto variance_coeff = static_cast<value_type>(2) *
+                log(pow(static_cast<value_type>(evaluations_),
+                        static_cast<value_type>(0.5) *
+                                static_cast<value_type>(dim_) +
+                            static_cast<value_type>(2)) *
+                    constants::pi<value_type> * constants::pi<value_type> /
+                    static_cast<value_type>(0.3));
+            return mean -
+                sqrt(
+                    max(variance_coeff * variance, static_cast<value_type>(0)));
+        };
+        const auto lower_bound_objective_function =
+            make_function_object_wrapper<value_type(variable_type)>(
+                lower_bound_function);
+        dividing_rectangles<
+            std::decay_t<decltype(lower_bound_objective_function)>>
+            lower_bound_optimizer{lower_bound_objective_function};
+
+        this->configure_child_algorithm_logger_if_exists(lower_bound_optimizer);
+        lower_bound_optimizer.max_evaluations(max_lower_bound_evaluations_);
+        lower_bound_optimizer.init(lower_, upper_);
+        lower_bound_optimizer.solve();
+
+        evaluate_on(lower_bound_optimizer.opt_variable());
+
+        return true;
     }
 
     //! Objective function.
