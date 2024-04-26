@@ -29,10 +29,10 @@
 #include <stat_bench/invocation_context.h>
 #include <stat_bench/stat/custom_stat_output.h>
 
+#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/opt/dividing_rectangles.h"
-#include "num_collect/opt/golden_section_search.h"
-#include "num_collect/opt/heuristic_global_optimizer.h"
+#include "num_collect/opt/gaussian_process_optimizer.h"
 #include "num_collect/opt/sampling_optimizer.h"
 
 STAT_BENCH_MAIN
@@ -44,8 +44,12 @@ public:
 
     template <typename Optimizer>
     void test_optimizer(std::size_t sample_index, Optimizer& optimizer) {
-        constexpr double tol_value = 1e-3;
+        constexpr double tol_value = 1e-2;
+        constexpr num_collect::index_type max_evaluations = 100;
         while (optimizer.opt_value() > tol_value) {
+            if (optimizer.evaluations() >= max_evaluations) {
+                throw num_collect::algorithm_failure("Failed to converge.");
+            }
             optimizer.iterate();
         }
         constexpr std::size_t thread_index = 0;
@@ -110,6 +114,21 @@ STAT_BENCH_CASE_F(single_variate_multiple_optima_function_fixture,
     STAT_BENCH_MEASURE_INDEXED(
         /*thread_index*/, sample_index, /*iteration_index*/) {
         auto optimizer = num_collect::opt::sampling_optimizer<
+            num_prob_collect::opt::single_variate_multi_optima_function>(
+            this->function(sample_index));
+        const auto [lower, upper] = search_region();
+        optimizer.init(lower, upper);
+        this->test_optimizer(sample_index, optimizer);
+    };
+}
+
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(single_variate_multiple_optima_function_fixture,
+    "opt_single_variate_multiple_optima_function",
+    "gaussian_process_optimizer") {
+    STAT_BENCH_MEASURE_INDEXED(
+        /*thread_index*/, sample_index, /*iteration_index*/) {
+        auto optimizer = num_collect::opt::gaussian_process_optimizer<
             num_prob_collect::opt::single_variate_multi_optima_function>(
             this->function(sample_index));
         const auto [lower, upper] = search_region();

@@ -7,6 +7,7 @@ set(SOURCE_FILES
     dividing_rectangles_test.cpp
     downhill_simplex_test.cpp
     function_object_wrapper_test.cpp
+    gaussian_process_optimizer_test.cpp
     golden_section_search_test.cpp
     heuristic_global_optimizer_test.cpp
     impl/ternary_vector_test.cpp
