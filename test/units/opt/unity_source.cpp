@@ -6,6 +6,7 @@
 #include "dividing_rectangles_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "downhill_simplex_test.cpp"     // NOLINT(bugprone-suspicious-include)
 #include "function_object_wrapper_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "gaussian_process_optimizer_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "golden_section_search_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "heuristic_global_optimizer_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/ternary_vector_test.cpp"  // NOLINT(bugprone-suspicious-include)
