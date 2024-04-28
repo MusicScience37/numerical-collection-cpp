@@ -19,6 +19,17 @@ RUN apt-get update && \
     chmod 0777 /root && \
     chmod -R 0777 /root/.pyenv
 
+# mimalloc
+RUN git clone https://github.com/microsoft/mimalloc.git -b v2.1.2 && \
+    cd mimalloc && \
+    mkdir -p out/release && \
+    cd out/release && \
+    cmake -DCMAKE_BUILD_TYPE=Release ../.. && \
+    cmake --build . && \
+    cmake --build . --target install && \
+    cd ../../.. && \
+    rm -r mimalloc
+
 # Prepare poetry for ubuntu user.
 USER ubuntu
 WORKDIR /home/ubuntu
