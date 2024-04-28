@@ -46,7 +46,8 @@ inline constexpr auto annealing_downhill_simplex_tag =
     logging::log_tag_view("num_collect::opt::annealing_downhill_simplex");
 
 /*!
- * \brief Class of downhill simplex method.
+ * \brief Class of downhill simplex method with simulated annealing
+ * \cite Press2007.
  *
  * \tparam ObjectiveFunction Type of the objective function.
  */
@@ -54,7 +55,8 @@ template <concepts::objective_function ObjectiveFunction>
 class annealing_downhill_simplex;
 
 /*!
- * \brief Class of downhill simplex method.
+ * \brief Class of downhill simplex method with simulated annealing
+ * \cite Press2007.
  *
  * \tparam ObjectiveFunction Type of the objective function.
  */
