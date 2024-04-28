@@ -130,6 +130,8 @@ public:
         evaluations_ = 0;
 
         variable_type var = init_var;
+        points_.clear();
+        values_.clear();
         points_.reserve(util::safe_cast<std::size_t>(dim_ + 1));
         values_.reserve(util::safe_cast<std::size_t>(dim_ + 1));
         points_.push_back(var);
@@ -142,6 +144,7 @@ public:
             var[i] = val;
         }
 
+        value_order_.clear();
         value_order_.reserve(util::safe_cast<std::size_t>(dim_ + 1));
         for (std::size_t i = 0; i < util::safe_cast<std::size_t>(dim_ + 1);
              ++i) {
