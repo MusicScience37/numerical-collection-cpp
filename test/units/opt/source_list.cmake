@@ -1,5 +1,6 @@
 set(SOURCE_FILES
     adaptive_diagonal_curves_test.cpp
+    annealing_downhill_simplex_test.cpp
     backtracking_line_searcher_test.cpp
     bfgs_optimizer_test.cpp
     conjugate_gradient_optimizer_test.cpp
