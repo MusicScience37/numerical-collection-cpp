@@ -31,6 +31,7 @@
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/opt/adaptive_diagonal_curves.h"
+#include "num_collect/opt/annealing_downhill_simplex.h"
 #include "num_collect/opt/dividing_rectangles.h"
 
 STAT_BENCH_MAIN
@@ -136,6 +137,23 @@ STAT_BENCH_CASE_F(multi_variate_multi_optima_function_fixture,
             this->function(sample_index));
         const auto [lower, upper] = this->search_region();
         optimizer.init(lower, upper);
+        this->test_optimizer(sample_index, optimizer);
+    };
+}
+
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(multi_variate_multi_optima_function_fixture,
+    "opt_multi_variate_multi_optima_function", "annealing_downhill_simplex") {
+    STAT_BENCH_MEASURE_INDEXED(
+        /*thread_index*/, sample_index, /*iteration_index*/) {
+        auto optimizer = num_collect::opt::annealing_downhill_simplex<
+            num_prob_collect::opt::multi_variate_multi_optima_function>(
+            this->function(sample_index));
+        optimizer.seed(0);  // For reproducibility.
+        const auto [lower, upper] = this->search_region();
+        optimizer.init((lower + upper) * 0.5);    // NOLINT
+        optimizer.highest_temperature(100.0);     // NOLINT
+        optimizer.max_iterations_per_trial(100);  // NOLINT
         this->test_optimizer(sample_index, optimizer);
     };
 }
