@@ -30,7 +30,7 @@
 namespace num_collect::rbf::impl {
 
 /*!
- * \brief Class to solve linear equations with kernel matrices.
+ * \brief Class to solve linear equations with symmetric kernel matrices.
  *
  * \tparam KernelMatrix Type of the kernel matrices.
  * \tparam Vector Type of the vectors.

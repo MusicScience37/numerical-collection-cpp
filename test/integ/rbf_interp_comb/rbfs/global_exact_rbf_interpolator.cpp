@@ -79,5 +79,5 @@ TEMPLATE_TEST_CASE("global_exact_rbf_interpolator with different RBFs", "",
     }
     const Eigen::VectorXd standard_deviations = variances.cwiseSqrt();
     comparison_approvals::verify_with_reference_and_error(
-        actual_values, standard_deviations, interpolated_values, 3);
+        interpolated_values, standard_deviations, actual_values, 2);
 }

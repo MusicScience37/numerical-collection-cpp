@@ -46,7 +46,8 @@ inline constexpr auto global_exact_rbf_interpolator_tag =
     logging::log_tag_view("num_collect::rbf::global_exact_rbf_interpolator");
 
 /*!
- * \brief Class to interpolate using RBF without regularization.
+ * \brief Class to interpolate using RBF using global length parameter, without
+ * regularization.
  *
  * \tparam Variable Type of variables.
  * \tparam FunctionValue Type of function values.
@@ -135,11 +136,13 @@ public:
         const std::vector<variable_type>& variables_for_kernel) const
         -> function_value_type {
         auto value = static_cast<function_value_type>(0);
+        const auto length_parameter =
+            length_parameter_calculator_.length_parameter_at(
+                static_cast<index_type>(0));
         for (std::size_t i = 0; i < variables_for_kernel.size(); ++i) {
             value += coeffs_(static_cast<index_type>(i)) *
                 rbf_(distance_function_(variable, variables_for_kernel[i]) /
-                    length_parameter_calculator_.length_parameter_at(
-                        static_cast<index_type>(i)));
+                    length_parameter);
         }
         return value;
     }
@@ -157,9 +160,7 @@ public:
     [[nodiscard]] auto evaluate_mean_and_variance_on(
         const variable_type& variable,
         const std::vector<variable_type>& variables_for_kernel) const
-        -> std::pair<function_value_type, function_value_type>
-        requires length_parameter_calculator_type::uses_global_length_parameter
-    {
+        -> std::pair<function_value_type, function_value_type> {
         Eigen::VectorXd kernel_vec;
         kernel_vec.resize(static_cast<index_type>(variables_for_kernel.size()));
         for (std::size_t i = 0; i < variables_for_kernel.size(); ++i) {
@@ -189,7 +190,8 @@ public:
     }
 
     /*!
-     * \brief Set the scale of length parameters with optimization.
+     * \brief Set the scale of length parameters with optimization using MLE
+     * \cite Scheuerer2011.
      *
      * \param[in] variables Variables.
      * \param[in] function_values Function values.
