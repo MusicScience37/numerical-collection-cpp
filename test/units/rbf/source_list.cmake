@@ -6,5 +6,6 @@ set(SOURCE_FILES
     length_parameter_calculators/global_length_parameter_calculator_test.cpp
     rbfs/gaussian_rbf_test.cpp
     rbfs/inverse_multi_quadric_rbf_test.cpp
+    rbfs/inverse_quadratic_rbf_test.cpp
     rbfs/multi_quadric_rbf_test.cpp
 )
