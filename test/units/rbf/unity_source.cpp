@@ -4,3 +4,5 @@
 #include "impl/symmetric_kernel_matrix_solver_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "length_parameter_calculators/global_length_parameter_calculator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rbfs/gaussian_rbf_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "rbfs/inverse_multi_quadric_rbf_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "rbfs/multi_quadric_rbf_test.cpp"  // NOLINT(bugprone-suspicious-include)

@@ -5,4 +5,6 @@ set(SOURCE_FILES
     impl/symmetric_kernel_matrix_solver_test.cpp
     length_parameter_calculators/global_length_parameter_calculator_test.cpp
     rbfs/gaussian_rbf_test.cpp
+    rbfs/inverse_multi_quadric_rbf_test.cpp
+    rbfs/multi_quadric_rbf_test.cpp
 )
