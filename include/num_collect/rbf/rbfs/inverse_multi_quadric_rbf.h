@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of gaussian_rbf class.
+ * \brief Definition of inverse_multi_quadric_rbf class.
  */
 #pragma once
 
@@ -26,12 +26,12 @@
 namespace num_collect::rbf::rbfs {
 
 /*!
- * \brief Class of Gaussian RBF \cite Fornberg2015.
+ * \brief Class of inverse multi-quadric RBF \cite Fornberg2015.
  *
  * \tparam Scalar Type of scalars.
  */
 template <base::concepts::real_scalar Scalar>
-class gaussian_rbf {
+class inverse_multi_quadric_rbf {
 public:
     //! Type of scalars.
     using scalar_type = Scalar;
@@ -44,8 +44,9 @@ public:
      */
     [[nodiscard]] auto operator()(
         const scalar_type& distance_rate) const noexcept -> scalar_type {
-        using std::exp;
-        return exp(-distance_rate * distance_rate);
+        using std::sqrt;
+        return static_cast<scalar_type>(1) /
+            sqrt(static_cast<scalar_type>(1) + distance_rate * distance_rate);
     }
 };
 

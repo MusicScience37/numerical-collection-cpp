@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of gaussian_rbf class.
+ * \brief Definition of multi_quadric_rbf class.
  */
 #pragma once
 
@@ -26,12 +26,15 @@
 namespace num_collect::rbf::rbfs {
 
 /*!
- * \brief Class of Gaussian RBF \cite Fornberg2015.
+ * \brief Class of Multi-quadric RBF \cite Fornberg2015.
  *
  * \tparam Scalar Type of scalars.
+ *
+ * \warning This RBF is written in \cite Fornberg2015, but didn't work in RBF
+ * interpolation.
  */
 template <base::concepts::real_scalar Scalar>
-class gaussian_rbf {
+class multi_quadric_rbf {
 public:
     //! Type of scalars.
     using scalar_type = Scalar;
@@ -44,8 +47,9 @@ public:
      */
     [[nodiscard]] auto operator()(
         const scalar_type& distance_rate) const noexcept -> scalar_type {
-        using std::exp;
-        return exp(-distance_rate * distance_rate);
+        using std::sqrt;
+        return sqrt(
+            static_cast<scalar_type>(1) + distance_rate * distance_rate);
     }
 };
 

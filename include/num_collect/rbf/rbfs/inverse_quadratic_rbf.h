@@ -15,23 +15,21 @@
  */
 /*!
  * \file
- * \brief Definition of gaussian_rbf class.
+ * \brief Definition of inverse_quadratic_rbf class.
  */
 #pragma once
-
-#include <cmath>
 
 #include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
 
 namespace num_collect::rbf::rbfs {
 
 /*!
- * \brief Class of Gaussian RBF \cite Fornberg2015.
+ * \brief Class of inverse quadratic RBF \cite Fornberg2015.
  *
  * \tparam Scalar Type of scalars.
  */
 template <base::concepts::real_scalar Scalar>
-class gaussian_rbf {
+class inverse_quadratic_rbf {
 public:
     //! Type of scalars.
     using scalar_type = Scalar;
@@ -44,8 +42,8 @@ public:
      */
     [[nodiscard]] auto operator()(
         const scalar_type& distance_rate) const noexcept -> scalar_type {
-        using std::exp;
-        return exp(-distance_rate * distance_rate);
+        return static_cast<scalar_type>(1) /
+            (static_cast<scalar_type>(1) + distance_rate * distance_rate);
     }
 };
 

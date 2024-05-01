@@ -60,7 +60,7 @@ public:
         const auto config =
             num_collect::logging::log_tag_config()
                 .sink(sink)
-                .output_log_level(num_collect::logging::log_level::summary)
+                .output_log_level(num_collect::logging::log_level::trace)
                 .output_log_level_in_child_iterations(
                     num_collect::logging::log_level::info);
         num_collect::logging::set_default_tag_config(config);
