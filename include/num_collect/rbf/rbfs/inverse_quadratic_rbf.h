@@ -24,7 +24,7 @@
 namespace num_collect::rbf::rbfs {
 
 /*!
- * \brief Class of inverse quadratic RBF.
+ * \brief Class of inverse quadratic RBF \cite Fornberg2015.
  *
  * \tparam Scalar Type of scalars.
  */

@@ -26,7 +26,7 @@
 namespace num_collect::rbf::rbfs {
 
 /*!
- * \brief Class of Gaussian RBF.
+ * \brief Class of Gaussian RBF \cite Fornberg2015.
  *
  * \tparam Scalar Type of scalars.
  */
