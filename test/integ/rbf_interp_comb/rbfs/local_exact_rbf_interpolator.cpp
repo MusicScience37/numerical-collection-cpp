@@ -17,7 +17,7 @@
  * \file
  * \brief Test of different RBFs in RBF interpolation.
  */
-#include "num_collect/rbf/global_exact_rbf_interpolator.h"
+#include "num_collect/rbf/local_exact_rbf_interpolator.h"
 
 #include <Eigen/Core>
 #include <catch2/catch_template_test_macros.hpp>
@@ -30,18 +30,18 @@
 #include "num_collect/rbf/rbfs/inverse_quadratic_rbf.h"
 #include "num_collect/rbf/rbfs/sech_rbf.h"
 
-TEMPLATE_TEST_CASE("global_exact_rbf_interpolator with different RBFs", "",
+TEMPLATE_TEST_CASE("local_exact_rbf_interpolator with different RBFs", "",
     num_collect::rbf::rbfs::gaussian_rbf<double>,
     // num_collect::rbf::rbfs::multi_quadric_rbf<double> didn't work.
     num_collect::rbf::rbfs::inverse_multi_quadric_rbf<double>,
     num_collect::rbf::rbfs::inverse_quadratic_rbf<double>,
     num_collect::rbf::rbfs::sech_rbf<double>) {
-    using num_collect::rbf::global_exact_rbf_interpolator;
+    using num_collect::rbf::local_exact_rbf_interpolator;
 
     using variable_type = double;
     using rbf_type = TestType;
     using rbf_interpolator_type =
-        global_exact_rbf_interpolator<variable_type, variable_type, rbf_type>;
+        local_exact_rbf_interpolator<variable_type, variable_type, rbf_type>;
 
     rbf_interpolator_type interpolator;
 
@@ -58,8 +58,8 @@ TEMPLATE_TEST_CASE("global_exact_rbf_interpolator with different RBFs", "",
             function(sample_variables[i]);
     }
 
-    interpolator.optimize_length_parameter_scale(
-        sample_variables, sample_values);
+    constexpr double length_parameter_scale = 2.0;
+    interpolator.fix_length_parameter_scale(length_parameter_scale);
     interpolator.compute(sample_variables, sample_values);
 
     const Eigen::VectorXd interpolated_variables =
@@ -68,16 +68,12 @@ TEMPLATE_TEST_CASE("global_exact_rbf_interpolator with different RBFs", "",
     interpolated_values.resize(interpolated_variables.size());
     Eigen::VectorXd actual_values;
     actual_values.resize(interpolated_variables.size());
-    Eigen::VectorXd variances;
-    variances.resize(interpolated_variables.size());
     for (num_collect::index_type i = 0; i < interpolated_variables.size();
          ++i) {
-        std::tie(interpolated_values(i), variances(i)) =
-            interpolator.evaluate_mean_and_variance_on(
-                interpolated_variables(i), sample_variables);
+        interpolated_values(i) = interpolator.interpolate(
+            interpolated_variables(i), sample_variables);
         actual_values(i) = function(interpolated_variables(i));
     }
-    const Eigen::VectorXd standard_deviations = variances.cwiseSqrt();
-    comparison_approvals::verify_with_reference_and_error(
-        interpolated_values, standard_deviations, actual_values, 2);
+    comparison_approvals::verify_with_reference(
+        interpolated_values, actual_values, 2);
 }

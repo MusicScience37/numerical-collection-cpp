@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of global_length_parameter_calculator class.
+ * \brief Definition of local_length_parameter_calculator class.
  */
 #pragma once
 
@@ -23,21 +23,24 @@
 #include <limits>
 #include <vector>
 
+#include <Eigen/Core>
+
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/constants/zero.h"
 #include "num_collect/rbf/concepts/distance_function.h"  // IWYU pragma: keep
+#include "num_collect/util/assert.h"
 
 namespace num_collect::rbf::length_parameter_calculators {
 
 /*!
- * \brief Class to calculate length parameters for RBF using global fixed length
- * parameter.
+ * \brief Class to calculate length parameters for RBF using length parameters
+ * localized for each sample point.
  *
  * \tparam DistanceFunction Type of the distance function.
  */
 template <concepts::distance_function DistanceFunction>
-class global_length_parameter_calculator {
+class local_length_parameter_calculator {
 public:
     //! Type of the distance function.
     using distance_function_type = DistanceFunction;
@@ -49,12 +52,12 @@ public:
     using scalar_type = typename DistanceFunction::value_type;
 
     //! Whether this calculator uses the globally fixed length parameters.
-    static constexpr bool uses_global_length_parameter = true;
+    static constexpr bool uses_global_length_parameter = false;
 
     /*!
      * \brief Constructor.
      */
-    global_length_parameter_calculator() = default;
+    local_length_parameter_calculator() = default;
 
     /*!
      * \brief Compute the length parameters.
@@ -69,7 +72,7 @@ public:
             throw invalid_argument("No sample point is given.");
         }
 
-        auto max_min_distance = constants::zero<scalar_type>;
+        length_parameters_.resize(static_cast<index_type>(num_samples));
         for (std::size_t i = 0; i < num_samples; ++i) {
             auto min_distance = std::numeric_limits<scalar_type>::max();
             for (std::size_t j = 0; j < num_samples; ++j) {
@@ -81,12 +84,9 @@ public:
                     }
                 }
             }
-            if (min_distance > max_min_distance) {
-                max_min_distance = min_distance;
-            }
+            length_parameters_(static_cast<index_type>(i)) =
+                scale_ * min_distance;
         }
-
-        length_parameter_ = scale_ * max_min_distance;
     }
 
     /*!
@@ -96,8 +96,9 @@ public:
      * \return Length parameter.
      */
     [[nodiscard]] auto length_parameter_at(index_type i) const -> scalar_type {
-        (void)i;
-        return length_parameter_;
+        NUM_COLLECT_DEBUG_ASSERT(0 <= i);
+        NUM_COLLECT_DEBUG_ASSERT(i < length_parameters_.size());
+        return length_parameters_(i);
     }
 
     /*!
@@ -127,8 +128,8 @@ private:
     //! Scale of length parameters.
     scalar_type scale_{default_scale};
 
-    //! Length parameter.
-    scalar_type length_parameter_{constants::zero<scalar_type>};
+    //! Length parameters.
+    Eigen::VectorX<scalar_type> length_parameters_{};
 };
 
 }  // namespace num_collect::rbf::length_parameter_calculators
