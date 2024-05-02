@@ -22,13 +22,15 @@
 #include <type_traits>
 #include <vector>
 
-#include "num_collect/base/concepts/dense_matrix.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/dense_matrix.h"      // IWYU pragma: keep
+#include "num_collect/base/concepts/sparse_matrix_of.h"  // IWYU pragma: keep
 #include "num_collect/base/index_type.h"
 #include "num_collect/constants/zero.h"
 #include "num_collect/rbf/concepts/distance_function.h"  // IWYU pragma: keep
 #include "num_collect/rbf/concepts/length_parameter_calculator.h"  // IWYU pragma: keep
 #include "num_collect/rbf/concepts/rbf.h"  // IWYU pragma: keep
 #include "num_collect/util/assert.h"
+#include "num_collect/util/safe_cast.h"
 
 namespace num_collect::rbf {
 
@@ -142,6 +144,63 @@ inline void compute_kernel_matrix(const DistanceFunction& distance_function,
                 static_cast<index_type>(i), static_cast<index_type>(j)) = value;
         }
     }
+}
+
+/*!
+ * \brief Compute a kernel matrix.
+ *
+ * \tparam DistanceFunction Type of the distance function.
+ * \tparam RBF Type of the RBF.
+ * \tparam LengthParameterCalculator Type of the calculator of length
+ * parameters.
+ * \tparam KernelMatrix Type of the kernel matrix.
+ * \param[in] distance_function Distance function.
+ * \param[in] rbf RBF.
+ * \param[in,out] length_parameter_calculator Calculator of length parameters.
+ * \param[in] variables Variables.
+ * \param[out] kernel_matrix Kernel matrix.
+ */
+template <concepts::distance_function DistanceFunction, concepts::rbf RBF,
+    concepts::length_parameter_calculator LengthParameterCalculator,
+    base::concepts::sparse_matrix_of<typename DistanceFunction::value_type>
+        KernelMatrix>
+    requires std::is_same_v<
+                 typename LengthParameterCalculator::distance_function_type,
+                 DistanceFunction> &&
+    std::is_same_v<typename DistanceFunction::value_type,
+        typename RBF::scalar_type> &&
+    std::is_same_v<typename DistanceFunction::value_type,
+        typename KernelMatrix::Scalar>
+inline void compute_kernel_matrix(const DistanceFunction& distance_function,
+    const RBF& rbf, LengthParameterCalculator& length_parameter_calculator,
+    const std::vector<typename DistanceFunction::variable_type>& variables,
+    KernelMatrix& kernel_matrix) {
+    using scalar_type = typename KernelMatrix::Scalar;
+
+    length_parameter_calculator.compute(variables, distance_function);
+
+    const auto num_variables = util::safe_cast<int>(variables.size());
+    kernel_matrix.resize(num_variables, num_variables);
+
+    std::vector<
+        Eigen::Triplet<scalar_type, typename KernelMatrix::StorageIndex>>
+        triplets;
+    for (int j = 0; j < num_variables; ++j) {
+        const scalar_type length_parameter =
+            length_parameter_calculator.length_parameter_at(j);
+        NUM_COLLECT_ASSERT(length_parameter > static_cast<scalar_type>(0));
+
+        for (int i = 0; i < num_variables; ++i) {
+            const scalar_type value =
+                rbf(distance_function(variables[static_cast<std::size_t>(i)],
+                        variables[static_cast<std::size_t>(j)]) /
+                    length_parameter);
+            if (value != static_cast<scalar_type>(0)) {
+                triplets.emplace_back(i, j, value);
+            }
+        }
+    }
+    kernel_matrix.setFromTriplets(triplets.begin(), triplets.end());
 }
 
 }  // namespace num_collect::rbf
