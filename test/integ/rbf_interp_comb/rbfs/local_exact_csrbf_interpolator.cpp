@@ -17,7 +17,7 @@
  * \file
  * \brief Test of different RBFs in RBF interpolation.
  */
-#include "num_collect/rbf/local_exact_rbf_interpolator.h"
+#include "num_collect/rbf/local_exact_csrbf_interpolator.h"
 
 #include <Eigen/Core>
 #include <catch2/catch_template_test_macros.hpp>
@@ -25,25 +25,21 @@
 
 #include "comparison_approvals.h"
 #include "num_collect/constants/pi.h"
-#include "num_collect/rbf/rbfs/gaussian_rbf.h"
-#include "num_collect/rbf/rbfs/inverse_multi_quadric_rbf.h"
-#include "num_collect/rbf/rbfs/inverse_quadratic_rbf.h"
-#include "num_collect/rbf/rbfs/sech_rbf.h"
 #include "num_collect/rbf/rbfs/wendland_csrbf.h"
 
-TEMPLATE_TEST_CASE("local_exact_rbf_interpolator with different RBFs", "",
-    num_collect::rbf::rbfs::gaussian_rbf<double>,
-    // num_collect::rbf::rbfs::multi_quadric_rbf<double> didn't work.
-    num_collect::rbf::rbfs::inverse_multi_quadric_rbf<double>,
-    num_collect::rbf::rbfs::inverse_quadratic_rbf<double>,
-    num_collect::rbf::rbfs::sech_rbf<double>,
-    (num_collect::rbf::rbfs::wendland_csrbf<double, 3, 1>)) {
-    using num_collect::rbf::local_exact_rbf_interpolator;
+TEMPLATE_TEST_CASE("local_exact_csrbf_interpolator with different RBFs", "",
+    (num_collect::rbf::rbfs::wendland_csrbf<double, 1, 0>),
+    (num_collect::rbf::rbfs::wendland_csrbf<double, 2, 0>),
+    (num_collect::rbf::rbfs::wendland_csrbf<double, 2, 1>),
+    (num_collect::rbf::rbfs::wendland_csrbf<double, 3, 0>),
+    (num_collect::rbf::rbfs::wendland_csrbf<double, 3, 1>),
+    (num_collect::rbf::rbfs::wendland_csrbf<double, 3, 2>)) {
+    using num_collect::rbf::local_exact_csrbf_interpolator;
 
     using variable_type = double;
     using rbf_type = TestType;
     using rbf_interpolator_type =
-        local_exact_rbf_interpolator<variable_type, variable_type, rbf_type>;
+        local_exact_csrbf_interpolator<variable_type, variable_type, rbf_type>;
 
     rbf_interpolator_type interpolator;
 
