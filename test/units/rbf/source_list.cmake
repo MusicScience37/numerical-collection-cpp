@@ -8,6 +8,7 @@ set(SOURCE_FILES
     length_parameter_calculators/local_length_parameter_calculator_test.cpp
     local_exact_csrbf_interpolator_test.cpp
     local_exact_rbf_interpolator_test.cpp
+    rbf_interpolator_test.cpp
     rbfs/gaussian_rbf_test.cpp
     rbfs/inverse_multi_quadric_rbf_test.cpp
     rbfs/inverse_quadratic_rbf_test.cpp

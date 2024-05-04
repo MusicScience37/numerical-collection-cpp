@@ -175,7 +175,7 @@ TEST_CASE(
 }
 
 TEST_CASE(
-    "num_collect::rbf::impl::kernel_matrix_solver (for dense matrix and local "
+    "num_collect::rbf::impl::kernel_matrix_solver (for sparse matrix and local "
     "length parameter)") {
     using num_collect::rbf::compute_kernel_matrix;
     using num_collect::rbf::kernel_matrix_type;
