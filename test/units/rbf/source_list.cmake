@@ -1,5 +1,6 @@
 set(SOURCE_FILES
     compute_kernel_matrix_test.cpp
+    compute_polynomial_term_matrix_test.cpp
     distance_functions/euclidean_distance_function_test.cpp
     gaussian_process_interpolator_test.cpp
     impl/kernel_matrix_solver_test.cpp
