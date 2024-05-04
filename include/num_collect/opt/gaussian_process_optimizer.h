@@ -36,7 +36,7 @@
 #include "num_collect/opt/dividing_rectangles.h"
 #include "num_collect/opt/function_object_wrapper.h"
 #include "num_collect/opt/optimizer_base.h"
-#include "num_collect/rbf/global_exact_rbf_interpolator.h"
+#include "num_collect/rbf/gaussian_process_interpolator.h"
 #include "num_collect/util/assert.h"
 #include "num_collect/util/is_eigen_vector.h"
 
@@ -206,7 +206,7 @@ private:
      * \brief Type of interpolator.
      */
     using interpolator_type =
-        rbf::global_exact_rbf_interpolator<variable_type, value_type>;
+        rbf::gaussian_process_interpolator<value_type(variable_type)>;
 
     /*!
      * \brief Evaluate function value.
@@ -257,8 +257,7 @@ private:
             using std::pow;
 
             const auto [mean, variance] =
-                interpolator_.evaluate_mean_and_variance_on(
-                    variable, variables_);
+                interpolator_.evaluate_mean_and_variance_on(variable);
             const auto variance_coeff = static_cast<value_type>(2) *
                 log(pow(static_cast<value_type>(evaluations_),
                         static_cast<value_type>(0.5) *
