@@ -15,9 +15,9 @@
  */
 /*!
  * \file
- * \brief Test of global_exact_rbf_interpolator class.
+ * \brief Test of gaussian_process_interpolator class.
  */
-#include "num_collect/rbf/global_exact_rbf_interpolator.h"
+#include "num_collect/rbf/gaussian_process_interpolator.h"
 
 #include <cmath>
 #include <tuple>
@@ -30,12 +30,11 @@
 #include "num_collect/constants/pi.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
 
-TEST_CASE("num_collect::rbf::global_exact_rbf_interpolator") {
-    using num_collect::rbf::global_exact_rbf_interpolator;
+TEST_CASE("num_collect::rbf::gaussian_process_interpolator") {
+    using num_collect::rbf::gaussian_process_interpolator;
     using num_collect::rbf::rbfs::gaussian_rbf;
 
-    using variable_type = double;
-    using rbf_interpolator_type = global_exact_rbf_interpolator<variable_type>;
+    using rbf_interpolator_type = gaussian_process_interpolator<double(double)>;
 
     rbf_interpolator_type interpolator;
 
@@ -69,7 +68,7 @@ TEST_CASE("num_collect::rbf::global_exact_rbf_interpolator") {
              ++i) {
             std::tie(interpolated_values(i), variances(i)) =
                 interpolator.evaluate_mean_and_variance_on(
-                    interpolated_variables(i), sample_variables);
+                    interpolated_variables(i));
             actual_values(i) = function(interpolated_variables(i));
         }
         const Eigen::VectorXd standard_deviations = variances.cwiseSqrt();
@@ -107,7 +106,7 @@ TEST_CASE("num_collect::rbf::global_exact_rbf_interpolator") {
              ++i) {
             std::tie(interpolated_values(i), variances(i)) =
                 interpolator.evaluate_mean_and_variance_on(
-                    interpolated_variables(i), sample_variables);
+                    interpolated_variables(i));
             actual_values(i) = function(interpolated_variables(i));
         }
         const Eigen::VectorXd standard_deviations = variances.cwiseSqrt();

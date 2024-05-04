@@ -1,12 +1,11 @@
 set(SOURCE_FILES
     compute_kernel_matrix_test.cpp
     distance_functions/euclidean_distance_function_test.cpp
-    global_exact_rbf_interpolator_test.cpp
-    impl/symmetric_kernel_matrix_solver_test.cpp
+    gaussian_process_interpolator_test.cpp
+    impl/kernel_matrix_solver_test.cpp
     length_parameter_calculators/global_length_parameter_calculator_test.cpp
     length_parameter_calculators/local_length_parameter_calculator_test.cpp
-    local_exact_csrbf_interpolator_test.cpp
-    local_exact_rbf_interpolator_test.cpp
+    rbf_interpolator_test.cpp
     rbfs/gaussian_rbf_test.cpp
     rbfs/inverse_multi_quadric_rbf_test.cpp
     rbfs/inverse_quadratic_rbf_test.cpp

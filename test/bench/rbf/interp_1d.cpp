@@ -26,9 +26,7 @@
 #include <stat_bench/invocation_context.h>
 
 #include "num_collect/base/index_type.h"
-#include "num_collect/rbf/global_exact_rbf_interpolator.h"
-#include "num_collect/rbf/local_exact_csrbf_interpolator.h"
-#include "num_collect/rbf/local_exact_rbf_interpolator.h"
+#include "num_collect/rbf/rbf_interpolator.h"
 
 STAT_BENCH_MAIN
 
@@ -88,7 +86,7 @@ public:
             const double variable =
                 evaluation_variables_[static_cast<std::size_t>(i)];
             evaluation_interpolated_values_[i] =
-                interpolator.interpolate(variable, sample_variables_);
+                interpolator.interpolate(variable);
         }
     }
 
@@ -121,25 +119,25 @@ private:
 };
 
 STAT_BENCH_CASE_F(
-    interpolate_1d_fixture, "interpolate_1d", "global_exact_rbf_interpolator") {
+    interpolate_1d_fixture, "interpolate_1d", "global_rbf_interpolator") {
     STAT_BENCH_MEASURE() {
-        num_collect::rbf::global_exact_rbf_interpolator<double> interpolator;
+        num_collect::rbf::global_rbf_interpolator<double(double)> interpolator;
         perform(interpolator);
     };
 }
 
 STAT_BENCH_CASE_F(
-    interpolate_1d_fixture, "interpolate_1d", "local_exact_rbf_interpolator") {
+    interpolate_1d_fixture, "interpolate_1d", "local_rbf_interpolator") {
     STAT_BENCH_MEASURE() {
-        num_collect::rbf::local_exact_rbf_interpolator<double> interpolator;
+        num_collect::rbf::local_rbf_interpolator<double(double)> interpolator;
         perform(interpolator);
     };
 }
 
-STAT_BENCH_CASE_F(interpolate_1d_fixture, "interpolate_1d",
-    "local_exact_csrbf_interpolator") {
+STAT_BENCH_CASE_F(
+    interpolate_1d_fixture, "interpolate_1d", "local_csrbf_interpolator") {
     STAT_BENCH_MEASURE() {
-        num_collect::rbf::local_exact_csrbf_interpolator<double> interpolator;
+        num_collect::rbf::local_csrbf_interpolator<double(double)> interpolator;
         perform(interpolator);
     };
 }

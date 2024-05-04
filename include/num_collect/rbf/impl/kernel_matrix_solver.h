@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of symmetric_kernel_matrix_solver class.
+ * \brief Definition of kernel_matrix_solver class.
  */
 #pragma once
 
@@ -23,46 +23,60 @@
 
 #include <Eigen/Core>
 #include <Eigen/Eigenvalues>
+#include <Eigen/IterativeLinearSolvers>
+#include <Eigen/LU>
+#include <Eigen/SparseCore>
 
 #include "num_collect/base/concepts/dense_vector.h"  // IWYU pragma: keep
 #include "num_collect/base/concepts/real_scalar_dense_matrix.h"  // IWYU pragma: keep
+#include "num_collect/base/exception.h"
+#include "num_collect/rbf/kernel_matrix_type.h"
 
 namespace num_collect::rbf::impl {
 
 /*!
- * \brief Class to solve linear equations with symmetric kernel matrices.
+ * \brief Class to solve linear equations of kernel matrices.
  *
- * \tparam KernelMatrix Type of the kernel matrices.
- * \tparam Vector Type of the vectors.
+ * \tparam KernelValue Type of values of the kernel.
+ * \tparam FunctionValue Type of the function values.
+ * \tparam KernelMatrixType Type of the kernel matrices.
+ * \tparam UsesGlobalLengthParameter Whether to uses the globally fixed length
+ * parameters.
  */
-template <base::concepts::real_scalar_dense_matrix KernelMatrix,
-    base::concepts::dense_vector Vector>
-class symmetric_kernel_matrix_solver {
+template <typename KernelValue, typename FunctionValue,
+    kernel_matrix_type KernelMatrixType, bool UsesGlobalLengthParameter>
+class kernel_matrix_solver;
+
+/*!
+ * \brief Class to solve linear equations of kernel matrices.
+ *
+ * \tparam KernelValue Type of values of the kernel.
+ * \tparam FunctionValue Type of the function values.
+ */
+template <typename KernelValue, typename FunctionValue>
+class kernel_matrix_solver<KernelValue, FunctionValue,
+    kernel_matrix_type::dense, true> {
 public:
     //! Type of matrices.
-    using kernel_matrix_type = KernelMatrix;
+    using kernel_matrix_type = Eigen::MatrixX<KernelValue>;
 
     //! Type of vectors.
-    using vector_type = Vector;
+    using vector_type = Eigen::VectorX<FunctionValue>;
 
     //! Type of scalars.
-    using scalar_type = typename KernelMatrix::Scalar;
+    using scalar_type = KernelValue;
 
     //! Constructor.
-    symmetric_kernel_matrix_solver() = default;
+    kernel_matrix_solver() = default;
 
     /*!
      * \brief Compute internal matrices.
      *
-     * \tparam InputKernelMatrix Type of the input kernel matrix.
-     * \tparam InputDataVector Type of the input data vector.
      * \param[in] kernel_matrix Kernel matrix.
      * \param[in] data Data vector.
      */
-    template <base::concepts::real_scalar_dense_matrix InputKernelMatrix,
-        base::concepts::dense_vector InputDataVector>
     void compute(
-        const InputKernelMatrix& kernel_matrix, const InputDataVector& data) {
+        const kernel_matrix_type& kernel_matrix, const vector_type& data) {
         decomposition_.compute(kernel_matrix, Eigen::ComputeEigenvectors);
         spectre_ = decomposition_.eigenvectors().adjoint() * data;
     }
@@ -70,13 +84,14 @@ public:
     /*!
      * \brief Solve the linear equation with a regularization parameter.
      *
-     * \tparam Coefficients Type of the vector of coefficients for each sample
-     * points.
      * \param[out] coefficients Vector of coefficients for each sample points.
      * \param[in] reg_param Regularization parameter.
+     * \param[in] data Data vector.
      */
-    template <base::concepts::dense_vector Coefficients>
-    void solve(Coefficients& coefficients, scalar_type reg_param) const {
+    void solve(vector_type& coefficients, scalar_type reg_param,
+        const vector_type& data) const {
+        (void)data;  // not used in this version.
+
         reg_param = correct_reg_param_if_needed(reg_param);
 
         coefficients = decomposition_.eigenvectors() *
@@ -211,10 +226,126 @@ private:
     }
 
     //! Eigen decomposition of the kernel matrix.
-    Eigen::SelfAdjointEigenSolver<KernelMatrix> decomposition_;
+    Eigen::SelfAdjointEigenSolver<kernel_matrix_type> decomposition_;
 
     //! Data transformed to the space determined by the eigen vectors.
-    Vector spectre_;
+    vector_type spectre_;
+};
+
+/*!
+ * \brief Class to solve linear equations of kernel matrices.
+ *
+ * \tparam KernelValue Type of values of the kernel.
+ * \tparam FunctionValue Type of the function values.
+ */
+template <typename KernelValue, typename FunctionValue>
+class kernel_matrix_solver<KernelValue, FunctionValue,
+    kernel_matrix_type::dense, false> {
+public:
+    //! Type of matrices.
+    using kernel_matrix_type = Eigen::MatrixX<KernelValue>;
+
+    //! Type of vectors.
+    using vector_type = Eigen::VectorX<FunctionValue>;
+
+    //! Type of scalars.
+    using scalar_type = KernelValue;
+
+    //! Constructor.
+    kernel_matrix_solver() = default;
+
+    /*!
+     * \brief Compute internal matrices.
+     *
+     * \param[in] kernel_matrix Kernel matrix.
+     * \param[in] data Data vector.
+     */
+    void compute(
+        const kernel_matrix_type& kernel_matrix, const vector_type& data) {
+        (void)data;  // not used in this version.
+
+        solver_.compute(kernel_matrix);
+    }
+
+    /*!
+     * \brief Solve the linear equation with a regularization parameter.
+     *
+     * \param[out] coefficients Vector of coefficients for each sample points.
+     * \param[in] reg_param Regularization parameter.
+     * \param[in] data Data vector.
+     */
+    void solve(vector_type& coefficients, scalar_type reg_param,
+        const vector_type& data) const {
+        if (reg_param != static_cast<scalar_type>(0)) {
+            throw invalid_argument(
+                "Non-zero regularization parameter cannot be used in this "
+                "configuration.");
+        }
+
+        coefficients = solver_.solve(data);
+    }
+
+private:
+    //! Solver of the kernel matrix.
+    Eigen::PartialPivLU<kernel_matrix_type> solver_;
+};
+
+/*!
+ * \brief Class to solve linear equations of kernel matrices.
+ *
+ * \tparam KernelValue Type of values of the kernel.
+ * \tparam FunctionValue Type of the function values.
+ */
+template <typename KernelValue, typename FunctionValue>
+class kernel_matrix_solver<KernelValue, FunctionValue,
+    kernel_matrix_type::sparse, false> {
+public:
+    //! Type of matrices.
+    using kernel_matrix_type = Eigen::SparseMatrix<KernelValue>;
+
+    //! Type of vectors.
+    using vector_type = Eigen::VectorX<FunctionValue>;
+
+    //! Type of scalars.
+    using scalar_type = KernelValue;
+
+    //! Constructor.
+    kernel_matrix_solver() = default;
+
+    /*!
+     * \brief Compute internal matrices.
+     *
+     * \param[in] kernel_matrix Kernel matrix.
+     * \param[in] data Data vector.
+     */
+    void compute(
+        const kernel_matrix_type& kernel_matrix, const vector_type& data) {
+        (void)data;  // not used in this version.
+
+        solver_.compute(kernel_matrix);
+    }
+
+    /*!
+     * \brief Solve the linear equation with a regularization parameter.
+     *
+     * \param[out] coefficients Vector of coefficients for each sample points.
+     * \param[in] reg_param Regularization parameter.
+     * \param[in] data Data vector.
+     */
+    void solve(vector_type& coefficients, scalar_type reg_param,
+        const vector_type& data) const {
+        if (reg_param != static_cast<scalar_type>(0)) {
+            throw invalid_argument(
+                "Non-zero regularization parameter cannot be used in this "
+                "configuration.");
+        }
+
+        coefficients = solver_.solve(data);
+    }
+
+private:
+    //! Solver of the kernel matrix.
+    Eigen::BiCGSTAB<kernel_matrix_type> solver_;
 };
 
 }  // namespace num_collect::rbf::impl
