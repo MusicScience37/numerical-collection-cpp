@@ -28,7 +28,7 @@
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include "num_collect/rbf/concepts/rbf.h"  // IWYU pragma: keep
+#include "num_collect/rbf/concepts/csrbf.h"  // IWYU pragma: keep
 
 TEMPLATE_TEST_CASE(
     "num_collect::rbf::rbfs::wendland_csrbf", "", float, double) {
@@ -38,7 +38,9 @@ TEMPLATE_TEST_CASE(
 
     SECTION("calculate values for l = 1, m = 0") {
         using rbf_type = wendland_csrbf<scalar_type, 1, 0>;
-        STATIC_REQUIRE(num_collect::rbf::concepts::rbf<rbf_type>);
+        STATIC_REQUIRE(num_collect::rbf::concepts::csrbf<rbf_type>);
+        CHECK(rbf_type::support_boundary() ==
+            static_cast<scalar_type>(1));  // NOLINT
 
         const rbf_type rbf;
 
@@ -60,7 +62,9 @@ TEMPLATE_TEST_CASE(
 
     SECTION("calculate values for l = 2, m = 0") {
         using rbf_type = wendland_csrbf<scalar_type, 2, 0>;
-        STATIC_REQUIRE(num_collect::rbf::concepts::rbf<rbf_type>);
+        STATIC_REQUIRE(num_collect::rbf::concepts::csrbf<rbf_type>);
+        CHECK(rbf_type::support_boundary() ==
+            static_cast<scalar_type>(1));  // NOLINT
 
         const rbf_type rbf;
 
@@ -82,7 +86,9 @@ TEMPLATE_TEST_CASE(
 
     SECTION("calculate values for l = 3, m = 0") {
         using rbf_type = wendland_csrbf<scalar_type, 3, 0>;
-        STATIC_REQUIRE(num_collect::rbf::concepts::rbf<rbf_type>);
+        STATIC_REQUIRE(num_collect::rbf::concepts::csrbf<rbf_type>);
+        CHECK(rbf_type::support_boundary() ==
+            static_cast<scalar_type>(1));  // NOLINT
 
         const rbf_type rbf;
 
@@ -104,7 +110,9 @@ TEMPLATE_TEST_CASE(
 
     SECTION("calculate values for l = 1, m = 1") {
         using rbf_type = wendland_csrbf<scalar_type, 1, 1>;
-        STATIC_REQUIRE(num_collect::rbf::concepts::rbf<rbf_type>);
+        STATIC_REQUIRE(num_collect::rbf::concepts::csrbf<rbf_type>);
+        CHECK(rbf_type::support_boundary() ==
+            static_cast<scalar_type>(1));  // NOLINT
 
         const rbf_type rbf;
 
@@ -126,7 +134,9 @@ TEMPLATE_TEST_CASE(
 
     SECTION("calculate values for l = 2, m = 1") {
         using rbf_type = wendland_csrbf<scalar_type, 2, 1>;
-        STATIC_REQUIRE(num_collect::rbf::concepts::rbf<rbf_type>);
+        STATIC_REQUIRE(num_collect::rbf::concepts::csrbf<rbf_type>);
+        CHECK(rbf_type::support_boundary() ==
+            static_cast<scalar_type>(1));  // NOLINT
 
         const rbf_type rbf;
 
@@ -148,7 +158,9 @@ TEMPLATE_TEST_CASE(
 
     SECTION("calculate values for l = 1, m = 2") {
         using rbf_type = wendland_csrbf<scalar_type, 1, 2>;
-        STATIC_REQUIRE(num_collect::rbf::concepts::rbf<rbf_type>);
+        STATIC_REQUIRE(num_collect::rbf::concepts::csrbf<rbf_type>);
+        CHECK(rbf_type::support_boundary() ==
+            static_cast<scalar_type>(1));  // NOLINT
 
         const rbf_type rbf;
 
@@ -170,7 +182,9 @@ TEMPLATE_TEST_CASE(
 
     SECTION("calculate values for l = 2, m = 2") {
         using rbf_type = wendland_csrbf<scalar_type, 2, 2>;
-        STATIC_REQUIRE(num_collect::rbf::concepts::rbf<rbf_type>);
+        STATIC_REQUIRE(num_collect::rbf::concepts::csrbf<rbf_type>);
+        CHECK(rbf_type::support_boundary() ==
+            static_cast<scalar_type>(1));  // NOLINT
 
         const rbf_type rbf;
 

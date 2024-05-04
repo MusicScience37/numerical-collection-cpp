@@ -55,6 +55,16 @@ public:
     using scalar_type = Scalar;
 
     /*!
+     * \brief Get the boundary of the support of this CSRBF.
+     *
+     * \return Boundary.
+     */
+    [[nodiscard]] static constexpr auto support_boundary() noexcept
+        -> scalar_type {
+        return static_cast<scalar_type>(1);
+    }
+
+    /*!
      * \brief Calculate a function value of RBF.
      *
      * \param[in] distance_rate Rate of distance.
@@ -86,6 +96,16 @@ class wendland_csrbf<Scalar, L, 1> {
 public:
     //! Type of scalars.
     using scalar_type = Scalar;
+
+    /*!
+     * \brief Get the boundary of the support of this CSRBF.
+     *
+     * \return Boundary.
+     */
+    [[nodiscard]] static constexpr auto support_boundary() noexcept
+        -> scalar_type {
+        return static_cast<scalar_type>(1);
+    }
 
     /*!
      * \brief Calculate a function value of RBF.
@@ -129,6 +149,16 @@ class wendland_csrbf<Scalar, L, 2> {
 public:
     //! Type of scalars.
     using scalar_type = Scalar;
+
+    /*!
+     * \brief Get the boundary of the support of this CSRBF.
+     *
+     * \return Boundary.
+     */
+    [[nodiscard]] static constexpr auto support_boundary() noexcept
+        -> scalar_type {
+        return static_cast<scalar_type>(1);
+    }
 
     /*!
      * \brief Calculate a function value of RBF.
