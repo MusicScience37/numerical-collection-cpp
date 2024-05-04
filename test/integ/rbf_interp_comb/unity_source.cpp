@@ -1,3 +1,3 @@
-#include "rbfs/global_exact_rbf_interpolator.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "rbfs/local_exact_csrbf_interpolator.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "rbfs/local_exact_rbf_interpolator.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "rbfs/gaussian_process_interpolator.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "rbfs/local_csrbf_interpolator.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "rbfs/local_rbf_interpolator.cpp"  // NOLINT(bugprone-suspicious-include)
