@@ -1,5 +1,6 @@
 #include "compute_kernel_matrix_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "distance_functions/euclidean_distance_function_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "gaussian_process_interpolator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "global_exact_rbf_interpolator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/kernel_matrix_solver_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/symmetric_kernel_matrix_solver_test.cpp"  // NOLINT(bugprone-suspicious-include)

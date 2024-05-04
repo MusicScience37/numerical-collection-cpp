@@ -287,6 +287,33 @@ public:
     }
 
     /*!
+     * \brief Get the distance function.
+     *
+     * \return Distance function.
+     */
+    [[nodiscard]] auto distance_function() const noexcept
+        -> const distance_function_type& {
+        return distance_function_;
+    }
+
+    /*!
+     * \brief Get the RBF.
+     *
+     * \return RBF.
+     */
+    [[nodiscard]] auto rbf() const noexcept -> const rbf_type& { return rbf_; }
+
+    /*!
+     * \brief Get the calculator of length parameters.
+     *
+     * \return Calculator of length parameters.
+     */
+    [[nodiscard]] auto length_parameter_calculator() const noexcept
+        -> const length_parameter_calculator_type& {
+        return length_parameter_calculator_;
+    }
+
+    /*!
      * \brief Get the coefficients for samples points.
      *
      * \return Coefficients.
@@ -294,6 +321,27 @@ public:
     [[nodiscard]] auto coeffs() const noexcept
         -> const function_value_vector_type& {
         return coeffs_;
+    }
+
+protected:
+    /*!
+     * \brief Get the variables.
+     *
+     * \return Variables.
+     */
+    [[nodiscard]] auto variables() const noexcept
+        -> const std::vector<variable_type>& {
+        return *variables_;
+    }
+
+    /*!
+     * \brief Get the solver of the linear equation of kernel matrix.
+     *
+     * \return Solver of the linear equation of kernel matrix.
+     */
+    [[nodiscard]] auto kernel_matrix_solver() const noexcept
+        -> const kernel_matrix_solver_type& {
+        return kernel_matrix_solver_;
     }
 
 private:
