@@ -26,6 +26,7 @@
 #include "num_collect/opt/dividing_rectangles.h"
 #include "num_collect/opt/function_object_wrapper.h"
 #include "num_collect/rbf/compute_kernel_matrix.h"
+#include "num_collect/rbf/concepts/csrbf.h"              // IWYU pragma: keep
 #include "num_collect/rbf/concepts/distance_function.h"  // IWYU pragma: keep
 #include "num_collect/rbf/concepts/length_parameter_calculator.h"  // IWYU pragma: keep
 #include "num_collect/rbf/concepts/rbf.h"  // IWYU pragma: keep
@@ -211,10 +212,19 @@ public:
         -> function_value_type {
         auto value = static_cast<function_value_type>(0);
         for (std::size_t i = 0; i < variables_->size(); ++i) {
-            value += coeffs_(static_cast<index_type>(i)) *
-                rbf_(distance_function_(variable, (*variables_)[i]) /
-                    length_parameter_calculator_.length_parameter_at(
-                        static_cast<index_type>(i)));
+            const kernel_value_type distance_rate =
+                distance_function_(variable, (*variables_)[i]) /
+                length_parameter_calculator_.length_parameter_at(
+                    static_cast<index_type>(i));
+            if constexpr (concepts::csrbf<rbf_type>) {
+                if (distance_rate < rbf_type::support_boundary()) {
+                    value += coeffs_(static_cast<index_type>(i)) *
+                        rbf_(distance_rate);
+                }
+            } else {
+                value +=
+                    coeffs_(static_cast<index_type>(i)) * rbf_(distance_rate);
+            }
         }
         // TODO optimization for CSRBF.
         return value;
