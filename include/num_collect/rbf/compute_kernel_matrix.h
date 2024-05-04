@@ -26,6 +26,7 @@
 #include "num_collect/base/concepts/sparse_matrix_of.h"  // IWYU pragma: keep
 #include "num_collect/base/index_type.h"
 #include "num_collect/constants/zero.h"
+#include "num_collect/rbf/concepts/csrbf.h"              // IWYU pragma: keep
 #include "num_collect/rbf/concepts/distance_function.h"  // IWYU pragma: keep
 #include "num_collect/rbf/concepts/length_parameter_calculator.h"  // IWYU pragma: keep
 #include "num_collect/rbf/concepts/rbf.h"  // IWYU pragma: keep
@@ -160,7 +161,7 @@ inline void compute_kernel_matrix(const DistanceFunction& distance_function,
  * \param[in] variables Variables.
  * \param[out] kernel_matrix Kernel matrix.
  */
-template <concepts::distance_function DistanceFunction, concepts::rbf RBF,
+template <concepts::distance_function DistanceFunction, concepts::csrbf RBF,
     concepts::length_parameter_calculator LengthParameterCalculator,
     base::concepts::sparse_matrix_of<typename DistanceFunction::value_type>
         KernelMatrix>
@@ -182,6 +183,8 @@ inline void compute_kernel_matrix(const DistanceFunction& distance_function,
     const auto num_variables = util::safe_cast<int>(variables.size());
     kernel_matrix.resize(num_variables, num_variables);
 
+    const scalar_type support_boundary = RBF::support_boundary();
+
     std::vector<
         Eigen::Triplet<scalar_type, typename KernelMatrix::StorageIndex>>
         triplets;
@@ -191,13 +194,15 @@ inline void compute_kernel_matrix(const DistanceFunction& distance_function,
         NUM_COLLECT_ASSERT(length_parameter > static_cast<scalar_type>(0));
 
         for (int i = 0; i < num_variables; ++i) {
-            const scalar_type value =
-                rbf(distance_function(variables[static_cast<std::size_t>(i)],
-                        variables[static_cast<std::size_t>(j)]) /
-                    length_parameter);
-            if (value != static_cast<scalar_type>(0)) {
-                triplets.emplace_back(i, j, value);
+            const scalar_type distance_rate =
+                distance_function(variables[static_cast<std::size_t>(i)],
+                    variables[static_cast<std::size_t>(j)]) /
+                length_parameter;
+            if (distance_rate >= support_boundary) {
+                continue;
             }
+            const scalar_type value = rbf(distance_rate);
+            triplets.emplace_back(i, j, value);
         }
     }
     kernel_matrix.setFromTriplets(triplets.begin(), triplets.end());
