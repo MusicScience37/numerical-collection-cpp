@@ -15,43 +15,43 @@
  */
 /*!
  * \file
- * \brief Definition of rbf_interpolator class.
+ * \brief Definition of rbf_polynomial_interpolator class.
  */
 #pragma once
 
-#include <type_traits>  // IWYU pragma: keep
-
+#include "num_collect/base/get_size.h"
+#include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_mixin.h"
 #include "num_collect/opt/dividing_rectangles.h"
 #include "num_collect/opt/function_object_wrapper.h"
 #include "num_collect/rbf/compute_kernel_matrix.h"
-#include "num_collect/rbf/concepts/csrbf.h"              // IWYU pragma: keep
 #include "num_collect/rbf/concepts/distance_function.h"  // IWYU pragma: keep
 #include "num_collect/rbf/concepts/length_parameter_calculator.h"  // IWYU pragma: keep
 #include "num_collect/rbf/concepts/rbf.h"  // IWYU pragma: keep
 #include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
+#include "num_collect/rbf/impl/general_spline_equation_solver.h"
 #include "num_collect/rbf/impl/get_default_scalar_type.h"
 #include "num_collect/rbf/impl/get_variable_type.h"
-#include "num_collect/rbf/impl/kernel_matrix_solver.h"
 #include "num_collect/rbf/kernel_matrix_type.h"
 #include "num_collect/rbf/length_parameter_calculators/global_length_parameter_calculator.h"
 #include "num_collect/rbf/length_parameter_calculators/local_length_parameter_calculator.h"
+#include "num_collect/rbf/polynomial_calculator.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
-#include "num_collect/rbf/rbfs/wendland_csrbf.h"
 
 namespace num_collect::rbf {
 
-//! Tag of rbf_interpolator.
-inline constexpr auto rbf_interpolator_tag =
-    logging::log_tag_view("num_collect::rbf::rbf_interpolator");
+//! Tag of rbf_polynomial_interpolator.
+inline constexpr auto rbf_polynomial_interpolator_tag =
+    logging::log_tag_view("num_collect::rbf::rbf_polynomial_interpolator");
 
 /*!
- * \brief Class to interpolate using RBF.
+ * \brief Class to interpolate using RBF and polynomials.
  *
  * \tparam FunctionSignature Signature of the function to interpolate.
  * (Example: `double(double)`, `double(Eigen::Vector3d)`, ...)
  * \tparam RBF Type of the RBF.
+ * \tparam PolynomialDegree Degree of the polynomial.
  * \tparam KernelMatrixType Type of kernel matrices.
  * \tparam DistanceFunction Type of the distance function.
  * \tparam LengthParameterCalculator Type of the calculator of length
@@ -60,6 +60,7 @@ inline constexpr auto rbf_interpolator_tag =
 template <typename FunctionSignature,
     concepts::rbf RBF =
         rbfs::gaussian_rbf<impl::get_default_scalar_type<FunctionSignature>>,
+    index_type PolynomialDegree = 1,
     kernel_matrix_type KernelMatrixType = kernel_matrix_type::dense,
     concepts::distance_function DistanceFunction =
         distance_functions::euclidean_distance_function<
@@ -67,32 +68,27 @@ template <typename FunctionSignature,
     concepts::length_parameter_calculator LengthParameterCalculator =
         length_parameter_calculators::local_length_parameter_calculator<
             DistanceFunction>>
-class rbf_interpolator;
+class rbf_polynomial_interpolator;
 
 /*!
- * \brief Class to interpolate using RBF.
+ * \brief Class to interpolate using RBF and polynomials.
  *
  * \tparam Variable Type of variables.
  * \tparam FunctionValue Type of function values.
  * \tparam RBF Type of the RBF.
+ * \tparam PolynomialDegree Degree of the polynomial.
  * \tparam KernelMatrixType Type of kernel matrices.
  * \tparam DistanceFunction Type of the distance function.
  * \tparam LengthParameterCalculator Type of the calculator of length
  * parameters.
  */
 template <typename Variable, typename FunctionValue, concepts::rbf RBF,
-    kernel_matrix_type KernelMatrixType,
+    index_type PolynomialDegree, kernel_matrix_type KernelMatrixType,
     concepts::distance_function DistanceFunction,
     concepts::length_parameter_calculator LengthParameterCalculator>
-    requires std::is_same_v<Variable,
-                 typename DistanceFunction::variable_type> &&
-    std::is_same_v<typename DistanceFunction::value_type,
-        typename RBF::scalar_type> &&
-    std::is_same_v<DistanceFunction,
-        typename LengthParameterCalculator::distance_function_type>
-class rbf_interpolator<FunctionValue(Variable), RBF, KernelMatrixType,
-    DistanceFunction, LengthParameterCalculator>
-    : public logging::logging_mixin {
+class rbf_polynomial_interpolator<FunctionValue(Variable), RBF,
+    PolynomialDegree, KernelMatrixType, DistanceFunction,
+    LengthParameterCalculator> : public logging::logging_mixin {
 public:
     //! Type of variables.
     using variable_type = Variable;
@@ -116,14 +112,19 @@ public:
     //! Type of kernel values.
     using kernel_value_type = typename DistanceFunction::value_type;
 
-    //! Type of the solver of the linear equation of kernel matrix.
-    using kernel_matrix_solver_type =
-        impl::kernel_matrix_solver<kernel_value_type, function_value_type,
-            KernelMatrixType, uses_global_length_parameter>;
+    //! Type of the solver of linear equations.
+    using equation_solver_type =
+        impl::general_spline_equation_solver<kernel_value_type,
+            function_value_type, KernelMatrixType,
+            uses_global_length_parameter>;
 
     //! Type of kernel matrices.
     using kernel_matrix_type =
-        typename kernel_matrix_solver_type::kernel_matrix_type;
+        typename equation_solver_type::kernel_matrix_type;
+
+    //! Type of matrices of polynomial terms.
+    using polynomial_matrix_type =
+        typename equation_solver_type::additional_matrix_type;
 
     //! Type of vectors of function values.
     using function_value_vector_type = Eigen::VectorX<function_value_type>;
@@ -137,10 +138,10 @@ public:
      * \param[in] distance_function Distance function.
      * \param[in] rbf RBF.
      */
-    explicit rbf_interpolator(
+    explicit rbf_polynomial_interpolator(
         distance_function_type distance_function = distance_function_type(),
         rbf_type rbf = rbf_type())
-        : logging::logging_mixin(rbf_interpolator_tag),
+        : logging::logging_mixin(rbf_polynomial_interpolator_tag),
           distance_function_(std::move(distance_function)),
           rbf_(std::move(rbf)) {}
 
@@ -155,10 +156,20 @@ public:
      */
     void compute(const std::vector<variable_type>& variables,
         const function_value_vector_type& function_values) {
+        const auto num_variables = static_cast<index_type>(variables.size());
+        if (num_variables == 0) {
+            throw invalid_argument("No variable is given.");
+        }
+        const index_type num_dimensions = base::get_size(variables.front());
+        polynomial_calculator_.prepare(num_dimensions);
+
         compute_kernel_matrix(distance_function_, rbf_,
             length_parameter_calculator_, variables, kernel_matrix_);
-        kernel_matrix_solver_.compute(kernel_matrix_, function_values);
-        kernel_matrix_solver_.solve(coeffs_, reg_param, function_values);
+        polynomial_calculator_.compute_polynomial_term_matrix(
+            variables, polynomial_matrix_);
+        equation_solver_.compute(
+            kernel_matrix_, polynomial_matrix_, function_values);
+        equation_solver_.solve(kernel_coeffs_, polynomial_coeffs_, reg_param);
         variables_ = &variables;
     }
 
@@ -171,6 +182,7 @@ public:
     [[nodiscard]] auto interpolate(const variable_type& variable) const
         -> function_value_type {
         auto value = static_cast<function_value_type>(0);
+
         for (std::size_t i = 0; i < variables_->size(); ++i) {
             const kernel_value_type distance_rate =
                 distance_function_(variable, (*variables_)[i]) /
@@ -178,14 +190,18 @@ public:
                     static_cast<index_type>(i));
             if constexpr (concepts::csrbf<rbf_type>) {
                 if (distance_rate < rbf_type::support_boundary()) {
-                    value += coeffs_(static_cast<index_type>(i)) *
+                    value += kernel_coeffs_(static_cast<index_type>(i)) *
                         rbf_(distance_rate);
                 }
             } else {
-                value +=
-                    coeffs_(static_cast<index_type>(i)) * rbf_(distance_rate);
+                value += kernel_coeffs_(static_cast<index_type>(i)) *
+                    rbf_(distance_rate);
             }
         }
+
+        value += polynomial_calculator_.evaluate_polynomial_for_variable(
+            variable, polynomial_coeffs_);
+
         return value;
     }
 
@@ -216,20 +232,26 @@ public:
         index_type max_mle_evaluations = default_max_mle_evaluations)
         requires uses_global_length_parameter
     {
-        static constexpr auto base = static_cast<kernel_value_type>(10);
+        const auto num_variables = static_cast<index_type>(variables.size());
+        if (num_variables == 0) {
+            throw invalid_argument("No variable is given.");
+        }
+        const index_type num_dimensions = base::get_size(variables.front());
+        polynomial_calculator_.prepare(num_dimensions);
 
+        static constexpr auto base = static_cast<kernel_value_type>(10);
         auto objective_function =
             [this, &variables, &function_values](
                 kernel_value_type log_scale) -> kernel_value_type {
             const kernel_value_type scale = std::pow(base, log_scale);
-            this->length_parameter_calculator_.scale(scale);
-            compute_kernel_matrix(this->distance_function_, this->rbf_,
-                this->length_parameter_calculator_, variables,
-                this->kernel_matrix_);
-            this->kernel_matrix_solver_.compute(
-                this->kernel_matrix_, function_values);
-            return std::log10(
-                this->kernel_matrix_solver_.calc_mle_objective(reg_param));
+            length_parameter_calculator_.scale(scale);
+            compute_kernel_matrix(distance_function_, rbf_,
+                length_parameter_calculator_, variables, kernel_matrix_);
+            polynomial_calculator_.compute_polynomial_term_matrix(
+                variables, polynomial_matrix_);
+            equation_solver_.compute(
+                kernel_matrix_, polynomial_matrix_, function_values);
+            return std::log10(equation_solver_.calc_mle_objective(reg_param));
         };
 
         using objective_function_object_type = decltype(objective_function);
@@ -283,34 +305,23 @@ public:
     }
 
     /*!
-     * \brief Get the coefficients for samples points.
+     * \brief Get the coefficients for kernels.
      *
      * \return Coefficients.
      */
-    [[nodiscard]] auto coeffs() const noexcept
+    [[nodiscard]] auto kernel_coeffs() const noexcept
         -> const function_value_vector_type& {
-        return coeffs_;
-    }
-
-protected:
-    /*!
-     * \brief Get the variables.
-     *
-     * \return Variables.
-     */
-    [[nodiscard]] auto variables() const noexcept
-        -> const std::vector<variable_type>& {
-        return *variables_;
+        return kernel_coeffs_;
     }
 
     /*!
-     * \brief Get the solver of the linear equation of kernel matrix.
+     * \brief Get the coefficients for polynomials.
      *
-     * \return Solver of the linear equation of kernel matrix.
+     * \return Coefficients.
      */
-    [[nodiscard]] auto kernel_matrix_solver() const noexcept
-        -> const kernel_matrix_solver_type& {
-        return kernel_matrix_solver_;
+    [[nodiscard]] auto polynomial_coeffs() const noexcept
+        -> const function_value_vector_type& {
+        return polynomial_coeffs_;
     }
 
 private:
@@ -328,80 +339,52 @@ private:
     //! Calculator of length parameters.
     length_parameter_calculator_type length_parameter_calculator_{};
 
+    //! Calculator of polynomials.
+    polynomial_calculator<variable_type, PolynomialDegree>
+        polynomial_calculator_{};
+
     //! Kernel matrix.
     kernel_matrix_type kernel_matrix_{};
+
+    //! Matrix of polynomial terms.
+    polynomial_matrix_type polynomial_matrix_{};
 
     //! Variables.
     const std::vector<variable_type>* variables_{nullptr};
 
-    //! Solver of the linear equation of kernel matrix.
-    kernel_matrix_solver_type kernel_matrix_solver_{};
+    //! Solver of linear equations.
+    equation_solver_type equation_solver_{};
 
-    //! Coefficients for sample points.
-    function_value_vector_type coeffs_{};
+    //! Coefficients for kernels.
+    function_value_vector_type kernel_coeffs_{};
+
+    //! Coefficients for polynomials.
+    function_value_vector_type polynomial_coeffs_{};
 };
 
 /*!
- * \brief Class to interpolate using RBF with length parameters localized for
- * sample points.
+ * \brief Class to interpolate using RBF and polynomials with globally fixed
+ * length parameters.
  *
  * \tparam FunctionSignature Signature of the function to interpolate.
  * (Example: `double(double)`, `double(Eigen::Vector3d)`, ...)
  * \tparam RBF Type of the RBF.
+ * \tparam PolynomialDegree Degree of the polynomial.
  * \tparam KernelMatrixType Type of kernel matrices.
  * \tparam DistanceFunction Type of the distance function.
  */
 template <typename FunctionSignature,
     concepts::rbf RBF =
         rbfs::gaussian_rbf<impl::get_default_scalar_type<FunctionSignature>>,
+    index_type PolynomialDegree = 1,
     kernel_matrix_type KernelMatrixType = kernel_matrix_type::dense,
     concepts::distance_function DistanceFunction =
         distance_functions::euclidean_distance_function<
             impl::get_variable_type_t<FunctionSignature>>>
-using local_rbf_interpolator =
-    rbf_interpolator<FunctionSignature, RBF, KernelMatrixType, DistanceFunction,
-        length_parameter_calculators::local_length_parameter_calculator<
-            DistanceFunction>>;
-
-/*!
- * \brief Class to interpolate using RBF with globally fixed length parameters.
- *
- * \tparam FunctionSignature Signature of the function to interpolate.
- * (Example: `double(double)`, `double(Eigen::Vector3d)`, ...)
- * \tparam RBF Type of the RBF.
- * \tparam KernelMatrixType Type of kernel matrices.
- * \tparam DistanceFunction Type of the distance function.
- */
-template <typename FunctionSignature,
-    concepts::rbf RBF =
-        rbfs::gaussian_rbf<impl::get_default_scalar_type<FunctionSignature>>,
-    kernel_matrix_type KernelMatrixType = kernel_matrix_type::dense,
-    concepts::distance_function DistanceFunction =
-        distance_functions::euclidean_distance_function<
-            impl::get_variable_type_t<FunctionSignature>>>
-using global_rbf_interpolator =
-    rbf_interpolator<FunctionSignature, RBF, KernelMatrixType, DistanceFunction,
+using global_rbf_polynomial_interpolator =
+    rbf_polynomial_interpolator<FunctionSignature, RBF, PolynomialDegree,
+        KernelMatrixType, DistanceFunction,
         length_parameter_calculators::global_length_parameter_calculator<
             DistanceFunction>>;
-
-/*!
- * \brief Class to interpolate using compactly supported RBF with length
- * parameters localized for sample points.
- *
- * \tparam FunctionSignature Signature of the function to interpolate.
- * (Example: `double(double)`, `double(Eigen::Vector3d)`, ...)
- * \tparam RBF Type of the RBF.
- * \tparam DistanceFunction Type of the distance function.
- */
-template <typename FunctionSignature,
-    concepts::rbf RBF = rbfs::wendland_csrbf<
-        impl::get_default_scalar_type<FunctionSignature>, 3, 1>,
-    concepts::distance_function DistanceFunction =
-        distance_functions::euclidean_distance_function<
-            impl::get_variable_type_t<FunctionSignature>>>
-using local_csrbf_interpolator = rbf_interpolator<FunctionSignature, RBF,
-    kernel_matrix_type::sparse, DistanceFunction,
-    length_parameter_calculators::local_length_parameter_calculator<
-        DistanceFunction>>;
 
 }  // namespace num_collect::rbf

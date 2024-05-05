@@ -27,6 +27,8 @@
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/rbf/rbf_interpolator.h"
+#include "num_collect/rbf/rbf_polynomial_interpolator.h"
+#include "num_collect/rbf/rbfs/gaussian_rbf.h"
 
 STAT_BENCH_MAIN
 
@@ -138,6 +140,26 @@ STAT_BENCH_CASE_F(
     interpolate_1d_fixture, "interpolate_1d", "local_csrbf_interpolator") {
     STAT_BENCH_MEASURE() {
         num_collect::rbf::local_csrbf_interpolator<double(double)> interpolator;
+        perform(interpolator);
+    };
+}
+
+STAT_BENCH_CASE_F(interpolate_1d_fixture, "interpolate_1d",
+    "global_rbf_polynomial_interpolator(0)") {
+    STAT_BENCH_MEASURE() {
+        num_collect::rbf::global_rbf_polynomial_interpolator<double(double),
+            num_collect::rbf::rbfs::gaussian_rbf<double>, 0>
+            interpolator;
+        perform(interpolator);
+    };
+}
+
+STAT_BENCH_CASE_F(interpolate_1d_fixture, "interpolate_1d",
+    "global_rbf_polynomial_interpolator(1)") {
+    STAT_BENCH_MEASURE() {
+        num_collect::rbf::global_rbf_polynomial_interpolator<double(double),
+            num_collect::rbf::rbfs::gaussian_rbf<double>, 1>
+            interpolator;
         perform(interpolator);
     };
 }
