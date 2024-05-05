@@ -19,9 +19,6 @@
  */
 #pragma once
 
-#include <cmath>
-#include <cstddef>
-
 #include <fmt/core.h>
 
 #include "num_collect/base/concepts/dense_matrix_of.h"  // IWYU pragma: keep
@@ -29,6 +26,7 @@
 #include "num_collect/base/concepts/real_scalar.h"      // IWYU pragma: keep
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/rbf/polynomial_calculator.h"
 
 namespace num_collect::rbf {
 
@@ -46,27 +44,9 @@ template <index_type PolynomialDegree, base::concepts::real_scalar Variable,
     requires(PolynomialDegree >= 0)
 inline void compute_polynomial_term_matrix(
     const std::vector<Variable>& variables, Matrix& matrix) {
-    using scalar_type = typename Matrix::Scalar;
-
-    const auto num_variables = static_cast<index_type>(variables.size());
-    if (num_variables < PolynomialDegree + 2) {
-        throw invalid_argument(
-            "At least (PolynomialDegree + 2) variables must be given.");
-    }
-
-    matrix.resize(num_variables, PolynomialDegree + 1);
-    {
-        // degree = 0 (constant)
-        matrix.col(0) = Eigen::MatrixX<scalar_type>::Constant(
-            num_variables, 1, static_cast<scalar_type>(1));
-    }
-    for (index_type degree = 1; degree <= PolynomialDegree; ++degree) {
-        for (index_type i = 0; i < num_variables; ++i) {
-            using std::pow;
-            matrix(i, degree) = static_cast<scalar_type>(
-                pow(variables[static_cast<std::size_t>(i)], degree));
-        }
-    }
+    polynomial_calculator<Variable, PolynomialDegree> calculator;
+    calculator.prepare(1);
+    calculator.compute_polynomial_term_matrix(variables, matrix);
 }
 
 /*!
@@ -94,31 +74,9 @@ inline void compute_polynomial_term_matrix(
     }
     const auto num_dimensions = variables.front().size();
 
-    index_type num_polynomials = 1;
-    if constexpr (PolynomialDegree == 0) {
-        num_polynomials = 1;
-    } else {
-        num_polynomials = 1 + num_dimensions;
-    }
-    if (num_variables < num_polynomials + 1) {
-        throw invalid_argument(fmt::format(
-            "At least {} variables must be given.", num_polynomials + 1));
-    }
-
-    matrix.resize(num_variables, num_polynomials);
-    {
-        // degree = 0 (constant)
-        matrix.col(0) = Eigen::MatrixX<scalar_type>::Constant(
-            num_variables, 1, static_cast<scalar_type>(1));
-    }
-    if constexpr (PolynomialDegree >= 1) {
-        // degree = 1
-        for (index_type j = 0; j < num_dimensions; ++j) {
-            for (index_type i = 0; i < num_variables; ++i) {
-                matrix(i, j + 1) = variables[static_cast<std::size_t>(i)](j);
-            }
-        }
-    }
+    polynomial_calculator<Variable, PolynomialDegree> calculator;
+    calculator.prepare(num_dimensions);
+    calculator.compute_polynomial_term_matrix(variables, matrix);
 }
 
 }  // namespace num_collect::rbf

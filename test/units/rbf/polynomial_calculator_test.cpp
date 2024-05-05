@@ -107,4 +107,70 @@ TEST_CASE("num_collect::rbf::polynomial_calculator") {
             }
         }
     }
+    SECTION("for vector variables") {
+        SECTION("for degree 0") {
+            polynomial_calculator<Eigen::Vector2d, 0> calculator;
+            calculator.prepare(2);
+
+            SECTION("calculate matrix of polynomial terms") {
+                const auto variables = std::vector{
+                    Eigen::Vector2d{0.0, 0.1},
+                    Eigen::Vector2d{0.2, 0.3},
+                    Eigen::Vector2d{0.4, 0.5},
+                    Eigen::Vector2d{0.6, 0.7},
+                    Eigen::Vector2d{0.8, 0.9},
+                };
+
+                Eigen::MatrixXd matrix;
+                calculator.compute_polynomial_term_matrix(variables, matrix);
+
+                const Eigen::MatrixXd expected_matrix{
+                    {1.0}, {1.0}, {1.0}, {1.0}, {1.0}};
+                CHECK_THAT(matrix, eigen_approx(expected_matrix));
+            }
+
+            SECTION("evaluate a polynomial with a variable") {
+                const Eigen::VectorXd coefficients{{0.2}};
+                const Eigen::Vector2d variable{0.7, 0.9};
+                constexpr double expected_value = 0.2;
+
+                CHECK_THAT(calculator.evaluate_polynomial_for_variable(
+                               variable, coefficients),
+                    Catch::Matchers::WithinRel(expected_value));
+            }
+        }
+
+        SECTION("for degree 1") {
+            polynomial_calculator<Eigen::Vector2d, 1> calculator;
+            calculator.prepare(2);
+
+            SECTION("calculate matrix of polynomial terms") {
+                const auto variables = std::vector{
+                    Eigen::Vector2d{0.0, 0.1},
+                    Eigen::Vector2d{0.2, 0.3},
+                    Eigen::Vector2d{0.4, 0.5},
+                    Eigen::Vector2d{0.6, 0.7},
+                    Eigen::Vector2d{0.8, 0.9},
+                };
+
+                Eigen::MatrixXd matrix;
+                calculator.compute_polynomial_term_matrix(variables, matrix);
+
+                const Eigen::MatrixXd expected_matrix{{1.0, 0.0, 0.1},
+                    {1.0, 0.2, 0.3}, {1.0, 0.4, 0.5}, {1.0, 0.6, 0.7},
+                    {1.0, 0.8, 0.9}};
+                CHECK_THAT(matrix, eigen_approx(expected_matrix));
+            }
+
+            SECTION("evaluate a polynomial with a variable") {
+                const Eigen::VectorXd coefficients{{0.2, 0.4, 0.6}};
+                const Eigen::Vector2d variable{0.7, 0.9};
+                constexpr double expected_value = 1.02;
+
+                CHECK_THAT(calculator.evaluate_polynomial_for_variable(
+                               variable, coefficients),
+                    Catch::Matchers::WithinRel(expected_value));
+            }
+        }
+    }
 }

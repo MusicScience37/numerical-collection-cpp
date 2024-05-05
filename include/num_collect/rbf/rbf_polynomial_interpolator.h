@@ -19,11 +19,11 @@
  */
 #pragma once
 
+#include "num_collect/base/get_size.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_mixin.h"
 #include "num_collect/rbf/compute_kernel_matrix.h"
-#include "num_collect/rbf/compute_polynomial_term_matrix.h"
 #include "num_collect/rbf/concepts/distance_function.h"  // IWYU pragma: keep
 #include "num_collect/rbf/concepts/length_parameter_calculator.h"  // IWYU pragma: keep
 #include "num_collect/rbf/concepts/rbf.h"  // IWYU pragma: keep
@@ -151,9 +151,16 @@ public:
      */
     void compute(const std::vector<variable_type>& variables,
         const function_value_vector_type& function_values) {
+        const auto num_variables = static_cast<index_type>(variables.size());
+        if (num_variables == 0) {
+            throw invalid_argument("No variable is given.");
+        }
+        const index_type num_dimensions = base::get_size(variables.front());
+        polynomial_calculator_.prepare(num_dimensions);
+
         compute_kernel_matrix(distance_function_, rbf_,
             length_parameter_calculator_, variables, kernel_matrix_);
-        compute_polynomial_term_matrix<PolynomialDegree>(
+        polynomial_calculator_.compute_polynomial_term_matrix(
             variables, polynomial_matrix_);
         equation_solver_.compute(
             kernel_matrix_, polynomial_matrix_, function_values);
