@@ -7,6 +7,7 @@ set(SOURCE_FILES
     impl/kernel_matrix_solver_test.cpp
     length_parameter_calculators/global_length_parameter_calculator_test.cpp
     length_parameter_calculators/local_length_parameter_calculator_test.cpp
+    polynomial_calculator_test.cpp
     rbf_interpolator_test.cpp
     rbf_polynomial_interpolator_test.cpp
     rbfs/gaussian_rbf_test.cpp

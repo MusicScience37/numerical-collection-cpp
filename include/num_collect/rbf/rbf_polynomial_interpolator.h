@@ -31,10 +31,10 @@
 #include "num_collect/rbf/impl/general_spline_equation_solver.h"
 #include "num_collect/rbf/impl/get_default_scalar_type.h"
 #include "num_collect/rbf/impl/get_variable_type.h"
-#include "num_collect/rbf/impl/polynomial_calculator.h"
 #include "num_collect/rbf/kernel_matrix_type.h"
 #include "num_collect/rbf/length_parameter_calculators/global_length_parameter_calculator.h"
 #include "num_collect/rbf/length_parameter_calculators/local_length_parameter_calculator.h"
+#include "num_collect/rbf/polynomial_calculator.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
 
 namespace num_collect::rbf {
@@ -265,7 +265,7 @@ private:
     length_parameter_calculator_type length_parameter_calculator_{};
 
     //! Calculator of polynomials.
-    impl::polynomial_calculator<variable_type, PolynomialDegree>
+    polynomial_calculator<variable_type, PolynomialDegree>
         polynomial_calculator_{};
 
     //! Kernel matrix.

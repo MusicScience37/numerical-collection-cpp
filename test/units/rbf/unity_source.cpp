@@ -6,6 +6,7 @@
 #include "impl/kernel_matrix_solver_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "length_parameter_calculators/global_length_parameter_calculator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "length_parameter_calculators/local_length_parameter_calculator_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "polynomial_calculator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rbf_interpolator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rbf_polynomial_interpolator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rbfs/gaussian_rbf_test.cpp"  // NOLINT(bugprone-suspicious-include)
