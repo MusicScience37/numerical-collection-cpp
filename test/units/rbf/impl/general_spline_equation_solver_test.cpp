@@ -93,5 +93,12 @@ TEST_CASE(
             CHECK(additional_coeffs.allFinite());
             // Values will be checked in tests of RBF interpolation.
         }
+
+        SECTION("calculate the objective function of MLE") {
+            constexpr double reg_param = 1e-4;
+
+            (void)solver.calc_mle_objective(reg_param);
+            // Result will be checked in tests of optimization of this value.
+        }
     }
 }

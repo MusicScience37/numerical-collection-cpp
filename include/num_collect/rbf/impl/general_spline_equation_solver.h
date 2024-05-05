@@ -151,7 +151,65 @@ public:
             (*data_) - (*kernel_matrix_) * kernel_coefficients);
     }
 
+    /*!
+     * \brief Calculate maximum likelihood estimation (MLE) objective function
+     * \cite Scheuerer2011.
+     *
+     * Minimize this function to get the optimal parameter.
+     *
+     * \param[in] reg_param Regularization parameter.
+     * \return Value of the MLE objective function.
+     */
+    [[nodiscard]] auto calc_mle_objective(scalar_type reg_param) const
+        -> scalar_type {
+        reg_param = correct_reg_param_if_needed(reg_param);
+
+        constexpr scalar_type limit = std::numeric_limits<scalar_type>::max() *
+            static_cast<scalar_type>(1e-20);
+        if (eigen_value_decomposition_.eigenvalues()(0) + reg_param <=
+            static_cast<scalar_type>(0)) {
+            return limit;
+        }
+
+        using std::log;
+        const scalar_type value =
+            static_cast<scalar_type>(kernel_subspace_dimensions_) *
+                log(calc_reg_term(reg_param)) +
+            calc_log_determinant(reg_param);
+        if (value < limit) {
+            return value;
+        }
+        return limit;
+    }
+
 private:
+    /*!
+     * \brief Calculate the regularization term.
+     *
+     * \param[in] reg_param Regularization parameter.
+     * \return Value.
+     */
+    [[nodiscard]] auto calc_reg_term(const scalar_type& reg_param) const
+        -> scalar_type {
+        return (spectre_.array().abs2().rowwise().sum() /
+            (eigen_value_decomposition_.eigenvalues().array() + reg_param))
+            .sum();
+    }
+
+    /*!
+     * \brief Calculate the logarithm of the determinant of kernel matrix plus
+     * regularization parameter.
+     *
+     * \param[in] reg_param Regularization parameter.
+     * \return Value.
+     */
+    [[nodiscard]] auto calc_log_determinant(const scalar_type& reg_param) const
+        -> scalar_type {
+        return (eigen_value_decomposition_.eigenvalues().array() + reg_param)
+            .log()
+            .sum();
+    }
+
     /*!
      * \brief Correct regularization parameter if needed.
      *

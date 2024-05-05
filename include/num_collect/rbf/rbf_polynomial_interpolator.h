@@ -23,6 +23,8 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_mixin.h"
+#include "num_collect/opt/dividing_rectangles.h"
+#include "num_collect/opt/function_object_wrapper.h"
 #include "num_collect/rbf/compute_kernel_matrix.h"
 #include "num_collect/rbf/concepts/distance_function.h"  // IWYU pragma: keep
 #include "num_collect/rbf/concepts/length_parameter_calculator.h"  // IWYU pragma: keep
@@ -127,6 +129,9 @@ public:
     //! Type of vectors of function values.
     using function_value_vector_type = Eigen::VectorX<function_value_type>;
 
+    //! Default value of maximum number of evaluations of objective functions in MLE.
+    static constexpr index_type default_max_mle_evaluations = 20;
+
     /*!
      * \brief Constructor.
      *
@@ -207,6 +212,69 @@ public:
      */
     void fix_length_parameter_scale(kernel_value_type value) {
         length_parameter_calculator_.scale(value);
+    }
+
+    /*!
+     * \brief Set the scale of length parameters with optimization using MLE
+     * \cite Scheuerer2011.
+     *
+     * \param[in] variables Variables.
+     * \param[in] function_values Function values.
+     * \param[in] max_mle_evaluations Maximum number of evaluations of objective
+     * functions in MLE.
+     *
+     * \note After call of this function, call compute() for calculation of
+     * internal parameter.
+     */
+    void optimize_length_parameter_scale(
+        const std::vector<variable_type>& variables,
+        const function_value_vector_type& function_values,
+        index_type max_mle_evaluations = default_max_mle_evaluations)
+        requires uses_global_length_parameter
+    {
+        const auto num_variables = static_cast<index_type>(variables.size());
+        if (num_variables == 0) {
+            throw invalid_argument("No variable is given.");
+        }
+        const index_type num_dimensions = base::get_size(variables.front());
+        polynomial_calculator_.prepare(num_dimensions);
+
+        static constexpr auto base = static_cast<kernel_value_type>(10);
+        auto objective_function =
+            [this, &variables, &function_values](
+                kernel_value_type log_scale) -> kernel_value_type {
+            const kernel_value_type scale = std::pow(base, log_scale);
+            length_parameter_calculator_.scale(scale);
+            compute_kernel_matrix(distance_function_, rbf_,
+                length_parameter_calculator_, variables, kernel_matrix_);
+            polynomial_calculator_.compute_polynomial_term_matrix(
+                variables, polynomial_matrix_);
+            equation_solver_.compute(
+                kernel_matrix_, polynomial_matrix_, function_values);
+            return std::log10(equation_solver_.calc_mle_objective(reg_param));
+        };
+
+        using objective_function_object_type = decltype(objective_function);
+        using objective_function_wrapper_type =
+            opt::function_object_wrapper<kernel_value_type(kernel_value_type),
+                objective_function_object_type>;
+        using optimizer_type =
+            opt::dividing_rectangles<objective_function_wrapper_type>;
+
+        optimizer_type optimizer{
+            objective_function_wrapper_type{objective_function}};
+        configure_child_algorithm_logger_if_exists(optimizer);
+        constexpr auto lower_boundary = static_cast<kernel_value_type>(-1);
+        constexpr auto upper_boundary = static_cast<kernel_value_type>(2);
+        optimizer.max_evaluations(max_mle_evaluations);
+        optimizer.init(lower_boundary, upper_boundary);
+        optimizer.solve();
+
+        const kernel_value_type log_scale = optimizer.opt_variable();
+        const kernel_value_type scale = std::pow(base, log_scale);
+        this->logger().debug()(
+            "Selected an optimized scale of length parameters: {}", scale);
+        this->length_parameter_calculator_.scale(scale);
     }
 
     /*!

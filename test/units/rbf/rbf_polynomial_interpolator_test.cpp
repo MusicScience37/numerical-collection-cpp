@@ -73,6 +73,40 @@ TEST_CASE(
         comparison_approvals::verify_with_reference(
             interpolated_values, actual_values, 2);
     }
+
+    SECTION("interpolate with a optimal scale") {
+        const auto function = [](double x) {
+            return std::cos(num_collect::constants::pi<double> * x);
+        };
+
+        const auto sample_variables = std::vector<double>{0.0, 0.5, 0.8, 1.0};
+        Eigen::VectorXd sample_values{};
+        sample_values.resize(
+            static_cast<num_collect::index_type>(sample_variables.size()));
+        for (std::size_t i = 0; i < sample_variables.size(); ++i) {
+            sample_values(static_cast<num_collect::index_type>(i)) =
+                function(sample_variables[i]);
+        }
+
+        interpolator.optimize_length_parameter_scale(
+            sample_variables, sample_values);
+        interpolator.compute(sample_variables, sample_values);
+
+        const Eigen::VectorXd interpolated_variables =
+            Eigen::VectorXd::LinSpaced(11, 0.0, 1.0);
+        Eigen::VectorXd interpolated_values;
+        interpolated_values.resize(interpolated_variables.size());
+        Eigen::VectorXd actual_values;
+        actual_values.resize(interpolated_variables.size());
+        for (num_collect::index_type i = 0; i < interpolated_variables.size();
+             ++i) {
+            interpolated_values(i) =
+                interpolator.interpolate(interpolated_variables(i));
+            actual_values(i) = function(interpolated_variables(i));
+        }
+        comparison_approvals::verify_with_reference(
+            interpolated_values, actual_values, 2);
+    }
 }
 
 TEST_CASE(
@@ -118,6 +152,27 @@ TEST_CASE(
     SECTION("interpolate with a fixed scale") {
         constexpr double length_parameter_scale = 2.0;
         interpolator.fix_length_parameter_scale(length_parameter_scale);
+        interpolator.compute(sample_variables, sample_values);
+
+        Eigen::VectorXd interpolated_values;
+        interpolated_values.resize(static_cast<num_collect::index_type>(
+            interpolated_variables.size()));
+        Eigen::VectorXd actual_values;
+        actual_values.resize(static_cast<num_collect::index_type>(
+            interpolated_variables.size()));
+        for (std::size_t i = 0; i < interpolated_variables.size(); ++i) {
+            interpolated_values(static_cast<num_collect::index_type>(i)) =
+                interpolator.interpolate(interpolated_variables[i]);
+            actual_values(static_cast<num_collect::index_type>(i)) =
+                function(interpolated_variables[i]);
+        }
+        comparison_approvals::verify_with_reference(
+            interpolated_values, actual_values, 2);
+    }
+
+    SECTION("interpolate with a optimal scale") {
+        interpolator.optimize_length_parameter_scale(
+            sample_variables, sample_values);
         interpolator.compute(sample_variables, sample_values);
 
         Eigen::VectorXd interpolated_values;
