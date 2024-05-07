@@ -2,6 +2,7 @@
 #include "compute_polynomial_term_matrix_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "distance_functions/euclidean_distance_function_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "gaussian_process_interpolator_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "generate_halton_nodes_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/general_spline_equation_solver_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/kernel_matrix_solver_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "length_parameter_calculators/global_length_parameter_calculator_test.cpp"  // NOLINT(bugprone-suspicious-include)

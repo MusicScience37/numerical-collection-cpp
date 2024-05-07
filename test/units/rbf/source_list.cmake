@@ -3,6 +3,7 @@ set(SOURCE_FILES
     compute_polynomial_term_matrix_test.cpp
     distance_functions/euclidean_distance_function_test.cpp
     gaussian_process_interpolator_test.cpp
+    generate_halton_nodes_test.cpp
     impl/general_spline_equation_solver_test.cpp
     impl/kernel_matrix_solver_test.cpp
     length_parameter_calculators/global_length_parameter_calculator_test.cpp
