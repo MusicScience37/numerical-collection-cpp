@@ -32,20 +32,9 @@
 
 STAT_BENCH_MAIN
 
-class interpolate_1d_fixture : public stat_bench::FixtureBase {
+class interpolate_1d_fixture_base : public stat_bench::FixtureBase {
 public:
-    interpolate_1d_fixture() {
-        add_param<num_collect::index_type>("points")
-            ->add(10)  // NOLINT
-            ->add(20)  // NOLINT
-            ->add(50)  // NOLINT
-#ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
-            ->add(100)  // NOLINT
-            ->add(200)  // NOLINT
-            ->add(500)  // NOLINT
-#endif
-            ;
-    }
+    interpolate_1d_fixture_base() = default;
 
     void setup(stat_bench::InvocationContext& context) override {
         num_sample_points_ =
@@ -92,6 +81,19 @@ public:
         }
     }
 
+    template <typename Interpolator>
+    void perform_with_optimization(Interpolator& interpolator) {
+        interpolator.optimize_length_parameter_scale(
+            sample_variables_, sample_values_);
+        interpolator.compute(sample_variables_, sample_values_);
+        for (num_collect::index_type i = 0; i < num_evaluation_points_; ++i) {
+            const double variable =
+                evaluation_variables_[static_cast<std::size_t>(i)];
+            evaluation_interpolated_values_[i] =
+                interpolator.interpolate(variable);
+        }
+    }
+
     void tear_down(stat_bench::InvocationContext& context) override {
         const double error_rate =
             (evaluation_correct_values_ - evaluation_interpolated_values_)
@@ -120,31 +122,69 @@ private:
     Eigen::VectorXd evaluation_interpolated_values_{};
 };
 
-STAT_BENCH_CASE_F(
-    interpolate_1d_fixture, "interpolate_1d", "global_rbf_interpolator") {
+class interpolate_1d_fixture_light : public interpolate_1d_fixture_base {
+public:
+    interpolate_1d_fixture_light() {
+        add_param<num_collect::index_type>("points")
+            ->add(10)  // NOLINT
+            ->add(20)  // NOLINT
+#ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
+            ->add(50)   // NOLINT
+            ->add(100)  // NOLINT
+#endif
+            ;
+    }
+};
+
+class interpolate_1d_fixture_medium : public interpolate_1d_fixture_base {
+public:
+    interpolate_1d_fixture_medium() {
+        add_param<num_collect::index_type>("points")
+            ->add(10)  // NOLINT
+            ->add(20)  // NOLINT
+            ->add(50)  // NOLINT
+#ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
+            ->add(100)  // NOLINT
+            ->add(200)  // NOLINT
+            ->add(500)  // NOLINT
+#endif
+            ;
+    }
+};
+
+STAT_BENCH_CASE_F(interpolate_1d_fixture_medium, "interpolate_1d",
+    "global_rbf_interpolator") {
     STAT_BENCH_MEASURE() {
         num_collect::rbf::global_rbf_interpolator<double(double)> interpolator;
         perform(interpolator);
     };
 }
 
+STAT_BENCH_CASE_F(interpolate_1d_fixture_light, "interpolate_1d",
+    "global_rbf_interpolator (with optimization)") {
+    STAT_BENCH_MEASURE() {
+        num_collect::rbf::global_rbf_interpolator<double(double)> interpolator;
+        perform_with_optimization(interpolator);
+    };
+}
+
 STAT_BENCH_CASE_F(
-    interpolate_1d_fixture, "interpolate_1d", "local_rbf_interpolator") {
+    interpolate_1d_fixture_medium, "interpolate_1d", "local_rbf_interpolator") {
     STAT_BENCH_MEASURE() {
         num_collect::rbf::local_rbf_interpolator<double(double)> interpolator;
         perform(interpolator);
     };
 }
 
-STAT_BENCH_CASE_F(
-    interpolate_1d_fixture, "interpolate_1d", "local_csrbf_interpolator") {
+STAT_BENCH_CASE_F(interpolate_1d_fixture_medium, "interpolate_1d",
+    "local_csrbf_interpolator") {
     STAT_BENCH_MEASURE() {
         num_collect::rbf::local_csrbf_interpolator<double(double)> interpolator;
         perform(interpolator);
     };
 }
 
-STAT_BENCH_CASE_F(interpolate_1d_fixture, "interpolate_1d",
+STAT_BENCH_CASE_F(interpolate_1d_fixture_medium, "interpolate_1d",
     "global_rbf_polynomial_interpolator(0)") {
     STAT_BENCH_MEASURE() {
         num_collect::rbf::global_rbf_polynomial_interpolator<double(double),
@@ -154,7 +194,7 @@ STAT_BENCH_CASE_F(interpolate_1d_fixture, "interpolate_1d",
     };
 }
 
-STAT_BENCH_CASE_F(interpolate_1d_fixture, "interpolate_1d",
+STAT_BENCH_CASE_F(interpolate_1d_fixture_medium, "interpolate_1d",
     "global_rbf_polynomial_interpolator(1)") {
     STAT_BENCH_MEASURE() {
         num_collect::rbf::global_rbf_polynomial_interpolator<double(double),
