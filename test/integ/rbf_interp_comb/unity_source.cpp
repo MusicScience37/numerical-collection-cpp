@@ -1,3 +1,7 @@
+#include "dimensions/gaussian_process_interpolator.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "dimensions/global_rbf_polynomial_interpolator.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "dimensions/local_csrbf_interpolator.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "dimensions/local_rbf_interpolator.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rbfs/gaussian_process_interpolator.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rbfs/global_rbf_polynomial_interpolator.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rbfs/local_csrbf_interpolator.cpp"  // NOLINT(bugprone-suspicious-include)
