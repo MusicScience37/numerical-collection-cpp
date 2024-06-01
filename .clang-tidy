@@ -37,6 +37,7 @@ Checks: >
     -bugprone-exception-escape,
     -bugprone-unchecked-optional-access,
     -bugprone-chained-comparison,
+    -bugprone-optional-value-conversion,
   concurrency-*,
   boost-*,
   openmp-*,
@@ -67,6 +68,7 @@ Checks: >
 # - bugprone-chained-comparison prevents use of my assertion macro.
 # - readability-redundant-member-init generates too many warnings in existing codes.
 # - modernize-use-std-numbers generates many false positives.
+# - bugprone-optional-value-conversion has a bug to generate warnings even when checks of existence of values exist.
 
 CheckOptions:
   # Naming Conventions
