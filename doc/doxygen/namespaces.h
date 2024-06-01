@@ -220,7 +220,7 @@ namespace num_collect {
             namespace impl {}
 
         }  // namespace backward
-    }      // namespace auto_diff
+    }  // namespace auto_diff
 
     /*!
      * \dir num_collect/opt
@@ -307,7 +307,7 @@ namespace num_collect {
             namespace impl {}
 
         }  // namespace kernel
-    }      // namespace interp
+    }  // namespace interp
 
     /*!
      * \dir num_collect/numbers

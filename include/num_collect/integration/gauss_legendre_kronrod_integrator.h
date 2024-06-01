@@ -108,9 +108,9 @@ public:
      * \return Result.
      */
     template <base::concepts::invocable_as<result_type(variable_type)> Function>
-    [[nodiscard]] auto integrate_once(
-        const Function& function, variable_type left, variable_type right) const
-        -> std::pair<result_type, result_type> {
+    [[nodiscard]] auto integrate_once(const Function& function,
+        variable_type left,
+        variable_type right) const -> std::pair<result_type, result_type> {
         const auto center = constants::half<variable_type> * (left + right);
         const auto half_width = constants::half<variable_type> * (right - left);
 
@@ -209,8 +209,8 @@ public:
      * \param[in] val Value.
      * \return This.
      */
-    auto tol_abs_error(variable_type val)
-        -> gauss_legendre_kronrod_integrator& {
+    auto tol_abs_error(
+        variable_type val) -> gauss_legendre_kronrod_integrator& {
         NUM_COLLECT_ASSERT(val > constants::zero<variable_type>);
         tol_abs_error_ = val;
         return *this;
@@ -222,8 +222,8 @@ public:
      * \param[in] val Value.
      * \return This.
      */
-    auto tol_rel_error(variable_type val)
-        -> gauss_legendre_kronrod_integrator& {
+    auto tol_rel_error(
+        variable_type val) -> gauss_legendre_kronrod_integrator& {
         NUM_COLLECT_ASSERT(val > constants::zero<variable_type>);
         tol_rel_error_ = val;
         return *this;

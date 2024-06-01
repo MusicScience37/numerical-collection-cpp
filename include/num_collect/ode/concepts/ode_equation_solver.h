@@ -59,7 +59,7 @@ concept ode_equation_solver = base::concepts::iterative_solver<T>&&
         {
             obj.tolerances()
         } -> base::concepts::const_reference_of<
-            error_tolerances<typename T::variable_type>>;
+              error_tolerances<typename T::variable_type>>;
     };
 };
 

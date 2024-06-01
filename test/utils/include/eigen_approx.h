@@ -55,8 +55,8 @@ public:
      * \return Whether two matrices are same.
      */
     template <typename OtherDerived>
-    [[nodiscard]] auto match(const Eigen::DenseBase<OtherDerived>& actual) const
-        -> bool {
+    [[nodiscard]] auto match(
+        const Eigen::DenseBase<OtherDerived>& actual) const -> bool {
         if (expected_.cols() != actual.cols()) {
             return false;
         }

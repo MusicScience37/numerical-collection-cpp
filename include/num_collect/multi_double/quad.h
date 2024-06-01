@@ -52,8 +52,9 @@ public:
      */
     template <typename Scalar,
         std::enable_if_t<(std::is_integral_v<Scalar> ||
-            std::is_floating_point_v<Scalar>)&&(!std::is_same_v<Scalar,
-                                                quad>)>* = nullptr>
+                             std::is_floating_point_v<Scalar>) &&
+            (!std::is_same_v<Scalar,
+                quad>)>* = nullptr>
     constexpr quad(Scalar value) noexcept  // NOLINT
         : high_(static_cast<double>(value)) {}
 

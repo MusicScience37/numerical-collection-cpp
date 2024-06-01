@@ -44,10 +44,10 @@ public:
 
     log_config_parser_base(const log_config_parser_base&) = delete;
     log_config_parser_base(log_config_parser_base&&) = delete;
-    auto operator=(const log_config_parser_base&)
-        -> log_config_parser_base& = delete;
-    auto operator=(log_config_parser_base&&)
-        -> log_config_parser_base& = delete;
+    auto operator=(
+        const log_config_parser_base&) -> log_config_parser_base& = delete;
+    auto operator=(
+        log_config_parser_base&&) -> log_config_parser_base& = delete;
 
     /*!
      * \brief Destructor.

@@ -112,8 +112,8 @@ private:
      * \return Output iterator after formatting.
      */
     template <typename FormatContext>
-    auto format_impl(const Vector& vec, FormatContext& context)
-        -> decltype(context.out()) {
+    auto format_impl(
+        const Vector& vec, FormatContext& context) -> decltype(context.out()) {
         const Eigen::Index size = vec.size();
         auto out = context.out();
         *out = '[';

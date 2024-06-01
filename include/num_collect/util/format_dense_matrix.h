@@ -146,8 +146,8 @@ private:
      * \return Output iterator after formatting.
      */
     template <typename FormatContext>
-    auto format_one_line(const Matrix& mat, FormatContext& context)
-        -> decltype(context.out()) {
+    auto format_one_line(
+        const Matrix& mat, FormatContext& context) -> decltype(context.out()) {
         const Eigen::Index rows = mat.rows();
         const Eigen::Index cols = mat.cols();
         auto out = context.out();
@@ -184,8 +184,8 @@ private:
      * \return Output iterator after formatting.
      */
     template <typename FormatContext>
-    auto format_multi_line(const Matrix& mat, FormatContext& context)
-        -> decltype(context.out()) {
+    auto format_multi_line(
+        const Matrix& mat, FormatContext& context) -> decltype(context.out()) {
         const Eigen::Index rows = mat.rows();
         const Eigen::Index cols = mat.cols();
         auto out = context.out();

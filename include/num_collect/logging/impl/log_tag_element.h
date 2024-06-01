@@ -66,8 +66,8 @@ public:
      * \retval true Two objects are equal.
      * \retval false Two objects are not equal.
      */
-    [[nodiscard]] auto operator==(const log_tag_element& right) const noexcept
-        -> bool {
+    [[nodiscard]] auto operator==(
+        const log_tag_element& right) const noexcept -> bool {
         return (hash_ == right.hash_) && (name_ == right.name_);
     }
 
@@ -78,8 +78,8 @@ public:
      * \retval true Two objects are not equal.
      * \retval false Two objects are equal.
      */
-    [[nodiscard]] auto operator!=(const log_tag_element& right) const noexcept
-        -> bool {
+    [[nodiscard]] auto operator!=(
+        const log_tag_element& right) const noexcept -> bool {
         return !operator==(right);
     }
 
@@ -114,8 +114,8 @@ public:
      * \param[in] key Key.
      * \return Hash number.
      */
-    [[nodiscard]] auto operator()(const argument_type& key) const noexcept
-        -> result_type {
+    [[nodiscard]] auto operator()(
+        const argument_type& key) const noexcept -> result_type {
         return key.hash();
     }
 };

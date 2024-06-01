@@ -127,8 +127,8 @@ private:
      * \param[in] hessian Hessian.
      * \return Search direction.
      */
-    [[nodiscard]] auto calc_direction_impl(const hessian_type& hessian)
-        -> variable_type {
+    [[nodiscard]] auto calc_direction_impl(
+        const hessian_type& hessian) -> variable_type {
         solver_.compute(hessian);
         return -solver_.solve(gradient());
     }

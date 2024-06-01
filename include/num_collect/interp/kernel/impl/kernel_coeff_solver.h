@@ -120,8 +120,8 @@ public:
      * \param[in] kernel_param Kernel parameters.
      * \return This.
      */
-    auto fix_kernel_param(const kernel_param_type& kernel_param)
-        -> kernel_coeff_solver& {
+    auto fix_kernel_param(
+        const kernel_param_type& kernel_param) -> kernel_coeff_solver& {
         kernel_.kernel_param(kernel_param);
         optimizer_.reset();
         return *this;

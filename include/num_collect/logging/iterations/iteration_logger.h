@@ -144,10 +144,10 @@ public:
      */
     template <concepts::formattable_iteration_parameter_value Value,
         concepts::getter_of<Value> Function>
-    auto append(std::string label, Function&& function)
-        -> iteration_parameter<Algorithm, Value,
-            function_iteration_parameter_value<Algorithm, Value,
-                std::decay_t<Function>>>* {
+    auto append(std::string label,
+        Function&& function) -> iteration_parameter<Algorithm, Value,
+                                 function_iteration_parameter_value<Algorithm,
+                                     Value, std::decay_t<Function>>>* {
         return append<Value>(std::move(label),
             function_iteration_parameter_value<Algorithm, Value,
                 std::decay_t<Function>>(std::forward<Function>(function)));

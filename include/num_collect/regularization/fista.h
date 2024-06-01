@@ -180,14 +180,14 @@ public:
     }
 
     //! \copydoc num_collect::regularization::implicit_regularized_solver_base::residual_norm
-    [[nodiscard]] auto residual_norm(const data_type& solution) const
-        -> scalar_type {
+    [[nodiscard]] auto residual_norm(
+        const data_type& solution) const -> scalar_type {
         return ((*coeff_) * solution - (*data_)).squaredNorm();
     }
 
     //! \copydoc num_collect::regularization::implicit_regularized_solver_base::regularization_term
-    [[nodiscard]] auto regularization_term(const data_type& solution) const
-        -> scalar_type {
+    [[nodiscard]] auto regularization_term(
+        const data_type& solution) const -> scalar_type {
         return solution.template lpNorm<1>();
     }
 

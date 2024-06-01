@@ -69,8 +69,8 @@ public:
      * \param[in] col Column index.
      * \return Element.
      */
-    [[nodiscard]] auto operator()(index_type row, index_type col) const
-        -> value_type {
+    [[nodiscard]] auto operator()(
+        index_type row, index_type col) const -> value_type {
         return kernel_(list_[static_cast<std::size_t>(row)],
             list_[static_cast<std::size_t>(col)]);
     }

@@ -121,8 +121,8 @@ private:
      * \return Index with the lowest degree.
      */
     template <base::concepts::sparse_matrix MatrixType>
-    [[nodiscard]] auto calculate_degrees(const MatrixType& matrix)
-        -> storage_index_type {
+    [[nodiscard]] auto calculate_degrees(
+        const MatrixType& matrix) -> storage_index_type {
         const auto size = static_cast<storage_index_type>(matrix.outerSize());
         unused_index_to_degree_.clear();
         unused_index_to_degree_.reserve(static_cast<std::size_t>(size));

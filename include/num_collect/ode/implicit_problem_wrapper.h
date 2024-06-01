@@ -163,8 +163,8 @@ private:
  */
 template <concepts::single_variate_problem Problem>
     requires concepts::mass_problem<Problem>
-[[nodiscard]] auto wrap_implicit_problem(Problem problem)
-    -> single_variate_implicit_problem_wrapper<Problem> {
+[[nodiscard]] auto wrap_implicit_problem(
+    Problem problem) -> single_variate_implicit_problem_wrapper<Problem> {
     return single_variate_implicit_problem_wrapper<Problem>(problem);
 }
 
@@ -180,8 +180,8 @@ template <concepts::single_variate_problem Problem>
  */
 template <concepts::multi_variate_problem Problem>
     requires concepts::mass_problem<Problem>
-[[nodiscard]] auto wrap_implicit_problem(Problem problem)
-    -> multi_variate_implicit_problem_wrapper<Problem> {
+[[nodiscard]] auto wrap_implicit_problem(
+    Problem problem) -> multi_variate_implicit_problem_wrapper<Problem> {
     return multi_variate_implicit_problem_wrapper<Problem>(problem);
 }
 #endif

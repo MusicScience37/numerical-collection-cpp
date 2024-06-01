@@ -88,8 +88,8 @@ public:
      * \param[in] process Type of process.
      * \return Name of process.
      */
-    [[nodiscard]] static auto process_name(process_type process)
-        -> std::string_view {
+    [[nodiscard]] static auto process_name(
+        process_type process) -> std::string_view {
         switch (process) {
         case process_type::none:
             return "none";
@@ -274,8 +274,8 @@ public:
      * \param[in] value Value.
      * \return This object.
      */
-    auto tol_simplex_size(const variable_scalar_type& value)
-        -> downhill_simplex& {
+    auto tol_simplex_size(
+        const variable_scalar_type& value) -> downhill_simplex& {
         tol_simplex_size_ = value;
         return *this;
     }

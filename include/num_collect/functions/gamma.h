@@ -64,8 +64,8 @@ namespace num_collect::functions {
  * \param[in] x Argument.
  * \return Value.
  */
-[[nodiscard]] inline constexpr auto gamma(std::complex<float> x)
-    -> std::complex<float> {
+[[nodiscard]] inline constexpr auto gamma(
+    std::complex<float> x) -> std::complex<float> {
     if (x.real() < 1.0F) {
         const std::complex<float> pi_1mx = constants::pi<float> * (1.0F - x);
         return pi_1mx / std::sin(pi_1mx) /
@@ -81,8 +81,8 @@ namespace num_collect::functions {
  * \param[in] x Argument.
  * \return Value.
  */
-[[nodiscard]] inline constexpr auto gamma(std::complex<double> x)
-    -> std::complex<double> {
+[[nodiscard]] inline constexpr auto gamma(
+    std::complex<double> x) -> std::complex<double> {
     if (x.real() < 1.0) {
         const std::complex<double> pi_1mx = constants::pi<double> * (1.0 - x);
         return pi_1mx / std::sin(pi_1mx) /

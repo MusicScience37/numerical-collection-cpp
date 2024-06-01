@@ -400,8 +400,8 @@ namespace num_collect::numbers {
  * \return Output stream.
  */
 template <num_collect::base::concepts::integral Integer>
-inline auto operator<<(std::ostream& stream, const fraction<Integer>& val)
-    -> std::ostream& {
+inline auto operator<<(
+    std::ostream& stream, const fraction<Integer>& val) -> std::ostream& {
     fmt::print(stream, "{}", val);
     return stream;
 }

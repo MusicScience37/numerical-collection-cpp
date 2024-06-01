@@ -71,8 +71,8 @@ public:
      * \return Result.
      */
     template <base::concepts::invocable_as<result_type(variable_type)> Function>
-    [[nodiscard]] auto integrate(const Function& function) const
-        -> result_type {
+    [[nodiscard]] auto integrate(
+        const Function& function) const -> result_type {
         const variable_type interval =
             max_point_ / static_cast<variable_type>(points_);
 
@@ -102,8 +102,8 @@ public:
      * \return Result.
      */
     template <base::concepts::invocable_as<result_type(variable_type)> Function>
-    [[nodiscard]] auto operator()(const Function& function) const
-        -> result_type {
+    [[nodiscard]] auto operator()(
+        const Function& function) const -> result_type {
         return integrate(function);
     }
 

@@ -174,8 +174,8 @@ public:
      * \return Expression to solve the linear equation.
      */
     template <base::concepts::dense_vector_of<scalar_type> Right>
-    [[nodiscard]] auto solve(const Right& right) const
-        -> Eigen::Solve<Derived, Right> {
+    [[nodiscard]] auto solve(
+        const Right& right) const -> Eigen::Solve<Derived, Right> {
         // TODO: Version for matrices.
         return Eigen::Solve<Derived, Right>(derived(), right);
     }

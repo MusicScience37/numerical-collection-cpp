@@ -66,8 +66,8 @@ enum class log_level {
  * \param[in] level Log level.
  * \return String.
  */
-[[nodiscard]] inline auto get_log_level_str(log_level level) noexcept
-    -> std::string_view {
+[[nodiscard]] inline auto get_log_level_str(
+    log_level level) noexcept -> std::string_view {
     switch (level) {
     case log_level::trace:
         return "trace";

@@ -140,14 +140,14 @@ public:
     }
 
     //! \copydoc num_collect::regularization::explicit_regularized_solver_base::residual_norm
-    [[nodiscard]] auto residual_norm(const scalar_type& param) const
-        -> scalar_type {
+    [[nodiscard]] auto residual_norm(
+        const scalar_type& param) const -> scalar_type {
         return tikhonov_.residual_norm(param);
     }
 
     //! \copydoc num_collect::regularization::explicit_regularized_solver_base::regularization_term
-    [[nodiscard]] auto regularization_term(const scalar_type& param) const
-        -> scalar_type {
+    [[nodiscard]] auto regularization_term(
+        const scalar_type& param) const -> scalar_type {
         return tikhonov_.regularization_term(param);
     }
 
@@ -176,8 +176,8 @@ public:
     }
 
     //! \copydoc num_collect::regularization::explicit_regularized_solver_base::sum_of_filter_factor
-    [[nodiscard]] auto sum_of_filter_factor(const scalar_type& param) const
-        -> scalar_type {
+    [[nodiscard]] auto sum_of_filter_factor(
+        const scalar_type& param) const -> scalar_type {
         return tikhonov_.sum_of_filter_factor(param);
     }
 

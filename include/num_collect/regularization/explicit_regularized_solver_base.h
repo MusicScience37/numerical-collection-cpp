@@ -59,8 +59,8 @@ public:
      * \param[in] param Regularization parameter.
      * \return Result.
      */
-    [[nodiscard]] auto residual_norm(const scalar_type& param) const
-        -> scalar_type {
+    [[nodiscard]] auto residual_norm(
+        const scalar_type& param) const -> scalar_type {
         return derived().residual_norm(param);
     }
 
@@ -70,8 +70,8 @@ public:
      * \param[in] param Regularization parameter.
      * \return Result.
      */
-    [[nodiscard]] auto regularization_term(const scalar_type& param) const
-        -> scalar_type {
+    [[nodiscard]] auto regularization_term(
+        const scalar_type& param) const -> scalar_type {
         return derived().regularization_term(param);
     }
 
@@ -127,8 +127,8 @@ public:
      * \param[in] param Regularization parameter.
      * \return Result.
      */
-    [[nodiscard]] auto sum_of_filter_factor(const scalar_type& param) const
-        -> scalar_type {
+    [[nodiscard]] auto sum_of_filter_factor(
+        const scalar_type& param) const -> scalar_type {
         return derived().sum_of_filter_factor(param);
     }
 

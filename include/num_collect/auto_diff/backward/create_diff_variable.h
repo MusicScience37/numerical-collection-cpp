@@ -37,8 +37,8 @@ namespace num_collect::auto_diff::backward {
  * \return Variable.
  */
 template <base::concepts::real_scalar Scalar>
-[[nodiscard]] inline auto create_diff_variable(const Scalar& value)
-    -> variable<Scalar> {
+[[nodiscard]] inline auto create_diff_variable(
+    const Scalar& value) -> variable<Scalar> {
     return variable<Scalar>(value, variable_tag());
 }
 
@@ -91,8 +91,8 @@ public:
      * \param[in] col Column index.
      * \return Element.
      */
-    [[nodiscard]] auto operator()(index_type row, index_type col) const
-        -> variable_type {
+    [[nodiscard]] auto operator()(
+        index_type row, index_type col) const -> variable_type {
         NUM_COLLECT_DEBUG_ASSERT(col == 0);
         return create_diff_variable<scalar_type>(value_vec_(row, col));
     }

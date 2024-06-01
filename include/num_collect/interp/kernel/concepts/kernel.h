@@ -52,7 +52,7 @@ concept kernel = requires(const T& const_obj, T& obj) {
         const_obj.kernel_param_search_region(
             std::declval<std::vector<typename T::value_type>>())
     } -> base::concepts::implicitly_convertible_to<std::pair<
-        typename T::kernel_param_type, typename T::kernel_param_type>>;
+          typename T::kernel_param_type, typename T::kernel_param_type>>;
 };
 
 }  // namespace num_collect::interp::kernel::concepts

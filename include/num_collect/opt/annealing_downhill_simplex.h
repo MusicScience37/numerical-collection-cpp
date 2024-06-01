@@ -99,8 +99,8 @@ public:
      * \param[in] process Type of process.
      * \return Name of process.
      */
-    [[nodiscard]] static auto process_name(process_type process)
-        -> std::string_view {
+    [[nodiscard]] static auto process_name(
+        process_type process) -> std::string_view {
         switch (process) {
         case process_type::none:
             return "none";
@@ -331,8 +331,8 @@ public:
      * \param[in] value Value.
      * \return This.
      */
-    auto max_iterations_per_trial(index_type value)
-        -> annealing_downhill_simplex& {
+    auto max_iterations_per_trial(
+        index_type value) -> annealing_downhill_simplex& {
         if (value == 0) {
             throw invalid_argument(
                 "Maximum number of iterations in each trial must be a positive "

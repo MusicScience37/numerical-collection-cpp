@@ -58,8 +58,8 @@ public:
      *
      * \return Value.
      */
-    [[nodiscard]] auto get(const Algorithm* /*algorithm*/) const noexcept
-        -> const Value& {
+    [[nodiscard]] auto get(
+        const Algorithm* /*algorithm*/) const noexcept -> const Value& {
         return get();
     }
 

@@ -37,8 +37,8 @@ static constexpr double c_min = 0.0;
 static constexpr double c_max = 2.0;
 static constexpr num_collect::index_type num_sample_points = 200;
 
-[[nodiscard]] static auto target_function(const Eigen::Vector2d& variable)
-    -> double {
+[[nodiscard]] static auto target_function(
+    const Eigen::Vector2d& variable) -> double {
     constexpr double slope = 0.5;
     return slope * variable.x() + variable.y() * variable.y();
 }
