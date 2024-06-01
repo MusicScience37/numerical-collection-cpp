@@ -30,7 +30,7 @@ namespace num_collect::logging::impl {
  *
  * \return Mask array.
  */
-[[nodiscard]] inline constexpr auto create_log_tag_element_char_mask() {
+[[nodiscard]] constexpr auto create_log_tag_element_char_mask() {
     constexpr std::size_t size = 256;
     std::array<bool, size> res{};
     res.fill(false);

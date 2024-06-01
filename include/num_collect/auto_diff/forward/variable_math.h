@@ -58,8 +58,8 @@ template <typename Value, typename Diff>
  * \return Value.
  */
 template <typename Value, typename Diff>
-[[nodiscard]] inline auto exp(const variable<Value, Diff>& x)
-    -> variable<Value, Diff> {
+[[nodiscard]] inline auto exp(
+    const variable<Value, Diff>& x) -> variable<Value, Diff> {
     using std::exp;
     const auto val = exp(x.value());
     return impl::process_one_arg_function(x, val, val);
@@ -74,8 +74,8 @@ template <typename Value, typename Diff>
  * \return Value.
  */
 template <typename Value, typename Diff>
-[[nodiscard]] inline auto log(const variable<Value, Diff>& x)
-    -> variable<Value, Diff> {
+[[nodiscard]] inline auto log(
+    const variable<Value, Diff>& x) -> variable<Value, Diff> {
     using std::log;
     return impl::process_one_arg_function(
         x, log(x.value()), static_cast<Value>(1) / x.value());
@@ -90,8 +90,8 @@ template <typename Value, typename Diff>
  * \return Value.
  */
 template <typename Value, typename Diff>
-[[nodiscard]] inline auto sqrt(const variable<Value, Diff>& x)
-    -> variable<Value, Diff> {
+[[nodiscard]] inline auto sqrt(
+    const variable<Value, Diff>& x) -> variable<Value, Diff> {
     using std::sqrt;
     const auto val = sqrt(x.value());
     const auto half = static_cast<Value>(0.5);

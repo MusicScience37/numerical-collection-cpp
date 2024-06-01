@@ -160,8 +160,8 @@ public:
      * \param[in] reg_param Regularization parameter.
      * \return Value of the MLE objective function.
      */
-    [[nodiscard]] auto calc_mle_objective(scalar_type reg_param) const
-        -> scalar_type {
+    [[nodiscard]] auto calc_mle_objective(
+        scalar_type reg_param) const -> scalar_type {
         reg_param = correct_reg_param_if_needed(reg_param);
 
         constexpr scalar_type limit = std::numeric_limits<scalar_type>::max() *
@@ -189,8 +189,8 @@ private:
      * \param[in] reg_param Regularization parameter.
      * \return Value.
      */
-    [[nodiscard]] auto calc_reg_term(const scalar_type& reg_param) const
-        -> scalar_type {
+    [[nodiscard]] auto calc_reg_term(
+        const scalar_type& reg_param) const -> scalar_type {
         return (spectre_.array().abs2().rowwise().sum() /
             (eigen_value_decomposition_.eigenvalues().array() + reg_param))
             .sum();
@@ -203,8 +203,8 @@ private:
      * \param[in] reg_param Regularization parameter.
      * \return Value.
      */
-    [[nodiscard]] auto calc_log_determinant(const scalar_type& reg_param) const
-        -> scalar_type {
+    [[nodiscard]] auto calc_log_determinant(
+        const scalar_type& reg_param) const -> scalar_type {
         return (eigen_value_decomposition_.eigenvalues().array() + reg_param)
             .log()
             .sum();

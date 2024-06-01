@@ -22,6 +22,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
+#include <cstdint>
 #include <iterator>
 #include <limits>
 #include <random>
@@ -42,7 +43,7 @@
 namespace num_collect::opt {
 
 //! Tag of annealing_downhill_simplex.
-inline constexpr auto annealing_downhill_simplex_tag =
+constexpr auto annealing_downhill_simplex_tag =
     logging::log_tag_view("num_collect::opt::annealing_downhill_simplex");
 
 /*!
@@ -85,7 +86,7 @@ public:
     using random_number_generator_type = std::mt19937;
 
     //! Type of processes.
-    enum class process_type {
+    enum class process_type : std::uint8_t {
         none,                      //!< None.
         reflection,                //!< Reflection.
         reflection_and_expansion,  //!< Reflection and expansion.
@@ -99,8 +100,8 @@ public:
      * \param[in] process Type of process.
      * \return Name of process.
      */
-    [[nodiscard]] static auto process_name(process_type process)
-        -> std::string_view {
+    [[nodiscard]] static auto process_name(
+        process_type process) -> std::string_view {
         switch (process) {
         case process_type::none:
             return "none";
@@ -331,8 +332,8 @@ public:
      * \param[in] value Value.
      * \return This.
      */
-    auto max_iterations_per_trial(index_type value)
-        -> annealing_downhill_simplex& {
+    auto max_iterations_per_trial(
+        index_type value) -> annealing_downhill_simplex& {
         if (value == 0) {
             throw invalid_argument(
                 "Maximum number of iterations in each trial must be a positive "

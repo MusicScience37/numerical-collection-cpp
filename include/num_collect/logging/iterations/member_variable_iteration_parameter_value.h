@@ -68,8 +68,8 @@ public:
      * \param[in] algorithm Algorithm.
      * \return Value.
      */
-    [[nodiscard]] auto get(const Algorithm* algorithm) const noexcept
-        -> const Value& {
+    [[nodiscard]] auto get(
+        const Algorithm* algorithm) const noexcept -> const Value& {
         return algorithm->*value_;
     }
 

@@ -36,8 +36,8 @@ namespace num_collect::logging::config {
  * \param[in] str String.
  * \return Log level.
  */
-[[nodiscard]] inline auto parse_output_log_level_str(std::string_view str)
-    -> log_level {
+[[nodiscard]] inline auto parse_output_log_level_str(
+    std::string_view str) -> log_level {
     if (str == "trace") {
         return log_level::trace;
     }

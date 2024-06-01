@@ -42,7 +42,7 @@
 namespace num_collect::rbf {
 
 //! Tag of rbf_polynomial_interpolator.
-inline constexpr auto rbf_polynomial_interpolator_tag =
+constexpr auto rbf_polynomial_interpolator_tag =
     logging::log_tag_view("num_collect::rbf::rbf_polynomial_interpolator");
 
 /*!
@@ -179,8 +179,8 @@ public:
      * \param[in] variable Variable on which the function value is interpolated.
      * \return Interpolated value.
      */
-    [[nodiscard]] auto interpolate(const variable_type& variable) const
-        -> function_value_type {
+    [[nodiscard]] auto interpolate(
+        const variable_type& variable) const -> function_value_type {
         auto value = static_cast<function_value_type>(0);
 
         for (std::size_t i = 0; i < variables_->size(); ++i) {

@@ -43,8 +43,8 @@ public:
      * \param[in] arg_type Argument.
      * \return Value.
      */
-    [[nodiscard]] auto operator()(const arg_type& arg_type) const
-        -> value_type {
+    [[nodiscard]] auto operator()(
+        const arg_type& arg_type) const -> value_type {
         using std::exp;
         return exp(-arg_type * arg_type);
     }

@@ -43,7 +43,7 @@
 namespace num_collect::opt {
 
 //! Tag of gaussian_process_optimizer.
-inline constexpr auto gaussian_process_optimizer_tag =
+constexpr auto gaussian_process_optimizer_tag =
     logging::log_tag_view("num_collect::opt::gaussian_process_optimizer");
 
 /*!
@@ -194,8 +194,8 @@ public:
      * \param[in] value Value.
      * \return This object.
      */
-    auto max_lower_bound_evaluations(index_type value)
-        -> gaussian_process_optimizer& {
+    auto max_lower_bound_evaluations(
+        index_type value) -> gaussian_process_optimizer& {
         NUM_COLLECT_ASSERT(value > 0);
         max_lower_bound_evaluations_ = value;
         return *this;
@@ -232,8 +232,8 @@ private:
      * \param[in] value Function value.
      * \return Corrected value.
      */
-    [[nodiscard]] static auto correct_value_if_needed(value_type value) noexcept
-        -> value_type {
+    [[nodiscard]] static auto correct_value_if_needed(
+        value_type value) noexcept -> value_type {
         constexpr auto safe_limit =
             std::numeric_limits<value_type>::max() * 1e-2;
         if (!isfinite(value) || value > safe_limit) {

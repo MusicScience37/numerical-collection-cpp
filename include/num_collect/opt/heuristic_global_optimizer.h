@@ -37,7 +37,7 @@
 namespace num_collect::opt {
 
 //! Tag of heuristic_global_optimizer.
-inline constexpr auto heuristic_global_optimizer_tag =
+constexpr auto heuristic_global_optimizer_tag =
     logging::log_tag_view("num_collect::opt::heuristic_global_optimizer");
 
 /*!
@@ -305,8 +305,8 @@ public:
      * \param[in] value Value.
      * \return This object.
      */
-    auto opt2_tol_simplex_size(const variable_scalar_type& value)
-        -> heuristic_global_optimizer& {
+    auto opt2_tol_simplex_size(
+        const variable_scalar_type& value) -> heuristic_global_optimizer& {
         opt2_.tol_simplex_size(value);
         return *this;
     }

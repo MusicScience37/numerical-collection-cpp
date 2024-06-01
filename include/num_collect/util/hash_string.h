@@ -32,8 +32,8 @@ namespace num_collect::util {
  * \param[in] str String.
  * \return Hash number.
  */
-[[nodiscard]] constexpr inline auto hash_string(std::string_view str) noexcept
-    -> std::uint32_t {
+[[nodiscard]] constexpr auto hash_string(
+    std::string_view str) noexcept -> std::uint32_t {
     constexpr std::uint32_t init_num = 0x5928ACD1U;
     std::uint32_t num = init_num;
     for (char c : str) {

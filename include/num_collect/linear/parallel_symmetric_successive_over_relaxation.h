@@ -206,8 +206,8 @@ public:
      * \param[in] val Whether to run in parallel.
      * \return This.
      */
-    auto run_parallel(bool val)
-        -> parallel_symmetric_successive_over_relaxation& {
+    auto run_parallel(
+        bool val) -> parallel_symmetric_successive_over_relaxation& {
         run_parallel_ = val;
         return *this;
     }

@@ -114,8 +114,8 @@ public:
      * \param[in] val Value.
      * \return This.
      */
-    auto current_step_error_exponent(const scalar_type& val)
-        -> pi_step_size_controller& {
+    auto current_step_error_exponent(
+        const scalar_type& val) -> pi_step_size_controller& {
         NUM_COLLECT_ASSERT(val >= previous_step_error_exponent_);
         current_step_error_exponent_ = val;
         return *this;
@@ -127,8 +127,8 @@ public:
      * \param[in] val Value.
      * \return This.
      */
-    auto previous_step_error_exponent(const scalar_type& val)
-        -> pi_step_size_controller& {
+    auto previous_step_error_exponent(
+        const scalar_type& val) -> pi_step_size_controller& {
         NUM_COLLECT_ASSERT(
             static_cast<scalar_type>(0) <= val <= current_step_error_exponent_);
         previous_step_error_exponent_ = val;
@@ -141,8 +141,8 @@ public:
      * \param[in] val Value.
      * \return This.
      */
-    auto step_size_factor_safety_coeff(const scalar_type& val)
-        -> pi_step_size_controller& {
+    auto step_size_factor_safety_coeff(
+        const scalar_type& val) -> pi_step_size_controller& {
         NUM_COLLECT_ASSERT(val > static_cast<scalar_type>(0));
         step_size_factor_safety_coeff_ = val;
         return *this;
@@ -154,8 +154,8 @@ public:
      * \param[in] val Value.
      * \return This.
      */
-    auto max_step_size_factor(const scalar_type& val)
-        -> pi_step_size_controller& {
+    auto max_step_size_factor(
+        const scalar_type& val) -> pi_step_size_controller& {
         NUM_COLLECT_ASSERT(val > min_step_size_factor_);
         max_step_size_factor_ = val;
         return *this;
@@ -167,8 +167,8 @@ public:
      * \param[in] val Value.
      * \return This.
      */
-    auto min_step_size_factor(const scalar_type& val)
-        -> pi_step_size_controller& {
+    auto min_step_size_factor(
+        const scalar_type& val) -> pi_step_size_controller& {
         NUM_COLLECT_ASSERT(
             static_cast<scalar_type>(0) < val < max_step_size_factor_);
         min_step_size_factor_ = val;

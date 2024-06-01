@@ -221,10 +221,10 @@ public:
 
     toml_log_config_parser(const toml_log_config_parser&) = delete;
     toml_log_config_parser(toml_log_config_parser&&) = delete;
-    auto operator=(const toml_log_config_parser&)
-        -> toml_log_config_parser& = delete;
-    auto operator=(toml_log_config_parser&&)
-        -> toml_log_config_parser& = delete;
+    auto operator=(
+        const toml_log_config_parser&) -> toml_log_config_parser& = delete;
+    auto operator=(
+        toml_log_config_parser&&) -> toml_log_config_parser& = delete;
 
 private:
     /*!

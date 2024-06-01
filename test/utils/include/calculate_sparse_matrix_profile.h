@@ -30,8 +30,8 @@
  * \return Profile.
  */
 template <num_collect::concepts::sparse_matrix Matrix>
-[[nodiscard]] inline auto calculate_sparse_matrix_profile(const Matrix& matrix)
-    -> num_collect::index_type {
+[[nodiscard]] inline auto calculate_sparse_matrix_profile(
+    const Matrix& matrix) -> num_collect::index_type {
     const num_collect::index_type size = matrix.outerSize();
     num_collect::index_type profile = size;
     for (num_collect::index_type i = 0; i < size; ++i) {

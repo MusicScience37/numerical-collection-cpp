@@ -75,8 +75,8 @@ public:
      * \return Value of gamma function.
      */
     template <typename T>
-        requires(
-            std::is_same_v<T, Real> || std::is_same_v<T, std::complex<Real>>)
+        requires(std::is_same_v<T, Real> ||
+                    std::is_same_v<T, std::complex<Real>>)
     [[nodiscard]] static constexpr auto gamma(T x) -> T {
         const T offset_x = x + rational;
         T series_sum = constant;

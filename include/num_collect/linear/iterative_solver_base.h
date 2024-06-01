@@ -74,7 +74,7 @@ public:
     //! Type of real scalars.
     using real_scalar_type = RealScalar;
 
-    enum {
+    enum {  // NOLINT(performance-enum-size): Preserve the same implementation as Eigen library.
         //! Number of columns at compile time. (For Eigen library.)
         ColsAtCompileTime = MatrixType::ColsAtCompileTime,  // NOLINT
         //! Maximum number of columns at compile time. (For Eigen library.)
@@ -174,8 +174,8 @@ public:
      * \return Expression to solve the linear equation.
      */
     template <base::concepts::dense_vector_of<scalar_type> Right>
-    [[nodiscard]] auto solve(const Right& right) const
-        -> Eigen::Solve<Derived, Right> {
+    [[nodiscard]] auto solve(
+        const Right& right) const -> Eigen::Solve<Derived, Right> {
         // TODO: Version for matrices.
         return Eigen::Solve<Derived, Right>(derived(), right);
     }

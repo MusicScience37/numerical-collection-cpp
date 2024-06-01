@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <cstdint>
 #include <string_view>
 
 #include <fmt/format.h>
@@ -28,7 +29,7 @@ namespace num_collect::logging {
 /*!
  * \brief Enumeration of log levels.
  */
-enum class log_level {
+enum class log_level : std::uint8_t {
     //! For internal trace logs.
     trace,
 
@@ -66,8 +67,8 @@ enum class log_level {
  * \param[in] level Log level.
  * \return String.
  */
-[[nodiscard]] inline auto get_log_level_str(log_level level) noexcept
-    -> std::string_view {
+[[nodiscard]] inline auto get_log_level_str(
+    log_level level) noexcept -> std::string_view {
     switch (level) {
     case log_level::trace:
         return "trace";

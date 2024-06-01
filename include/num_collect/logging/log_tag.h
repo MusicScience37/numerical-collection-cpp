@@ -54,8 +54,8 @@ public:
      * \param[in] right Right-hand-side object.
      * \return Result.
      */
-    auto operator<=>(const log_tag& right) const noexcept
-        -> std::strong_ordering {
+    auto operator<=>(
+        const log_tag& right) const noexcept -> std::strong_ordering {
         return this->name().compare(right.name()) <=> 0;
     }
 

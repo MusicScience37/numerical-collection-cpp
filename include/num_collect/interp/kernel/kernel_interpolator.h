@@ -114,8 +114,8 @@ public:
      * \param[in] kernel_param Kernel parameters.
      * \return This.
      */
-    auto fix_kernel_param(const kernel_param_type& kernel_param)
-        -> kernel_interpolator& {
+    auto fix_kernel_param(
+        const kernel_param_type& kernel_param) -> kernel_interpolator& {
         solver_.fix_kernel_param(kernel_param);
         return *this;
     }
@@ -160,8 +160,8 @@ public:
      * \param[in] variable Variable.
      * \return Value.
      */
-    [[nodiscard]] auto interpolate_on(const variable_type& variable) const
-        -> value_type {
+    [[nodiscard]] auto interpolate_on(
+        const variable_type& variable) const -> value_type {
         auto value = static_cast<value_type>(0);
         for (std::size_t i = 0; i < variable_list_.size(); ++i) {
             value += kernel()(variable, variable_list_[i]) *
@@ -176,8 +176,8 @@ public:
      * \param[in] variable Variable.
      * \return Value.
      */
-    [[nodiscard]] auto operator()(const variable_type& variable) const
-        -> value_type {
+    [[nodiscard]] auto operator()(
+        const variable_type& variable) const -> value_type {
         return interpolate_on(variable);
     }
 

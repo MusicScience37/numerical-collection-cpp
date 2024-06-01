@@ -34,7 +34,7 @@
 namespace num_collect::opt {
 
 //! Tag of newton_optimizer.
-inline constexpr auto newton_optimizer_tag =
+constexpr auto newton_optimizer_tag =
     logging::log_tag_view("num_collect::opt::newton_optimizer");
 
 /*!
@@ -127,8 +127,8 @@ private:
      * \param[in] hessian Hessian.
      * \return Search direction.
      */
-    [[nodiscard]] auto calc_direction_impl(const hessian_type& hessian)
-        -> variable_type {
+    [[nodiscard]] auto calc_direction_impl(
+        const hessian_type& hessian) -> variable_type {
         solver_.compute(hessian);
         return -solver_.solve(gradient());
     }

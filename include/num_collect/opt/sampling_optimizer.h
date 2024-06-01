@@ -36,7 +36,7 @@
 namespace num_collect::opt {
 
 //! Tag of golden_section_search.
-inline constexpr auto sampling_optimizer_tag =
+constexpr auto sampling_optimizer_tag =
     logging::log_tag_view("num_collect::opt::sampling_optimizer");
 
 /*!

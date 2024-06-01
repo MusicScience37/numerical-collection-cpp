@@ -42,8 +42,8 @@ namespace impl {
  * \param[in] level Log level.
  * \return Style.
  */
-[[nodiscard]] inline auto get_log_level_style(log_level level)
-    -> fmt::text_style {
+[[nodiscard]] inline auto get_log_level_style(
+    log_level level) -> fmt::text_style {
     switch (level) {
     case log_level::trace:
         return fmt::fg(fmt::color::gray);

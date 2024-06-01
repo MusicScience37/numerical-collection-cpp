@@ -19,6 +19,8 @@
  */
 #pragma once
 
+#include <cstdint>
+
 #include <Eigen/Core>
 #include <Eigen/SparseCore>  // IWYU pragma: keep
 #include <fmt/format.h>
@@ -32,7 +34,7 @@ namespace num_collect::util {
 /*!
  * \brief Enumeration of matrix format types.
  */
-enum class sparse_matrix_format_type {
+enum class sparse_matrix_format_type : std::uint8_t {
     //! One line.
     one_line,
 
@@ -147,8 +149,8 @@ private:
      * \return Output iterator after formatting.
      */
     template <typename FormatContext>
-    auto format_one_line(const Matrix& mat, FormatContext& context)
-        -> decltype(context.out()) {
+    auto format_one_line(
+        const Matrix& mat, FormatContext& context) -> decltype(context.out()) {
         const Eigen::Index rows = mat.rows();
         const Eigen::Index cols = mat.cols();
         auto out = context.out();
@@ -185,8 +187,8 @@ private:
      * \return Output iterator after formatting.
      */
     template <typename FormatContext>
-    auto format_multi_line(const Matrix& mat, FormatContext& context)
-        -> decltype(context.out()) {
+    auto format_multi_line(
+        const Matrix& mat, FormatContext& context) -> decltype(context.out()) {
         const Eigen::Index rows = mat.rows();
         const Eigen::Index cols = mat.cols();
         auto out = context.out();

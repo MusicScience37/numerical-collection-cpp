@@ -93,8 +93,8 @@ public:
      * \param[in] val Value.
      * \return This.
      */
-    auto step_size_factor_safety_coeff(const scalar_type& val)
-        -> basic_step_size_controller& {
+    auto step_size_factor_safety_coeff(
+        const scalar_type& val) -> basic_step_size_controller& {
         NUM_COLLECT_ASSERT(val > static_cast<scalar_type>(0));
         step_size_factor_safety_coeff_ = val;
         return *this;
@@ -106,8 +106,8 @@ public:
      * \param[in] val Value.
      * \return This.
      */
-    auto max_step_size_factor(const scalar_type& val)
-        -> basic_step_size_controller& {
+    auto max_step_size_factor(
+        const scalar_type& val) -> basic_step_size_controller& {
         NUM_COLLECT_ASSERT(val > static_cast<scalar_type>(0));
         max_step_size_factor_ = val;
         return *this;

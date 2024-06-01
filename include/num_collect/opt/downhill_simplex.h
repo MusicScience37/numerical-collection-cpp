@@ -21,6 +21,7 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <cstdint>
 #include <iterator>
 #include <string_view>
 #include <vector>
@@ -38,7 +39,7 @@
 namespace num_collect::opt {
 
 //! Tag of downhill_simplex.
-inline constexpr auto downhill_simplex_tag =
+constexpr auto downhill_simplex_tag =
     logging::log_tag_view("num_collect::opt::downhill_simplex");
 
 /*!
@@ -74,7 +75,7 @@ public:
     using value_type = typename objective_function_type::value_type;
 
     //! Type of processes.
-    enum class process_type {
+    enum class process_type : std::uint8_t {
         none,                      //!< None.
         reflection,                //!< Reflection.
         reflection_and_expansion,  //!< Reflection and expansion.
@@ -88,8 +89,8 @@ public:
      * \param[in] process Type of process.
      * \return Name of process.
      */
-    [[nodiscard]] static auto process_name(process_type process)
-        -> std::string_view {
+    [[nodiscard]] static auto process_name(
+        process_type process) -> std::string_view {
         switch (process) {
         case process_type::none:
             return "none";
@@ -274,8 +275,8 @@ public:
      * \param[in] value Value.
      * \return This object.
      */
-    auto tol_simplex_size(const variable_scalar_type& value)
-        -> downhill_simplex& {
+    auto tol_simplex_size(
+        const variable_scalar_type& value) -> downhill_simplex& {
         tol_simplex_size_ = value;
         return *this;
     }

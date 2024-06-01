@@ -118,7 +118,7 @@ private:
 /*!
  * \brief Default log tag.
  */
-inline constexpr auto default_tag = log_tag_view("");
+constexpr auto default_tag = log_tag_view("");
 
 /*!
  * \brief Class of loggers.

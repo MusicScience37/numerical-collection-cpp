@@ -32,8 +32,8 @@ public:
     gzip_msgpack_output_stream(gzip_msgpack_output_stream&&) = delete;
     auto operator=(const gzip_msgpack_output_stream&)
         -> gzip_msgpack_output_stream& = delete;
-    auto operator=(gzip_msgpack_output_stream&&)
-        -> gzip_msgpack_output_stream& = delete;
+    auto operator=(
+        gzip_msgpack_output_stream&&) -> gzip_msgpack_output_stream& = delete;
 
     ~gzip_msgpack_output_stream();
 

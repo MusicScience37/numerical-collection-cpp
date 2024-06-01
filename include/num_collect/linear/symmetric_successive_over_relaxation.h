@@ -168,8 +168,8 @@ public:
      * \param[in] val Relaxation coefficient.
      * \return This.
      */
-    auto relaxation_coeff(const scalar_type& val)
-        -> symmetric_successive_over_relaxation& {
+    auto relaxation_coeff(
+        const scalar_type& val) -> symmetric_successive_over_relaxation& {
         if (val <= static_cast<scalar_type>(0) ||
             static_cast<scalar_type>(2) <= val) {
             throw invalid_argument("Invalid relaxation coefficient.");

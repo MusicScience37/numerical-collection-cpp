@@ -32,7 +32,7 @@
 namespace num_collect::opt {
 
 //! Tag of steepest_descent.
-inline constexpr auto steepest_descent_tag =
+constexpr auto steepest_descent_tag =
     logging::log_tag_view("num_collect::opt::steepest_descent");
 
 /*!
