@@ -9,6 +9,8 @@ package-mode = false
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.13"
+# Some packages requires setuptools.
+setuptools = "^70.0.0"
 
 [tool.poetry.group.test.dependencies]
 kaleido = "==0.2.1"
