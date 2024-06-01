@@ -1488,13 +1488,13 @@ test = ["beautifulsoup4", "coverage", "myst-nb", "pytest", "pytest-cov", "pytest
 
 [[package]]
 name = "sphinx-orange-book-theme"
-version = "0.10.0"
+version = "0.11.0"
 description = "An orange version of sphinx-book-theme."
 optional = false
 python-versions = "<3.13,>=3.10"
 files = [
-    {file = "sphinx_orange_book_theme-0.10.0-py3-none-any.whl", hash = "sha256:dfe2ff8cb733fd60c6de69b81db478e03f8f8687c1563ecb730534fd05372419"},
-    {file = "sphinx_orange_book_theme-0.10.0.tar.gz", hash = "sha256:de2992d698db1bd72af5a50665f0bff59561a1e739134443388a04c94f80fa23"},
+    {file = "sphinx_orange_book_theme-0.11.0-py3-none-any.whl", hash = "sha256:320d51d2d50cd20796d38ed64ac26eac923880909f0b7c11ea672bf7537ad3ec"},
+    {file = "sphinx_orange_book_theme-0.11.0.tar.gz", hash = "sha256:84c12451ae9971d75305acf2512c8992b611f147ce97a1ad30263431771f782e"},
 ]
 
 [package.dependencies]
@@ -2029,4 +2029,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "1fc66b1302c3d2e8f9333bf10fe426dd40720c7cc8bd39d630a517cdcb93d6a2"
+content-hash = "5360cb7fa4c7c4a0d524a97a7667164002193a96fbd437babfec8b4e838b494e"
