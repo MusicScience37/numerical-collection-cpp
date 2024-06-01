@@ -38,7 +38,7 @@
 namespace num_collect::roots {
 
 //! Tag of newton_raphson.
-inline constexpr auto newton_raphson_tag =
+constexpr auto newton_raphson_tag =
     logging::log_tag_view("num_collect::roots::newton_raphson");
 
 /*!

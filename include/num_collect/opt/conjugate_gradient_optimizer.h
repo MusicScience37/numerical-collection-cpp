@@ -32,7 +32,7 @@
 namespace num_collect::opt {
 
 //! Tag of conjugate_gradient_optimizer.
-inline constexpr auto conjugate_gradient_optimizer_tag =
+constexpr auto conjugate_gradient_optimizer_tag =
     logging::log_tag_view("num_collect::opt::conjugate_gradient_optimizer");
 
 /*!

@@ -46,7 +46,7 @@
 namespace num_collect::opt {
 
 //! Tag of dividing_rectangles.
-inline constexpr auto dividing_rectangles_tag =
+constexpr auto dividing_rectangles_tag =
     logging::log_tag_view("num_collect::opt::dividing_rectangles");
 
 /*!

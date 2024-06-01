@@ -42,7 +42,7 @@
 namespace num_collect::rbf {
 
 //! Tag of rbf_polynomial_interpolator.
-inline constexpr auto rbf_polynomial_interpolator_tag =
+constexpr auto rbf_polynomial_interpolator_tag =
     logging::log_tag_view("num_collect::rbf::rbf_polynomial_interpolator");
 
 /*!

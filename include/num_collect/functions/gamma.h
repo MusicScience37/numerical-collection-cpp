@@ -32,7 +32,7 @@ namespace num_collect::functions {
  * \param[in] x Argument.
  * \return Value.
  */
-[[nodiscard]] inline constexpr auto gamma(float x) -> float {
+[[nodiscard]] constexpr auto gamma(float x) -> float {
     if (x < 1.0F) {
         const float pi_1mx = constants::pi<float> * (1.0F - x);
         return pi_1mx / std::sin(pi_1mx) /
@@ -48,7 +48,7 @@ namespace num_collect::functions {
  * \param[in] x Argument.
  * \return Value.
  */
-[[nodiscard]] inline constexpr auto gamma(double x) -> double {
+[[nodiscard]] constexpr auto gamma(double x) -> double {
     if (x < 1.0) {
         const double pi_1mx = constants::pi<double> * (1.0 - x);
         return pi_1mx / std::sin(pi_1mx) /
@@ -64,7 +64,7 @@ namespace num_collect::functions {
  * \param[in] x Argument.
  * \return Value.
  */
-[[nodiscard]] inline constexpr auto gamma(
+[[nodiscard]] constexpr auto gamma(
     std::complex<float> x) -> std::complex<float> {
     if (x.real() < 1.0F) {
         const std::complex<float> pi_1mx = constants::pi<float> * (1.0F - x);
@@ -81,7 +81,7 @@ namespace num_collect::functions {
  * \param[in] x Argument.
  * \return Value.
  */
-[[nodiscard]] inline constexpr auto gamma(
+[[nodiscard]] constexpr auto gamma(
     std::complex<double> x) -> std::complex<double> {
     if (x.real() < 1.0) {
         const std::complex<double> pi_1mx = constants::pi<double> * (1.0 - x);
@@ -98,7 +98,7 @@ namespace num_collect::functions {
  * \param[in] x Argument.
  * \return Value.
  */
-[[nodiscard]] inline constexpr auto log_gamma(float x) -> float {
+[[nodiscard]] constexpr auto log_gamma(float x) -> float {
     return impl::gamma_lanczos<float>::log_gamma(x);
 }
 
@@ -108,7 +108,7 @@ namespace num_collect::functions {
  * \param[in] x Argument.
  * \return Value.
  */
-[[nodiscard]] inline constexpr auto log_gamma(double x) -> double {
+[[nodiscard]] constexpr auto log_gamma(double x) -> double {
     return impl::gamma_lanczos<double>::log_gamma(x);
 }
 

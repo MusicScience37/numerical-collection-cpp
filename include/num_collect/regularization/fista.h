@@ -34,7 +34,7 @@
 namespace num_collect::regularization {
 
 //! Tag of fista.
-inline constexpr auto fista_tag =
+constexpr auto fista_tag =
     logging::log_tag_view("num_collect::regularization::fista");
 
 /*!

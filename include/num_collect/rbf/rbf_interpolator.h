@@ -43,7 +43,7 @@
 namespace num_collect::rbf {
 
 //! Tag of rbf_interpolator.
-inline constexpr auto rbf_interpolator_tag =
+constexpr auto rbf_interpolator_tag =
     logging::log_tag_view("num_collect::rbf::rbf_interpolator");
 
 /*!

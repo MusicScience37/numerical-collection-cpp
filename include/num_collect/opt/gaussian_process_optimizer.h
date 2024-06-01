@@ -43,7 +43,7 @@
 namespace num_collect::opt {
 
 //! Tag of gaussian_process_optimizer.
-inline constexpr auto gaussian_process_optimizer_tag =
+constexpr auto gaussian_process_optimizer_tag =
     logging::log_tag_view("num_collect::opt::gaussian_process_optimizer");
 
 /*!

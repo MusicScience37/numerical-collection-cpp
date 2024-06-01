@@ -35,7 +35,7 @@ namespace num_collect::util {
  * \return Greatest common divisor of the integers.
  */
 template <base::concepts::integral T>
-[[nodiscard]] inline constexpr auto greatest_common_divisor(T a, T b) -> T {
+[[nodiscard]] constexpr auto greatest_common_divisor(T a, T b) -> T {
     if (a <= static_cast<T>(0) || b <= static_cast<T>(0)) {
         throw invalid_argument(
             "greatest_common_divisor requires positive integers.");

@@ -37,7 +37,7 @@
 namespace num_collect::opt {
 
 //! Tag of heuristic_global_optimizer.
-inline constexpr auto heuristic_global_optimizer_tag =
+constexpr auto heuristic_global_optimizer_tag =
     logging::log_tag_view("num_collect::opt::heuristic_global_optimizer");
 
 /*!

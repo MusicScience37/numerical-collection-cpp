@@ -34,7 +34,7 @@
 namespace num_collect::opt {
 
 //! Tag of newton_optimizer.
-inline constexpr auto newton_optimizer_tag =
+constexpr auto newton_optimizer_tag =
     logging::log_tag_view("num_collect::opt::newton_optimizer");
 
 /*!

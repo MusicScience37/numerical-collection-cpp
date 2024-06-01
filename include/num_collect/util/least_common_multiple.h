@@ -34,7 +34,7 @@ namespace num_collect::util {
  * \return Least common multiple of the integers.
  */
 template <base::concepts::integral T>
-[[nodiscard]] inline constexpr auto least_common_multiple(T a, T b) -> T {
+[[nodiscard]] constexpr auto least_common_multiple(T a, T b) -> T {
     return multiply_safely(a / greatest_common_divisor(a, b), b);
 }
 

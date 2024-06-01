@@ -43,7 +43,7 @@
 namespace num_collect::opt {
 
 //! Tag of annealing_downhill_simplex.
-inline constexpr auto annealing_downhill_simplex_tag =
+constexpr auto annealing_downhill_simplex_tag =
     logging::log_tag_view("num_collect::opt::annealing_downhill_simplex");
 
 /*!

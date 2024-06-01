@@ -41,7 +41,7 @@
 namespace num_collect::integration {
 
 //! Tag of de_finite_integrator.
-inline constexpr auto de_finite_integrator_tag =
+constexpr auto de_finite_integrator_tag =
     logging::log_tag_view("num_collect::integration::de_finite_integrator");
 
 /*!

@@ -36,7 +36,7 @@
 namespace num_collect::opt {
 
 //! Tag of bfgs_optimizer.
-inline constexpr auto bfgs_optimizer_tag =
+constexpr auto bfgs_optimizer_tag =
     logging::log_tag_view("num_collect::opt::bfgs_optimizer");
 
 /*!

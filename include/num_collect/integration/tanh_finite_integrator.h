@@ -36,7 +36,7 @@
 namespace num_collect::integration {
 
 //! Tag of de_finite_integrator.
-inline constexpr auto tanh_finite_integrator_tag =
+constexpr auto tanh_finite_integrator_tag =
     logging::log_tag_view("num_collect::integration::tanh_finite_integrator");
 
 namespace impl {

@@ -40,7 +40,7 @@ namespace impl {
  * \brief Default precision of floating-point values in
  * num_collect::logging::iterations::iteration_parameter_formatter.
  */
-inline constexpr index_type iteration_parameter_formatter_default_precision = 4;
+constexpr index_type iteration_parameter_formatter_default_precision = 4;
 
 }  // namespace impl
 

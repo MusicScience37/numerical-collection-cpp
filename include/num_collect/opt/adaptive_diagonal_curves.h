@@ -49,7 +49,7 @@
 namespace num_collect::opt {
 
 //! Tag of adaptive_diagonal_curves.
-inline constexpr auto adaptive_diagonal_curves_tag =
+constexpr auto adaptive_diagonal_curves_tag =
     logging::log_tag_view("num_collect::opt::adaptive_diagonal_curves");
 
 namespace impl {

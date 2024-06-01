@@ -37,7 +37,7 @@ namespace num_collect::logging::iterations {
 namespace impl {
 
 //! Default width in .num_collect::logging::iterations::iteration_parameter.
-inline constexpr index_type iteration_parameter_default_width = 11;
+constexpr index_type iteration_parameter_default_width = 11;
 
 }  // namespace impl
 

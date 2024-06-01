@@ -35,7 +35,7 @@
 namespace num_collect::opt {
 
 //! Tag of dfp_optimizer.
-inline constexpr auto dfp_optimizer_tag =
+constexpr auto dfp_optimizer_tag =
     logging::log_tag_view("num_collect::opt::dfp_optimizer");
 
 /*!

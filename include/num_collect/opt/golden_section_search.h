@@ -31,7 +31,7 @@
 namespace num_collect::opt {
 
 //! Tag of golden_section_search.
-inline constexpr auto golden_section_search_tag =
+constexpr auto golden_section_search_tag =
     logging::log_tag_view("num_collect::opt::golden_section_search");
 
 /*!

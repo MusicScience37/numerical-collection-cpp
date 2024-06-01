@@ -35,7 +35,7 @@ namespace num_collect::util {
  * \return Result of multiplication.
  */
 template <base::concepts::integral T>
-[[nodiscard]] inline constexpr auto multiply_safely(T a, T b) -> T {
+[[nodiscard]] constexpr auto multiply_safely(T a, T b) -> T {
     const T res = a * b;
     if (a != static_cast<T>(0) && res / a != b) {
         throw algorithm_failure("Overflow in multiplication.");

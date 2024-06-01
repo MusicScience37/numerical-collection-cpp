@@ -39,7 +39,7 @@
 namespace num_collect::opt {
 
 //! Tag of downhill_simplex.
-inline constexpr auto downhill_simplex_tag =
+constexpr auto downhill_simplex_tag =
     logging::log_tag_view("num_collect::opt::downhill_simplex");
 
 /*!

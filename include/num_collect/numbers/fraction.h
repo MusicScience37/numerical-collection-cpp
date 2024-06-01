@@ -301,7 +301,7 @@ private:
  * \return Sum of the fractions.
  */
 template <num_collect::base::concepts::integral Integer>
-inline constexpr auto operator+(const fraction<Integer>& left,
+constexpr auto operator+(const fraction<Integer>& left,
     const fraction<Integer>& right) -> fraction<Integer> {
     return fraction<Integer>(left) += right;
 }
@@ -315,7 +315,7 @@ inline constexpr auto operator+(const fraction<Integer>& left,
  * \return Difference of the fractions.
  */
 template <num_collect::base::concepts::integral Integer>
-inline constexpr auto operator-(const fraction<Integer>& left,
+constexpr auto operator-(const fraction<Integer>& left,
     const fraction<Integer>& right) -> fraction<Integer> {
     return fraction<Integer>(left) -= right;
 }
@@ -329,7 +329,7 @@ inline constexpr auto operator-(const fraction<Integer>& left,
  * \return Product of the fractions.
  */
 template <num_collect::base::concepts::integral Integer>
-inline constexpr auto operator*(const fraction<Integer>& left,
+constexpr auto operator*(const fraction<Integer>& left,
     const fraction<Integer>& right) -> fraction<Integer> {
     return fraction<Integer>(left) *= right;
 }
@@ -343,7 +343,7 @@ inline constexpr auto operator*(const fraction<Integer>& left,
  * \return Quotient of the fractions.
  */
 template <num_collect::base::concepts::integral Integer>
-inline constexpr auto operator/(const fraction<Integer>& left,
+constexpr auto operator/(const fraction<Integer>& left,
     const fraction<Integer>& right) -> fraction<Integer> {
     return fraction<Integer>(left) /= right;
 }
