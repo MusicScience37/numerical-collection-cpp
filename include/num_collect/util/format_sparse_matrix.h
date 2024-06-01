@@ -19,6 +19,8 @@
  */
 #pragma once
 
+#include <cstdint>
+
 #include <Eigen/Core>
 #include <Eigen/SparseCore>  // IWYU pragma: keep
 #include <fmt/format.h>
@@ -32,7 +34,7 @@ namespace num_collect::util {
 /*!
  * \brief Enumeration of matrix format types.
  */
-enum class sparse_matrix_format_type {
+enum class sparse_matrix_format_type : std::uint8_t {
     //! One line.
     one_line,
 

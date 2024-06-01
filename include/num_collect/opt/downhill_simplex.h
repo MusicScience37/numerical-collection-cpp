@@ -21,6 +21,7 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <cstdint>
 #include <iterator>
 #include <string_view>
 #include <vector>
@@ -74,7 +75,7 @@ public:
     using value_type = typename objective_function_type::value_type;
 
     //! Type of processes.
-    enum class process_type {
+    enum class process_type : std::uint8_t {
         none,                      //!< None.
         reflection,                //!< Reflection.
         reflection_and_expansion,  //!< Reflection and expansion.

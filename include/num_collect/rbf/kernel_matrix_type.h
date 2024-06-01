@@ -19,12 +19,14 @@
  */
 #pragma once
 
+#include <cstdint>
+
 namespace num_collect::rbf {
 
 /*!
  * \brief Enumeration of types of kernel matrices.
  */
-enum class kernel_matrix_type {
+enum class kernel_matrix_type : std::uint8_t {
     //! Dense matrix.
     dense,
 

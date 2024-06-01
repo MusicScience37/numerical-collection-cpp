@@ -475,7 +475,7 @@ public:
     /*!
      * \brief Enumeration of states in ADC method.
      */
-    enum class state_type {
+    enum class state_type : std::uint8_t {
         none,         //!< No operation.
         local,        //!< Local phase (not last iteration).
         local_last,   //!< Last iteration in local phase.

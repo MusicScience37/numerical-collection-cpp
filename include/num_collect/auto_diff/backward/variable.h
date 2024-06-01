@@ -440,7 +440,7 @@ struct NumTraits<num_collect::auto_diff::backward::variable<Scalar>> {
     //! Type of the variable.
     using Nested = Real;
 
-    enum {
+    enum {  // NOLINT(performance-enum-size): Preserve the same implementation as Eigen library.
         //! Whether this type is an integer.
         IsInteger = 0,  // NOLINT
 

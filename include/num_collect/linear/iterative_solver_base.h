@@ -74,7 +74,7 @@ public:
     //! Type of real scalars.
     using real_scalar_type = RealScalar;
 
-    enum {
+    enum {  // NOLINT(performance-enum-size): Preserve the same implementation as Eigen library.
         //! Number of columns at compile time. (For Eigen library.)
         ColsAtCompileTime = MatrixType::ColsAtCompileTime,  // NOLINT
         //! Maximum number of columns at compile time. (For Eigen library.)

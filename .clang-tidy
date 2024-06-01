@@ -27,6 +27,8 @@ Checks: >
     -modernize-pass-by-value,
     -modernize-return-braced-init-list,
     -modernize-concat-nested-namespaces,
+    -modernize-use-std-numbers,
+    -modernize-use-constraints,
   hicpp-*,
   cert-*,
     -cert-err58-cpp,
@@ -60,10 +62,11 @@ Checks: >
 # - cppcoreguidelines-avoid-const-or-ref-data-members prevents expression templates.
 # - readability-avoid-unconditional-preprocessor-if generates warnings to automatically generated files which cannot be fixed.
 # - cppcoreguidelines-missing-std-forward cannot be fixed sometimes.
-# - modernize-concat-nested-namespaces will be fixed later.
+# - modernize-concat-nested-namespaces, modernize-use-constraints will be fixed later.
 # - clang-diagnostic-unknown-pragmas generates false positives for "#pragma omp" even with flags for OpenMP.
 # - bugprone-chained-comparison prevents use of my assertion macro.
-# = readability-redundant-member-init generates too many warnings in existing codes.
+# - readability-redundant-member-init generates too many warnings in existing codes.
+# - modernize-use-std-numbers generates many false positives.
 
 CheckOptions:
   # Naming Conventions

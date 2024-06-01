@@ -19,6 +19,8 @@
  */
 #pragma once
 
+#include <cstdint>
+
 #include <Eigen/Core>
 #include <fmt/format.h>
 
@@ -30,7 +32,7 @@ namespace num_collect::util {
 /*!
  * \brief Enumeration of matrix format types.
  */
-enum class dense_matrix_format_type {
+enum class dense_matrix_format_type : std::uint8_t {
     //! One line.
     one_line,
 

@@ -22,6 +22,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
+#include <cstdint>
 #include <iterator>
 #include <limits>
 #include <random>
@@ -85,7 +86,7 @@ public:
     using random_number_generator_type = std::mt19937;
 
     //! Type of processes.
-    enum class process_type {
+    enum class process_type : std::uint8_t {
         none,                      //!< None.
         reflection,                //!< Reflection.
         reflection_and_expansion,  //!< Reflection and expansion.
