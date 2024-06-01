@@ -22,6 +22,7 @@ Checks: >
     -readability-function-cognitive-complexity,
     -readability-suspicious-call-argument,
     -readability-avoid-unconditional-preprocessor-if,
+    -readability-redundant-member-init,
   modernize-*,
     -modernize-pass-by-value,
     -modernize-return-braced-init-list,
@@ -33,6 +34,7 @@ Checks: >
     -bugprone-easily-swappable-parameters,
     -bugprone-exception-escape,
     -bugprone-unchecked-optional-access,
+    -bugprone-chained-comparison,
   concurrency-*,
   boost-*,
   openmp-*,
@@ -60,6 +62,8 @@ Checks: >
 # - cppcoreguidelines-missing-std-forward cannot be fixed sometimes.
 # - modernize-concat-nested-namespaces will be fixed later.
 # - clang-diagnostic-unknown-pragmas generates false positives for "#pragma omp" even with flags for OpenMP.
+# - bugprone-chained-comparison prevents use of my assertion macro.
+# = readability-redundant-member-init generates too many warnings in existing codes.
 
 CheckOptions:
   # Naming Conventions
