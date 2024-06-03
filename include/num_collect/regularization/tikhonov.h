@@ -32,6 +32,10 @@
 
 namespace num_collect::regularization {
 
+//! Tag of fista.
+constexpr auto tikhonov_tag =
+    logging::log_tag_view("num_collect::regularization::tikhonov");
+
 /*!
  * \brief Class to perform Tikhonov regularization.
  *
@@ -59,7 +63,7 @@ public:
     /*!
      * \brief Constructor.
      */
-    tikhonov() = default;
+    tikhonov() : base_type(tikhonov_tag) {}
 
     /*!
      * \brief Compute internal matrices.
@@ -202,10 +206,10 @@ public:
         return res;
     }
 
-    //! \copydoc num_collect::regularization::explicit_regularized_solver_base::data_size
+    //! \copydoc num_collect::regularization::regularized_solver_base::data_size
     [[nodiscard]] auto data_size() const -> index_type { return svd_.rows(); }
 
-    //! \copydoc num_collect::regularization::explicit_regularized_solver_base::param_search_region
+    //! \copydoc num_collect::regularization::regularized_solver_base::param_search_region
     [[nodiscard]] auto param_search_region() const
         -> std::pair<scalar_type, scalar_type> {
         const scalar_type max_singular_value = singular_values()(0);

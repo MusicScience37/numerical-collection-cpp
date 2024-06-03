@@ -191,10 +191,10 @@ public:
         return solution.template lpNorm<1>();
     }
 
-    //! \copydoc num_collect::regularization::implicit_regularized_solver_base::data_size
+    //! \copydoc num_collect::regularization::regularized_solver_base::data_size
     [[nodiscard]] auto data_size() const -> index_type { return data_->size(); }
 
-    //! \copydoc num_collect::regularization::implicit_regularized_solver_base::param_search_region
+    //! \copydoc num_collect::regularization::regularized_solver_base::param_search_region
     [[nodiscard]] auto param_search_region() const
         -> std::pair<scalar_type, scalar_type> {
         const scalar_type max_sol_est =

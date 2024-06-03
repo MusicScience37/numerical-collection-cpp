@@ -20,10 +20,10 @@
 #pragma once
 
 #include <cmath>
-#include <utility>
 
 #include "num_collect/base/concepts/dense_matrix.h"
-#include "num_collect/base/index_type.h"
+#include "num_collect/logging/log_tag_view.h"
+#include "num_collect/regularization/regularized_solver_base.h"
 
 namespace num_collect::regularization {
 
@@ -34,14 +34,12 @@ namespace num_collect::regularization {
  * \tparam Data Type of data.
  */
 template <typename Derived, base::concepts::dense_matrix Data>
-class explicit_regularized_solver_base {
+class explicit_regularized_solver_base
+    : public regularized_solver_base<Derived, Data> {
 public:
-    //! Type of data.
-    using data_type = Data;
-
-    //! Type of scalars.
-    using scalar_type =
-        typename Eigen::NumTraits<typename data_type::Scalar>::Real;
+    using typename regularized_solver_base<Derived, Data>::data_type;
+    using typename regularized_solver_base<Derived, Data>::scalar_type;
+    using regularized_solver_base<Derived, Data>::data_size;
 
     /*!
      * \brief Solve for a regularization parameter.
@@ -133,26 +131,6 @@ public:
     }
 
     /*!
-     * \brief Get the size of data.
-     *
-     * \return Size of data.
-     */
-    [[nodiscard]] auto data_size() const -> index_type {
-        return derived().data_size();
-    }
-
-    /*!
-     * \brief Get the default region to search for the optimal regularization
-     * parameter.
-     *
-     * \return Pair of minimum and maximum regularization parameters.
-     */
-    [[nodiscard]] auto param_search_region() const
-        -> std::pair<scalar_type, scalar_type> {
-        return derived().param_search_region();
-    }
-
-    /*!
      * \brief Calculate the curvature of L-curve.
      *
      * \param[in] param Regularization parameter.
@@ -192,22 +170,14 @@ public:
 
 protected:
     /*!
-     * \brief Access derived object.
+     * \brief Constructor.
      *
-     * \return Reference to the derived object.
+     * \param[in] tag Log tag.
      */
-    [[nodiscard]] auto derived() noexcept -> Derived& {
-        return *static_cast<Derived*>(this);
-    }
+    explicit explicit_regularized_solver_base(logging::log_tag_view tag)
+        : regularized_solver_base<Derived, Data>(tag) {}
 
-    /*!
-     * \brief Access derived object.
-     *
-     * \return Reference to the derived object.
-     */
-    [[nodiscard]] auto derived() const noexcept -> const Derived& {
-        return *static_cast<const Derived*>(this);
-    }
+    using regularized_solver_base<Derived, Data>::derived;
 };
 
 }  // namespace num_collect::regularization
