@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 MusicScience37 (Kenta Kabashima)
+ * Copyright 2024 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,51 +15,62 @@
  */
 /*!
  * \file
- * \brief Definition of implicit_regularized_solver_base class.
+ * \brief Definition of regularized_solver_base class.
  */
 #pragma once
 
 #include <Eigen/Core>
 
 #include "num_collect/base/concepts/dense_matrix.h"  // IWYU pragma: keep
-#include "num_collect/logging/log_tag_view.h"
-#include "num_collect/regularization/regularized_solver_base.h"
+#include "num_collect/logging/logging_mixin.h"
 
 namespace num_collect::regularization {
 
 /*!
- * \brief Base class of solvers using implicit formulas for regularization.
+ * \brief Base class of solvers for regularization.
  *
  * \tparam Derived Type of derived class.
  * \tparam Data Type of data.
  */
 template <typename Derived, base::concepts::dense_matrix Data>
-class implicit_regularized_solver_base
-    : public regularized_solver_base<Derived, Data> {
+class regularized_solver_base : public logging::logging_mixin {
 public:
-    using typename regularized_solver_base<Derived, Data>::data_type;
-    using typename regularized_solver_base<Derived, Data>::scalar_type;
+    //! Type of data.
+    using data_type = Data;
+
+    //! Type of scalars.
+    using scalar_type =
+        typename Eigen::NumTraits<typename data_type::Scalar>::Real;
 
     /*!
-     * \brief Calculate the squared norm of the residual.
+     * \brief Solve for a regularization parameter.
      *
-     * \param[in] solution Solution.
-     * \return Result.
+     * \param[in] param Regularization parameter.
+     * \param[in,out] solution Solution. (Iterative algorithm uses this
+     * parameter as the initial solution.)
      */
-    [[nodiscard]] auto residual_norm(
-        const data_type& solution) const -> scalar_type {
-        return derived().residual_norm(solution);
+    void solve(const scalar_type& param, data_type& solution) {
+        return derived().solve(param, solution);
     }
 
     /*!
-     * \brief Calculate the regularization term.
+     * \brief Get the size of data.
      *
-     * \param[in] solution Solution.
-     * \return Result.
+     * \return Size of data.
      */
-    [[nodiscard]] auto regularization_term(
-        const data_type& solution) const -> scalar_type {
-        return derived().regularization_term(solution);
+    [[nodiscard]] auto data_size() const -> index_type {
+        return derived().data_size();
+    }
+
+    /*!
+     * \brief Get the default region to search for the optimal regularization
+     * parameter.
+     *
+     * \return Pair of minimum and maximum regularization parameters.
+     */
+    [[nodiscard]] auto param_search_region() const
+        -> std::pair<scalar_type, scalar_type> {
+        return derived().param_search_region();
     }
 
 protected:
@@ -68,10 +79,8 @@ protected:
      *
      * \param[in] tag Log tag.
      */
-    explicit implicit_regularized_solver_base(logging::log_tag_view tag)
-        : regularized_solver_base<Derived, Data>(tag) {
-        this->logger().set_iterative();
-    }
+    explicit regularized_solver_base(logging::log_tag_view tag)
+        : logging::logging_mixin(tag) {}
 
     /*!
      * \brief Access derived object.

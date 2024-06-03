@@ -27,11 +27,16 @@
 #include "num_collect/base/concepts/dense_matrix.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/logging/log_tag_view.h"
 #include "num_collect/regularization/explicit_regularized_solver_base.h"
 #include "num_collect/regularization/tikhonov.h"
 #include "num_collect/util/assert.h"
 
 namespace num_collect::regularization {
+
+//! Tag of fista.
+constexpr auto full_gen_tikhonov_tag =
+    logging::log_tag_view("num_collect::regularization::full_gen_tikhonov");
 
 /*!
  * \brief Class to perform generalized Tikhonov regularization on the condition
@@ -63,7 +68,7 @@ public:
     /*!
      * \brief Constructor.
      */
-    full_gen_tikhonov() = default;
+    full_gen_tikhonov() : base_type(full_gen_tikhonov_tag) {}
 
     /*!
      * \brief Compute internal matrices.
@@ -121,7 +126,7 @@ public:
         offset_actual_solution_ = v.rightCols(n - p) * coeff_v2_inv_data;
     }
 
-    //! \copydoc num_collect::regularization::explicit_regularized_solver_base::solve
+    //! \copydoc num_collect::regularization::regularized_solver_base::solve
     void solve(const scalar_type& param, data_type& solution) const {
         data_type tikhonov_solution;
         tikhonov_.solve(param, tikhonov_solution);
@@ -181,12 +186,12 @@ public:
         return tikhonov_.sum_of_filter_factor(param);
     }
 
-    //! \copydoc num_collect::regularization::explicit_regularized_solver_base::data_size
+    //! \copydoc num_collect::regularization::regularized_solver_base::data_size
     [[nodiscard]] auto data_size() const -> index_type {
         return tikhonov_.data_size();
     }
 
-    //! \copydoc num_collect::regularization::explicit_regularized_solver_base::param_search_region
+    //! \copydoc num_collect::regularization::regularized_solver_base::param_search_region
     [[nodiscard]] auto param_search_region() const
         -> std::pair<scalar_type, scalar_type> {
         return tikhonov_.param_search_region();
