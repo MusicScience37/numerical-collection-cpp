@@ -81,7 +81,7 @@ public:
                        .squaredNorm();
     }
 
-    //! \copydoc num_collect::regularization::regularized_solver_base::solve
+    //! \copydoc num_collect::regularization::explicit_regularized_solver_base::solve
     void solve(const scalar_type& param, data_type& solution) const {
         solution = data_type::Zero(svd_.cols(), rot_data_.cols());
         const index_type rank = svd_.nonzeroSingularValues();

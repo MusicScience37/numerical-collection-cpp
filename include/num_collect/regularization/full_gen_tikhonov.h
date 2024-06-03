@@ -126,7 +126,7 @@ public:
         offset_actual_solution_ = v.rightCols(n - p) * coeff_v2_inv_data;
     }
 
-    //! \copydoc num_collect::regularization::regularized_solver_base::solve
+    //! \copydoc num_collect::regularization::explicit_regularized_solver_base::solve
     void solve(const scalar_type& param, data_type& solution) const {
         data_type tikhonov_solution;
         tikhonov_.solve(param, tikhonov_solution);
