@@ -24,6 +24,7 @@
 #include <string_view>
 #include <vector>
 
+#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
@@ -204,7 +205,9 @@ public:
      * \return This.
      */
     auto num_samples(index_type value) -> sampling_optimizer& {
-        NUM_COLLECT_ASSERT(value >= 2);
+        if (value < 2) {
+            throw invalid_argument("Number of samples must be at least two.");
+        }
         num_samples_ = value;
         return *this;
     }
@@ -216,7 +219,10 @@ public:
      * \return This.
      */
     auto max_iterations(index_type value) -> sampling_optimizer& {
-        NUM_COLLECT_ASSERT(value > 0);
+        if (value <= 0) {
+            throw invalid_argument(
+                "Maximum number of iterations must be a positive integer.");
+        }
         max_iterations_ = value;
         return *this;
     }

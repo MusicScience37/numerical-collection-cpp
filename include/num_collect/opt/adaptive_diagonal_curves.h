@@ -100,8 +100,15 @@ public:
      * \param[in] upper Element-wise upper limit.
      */
     void init(const variable_type& lower, const variable_type& upper) {
-        NUM_COLLECT_ASSERT(lower.size() == upper.size());
-        NUM_COLLECT_ASSERT((lower.array() < upper.array()).all());
+        if (lower.size() != upper.size()) {
+            throw invalid_argument(
+                "Element-wise limits must have the same size.");
+        }
+        if (!(lower.array() < upper.array()).all()) {
+            throw invalid_argument(
+                "Element-wise limits must satisfy lower < upper for each "
+                "element.");
+        }
         lower_ = lower;
         width_ = upper - lower;
         dim_ = lower.size();
@@ -642,7 +649,11 @@ public:
      * \return This object.
      */
     auto max_evaluations(index_type value) -> adaptive_diagonal_curves& {
-        NUM_COLLECT_ASSERT(value > 0);
+        if (value <= 0) {
+            throw invalid_argument(
+                "Maximum number of function evaluations must be a positive "
+                "integer.");
+        }
         max_evaluations_ = value;
         return *this;
     }
@@ -655,7 +666,11 @@ public:
      * \return This object.
      */
     auto min_rate_imp(value_type value) -> adaptive_diagonal_curves& {
-        NUM_COLLECT_ASSERT(value > 0);
+        if (value <= static_cast<value_type>(0)) {
+            throw invalid_argument(
+                "Minimum rate of improvement in the function value required "
+                "for potentially optimal rectangles must be a positive value.");
+        }
         min_rate_imp_ = value;
         return *this;
     }
@@ -668,7 +683,12 @@ public:
      * \return This object.
      */
     auto decrease_rate_bound(value_type value) -> adaptive_diagonal_curves& {
-        NUM_COLLECT_ASSERT(value > value_type(0));
+        if (value <= static_cast<value_type>(0)) {
+            throw invalid_argument(
+                "Rate of function value used to check whether the function "
+                "value decreased in the current phase must be a positive "
+                "value.");
+        }
         decrease_rate_bound_ = value;
         return *this;
     }

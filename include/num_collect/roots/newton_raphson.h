@@ -26,6 +26,7 @@
 
 #include <Eigen/LU>
 
+#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
@@ -208,7 +209,10 @@ public:
      * \return This.
      */
     auto max_iterations(index_type val) -> this_type& {
-        NUM_COLLECT_ASSERT(val > 0);
+        if (val <= 0) {
+            throw invalid_argument(
+                "Maximum number of iterations must be a positive integer.");
+        }
         max_iterations_ = val;
         return *this;
     }
@@ -220,7 +224,11 @@ public:
      * \return This.
      */
     auto tol_last_change(const variable_type& val) -> this_type& {
-        NUM_COLLECT_ASSERT(val >= static_cast<variable_type>(0));
+        if (val < static_cast<variable_type>(0)) {
+            throw invalid_argument(
+                "Tolerance of last change of the variable must be a "
+                "non-negative value.");
+        }
         tol_last_change_ = val;
         return *this;
     }
@@ -232,7 +240,11 @@ public:
      * \return This.
      */
     auto tol_value_norm(const variable_type& val) -> this_type& {
-        NUM_COLLECT_ASSERT(val >= static_cast<variable_type>(0));
+        if (val < static_cast<variable_type>(0)) {
+            throw invalid_argument(
+                "Tolerance of the norm of function value must be a "
+                "non-negative value.");
+        }
         tol_value_norm_ = val;
         return *this;
     }
@@ -442,7 +454,10 @@ public:
      * \return This.
      */
     auto max_iterations(index_type val) -> this_type& {
-        NUM_COLLECT_ASSERT(val > 0);
+        if (val <= 0) {
+            throw invalid_argument(
+                "Maximum number of iterations must be a positive integer.");
+        }
         max_iterations_ = val;
         return *this;
     }
@@ -454,7 +469,11 @@ public:
      * \return This.
      */
     auto tol_last_change(const scalar_type& val) -> this_type& {
-        NUM_COLLECT_ASSERT(val >= static_cast<scalar_type>(0));
+        if (val < static_cast<variable_type>(0)) {
+            throw invalid_argument(
+                "Tolerance of last change of the variable must be a "
+                "non-negative value.");
+        }
         tol_last_change_ = val;
         return *this;
     }
@@ -466,7 +485,11 @@ public:
      * \return This.
      */
     auto tol_value_norm(const scalar_type& val) -> this_type& {
-        NUM_COLLECT_ASSERT(val >= static_cast<scalar_type>(0));
+        if (val < static_cast<variable_type>(0)) {
+            throw invalid_argument(
+                "Tolerance of the norm of function value must be a "
+                "non-negative value.");
+        }
         tol_value_norm_ = val;
         return *this;
     }
