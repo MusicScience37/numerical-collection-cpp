@@ -25,6 +25,7 @@
 
 #include <Eigen/Core>
 
+#include "num_collect/base/exception.h"
 #include "num_collect/interp/kernel/concepts/kernel.h"  // IWYU pragma: keep
 #include "num_collect/interp/kernel/impl/auto_regularizer_wrapper.h"
 #include "num_collect/interp/kernel/impl/kernel_parameter_optimizer.h"
@@ -160,9 +161,13 @@ public:
     template <typename Container, typename InputData>
     void compute(const Container& variable_list,
         const Eigen::MatrixBase<InputData>& data) {
-        NUM_COLLECT_ASSERT(
-            static_cast<std::size_t>(data.rows()) == variable_list.size());
-        NUM_COLLECT_ASSERT(data.cols() == 1);
+        if (static_cast<std::size_t>(data.rows()) != variable_list.size()) {
+            throw invalid_argument(
+                "Number of elements in data and variables must match.");
+        }
+        if (data.cols() != 1) {
+            throw invalid_argument("Data must be a vector.");
+        }
 
         if (optimizer_) {
             optimizer_->compute(variable_list, data);

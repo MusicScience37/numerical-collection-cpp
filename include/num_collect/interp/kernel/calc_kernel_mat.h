@@ -23,6 +23,7 @@
 
 #include <Eigen/Core>
 
+#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/interp/kernel/concepts/kernel.h"  // IWYU pragma: keep
 #include "num_collect/util/assert.h"
@@ -100,7 +101,10 @@ template <concepts::kernel Kernel, typename Container>
     -> Eigen::CwiseNullaryOp<impl::calc_kernel_mat_functor<Kernel, Container>,
         typename impl::calc_kernel_mat_functor<Kernel,
             Container>::result_type> {
-    NUM_COLLECT_ASSERT(!list.empty());
+    if (list.empty()) {
+        throw invalid_argument(
+            "calc_kernel_mat requires at least one variable.");
+    }
 
     using result_type =
         typename impl::calc_kernel_mat_functor<Kernel, Container>::result_type;

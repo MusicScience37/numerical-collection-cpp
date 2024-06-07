@@ -26,6 +26,7 @@
 #include <Eigen/Core>
 
 #include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
+#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/constants/pi.h"    // IWYU pragma: keep
 #include "num_collect/constants/zero.h"  // IWYU pragma: keep
@@ -58,7 +59,10 @@ public:
      * \param[in] degree Degree of Legendre function.
      */
     explicit legendre_for_newton(index_type degree) : degree_(degree) {
-        NUM_COLLECT_ASSERT(degree > 0);
+        if (degree < 1) {
+            throw invalid_argument(
+                "Degree of Legendre function must be at least one.");
+        }
     }
 
     /*!
@@ -131,7 +135,10 @@ public:
      * \param[in] degree Degree of Legendre function.
      */
     void compute(index_type degree) {
-        NUM_COLLECT_ASSERT(degree > 0);
+        if (degree < 1) {
+            throw invalid_argument(
+                "Degree of Legendre function must be at least one.");
+        }
         degree_ = degree;
 
         roots_.resize(degree_);

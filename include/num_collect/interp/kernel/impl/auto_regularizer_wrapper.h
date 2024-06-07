@@ -24,6 +24,7 @@
 #include <Eigen/Core>
 
 #include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
+#include "num_collect/base/exception.h"
 #include "num_collect/interp/kernel/calc_kernel_mat.h"
 #include "num_collect/interp/kernel/impl/auto_regularizer.h"
 #include "num_collect/interp/kernel/impl/self_adjoint_kernel_solver.h"
@@ -61,7 +62,10 @@ public:
      * \param[in] reg_param Regularization parameter.
      */
     void regularize_with(const scalar_type& reg_param) {
-        NUM_COLLECT_ASSERT(reg_param >= static_cast<scalar_type>(0.0));
+        if (reg_param < static_cast<scalar_type>(0)) {
+            throw invalid_argument(
+                "Regularization parameter must be a a non-negative value.");
+        }
         reg_param_ = reg_param;
         regularizer_.reset();
     }

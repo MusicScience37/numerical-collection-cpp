@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/constants/zero.h"  // IWYU pragma: keep
 #include "num_collect/logging/iterations/iteration_logger.h"
@@ -94,7 +95,9 @@ public:
 
     //! \copydoc ode::solver_base::step_size(scalar_type)
     auto step_size(scalar_type val) -> this_type& {
-        NUM_COLLECT_ASSERT(val > constants::zero<scalar_type>);
+        if (val <= static_cast<scalar_type>(0)) {
+            throw invalid_argument("Step size must be a positive value.");
+        }
         step_size_ = val;
         return *this;
     }

@@ -70,7 +70,10 @@ public:
      */
     explicit gauss_legendre_integrator(index_type degree = default_degree)
         : roots_(degree) {
-        NUM_COLLECT_ASSERT(degree > 0);
+        if (degree < 1) {
+            throw invalid_argument(
+                "Degree of Legendre function must be at least one.");
+        }
         update_weight();
     }
 
@@ -80,7 +83,10 @@ public:
      * \param[in] degree Degree.
      */
     void prepare(index_type degree) {
-        NUM_COLLECT_ASSERT(degree > 0);
+        if (degree < 1) {
+            throw invalid_argument(
+                "Degree of Legendre function must be at least one.");
+        }
         roots_.compute(degree);
         update_weight();
     }

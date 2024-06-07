@@ -22,6 +22,7 @@
 #include <limits>
 
 #include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
+#include "num_collect/base/exception.h"
 #include "num_collect/constants/sqrt.h"
 #include "num_collect/util/assert.h"
 
@@ -105,7 +106,10 @@ public:
      * \return This.
      */
     auto upper_limit(const scalar_type& val) -> step_size_limits& {
-        NUM_COLLECT_ASSERT(val > lower_limit_);
+        if (val <= lower_limit_) {
+            throw invalid_argument(
+                "0 < lower_limit < upper_limit must be satisfied.");
+        }
         upper_limit_ = val;
         return *this;
     }
@@ -117,7 +121,10 @@ public:
      * \return This.
      */
     auto lower_limit(const scalar_type& val) -> step_size_limits& {
-        NUM_COLLECT_ASSERT(static_cast<scalar_type>(0) < val < upper_limit_);
+        if (val <= static_cast<scalar_type>(0) || upper_limit_ <= val) {
+            throw invalid_argument(
+                "0 < lower_limit < upper_limit must be satisfied.");
+        }
         lower_limit_ = val;
         return *this;
     }

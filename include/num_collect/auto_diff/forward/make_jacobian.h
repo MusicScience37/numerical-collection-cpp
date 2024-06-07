@@ -26,6 +26,7 @@
 #include "num_collect/base/concepts/dense_vector.h"  // IWYU pragma: keep
 #include "num_collect/base/concepts/real_scalar.h"   // IWYU pragma: keep
 #include "num_collect/base/concepts/real_scalar_dense_matrix.h"  // IWYU pragma: keep
+#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/util/assert.h"
 
@@ -103,8 +104,15 @@ template <base::concepts::dense_vector VectorType>
     using result_type =
         typename impl::make_jacobian_functor<VectorType>::result_type;
 
-    NUM_COLLECT_ASSERT(vector.rows() > 1);
-    NUM_COLLECT_ASSERT(vector.cols() == 1);
+    if (vector.cols() != 1) {
+        throw invalid_argument(
+            "differentiate function requires a vector as the argument.");
+    }
+    if (vector.rows() < 2) {
+        throw invalid_argument(
+            "differentiate function requires a vector with at least two "
+            "elements.");
+    }
     for (index_type i = 0; i < vector.rows(); ++i) {
         NUM_COLLECT_ASSERT(vector(i).diff().cols() == 1);
     }

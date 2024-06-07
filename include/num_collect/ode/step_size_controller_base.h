@@ -97,7 +97,11 @@ public:
      * \return This.
      */
     auto reduction_rate(const scalar_type& val) -> Derived& {
-        NUM_COLLECT_ASSERT(val > static_cast<scalar_type>(0));
+        if (val <= static_cast<scalar_type>(0)) {
+            throw invalid_argument(
+                "Rate to reduce step sizes when error is large must be a "
+                "positive value.");
+        }
         reduction_rate_ = val;
         return derived();
     }
