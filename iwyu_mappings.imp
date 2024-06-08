@@ -23,6 +23,7 @@
   { symbol: [ "std::pow", private, "<cmath>", public ] },
   { symbol: [ "std::log10", private, "<cmath>", public ] },
   { symbol: [ "std::cos", private, "<cmath>", public ] },
+  { symbol: [ "std::cosh", private, "<cmath>", public ] },
   # Custom (STL - Internal headers)
   { include: ["@<__memory/.*>", private, "<memory>", public ] },
   { include: ["@<__functional/.*>", private, "<functional>", public ] },
@@ -59,6 +60,7 @@
   { include: ["\"src/Core/MatrixBase.h\"", private, "<Eigen/Core>", public ] },
   { include: ["\"src/Core/ArrayBase.h\"", private, "<Eigen/Core>", public ] },
   { include: ["<Eigen/src/plugins/ArrayCwiseUnaryOps.h>", private, "<Eigen/Core>", public ] },
+  { include: ["<Eigen/src/plugins/ReshapedMethods.h>", private, "<Eigen/Core>", public ] },
   { include: ["@<Eigen/src/Cholesky/.*>", private, "<Eigen/Cholesky>", public ] },
   { include: ["@<Eigen/src/Eigenvalues/.*>", private, "<Eigen/Eigenvalues>", public ] },
   { include: ["@<Eigen/src/Householder/.*>", private, "<Eigen/Householder>", public ] },
@@ -67,6 +69,7 @@
   { include: ["@<Eigen/src/QR/.*>", private, "<Eigen/QR>", public ] },
   { include: ["@<Eigen/src/SVD/.*>", private, "<Eigen/SVD>", public ] },
   { include: ["@<Eigen/src/IterativeLinearSolvers/.*>", private, "<Eigen/IterativeLinearSolvers>", public ] },
+  { include: ["@<Eigen/src/SparseCholesky/.*>", private, "<Eigen/SparseCholesky>", public ] },
   # Custom (toml++)
   { include: ["@<toml\\+\\+/impl/.*>", private, "<toml++/toml.h>", public ] },
   # Custom (trompeloeil)
@@ -75,8 +78,11 @@
   # Custom (Pybind11)
   { include: ["<cast.h>", private, "<pybind11/pybind11.h>", public ] },
   { include: ["<pytypes.h>", private, "<pybind11/pybind11.h>", public ] },
+  { include: ["<pybind11/cast.h>", private, "<pybind11/pybind11.h>", public ] },
+  { include: ["<pybind11/pytypes.h>", private, "<pybind11/pybind11.h>", public ] },
   # Custom (lyra)
   { include: ["<lyra/cli.hpp>", private, "<lyra/lyra.hpp>", public ] },
   { include: ["<lyra/opt.hpp>", private, "<lyra/lyra.hpp>", public ] },
   { include: ["<lyra/parser.hpp>", private, "<lyra/lyra.hpp>", public ] },
+  { include: ["<lyra/args.hpp>", private, "<lyra/lyra.hpp>", public ] },
 ]

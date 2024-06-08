@@ -20,12 +20,15 @@
 #include "num_prob_collect/linear/laplacian_2d_grid.h"
 
 #include <algorithm>
+#include <exception>
 #include <iostream>
+#include <string>
+#include <string_view>
 
 #include <Eigen/Core>
 #include <Eigen/IterativeLinearSolvers>
 #include <Eigen/SparseCore>
-#include <pybind11/eigen.h>
+#include <pybind11/eigen.h>  // IWYU pragma: keep
 #include <pybind11/embed.h>
 #include <pybind11/pybind11.h>
 #include <toml++/toml.h>

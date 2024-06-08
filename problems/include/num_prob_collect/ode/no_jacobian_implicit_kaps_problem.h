@@ -19,6 +19,8 @@
  */
 #pragma once
 
+#include <Eigen/Core>
+
 #include "num_collect/ode/concepts/mass_problem.h"
 #include "num_collect/ode/concepts/multi_variate_problem.h"
 #include "num_collect/ode/evaluation_type.h"

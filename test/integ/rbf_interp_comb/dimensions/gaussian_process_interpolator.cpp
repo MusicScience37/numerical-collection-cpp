@@ -19,6 +19,8 @@
  */
 #include "num_collect/rbf/gaussian_process_interpolator.h"
 
+#include <tuple>
+
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
 

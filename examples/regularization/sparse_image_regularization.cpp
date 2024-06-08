@@ -17,12 +17,18 @@
  * \file
  * \brief Example of tikhonov class with blurred sine test problem.
  */
+#include <algorithm>
+#include <cmath>
+#include <cstdint>
 #include <random>
+#include <string>
+#include <vector>
 
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <png++/image.hpp>
 #include <png++/rgb_pixel.hpp>
+#include <png++/types.hpp>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/regularization/fista.h"
