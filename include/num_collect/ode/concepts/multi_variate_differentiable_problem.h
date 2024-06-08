@@ -19,8 +19,8 @@
  */
 #pragma once
 
-#include "num_collect/ode/concepts/differentiable_problem.h"  // IWYU pragma: keep
-#include "num_collect/ode/concepts/multi_variate_problem.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/differentiable_problem.h"
+#include "num_collect/ode/concepts/multi_variate_problem.h"
 
 namespace num_collect::ode::concepts {
 

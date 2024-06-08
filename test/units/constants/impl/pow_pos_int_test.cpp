@@ -21,7 +21,6 @@
 
 #include <cmath>
 #include <ostream>
-#include <string>
 #include <utility>
 
 #include <catch2/catch_template_test_macros.hpp>

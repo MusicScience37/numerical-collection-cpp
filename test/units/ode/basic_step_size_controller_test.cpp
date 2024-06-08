@@ -19,15 +19,12 @@
  */
 #include "num_collect/ode/basic_step_size_controller.h"
 
-#include <string>
-
 #include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
-#include <fmt/format.h>
 
-#include "num_collect/ode/concepts/step_size_controller.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/step_size_controller.h"
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
 #include "num_collect/ode/step_size_limits.h"

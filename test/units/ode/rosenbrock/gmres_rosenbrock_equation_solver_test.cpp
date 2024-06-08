@@ -20,16 +20,14 @@
 #include "num_collect/ode/rosenbrock/gmres_rosenbrock_equation_solver.h"
 
 #include <cmath>
-#include <string>
 
 #include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
-#include <fmt/format.h>
 
 #include "comparison_approvals.h"
-#include "num_collect/ode/concepts/rosenbrock_equation_solver.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/rosenbrock_equation_solver.h"
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/evaluation_type.h"
 #include "num_prob_collect/ode/external_force_vibration_problem.h"

@@ -19,7 +19,7 @@
  */
 #pragma once
 
-#include "num_collect/ode/concepts/formula.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/formula.h"
 
 namespace num_collect::ode::concepts {
 

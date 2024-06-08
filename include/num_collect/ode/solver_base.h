@@ -19,11 +19,10 @@
  */
 #pragma once
 
-#include "num_collect/base/concepts/reference_of.h"  // IWYU pragma: keep
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/iterations/iteration_logger_mixin.h"
 #include "num_collect/logging/logging_mixin.h"
-#include "num_collect/ode/concepts/formula.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/formula.h"
 
 namespace num_collect::ode {
 

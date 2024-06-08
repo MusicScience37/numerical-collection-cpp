@@ -19,7 +19,6 @@
  */
 #include "num_collect/opt/impl/ternary_vector.h"
 
-#include <string>
 #include <type_traits>
 
 #include <catch2/catch_message.hpp>

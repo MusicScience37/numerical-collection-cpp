@@ -19,8 +19,6 @@
  */
 #include "num_collect/base/concepts/dense_matrix.h"
 
-#include <string>
-
 #include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("num_collect::concepts::dense_matrix") {

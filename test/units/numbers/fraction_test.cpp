@@ -19,9 +19,11 @@
  */
 #include "num_collect/numbers/fraction.h"
 
+#include <cstddef>
 #include <cstdint>
 #include <sstream>
-#include <type_traits>
+#include <string>
+#include <type_traits>  // IWYU pragma: keep
 
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>

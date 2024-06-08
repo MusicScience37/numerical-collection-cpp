@@ -20,13 +20,11 @@
 #include "num_collect/ode/simple_solver.h"
 
 #include <cmath>
-#include <string>
 
 #include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
-#include <fmt/format.h>
 
 #include "comparison_approvals.h"
 #include "eigen_approx.h"

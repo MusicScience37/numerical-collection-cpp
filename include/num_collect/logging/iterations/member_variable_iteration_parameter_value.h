@@ -20,7 +20,7 @@
 #pragma once
 
 #include "num_collect/base/exception.h"
-#include "num_collect/logging/concepts/formattable_iteration_parameter_value.h"  // IWYU pragma: keep
+#include "num_collect/logging/concepts/formattable_iteration_parameter_value.h"
 
 namespace num_collect::logging::iterations {
 

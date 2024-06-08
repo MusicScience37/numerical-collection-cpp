@@ -21,8 +21,8 @@
 
 #include <cmath>
 
-#include "num_collect/ode/concepts/differentiable_problem.h"  // IWYU pragma: keep
-#include "num_collect/ode/concepts/mass_problem.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/differentiable_problem.h"
+#include "num_collect/ode/concepts/mass_problem.h"
 #include "num_collect/ode/evaluation_type.h"
 
 namespace num_prob_collect::ode {

@@ -20,10 +20,10 @@
 #include "num_collect/integration/gauss_legendre_kronrod_integrator.h"
 
 #include <cmath>
+#include <complex>
 #include <limits>
 #include <memory>
 #include <ostream>
-#include <string>
 
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>

@@ -19,8 +19,22 @@
  */
 #pragma once
 
+#include <algorithm>
+#include <cstddef>
+#include <utility>
+#include <vector>
+
+#include <Eigen/Core>
+
+#include "num_collect/base/index_type.h"
+#include "num_collect/rbf/concepts/distance_function.h"
+#include "num_collect/rbf/concepts/rbf.h"
+#include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
+#include "num_collect/rbf/impl/get_default_scalar_type.h"
+#include "num_collect/rbf/impl/get_variable_type.h"
 #include "num_collect/rbf/kernel_matrix_type.h"
 #include "num_collect/rbf/rbf_interpolator.h"
+#include "num_collect/rbf/rbfs/gaussian_rbf.h"
 
 namespace num_collect::rbf {
 

@@ -23,8 +23,8 @@
 
 #include <type_traits>  // IWYU pragma: keep
 
-#include "num_collect/logging/concepts/formattable_iteration_parameter_value.h"  // IWYU pragma: keep
-#include "num_collect/logging/concepts/getter_of.h"  // IWYU pragma: keep
+#include "num_collect/logging/concepts/formattable_iteration_parameter_value.h"
+#include "num_collect/logging/concepts/getter_of.h"
 
 namespace num_collect::logging::iterations {
 

@@ -19,8 +19,7 @@
  */
 #pragma once
 
-#include "num_collect/base/concepts/const_reference_of.h"  // IWYU pragma: keep
-#include "num_collect/ode/concepts/ode_equation_solver.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/ode_equation_solver.h"
 
 namespace num_collect::ode::concepts {
 

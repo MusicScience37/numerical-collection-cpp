@@ -21,7 +21,7 @@
 
 #include <type_traits>
 
-#include "num_collect/base/concepts/integral.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/integral.h"
 
 namespace num_collect {
 inline namespace base {

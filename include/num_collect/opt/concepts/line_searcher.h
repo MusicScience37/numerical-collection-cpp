@@ -21,12 +21,11 @@
 
 #include <type_traits>  // IWYU pragma: keep
 
-#include "num_collect/base/concepts/const_reference_of.h"  // IWYU pragma: keep
-#include "num_collect/base/concepts/implicitly_convertible_to.h"  // IWYU pragma: keep
-#include "num_collect/base/concepts/real_scalar.h"   // IWYU pragma: keep
-#include "num_collect/base/concepts/reference_of.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/const_reference_of.h"
+#include "num_collect/base/concepts/implicitly_convertible_to.h"
+#include "num_collect/base/concepts/reference_of.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/opt/concepts/differentiable_objective_function.h"  // IWYU pragma: keep
+#include "num_collect/opt/concepts/differentiable_objective_function.h"
 
 namespace num_collect::opt::concepts {
 

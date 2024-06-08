@@ -22,7 +22,7 @@
 #include <cmath>
 #include <complex>
 
-#include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/real_scalar.h"
 
 namespace num_collect {
 inline namespace base {

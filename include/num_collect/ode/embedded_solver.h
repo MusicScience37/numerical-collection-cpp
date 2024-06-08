@@ -22,7 +22,6 @@
 #include <cmath>
 #include <limits>
 #include <optional>
-#include <string_view>
 #include <type_traits>  // IWYU pragma: keep
 
 #include "num_collect/base/exception.h"
@@ -30,13 +29,12 @@
 #include "num_collect/constants/one.h"   // IWYU pragma: keep
 #include "num_collect/constants/zero.h"  // IWYU pragma: keep
 #include "num_collect/logging/iterations/iteration_logger.h"
-#include "num_collect/ode/concepts/embedded_formula.h"      // IWYU pragma: keep
-#include "num_collect/ode/concepts/step_size_controller.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/embedded_formula.h"
+#include "num_collect/ode/concepts/step_size_controller.h"
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/initial_step_size_calculator.h"
 #include "num_collect/ode/pi_step_size_controller.h"
 #include "num_collect/ode/solver_base.h"
-#include "num_collect/util/assert.h"
 #include "num_collect/util/is_eigen_vector.h"  // IWYU pragma: keep
 
 namespace num_collect::ode {

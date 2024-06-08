@@ -22,16 +22,15 @@
 // IWYU pragma: no_include <Eigen/Core>
 // IWYU pragma: no_include <Eigen/SparseCore>
 
-#include <cmath>
+#include <cmath>  // IWYU pragma: keep
 #include <limits>
 #include <optional>
-#include <string_view>
 
-#include "num_collect/base/concepts/real_scalar_dense_vector.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/exception.h"
-#include "num_collect/ode/concepts/mass_problem.h"  // IWYU pragma: keep
-#include "num_collect/ode/concepts/multi_variate_problem.h"  // IWYU pragma: keep
-#include "num_collect/ode/concepts/time_differentiable_problem.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/mass_problem.h"
+#include "num_collect/ode/concepts/multi_variate_problem.h"
+#include "num_collect/ode/concepts/time_differentiable_problem.h"
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/evaluation_type.h"
 #include "num_collect/ode/impl/bicgstab.h"

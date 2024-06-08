@@ -20,13 +20,12 @@
 #include "num_collect/ode/rosenbrock/scalar_rosenbrock_equation_solver.h"
 
 #include <cmath>
-#include <string>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include "num_collect/ode/concepts/rosenbrock_equation_solver.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/rosenbrock_equation_solver.h"
 #include "num_prob_collect/ode/exponential_problem.h"
 #include "num_prob_collect/ode/external_exponential_problem.h"
 #include "num_prob_collect/ode/implicit_exponential_problem.h"

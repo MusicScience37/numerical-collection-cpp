@@ -19,8 +19,12 @@
  */
 #include "num_collect/rbf/impl/kernel_matrix_solver.h"
 
+#include <cstddef>
+#include <vector>
+
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
+#include <catch2/catch_message.hpp>
 #include <catch2/catch_test_macros.hpp>
 
 #include "num_collect/base/index_type.h"

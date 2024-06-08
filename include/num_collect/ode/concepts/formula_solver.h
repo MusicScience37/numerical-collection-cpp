@@ -21,9 +21,9 @@
 
 #include <utility>
 
-#include "num_collect/base/concepts/const_reference_of.h"  // IWYU pragma: keep
-#include "num_collect/base/concepts/reference_of.h"        // IWYU pragma: keep
-#include "num_collect/ode/concepts/problem.h"              // IWYU pragma: keep
+#include "num_collect/base/concepts/const_reference_of.h"
+#include "num_collect/base/concepts/reference_of.h"
+#include "num_collect/ode/concepts/problem.h"
 
 namespace num_collect::ode::concepts {
 

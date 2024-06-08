@@ -19,10 +19,10 @@
  */
 #pragma once
 
+#include <cstddef>
 #include <limits>
-#include <queue>
 #include <set>
-#include <utility>
+#include <vector>
 
 #include <Eigen/Core>
 #include <Eigen/SparseCore>

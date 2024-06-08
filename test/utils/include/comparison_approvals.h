@@ -26,9 +26,9 @@
 #include <ApprovalTests.hpp>
 #include <fmt/format.h>
 
-#include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
-#include "num_collect/base/concepts/real_scalar_dense_matrix.h"  // IWYU pragma: keep
-#include "num_collect/base/concepts/real_scalar_dense_vector.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/concepts/real_scalar_dense_matrix.h"
+#include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/index_type.h"
 #include "table_comparator.h"
 

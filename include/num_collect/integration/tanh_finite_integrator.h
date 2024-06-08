@@ -19,18 +19,20 @@
  */
 #pragma once
 
-#include <cmath>
+#include <cmath>  // IWYU pragma: keep
+#include <cstddef>
+#include <type_traits>
+#include <vector>
 
-#include "num_collect/base/concepts/invocable_as.h"  // IWYU pragma: keep
-#include "num_collect/base/concepts/real_scalar.h"   // IWYU pragma: keep
+#include "num_collect/base/concepts/invocable_as.h"
+#include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/isfinite.h"
 #include "num_collect/constants/half.h"
 #include "num_collect/constants/one.h"
-#include "num_collect/constants/zero.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_mixin.h"
-#include "num_collect/util/assert.h"
 #include "num_collect/util/kahan_adder.h"
 
 namespace num_collect::integration {

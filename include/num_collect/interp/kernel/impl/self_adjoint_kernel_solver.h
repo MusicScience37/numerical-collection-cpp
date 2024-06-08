@@ -31,7 +31,7 @@
 #include <Eigen/Core>
 #include <Eigen/Eigenvalues>
 
-#include "num_collect/base/concepts/real_scalar_dense_matrix.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/real_scalar_dense_matrix.h"
 
 namespace num_collect::interp::kernel::impl {
 

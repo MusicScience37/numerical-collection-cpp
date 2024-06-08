@@ -23,7 +23,7 @@
 #include <unordered_map>
 
 #include "num_collect/auto_diff/backward/graph/node.h"
-#include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/util/assert.h"
 

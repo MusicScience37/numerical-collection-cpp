@@ -22,7 +22,6 @@
 #include <cstddef>
 #include <deque>
 #include <limits>
-#include <utility>
 
 #include <fmt/format.h>  // IWYU pragma: keep
 

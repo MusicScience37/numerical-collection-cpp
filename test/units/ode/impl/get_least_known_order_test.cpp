@@ -19,8 +19,6 @@
  */
 #include "num_collect/ode/impl/get_least_known_order.h"
 
-#include <string>
-
 #include <catch2/catch_test_macros.hpp>
 
 #include "num_collect/ode/runge_kutta/rk4_formula.h"

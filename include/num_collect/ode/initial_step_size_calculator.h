@@ -21,12 +21,11 @@
 
 #include <algorithm>
 #include <cmath>  // IWYU pragma: keep
-#include <string_view>
 #include <tuple>
 
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_mixin.h"
-#include "num_collect/ode/concepts/formula.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/formula.h"
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/evaluation_type.h"
 #include "num_collect/ode/impl/get_least_known_order.h"

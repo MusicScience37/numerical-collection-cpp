@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <cmath>
 #include <limits>
 
 #include <Eigen/Core>
@@ -27,8 +28,7 @@
 #include <Eigen/LU>
 #include <Eigen/SparseCore>
 
-#include "num_collect/base/concepts/dense_vector.h"  // IWYU pragma: keep
-#include "num_collect/base/concepts/real_scalar_dense_matrix.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/dense_vector.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/rbf/kernel_matrix_type.h"
 

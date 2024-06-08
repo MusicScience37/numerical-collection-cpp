@@ -22,7 +22,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "mock_algorithm.h"
-#include "num_collect/logging/concepts/iteration_parameter_value.h"  // IWYU pragma: keep
+#include "num_collect/logging/concepts/iteration_parameter_value.h"
 #include "trompeloeil_catch2.h"
 
 TEST_CASE(

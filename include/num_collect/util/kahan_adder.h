@@ -19,7 +19,7 @@
  */
 #pragma once
 
-#include "num_collect/util/concepts/kahan_addable.h"  // IWYU pragma: keep
+#include "num_collect/util/concepts/kahan_addable.h"
 
 namespace num_collect::util {
 

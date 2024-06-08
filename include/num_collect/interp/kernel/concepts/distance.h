@@ -21,7 +21,7 @@
 
 #include <utility>
 
-#include "num_collect/base/concepts/implicitly_convertible_to.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/implicitly_convertible_to.h"
 
 namespace num_collect::interp::kernel::concepts {
 

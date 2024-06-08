@@ -33,8 +33,8 @@
 #include <Eigen/Core>
 #include <Eigen/Eigenvalues>
 
-#include "num_collect/base/concepts/invocable_as.h"  // IWYU pragma: keep
-#include "num_collect/base/concepts/real_scalar.h"   // IWYU pragma: keep
+#include "num_collect/base/concepts/invocable_as.h"
+#include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/norm.h"

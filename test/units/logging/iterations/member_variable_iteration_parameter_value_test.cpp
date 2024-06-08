@@ -22,7 +22,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "mock_algorithm.h"
-#include "num_collect/logging/concepts/iteration_parameter_value.h"  // IWYU pragma: keep
+#include "num_collect/logging/concepts/iteration_parameter_value.h"
 
 TEST_CASE(
     "num_collect::logging::iterations::member_variable_iteration_parameter_"

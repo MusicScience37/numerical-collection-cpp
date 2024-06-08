@@ -19,7 +19,6 @@
  */
 #include "num_collect/interp/kernel/impl/auto_regularizer_wrapper.h"
 
-#include <string>
 #include <vector>
 
 #include <Eigen/Core>
@@ -32,7 +31,6 @@
 #include "num_collect/interp/kernel/euclidean_distance.h"
 #include "num_collect/interp/kernel/gaussian_rbf.h"
 #include "num_collect/interp/kernel/rbf_kernel.h"
-#include "num_collect/opt/sampling_optimizer.h"
 
 TEST_CASE("num_collect::interp::kernel::impl::auto_regularizer_wrapper") {
     using num_collect::interp::kernel::euclidean_distance;

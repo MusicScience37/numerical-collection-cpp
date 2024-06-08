@@ -25,8 +25,8 @@
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/constants/zero.h"
-#include "num_collect/rbf/concepts/distance_function.h"  // IWYU pragma: keep
+#include "num_collect/constants/zero.h"  // IWYU pragma: keep
+#include "num_collect/rbf/concepts/distance_function.h"
 
 namespace num_collect::rbf::length_parameter_calculators {
 

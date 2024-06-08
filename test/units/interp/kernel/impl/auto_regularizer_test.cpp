@@ -21,7 +21,6 @@
 
 // IWYU pragma: no_include <Eigen/src/Householder/BlockHouseholder.h>
 
-#include <string>
 #include <vector>
 
 #include <Eigen/Core>

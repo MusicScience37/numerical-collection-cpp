@@ -19,8 +19,8 @@
  */
 #pragma once
 
-#include "num_collect/base/concepts/dense_matrix.h"  // IWYU pragma: keep
-#include "num_collect/base/concepts/real_scalar.h"   // IWYU pragma: keep
+#include "num_collect/base/concepts/dense_matrix.h"
+#include "num_collect/base/concepts/real_scalar.h"
 
 namespace num_collect {
 inline namespace base {

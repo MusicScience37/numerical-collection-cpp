@@ -20,14 +20,13 @@
 #pragma once
 
 #include <ostream>
-#include <type_traits>
+#include <type_traits>  // IWYU pragma: keep
 
 #include <fmt/format.h>
-#include <fmt/ostream.h>
+#include <fmt/ostream.h>  // IWYU pragma: keep
 
 #include "num_collect/base/concepts/integral.h"
 #include "num_collect/base/exception.h"
-#include "num_collect/util/assert.h"
 #include "num_collect/util/greatest_common_divisor.h"
 #include "num_collect/util/multiply_safely.h"
 

@@ -20,7 +20,6 @@
 #include "num_collect/auto_diff/backward/differentiate.h"
 
 #include <ostream>
-#include <string>
 
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>

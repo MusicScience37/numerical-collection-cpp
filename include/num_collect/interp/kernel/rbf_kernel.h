@@ -26,9 +26,8 @@
 #include <utility>
 
 #include "num_collect/base/exception.h"
-#include "num_collect/interp/kernel/concepts/distance.h"  // IWYU pragma: keep
-#include "num_collect/interp/kernel/concepts/rbf.h"       // IWYU pragma: keep
-#include "num_collect/util/assert.h"
+#include "num_collect/interp/kernel/concepts/distance.h"
+#include "num_collect/interp/kernel/concepts/rbf.h"
 
 namespace num_collect::interp::kernel {
 

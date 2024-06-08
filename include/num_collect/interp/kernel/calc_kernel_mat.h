@@ -25,8 +25,7 @@
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/interp/kernel/concepts/kernel.h"  // IWYU pragma: keep
-#include "num_collect/util/assert.h"
+#include "num_collect/interp/kernel/concepts/kernel.h"
 
 namespace num_collect::interp::kernel {
 

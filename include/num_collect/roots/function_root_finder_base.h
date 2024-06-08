@@ -21,7 +21,7 @@
 
 #include "num_collect/base/iterative_solver_base.h"
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/roots/concepts/function.h"  // IWYU pragma: keep
+#include "num_collect/roots/concepts/function.h"
 
 namespace num_collect::roots {
 

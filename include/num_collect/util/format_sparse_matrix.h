@@ -25,7 +25,7 @@
 #include <Eigen/SparseCore>  // IWYU pragma: keep
 #include <fmt/format.h>
 
-#include "num_collect/base/concepts/sparse_matrix.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/logging/log_and_throw.h"
 
