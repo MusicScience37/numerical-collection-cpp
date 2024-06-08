@@ -20,7 +20,6 @@
 #include "num_collect/util/safe_cast.h"
 
 #include <cstdint>
-#include <string>
 
 #include <catch2/catch_test_macros.hpp>
 

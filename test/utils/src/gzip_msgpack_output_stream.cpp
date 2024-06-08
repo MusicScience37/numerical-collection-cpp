@@ -22,8 +22,7 @@
 #include <stdexcept>
 #include <string>
 
-#include <fmt/core.h>
-#include <msgpack_light/output_stream.h>
+#include <fmt/format.h>
 #include <zlib.h>
 
 gzip_msgpack_output_stream::gzip_msgpack_output_stream(

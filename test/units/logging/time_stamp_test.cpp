@@ -20,9 +20,9 @@
 #include "num_collect/logging/time_stamp.h"
 
 #include <chrono>
+#include <compare>
 #include <cstdint>
 #include <ctime>
-#include <ratio>
 #include <string>
 
 #include <catch2/catch_test_macros.hpp>

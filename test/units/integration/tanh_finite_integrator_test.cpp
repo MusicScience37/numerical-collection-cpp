@@ -21,7 +21,7 @@
 
 #include <cmath>
 #include <complex>
-#include <type_traits>
+#include <ostream>
 
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>

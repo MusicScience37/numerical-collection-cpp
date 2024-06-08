@@ -19,12 +19,11 @@
  */
 #include "num_collect/ode/rosenbrock/default_rosenbrock_equation_solver.h"
 
-#include <string>
 #include <type_traits>
 
 #include <catch2/catch_test_macros.hpp>
 
-#include "num_collect/ode/concepts/rosenbrock_equation_solver.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/rosenbrock_equation_solver.h"
 #include "num_collect/ode/rosenbrock/lu_rosenbrock_equation_solver.h"
 #include "num_collect/ode/rosenbrock/scalar_rosenbrock_equation_solver.h"
 #include "num_prob_collect/ode/exponential_problem.h"

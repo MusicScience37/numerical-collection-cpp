@@ -19,7 +19,6 @@
  */
 #pragma once
 
-#include "num_collect/base/concepts/reference_of.h"  // IWYU pragma: keep
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
 

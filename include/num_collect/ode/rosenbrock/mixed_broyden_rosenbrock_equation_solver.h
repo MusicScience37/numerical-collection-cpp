@@ -20,7 +20,6 @@
 #pragma once
 
 #include <limits>
-#include <string_view>
 
 #include <Eigen/Core>  // IWYU pragma: keep
 #include <Eigen/LU>
@@ -29,8 +28,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_mixin.h"
-#include "num_collect/ode/concepts/multi_variate_differentiable_problem.h"  // IWYU pragma: keep
-#include "num_collect/ode/concepts/time_differentiable_problem.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/multi_variate_differentiable_problem.h"
 #include "num_collect/ode/evaluation_type.h"
 
 namespace num_collect::ode::rosenbrock {

@@ -19,8 +19,6 @@
  */
 #include "num_collect/regularization/fista.h"
 
-#include <string>
-
 #include <ApprovalTests.hpp>
 #include <Eigen/Core>
 #include <Eigen/SparseCore>

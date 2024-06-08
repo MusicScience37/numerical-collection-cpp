@@ -19,6 +19,9 @@
  */
 #include "num_collect/rbf/impl/general_spline_equation_solver.h"
 
+#include <cstddef>
+#include <vector>
+
 #include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
 

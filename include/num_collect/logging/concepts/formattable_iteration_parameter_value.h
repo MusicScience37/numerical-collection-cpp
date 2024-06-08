@@ -21,7 +21,6 @@
 
 #include <fmt/format.h>
 
-#include "num_collect/base/concepts/same_as.h"  // IWYU pragma: keep
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/iterations/iteration_parameter_formatter_decl.h"
 

@@ -19,7 +19,6 @@
  */
 #include "num_collect/interp/kernel/impl/self_adjoint_kernel_solver.h"
 
-#include <string>
 #include <vector>
 
 #include <Eigen/Cholesky>

@@ -19,6 +19,8 @@
  */
 #include "num_collect/linear/cuthill_mckee_ordering.h"
 
+#include <algorithm>
+
 #include <ApprovalTests.hpp>
 #include <Eigen/SparseCore>
 #include <catch2/catch_template_test_macros.hpp>

@@ -19,13 +19,11 @@
  */
 #pragma once
 
-#include <string_view>
-
-#include "num_collect/base/concepts/real_scalar_dense_vector.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/ode/concepts/problem.h"  // IWYU pragma: keep
-#include "num_collect/ode/concepts/update_equation_solver.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/problem.h"
+#include "num_collect/ode/concepts/update_equation_solver.h"
 #include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/inexact_newton_update_equation_solver.h"
 #include "num_collect/ode/runge_kutta/implicit_formula_base.h"

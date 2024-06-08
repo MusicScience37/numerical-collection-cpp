@@ -22,7 +22,6 @@
 #include <iostream>
 
 #include "../configure_logging.h"
-#include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
 #include "num_prob_collect/ode/exponential_problem.h"
 

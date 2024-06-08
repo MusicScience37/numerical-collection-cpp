@@ -20,8 +20,6 @@
 #include "num_collect/interp/kernel/kernel_interpolator.h"
 
 #include <cmath>
-#include <functional>
-#include <string>
 
 #include <Eigen/Core>
 #include <catch2/catch_message.hpp>

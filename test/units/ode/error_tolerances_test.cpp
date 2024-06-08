@@ -19,13 +19,10 @@
  */
 #include "num_collect/ode/error_tolerances.h"
 
-#include <string>
-
 #include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
-#include <fmt/format.h>
 
 TEST_CASE("num_collect::ode::error_tolerances<vector>") {
     using num_collect::ode::error_tolerances;

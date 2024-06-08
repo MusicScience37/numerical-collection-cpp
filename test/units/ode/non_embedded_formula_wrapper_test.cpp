@@ -20,14 +20,12 @@
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
 
 #include <cmath>
-#include <string>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "comparison_approvals.h"
-#include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/runge_kutta/rk4_formula.h"
 #include "num_prob_collect/ode/exponential_problem.h"
 

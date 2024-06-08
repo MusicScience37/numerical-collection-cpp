@@ -18,27 +18,25 @@
  * \brief Example of solving the wave equation using finite difference and
  * RODASP formula.
  */
-#include <cmath>
 #include <exception>
 #include <iostream>
+#include <optional>
+#include <string>
 #include <string_view>
+#include <vector>
 
 #include <Eigen/Core>
 #include <fmt/format.h>
-#include <pybind11/eigen.h>
+#include <pybind11/eigen.h>  // IWYU pragma: keep
 #include <pybind11/embed.h>
 #include <pybind11/pybind11.h>
 #include <toml++/toml.h>
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/constants/pi.h"
 #include "num_collect/logging/load_logging_config.h"
 #include "num_collect/logging/logger.h"
-#include "num_collect/ode/rosenbrock/bicgstab_rosenbrock_equation_solver.h"
 #include "num_collect/ode/rosenbrock/rodasp_formula.h"
-#include "num_collect/util/assert.h"
-#include "num_collect/util/format_dense_vector.h"
 #include "num_prob_collect/ode/string_wave_1d_problem.h"
 
 template <typename T>

@@ -20,10 +20,9 @@
  */
 #pragma once
 
-#include "num_collect/base/concepts/const_reference_of.h"  // IWYU pragma: keep
-#include "num_collect/base/concepts/real_scalar_dense_matrix.h"  // IWYU pragma: keep
-#include "num_collect/base/concepts/real_scalar_dense_vector.h"  // IWYU pragma: keep
-#include "num_collect/opt/concepts/twice_differentiable_objective_function.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/real_scalar_dense_matrix.h"
+#include "num_collect/base/concepts/real_scalar_dense_vector.h"
+#include "num_collect/opt/concepts/twice_differentiable_objective_function.h"
 
 namespace num_collect::opt::concepts {
 

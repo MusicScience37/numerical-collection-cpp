@@ -19,7 +19,6 @@
  */
 #include "num_collect/util/format_sparse_matrix.h"
 
-#include <string>
 #include <vector>
 
 #include <ApprovalTests.hpp>

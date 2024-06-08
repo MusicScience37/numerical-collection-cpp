@@ -19,14 +19,12 @@
  */
 #include "num_collect/opt/backtracking_line_searcher.h"
 
-#include <string>
-
 #include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 
 #include "eigen_approx.h"
-#include "num_collect/opt/concepts/line_searcher.h"  // IWYU pragma: keep
+#include "num_collect/opt/concepts/line_searcher.h"
 #include "num_prob_collect/opt/multi_quadratic_function.h"
 
 TEST_CASE("num_collect::opt::backtracking_line_searcher") {

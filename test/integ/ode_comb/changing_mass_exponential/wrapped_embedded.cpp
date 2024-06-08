@@ -17,14 +17,13 @@
  * \file
  * \brief Combinatorial test of ODE solvers.
  */
-#include <type_traits>
+#include <cmath>
 
-#include <Eigen/Core>
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "../solve_and_check.h"
+#include "num_collect/base/index_type.h"
 #include "num_collect/ode/implicit_problem_wrapper.h"
 #include "num_collect/ode/runge_kutta/ark43_erk_formula.h"
 #include "num_collect/ode/runge_kutta/dopri5_formula.h"

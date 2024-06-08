@@ -19,8 +19,8 @@
  */
 #pragma once
 
-#include "num_collect/base/concepts/decayed_to.h"    // IWYU pragma: keep
-#include "num_collect/base/concepts/reference_of.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/decayed_to.h"
+#include "num_collect/base/concepts/reference_of.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/logger.h"
 

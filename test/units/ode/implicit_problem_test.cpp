@@ -17,7 +17,9 @@
  * \file
  * \brief Test of implicit_problem_wrapper class.
  */
+#include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "eigen_approx.h"
@@ -25,7 +27,6 @@
 #include "num_collect/ode/implicit_problem_wrapper.h"
 #include "num_prob_collect/ode/changing_mass_exponential_problem.h"
 #include "num_prob_collect/ode/changing_mass_quadratic_problem.h"
-#include "trompeloeil_catch2.h"
 
 TEST_CASE("num_collect::ode::single_variate_implicit_problem_wrapper") {
     using num_collect::ode::single_variate_implicit_problem_wrapper;

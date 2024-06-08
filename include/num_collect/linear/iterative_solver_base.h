@@ -23,7 +23,7 @@
 #include <Eigen/IterativeLinearSolvers>
 #include <Eigen/SparseCore>
 
-#include "num_collect/base/concepts/dense_vector_of.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/dense_vector_of.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/util/assert.h"
@@ -38,7 +38,7 @@ namespace impl {
  * \tparam Solver Type of the solver.
  */
 template <typename Solver, typename /*reserved for SFINAE*/ = void>
-struct iterative_solver_traits;
+struct iterative_solver_traits;  // IWYU pragma: keep
 
 }  // namespace impl
 

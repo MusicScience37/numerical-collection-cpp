@@ -22,8 +22,8 @@
 #include <cstdint>
 #include <limits>
 
-#include "num_collect/base/concepts/integral.h"         // IWYU pragma: keep
-#include "num_collect/base/concepts/signed_integral.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/integral.h"
+#include "num_collect/base/concepts/signed_integral.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/util/bidirectional_vector.h"
 

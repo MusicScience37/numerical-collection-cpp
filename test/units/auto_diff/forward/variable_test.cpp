@@ -20,7 +20,6 @@
 #include "num_collect/auto_diff/forward/variable.h"
 
 #include <ostream>
-#include <string>
 
 #include <Eigen/Core>
 #include <catch2/catch_template_test_macros.hpp>

@@ -21,8 +21,8 @@
 
 #include <type_traits>  // IWYU pragma: keep
 
-#include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
-#include "num_collect/ode/concepts/problem.h"       // IWYU pragma: keep
+#include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/ode/concepts/problem.h"
 
 namespace num_collect::ode::concepts {
 

@@ -23,7 +23,6 @@
 #include <fmt/format.h>
 
 #include "num_collect/base/exception.h"
-#include "num_collect/util/assert.h"
 
 namespace num_collect::util {
 

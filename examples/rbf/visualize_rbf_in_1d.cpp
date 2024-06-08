@@ -18,19 +18,23 @@
  * \brief Example to visualize RBFs used in interpolation in 1D.
  */
 #include <cstdio>
-#include <cstdlib>
+#include <exception>
 #include <string_view>
 #include <utility>
 #include <vector>
 
 #include <Eigen/Core>
-#include <fmt/core.h>
-#include <pybind11/eigen.h>
+#include <fmt/format.h>
+#include <pybind11/eigen.h>  // IWYU pragma: keep
 #include <pybind11/embed.h>
-#include <pybind11/stl.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>  // IWYU pragma: keep
 
 #include "num_collect/base/index_type.h"
+#include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
+#include "num_collect/rbf/length_parameter_calculators/global_length_parameter_calculator.h"
 #include "num_collect/rbf/rbf_interpolator.h"
+#include "num_collect/rbf/rbfs/gaussian_rbf.h"
 
 static constexpr double x_max = 10.0;
 static constexpr double y_max = 5.0;

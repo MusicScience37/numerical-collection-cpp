@@ -19,16 +19,13 @@
  */
 #include "num_collect/ode/rosenbrock/mixed_broyden_rosenbrock_equation_solver.h"
 
-#include <string>
-
 #include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
-#include <fmt/format.h>
 
 #include "comparison_approvals.h"
 #include "eigen_approx.h"
-#include "num_collect/ode/concepts/rosenbrock_equation_solver.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/rosenbrock_equation_solver.h"
 #include "num_collect/ode/rosenbrock/lu_rosenbrock_equation_solver.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
 

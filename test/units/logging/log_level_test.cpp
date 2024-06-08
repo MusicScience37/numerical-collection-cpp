@@ -21,6 +21,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <utility>
 
 #include <catch2/catch_message.hpp>
 #include <catch2/catch_test_macros.hpp>

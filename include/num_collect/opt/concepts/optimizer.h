@@ -19,12 +19,12 @@
  */
 #pragma once
 
-#include "num_collect/base/concepts/const_reference_of.h"  // IWYU pragma: keep
-#include "num_collect/base/concepts/implicitly_convertible_to.h"  // IWYU pragma: keep
-#include "num_collect/base/concepts/iterative_solver.h"  // IWYU pragma: keep
-#include "num_collect/base/concepts/same_as.h"           // IWYU pragma: keep
+#include "num_collect/base/concepts/const_reference_of.h"
+#include "num_collect/base/concepts/implicitly_convertible_to.h"
+#include "num_collect/base/concepts/iterative_solver.h"
+#include "num_collect/base/concepts/same_as.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/opt/concepts/objective_function.h"  // IWYU pragma: keep
+#include "num_collect/opt/concepts/objective_function.h"
 
 namespace num_collect::opt::concepts {
 

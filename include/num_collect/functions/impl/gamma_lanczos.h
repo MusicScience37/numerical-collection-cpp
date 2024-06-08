@@ -23,10 +23,10 @@
 #include <cmath>
 #include <complex>
 #include <cstddef>
-#include <type_traits>
+#include <type_traits>  // IWYU pragma: keep
 
-#include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
-#include "num_collect/constants/half.h"             // IWYU pragma: keep
+#include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/constants/half.h"  // IWYU pragma: keep
 
 namespace num_collect::functions::impl {
 

@@ -20,12 +20,14 @@
 #pragma once
 
 #include <cmath>
+#include <cstddef>
+#include <vector>
 
 #include <Eigen/Core>
 
-#include "num_collect/base/concepts/dense_matrix_of.h"  // IWYU pragma: keep
-#include "num_collect/base/concepts/dense_vector.h"     // IWYU pragma: keep
-#include "num_collect/base/concepts/real_scalar.h"      // IWYU pragma: keep
+#include "num_collect/base/concepts/dense_matrix_of.h"
+#include "num_collect/base/concepts/dense_vector.h"
+#include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 

@@ -20,13 +20,11 @@
 #include "num_collect/ode/inexact_newton_slope_equation_solver.h"
 
 #include <limits>
-#include <string>
 
 #include <catch2/catch_test_macros.hpp>
-#include <fmt/format.h>
 
 #include "comparison_approvals.h"
-#include "num_collect/ode/concepts/slope_equation_solver.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/slope_equation_solver.h"
 #include "num_prob_collect/ode/exponential_problem.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
 

@@ -17,10 +17,18 @@
  * \file
  * \brief Example to generate Halton nodes in 2D.
  */
-#include <fmt/core.h>
+#include <exception>
+#include <iostream>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
+#include <Eigen/Core>
+#include <fmt/format.h>
 #include <lyra/lyra.hpp>
 #include <pybind11/embed.h>
-#include <pybind11/stl.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>  // IWYU pragma: keep
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/rbf/generate_halton_nodes.h"

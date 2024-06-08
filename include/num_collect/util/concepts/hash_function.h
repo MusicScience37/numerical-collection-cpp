@@ -21,7 +21,7 @@
 
 #include <cstddef>
 
-#include "num_collect/base/concepts/same_as.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/same_as.h"
 
 namespace num_collect::util::concepts {
 

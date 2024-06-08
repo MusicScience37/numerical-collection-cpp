@@ -19,7 +19,7 @@
  */
 #pragma once
 
-#include "num_collect/ode/concepts/problem.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/problem.h"
 
 namespace num_collect::ode {
 

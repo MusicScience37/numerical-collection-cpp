@@ -20,7 +20,6 @@
 #include "num_collect/interp/kernel/calc_kernel_mat.h"
 
 #include <cmath>
-#include <string>
 #include <vector>
 
 #include <Eigen/Core>

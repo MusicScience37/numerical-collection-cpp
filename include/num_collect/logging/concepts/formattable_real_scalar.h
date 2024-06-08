@@ -19,8 +19,8 @@
  */
 #pragma once
 
-#include "num_collect/base/concepts/formattable.h"  // IWYU pragma: keep
-#include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/formattable.h"
+#include "num_collect/base/concepts/real_scalar.h"
 
 namespace num_collect::logging::concepts {
 

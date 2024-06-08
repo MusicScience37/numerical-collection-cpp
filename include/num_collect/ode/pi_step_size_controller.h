@@ -20,17 +20,15 @@
 #pragma once
 
 #include <cmath>
-#include <string_view>
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/ode/concepts/formula.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/formula.h"
 #include "num_collect/ode/error_tolerances.h"  // IWYU pragma: keep
 #include "num_collect/ode/impl/get_least_known_order.h"
 #include "num_collect/ode/step_size_controller_base.h"
 #include "num_collect/ode/step_size_limits.h"  // IWYU pragma: keep
-#include "num_collect/util/assert.h"
 
 namespace num_collect::ode {
 

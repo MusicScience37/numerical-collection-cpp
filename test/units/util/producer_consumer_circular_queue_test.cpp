@@ -20,10 +20,10 @@
 #include "num_collect/util/producer_consumer_circular_queue.h"
 
 #include <chrono>
+#include <compare>
 #include <cstddef>
 #include <limits>
 #include <memory>
-#include <ratio>
 #include <thread>
 #include <vector>
 

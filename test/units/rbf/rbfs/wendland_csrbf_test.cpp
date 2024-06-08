@@ -19,16 +19,16 @@
  */
 #include "num_collect/rbf/rbfs/wendland_csrbf.h"
 
+#include <ostream>
 #include <tuple>
 
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
-#include <catch2/generators/catch_generators_range.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include "num_collect/rbf/concepts/csrbf.h"  // IWYU pragma: keep
+#include "num_collect/rbf/concepts/csrbf.h"
 
 TEMPLATE_TEST_CASE(
     "num_collect::rbf::rbfs::wendland_csrbf", "", float, double) {

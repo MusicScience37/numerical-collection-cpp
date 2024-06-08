@@ -19,8 +19,8 @@
  */
 #pragma once
 
-#include "num_collect/base/concepts/same_as.h"  // IWYU pragma: keep
-#include "num_collect/rbf/concepts/rbf.h"       // IWYU pragma: keep
+#include "num_collect/base/concepts/same_as.h"
+#include "num_collect/rbf/concepts/rbf.h"
 
 namespace num_collect::rbf::concepts {
 

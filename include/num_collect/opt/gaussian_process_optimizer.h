@@ -22,6 +22,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
+#include <limits>
 #include <type_traits>
 #include <vector>
 
@@ -30,16 +31,17 @@
 #include "num_collect/base/exception.h"
 #include "num_collect/base/get_size.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/constants/pi.h"
+#include "num_collect/base/isfinite.h"
+#include "num_collect/constants/pi.h"  // IWYU pragma: keep
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/opt/concepts/objective_function.h"  // IWYU pragma: keep
+#include "num_collect/opt/concepts/objective_function.h"
 #include "num_collect/opt/dividing_rectangles.h"
 #include "num_collect/opt/function_object_wrapper.h"
 #include "num_collect/opt/optimizer_base.h"
 #include "num_collect/rbf/gaussian_process_interpolator.h"
 #include "num_collect/util/assert.h"
-#include "num_collect/util/is_eigen_vector.h"
+#include "num_collect/util/is_eigen_vector.h"  // IWYU pragma: keep
 
 namespace num_collect::opt {
 

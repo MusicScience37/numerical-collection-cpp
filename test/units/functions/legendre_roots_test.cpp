@@ -20,7 +20,6 @@
 #include "num_collect/functions/legendre_roots.h"
 
 #include <ostream>
-#include <string>
 
 #include <catch2/catch_message.hpp>
 #include <catch2/catch_template_test_macros.hpp>

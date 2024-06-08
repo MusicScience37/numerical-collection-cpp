@@ -20,7 +20,6 @@
 #include "num_collect/base/concepts/assertion_condition.h"
 
 #include <memory>
-#include <string>
 
 #include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>

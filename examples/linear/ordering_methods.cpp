@@ -18,14 +18,18 @@
  * \brief Example of ordering methods for sparse matrices.
  */
 #include <algorithm>
+#include <cstdint>
 #include <random>
 #include <string>
+#include <vector>
 
 #include <Eigen/Core>
 #include <Eigen/OrderingMethods>
 #include <Eigen/SparseCore>
+#include <fmt/format.h>
 #include <png++/image.hpp>
 #include <png++/rgb_pixel.hpp>
+#include <png++/types.hpp>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/linear/cuthill_mckee_ordering.h"

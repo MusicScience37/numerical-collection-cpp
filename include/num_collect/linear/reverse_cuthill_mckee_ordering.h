@@ -23,7 +23,6 @@
 #include <Eigen/SparseCore>
 
 #include "num_collect/base/concepts/sparse_matrix.h"
-#include "num_collect/base/index_type.h"
 #include "num_collect/linear/cuthill_mckee_ordering.h"
 
 namespace num_collect::linear {

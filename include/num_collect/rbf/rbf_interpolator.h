@@ -19,17 +19,22 @@
  */
 #pragma once
 
+#include <cstddef>
 #include <type_traits>  // IWYU pragma: keep
+#include <vector>
 
+#include <Eigen/Core>
+
+#include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_mixin.h"
 #include "num_collect/opt/dividing_rectangles.h"
 #include "num_collect/opt/function_object_wrapper.h"
 #include "num_collect/rbf/compute_kernel_matrix.h"
-#include "num_collect/rbf/concepts/csrbf.h"              // IWYU pragma: keep
-#include "num_collect/rbf/concepts/distance_function.h"  // IWYU pragma: keep
-#include "num_collect/rbf/concepts/length_parameter_calculator.h"  // IWYU pragma: keep
-#include "num_collect/rbf/concepts/rbf.h"  // IWYU pragma: keep
+#include "num_collect/rbf/concepts/csrbf.h"
+#include "num_collect/rbf/concepts/distance_function.h"
+#include "num_collect/rbf/concepts/length_parameter_calculator.h"
+#include "num_collect/rbf/concepts/rbf.h"
 #include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
 #include "num_collect/rbf/impl/get_default_scalar_type.h"
 #include "num_collect/rbf/impl/get_variable_type.h"

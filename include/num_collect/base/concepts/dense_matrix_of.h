@@ -21,7 +21,7 @@
 
 #include <type_traits>  // IWYU pragma: keep
 
-#include "num_collect/base/concepts/dense_matrix.h"  // IWYU pragma: keep
+#include "num_collect/base/concepts/dense_matrix.h"
 
 namespace num_collect {
 inline namespace base {

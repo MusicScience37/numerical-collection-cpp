@@ -27,7 +27,7 @@
 
 #include "comparison_approvals.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/constants/pi.h"
+#include "num_collect/constants/pi.h"  // IWYU pragma: keep
 #include "num_collect/constants/sqrt.h"
 
 TEMPLATE_TEST_CASE("num_collect::functions::gamma", "", float, double) {

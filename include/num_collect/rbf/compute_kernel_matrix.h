@@ -19,17 +19,20 @@
  */
 #pragma once
 
-#include <type_traits>
+#include <cstddef>
+#include <type_traits>  // IWYU pragma: keep
 #include <vector>
 
-#include "num_collect/base/concepts/dense_matrix.h"      // IWYU pragma: keep
-#include "num_collect/base/concepts/sparse_matrix_of.h"  // IWYU pragma: keep
+#include <Eigen/SparseCore>
+
+#include "num_collect/base/concepts/dense_matrix.h"
+#include "num_collect/base/concepts/sparse_matrix_of.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/constants/zero.h"
-#include "num_collect/rbf/concepts/csrbf.h"              // IWYU pragma: keep
-#include "num_collect/rbf/concepts/distance_function.h"  // IWYU pragma: keep
-#include "num_collect/rbf/concepts/length_parameter_calculator.h"  // IWYU pragma: keep
-#include "num_collect/rbf/concepts/rbf.h"  // IWYU pragma: keep
+#include "num_collect/constants/zero.h"  // IWYU pragma: keep
+#include "num_collect/rbf/concepts/csrbf.h"
+#include "num_collect/rbf/concepts/distance_function.h"
+#include "num_collect/rbf/concepts/length_parameter_calculator.h"
+#include "num_collect/rbf/concepts/rbf.h"
 #include "num_collect/util/assert.h"
 #include "num_collect/util/safe_cast.h"
 

@@ -19,14 +19,11 @@
  */
 #pragma once
 
-#include <string_view>
-
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/ode/concepts/problem.h"  // IWYU pragma: keep
-#include "num_collect/ode/concepts/rosenbrock_equation_solver.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/problem.h"
+#include "num_collect/ode/concepts/rosenbrock_equation_solver.h"
 #include "num_collect/ode/embedded_solver.h"
-#include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/evaluation_type.h"
 #include "num_collect/ode/rosenbrock/default_rosenbrock_equation_solver.h"
 #include "num_collect/ode/rosenbrock/rosenbrock_formula_base.h"

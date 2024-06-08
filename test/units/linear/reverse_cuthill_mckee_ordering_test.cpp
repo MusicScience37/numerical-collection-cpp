@@ -19,6 +19,10 @@
  */
 #include "num_collect/linear/reverse_cuthill_mckee_ordering.h"
 
+#include <algorithm>
+#include <cstddef>
+#include <vector>
+
 #include <ApprovalTests.hpp>
 #include <Eigen/SparseCore>
 #include <catch2/catch_template_test_macros.hpp>

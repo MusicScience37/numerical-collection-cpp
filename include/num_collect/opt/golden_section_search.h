@@ -20,12 +20,11 @@
 #pragma once
 
 #include <cmath>
-#include <string_view>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/opt/concepts/single_variate_objective_function.h"  // IWYU pragma: keep
+#include "num_collect/opt/concepts/single_variate_objective_function.h"
 #include "num_collect/opt/optimizer_base.h"
 
 namespace num_collect::opt {
