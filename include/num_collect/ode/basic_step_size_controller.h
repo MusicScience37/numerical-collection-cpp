@@ -22,6 +22,7 @@
 #include <cmath>
 #include <string_view>
 
+#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/concepts/formula.h"  // IWYU pragma: keep
@@ -95,7 +96,11 @@ public:
      */
     auto step_size_factor_safety_coeff(
         const scalar_type& val) -> basic_step_size_controller& {
-        NUM_COLLECT_ASSERT(val > static_cast<scalar_type>(0));
+        if (val <= static_cast<scalar_type>(0)) {
+            throw invalid_argument(
+                "Safety coefficient for factors of step sizes must be a "
+                "positive value.");
+        }
         step_size_factor_safety_coeff_ = val;
         return *this;
     }
@@ -108,7 +113,10 @@ public:
      */
     auto max_step_size_factor(
         const scalar_type& val) -> basic_step_size_controller& {
-        NUM_COLLECT_ASSERT(val > static_cast<scalar_type>(0));
+        if (val <= static_cast<scalar_type>(0)) {
+            throw invalid_argument(
+                "Maximum factor of step sizes must be a positive value.");
+        }
         max_step_size_factor_ = val;
         return *this;
     }

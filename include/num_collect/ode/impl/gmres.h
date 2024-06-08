@@ -28,6 +28,7 @@
 #include <Eigen/QR>
 
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"  // IWYU pragma: keep
+#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/util/assert.h"
 
@@ -118,7 +119,11 @@ public:
      * \return This.
      */
     auto max_subspace_dim(index_type val) -> gmres& {
-        NUM_COLLECT_ASSERT(val > 0);
+        if (val <= 0) {
+            throw invalid_argument(
+                "Maximum number of dimensions of subspace must be a positive "
+                "integer.");
+        }
         max_subspace_dim_ = val;
         return *this;
     }

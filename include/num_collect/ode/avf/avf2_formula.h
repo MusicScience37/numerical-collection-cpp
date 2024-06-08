@@ -21,6 +21,7 @@
 
 #include <string_view>
 
+#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/norm.h"
 #include "num_collect/constants/one.h"   // IWYU pragma: keep
@@ -127,7 +128,10 @@ public:
      * \param[in] val Value.
      */
     void tol_residual_norm(scalar_type val) {
-        NUM_COLLECT_ASSERT(val > constants::zero<scalar_type>);
+        if (val <= static_cast<scalar_type>(0)) {
+            throw invalid_argument(
+                "Tolerance of residual norm must be a positive value.");
+        }
         tol_residual_norm_ = val;
     }
 

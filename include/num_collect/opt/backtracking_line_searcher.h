@@ -176,19 +176,27 @@ public:
      * \return This object.
      */
     auto armijo_coeff(value_type value) -> backtracking_line_searcher& {
-        NUM_COLLECT_ASSERT(value_type(0) < value < value_type(1));
+        if (value <= static_cast<value_type>(0) ||
+            static_cast<value_type>(1) <= value) {
+            throw invalid_argument(
+                "Coefficient in Armijo rule must be in the range of (0, 1).");
+        }
         armijo_coeff_ = value;
         return *this;
     }
 
     /*!
-     * \brief Set the ration to scale step sizes.
+     * \brief Set the ratio to scale step sizes.
      *
      * \param[in] value Value.
      * \return This object.
      */
     auto step_scale(value_type value) -> backtracking_line_searcher& {
-        NUM_COLLECT_ASSERT(value_type(0) < value < value_type(1));
+        if (value <= static_cast<value_type>(0) ||
+            static_cast<value_type>(1) <= value) {
+            throw invalid_argument(
+                "Ratio to scale step sizes must be in the range of (0, 1).");
+        }
         step_scale_ = value;
         return *this;
     }
@@ -216,7 +224,7 @@ private:
     //! Default ratio to scale step sizes.
     static inline const auto default_step_scale = static_cast<value_type>(0.5);
 
-    //! Ration to scale step sizes.
+    //! Ratio to scale step sizes.
     value_type step_scale_{default_step_scale};
 
     //! Number of function evaluations.

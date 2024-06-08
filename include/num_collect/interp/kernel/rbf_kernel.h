@@ -25,6 +25,7 @@
 #include <type_traits>  // IWYU pragma: keep
 #include <utility>
 
+#include "num_collect/base/exception.h"
 #include "num_collect/interp/kernel/concepts/distance.h"  // IWYU pragma: keep
 #include "num_collect/interp/kernel/concepts/rbf.h"       // IWYU pragma: keep
 #include "num_collect/util/assert.h"
@@ -101,7 +102,10 @@ public:
      * \return This.
      */
     auto len_param(const len_param_type& value) -> rbf_kernel& {
-        NUM_COLLECT_ASSERT(value > static_cast<len_param_type>(0));
+        if (value <= static_cast<len_param_type>(0)) {
+            throw invalid_argument(
+                "Length parameter must be a positive value.");
+        }
         len_param_ = value;
         return *this;
     }
@@ -139,7 +143,9 @@ public:
     template <typename Container>
     [[nodiscard]] auto kernel_param_search_region(const Container& list) const
         -> std::pair<kernel_param_type, kernel_param_type> {
-        NUM_COLLECT_ASSERT(list.size() > static_cast<std::size_t>(1));
+        if (list.size() < static_cast<std::size_t>(2)) {
+            throw invalid_argument("At least two variables are required.");
+        }
 
         len_param_type max_min_dist =
             std::numeric_limits<len_param_type>::min();

@@ -22,6 +22,7 @@
 #include <cmath>
 #include <string_view>
 
+#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/concepts/formula.h"  // IWYU pragma: keep
@@ -116,7 +117,11 @@ public:
      */
     auto current_step_error_exponent(
         const scalar_type& val) -> pi_step_size_controller& {
-        NUM_COLLECT_ASSERT(val >= previous_step_error_exponent_);
+        if (val < previous_step_error_exponent_) {
+            throw invalid_argument(
+                "0 <= previous_step_error_exponent <= "
+                "current_step_error_exponent must be satisfied.");
+        }
         current_step_error_exponent_ = val;
         return *this;
     }
@@ -129,8 +134,12 @@ public:
      */
     auto previous_step_error_exponent(
         const scalar_type& val) -> pi_step_size_controller& {
-        NUM_COLLECT_ASSERT(
-            static_cast<scalar_type>(0) <= val <= current_step_error_exponent_);
+        if (val < static_cast<scalar_type>(0) ||
+            current_step_error_exponent_ < val) {
+            throw invalid_argument(
+                "0 <= previous_step_error_exponent <= "
+                "current_step_error_exponent must be satisfied.");
+        }
         previous_step_error_exponent_ = val;
         return *this;
     }
@@ -143,7 +152,11 @@ public:
      */
     auto step_size_factor_safety_coeff(
         const scalar_type& val) -> pi_step_size_controller& {
-        NUM_COLLECT_ASSERT(val > static_cast<scalar_type>(0));
+        if (val <= static_cast<scalar_type>(0)) {
+            throw invalid_argument(
+                "Safety coefficient for factors of step sizes must be a "
+                "positive value.");
+        }
         step_size_factor_safety_coeff_ = val;
         return *this;
     }
@@ -156,7 +169,11 @@ public:
      */
     auto max_step_size_factor(
         const scalar_type& val) -> pi_step_size_controller& {
-        NUM_COLLECT_ASSERT(val > min_step_size_factor_);
+        if (val <= min_step_size_factor_) {
+            throw invalid_argument(
+                "0 < min_step_size_factor < max_step_size_factor must be "
+                "satisfied.");
+        }
         max_step_size_factor_ = val;
         return *this;
     }
@@ -169,8 +186,12 @@ public:
      */
     auto min_step_size_factor(
         const scalar_type& val) -> pi_step_size_controller& {
-        NUM_COLLECT_ASSERT(
-            static_cast<scalar_type>(0) < val < max_step_size_factor_);
+        if (val <= static_cast<scalar_type>(0) ||
+            max_step_size_factor_ <= val) {
+            throw invalid_argument(
+                "0 < min_step_size_factor < max_step_size_factor must be "
+                "satisfied.");
+        }
         min_step_size_factor_ = val;
         return *this;
     }

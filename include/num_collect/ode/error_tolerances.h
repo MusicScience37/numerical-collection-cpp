@@ -24,6 +24,7 @@
 
 #include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"  // IWYU pragma: keep
+#include "num_collect/base/exception.h"
 #include "num_collect/util/assert.h"
 
 namespace num_collect::ode {
@@ -208,7 +209,10 @@ public:
      * \return This.
      */
     auto tol_rel_error(const scalar_type& val) -> error_tolerances& {
-        NUM_COLLECT_ASSERT(val >= static_cast<scalar_type>(0));
+        if (val < static_cast<scalar_type>(0)) {
+            throw invalid_argument(
+                "Tolerance of relative error must be a non-negative value.");
+        }
         tol_rel_error_ = val;
         return *this;
     }
@@ -220,7 +224,10 @@ public:
      * \return This.
      */
     auto tol_rel_error(const variable_type& val) -> error_tolerances& {
-        NUM_COLLECT_ASSERT((val.array() >= static_cast<scalar_type>(0)).all());
+        if (!(val.array() >= static_cast<scalar_type>(0)).all()) {
+            throw invalid_argument(
+                "Tolerance of relative error must be non-negative values.");
+        }
         tol_rel_error_ = val;
         return *this;
     }
@@ -232,7 +239,10 @@ public:
      * \return This.
      */
     auto tol_abs_error(const scalar_type& val) -> error_tolerances& {
-        NUM_COLLECT_ASSERT(val >= static_cast<scalar_type>(0));
+        if (val < static_cast<scalar_type>(0)) {
+            throw invalid_argument(
+                "Tolerance of absolute error must be a non-negative value.");
+        }
         tol_abs_error_ = val;
         return *this;
     }
@@ -244,7 +254,10 @@ public:
      * \return This.
      */
     auto tol_abs_error(const variable_type& val) -> error_tolerances& {
-        NUM_COLLECT_ASSERT((val.array() >= static_cast<scalar_type>(0)).all());
+        if (!(val.array() >= static_cast<scalar_type>(0)).all()) {
+            throw invalid_argument(
+                "Tolerance of absolute error must be non-negative values.");
+        }
         tol_abs_error_ = val;
         return *this;
     }
@@ -315,7 +328,10 @@ public:
      * \return This.
      */
     auto tol_rel_error(const variable_type& val) -> error_tolerances& {
-        NUM_COLLECT_ASSERT(val >= static_cast<scalar_type>(0));
+        if (val < static_cast<scalar_type>(0)) {
+            throw invalid_argument(
+                "Tolerance of relative error must be a non-negative value.");
+        }
         tol_rel_error_ = val;
         return *this;
     }
@@ -327,7 +343,10 @@ public:
      * \return This.
      */
     auto tol_abs_error(const variable_type& val) -> error_tolerances& {
-        NUM_COLLECT_ASSERT(val >= static_cast<scalar_type>(0));
+        if (val < static_cast<scalar_type>(0)) {
+            throw invalid_argument(
+                "Tolerance of absolute error must be a non-negative value.");
+        }
         tol_abs_error_ = val;
         return *this;
     }

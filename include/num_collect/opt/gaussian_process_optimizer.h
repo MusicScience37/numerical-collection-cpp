@@ -27,6 +27,7 @@
 
 #include <Eigen/Core>
 
+#include "num_collect/base/exception.h"
 #include "num_collect/base/get_size.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/constants/pi.h"
@@ -89,7 +90,10 @@ public:
      */
     void init(const variable_type& lower, const variable_type& upper) {
         if constexpr (is_eigen_vector_v<variable_type>) {
-            NUM_COLLECT_ASSERT(get_size(lower) == get_size(upper));
+            if (lower.size() != upper.size()) {
+                throw invalid_argument(
+                    "Lower and upper limits must have the same size.");
+            }
         }
         lower_ = lower;
         upper_ = upper;
@@ -183,7 +187,11 @@ public:
      * \return This object.
      */
     auto max_evaluations(index_type value) -> gaussian_process_optimizer& {
-        NUM_COLLECT_ASSERT(value > 0);
+        if (value <= 0) {
+            throw invalid_argument(
+                "Maximum number of function evaluations must be a positive "
+                "integer.");
+        }
         max_evaluations_ = value;
         return *this;
     }
@@ -196,7 +204,11 @@ public:
      */
     auto max_lower_bound_evaluations(
         index_type value) -> gaussian_process_optimizer& {
-        NUM_COLLECT_ASSERT(value > 0);
+        if (value <= 0) {
+            throw invalid_argument(
+                "Maximum number of evaluations of lower bounds must be a "
+                "positive integer.");
+        }
         max_lower_bound_evaluations_ = value;
         return *this;
     }

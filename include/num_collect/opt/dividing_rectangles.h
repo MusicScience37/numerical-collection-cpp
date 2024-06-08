@@ -31,6 +31,7 @@
 #include <utility>
 #include <vector>
 
+#include "num_collect/base/exception.h"
 #include "num_collect/base/get_size.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/isfinite.h"
@@ -90,7 +91,10 @@ public:
      */
     void init(const variable_type& lower, const variable_type& upper) {
         if constexpr (is_eigen_vector_v<variable_type>) {
-            NUM_COLLECT_ASSERT(lower.size() == upper.size());
+            if (lower.size() != upper.size()) {
+                throw invalid_argument(
+                    "Lower and upper limits must have the same size.");
+            }
         }
         lower_ = lower;
         upper_ = upper;
@@ -187,7 +191,11 @@ public:
      * \return This object.
      */
     auto max_evaluations(index_type value) -> dividing_rectangles& {
-        NUM_COLLECT_ASSERT(value > 0);
+        if (value <= 0) {
+            throw invalid_argument(
+                "Maximum number of function evaluations must be a positive "
+                "integer.");
+        }
         max_evaluations_ = value;
         return *this;
     }
@@ -200,7 +208,11 @@ public:
      * \return This object.
      */
     auto min_rate_imp(value_type value) -> dividing_rectangles& {
-        NUM_COLLECT_ASSERT(value > 0);
+        if (value <= static_cast<value_type>(0)) {
+            throw invalid_argument(
+                "Minimum rate of improvement in the function value required "
+                "for potentially optimal rectangles must be a positive value.");
+        }
         min_rate_imp_ = value;
         return *this;
     }

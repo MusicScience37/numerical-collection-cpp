@@ -82,9 +82,22 @@ public:
      */
     void compute(const coeff_type& coeff, const data_type& data,
         const coeff_type& reg_coeff) {
-        NUM_COLLECT_ASSERT(coeff.rows() == data.rows());
-        NUM_COLLECT_ASSERT(coeff.cols() == reg_coeff.cols());
-        NUM_COLLECT_ASSERT(reg_coeff.rows() < reg_coeff.cols());
+        if (coeff.rows() != data.rows()) {
+            throw invalid_argument(
+                "The number of rows in the coefficient matrix must match the "
+                "number of rows in data.");
+        }
+        if (coeff.cols() != reg_coeff.cols()) {
+            throw invalid_argument(
+                "The number of columns in the coefficient matrix must match "
+                "the number of columns in the coefficient matrix of the "
+                "regularization term.");
+        }
+        if (reg_coeff.rows() >= reg_coeff.cols()) {
+            throw invalid_argument(
+                "Coefficient matrix for the regularization term must have rows "
+                "less than columns.");
+        }
 
         // How can I implement those complex formulas with good variable names.
 

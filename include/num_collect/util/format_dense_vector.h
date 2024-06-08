@@ -22,6 +22,7 @@
 #include <Eigen/Core>
 #include <fmt/format.h>
 
+#include "num_collect/base/exception.h"
 #include "num_collect/util/assert.h"
 
 namespace num_collect::util {
@@ -69,7 +70,9 @@ private:
 template <typename Vector>
 [[nodiscard]] inline auto format_dense_vector(
     const Eigen::DenseBase<Vector>& vec) {
-    NUM_COLLECT_ASSERT(vec.cols() == 1);
+    if (vec.cols() != 1) {
+        throw invalid_argument("format_dense_vector requires a vector.");
+    }
     return impl::dense_vector_format_view<Vector>(vec.derived());
 }
 

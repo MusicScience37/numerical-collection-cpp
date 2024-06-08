@@ -133,9 +133,20 @@ public:
     void solve_vector_in_place(const Right& right, Solution& solution) const {
         const auto& coeff_ref = coeff();
 
-        NUM_COLLECT_ASSERT(coeff_ref.rows() == coeff_ref.cols());
-        NUM_COLLECT_ASSERT(right.size() == coeff_ref.cols());
-        NUM_COLLECT_ASSERT(solution.size() == coeff_ref.cols());
+        if (coeff_ref.rows() != coeff_ref.cols()) {
+            throw invalid_argument(
+                "Coefficient matrix must be a square matrix.");
+        }
+        if (right.rows() != coeff_ref.cols()) {
+            throw invalid_argument(
+                "Right-hand-side vector must have the number of elements same "
+                "as the size of the coefficient matrix.");
+        }
+        if (solution.rows() != coeff_ref.cols()) {
+            throw invalid_argument(
+                "Solution vector must have the number of elements same "
+                "as the size of the coefficient matrix.");
+        }
 
         iterations_ = 0;
         const scalar_type right_norm = right.squaredNorm();

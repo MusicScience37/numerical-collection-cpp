@@ -154,7 +154,9 @@ public:
      * \return This.
      */
     auto max_point(variable_type val) -> de_semi_infinite_integrator& {
-        NUM_COLLECT_ASSERT(val > constants::zero<variable_type>);
+        if (val <= static_cast<variable_type>(0)) {
+            throw invalid_argument("Maximum point must be a positive value.");
+        }
         max_point_ = val;
         return *this;
     }
@@ -166,7 +168,9 @@ public:
      * \return This.
      */
     auto points(index_type val) -> de_semi_infinite_integrator& {
-        NUM_COLLECT_ASSERT(val > constants::zero<index_type>);
+        if (val <= 0) {
+            throw invalid_argument("Number of points must a positive integer.");
+        }
         points_ = val;
         return *this;
     }

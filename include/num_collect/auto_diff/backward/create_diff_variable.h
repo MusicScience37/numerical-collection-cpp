@@ -24,6 +24,7 @@
 #include "num_collect/auto_diff/backward/variable.h"
 #include "num_collect/base/concepts/real_scalar.h"  // IWYU pragma: keep
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"  // IWYU pragma: keep
+#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/util/assert.h"
 
@@ -118,7 +119,11 @@ template <base::concepts::real_scalar_dense_vector ValueVector>
         impl::create_diff_variable_vector_functor<ValueVector>,
         typename impl::create_diff_variable_vector_functor<
             ValueVector>::result_type> {
-    NUM_COLLECT_ASSERT(value_vec.cols() == 1);
+    if (value_vec.cols() != 1) {
+        throw invalid_argument(
+            "create_diff_variable_vector function requires a vector as the "
+            "argument.");
+    }
 
     using result_type = typename impl::create_diff_variable_vector_functor<
         ValueVector>::result_type;
