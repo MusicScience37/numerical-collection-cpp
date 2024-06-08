@@ -48,6 +48,8 @@
   { include: ["<bits/types/struct_FILE.h>", private, "<cstdio>", public ] },
   # Custom (STL - Others)
   { symbol: [ "std::hash", private, "<functional>", public ] },
+  { symbol: [ "std::hash", private, "<unordered_map>", public ] },
+  { symbol: [ "std::hash", private, "<unordered_set>", public ] },
   { symbol: [ "std::FILE", private, "<cstdio>", public ] },
   { symbol: [ "char_traits", private, "<string>", public ] },
   { symbol: [ "errno", private, "<cerrno>", public ] },
@@ -70,6 +72,7 @@
   { include: ["@<Eigen/src/SVD/.*>", private, "<Eigen/SVD>", public ] },
   { include: ["@<Eigen/src/IterativeLinearSolvers/.*>", private, "<Eigen/IterativeLinearSolvers>", public ] },
   { include: ["@<Eigen/src/SparseCholesky/.*>", private, "<Eigen/SparseCholesky>", public ] },
+  { include: ["@<Eigen/src/OrderingMethods/.*>", private, "<Eigen/OrderingMethods>", public ] },
   # Custom (toml++)
   { include: ["@<toml\\+\\+/impl/.*>", private, "<toml++/toml.h>", public ] },
   # Custom (trompeloeil)

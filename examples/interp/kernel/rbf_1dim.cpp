@@ -17,9 +17,7 @@
  * \file
  * \brief Example of 1-dimensional RBF interpolation.
  */
-#include <array>
 #include <cmath>
-#include <functional>
 #include <vector>
 
 #include <Eigen/Core>

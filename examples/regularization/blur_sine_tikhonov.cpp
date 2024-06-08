@@ -17,16 +17,21 @@
  * \file
  * \brief Example of tikhonov class with blurred sine test problem.
  */
+#include <cmath>
+#include <cstddef>
 #include <iomanip>
 #include <iostream>
 #include <random>
+#include <string>
 #include <unordered_map>
 #include <vector>
 
 #include <Eigen/Core>
 #include <pybind11/embed.h>
-#include <pybind11/stl.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>  // IWYU pragma: keep
 
+#include "num_collect/base/index_type.h"
 #include "num_collect/regularization/explicit_l_curve.h"
 #include "num_collect/regularization/tikhonov.h"
 #include "num_prob_collect/regularization/blur_sine.h"

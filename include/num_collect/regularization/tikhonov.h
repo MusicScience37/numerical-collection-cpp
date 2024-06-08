@@ -19,16 +19,17 @@
  */
 #pragma once
 
-#include <type_traits>
+#include <utility>
 
 #include <Eigen/Core>
 #include <Eigen/SVD>
 
 #include "num_collect/base/concepts/dense_matrix.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/logging/log_tag_view.h"
 #include "num_collect/regularization/explicit_regularized_solver_base.h"
-#include "num_collect/regularization/impl/coeff_param.h"
-#include "num_collect/util/impl/warn_fast_math_for_bdcsvc.h"
+#include "num_collect/regularization/impl/coeff_param.h"  // IWYU pragma: keep
+#include "num_collect/util/impl/warn_fast_math_for_bdcsvc.h"  // IWYU pragma: keep
 
 namespace num_collect::regularization {
 

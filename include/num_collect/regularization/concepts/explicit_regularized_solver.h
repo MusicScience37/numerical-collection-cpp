@@ -19,8 +19,9 @@
  */
 #pragma once
 
-#include <type_traits>
 #include <utility>
+
+#include <Eigen/Core>
 
 #include "num_collect/base/concepts/decayed_to.h"
 #include "num_collect/base/concepts/dense_matrix.h"

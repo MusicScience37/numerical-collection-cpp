@@ -20,7 +20,6 @@
 #include <cmath>
 #include <iomanip>
 #include <iostream>
-#include <vector>
 
 #include "num_collect/auto_diff/backward/differentiate.h"
 #include "num_collect/auto_diff/backward/variable.h"

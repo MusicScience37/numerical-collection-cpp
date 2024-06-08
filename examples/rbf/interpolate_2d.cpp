@@ -17,17 +17,24 @@
  * \file
  * \brief Example to interpolate in 2D.
  */
+#include <cstdio>
+#include <exception>
+#include <string_view>
 #include <utility>
 #include <vector>
 
 #include <Eigen/Core>
-#include <pybind11/eigen.h>
+#include <fmt/format.h>
+#include <pybind11/eigen.h>  // IWYU pragma: keep
 #include <pybind11/embed.h>
-#include <pybind11/stl.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>  // IWYU pragma: keep
 
 #include "num_collect/base/index_type.h"
+#include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
 #include "num_collect/rbf/generate_halton_nodes.h"
 #include "num_collect/rbf/rbf_polynomial_interpolator.h"
+#include "num_collect/rbf/rbfs/gaussian_rbf.h"
 
 static constexpr double x_min = 0.0;
 static constexpr double x_max = 2.0;
