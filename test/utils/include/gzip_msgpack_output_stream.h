@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <cstddef>
 #include <string>
 
 #include <msgpack_light/output_stream.h>

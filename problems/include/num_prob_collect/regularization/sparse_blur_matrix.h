@@ -20,7 +20,7 @@
 #pragma once
 
 #include <algorithm>
-#include <cmath>
+#include <cmath>  // IWYU pragma: keep
 #include <vector>
 
 #include <Eigen/SparseCore>

@@ -20,7 +20,6 @@
 #include "num_collect/util/multiply_safely.h"
 
 #include <cstdint>
-#include <string>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>

@@ -19,8 +19,6 @@
  */
 #include "num_collect/util/format_dense_vector.h"
 
-#include <string>
-
 #include <ApprovalTests.hpp>
 #include <catch2/catch_test_macros.hpp>
 

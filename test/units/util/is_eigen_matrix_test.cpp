@@ -19,8 +19,6 @@
  */
 #include "num_collect/util/is_eigen_matrix.h"
 
-#include <string>
-
 #include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("num_collect::is_eigen_matrix") {
