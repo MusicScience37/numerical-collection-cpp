@@ -1,5 +1,4 @@
 set(SOURCE_FILES
-    assert_test.cpp
     bidirectional_vector_test.cpp
     comparators_test.cpp
     concepts/comparable_test.cpp
@@ -12,7 +11,6 @@ set(SOURCE_FILES
     format_sparse_matrix_test.cpp
     greatest_common_divisor_test.cpp
     hash_string_test.cpp
-    impl/assertion_decomposer_test.cpp
     impl/compiler_builtins_test.cpp
     is_eigen_matrix_test.cpp
     is_eigen_vector_test.cpp
