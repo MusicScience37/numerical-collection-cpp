@@ -11,7 +11,6 @@ set(SOURCE_FILES
     format_sparse_matrix_test.cpp
     greatest_common_divisor_test.cpp
     hash_string_test.cpp
-    impl/assertion_decomposer_test.cpp
     impl/compiler_builtins_test.cpp
     is_eigen_matrix_test.cpp
     is_eigen_vector_test.cpp
