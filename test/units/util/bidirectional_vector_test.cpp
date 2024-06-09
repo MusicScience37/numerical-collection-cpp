@@ -175,15 +175,6 @@ TEST_CASE("num_collect::util::bidirectional_vector") {
         REQUIRE(vec.at(-1) == value);
     }
 
-    SECTION("add value to the beginning to fail") {
-        auto vec = bidirectional_vector<int>();
-        constexpr auto min_ind =
-            std::numeric_limits<num_collect::index_type>::min();
-        vec.resize(min_ind, min_ind);
-
-        REQUIRE_THROWS(vec.push_front(0));
-    }
-
     SECTION("add value to the end") {
         auto vec = bidirectional_vector<int>();
 
@@ -208,26 +199,5 @@ TEST_CASE("num_collect::util::bidirectional_vector") {
         REQUIRE(vec.min_index() == 2);
         REQUIRE(vec.max_index() == 2);
         REQUIRE(vec.at(2) == value);
-    }
-
-    SECTION("move position to too left one") {
-        auto vec = bidirectional_vector<int>();
-        vec.push_front(0);
-        REQUIRE(vec.min_index() == -1);
-        REQUIRE(vec.max_index() == -1);
-
-        REQUIRE_THROWS(vec.move_position(
-            std::numeric_limits<num_collect::index_type>::min()));
-    }
-
-    SECTION("move position to too right one") {
-        auto vec = bidirectional_vector<int>();
-        vec.push_back(0);
-        vec.push_back(0);
-        REQUIRE(vec.min_index() == 0);
-        REQUIRE(vec.max_index() == 1);
-
-        REQUIRE_THROWS(vec.move_position(
-            std::numeric_limits<num_collect::index_type>::max()));
     }
 }

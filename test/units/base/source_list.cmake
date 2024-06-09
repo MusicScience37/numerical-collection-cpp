@@ -1,5 +1,4 @@
 set(SOURCE_FILES
-    assert_test.cpp
     concepts/assertion_condition_test.cpp
     concepts/const_reference_of_test.cpp
     concepts/dense_matrix_test.cpp

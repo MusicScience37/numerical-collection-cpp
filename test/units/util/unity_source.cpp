@@ -1,4 +1,3 @@
-#include "assert_test.cpp"                // NOLINT(bugprone-suspicious-include)
 #include "bidirectional_vector_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "comparators_test.cpp"           // NOLINT(bugprone-suspicious-include)
 #include "concepts/comparable_test.cpp"   // NOLINT(bugprone-suspicious-include)

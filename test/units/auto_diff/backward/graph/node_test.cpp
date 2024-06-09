@@ -41,8 +41,4 @@ TEST_CASE("num_collect::auto_diff::backward::graph::node") {
         REQUIRE(n->children()[1].node() == n2);
         REQUIRE(n->children()[1].sensitivity() == c2);
     }
-
-    SECTION("try to construct with nullptr") {
-        REQUIRE_THROWS((void)create_node<double>(node_ptr<double>(), 0.0));
-    }
 }

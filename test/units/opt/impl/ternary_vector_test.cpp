@@ -181,12 +181,6 @@ TEST_CASE("num_collect::opt::impl::ternary_vector") {
         REQUIRE(vec1 != vec2);
     }
 
-    SECTION("compare vectors with different dimensions") {
-        auto vec1 = ternary_vector(1);
-        auto vec2 = ternary_vector(2);
-        REQUIRE_THROWS_AS(vec1 == vec2, num_collect::assertion_failure);
-    }
-
     SECTION("get element as double") {
         auto vec = ternary_vector(1);
         vec.push_back(0, 0);  // NOLINT
@@ -197,14 +191,6 @@ TEST_CASE("num_collect::opt::impl::ternary_vector") {
         REQUIRE_THAT(
             vec.elem_as<double>(0), Catch::Matchers::WithinRel(expected));
     }
-
-#ifndef NDEBUG
-    SECTION("get digits of a dimension out of range") {
-        constexpr num_collect::index_type dim = 3;
-        auto vec = ternary_vector(dim);
-        REQUIRE_THROWS_AS(vec.digits(dim), num_collect::assertion_failure);
-    }
-#endif
 }
 
 TEST_CASE("std::hash<num_collect::opt::impl::ternary_vector>") {

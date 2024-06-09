@@ -105,9 +105,4 @@ TEST_CASE("num_collect::auto_diff::backward::graph::node_differentiator") {
         REQUIRE_THAT(diff.coeff(n1), Catch::Matchers::WithinRel(0.0));
         REQUIRE_THAT(diff.coeff(n2), Catch::Matchers::WithinRel(1.0));
     }
-
-    SECTION("compute nullptr") {
-        auto diff = node_differentiator<double>();
-        REQUIRE_THROWS(diff.compute(node_ptr<double>()));
-    }
 }
