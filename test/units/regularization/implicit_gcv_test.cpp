@@ -20,8 +20,11 @@
 #include "num_collect/regularization/implicit_gcv.h"
 
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 
+#include "num_collect/logging/logger.h"
 #include "num_collect/regularization/fista.h"
+#include "num_collect/util/format_dense_vector.h"
 #include "num_prob_collect/regularization/sparse_blur_matrix.h"
 
 TEST_CASE("num_collect::regularization::implicit_gcv_calculator") {
@@ -57,5 +60,48 @@ TEST_CASE("num_collect::regularization::implicit_gcv_calculator") {
         calculator_type calculator{solver, data, initial_solution};
         constexpr scalar_type param = 1e-2;
         CHECK(calculator(param) > 0.0);
+    }
+}
+
+TEST_CASE("num_collect::regularization::implicit_gcv") {
+    using num_collect::regularization::fista;
+    using num_collect::regularization::implicit_gcv;
+    using num_prob_collect::regularization::sparse_blur_matrix;
+
+    using scalar_type = double;
+    using coeff_type = Eigen::SparseMatrix<scalar_type>;
+    using data_type = Eigen::VectorX<scalar_type>;
+    using solver_type = fista<coeff_type, data_type>;
+    using parameter_searcher_type = implicit_gcv<solver_type>;
+
+    num_collect::logging::logger logger;
+
+    SECTION("solve") {
+        constexpr num_collect::index_type solution_size = 15;
+        constexpr num_collect::index_type data_size = 15;
+
+        coeff_type coeff;
+        sparse_blur_matrix(coeff, data_size, solution_size);
+        const data_type true_solution{{
+            0.0, 0.8, 0.8, 0.8, 0.0,   //
+            0.0, 0.0, 0.0, 0.0, -0.2,  //
+            -0.2, 0.0, 0.0, 0.0, 0.0   //
+        }};
+        const data_type data = coeff * true_solution;
+        REQUIRE(true_solution.rows() == solution_size);
+        REQUIRE(data.rows() == data_size);
+
+        solver_type solver;
+        REQUIRE_NOTHROW(solver.compute(coeff, data));
+
+        const data_type initial_solution = data_type::Zero(solution_size);
+        parameter_searcher_type searcher{solver, data, initial_solution};
+        REQUIRE_NOTHROW(searcher.search());
+
+        data_type solution = initial_solution;
+        REQUIRE_NOTHROW(searcher.solve(solution));
+
+        logger.info()(
+            "Solution: {}", num_collect::util::format_dense_vector(solution));
     }
 }

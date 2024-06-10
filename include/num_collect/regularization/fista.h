@@ -27,7 +27,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/regularization/impl/coeff_param.h"  // IWYU pragma: keep
+#include "num_collect/regularization/impl/weak_coeff_param.h"  // IWYU pragma: keep
 #include "num_collect/regularization/iterative_regularized_solver_base.h"
 
 namespace num_collect::regularization {
@@ -218,8 +218,8 @@ public:
         const scalar_type max_sol_est =
             (coeff_->transpose() * (*data_)).cwiseAbs().maxCoeff();
         this->logger().trace()("max_sol_est={}", max_sol_est);
-        return {max_sol_est * impl::coeff_min_param<scalar_type>,
-            max_sol_est * impl::coeff_max_param<scalar_type>};
+        return {max_sol_est * impl::weak_coeff_min_param<scalar_type>,
+            max_sol_est * impl::weak_coeff_max_param<scalar_type>};
     }
 
     /*!

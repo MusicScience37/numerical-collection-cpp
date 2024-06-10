@@ -31,7 +31,11 @@
 #include <png++/types.hpp>
 
 #include "num_collect/base/index_type.h"
+#include "num_collect/logging/log_config.h"
+#include "num_collect/logging/log_level.h"
+#include "num_collect/logging/log_tag_config.h"
 #include "num_collect/regularization/fista.h"
+#include "num_collect/regularization/implicit_gcv.h"
 
 static void add_circle(
     Eigen::MatrixXd& image, const Eigen::Vector2d& center, double radius) {
@@ -93,6 +97,12 @@ static void write_image(
 }
 
 auto main() -> int {
+    num_collect::logging::set_default_tag_config(
+        num_collect::logging::log_tag_config()
+            .output_log_level(num_collect::logging::log_level::debug)
+            .output_log_level_in_child_iterations(
+                num_collect::logging::log_level::warning));
+
     constexpr num_collect::index_type rows = 20;
     constexpr num_collect::index_type cols = 20;
     constexpr num_collect::index_type size = rows * cols;
@@ -103,7 +113,7 @@ auto main() -> int {
     add_circle(origin, center, radius);
     write_image(origin, "./sparse_image_origin.png");
 
-    constexpr double noise_rate = 0.1;
+    constexpr double noise_rate = 0.05;
     Eigen::MatrixXd data = origin;
     add_noise(data, noise_rate);
     write_image(data, "./sparse_image_data.png");
@@ -113,12 +123,17 @@ auto main() -> int {
     coeff.resize(size, size);
     coeff.setIdentity();
 
-    constexpr double reg_param = 0.2;
+    using solver_type =
+        num_collect::regularization::fista<coeff_type, Eigen::VectorXd>;
     num_collect::regularization::fista<coeff_type, Eigen::VectorXd> solver;
     const Eigen::VectorXd data_vec = data.reshaped();
     solver.compute(coeff, data_vec);
+
     Eigen::VectorXd solution_vec = data_vec;
-    solver.solve(reg_param, solution_vec);
+    num_collect::regularization::implicit_gcv<solver_type> gcv{
+        solver, data_vec, solution_vec};
+    gcv.search();
+    gcv.solve(solution_vec);
 
     const Eigen::MatrixXd solution = solution_vec.reshaped(rows, cols);
     write_image(solution, "./sparse_image_solution.png");
