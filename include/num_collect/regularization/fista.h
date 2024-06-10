@@ -201,6 +201,14 @@ public:
         return solution.template lpNorm<1>();
     }
 
+    //! \copydoc num_collect::regularization::implicit_regularized_solver_base::change_data
+    void change_data(const data_type& data) { data_ = &data; }
+
+    //! \copydoc num_collect::regularization::implicit_regularized_solver_base::calculate_data_for
+    void calculate_data_for(const data_type& solution, data_type& data) const {
+        data = (*coeff_) * solution;
+    }
+
     //! \copydoc num_collect::regularization::regularized_solver_base::data_size
     [[nodiscard]] auto data_size() const -> index_type { return data_->size(); }
 
