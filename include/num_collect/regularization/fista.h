@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <algorithm>
 #include <cmath>
 #include <limits>
 #include <utility>
@@ -27,7 +28,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/regularization/impl/coeff_param.h"  // IWYU pragma: keep
+#include "num_collect/regularization/impl/weak_coeff_param.h"  // IWYU pragma: keep
 #include "num_collect/regularization/iterative_regularized_solver_base.h"
 
 namespace num_collect::regularization {
@@ -201,6 +202,14 @@ public:
         return solution.template lpNorm<1>();
     }
 
+    //! \copydoc num_collect::regularization::implicit_regularized_solver_base::change_data
+    void change_data(const data_type& data) { data_ = &data; }
+
+    //! \copydoc num_collect::regularization::implicit_regularized_solver_base::calculate_data_for
+    void calculate_data_for(const data_type& solution, data_type& data) const {
+        data = (*coeff_) * solution;
+    }
+
     //! \copydoc num_collect::regularization::regularized_solver_base::data_size
     [[nodiscard]] auto data_size() const -> index_type { return data_->size(); }
 
@@ -210,8 +219,12 @@ public:
         const scalar_type max_sol_est =
             (coeff_->transpose() * (*data_)).cwiseAbs().maxCoeff();
         this->logger().trace()("max_sol_est={}", max_sol_est);
-        return {max_sol_est * impl::coeff_min_param<scalar_type>,
-            max_sol_est * impl::coeff_max_param<scalar_type>};
+        constexpr auto tol_update_coeff_multiplier =
+            static_cast<scalar_type>(10);
+        return {max_sol_est *
+                std::max(impl::weak_coeff_min_param<scalar_type>,
+                    tol_update_coeff_multiplier * tol_update_rate_),
+            max_sol_est * impl::weak_coeff_max_param<scalar_type>};
     }
 
     /*!
@@ -355,7 +368,8 @@ private:
     index_type max_iterations_{default_max_iterations};
 
     //! Default tolerance of update rate of the solution.
-    static constexpr scalar_type default_tol_update_rate = 1e-4;
+    static constexpr auto default_tol_update_rate =
+        static_cast<scalar_type>(1e-4);
 
     //! Tolerance of update rate of the solution.
     scalar_type tol_update_rate_{default_tol_update_rate};

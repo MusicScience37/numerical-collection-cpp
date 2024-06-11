@@ -72,7 +72,7 @@ private:
 };
 
 /*!
- * \brief Class to search
+ * \brief Class to search optimal regularization parameter using GCV.
  *
  * \tparam Solver Type of solvers.
  * \tparam Optimizer Type of optimizers.

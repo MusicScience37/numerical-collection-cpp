@@ -60,6 +60,23 @@ public:
         return derived().regularization_term(solution);
     }
 
+    /*!
+     * \brief Change data.
+     *
+     * \param[in] data New data.
+     */
+    void change_data(const data_type& data) { derived().change_data(data); }
+
+    /*!
+     * \brief Calculate data for a solution.
+     *
+     * \param[in] solution Solution.
+     * \param[out] data Data.
+     */
+    void calculate_data_for(const data_type& solution, data_type& data) const {
+        derived().calculate_data_for(solution, data);
+    }
+
 protected:
     /*!
      * \brief Constructor.

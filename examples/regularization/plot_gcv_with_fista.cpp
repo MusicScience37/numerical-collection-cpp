@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 MusicScience37 (Kenta Kabashima)
+ * Copyright 2024 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,25 +15,24 @@
  */
 /*!
  * \file
- * \brief Example of tikhonov class with blurred sine test problem.
+ * \brief Example to plot GCV calculated for FISTA.
  */
-#include <algorithm>
 #include <cmath>
-#include <cstdint>
 #include <random>
 #include <string>
-#include <vector>
 
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
-#include <png++/image.hpp>
-#include <png++/rgb_pixel.hpp>
-#include <png++/types.hpp>
+#include <pybind11/eigen.h>  // IWYU pragma: keep
+#include <pybind11/embed.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>  // IWYU pragma: keep
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_config.h"
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/log_tag_config.h"
+#include "num_collect/logging/logger.h"
 #include "num_collect/regularization/fista.h"
 #include "num_collect/regularization/implicit_gcv.h"
 
@@ -72,36 +71,8 @@ static void add_noise(Eigen::MatrixXd& image, double rate) {
     }
 }
 
-static void write_image(
-    const Eigen::MatrixXd& image_mat, const std::string& filepath) {
-    const num_collect::index_type rows = image_mat.rows();
-    const num_collect::index_type cols = image_mat.cols();
-
-    using png_index_type = png::uint_32;
-
-    png::image<png::rgb_pixel> image(
-        static_cast<png_index_type>(rows), static_cast<png_index_type>(cols));
-    for (num_collect::index_type j = 0; j < cols; ++j) {
-        for (num_collect::index_type i = 0; i < rows; ++i) {
-            const double raw_val = image_mat(i, j);
-            constexpr double max_val = 255.0;
-            const auto val = static_cast<std::uint8_t>(static_cast<int>(
-                std::min(max_val, std::max(0.0, max_val * raw_val))));
-
-            image[static_cast<png_index_type>(i)][static_cast<png_index_type>(
-                j)] = png::rgb_pixel(val, val, val);
-        }
-    }
-
-    image.write(filepath);
-}
-
 auto main() -> int {
-    num_collect::logging::set_default_tag_config(
-        num_collect::logging::log_tag_config()
-            .output_log_level(num_collect::logging::log_level::debug)
-            .output_log_level_in_child_iterations(
-                num_collect::logging::log_level::warning));
+    num_collect::logging::logger logger;
 
     constexpr num_collect::index_type rows = 20;
     constexpr num_collect::index_type cols = 20;
@@ -111,12 +82,10 @@ auto main() -> int {
     constexpr double radius = 0.2;
     Eigen::MatrixXd origin = Eigen::MatrixXd::Zero(rows, cols);
     add_circle(origin, center, radius);
-    write_image(origin, "./sparse_image_origin.png");
 
-    constexpr double noise_rate = 0.05;
+    constexpr double noise_rate = 0.1;
     Eigen::MatrixXd data = origin;
     add_noise(data, noise_rate);
-    write_image(data, "./sparse_image_data.png");
 
     using coeff_type = Eigen::SparseMatrix<double>;
     coeff_type coeff;
@@ -125,21 +94,49 @@ auto main() -> int {
 
     using solver_type =
         num_collect::regularization::fista<coeff_type, Eigen::VectorXd>;
-    num_collect::regularization::fista<coeff_type, Eigen::VectorXd> solver;
+    solver_type solver;
     const Eigen::VectorXd data_vec = data.reshaped();
     solver.compute(coeff, data_vec);
 
-    Eigen::VectorXd solution_vec = data_vec;
-    num_collect::regularization::implicit_gcv<solver_type> gcv{
-        solver, data_vec, solution_vec};
-    gcv.search();
-    gcv.solve(solution_vec);
+    const auto [param_lower_bound, param_upper_bound] =
+        solver.param_search_region();
+    logger.info()(
+        "param_search_region: [{}, {}]", param_lower_bound, param_upper_bound);
 
-    const Eigen::MatrixXd solution = solution_vec.reshaped(rows, cols);
-    write_image(solution, "./sparse_image_solution.png");
+    const Eigen::VectorXd& initial_solution_vec = data_vec;
+    num_collect::regularization::implicit_gcv_calculator<solver_type>
+        gcv_calculator{solver, data_vec, initial_solution_vec};
 
-    const Eigen::MatrixXd error = (solution - origin).cwiseAbs();
-    write_image(error, "./sparse_image_error.png");
+    constexpr num_collect::index_type num_samples = 41;
+    constexpr double min_log_param = -3;
+    constexpr double max_log_param = 1;
+    Eigen::VectorXd param_vec = Eigen::VectorXd::Zero(num_samples);
+    Eigen::VectorXd gcv_value_vec = Eigen::VectorXd::Zero(num_samples);
+    for (num_collect::index_type i = 0; i < num_samples; ++i) {
+        const double log_param = min_log_param +
+            (max_log_param - min_log_param) *
+                (static_cast<double>(i) / static_cast<double>(num_samples - 1));
+        const double param = std::pow(10.0, log_param);
+        const double gcv_value = gcv_calculator(param);
+        logger.info()("gcv({}) = {}", param, gcv_value);
+        param_vec(i) = param;
+        gcv_value_vec(i) = gcv_value;
+    }
 
-    return 0;
+    pybind11::scoped_interpreter interpreter;
+    auto pd = pybind11::module::import("pandas");
+    auto px = pybind11::module::import("plotly.express");
+
+    const std::string param_key = "Regularization parameter";
+    const std::string value_key = "Value of Objective Function in GCV";
+    std::unordered_map<std::string, pybind11::object> plot_data;
+    plot_data.try_emplace(param_key, pybind11::cast(param_vec));
+    plot_data.try_emplace(value_key, pybind11::cast(gcv_value_vec));
+
+    auto fig = px.attr("line")(pybind11::arg("data_frame") = plot_data,
+        pybind11::arg("x") = param_key, pybind11::arg("y") = value_key,
+        pybind11::arg("log_x") = true, pybind11::arg("log_y") = true);
+
+    fig.attr("write_html")("plot_gcv_with_fista.html");
+    fig.attr("write_image")("plot_gcv_with_fista.png");
 }
