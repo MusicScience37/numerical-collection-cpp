@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <algorithm>
 #include <cmath>
 #include <limits>
 #include <utility>
@@ -218,7 +219,11 @@ public:
         const scalar_type max_sol_est =
             (coeff_->transpose() * (*data_)).cwiseAbs().maxCoeff();
         this->logger().trace()("max_sol_est={}", max_sol_est);
-        return {max_sol_est * impl::weak_coeff_min_param<scalar_type>,
+        constexpr auto tol_update_coeff_multiplier =
+            static_cast<scalar_type>(10);
+        return {max_sol_est *
+                std::max(impl::weak_coeff_min_param<scalar_type>,
+                    tol_update_coeff_multiplier * tol_update_rate_),
             max_sol_est * impl::weak_coeff_max_param<scalar_type>};
     }
 
@@ -363,7 +368,8 @@ private:
     index_type max_iterations_{default_max_iterations};
 
     //! Default tolerance of update rate of the solution.
-    static constexpr scalar_type default_tol_update_rate = 1e-4;
+    static constexpr auto default_tol_update_rate =
+        static_cast<scalar_type>(1e-4);
 
     //! Tolerance of update rate of the solution.
     scalar_type tol_update_rate_{default_tol_update_rate};
