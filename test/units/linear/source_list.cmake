@@ -4,6 +4,7 @@ set(SOURCE_FILES
     impl/amg/build_first_coarse_grid_candidate_test.cpp
     impl/amg/compute_strong_connection_list_test.cpp
     impl/amg/create_coarse_grid_test.cpp
+    impl/amg/create_prolongation_matrix_test.cpp
     impl/amg/node_connection_list_test.cpp
     impl/amg/tune_coarse_grid_selection_test.cpp
     parallel_symmetric_successive_over_relaxation.cpp

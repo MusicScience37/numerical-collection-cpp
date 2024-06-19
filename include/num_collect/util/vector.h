@@ -94,7 +94,7 @@ public:
      *
      * \param[in] values Initializer list of values.
      */
-    vector(std::initializer_list<value_type> values) : vector_(values) {}
+    vector(std::initializer_list<T> values) : vector_(values) {}
 
     /*!
      * \brief Access to an element.
