@@ -213,7 +213,8 @@ TEST_CASE("num_collect::linear::impl::amg::tune_coarse_grid_selection") {
 
         node_classification[57] = node_layer::fine;  // NOLINT
 
-        tune_coarse_grid_selection(connections, node_classification);
+        tune_coarse_grid_selection(
+            connections, transposed_connections, node_classification);
 
         fmt::memory_buffer buffer;
         buffer.append(std::string_view("Classification:"));

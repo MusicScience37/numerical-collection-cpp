@@ -26,6 +26,7 @@
 #include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/linear/impl/amg/node_connection_list.h"
 #include "num_collect/linear/impl/amg/node_layer.h"
+#include "num_collect/util/assert.h"
 #include "num_collect/util/vector.h"
 
 namespace num_collect::linear::impl::amg {
@@ -76,6 +77,8 @@ void create_prolongation_matrix(Matrix& prolongation_matrix,
                     ++num_connected_nodes;
                 }
             }
+
+            NUM_COLLECT_ASSERT(num_connected_nodes != 0);
 
             const scalar_type value = static_cast<scalar_type>(1) /
                 static_cast<scalar_type>(num_connected_nodes);

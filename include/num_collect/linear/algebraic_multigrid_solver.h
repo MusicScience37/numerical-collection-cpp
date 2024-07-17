@@ -303,7 +303,8 @@ private:
         const auto transposed_connections = connections.transpose();
         auto node_classification = impl::amg::build_first_coarse_grid_candidate(
             connections, transposed_connections);
-        impl::amg::tune_coarse_grid_selection(connections, node_classification);
+        impl::amg::tune_coarse_grid_selection(
+            connections, transposed_connections, node_classification);
         impl::amg::create_prolongation_matrix(
             prolongation_matrix, transposed_connections, node_classification);
     }
