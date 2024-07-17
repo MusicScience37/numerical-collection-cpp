@@ -36,6 +36,7 @@
 #include "num_collect/linear/impl/amg/create_prolongation_matrix.h"
 #include "num_collect/linear/impl/amg/tune_coarse_grid_selection.h"
 #include "num_collect/linear/iterative_solver_base.h"
+#include "num_collect/linear/parallel_symmetric_successive_over_relaxation.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_mixin.h"
 
@@ -106,13 +107,16 @@ public:
     void compute(const matrix_type& coeff) {
         base_type::compute(coeff);
 
+        constexpr index_type smoother_iterations = 1;
+
         // Initialization of the first layer.
         this->logger().trace()("AMG layer size {} (first layer)", coeff.cols());
         compute_prolongation_matrix(first_layer_.prolongation_matrix, coeff);
         first_layer_.smoother.compute(coeff);
-        first_layer_.smoother.max_iterations(1);
+        first_layer_.smoother.max_iterations(smoother_iterations);
 
         // Initialization of the intermidiate layers.
+        intermidiate_layers_.clear();
         const matrix_type* current_matrix = &coeff;
         const matrix_type* current_prolongation =
             &first_layer_.prolongation_matrix;
@@ -126,7 +130,7 @@ public:
             compute_prolongation_matrix(
                 next_layer.prolongation_matrix, next_layer.coeff_matrix);
             next_layer.smoother.compute(next_layer.coeff_matrix);
-            next_layer.smoother.max_iterations(1);
+            next_layer.smoother.max_iterations(smoother_iterations);
 
             current_matrix = &next_layer.coeff_matrix;
             current_prolongation = &next_layer.prolongation_matrix;
@@ -315,7 +319,7 @@ private:
         matrix_type prolongation_matrix;
 
         //! Smoother in this layer.
-        gauss_seidel_iterative_solver<matrix_type> smoother;
+        parallel_symmetric_successive_over_relaxation<matrix_type> smoother;
     };
 
     //! Struct of internal data for the intermidiate layers.
@@ -327,7 +331,7 @@ private:
         matrix_type prolongation_matrix;
 
         //! Smoother in this layer.
-        gauss_seidel_iterative_solver<matrix_type> smoother;
+        parallel_symmetric_successive_over_relaxation<matrix_type> smoother;
     };
 
     //! Struct of internal data for the final layer.
@@ -372,7 +376,7 @@ private:
 
     //! Default value of the maximum size of matrices to solve directly.
     static constexpr index_type default_maximum_directly_solved_matrix_size =
-        3000;
+        500;
 
     //! Maximum size of matrices to solve directly.
     index_type maximum_directly_solved_matrix_size_{

@@ -78,8 +78,6 @@ void create_prolongation_matrix(Matrix& prolongation_matrix,
                 }
             }
 
-            NUM_COLLECT_ASSERT(num_connected_nodes != 0);
-
             const scalar_type value = static_cast<scalar_type>(1) /
                 static_cast<scalar_type>(num_connected_nodes);
             for (const storage_index_type connected_node_index :
