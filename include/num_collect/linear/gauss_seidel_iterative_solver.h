@@ -163,7 +163,7 @@ public:
      *
      * \return Rate of the last residual.
      */
-    [[nodiscard]] auto residual_rate() const noexcept -> index_type {
+    [[nodiscard]] auto residual_rate() const noexcept -> scalar_type {
         return residual_rate_;
     }
 

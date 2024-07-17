@@ -1,4 +1,5 @@
 set(SOURCE_FILES
+    algebraic_multigrid_solver_test.cpp
     cuthill_mckee_ordering_test.cpp
     gauss_seidel_iterative_solver_test.cpp
     impl/amg/build_first_coarse_grid_candidate_test.cpp
