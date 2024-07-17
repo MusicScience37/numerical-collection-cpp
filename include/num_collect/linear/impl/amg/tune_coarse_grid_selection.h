@@ -114,12 +114,32 @@ void tune_coarse_grid_selection_for_one_node(
  *
  * \tparam StorageIndex Type of indices in storage.
  * \param[in] connections List of connections.
+ * \param[in] transposed_connections Transposed list of connections.
  * \param[in,out] node_classification Classification of nodes.
  */
 template <typename StorageIndex>
 void tune_coarse_grid_selection(
     const node_connection_list<StorageIndex>& connections,
+    const node_connection_list<StorageIndex>& transposed_connections,
     util::vector<node_layer>& node_classification) {
+    // At least one node must be strongly connected to a node not in coarse
+    // grid.
+    for (index_type i = 0; i < node_classification.size(); ++i) {
+        if (node_classification[i] != node_layer::coarse) {
+            index_type num_connected_nodes = 0;
+            for (const index_type connected_node_index :
+                transposed_connections.connected_nodes_to(i)) {
+                if (node_classification[connected_node_index] ==
+                    node_layer::coarse) {
+                    ++num_connected_nodes;
+                }
+            }
+            if (num_connected_nodes == 0) {
+                node_classification[i] = node_layer::coarse;
+            }
+        }
+    }
+
     for (index_type i = 0; i < node_classification.size(); ++i) {
         if (node_classification[i] == node_layer::fine) {
             tune_coarse_grid_selection_for_one_node(

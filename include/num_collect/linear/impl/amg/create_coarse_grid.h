@@ -47,7 +47,8 @@ template <base::concepts::sparse_matrix Matrix>
     const auto transposed_connections = connections.transpose();
     auto node_classification =
         build_first_coarse_grid_candidate(connections, transposed_connections);
-    tune_coarse_grid_selection(connections, node_classification);
+    tune_coarse_grid_selection(
+        connections, transposed_connections, node_classification);
     return node_classification;
 }
 

@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <limits>
 #include <optional>
 
 #include "num_collect/base/index_type.h"
@@ -61,7 +62,7 @@ template <typename StorageIndex>
     const util::vector<node_layer>& classification)
     -> std::optional<index_type> {
     std::optional<index_type> index;
-    auto score = static_cast<StorageIndex>(-1);
+    auto score = std::numeric_limits<StorageIndex>::min();
     for (index_type i = 0; i < scores.size(); ++i) {
         if (classification[i] == node_layer::unclassified) {
             if (scores[i] > score) {
