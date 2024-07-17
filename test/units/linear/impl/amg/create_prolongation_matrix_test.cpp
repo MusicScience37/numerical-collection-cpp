@@ -22,6 +22,7 @@
 #include <ApprovalTests.hpp>
 #include <Eigen/SparseCore>
 #include <catch2/catch_test_macros.hpp>
+#include <fmt/format.h>
 
 #include "num_collect/linear/impl/amg/node_connection_list.h"
 #include "num_collect/linear/impl/amg/node_layer.h"

@@ -26,7 +26,6 @@
 #include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/linear/impl/amg/node_connection_list.h"
 #include "num_collect/linear/impl/amg/node_layer.h"
-#include "num_collect/util/assert.h"
 #include "num_collect/util/vector.h"
 
 namespace num_collect::linear::impl::amg {

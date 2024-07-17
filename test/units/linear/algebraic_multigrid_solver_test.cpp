@@ -19,6 +19,8 @@
  */
 #include "num_collect/linear/algebraic_multigrid_solver.h"
 
+#include <Eigen/IterativeLinearSolvers>
+#include <Eigen/SparseCore>
 #include <catch2/catch_test_macros.hpp>
 
 #include "num_collect/base/index_type.h"

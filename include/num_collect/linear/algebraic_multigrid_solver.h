@@ -19,6 +19,8 @@
  */
 #pragma once
 
+#include <cmath>
+#include <cstddef>
 #include <deque>
 #include <vector>
 
@@ -30,7 +32,6 @@
 #include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/linear/gauss_seidel_iterative_solver.h"
 #include "num_collect/linear/impl/amg/build_first_coarse_grid_candidate.h"
 #include "num_collect/linear/impl/amg/compute_strong_connection_list.h"
 #include "num_collect/linear/impl/amg/create_prolongation_matrix.h"
