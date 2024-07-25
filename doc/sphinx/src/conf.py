@@ -14,6 +14,10 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
+import pathlib
+
+THIS_DIR = pathlib.Path(__file__).absolute().parent
+
 # -- Project information -----------------------------------------------------
 
 project = "numerical-collection-cpp"
@@ -24,22 +28,23 @@ author = "MusicScience37"
 
 # -- General configuration ---------------------------------------------------
 
-extensions = [
-    "sphinx.ext.todo",
-    "myst_parser",
-]
+extensions = []
 
 templates_path = ["_templates"]
 
 exclude_patterns = []
 
-# setting of PlantUML
-extensions += ["sphinxcontrib.plantuml"]
-plantuml_output_format = "svg"
-plantuml_syntax_error_image = True
+# settings of myst-parser
+extensions += ["myst_parser"]
+myst_enable_extensions = [
+    "amsmath",
+    "dollarmath",
+]
 
-# setting of mathjax
-extensions += ["sphinx.ext.mathjax"]
+# setting of MathJax
+# Extension for MathJax is already enabled by myst_nb.
+# MathJax URL working with Plotly was written in https://www.npmjs.com/package/plotly.js/v/2.16.4#mathjax.
+mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"
 mathjax3_config = {
     "tex": {
         "macros": {
@@ -47,6 +52,21 @@ mathjax3_config = {
         },
     },
 }
+
+# setting of todo
+extensions += ["sphinx.ext.todo"]
+todo_include_todos = True
+
+# setting of PlantUML
+extensions += ["sphinxcontrib.plantuml"]
+plantuml_output_format = "svg"
+plantuml_syntax_error_image = True
+
+# setting of bibtex
+# https://sphinxcontrib-bibtex.readthedocs.io/
+extensions += ["sphinxcontrib.bibtex"]
+bibtex_bibfiles = [str(THIS_DIR.parent.parent / "articles.bib")]
+bibtex_default_style = "plain"
 
 # -- Options for HTML output -------------------------------------------------
 
