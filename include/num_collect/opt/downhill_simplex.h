@@ -51,7 +51,7 @@ template <concepts::objective_function ObjectiveFunction>
 class downhill_simplex;
 
 /*!
- * \brief Class of downhill simplex method.
+ * \brief Class of downhill simplex method \cite Press2007.
  *
  * \tparam ObjectiveFunction Type of the objective function.
  */

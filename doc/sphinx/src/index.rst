@@ -9,6 +9,8 @@ A collection of algorithms in numerical analysis implemented in C++.
 
     license
     release_notes/index
+    algorithm_list
+    bibliography
 
 .. toctree::
     :maxdepth: 1

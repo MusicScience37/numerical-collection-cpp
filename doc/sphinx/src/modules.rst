@@ -4,9 +4,6 @@ Modules
 base
     Definitions common in this project.
 
-util
-    Utility common in this project.
-
 logging
     Logging.
 
@@ -21,6 +18,9 @@ regularization
 
 interp
     Interpolation algorithms.
+
+rbf
+    RBF interpolation
 
 multi_double
     Multiple precision numbers with double numbers.
@@ -39,3 +39,9 @@ integration
 
 ode
     Solvers of ordinary differential equations (ODE).
+
+linear
+    Solvers of linear equations.
+
+util
+    Utility common in this project.
