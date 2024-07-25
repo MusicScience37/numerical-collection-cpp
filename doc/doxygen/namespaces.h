@@ -58,32 +58,6 @@ namespace num_collect {
     }  // namespace base
 
     /*!
-     * \dir num_collect/util
-     * \brief Directory of utility classes.
-     */
-
-    //! Namespace of utilities.
-    namespace util {
-
-        /*!
-         * \dir num_collect/util/concepts
-         * \brief Directory of C++ concepts.
-         */
-
-        //! Namespace of C++ concepts.
-        namespace concepts {}
-
-        /*!
-         * \dir num_collect/util/impl
-         * \brief Directory of implementation.
-         */
-
-        //! Namespace of internal implementations.
-        namespace impl {}
-
-    }  // namespace util
-
-    /*!
      * \dir num_collect/logging
      * \brief Directory of logging.
      */
@@ -310,6 +284,56 @@ namespace num_collect {
     }  // namespace interp
 
     /*!
+     * \dir num_collect/rbf
+     * \brief Directory of RBF interpolation.
+     */
+
+    //! Namespace of RBF interpolation.
+    namespace rbf {
+
+        /*!
+         * \dir num_collect/rbf/concepts
+         * \brief Directory of C++ concepts.
+         */
+
+        //! Namespace of C++ concepts.
+        namespace concepts {}
+
+        /*!
+         * \dir num_collect/rbf/distance_functions
+         * \brief Directory of distance functions for RBF interpolation.
+         */
+
+        //! Namespace of distance functions for RBF interpolation.
+        namespace distance_functions {}
+
+        /*!
+         * \dir num_collect/rbf/impl
+         * \brief Directory of internal implementations.
+         */
+
+        //! Namespace of internal implementations.
+        namespace impl {}
+
+        /*!
+         * \dir num_collect/rbf/length_parameter_calculators
+         * \brief Directory of calculators of length parameters.
+         */
+
+        //! Namespace of calculators of length parameters.
+        namespace length_parameter_calculators {}
+
+        /*!
+         * \dir num_collect/rbf/rbfs
+         * \brief Directory of RBFs.
+         */
+
+        //! Namespace of RBFs.
+        namespace rbfs {}
+
+    }  // namespace rbf
+
+    /*!
      * \dir num_collect/numbers
      * \brief Directory of classes of numbers.
      */
@@ -501,6 +525,32 @@ namespace num_collect {
         }  // namespace impl
 
     }  // namespace linear
+
+    /*!
+     * \dir num_collect/util
+     * \brief Directory of utility classes.
+     */
+
+    //! Namespace of utilities.
+    namespace util {
+
+        /*!
+         * \dir num_collect/util/concepts
+         * \brief Directory of C++ concepts.
+         */
+
+        //! Namespace of C++ concepts.
+        namespace concepts {}
+
+        /*!
+         * \dir num_collect/util/impl
+         * \brief Directory of implementation.
+         */
+
+        //! Namespace of internal implementations.
+        namespace impl {}
+
+    }  // namespace util
 
 }  // namespace num_collect
 

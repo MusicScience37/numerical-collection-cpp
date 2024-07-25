@@ -1,7 +1,145 @@
 # List of Algorithms
 
-## util Module
+## Automatic Differentiation (`auto_diff` Module)
 
-| Algorithm                           | Class         |
-| :---------------------------------- | :------------ |
-| Kahan summation {cite:p}`Kahan1965` | `kahan_adder` |
+| Algorithm                                                    | Namespace                          |
+| :----------------------------------------------------------- | :--------------------------------- |
+| Backward-mode automatic differentiation {cite:p}`Kubota1998` | `num_collect::auto_diff::backward` |
+| Forward-mode automatic differentiation {cite:p}`Kubota1998`  | `num_collect::auto_diff::forward`  |
+
+## Optimization (`opt` Module)
+
+| Algorithm                                                                | Class                                            |
+| :----------------------------------------------------------------------- | :----------------------------------------------- |
+| Adaptive diagonal curves (ADC) {cite:p}`Sergeyev2006`                    | `num_collect::opt::adaptive_diagonal_curves`     |
+| Backtracking line search                                                 | `num_collect::opt::backtracking_line_searcher`   |
+| Conjugate gradient method                                                | `num_collect::opt::conjugate_gradient_optimizer` |
+| Dividing rectangles (DIRECT) method                                      | `num_collect::opt::dividing_rectangles`          |
+| Downhill simplex method {cite:p}`Press2007`                              | `num_collect::opt::downhill_simplex`             |
+| Downhill simplex method with simulated annealing {cite:p}`Press2007`     | `num_collect::opt::annealing_downhill_simplex`   |
+| Gaussian process optimization {cite:p}`Srinivas2010,Brochu2010`          | `num_collect::opt::gaussian_process_optimizer`   |
+| Quasi-Newton method with Broyden-Fletcher-Goldfarb-Shanno (BFGS) formula | `num_collect::opt::bfgs_optimizer`               |
+| Quasi-Newton method with Davidon-Fletcher-Powell (DFP) formula           | `num_collect::opt::dfp_optimizer`                |
+
+## Regularization (`regularization` Module)
+
+| Algorithm                                                                  | Class                                                                                     |
+| :------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
+| Fast iterative shrinkage-thresholding algorithm (FISTA) {cite:p}`Beck2009` | `num_collect::regularization::fista`                                                      |
+| Generalized cross validation (GCV)                                         | `num_collect::regularization::explicit_gcv`, `num_collect::regularization::implicit_gcv`  |
+| L-curve                                                                    | `num_collect::regularization::explicit_l_curve`                                           |
+| Tikhonov regularization {cite:p}`Elden1982,Hansen1994`                     | `num_collect::regularization::tikhonov`, `num_collect::regularization::full_gen_tikhonov` |
+
+## RBF Interpolation (`rbf` Module)
+
+```{todo}
+Reconsider grouping of algorithms in this section.
+```
+
+| Algorithm                                                                        | Class / Function                                                                                                                                        |
+| :------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Gaussian process                                                                 | `num_collect::rbf::gaussian_process_interpolator`                                                                                                       |
+| Halton nodes {cite:p}`Fornberg2015`                                              | `num_collect::rbf::generate_halton_nodes`                                                                                                               |
+| Maximum likelihood estimator (MLE) for length parameters {cite:p}`Scheuerer2011` | `num_collect::rbf::rbf_interpolator::optimize_length_parameter_scale`, `num_collect::rbf::rbf_polynomial_interpolator::optimize_length_parameter_scale` |
+| RBF interpolation                                                                | `num_collect::rbf::rbf_interpolator`, `num_collect::rbf::rbf_polynomial_interpolator`                                                                   |
+
+| RBF                                                               | Class                                               |
+| :---------------------------------------------------------------- | :-------------------------------------------------- |
+| Gaussian                                                          | `num_collect::rbf::rbfs::gaussian_rbf`              |
+| Inverse multi-quadric                                             | `num_collect::rbf::rbfs::inverse_multi_quadric_rbf` |
+| Inverse quadratic                                                 | `num_collect::rbf::rbfs::inverse_quadratic_rbf`     |
+| Multi-quadric                                                     | `num_collect::rbf::rbfs::multi_quadric_rbf`         |
+| Sech                                                              | `num_collect::rbf::rbfs::sech_rbf`                  |
+| Wendland's Compactly Supported RBF (CSRBF) {cite:p}`Wendland1995` | `num_collect::rbf::rbfs::wendland_csrbf`            |
+
+## Root-Finding Algorithms (`roots` Module)
+
+| Algorithm             | Class                                |
+| :-------------------- | :----------------------------------- |
+| Newton-Raphson method | `num_collect::roots::newton_raphson` |
+
+## Special functions (`functions` Module)
+
+| Function          | Class                              |
+| :---------------- | :--------------------------------- |
+| Gamma function    | `num_collect::functions::gamma`    |
+| Legendre function | `num_collect::functions::legendre` |
+
+## Numerical Integration (`integration` Module)
+
+| Algorithm                                           | Class                                                                                                                                                         |
+| :-------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Double Exponential (DE) rule                        | `num_collect::integration::de_finite_integrator`, `num_collect::integration::de_infinite_integrator`, `num_collect::integration::de_semi_infinite_integrator` |
+| Gauss-Legendre formula                              | `num_collect::integration::gauss_legendre_integrator`                                                                                                         |
+| Gauss-Legendre-Kronrod formula {cite:p}`Laurie1997` | `num_collect::integration::gauss_legendre_kronrod_integrator`                                                                                                 |
+| TANH rule                                           | `num_collect::integration::tanh_finite_integrator`                                                                                                            |
+
+## ODE Solvers (`ode` Module)
+
+### Formulas of Runge-Kutta method
+
+| Formula                                             | Class                                                 |
+| :-------------------------------------------------- | :---------------------------------------------------- |
+| ARK4(3)6L[2]SA-ERK formula {cite:p}`Kennedy2003`    | `num_collect::ode::runge_kutta::ark43_erk_formula`    |
+| ARK4(3)6L[2]SA-ESDIRK formula {cite:p}`Kennedy2003` | `num_collect::ode::runge_kutta::ark43_esdirk_formula` |
+| ARK5(4)8L[2]SA-ESDIRK formula {cite:p}`Kennedy2003` | `num_collect::ode::runge_kutta::ark54_esdirk_formula` |
+| DOPRI5 formula {cite:p}`Hairer1991`                 | `num_collect::ode::runge_kutta::dopri5_formula`       |
+| ESDIRK45c formula {cite:p}`Jorgensen2018`           | `num_collect::ode::runge_kutta::esdirk45_formula`     |
+| Runge-Kutta 4 (RK4)                                 | `num_collect::ode::runge_kutta::rk4_formula`          |
+| Runge-Kutta-Fehlberg 45 (RKF45)                     | `num_collect::ode::runge_kutta::rkf45_formula`        |
+| 4th order SDIRK {cite:p}`Hairer1991`                | `num_collect::ode::runge_kutta::sdirk4_formula`       |
+| Tanaka Formula 1                                    | `num_collect::ode::runge_kutta::tanaka1_formula`      |
+| Tanaka Formula 2                                    | `num_collect::ode::runge_kutta::tanaka2_formula`      |
+
+### Formulas of Rosenbrock method
+
+| Formula                             | Class                                            |
+| :---------------------------------- | :----------------------------------------------- |
+| RODASP formula                      | `num_collect::ode::rosenbrock::rodasp_formula`   |
+| RODASPR formula {cite:p}`Rang2015`  | `num_collect::ode::rosenbrock::rodaspr_formula`  |
+| ROS3w formula {cite:p}`Rang2015`    | `num_collect::ode::rosenbrock::ros3w_formula`    |
+| ROS34PW3 formula {cite:p}`Rang2015` | `num_collect::ode::rosenbrock::ros34pw3_formula` |
+
+### Average vector field (AVF) method {cite:p}`Quispel2008`
+
+| Order | Class                                 |
+| ----: | :------------------------------------ |
+|     2 | `num_collect::ode::avf::avf2_formula` |
+|     3 | `num_collect::ode::avf::avf3_formula` |
+|     4 | `num_collect::ode::avf::avf4_formula` |
+
+### Symplectic formulas
+
+| Formula                                                             | Class                                                      |
+| :------------------------------------------------------------------ | :--------------------------------------------------------- |
+| Leap-frog formula                                                   | `num_collect::ode::symplectic::leap_frog_formula`          |
+| Fourth-order symplectic integration formula in {cite:p}`Forest1990` | `num_collect::ode::symplectic::symplectic_forest4_formula` |
+
+### Other formulas
+
+| Formula                | Class                                                   |
+| :--------------------- | :------------------------------------------------------ |
+| Implicit Euler formula | `num_collect::ode::runge_kutta::implicit_euler_formula` |
+
+### Controllers of step sizes
+
+| Algorithm                               | Class                                          |
+| :-------------------------------------- | :--------------------------------------------- |
+| Basic algorithm in {cite:p}`Hairer1993` | `num_collect::ode::basic_step_size_controller` |
+| PI controller {cite:p}`Gustafsson1991`  | `num_collect::ode::pi_step_size_controller`    |
+
+## Solvers of Linear Equations (`linear` Module)
+
+| Algorithm                                                      | Class                                                                                                                             |
+| :------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
+| Algebraic multigrid (AMG) method {cite:p}`Ruge1987`            | `num_collect::linear::algebraic_multigrid_solver`                                                                                 |
+| Cuthill-McKee ordering {cite:p}`Golub2013,Knabner2003`         | `num_collect::linear::cuthill_mckee_ordering`                                                                                     |
+| Gauss-Seidel iteration {cite:p}`Golub2013`                     | `num_collect::linear::gauss_seidel_iterative_solver`                                                                              |
+| Symmetric successive over-relaxation {cite:p}`Golub2013`       | `num_collect::linear::symmetric_successive_over_relaxation`, `num_collect::linear::parallel_symmetric_successive_over_relaxation` |
+| Reverse Cuthill-McKee ordering {cite:p}`Golub2013,Knabner2003` | `num_collect::linear::reverse_cuthill_mckee_ordering`                                                                             |
+
+## Common Algorithms (`util` Module)
+
+| Algorithm                           | Class                            |
+| :---------------------------------- | :------------------------------- |
+| Kahan summation {cite:p}`Kahan1965` | `num_collect::util::kahan_adder` |

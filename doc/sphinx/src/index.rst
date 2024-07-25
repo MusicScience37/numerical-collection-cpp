@@ -9,6 +9,8 @@ A collection of algorithms in numerical analysis implemented in C++.
 
     license
     release_notes/index
+    algorithm_list
+    bibliography
 
 .. toctree::
     :maxdepth: 1
@@ -18,8 +20,6 @@ A collection of algorithms in numerical analysis implemented in C++.
     modules
     user_guide/index
     API Reference <https://numcollect.musicscience37.com/api/index.html>
-    algorithm_list
-    bibliography
 
 .. toctree::
     :maxdepth: 1
