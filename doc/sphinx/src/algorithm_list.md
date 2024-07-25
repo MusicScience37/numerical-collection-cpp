@@ -1,4 +1,4 @@
-# List of Algorithms
+# Algorithms
 
 ## Automatic Differentiation (`auto_diff` Module)
 
@@ -23,25 +23,44 @@
 
 ## Regularization (`regularization` Module)
 
+### Computation of Regularized Solutions
+
 | Algorithm                                                                  | Class                                                                                     |
 | :------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
 | Fast iterative shrinkage-thresholding algorithm (FISTA) {cite:p}`Beck2009` | `num_collect::regularization::fista`                                                      |
-| Generalized cross validation (GCV)                                         | `num_collect::regularization::explicit_gcv`, `num_collect::regularization::implicit_gcv`  |
-| L-curve                                                                    | `num_collect::regularization::explicit_l_curve`                                           |
 | Tikhonov regularization {cite:p}`Elden1982,Hansen1994`                     | `num_collect::regularization::tikhonov`, `num_collect::regularization::full_gen_tikhonov` |
+
+### Selection of Regularization Parameters
+
+| Algorithm                          | Class                                                                                    |
+| :--------------------------------- | :--------------------------------------------------------------------------------------- |
+| Generalized cross validation (GCV) | `num_collect::regularization::explicit_gcv`, `num_collect::regularization::implicit_gcv` |
+| L-curve                            | `num_collect::regularization::explicit_l_curve`                                          |
 
 ## RBF Interpolation (`rbf` Module)
 
-```{todo}
-Reconsider grouping of algorithms in this section.
-```
+### Interpolator Using RBF Interpolation
 
-| Algorithm                                                                        | Class / Function                                                                                                                                        |
-| :------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Gaussian process                                                                 | `num_collect::rbf::gaussian_process_interpolator`                                                                                                       |
-| Halton nodes {cite:p}`Fornberg2015`                                              | `num_collect::rbf::generate_halton_nodes`                                                                                                               |
-| Maximum likelihood estimator (MLE) for length parameters {cite:p}`Scheuerer2011` | `num_collect::rbf::rbf_interpolator::optimize_length_parameter_scale`, `num_collect::rbf::rbf_polynomial_interpolator::optimize_length_parameter_scale` |
-| RBF interpolation                                                                | `num_collect::rbf::rbf_interpolator`, `num_collect::rbf::rbf_polynomial_interpolator`                                                                   |
+| Type of Length Parameter | Type of RBF | Use of Polynomial Terms | Alias for Class                                                                                |
+| :----------------------- | :---------- | :---------------------- | :--------------------------------------------------------------------------------------------- |
+| Local                    | Global      | No                      | `num_collect::rbf::local_rbf_interpolator`                                                     |
+| Global                   | Global      | No                      | `num_collect::rbf::global_rbf_interpolator`, `num_collect::rbf::gaussian_process_interpolator` |
+| Local                    | Compact     | No                      | `num_collect::rbf::local_csrbf_interpolator`                                                   |
+| Global                   | Global      | Yes                     | `num_collect::rbf::global_rbf_polynomial_interpolator`                                         |
+
+### Selection of Length Parameters
+
+| Algorithm                                                                        | Class / Function                                                     |
+| :------------------------------------------------------------------------------- | :------------------------------------------------------------------- |
+| Maximum likelihood estimator (MLE) for length parameters {cite:p}`Scheuerer2011` | `optimize_length_parameter_scale` member functions in interpolators. |
+
+### Selection of Points
+
+| Algorithm                           | Class / Function                          |
+| :---------------------------------- | :---------------------------------------- |
+| Halton nodes {cite:p}`Fornberg2015` | `num_collect::rbf::generate_halton_nodes` |
+
+### RBFs
 
 | RBF                                                               | Class                                               |
 | :---------------------------------------------------------------- | :-------------------------------------------------- |
@@ -67,12 +86,14 @@ Reconsider grouping of algorithms in this section.
 
 ## Numerical Integration (`integration` Module)
 
-| Algorithm                                           | Class                                                                                                                                                         |
-| :-------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Double Exponential (DE) rule                        | `num_collect::integration::de_finite_integrator`, `num_collect::integration::de_infinite_integrator`, `num_collect::integration::de_semi_infinite_integrator` |
-| Gauss-Legendre formula                              | `num_collect::integration::gauss_legendre_integrator`                                                                                                         |
-| Gauss-Legendre-Kronrod formula {cite:p}`Laurie1997` | `num_collect::integration::gauss_legendre_kronrod_integrator`                                                                                                 |
-| TANH rule                                           | `num_collect::integration::tanh_finite_integrator`                                                                                                            |
+| Algorithm                                           | Range               | Class                                                         |
+| :-------------------------------------------------- | :------------------ | :------------------------------------------------------------ |
+| Double Exponential (DE) rule                        | $(a,b)$             | `num_collect::integration::de_finite_integrator`              |
+| Double Exponential (DE) rule                        | $(-\infty, \infty)$ | `num_collect::integration::de_infinite_integrator`            |
+| Double Exponential (DE) rule                        | $(0, \infty)$       | `num_collect::integration::de_semi_infinite_integrator`       |
+| Gauss-Legendre formula                              | $(a,b)$             | `num_collect::integration::gauss_legendre_integrator`         |
+| Gauss-Legendre-Kronrod formula {cite:p}`Laurie1997` | $(a,b)$             | `num_collect::integration::gauss_legendre_kronrod_integrator` |
+| TANH rule                                           | $(a,b)$             | `num_collect::integration::tanh_finite_integrator`            |
 
 ## ODE Solvers (`ode` Module)
 
@@ -130,13 +151,20 @@ Reconsider grouping of algorithms in this section.
 
 ## Solvers of Linear Equations (`linear` Module)
 
-| Algorithm                                                      | Class                                                                                                                             |
-| :------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
-| Algebraic multigrid (AMG) method {cite:p}`Ruge1987`            | `num_collect::linear::algebraic_multigrid_solver`                                                                                 |
-| Cuthill-McKee ordering {cite:p}`Golub2013,Knabner2003`         | `num_collect::linear::cuthill_mckee_ordering`                                                                                     |
-| Gauss-Seidel iteration {cite:p}`Golub2013`                     | `num_collect::linear::gauss_seidel_iterative_solver`                                                                              |
-| Symmetric successive over-relaxation {cite:p}`Golub2013`       | `num_collect::linear::symmetric_successive_over_relaxation`, `num_collect::linear::parallel_symmetric_successive_over_relaxation` |
-| Reverse Cuthill-McKee ordering {cite:p}`Golub2013,Knabner2003` | `num_collect::linear::reverse_cuthill_mckee_ordering`                                                                             |
+### Solvers of Linear Equations
+
+| Algorithm                                                | Class                                                                                                                             |
+| :------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
+| Algebraic multigrid (AMG) method {cite:p}`Ruge1987`      | `num_collect::linear::algebraic_multigrid_solver`                                                                                 |
+| Gauss-Seidel iteration {cite:p}`Golub2013`               | `num_collect::linear::gauss_seidel_iterative_solver`                                                                              |
+| Symmetric successive over-relaxation {cite:p}`Golub2013` | `num_collect::linear::symmetric_successive_over_relaxation`, `num_collect::linear::parallel_symmetric_successive_over_relaxation` |
+
+### Ordering Algorithms
+
+| Algorithm                                                            | Class                                                 |
+| :------------------------------------------------------------------- | :---------------------------------------------------- |
+| Cuthill-McKee (CM) ordering {cite:p}`Golub2013,Knabner2003`          | `num_collect::linear::cuthill_mckee_ordering`         |
+| Reverse Cuthill-McKee (RCM) ordering {cite:p}`Golub2013,Knabner2003` | `num_collect::linear::reverse_cuthill_mckee_ordering` |
 
 ## Common Algorithms (`util` Module)
 
