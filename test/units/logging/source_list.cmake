@@ -31,6 +31,7 @@ set(SOURCE_FILES
     log_tag_test.cpp
     log_tag_view_test.cpp
     logger_test.cpp
+    logging_macros_test.cpp
     logging_mixin_test.cpp
     sinks/combined_log_sink_test.cpp
     sinks/file_wrapper_test.cpp
