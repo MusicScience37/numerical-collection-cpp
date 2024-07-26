@@ -28,6 +28,7 @@
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/regularization/explicit_regularized_solver_base.h"
 #include "num_collect/regularization/tikhonov.h"
 #include "num_collect/util/assert.h"
@@ -83,18 +84,18 @@ public:
     void compute(const coeff_type& coeff, const data_type& data,
         const coeff_type& reg_coeff) {
         if (coeff.rows() != data.rows()) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "The number of rows in the coefficient matrix must match the "
                 "number of rows in data.");
         }
         if (coeff.cols() != reg_coeff.cols()) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "The number of columns in the coefficient matrix must match "
                 "the number of columns in the coefficient matrix of the "
                 "regularization term.");
         }
         if (reg_coeff.rows() >= reg_coeff.cols()) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Coefficient matrix for the regularization term must have rows "
                 "less than columns.");
         }
@@ -108,7 +109,7 @@ public:
         Eigen::ColPivHouseholderQR<coeff_type> qr_reg_adj;
         qr_reg_adj.compute(reg_coeff.adjoint());
         if (qr_reg_adj.rank() < qr_reg_adj.cols()) {
-            throw precondition_not_satisfied(
+            NUM_COLLECT_LOG_AND_THROW(precondition_not_satisfied,
                 "reg_coeff must have full row rank.");
         }
         const coeff_type v = qr_reg_adj.householderQ();
@@ -116,7 +117,7 @@ public:
         Eigen::ColPivHouseholderQR<coeff_type> qr_coeff_v2;
         qr_coeff_v2.compute(coeff * v.rightCols(n - p));
         if (qr_coeff_v2.rank() < qr_coeff_v2.cols()) {
-            throw precondition_not_satisfied(
+            NUM_COLLECT_LOG_AND_THROW(precondition_not_satisfied,
                 "reg_coeff and coeff must not have common elements "
                 "other than zero in their kernel.");
         }

@@ -28,6 +28,7 @@
 
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/exception.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/ode/concepts/mass_problem.h"
 #include "num_collect/ode/concepts/multi_variate_problem.h"
 #include "num_collect/ode/concepts/time_differentiable_problem.h"
@@ -106,7 +107,7 @@ public:
         base::concepts::real_scalar_dense_vector Result>
     void apply_jacobian(const Target& target, Result& result) {
         if (problem_ == nullptr) {
-            throw precondition_not_satisfied(
+            NUM_COLLECT_LOG_AND_THROW(precondition_not_satisfied,
                 "evaluate_and_update_jacobian is not called.");
         }
 

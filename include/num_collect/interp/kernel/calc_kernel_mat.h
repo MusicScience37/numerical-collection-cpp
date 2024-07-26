@@ -26,6 +26,7 @@
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/interp/kernel/concepts/kernel.h"
+#include "num_collect/logging/logging_macros.h"
 
 namespace num_collect::interp::kernel {
 
@@ -101,7 +102,7 @@ template <concepts::kernel Kernel, typename Container>
         typename impl::calc_kernel_mat_functor<Kernel,
             Container>::result_type> {
     if (list.empty()) {
-        throw invalid_argument(
+        NUM_COLLECT_LOG_AND_THROW(invalid_argument,
             "calc_kernel_mat requires at least one variable.");
     }
 

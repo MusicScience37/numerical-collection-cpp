@@ -27,6 +27,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/opt/concepts/objective_function.h"
 #include "num_collect/opt/concepts/single_variate_objective_function.h"
 #include "num_collect/opt/optimizer_base.h"
@@ -204,7 +205,8 @@ public:
      */
     auto num_samples(index_type value) -> sampling_optimizer& {
         if (value < 2) {
-            throw invalid_argument("Number of samples must be at least two.");
+            NUM_COLLECT_LOG_AND_THROW(
+                invalid_argument, "Number of samples must be at least two.");
         }
         num_samples_ = value;
         return *this;
@@ -218,7 +220,7 @@ public:
      */
     auto max_iterations(index_type value) -> sampling_optimizer& {
         if (value <= 0) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Maximum number of iterations must be a positive integer.");
         }
         max_iterations_ = value;

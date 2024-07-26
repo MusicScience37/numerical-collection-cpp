@@ -21,6 +21,7 @@
 
 #include "num_collect/base/exception.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/logging/logging_mixin.h"
 #include "num_collect/ode/concepts/formula.h"
 #include "num_collect/ode/error_tolerances.h"
@@ -98,7 +99,7 @@ public:
      */
     auto reduction_rate(const scalar_type& val) -> Derived& {
         if (val <= static_cast<scalar_type>(0)) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Rate to reduce step sizes when error is large must be a "
                 "positive value.");
         }

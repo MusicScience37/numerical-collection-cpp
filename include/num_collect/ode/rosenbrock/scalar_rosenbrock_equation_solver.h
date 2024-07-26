@@ -26,6 +26,7 @@
 #include <fmt/format.h>  // IWYU pragma: keep
 
 #include "num_collect/base/exception.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/ode/concepts/mass_problem.h"
 #include "num_collect/ode/concepts/single_variate_differentiable_problem.h"
 #include "num_collect/ode/concepts/time_differentiable_problem.h"
@@ -99,8 +100,8 @@ public:
         inverted_value -= step_size * inverted_jacobian_coeff_ * jacobian_;
         using std::abs;
         if (abs(inverted_value) < std::numeric_limits<scalar_type>::epsilon()) {
-            throw algorithm_failure(fmt::format(
-                "Value to invert is too small: {}.", inverted_value));
+            NUM_COLLECT_LOG_AND_THROW(algorithm_failure,
+                "Value to invert is too small: {}.", inverted_value);
         }
         inverted_coeff_ = static_cast<scalar_type>(1) / inverted_value;
     }

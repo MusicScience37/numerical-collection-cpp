@@ -24,6 +24,7 @@
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/ode/concepts/formula.h"
 #include "num_collect/ode/error_tolerances.h"  // IWYU pragma: keep
 #include "num_collect/ode/impl/get_least_known_order.h"
@@ -95,7 +96,7 @@ public:
     auto step_size_factor_safety_coeff(
         const scalar_type& val) -> basic_step_size_controller& {
         if (val <= static_cast<scalar_type>(0)) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Safety coefficient for factors of step sizes must be a "
                 "positive value.");
         }
@@ -112,7 +113,7 @@ public:
     auto max_step_size_factor(
         const scalar_type& val) -> basic_step_size_controller& {
         if (val <= static_cast<scalar_type>(0)) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Maximum factor of step sizes must be a positive value.");
         }
         max_step_size_factor_ = val;

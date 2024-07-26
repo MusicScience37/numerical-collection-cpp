@@ -35,6 +35,7 @@
 #include "num_collect/constants/pi.h"  // IWYU pragma: keep
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/opt/concepts/objective_function.h"
 #include "num_collect/opt/dividing_rectangles.h"
 #include "num_collect/opt/function_object_wrapper.h"
@@ -93,7 +94,7 @@ public:
     void init(const variable_type& lower, const variable_type& upper) {
         if constexpr (is_eigen_vector_v<variable_type>) {
             if (lower.size() != upper.size()) {
-                throw invalid_argument(
+                NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                     "Lower and upper limits must have the same size.");
             }
         }
@@ -190,7 +191,7 @@ public:
      */
     auto max_evaluations(index_type value) -> gaussian_process_optimizer& {
         if (value <= 0) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Maximum number of function evaluations must be a positive "
                 "integer.");
         }
@@ -207,7 +208,7 @@ public:
     auto max_lower_bound_evaluations(
         index_type value) -> gaussian_process_optimizer& {
         if (value <= 0) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Maximum number of evaluations of lower bounds must be a "
                 "positive integer.");
         }

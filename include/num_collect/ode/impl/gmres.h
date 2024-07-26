@@ -30,6 +30,7 @@
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/logging/logging_macros.h"
 
 namespace num_collect::ode::impl {
 
@@ -119,7 +120,7 @@ public:
      */
     auto max_subspace_dim(index_type val) -> gmres& {
         if (val <= 0) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Maximum number of dimensions of subspace must be a positive "
                 "integer.");
         }

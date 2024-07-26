@@ -28,6 +28,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/regularization/impl/weak_coeff_param.h"  // IWYU pragma: keep
 #include "num_collect/regularization/iterative_regularized_solver_base.h"
 
@@ -91,17 +92,17 @@ public:
         (void)param;
 
         if (coeff_->rows() != data_->rows()) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Coefficient matrix and data vector must have the same number "
                 "of rows.");
         }
         if (coeff_->cols() != solution.rows()) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "The number of columns in the coefficient matrix must match "
                 "the number of rows in solution vector.");
         }
         if (data_->cols() != solution.cols()) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Data and solution must have the same number of columns.");
         }
 
@@ -271,7 +272,7 @@ public:
      */
     auto max_iterations(index_type value) -> fista& {
         if (value <= 0) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Maximum number of iterations must be a positive integer.");
         }
         max_iterations_ = value;
@@ -295,7 +296,7 @@ public:
      */
     auto tol_update_rate(scalar_type value) -> fista& {
         if (value <= static_cast<scalar_type>(0)) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Tolerance of update rate of the solution must be a positive "
                 "value.");
         }

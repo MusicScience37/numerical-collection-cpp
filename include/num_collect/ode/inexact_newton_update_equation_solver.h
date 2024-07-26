@@ -30,6 +30,7 @@
 #include "num_collect/base/iterative_solver_base.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/ode/concepts/differentiable_problem.h"
 #include "num_collect/ode/concepts/multi_variate_differentiable_problem.h"
 #include "num_collect/ode/concepts/single_variate_differentiable_problem.h"
@@ -135,7 +136,8 @@ public:
                 step_size_ * slope_coeff_ * problem_->jacobian());
         using std::isfinite;
         if (!isfinite(coeff_inverse_)) {
-            throw algorithm_failure("Failed to calculate inverse.");
+            NUM_COLLECT_LOG_AND_THROW(
+                algorithm_failure, "Failed to calculate inverse.");
         }
     }
 
@@ -184,7 +186,8 @@ public:
      */
     void iterate() {
         if (problem_ == nullptr || solution_ == nullptr) {
-            throw precondition_not_satisfied("Initialization is not done yet.");
+            NUM_COLLECT_LOG_AND_THROW(
+                precondition_not_satisfied, "Initialization is not done yet.");
         }
 
         temp_variable_ = variable_ + (*solution_);
@@ -474,7 +477,8 @@ public:
      */
     void iterate() {
         if (problem_ == nullptr || solution_ == nullptr) {
-            throw precondition_not_satisfied("Initialization is not done yet.");
+            NUM_COLLECT_LOG_AND_THROW(
+                precondition_not_satisfied, "Initialization is not done yet.");
         }
 
         temp_variable_ = variable_ + (*solution_);
@@ -489,7 +493,8 @@ public:
             this->logger().error()(
                 "Failed to solve an equation. step_size={}, cond={}.",
                 step_size_, lu_.rcond());
-            throw algorithm_failure("Failed to solve an equation.");
+            NUM_COLLECT_LOG_AND_THROW(
+                algorithm_failure, "Failed to solve an equation.");
         }
         *solution_ += update_;
 

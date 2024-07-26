@@ -24,6 +24,7 @@
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/constants/sqrt.h"
+#include "num_collect/logging/logging_macros.h"
 
 namespace num_collect::ode {
 
@@ -106,7 +107,7 @@ public:
      */
     auto upper_limit(const scalar_type& val) -> step_size_limits& {
         if (val <= lower_limit_) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "0 < lower_limit < upper_limit must be satisfied.");
         }
         upper_limit_ = val;
@@ -121,7 +122,7 @@ public:
      */
     auto lower_limit(const scalar_type& val) -> step_size_limits& {
         if (val <= static_cast<scalar_type>(0) || upper_limit_ <= val) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "0 < lower_limit < upper_limit must be satisfied.");
         }
         lower_limit_ = val;

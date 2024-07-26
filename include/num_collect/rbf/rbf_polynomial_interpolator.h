@@ -28,6 +28,7 @@
 #include "num_collect/base/get_size.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/logging/logging_mixin.h"
 #include "num_collect/opt/dividing_rectangles.h"
 #include "num_collect/opt/function_object_wrapper.h"
@@ -165,7 +166,8 @@ public:
         const function_value_vector_type& function_values) {
         const auto num_variables = static_cast<index_type>(variables.size());
         if (num_variables == 0) {
-            throw invalid_argument("No variable is given.");
+            NUM_COLLECT_LOG_AND_THROW(
+                invalid_argument, "No variable is given.");
         }
         const index_type num_dimensions = base::get_size(variables.front());
         polynomial_calculator_.prepare(num_dimensions);
@@ -241,7 +243,8 @@ public:
     {
         const auto num_variables = static_cast<index_type>(variables.size());
         if (num_variables == 0) {
-            throw invalid_argument("No variable is given.");
+            NUM_COLLECT_LOG_AND_THROW(
+                invalid_argument, "No variable is given.");
         }
         const index_type num_dimensions = base::get_size(variables.front());
         polynomial_calculator_.prepare(num_dimensions);

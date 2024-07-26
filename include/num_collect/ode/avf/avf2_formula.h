@@ -26,6 +26,7 @@
 #include "num_collect/constants/zero.h"  // IWYU pragma: keep
 #include "num_collect/integration/gauss_legendre_integrator.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/ode/avf/impl/avf_integrand.h"
 #include "num_collect/ode/concepts/problem.h"
 #include "num_collect/ode/evaluation_type.h"
@@ -126,7 +127,7 @@ public:
      */
     void tol_residual_norm(scalar_type val) {
         if (val <= static_cast<scalar_type>(0)) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Tolerance of residual norm must be a positive value.");
         }
         tol_residual_norm_ = val;

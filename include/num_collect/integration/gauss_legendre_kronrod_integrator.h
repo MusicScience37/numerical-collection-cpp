@@ -42,6 +42,7 @@
 #include "num_collect/constants/one.h"   // IWYU pragma: keep
 #include "num_collect/constants/two.h"   // IWYU pragma: keep
 #include "num_collect/constants/zero.h"  // IWYU pragma: keep
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/util/assert.h"
 #include "num_collect/util/safe_cast.h"
 #include "num_collect/util/static_stack.h"
@@ -85,7 +86,7 @@ public:
         index_type degree = default_degree)
         : degree_(degree) {
         if (degree < 1) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Degree of Legendre function must be at least one.");
         }
         compute_parameters();
@@ -98,7 +99,7 @@ public:
      */
     void prepare(index_type degree) {
         if (degree < 1) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Degree of Legendre function must be at least one.");
         }
         degree_ = degree;
@@ -154,7 +155,7 @@ public:
     [[nodiscard]] auto integrate(const Function& function, variable_type left,
         variable_type right) const -> result_type {
         if (left >= right) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "The boundaries of the range to integrate on must satisfy left "
                 "< right.");
         }
@@ -223,7 +224,7 @@ public:
     auto tol_abs_error(
         variable_type val) -> gauss_legendre_kronrod_integrator& {
         if (val <= static_cast<variable_type>(0)) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Tolerance of absolute error must be positive value.");
         }
         tol_abs_error_ = val;
@@ -239,7 +240,7 @@ public:
     auto tol_rel_error(
         variable_type val) -> gauss_legendre_kronrod_integrator& {
         if (val <= static_cast<variable_type>(0)) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Tolerance of relative error must be positive value.");
         }
         tol_rel_error_ = val;
@@ -254,7 +255,7 @@ public:
      */
     auto min_div_rate(variable_type val) -> gauss_legendre_kronrod_integrator& {
         if (val <= std::numeric_limits<variable_type>::epsilon) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Minimum rate of division of integration region must be larger "
                 "than the machine epsilon.");
         }

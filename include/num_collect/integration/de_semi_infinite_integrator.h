@@ -31,6 +31,7 @@
 #include "num_collect/constants/pi.h"    // IWYU pragma: keep
 #include "num_collect/constants/two.h"   // IWYU pragma: keep
 #include "num_collect/constants/zero.h"  // IWYU pragma: keep
+#include "num_collect/logging/logging_macros.h"
 
 namespace num_collect::integration {
 
@@ -155,7 +156,8 @@ public:
      */
     auto max_point(variable_type val) -> de_semi_infinite_integrator& {
         if (val <= static_cast<variable_type>(0)) {
-            throw invalid_argument("Maximum point must be a positive value.");
+            NUM_COLLECT_LOG_AND_THROW(
+                invalid_argument, "Maximum point must be a positive value.");
         }
         max_point_ = val;
         return *this;
@@ -169,7 +171,8 @@ public:
      */
     auto points(index_type val) -> de_semi_infinite_integrator& {
         if (val <= 0) {
-            throw invalid_argument("Number of points must a positive integer.");
+            NUM_COLLECT_LOG_AND_THROW(
+                invalid_argument, "Number of points must a positive integer.");
         }
         points_ = val;
         return *this;

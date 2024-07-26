@@ -32,6 +32,7 @@
 #include "num_collect/constants/half.h"
 #include "num_collect/constants/one.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/logging/logging_mixin.h"
 #include "num_collect/util/kahan_adder.h"
 
@@ -251,7 +252,8 @@ public:
      */
     auto max_point(variable_type val) -> tanh_finite_integrator& {
         if (val <= static_cast<variable_type>(0)) {
-            throw invalid_argument("Maximum point must be a positive value.");
+            NUM_COLLECT_LOG_AND_THROW(
+                invalid_argument, "Maximum point must be a positive value.");
         }
         max_point_ = val;
         calculate_coefficients();
@@ -266,7 +268,8 @@ public:
      */
     auto points(index_type val) -> tanh_finite_integrator& {
         if (val <= 0) {
-            throw invalid_argument("Number of points must a positive integer.");
+            NUM_COLLECT_LOG_AND_THROW(
+                invalid_argument, "Number of points must a positive integer.");
         }
         points_ = val;
         calculate_coefficients();

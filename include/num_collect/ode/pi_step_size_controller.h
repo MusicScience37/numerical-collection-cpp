@@ -24,6 +24,7 @@
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/ode/concepts/formula.h"
 #include "num_collect/ode/error_tolerances.h"  // IWYU pragma: keep
 #include "num_collect/ode/impl/get_least_known_order.h"
@@ -116,7 +117,7 @@ public:
     auto current_step_error_exponent(
         const scalar_type& val) -> pi_step_size_controller& {
         if (val < previous_step_error_exponent_) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "0 <= previous_step_error_exponent <= "
                 "current_step_error_exponent must be satisfied.");
         }
@@ -134,7 +135,7 @@ public:
         const scalar_type& val) -> pi_step_size_controller& {
         if (val < static_cast<scalar_type>(0) ||
             current_step_error_exponent_ < val) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "0 <= previous_step_error_exponent <= "
                 "current_step_error_exponent must be satisfied.");
         }
@@ -151,7 +152,7 @@ public:
     auto step_size_factor_safety_coeff(
         const scalar_type& val) -> pi_step_size_controller& {
         if (val <= static_cast<scalar_type>(0)) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Safety coefficient for factors of step sizes must be a "
                 "positive value.");
         }
@@ -168,7 +169,7 @@ public:
     auto max_step_size_factor(
         const scalar_type& val) -> pi_step_size_controller& {
         if (val <= min_step_size_factor_) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "0 < min_step_size_factor < max_step_size_factor must be "
                 "satisfied.");
         }
@@ -186,7 +187,7 @@ public:
         const scalar_type& val) -> pi_step_size_controller& {
         if (val <= static_cast<scalar_type>(0) ||
             max_step_size_factor_ <= val) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "0 < min_step_size_factor < max_step_size_factor must be "
                 "satisfied.");
         }

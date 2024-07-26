@@ -28,6 +28,7 @@
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/logging/logging_mixin.h"
 #include "num_collect/opt/function_object_wrapper.h"
 #include "num_collect/opt/gaussian_process_optimizer.h"
@@ -116,7 +117,8 @@ public:
      */
     auto noise_rate(scalar_type value) -> implicit_gcv_calculator& {
         if (value <= static_cast<scalar_type>(0)) {
-            throw invalid_argument("Rate of noise must be a positive value.");
+            NUM_COLLECT_LOG_AND_THROW(
+                invalid_argument, "Rate of noise must be a positive value.");
         }
         noise_rate_ = value;
         using std::sqrt;

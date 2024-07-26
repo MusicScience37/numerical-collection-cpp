@@ -23,6 +23,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/constants/half.h"  // IWYU pragma: keep
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/ode/concepts/multi_variate_problem.h"
 #include "num_collect/ode/concepts/problem.h"
 #include "num_collect/ode/evaluation_type.h"
@@ -91,7 +92,7 @@ public:
         const index_type dim = current.size();
         const index_type half_dim = dim / 2;
         if (dim % 2 == 1) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "This formula requires vectors with even dimensions.");
         }
 

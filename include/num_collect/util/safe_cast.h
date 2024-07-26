@@ -30,6 +30,7 @@
 
 #include "num_collect/base/concepts/integral.h"
 #include "num_collect/base/exception.h"
+#include "num_collect/logging/logging_macros.h"
 
 namespace num_collect::util {
 
@@ -55,26 +56,26 @@ template <base::concepts::integral To, base::concepts::integral From>
     if constexpr (std::numeric_limits<To>::digits <
         std::numeric_limits<From>::digits) {
         if (value > static_cast<From>(std::numeric_limits<To>::max())) {
-            throw unsafe_cast(fmt::format(
+            NUM_COLLECT_LOG_AND_THROW(unsafe_cast,
                 "unsafe cast of value {} from {} to {} (upper bound)", value,
-                typeid(From).name(), typeid(To).name()));
+                typeid(From).name(), typeid(To).name());
         }
     }
 
     // Check lower bound.
     if constexpr (std::is_signed_v<From> && std::is_unsigned_v<To>) {
         if (value < static_cast<From>(0)) {
-            throw unsafe_cast(fmt::format(
+            NUM_COLLECT_LOG_AND_THROW(unsafe_cast,
                 "unsafe cast of value {} from {} to {} (lower bound)", value,
-                typeid(From).name(), typeid(To).name()));
+                typeid(From).name(), typeid(To).name());
         }
     }
     if constexpr (std::is_signed_v<From> && std::is_signed_v<To> &&
         (std::numeric_limits<To>::digits < std::numeric_limits<From>::digits)) {
         if (value < static_cast<From>(std::numeric_limits<To>::min())) {
-            throw unsafe_cast(fmt::format(
+            NUM_COLLECT_LOG_AND_THROW(unsafe_cast,
                 "unsafe cast of value {} from {} to {} (lower bound)", value,
-                typeid(From).name(), typeid(To).name()));
+                typeid(From).name(), typeid(To).name());
         }
     }
 

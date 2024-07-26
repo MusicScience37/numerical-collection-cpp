@@ -30,6 +30,7 @@
 
 #include "num_collect/base/concepts/dense_vector.h"
 #include "num_collect/base/exception.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/rbf/kernel_matrix_type.h"
 
 namespace num_collect::rbf::impl {
@@ -277,7 +278,7 @@ public:
     void solve(vector_type& coefficients, scalar_type reg_param,
         const vector_type& data) const {
         if (reg_param != static_cast<scalar_type>(0)) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Non-zero regularization parameter cannot be used in this "
                 "configuration.");
         }
@@ -335,7 +336,7 @@ public:
     void solve(vector_type& coefficients, scalar_type reg_param,
         const vector_type& data) const {
         if (reg_param != static_cast<scalar_type>(0)) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Non-zero regularization parameter cannot be used in this "
                 "configuration.");
         }
