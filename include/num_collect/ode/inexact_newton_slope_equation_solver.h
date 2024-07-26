@@ -427,11 +427,9 @@ public:
         residual_ = (*solution_) - problem_->diff_coeff();
         update_ = -lu_.solve(residual_);
         if (!update_.array().isFinite().all()) {
-            this->logger().error()(
+            NUM_COLLECT_LOG_AND_THROW(algorithm_failure,
                 "Failed to solve an equation. step_size={}, cond={}.",
                 step_size_, lu_.rcond());
-            NUM_COLLECT_LOG_AND_THROW(
-                algorithm_failure, "Failed to solve an equation.");
         }
         *solution_ += update_;
 

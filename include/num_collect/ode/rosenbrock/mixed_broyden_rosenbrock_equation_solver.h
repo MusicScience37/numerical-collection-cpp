@@ -190,11 +190,9 @@ private:
 
         inverse_ = lu_.inverse();
         if (!inverse_.array().isFinite().all()) {
-            this->logger().error()(
+            NUM_COLLECT_LOG_AND_THROW(algorithm_failure,
                 "Failed to solve an equation. step_size={}, cond={}.",
                 step_size_, lu_.rcond());
-            NUM_COLLECT_LOG_AND_THROW(
-                algorithm_failure, "Failed to solve an equation.");
         }
 
         time_ = time;
