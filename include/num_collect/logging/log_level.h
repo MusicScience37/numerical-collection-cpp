@@ -26,38 +26,52 @@
 
 namespace num_collect::logging {
 
+// clang-format off
 /*!
  * \brief Enumeration of log levels.
+ *
+ * | Log level       | Usage in this library                                                   |
+ * | :-------------- | :---------------------------------------------------------------------- |
+ * | trace           | Internal trace logs for developer of this library.                      |
+ * | debug           | Log for debugging.                                                      |
+ * | iteration       | Log of each iteration.                                                  |
+ * | iteration_label | Label of iteration logs. (Not usable for output log level.)             |
+ * | summary         | Summary of calculations.                                                |
+ * | info            | None. (Meant for use in user code to show some information.)            |
+ * | warning         | Warnings of undesirable conditions.                                     |
+ * | error           | Errors preventing further processing. (Usually used with exceptions.)   |
+ * | critical        | None. (Meant for use in conditions which may cause death of processes.) |
+ * | off             | Turn off output. (Only for output log level.)                           |
  */
-enum class log_level : std::uint8_t {
-    //! For internal trace logs.
+enum class log_level : std::uint8_t {  // clang-format on
+    //! Trace.
     trace,
 
-    //! For debug information.
+    //! Debug.
     debug,
 
-    //! For logs of iterations.
+    //! Iteration.
     iteration,
 
-    //! For labels of iteration logs.
+    //! Label of iterations.
     iteration_label,
 
-    //! For summary of calculations.
+    //! Summary.
     summary,
 
-    //! For some information. (Meant for use in user code, not in algorithms.)
+    //! Information.
     info,
 
-    //! For warnings.
+    //! Warning.
     warning,
 
-    //! For errors.
+    //! Error.
     error,
 
-    //! For critical errors.
+    //! Critical.
     critical,
 
-    //! Turn off output (only for output log level).
+    //! Turn off output. (Only for output log level).
     off
 };
 
