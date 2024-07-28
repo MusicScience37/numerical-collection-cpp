@@ -17,7 +17,6 @@ SOURCE_PATHS = (
             "constants",
             "functions",
             "integration",
-            "interp",
             "linear",
             "logging",
             "multi_double",
