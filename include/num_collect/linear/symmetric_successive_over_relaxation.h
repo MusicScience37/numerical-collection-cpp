@@ -29,6 +29,7 @@
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/linear/iterative_solver_base.h"
+#include "num_collect/logging/logging_macros.h"
 
 namespace num_collect::linear {
 
@@ -97,7 +98,7 @@ public:
         inv_diag_ = diag_.cwiseInverse();
         intermidiate_solution_.resize(coeff.cols());
         if (!inv_diag_.array().isFinite().all()) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "All diagonal elements of the coefficient matrix must not be "
                 "zero.");
         }
@@ -117,16 +118,16 @@ public:
         const auto& coeff_ref = coeff();
 
         if (coeff_ref.rows() != coeff_ref.cols()) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Coefficient matrix must be a square matrix.");
         }
         if (right.rows() != coeff_ref.cols()) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Right-hand-side vector must have the number of elements same "
                 "as the size of the coefficient matrix.");
         }
         if (solution.rows() != coeff_ref.cols()) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Solution vector must have the number of elements same "
                 "as the size of the coefficient matrix.");
         }
@@ -137,7 +138,7 @@ public:
         while (iterations_ < max_iterations) {
             iterate(coeff_ref, right, solution);
             if (!std::isfinite(residual_)) {
-                throw algorithm_failure(
+                NUM_COLLECT_LOG_AND_THROW(algorithm_failure,
                     "Failure in "
                     "symmetric_successive_over_relaxation.");
             }
@@ -182,7 +183,8 @@ public:
         const scalar_type& val) -> symmetric_successive_over_relaxation& {
         if (val <= static_cast<scalar_type>(0) ||
             static_cast<scalar_type>(2) <= val) {
-            throw invalid_argument("Invalid relaxation coefficient.");
+            NUM_COLLECT_LOG_AND_THROW(
+                invalid_argument, "Invalid relaxation coefficient.");
         }
         relaxation_coeff_ = val;
         return *this;

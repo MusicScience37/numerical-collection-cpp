@@ -30,6 +30,7 @@
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/rbf/kernel_matrix_type.h"
 
 namespace num_collect::rbf::impl {
@@ -86,16 +87,17 @@ public:
         const vector_type& data) {
         num_variables_ = kernel_matrix.rows();
         if (kernel_matrix.cols() != num_variables_) {
-            throw invalid_argument("Kernel matrix must be a square matrix.");
+            NUM_COLLECT_LOG_AND_THROW(
+                invalid_argument, "Kernel matrix must be a square matrix.");
         }
         if (additional_matrix.rows() != num_variables_) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Matrix of additional terms must have the same number of rows "
                 "as the kernel matrix.");
         }
         num_additional_terms_ = additional_matrix.cols();
         if (num_variables_ <= num_additional_terms_) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "The number of variables must be larger than the number of "
                 "additional terms.");
         }
@@ -103,10 +105,10 @@ public:
 
         qr_decomposition_.compute(additional_matrix);
         if (qr_decomposition_.rank() != additional_matrix.cols()) {
-            throw algorithm_failure(
-                fmt::format("The matrix of additional terms must have full "
-                            "column rank. (columns={}, rand={})",
-                    additional_matrix.cols(), qr_decomposition_.rank()));
+            NUM_COLLECT_LOG_AND_THROW(algorithm_failure,
+                "The matrix of additional terms must have full "
+                "column rank. (columns={}, rand={})",
+                additional_matrix.cols(), qr_decomposition_.rank());
         }
         q_matrix_ = qr_decomposition_.householderQ();
 
@@ -137,7 +139,7 @@ public:
     void solve(vector_type& kernel_coefficients,
         vector_type& additional_coefficients, scalar_type reg_param) const {
         if (kernel_matrix_ == nullptr || data_ == nullptr) {
-            throw precondition_not_satisfied(
+            NUM_COLLECT_LOG_AND_THROW(precondition_not_satisfied,
                 "compute() must be called before solve().");
         }
 

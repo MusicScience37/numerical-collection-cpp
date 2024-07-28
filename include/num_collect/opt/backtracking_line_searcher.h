@@ -23,6 +23,7 @@
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/opt/concepts/differentiable_objective_function.h"
 #include "num_collect/opt/concepts/multi_variate_differentiable_objective_function.h"
 
@@ -103,7 +104,8 @@ public:
             step_ *= step_scale_;
         }
 
-        throw algorithm_failure("failed to search step size");
+        NUM_COLLECT_LOG_AND_THROW(
+            algorithm_failure, "failed to search step size");
     }
 
     /*!
@@ -176,7 +178,7 @@ public:
     auto armijo_coeff(value_type value) -> backtracking_line_searcher& {
         if (value <= static_cast<value_type>(0) ||
             static_cast<value_type>(1) <= value) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Coefficient in Armijo rule must be in the range of (0, 1).");
         }
         armijo_coeff_ = value;
@@ -192,7 +194,7 @@ public:
     auto step_scale(value_type value) -> backtracking_line_searcher& {
         if (value <= static_cast<value_type>(0) ||
             static_cast<value_type>(1) <= value) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Ratio to scale step sizes must be in the range of (0, 1).");
         }
         step_scale_ = value;

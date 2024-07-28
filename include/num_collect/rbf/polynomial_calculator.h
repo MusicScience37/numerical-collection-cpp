@@ -30,6 +30,7 @@
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/logging/logging_macros.h"
 
 namespace num_collect::rbf {
 
@@ -74,7 +75,7 @@ public:
         const std::vector<Variable>& variables, Matrix& matrix) const {
         const auto num_variables = static_cast<index_type>(variables.size());
         if (num_variables < PolynomialDegree + 2) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "At least (PolynomialDegree + 2) variables must be given.");
         }
 
@@ -103,7 +104,8 @@ public:
     [[nodiscard]] auto evaluate_polynomial_for_variable(Variable variable,
         const Eigen::VectorX<Variable>& coeffs) const -> Variable {
         if (coeffs.size() != PolynomialDegree + 1) {
-            throw invalid_argument("Invalid size of coefficients.");
+            NUM_COLLECT_LOG_AND_THROW(
+                invalid_argument, "Invalid size of coefficients.");
         }
 
         // degree = 0 (constant)
@@ -172,7 +174,8 @@ public:
         const std::vector<Variable>& variables, Matrix& matrix) const {
         const auto num_variables = static_cast<index_type>(variables.size());
         if (num_variables == 0) {
-            throw invalid_argument("No variable is given.");
+            NUM_COLLECT_LOG_AND_THROW(
+                invalid_argument, "No variable is given.");
         }
         const index_type num_dimensions = variables.front().size();
 
@@ -205,7 +208,8 @@ public:
 
         const index_type num_patterns = degrees_.rows();
         if (coeffs.size() != num_patterns) {
-            throw invalid_argument("Invalid size of coefficients.");
+            NUM_COLLECT_LOG_AND_THROW(
+                invalid_argument, "Invalid size of coefficients.");
         }
 
         auto value = static_cast<scalar_type>(0);

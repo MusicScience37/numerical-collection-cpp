@@ -31,6 +31,7 @@
 #include "num_collect/constants/pi.h"    // IWYU pragma: keep
 #include "num_collect/constants/zero.h"  // IWYU pragma: keep
 #include "num_collect/functions/legendre.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/roots/newton_raphson.h"
 #include "num_collect/util/assert.h"
 
@@ -60,7 +61,7 @@ public:
      */
     explicit legendre_for_newton(index_type degree) : degree_(degree) {
         if (degree < 1) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Degree of Legendre function must be at least one.");
         }
     }
@@ -136,7 +137,7 @@ public:
      */
     void compute(index_type degree) {
         if (degree < 1) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Degree of Legendre function must be at least one.");
         }
         degree_ = degree;

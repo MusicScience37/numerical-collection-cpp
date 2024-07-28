@@ -28,6 +28,7 @@
 #include "num_collect/base/exception.h"
 #include "num_collect/interp/kernel/concepts/distance.h"
 #include "num_collect/interp/kernel/concepts/rbf.h"
+#include "num_collect/logging/logging_macros.h"
 
 namespace num_collect::interp::kernel {
 
@@ -102,8 +103,8 @@ public:
      */
     auto len_param(const len_param_type& value) -> rbf_kernel& {
         if (value <= static_cast<len_param_type>(0)) {
-            throw invalid_argument(
-                "Length parameter must be a positive value.");
+            NUM_COLLECT_LOG_AND_THROW(
+                invalid_argument, "Length parameter must be a positive value.");
         }
         len_param_ = value;
         return *this;
@@ -143,7 +144,8 @@ public:
     [[nodiscard]] auto kernel_param_search_region(const Container& list) const
         -> std::pair<kernel_param_type, kernel_param_type> {
         if (list.size() < static_cast<std::size_t>(2)) {
-            throw invalid_argument("At least two variables are required.");
+            NUM_COLLECT_LOG_AND_THROW(
+                invalid_argument, "At least two variables are required.");
         }
 
         len_param_type max_min_dist =

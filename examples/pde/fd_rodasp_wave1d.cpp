@@ -36,6 +36,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/load_logging_config.h"
 #include "num_collect/logging/logger.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/ode/rosenbrock/rodasp_formula.h"
 #include "num_prob_collect/ode/string_wave_1d_problem.h"
 
@@ -48,8 +49,8 @@ static auto get_config_value(
                                      ->at(key)
                                      .value<T>();
     if (!res) {
-        throw num_collect::invalid_argument(
-            fmt::format("Failed to load configuration {}.", key));
+        NUM_COLLECT_LOG_AND_THROW(num_collect::invalid_argument,
+            "Failed to load configuration {}.", key);
     }
     return res.value();
 }

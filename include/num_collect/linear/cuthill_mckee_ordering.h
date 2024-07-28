@@ -30,6 +30,7 @@
 
 #include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/exception.h"
+#include "num_collect/logging/logging_macros.h"
 
 namespace num_collect::linear {
 
@@ -64,7 +65,8 @@ public:
     template <base::concepts::sparse_matrix MatrixType>
     void operator()(const MatrixType& matrix, permutation_type& permutation) {
         if (matrix.rows() != matrix.cols()) {
-            throw invalid_argument("Square matrix is required.");
+            NUM_COLLECT_LOG_AND_THROW(
+                invalid_argument, "Square matrix is required.");
         }
 
         const storage_index_type first_index = calculate_degrees(matrix);
@@ -201,7 +203,8 @@ private:
         }
 
         if (!unused_index_to_degree_.empty()) {
-            throw algorithm_failure("Unused indices exist.");
+            NUM_COLLECT_LOG_AND_THROW(
+                algorithm_failure, "Unused indices exist.");
         }
     }
 

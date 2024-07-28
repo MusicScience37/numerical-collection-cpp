@@ -25,6 +25,7 @@
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/exception.h"
+#include "num_collect/logging/logging_macros.h"
 
 namespace num_collect::ode {
 
@@ -209,7 +210,7 @@ public:
      */
     auto tol_rel_error(const scalar_type& val) -> error_tolerances& {
         if (val < static_cast<scalar_type>(0)) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Tolerance of relative error must be a non-negative value.");
         }
         tol_rel_error_ = val;
@@ -224,7 +225,7 @@ public:
      */
     auto tol_rel_error(const variable_type& val) -> error_tolerances& {
         if (!(val.array() >= static_cast<scalar_type>(0)).all()) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Tolerance of relative error must be non-negative values.");
         }
         tol_rel_error_ = val;
@@ -239,7 +240,7 @@ public:
      */
     auto tol_abs_error(const scalar_type& val) -> error_tolerances& {
         if (val < static_cast<scalar_type>(0)) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Tolerance of absolute error must be a non-negative value.");
         }
         tol_abs_error_ = val;
@@ -254,7 +255,7 @@ public:
      */
     auto tol_abs_error(const variable_type& val) -> error_tolerances& {
         if (!(val.array() >= static_cast<scalar_type>(0)).all()) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Tolerance of absolute error must be non-negative values.");
         }
         tol_abs_error_ = val;
@@ -328,7 +329,7 @@ public:
      */
     auto tol_rel_error(const variable_type& val) -> error_tolerances& {
         if (val < static_cast<scalar_type>(0)) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Tolerance of relative error must be a non-negative value.");
         }
         tol_rel_error_ = val;
@@ -343,7 +344,7 @@ public:
      */
     auto tol_abs_error(const variable_type& val) -> error_tolerances& {
         if (val < static_cast<scalar_type>(0)) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Tolerance of absolute error must be a non-negative value.");
         }
         tol_abs_error_ = val;

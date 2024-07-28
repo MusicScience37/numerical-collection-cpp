@@ -30,6 +30,7 @@
 #include "log_tag_test.cpp"              // NOLINT(bugprone-suspicious-include)
 #include "log_tag_view_test.cpp"         // NOLINT(bugprone-suspicious-include)
 #include "logger_test.cpp"               // NOLINT(bugprone-suspicious-include)
+#include "logging_macros_test.cpp"       // NOLINT(bugprone-suspicious-include)
 #include "logging_mixin_test.cpp"        // NOLINT(bugprone-suspicious-include)
 #include "sinks/combined_log_sink_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "sinks/file_wrapper_test.cpp"  // NOLINT(bugprone-suspicious-include)

@@ -27,6 +27,7 @@
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/util/assert.h"
 
 namespace num_collect::util {
@@ -274,7 +275,7 @@ private:
      * \param[in] index Index.
      */
     [[noreturn]] void throw_out_of_range(index_type index) const {
-        throw invalid_argument(
+        NUM_COLLECT_LOG_AND_THROW(invalid_argument,
             fmt::format("Index out of range (index: {}, range: [{}, {}])",
                 index, min_index(), max_index()));
     }

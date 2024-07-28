@@ -27,6 +27,7 @@
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/logging/logging_mixin.h"
 #include "num_collect/ode/concepts/multi_variate_differentiable_problem.h"
 #include "num_collect/ode/evaluation_type.h"
@@ -189,10 +190,9 @@ private:
 
         inverse_ = lu_.inverse();
         if (!inverse_.array().isFinite().all()) {
-            this->logger().error()(
+            NUM_COLLECT_LOG_AND_THROW(algorithm_failure,
                 "Failed to solve an equation. step_size={}, cond={}.",
                 step_size_, lu_.rcond());
-            throw algorithm_failure("Failed to solve an equation.");
         }
 
         time_ = time;

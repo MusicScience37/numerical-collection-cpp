@@ -39,6 +39,7 @@
 #include "num_collect/linear/iterative_solver_base.h"
 #include "num_collect/linear/parallel_symmetric_successive_over_relaxation.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/logging/logging_mixin.h"
 
 namespace num_collect::linear {
@@ -174,16 +175,16 @@ public:
         const auto& coeff_ref = coeff();
 
         if (coeff_ref.rows() != coeff_ref.cols()) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Coefficient matrix must be a square matrix.");
         }
         if (right.rows() != coeff_ref.cols()) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Right-hand-side vector must have the number of elements same "
                 "as the size of the coefficient matrix.");
         }
         if (solution.rows() != coeff_ref.cols()) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Solution vector must have the number of elements same "
                 "as the size of the coefficient matrix.");
         }
@@ -213,7 +214,7 @@ public:
     auto maximum_directly_solved_matrix_size(
         index_type value) -> algebraic_multigrid_solver& {
         if (value <= 0) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "THe maximum size of matrices to solve directly must be a "
                 "positive integer.");
         }

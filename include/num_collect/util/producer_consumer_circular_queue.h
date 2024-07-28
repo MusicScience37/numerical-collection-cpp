@@ -30,6 +30,7 @@
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/util/cache_line.h"
 #include "num_collect/util/object_storage.h"
 #include "num_collect/util/safe_cast.h"
@@ -150,7 +151,8 @@ private:
      */
     [[nodiscard]] static auto get_buffer_size(index_type val) -> std::size_t {
         if (val <= 0 || val == std::numeric_limits<index_type>::max()) {
-            throw invalid_argument(fmt::format("Invalid queue size {}.", val));
+            NUM_COLLECT_LOG_AND_THROW(
+                invalid_argument, "Invalid queue size {}.", val);
         }
         return safe_cast<std::size_t>(val + 1);
     }

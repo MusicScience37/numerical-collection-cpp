@@ -30,6 +30,7 @@
 #include "num_collect/interp/kernel/impl/kernel_parameter_optimizer.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/logging/logging_mixin.h"
 
 namespace num_collect::interp::kernel {
@@ -160,11 +161,12 @@ public:
     void compute(const Container& variable_list,
         const Eigen::MatrixBase<InputData>& data) {
         if (static_cast<std::size_t>(data.rows()) != variable_list.size()) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Number of elements in data and variables must match.");
         }
         if (data.cols() != 1) {
-            throw invalid_argument("Data must be a vector.");
+            NUM_COLLECT_LOG_AND_THROW(
+                invalid_argument, "Data must be a vector.");
         }
 
         if (optimizer_) {

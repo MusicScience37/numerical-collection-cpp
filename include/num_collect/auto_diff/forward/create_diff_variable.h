@@ -26,6 +26,7 @@
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/util/assert.h"
 
 namespace num_collect::auto_diff::forward {
@@ -146,7 +147,7 @@ template <base::concepts::real_scalar_dense_vector ValueVector>
         typename impl::create_diff_variable_vector_functor<
             ValueVector>::result_type> {
     if (value_vec.cols() != 1) {
-        throw invalid_argument(
+        NUM_COLLECT_LOG_AND_THROW(invalid_argument,
             "create_diff_variable_vector function requires a vector as the "
             "argument.");
     }

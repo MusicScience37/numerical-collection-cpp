@@ -26,6 +26,7 @@
 
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/exception.h"
+#include "num_collect/logging/logging_macros.h"
 
 namespace num_collect::auto_diff::forward {
 
@@ -94,7 +95,7 @@ public:
      */
     [[nodiscard]] auto diff() const -> const diff_type& {
         if (!has_diff()) {
-            throw precondition_not_satisfied(
+            NUM_COLLECT_LOG_AND_THROW(precondition_not_satisfied,
                 "diff function called for a variable without differential "
                 "coefficients.");
         }

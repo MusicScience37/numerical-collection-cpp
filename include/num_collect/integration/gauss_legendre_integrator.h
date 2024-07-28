@@ -34,6 +34,7 @@
 #include "num_collect/constants/two.h"   // IWYU pragma: keep
 #include "num_collect/functions/legendre.h"
 #include "num_collect/functions/legendre_roots.h"
+#include "num_collect/logging/logging_macros.h"
 
 namespace num_collect::integration {
 
@@ -71,7 +72,7 @@ public:
     explicit gauss_legendre_integrator(index_type degree = default_degree)
         : roots_(degree) {
         if (degree < 1) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Degree of Legendre function must be at least one.");
         }
         update_weight();
@@ -84,7 +85,7 @@ public:
      */
     void prepare(index_type degree) {
         if (degree < 1) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Degree of Legendre function must be at least one.");
         }
         roots_.compute(degree);

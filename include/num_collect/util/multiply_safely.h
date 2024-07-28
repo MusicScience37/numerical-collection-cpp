@@ -21,6 +21,7 @@
 
 #include "num_collect/base/concepts/integral.h"
 #include "num_collect/base/exception.h"
+#include "num_collect/logging/logging_macros.h"
 
 namespace num_collect::util {
 
@@ -36,7 +37,8 @@ template <base::concepts::integral T>
 [[nodiscard]] constexpr auto multiply_safely(T a, T b) -> T {
     const T res = a * b;
     if (a != static_cast<T>(0) && res / a != b) {
-        throw algorithm_failure("Overflow in multiplication.");
+        NUM_COLLECT_LOG_AND_THROW(
+            algorithm_failure, "Overflow in multiplication.");
     }
     return res;
 }

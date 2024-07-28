@@ -29,6 +29,7 @@
 #include "num_collect/interp/kernel/impl/auto_regularizer.h"
 #include "num_collect/interp/kernel/impl/self_adjoint_kernel_solver.h"
 #include "num_collect/logging/logger.h"
+#include "num_collect/logging/logging_macros.h"
 
 namespace num_collect::interp::kernel::impl {
 
@@ -62,7 +63,7 @@ public:
      */
     void regularize_with(const scalar_type& reg_param) {
         if (reg_param < static_cast<scalar_type>(0)) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Regularization parameter must be a a non-negative value.");
         }
         reg_param_ = reg_param;

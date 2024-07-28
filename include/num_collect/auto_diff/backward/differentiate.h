@@ -30,6 +30,7 @@
 #include "num_collect/auto_diff/backward/variable.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/util/safe_cast.h"
 
 namespace num_collect::auto_diff::backward {
@@ -214,7 +215,7 @@ template <typename FuncValType, typename ArgType>
     using scalar_type = typename variable_type::scalar_type;
 
     if (func_value.cols() != 1 || arg.cols() != 1) {
-        throw invalid_argument(
+        NUM_COLLECT_LOG_AND_THROW(invalid_argument,
             "differentiate function requires vectors as arguments.");
     }
 

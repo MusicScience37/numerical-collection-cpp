@@ -27,7 +27,7 @@
 
 #include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/exception.h"
-#include "num_collect/logging/log_and_throw.h"
+#include "num_collect/logging/logging_macros.h"
 
 namespace num_collect::util {
 
@@ -135,8 +135,8 @@ public:
         case num_collect::util::sparse_matrix_format_type::multi_line:
             return format_multi_line(mat, context);
         }
-        num_collect::logging::log_and_throw<num_collect::invalid_argument>(
-            "Invalid format type.");
+        NUM_COLLECT_LOG_AND_THROW(
+            num_collect::invalid_argument, "Invalid format type.");
     }
 
 private:

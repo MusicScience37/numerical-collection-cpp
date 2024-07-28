@@ -23,6 +23,7 @@
 #include <new>
 
 #include "num_collect/base/exception.h"
+#include "num_collect/logging/logging_macros.h"
 
 namespace num_collect::util {
 
@@ -67,7 +68,8 @@ public:
      */
     void push(const T& value) {
         if (end_ == storage_end_) {
-            throw precondition_not_satisfied("Stack is full.");
+            NUM_COLLECT_LOG_AND_THROW(
+                precondition_not_satisfied, "Stack is full.");
         }
         new (end_) T(value);
         ++end_;

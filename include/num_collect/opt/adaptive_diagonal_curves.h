@@ -38,6 +38,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/opt/concepts/multi_variate_objective_function.h"
 #include "num_collect/opt/concepts/objective_function.h"
 #include "num_collect/opt/impl/ternary_vector.h"
@@ -100,11 +101,11 @@ public:
      */
     void init(const variable_type& lower, const variable_type& upper) {
         if (lower.size() != upper.size()) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Element-wise limits must have the same size.");
         }
         if (!(lower.array() < upper.array()).all()) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Element-wise limits must satisfy lower < upper for each "
                 "element.");
         }
@@ -562,7 +563,7 @@ public:
             iterate_globally_last();
             break;
         default:
-            throw algorithm_failure(
+            NUM_COLLECT_LOG_AND_THROW(algorithm_failure,
                 "invalid state (bug in adaptive_diagonal_curve class)");
         }
 
@@ -649,7 +650,7 @@ public:
      */
     auto max_evaluations(index_type value) -> adaptive_diagonal_curves& {
         if (value <= 0) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Maximum number of function evaluations must be a positive "
                 "integer.");
         }
@@ -666,7 +667,7 @@ public:
      */
     auto min_rate_imp(value_type value) -> adaptive_diagonal_curves& {
         if (value <= static_cast<value_type>(0)) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Minimum rate of improvement in the function value required "
                 "for potentially optimal rectangles must be a positive value.");
         }
@@ -683,7 +684,7 @@ public:
      */
     auto decrease_rate_bound(value_type value) -> adaptive_diagonal_curves& {
         if (value <= static_cast<value_type>(0)) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Rate of function value used to check whether the function "
                 "value decreased in the current phase must be a positive "
                 "value.");
@@ -863,7 +864,7 @@ private:
                 return i;
             }
         }
-        throw precondition_not_satisfied(
+        NUM_COLLECT_LOG_AND_THROW(precondition_not_satisfied,
             "adaptive_diagonal_curves::init is not called.");
     }
 

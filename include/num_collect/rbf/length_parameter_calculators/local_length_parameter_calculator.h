@@ -28,6 +28,7 @@
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/constants/zero.h"  // IWYU pragma: keep
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/rbf/concepts/distance_function.h"
 #include "num_collect/util/assert.h"
 
@@ -69,7 +70,8 @@ public:
         const distance_function_type& distance_function) {
         const std::size_t num_samples = variables.size();
         if (num_samples == 0) {
-            throw invalid_argument("No sample point is given.");
+            NUM_COLLECT_LOG_AND_THROW(
+                invalid_argument, "No sample point is given.");
         }
 
         length_parameters_.resize(static_cast<index_type>(num_samples));
@@ -115,7 +117,7 @@ public:
      */
     void scale(scalar_type value) {
         if (value <= constants::zero<scalar_type>) {
-            throw invalid_argument(
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Scale of length parameters must be a positive number.");
         }
         scale_ = value;
