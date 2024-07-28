@@ -71,7 +71,7 @@ public:
      * \param[in] body Body.
      */
     void operator()(std::string_view body) const {
-        if (!write_log_) [[likely]] {
+        if (!write_log_) {
             return;
         }
 
@@ -86,8 +86,9 @@ public:
      * \param[in] args Arguments for the format string.
      */
     template <typename... Args>
+        requires(sizeof...(Args) > 0)
     void operator()(fmt::format_string<Args...> format, Args&&... args) const {
-        if (!write_log_) [[likely]] {
+        if (!write_log_) {
             return;
         }
 
@@ -207,13 +208,13 @@ public:
      * \retval false Should not write logs.
      */
     [[nodiscard]] auto should_log(log_level level) const noexcept -> bool {
-        if (level < lowest_output_log_level_) [[likely]] {
+        if (level < lowest_output_log_level_) {
             return false;
         }
-        if (level >= always_output_log_level_) [[unlikely]] {
+        if (level >= always_output_log_level_) {
             return true;
         }
-        if (iteration_layer_handler_.is_upper_layer_iterative()) [[unlikely]] {
+        if (iteration_layer_handler_.is_upper_layer_iterative()) {
             return level >= config_.output_log_level_in_child_iterations();
         }
         return level >= config_.output_log_level();
@@ -372,6 +373,44 @@ public:
         util::source_info_view source = util::source_info_view()) const noexcept
         -> logging_proxy {
         return log(log_level::critical, source);
+    }
+
+    /*!
+     * \brief Write a log without check of the condition to write logs.
+     *
+     * \warning This function should be used with should_log() function.
+     *
+     * \param[in] source Information of the source code.
+     * \param[in] level Log level.
+     * \param[in] body Body.
+     */
+    void log_without_condition_check(util::source_info_view source,
+        log_level level, std::string_view body) const {
+        config_.sink().write(
+            time_stamp::now(), tag_.name(), level, source, body);
+    }
+
+    /*!
+     * \brief Write a log without check of the condition to write logs.
+     *
+     * \warning This function should be used with should_log() function.
+     *
+     * \tparam Args Type of arguments.
+     * \param[in] source Information of the source code.
+     * \param[in] level Log level.
+     * \param[in] format Format string.
+     * \param[in] args Arguments for the format string.
+     */
+    template <typename... Args>
+        requires(sizeof...(Args) > 0)
+    void log_without_condition_check(util::source_info_view source,
+        log_level level, fmt::format_string<Args...> format,
+        Args&&... args) const {
+        fmt::memory_buffer buffer;
+        fmt::format_to(
+            std::back_inserter(buffer), format, std::forward<Args>(args)...);
+        config_.sink().write(time_stamp::now(), tag_.name(), level, source,
+            std::string_view(buffer.data(), buffer.size()));
     }
 
 private:

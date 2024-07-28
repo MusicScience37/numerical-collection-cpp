@@ -33,7 +33,7 @@ enum class log_level : std::uint8_t {
     //! For internal trace logs.
     trace,
 
-    //! For debug information. (Meant for use in user code, not in algorithms.)
+    //! For debug information.
     debug,
 
     //! For logs of iterations.

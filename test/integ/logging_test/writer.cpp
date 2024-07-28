@@ -31,6 +31,7 @@
 #include "num_collect/logging/load_logging_config.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
+#include "num_collect/logging/logging_macros.h"
 
 constexpr auto my_tag = num_collect::logging::log_tag_view("example_tag");
 
@@ -64,6 +65,22 @@ static void write_to_default_tag() {
     logger.warning()("warning");
     logger.error()("error");
     logger.critical()("critical");
+}
+
+static void write_logs_with_macros() {
+    // Create a logger with a tag.
+    const auto logger = num_collect::logging::logger(my_tag);
+
+    // Write logs.
+    NUM_COLLECT_LOG_TRACE(logger, "trace");
+    NUM_COLLECT_LOG_DEBUG(logger, "debug");
+    NUM_COLLECT_LOG_ITERATION(logger, "iteration");
+    NUM_COLLECT_LOG_ITERATION_LABEL(logger, "iteration_label");
+    NUM_COLLECT_LOG_SUMMARY(logger, "summary");
+    NUM_COLLECT_LOG_INFO(logger, "info");
+    NUM_COLLECT_LOG_WARNING(logger, "warning");
+    NUM_COLLECT_LOG_ERROR(logger, "error");
+    NUM_COLLECT_LOG_CRITICAL(logger, "critical");
 }
 
 static void write_iterations() {
@@ -127,10 +144,9 @@ auto main(int argc, char** argv) -> int {
 
         write_logs();
         write_to_default_tag();
+        write_logs_with_macros();
         write_iterations();
         write_parameters();
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));  // NOLINT
 
         return 0;
     } catch (const std::exception& e) {
