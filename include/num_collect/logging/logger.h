@@ -127,6 +127,19 @@ constexpr auto default_tag = log_tag_view("");
  * \thread_safety All `const` member functions (member functions except for
  * initialize_child_algorithm_logger function, constructors, destructor, and
  * assignment operators) are thread safe even for the same object.
+ *
+ * For logging, following macros can be used:
+ *
+ * - \ref NUM_COLLECT_LOG_TRACE
+ * - \ref NUM_COLLECT_LOG_DEBUG
+ * - \ref NUM_COLLECT_LOG_ITERATION
+ * - \ref NUM_COLLECT_LOG_ITERATION_LABEL
+ * - \ref NUM_COLLECT_LOG_SUMMARY
+ * - \ref NUM_COLLECT_LOG_INFO
+ * - \ref NUM_COLLECT_LOG_WARNING
+ * - \ref NUM_COLLECT_LOG_ERROR
+ * - \ref NUM_COLLECT_LOG_CRITICAL
+ * - \ref NUM_COLLECT_LOG_AND_THROW
  */
 class logger {
 public:

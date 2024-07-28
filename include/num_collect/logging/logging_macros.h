@@ -177,7 +177,7 @@ template <
  *   - the log body, or
  *   - the format string and its arguments of the log body.
  *
- * For log levels, see \see num_collect::logging::log_level.
+ * For log levels, see num_collect::logging::log_level.
  */
 #define NUM_COLLECT_LOG_TRACE(LOGGER, ...) /*NOLINT*/ \
     INTERNAL_NUM_COLLECT_LOG_IMPL(                    \
@@ -193,7 +193,7 @@ template <
  *   - the log body, or
  *   - the format string and its arguments of the log body.
  *
- * For log levels, see \see num_collect::logging::log_level.
+ * For log levels, see num_collect::logging::log_level.
  */
 #define NUM_COLLECT_LOG_DEBUG(LOGGER, ...) /*NOLINT*/ \
     INTERNAL_NUM_COLLECT_LOG_IMPL(                    \
@@ -209,7 +209,7 @@ template <
  *   - the log body, or
  *   - the format string and its arguments of the log body.
  *
- * For log levels, see \see num_collect::logging::log_level.
+ * For log levels, see num_collect::logging::log_level.
  */
 #define NUM_COLLECT_LOG_ITERATION(LOGGER, ...) /*NOLINT*/ \
     INTERNAL_NUM_COLLECT_LOG_IMPL(                        \
@@ -225,7 +225,7 @@ template <
  *   - the log body, or
  *   - the format string and its arguments of the log body.
  *
- * For log levels, see \see num_collect::logging::log_level.
+ * For log levels, see num_collect::logging::log_level.
  */
 #define NUM_COLLECT_LOG_ITERATION_LABEL(LOGGER, ...) /*NOLINT*/ \
     INTERNAL_NUM_COLLECT_LOG_IMPL(LOGGER,                       \
@@ -241,7 +241,7 @@ template <
  *   - the log body, or
  *   - the format string and its arguments of the log body.
  *
- * For log levels, see \see num_collect::logging::log_level.
+ * For log levels, see num_collect::logging::log_level.
  */
 #define NUM_COLLECT_LOG_SUMMARY(LOGGER, ...) /*NOLINT*/ \
     INTERNAL_NUM_COLLECT_LOG_IMPL(                      \
@@ -257,7 +257,7 @@ template <
  *   - the log body, or
  *   - the format string and its arguments of the log body.
  *
- * For log levels, see \see num_collect::logging::log_level.
+ * For log levels, see num_collect::logging::log_level.
  */
 #define NUM_COLLECT_LOG_INFO(LOGGER, ...) /*NOLINT*/ \
     INTERNAL_NUM_COLLECT_LOG_IMPL(                   \
@@ -273,7 +273,7 @@ template <
  *   - the log body, or
  *   - the format string and its arguments of the log body.
  *
- * For log levels, see \see num_collect::logging::log_level.
+ * For log levels, see num_collect::logging::log_level.
  */
 #define NUM_COLLECT_LOG_WARNING(LOGGER, ...) /*NOLINT*/ \
     INTERNAL_NUM_COLLECT_LOG_IMPL(                      \
@@ -289,7 +289,7 @@ template <
  *   - the log body, or
  *   - the format string and its arguments of the log body.
  *
- * For log levels, see \see num_collect::logging::log_level.
+ * For log levels, see num_collect::logging::log_level.
  */
 #define NUM_COLLECT_LOG_ERROR(LOGGER, ...) /*NOLINT*/ \
     INTERNAL_NUM_COLLECT_LOG_IMPL(                    \
@@ -305,7 +305,7 @@ template <
  *   - the log body, or
  *   - the format string and its arguments of the log body.
  *
- * For log levels, see \see num_collect::logging::log_level.
+ * For log levels, see num_collect::logging::log_level.
  */
 #define NUM_COLLECT_LOG_CRITICAL(LOGGER, ...) /*NOLINT*/ \
     INTERNAL_NUM_COLLECT_LOG_IMPL(                       \
