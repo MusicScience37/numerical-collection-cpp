@@ -249,41 +249,6 @@ namespace num_collect {
     }  // namespace regularization
 
     /*!
-     * \dir num_collect/interp
-     * \brief Directory of interpolation algorithms.
-     */
-
-    //! Namespace of interpolation algorithms.
-    namespace interp {
-
-        /*!
-         * \dir num_collect/interp/kernel
-         * \brief Directory of interpolation using kernels.
-         */
-
-        //! namespace of interpolation using kernels.
-        namespace kernel {
-
-            /*!
-             * \dir num_collect/interp/kernel/concepts
-             * \brief Directory of C++ concepts.
-             */
-
-            //! Namespace of C++ concepts.
-            namespace concepts {}
-
-            /*!
-             * \dir num_collect/interp/kernel/impl
-             * \brief Directory of internal implementations.
-             */
-
-            //! Namespace of internal implementations.
-            namespace impl {}
-
-        }  // namespace kernel
-    }  // namespace interp
-
-    /*!
      * \dir num_collect/rbf
      * \brief Directory of RBF interpolation.
      */
