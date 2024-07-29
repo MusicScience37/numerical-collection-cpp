@@ -87,16 +87,16 @@ public:
         step_size_controller_.init();
 
         if (step_size_) {
-            this->logger().trace()(
+            NUM_COLLECT_LOG_DEBUG(this->logger(),
                 "Using user-specified initial step size {}.", *step_size_);
         } else {
-            this->logger().trace()(
-                "Automatically calculate initial step size.");
+            NUM_COLLECT_LOG_TRACE(
+                this->logger(), "Automatically calculate initial step size.");
             step_size_ = initial_step_size_calculator<formula_type>().calculate(
                 this->problem(), time_, variable_,
                 step_size_controller_.limits(),
                 step_size_controller_.tolerances());
-            this->logger().trace()(
+            NUM_COLLECT_LOG_DEBUG(this->logger(),
                 "Automatically selected initial step size {}.", *step_size_);
         }
     }

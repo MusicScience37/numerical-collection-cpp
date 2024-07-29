@@ -11,6 +11,7 @@ Checks: >
     -cppcoreguidelines-avoid-non-const-global-variables,
     -cppcoreguidelines-avoid-const-or-ref-data-members,
     -cppcoreguidelines-missing-std-forward,
+    -cppcoreguidelines-avoid-do-while,
   google-*,
     -google-runtime-references,
     -google-readability-todo,
@@ -69,6 +70,7 @@ Checks: >
 # - readability-redundant-member-init generates too many warnings in existing codes.
 # - modernize-use-std-numbers generates many false positives.
 # - bugprone-optional-value-conversion has a bug to generate warnings even when checks of existence of values exist.
+# - cppcoreguidelines-avoid-do-while has a bug to ignore NOLINT.
 
 CheckOptions:
   # Naming Conventions

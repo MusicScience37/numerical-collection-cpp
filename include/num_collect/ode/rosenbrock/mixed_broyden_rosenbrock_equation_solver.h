@@ -130,7 +130,7 @@ public:
         variable_ = variable;
         diff_coeff_ = problem.diff_coeff();
 
-        this->logger().trace()("Using approximate Jacobian.");
+        NUM_COLLECT_LOG_TRACE(this->logger(), "Using approximate Jacobian.");
     }
 
     /*!
@@ -201,7 +201,7 @@ private:
         diff_coeff_ = problem.diff_coeff();
         evaluated_once_ = true;
 
-        this->logger().trace()("Using exact Jacobian.");
+        NUM_COLLECT_LOG_TRACE(this->logger(), "Using exact Jacobian.");
     }
 
     //! Whether evaluated a Jacobian.

@@ -282,7 +282,7 @@ public:
 
         const kernel_value_type log_scale = optimizer.opt_variable();
         const kernel_value_type scale = std::pow(base, log_scale);
-        this->logger().debug()(
+        NUM_COLLECT_LOG_DEBUG(this->logger(),
             "Selected an optimized scale of length parameters: {}", scale);
         this->length_parameter_calculator_.scale(scale);
     }

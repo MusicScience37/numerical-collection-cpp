@@ -27,6 +27,7 @@
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/logging/logging_mixin.h"
 #include "num_collect/opt/dividing_rectangles.h"
 #include "num_collect/opt/function_object_wrapper.h"
@@ -255,7 +256,7 @@ public:
 
         const kernel_value_type log_scale = optimizer.opt_variable();
         const kernel_value_type scale = std::pow(base, log_scale);
-        this->logger().debug()(
+        NUM_COLLECT_LOG_DEBUG(this->logger(),
             "Selected an optimized scale of length parameters: {}", scale);
         this->length_parameter_calculator_.scale(scale);
     }

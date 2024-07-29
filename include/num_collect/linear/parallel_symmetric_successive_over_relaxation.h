@@ -253,8 +253,9 @@ private:
                 std::min(my_start_row + rows_per_thread, size);
 
             if (iterations_ == 0) {
-                this->logger().trace()("my rows: {} - {} (whole rows: {})",
-                    my_start_row, my_last_row, size);
+                NUM_COLLECT_LOG_TRACE(this->logger(),
+                    "my rows: {} - {} (whole rows: {})", my_start_row,
+                    my_last_row, size);
             }
 
             auto my_residual = static_cast<scalar_type>(0);

@@ -26,13 +26,14 @@
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/logger.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/logging/sinks/file_log_sink.h"
 
 static void test() {
     num_collect::logging::logger logger;
     constexpr std::size_t num_logs = 10000;
     for (std::size_t i = 0; i < num_logs; ++i) {
-        logger.trace()("Test trace logs. i={}", i);
+        NUM_COLLECT_LOG_TRACE(logger, "Test trace logs. i={}", i);
     }
 }
 

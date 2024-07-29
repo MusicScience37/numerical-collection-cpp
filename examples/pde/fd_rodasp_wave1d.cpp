@@ -101,7 +101,7 @@ auto main(int argc, char** argv) -> int {
 
         const auto time_list = std::vector<double>{0.2, 0.4, 0.6, 0.8, 1.0};
         for (const double time : time_list) {
-            logger.trace()("Solve till {}", time);
+            NUM_COLLECT_LOG_TRACE(logger, "Solve till {}", time);
             solver.solve_till(time);
 
             fig.attr("add_trace")(

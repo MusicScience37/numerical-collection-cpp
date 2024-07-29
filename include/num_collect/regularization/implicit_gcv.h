@@ -235,8 +235,8 @@ public:
         using std::pow;
         const auto [min_param, max_param] =
             calculator_.solver().param_search_region();
-        logger().debug()(
-            "Region of parameters: [{}, {}]", min_param, max_param);
+        NUM_COLLECT_LOG_DEBUG(
+            logger(), "Region of parameters: [{}, {}]", min_param, max_param);
         const scalar_type log_min_param = log10(min_param);
         const scalar_type log_max_param = log10(max_param);
 
@@ -248,7 +248,7 @@ public:
                 pow(static_cast<scalar_type>(10),  // NOLINT
                     log_param);
             const scalar_type gcv_value = calculator_(param);
-            logger().trace()("gcv({}) = {}", param, gcv_value);
+            NUM_COLLECT_LOG_TRACE(logger(), "gcv({}) = {}", param, gcv_value);
             return log10(gcv_value);
         };
 
@@ -273,7 +273,7 @@ public:
         opt_param_ = pow(static_cast<scalar_type>(10),  // NOLINT
             optimizer.opt_variable());
 
-        logger().debug()("Selected parameter: {}", opt_param_);
+        NUM_COLLECT_LOG_DEBUG(logger(), "Selected parameter: {}", opt_param_);
     }
 
     //! \copydoc explicit_param_searcher_base::opt_param
