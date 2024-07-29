@@ -84,7 +84,8 @@ public:
         coeff_ = &coeff;
         data_ = &data;
         inv_max_eigen_ = static_cast<scalar_type>(1) / max_eigen_aat(coeff);
-        this->logger().trace()("inv_max_eigen={}", inv_max_eigen_);
+        NUM_COLLECT_LOG_TRACE(
+            this->logger(), "inv_max_eigen={}", inv_max_eigen_);
     }
 
     //! \copydoc num_collect::regularization::iterative_regularized_solver_base::init
@@ -219,7 +220,7 @@ public:
         -> std::pair<scalar_type, scalar_type> {
         const scalar_type max_sol_est =
             (coeff_->transpose() * (*data_)).cwiseAbs().maxCoeff();
-        this->logger().trace()("max_sol_est={}", max_sol_est);
+        NUM_COLLECT_LOG_TRACE(this->logger(), "max_sol_est={}", max_sol_est);
         constexpr auto tol_update_coeff_multiplier =
             static_cast<scalar_type>(10);
         return {max_sol_est *

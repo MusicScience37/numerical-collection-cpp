@@ -29,6 +29,7 @@
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/logging/logging_mixin.h"
 #include "num_collect/ode/error_tolerances.h"
 
@@ -85,7 +86,7 @@ public:
 
         scalar_type residual_norm = tolerances_.calc_norm(rhs, residual_);
         if (residual_norm <= tolerance_rate_) {
-            this->logger().trace()(
+            NUM_COLLECT_LOG_DEBUG(this->logger(),
                 "No iteration needed. residual_norm={}", residual_norm);
             return;
         }
@@ -94,7 +95,8 @@ public:
             coeff_function(p_, ap_);
             const scalar_type as_dot = r0_.dot(ap_);
             if (abs(as_dot) < std::numeric_limits<scalar_type>::min()) {
-                this->logger().warning()("No further iteration can be done.");
+                NUM_COLLECT_LOG_WARNING(
+                    this->logger(), "No further iteration can be done.");
                 return;
             }
             const scalar_type mu = rho_ / r0_.dot(ap_);
@@ -115,7 +117,7 @@ public:
             residual_norm = tolerances_.calc_norm(rhs, residual_);
             if (residual_norm <= tolerance_rate_ ||
                 iterations_ >= max_iterations_) {
-                this->logger().trace()(
+                NUM_COLLECT_LOG_DEBUG(this->logger(),
                     "Finished iterations: iterations={}, residual_norm={}",
                     iterations_, residual_norm);
                 return;

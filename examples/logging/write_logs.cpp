@@ -30,6 +30,7 @@
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
+#include "num_collect/logging/logging_macros.h"
 
 constexpr auto my_tag = num_collect::logging::log_tag_view("example_tag");
 
@@ -39,17 +40,17 @@ static void write_logs() {
     logger.info()("Example of logs with various log levels.");
 
     // Write logs.
-    logger.trace()("trace");
-    logger.debug()("debug");
-    logger.summary()("summary");
-    logger.info()("info");
-    logger.warning()("warning");
-    logger.error()("error");
-    logger.critical()("critical");
+    NUM_COLLECT_LOG_TRACE(logger, "trace");
+    NUM_COLLECT_LOG_DEBUG(logger, "debug");
+    NUM_COLLECT_LOG_SUMMARY(logger, "summary");
+    NUM_COLLECT_LOG_INFO(logger, "info");
+    NUM_COLLECT_LOG_WARNING(logger, "warning");
+    NUM_COLLECT_LOG_ERROR(logger, "error");
+    NUM_COLLECT_LOG_CRITICAL(logger, "critical");
 
     // These may not be used in ordinary user code.
-    logger.iteration()("iteration");
-    logger.iteration_label()("iteration_label");
+    NUM_COLLECT_LOG_ITERATION(logger, "iteration");
+    NUM_COLLECT_LOG_ITERATION_LABEL(logger, "iteration_label");
 }
 
 static void write_to_default_tag() {
@@ -58,9 +59,10 @@ static void write_to_default_tag() {
     logger.info()("Example of logs without a log tag.");
 
     // Write logs.
-    logger.trace()("trace");  // Not shown with the default configuration.
-    logger.warning()("warning");
-    logger.error()("error");
+    NUM_COLLECT_LOG_TRACE(
+        logger, "trace");  // Not shown with the default configuration.
+    NUM_COLLECT_LOG_WARNING(logger, "warning");
+    NUM_COLLECT_LOG_ERROR(logger, "error");
 }
 
 static void write_iterations() {

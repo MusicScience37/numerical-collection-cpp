@@ -23,6 +23,7 @@
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/logger.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/logging/sinks/file_log_sink.h"
 
 STAT_BENCH_MAIN
@@ -30,7 +31,7 @@ STAT_BENCH_MAIN
 static void perform() {
     num_collect::logging::logger logger;
     STAT_BENCH_MEASURE_INDEXED(/*thread_ind*/, /*sample_ind*/, i) {
-        logger.trace()("Test trace logs. i={}", i);
+        NUM_COLLECT_LOG_TRACE(logger, "Test trace logs. i={}", i);
     };
 }
 

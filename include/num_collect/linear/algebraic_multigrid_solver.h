@@ -112,7 +112,8 @@ public:
         constexpr index_type smoother_iterations = 1;
 
         // Initialization of the first layer.
-        this->logger().trace()("AMG layer size {} (first layer)", coeff.cols());
+        NUM_COLLECT_LOG_TRACE(
+            this->logger(), "AMG layer size {} (first layer)", coeff.cols());
         compute_prolongation_matrix(first_layer_.prolongation_matrix, coeff);
         first_layer_.smoother.compute(coeff);
         first_layer_.smoother.max_iterations(smoother_iterations);
@@ -124,7 +125,8 @@ public:
             &first_layer_.prolongation_matrix;
         index_type next_matrix_size = first_layer_.prolongation_matrix.cols();
         while (next_matrix_size > maximum_directly_solved_matrix_size_) {
-            this->logger().trace()("AMG layer size {}", next_matrix_size);
+            NUM_COLLECT_LOG_TRACE(
+                this->logger(), "AMG layer size {}", next_matrix_size);
             intermidiate_layer_data& next_layer =
                 intermidiate_layers_.emplace_back();
             next_layer.coeff_matrix = (*current_prolongation).transpose() *
@@ -140,8 +142,8 @@ public:
         }
 
         // Initialization of the final layer.
-        this->logger().trace()(
-            "AMG layer size {} (final layer)", next_matrix_size);
+        NUM_COLLECT_LOG_TRACE(this->logger(), "AMG layer size {} (final layer)",
+            next_matrix_size);
         final_layer_.coeff_matrix = (*current_prolongation).transpose() *
             (*current_matrix) * (*current_prolongation);
         final_layer_.solver.compute(final_layer_.coeff_matrix);
@@ -200,7 +202,7 @@ public:
             }
         }
 
-        this->logger().summary()(
+        NUM_COLLECT_LOG_SUMMARY(this->logger(),
             "Solved a linear equation with {} iterations. (Residual rate: {})",
             iterations_, residual_rate());
     }

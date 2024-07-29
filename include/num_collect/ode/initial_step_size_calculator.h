@@ -24,6 +24,7 @@
 #include <tuple>
 
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/logging/logging_mixin.h"
 #include "num_collect/ode/concepts/formula.h"
 #include "num_collect/ode/error_tolerances.h"
@@ -93,12 +94,13 @@ public:
 
         const scalar_type step_size_without_limit =
             std::min(1e+2 * step_size_from_diff, step_size_from_second_diff);
-        this->logger().trace()("Selection of step size without limits: {}",
+        NUM_COLLECT_LOG_TRACE(this->logger(),
+            "Selection of step size without limits: {}",
             step_size_without_limit);
 
         const scalar_type final_step_size =
             limits.apply(step_size_without_limit);
-        this->logger().trace()(
+        NUM_COLLECT_LOG_TRACE(this->logger(),
             "Final selection of step size: {}", step_size_without_limit);
 
         return final_step_size;
@@ -122,13 +124,14 @@ private:
         // d0 in Hairer1993
         const scalar_type initial_variable_norm =
             tolerances.calc_norm(initial_variable, initial_variable);
-        this->logger().trace()("Norm of variable: {}", initial_variable_norm);
+        NUM_COLLECT_LOG_TRACE(
+            this->logger(), "Norm of variable: {}", initial_variable_norm);
 
         // d1 in Hairer1993
         const scalar_type initial_diff_norm =
             tolerances.calc_norm(initial_variable, initial_diff);
-        this->logger().trace()(
-            "Norm of first derivative: {}", initial_diff_norm);
+        NUM_COLLECT_LOG_TRACE(
+            this->logger(), "Norm of first derivative: {}", initial_diff_norm);
 
         // h0 in Hairer1993
         const scalar_type step_size_from_diff =
@@ -137,7 +140,7 @@ private:
             ? static_cast<scalar_type>(1e-2) * initial_variable_norm /
                 initial_diff_norm
             : static_cast<scalar_type>(1e-6);
-        this->logger().trace()(
+        NUM_COLLECT_LOG_TRACE(this->logger(),
             "First estimate of step size using differential coefficient: {}",
             step_size_from_diff);
 
@@ -178,8 +181,8 @@ private:
             tolerances.calc_norm(
                 initial_variable, euler_updated_diff - initial_diff) /
             step_size_from_diff;
-        this->logger().trace()(
-            "Norm of second derivative: {}", second_diff_norm);
+        NUM_COLLECT_LOG_TRACE(
+            this->logger(), "Norm of second derivative: {}", second_diff_norm);
 
         const scalar_type larger_norm =
             std::max(initial_diff_norm, second_diff_norm);
@@ -193,7 +196,7 @@ private:
                   exponent_of_order)
             : std::max(static_cast<scalar_type>(1e-6),
                   static_cast<scalar_type>(1e-3) * step_size_from_diff);
-        this->logger().trace()(
+        NUM_COLLECT_LOG_TRACE(this->logger(),
             "Second estimate of step size using second derivative: {}",
             step_size_from_second_diff);
 

@@ -139,7 +139,7 @@ public:
             const result_type function_values =
                 function(var_plus) + function(var_minus);
             if (!base::isfinite(function_values)) [[unlikely]] {
-                this->logger().warning()(
+                NUM_COLLECT_LOG_WARNING(this->logger(),
                     "A function value was not a finite value. "
                     "Stopped numerical integration.");
                 break;
@@ -192,7 +192,7 @@ public:
                 left_boundary_function(variable_distance) +
                 right_boundary_function(-variable_distance);
             if (!base::isfinite(function_values)) [[unlikely]] {
-                this->logger().warning()(
+                NUM_COLLECT_LOG_WARNING(this->logger(),
                     "A function value was not a finite value. "
                     "Stopped numerical integration.");
                 break;
