@@ -1,0 +1,13 @@
+html {
+  --primary-color: #d66d32;
+  --primary-dark-color: #713514;
+  --primary-light-color: #c77f59;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not(.light-mode) {
+    --primary-color: #e68f60;
+    --primary-dark-color: #ffb48b;
+    --primary-light-color: #b8724c;
+  }
+}
