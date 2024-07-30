@@ -53,10 +53,10 @@
       "source.organizeImports": "explicit"
     }
   },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   "isort.args": ["--profile", "black"],
-  "todo-tree.filtering.excludeGlobs": [
-    "**/node_modules/*/**",
-    "**/vcpkg/**"
-  ],
+  "todo-tree.filtering.excludeGlobs": ["**/node_modules/*/**", "**/vcpkg/**"],
   "restructuredtext.pythonRecommendation.disabled": true
 }
