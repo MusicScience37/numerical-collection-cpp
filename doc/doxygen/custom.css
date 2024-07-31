@@ -13,6 +13,8 @@ html {
   --fragment-comment: #707070;
   --fragment-link: var(--primary-color);
   --fragment-preprocessor: #a68715;
+
+  --code-background: var(--fragment-background);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -32,5 +34,7 @@ html {
     --fragment-comment: #909090;
     --fragment-link: var(--primary-color);
     --fragment-preprocessor: #ddc484;
+
+    --code-background: var(--fragment-background);
   }
 }
