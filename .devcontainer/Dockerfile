@@ -20,7 +20,7 @@ RUN apt-get update && \
     chmod -R 0777 /root/.pyenv
 
 # mimalloc
-RUN git clone https://github.com/microsoft/mimalloc.git -b v2.1.2 && \
+RUN git clone https://github.com/microsoft/mimalloc.git -b v2.1.7 && \
     cd mimalloc && \
     mkdir -p out/release && \
     cd out/release && \
