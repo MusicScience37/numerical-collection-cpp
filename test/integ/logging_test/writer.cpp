@@ -26,6 +26,7 @@
 #include <vector>
 
 #include <fmt/format.h>
+#include <fmt/ranges.h>
 
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/load_logging_config.h"

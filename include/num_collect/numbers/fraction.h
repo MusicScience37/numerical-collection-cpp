@@ -380,8 +380,8 @@ public:
      * \return Output iterator after formatting.
      */
     template <typename FormatContext>
-    auto format(
-        num_collect::numbers::fraction<Integer> val, FormatContext& context) {
+    auto format(num_collect::numbers::fraction<Integer> val,
+        FormatContext& context) const {
         return fmt::format_to(
             context.out(), "{} / {}", val.numerator(), val.denominator());
     }
