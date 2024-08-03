@@ -10,13 +10,13 @@ package-mode = false
 [tool.poetry.dependencies]
 python = ">=3.11,<3.13"
 # Some packages requires setuptools.
-setuptools = "^71.1.0"
+setuptools = "^72.1.0"
 
 [tool.poetry.group.test.dependencies]
 kaleido = "==0.2.1"
 pandas = "^2.2.2"
 plotly = "^5.23.0"
-pytest = "^8.3.1"
+pytest = "^8.3.2"
 pytest-approvaltests = "^0.2.4"
 fastjsonschema = "^2.20.0"
 pybind11 = "^2.13.1"
@@ -30,11 +30,11 @@ sphinxcontrib-plantuml = "^0.30"
 sphinxcontrib-bibtex = "^2.6.2"
 
 [tool.poetry.group.dev.dependencies]
-black = "^24.4.2"
+black = "^24.8.0"
 click = "^8.1.7"
 cmakelang = "^0.6.13"
 doc8 = "^1.1.1"
-pre-commit = "^3.7.1"
+pre-commit = "^3.8.0"
 sphinx-autobuild = "^2024.4.16"
 tqdm = "^4.66.4"
 lizard = "^1.17.10"
