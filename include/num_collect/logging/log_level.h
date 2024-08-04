@@ -128,7 +128,8 @@ public:
      * \return Output iterator after formatting.
      */
     template <typename FormatContext>
-    auto format(num_collect::logging::log_level val, FormatContext& context) {
+    auto format(
+        num_collect::logging::log_level val, FormatContext& context) const {
         return formatter<string_view>::format(
             num_collect::logging::get_log_level_str(val), context);
     }

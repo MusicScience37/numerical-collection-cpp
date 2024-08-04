@@ -101,7 +101,7 @@ public:
     template <typename FormatContext>
     auto format(
         const num_collect::util::impl::dense_vector_format_view<Vector>& val,
-        FormatContext& context) -> decltype(context.out()) {
+        FormatContext& context) const -> decltype(context.out()) {
         const auto& vec = val.vec();
         return format_impl(vec, context);
     }
@@ -116,8 +116,8 @@ private:
      * \return Output iterator after formatting.
      */
     template <typename FormatContext>
-    auto format_impl(
-        const Vector& vec, FormatContext& context) -> decltype(context.out()) {
+    auto format_impl(const Vector& vec,
+        FormatContext& context) const -> decltype(context.out()) {
         const Eigen::Index size = vec.size();
         auto out = context.out();
         *out = '[';
@@ -142,7 +142,7 @@ private:
      * \return Output iterator.
      */
     template <typename OutputIterator>
-    auto write_comma(OutputIterator out) -> OutputIterator {
+    static auto write_comma(OutputIterator out) -> OutputIterator {
         *out = ',';
         ++out;
         *out = ' ';

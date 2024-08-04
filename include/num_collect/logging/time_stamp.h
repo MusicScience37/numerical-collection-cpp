@@ -104,7 +104,8 @@ public:
      * \return Output iterator after formatting.
      */
     template <typename FormatContext>
-    auto format(num_collect::logging::time_stamp val, FormatContext& context) {
+    auto format(
+        num_collect::logging::time_stamp val, FormatContext& context) const {
         const auto time_tm = fmt::gmtime(val.seconds());
         return fmt::format_to(context.out(), FMT_STRING("{0:%FT%T}.{1:09d}"),
             time_tm, val.nanoseconds());

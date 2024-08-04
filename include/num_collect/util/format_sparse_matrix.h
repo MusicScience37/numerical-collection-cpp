@@ -127,7 +127,7 @@ public:
     template <typename FormatContext>
     auto format(
         const num_collect::util::impl::sparse_matrix_format_view<Matrix>& val,
-        FormatContext& context) -> decltype(context.out()) {
+        FormatContext& context) const -> decltype(context.out()) {
         const auto& mat = val.mat();
         switch (val.type()) {
         case num_collect::util::sparse_matrix_format_type::one_line:
@@ -149,8 +149,8 @@ private:
      * \return Output iterator after formatting.
      */
     template <typename FormatContext>
-    auto format_one_line(
-        const Matrix& mat, FormatContext& context) -> decltype(context.out()) {
+    auto format_one_line(const Matrix& mat,
+        FormatContext& context) const -> decltype(context.out()) {
         const Eigen::Index rows = mat.rows();
         const Eigen::Index cols = mat.cols();
         auto out = context.out();
@@ -187,8 +187,8 @@ private:
      * \return Output iterator after formatting.
      */
     template <typename FormatContext>
-    auto format_multi_line(
-        const Matrix& mat, FormatContext& context) -> decltype(context.out()) {
+    auto format_multi_line(const Matrix& mat,
+        FormatContext& context) const -> decltype(context.out()) {
         const Eigen::Index rows = mat.rows();
         const Eigen::Index cols = mat.cols();
         auto out = context.out();
@@ -235,7 +235,7 @@ private:
      * \return Output iterator.
      */
     template <typename OutputIterator>
-    auto write_comma(OutputIterator out) -> OutputIterator {
+    static auto write_comma(OutputIterator out) -> OutputIterator {
         *out = ',';
         ++out;
         *out = ' ';
