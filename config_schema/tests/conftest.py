@@ -1,7 +1,6 @@
 """Configuration of pytest."""
 
 import pytest
-
 from config_validator import ConfigValidator
 
 

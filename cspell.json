@@ -140,6 +140,7 @@
     "interp",
     "interruptible",
     "isfinite",
+    "isort",
     "issn",
     "isystem",
     "iwyu",

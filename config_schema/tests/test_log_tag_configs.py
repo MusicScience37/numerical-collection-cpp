@@ -1,9 +1,7 @@
 """Test of validating log tag configurations."""
 
-import pytest
-
 import fastjsonschema
-
+import pytest
 from config_validator import ConfigValidator
 
 

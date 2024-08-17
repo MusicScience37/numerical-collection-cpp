@@ -1,13 +1,12 @@
 """Validator of configurations."""
 
 import json
-import typing
 import os
+import typing
 
 import fastjsonschema
 import pytomlpp
-
-from constants import SCHEMA_DIR, FILE_ENCODING
+from constants import FILE_ENCODING, SCHEMA_DIR
 
 
 class ConfigValidator:
