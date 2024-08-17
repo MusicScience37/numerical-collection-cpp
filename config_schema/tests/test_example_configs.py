@@ -3,9 +3,8 @@
 import os
 
 import pytest
-
-from constants import EXAMPLE_CONFIGS_DIR
 from config_validator import ConfigValidator
+from constants import EXAMPLE_CONFIGS_DIR
 
 
 @pytest.mark.parametrize(

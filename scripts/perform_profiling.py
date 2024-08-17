@@ -2,11 +2,11 @@
 """Helper script to perform profiling
 """
 
-from pathlib import Path
-import subprocess
 import os
-import click
+import subprocess
+from pathlib import Path
 
+import click
 
 THIS_DIR = Path(__file__).absolute().parent
 PROF_RESULTS_DIR = THIS_DIR.parent / "profiling" / "results"
