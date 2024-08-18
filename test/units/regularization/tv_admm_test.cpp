@@ -59,13 +59,11 @@ TEST_CASE("num_collect::regularization::tv_admm") {
             dense_diff_matrix<derivative_matrix_type>(solution_size);
 
         solver_type solver;
-        constexpr scalar_type tol_update_rate = 1e-3;
-        REQUIRE_NOTHROW(solver.tol_update_rate(tol_update_rate));
         REQUIRE_NOTHROW(solver.compute(coeff, derivative_matrix, data));
 
         REQUIRE_NOTHROW((void)solver.param_search_region());
 
-        constexpr scalar_type param = 1e-2;
+        constexpr scalar_type param = 0.5e-2;
         data_type solution = data_type::Zero(solution_size);
         REQUIRE_NOTHROW(solver.solve(param, solution));
 
