@@ -19,14 +19,19 @@
  */
 #pragma once
 
+#include <algorithm>
 #include <limits>
+#include <utility>
 
 #include "num_collect/base/concepts/dense_matrix.h"
 #include "num_collect/base/concepts/dense_vector.h"
 #include "num_collect/base/concepts/sparse_matrix.h"
+#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/linear/impl/operator_conjugate_gradient.h"
+#include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/regularization/impl/weak_coeff_param.h"  // IWYU pragma: keep
 #include "num_collect/regularization/iterative_regularized_solver_base.h"
 
