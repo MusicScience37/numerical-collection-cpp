@@ -62,7 +62,7 @@ public:
      * coeff_function is assumed to have a signature like:
      *
      * ~~~{.cpp}
-     * void coeff_function(const variable_type& target, variable_type& result);
+     * void coeff_function(const vector_type& target, vector_type& result);
      * ~~~
      *
      * \tparam CoeffFunction Type of the function to multiply coefficient
