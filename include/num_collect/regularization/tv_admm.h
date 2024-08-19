@@ -128,7 +128,7 @@ public:
         lagrange_multiplier_ = data_type::Zero(derivative_matrix_->rows());
         temp_solution_ = solution;
         residual_ = (*coeff_) * solution - (*data_);
-        update_ = std::numeric_limits<scalar_type>::max();
+        update_rate_ = std::numeric_limits<scalar_type>::infinity();
 
         const scalar_type conjugate_gradient_tolerance_rate =
             static_cast<scalar_type>(1e-2) * tol_update_rate_;
@@ -137,12 +137,12 @@ public:
 
     //! \copydoc num_collect::regularization::iterative_regularized_solver_base::iterate
     void iterate(const scalar_type& param, data_type& solution) {
+        // Update solution.
         temp_solution_ =
             static_cast<scalar_type>(2) * (*coeff_).transpose() * (*data_) -
             (*derivative_matrix_).transpose() * lagrange_multiplier_ +
             derivative_constraint_coeff_ * (*derivative_matrix_).transpose() *
                 derivative_;
-
         previous_solution_ = solution;
         conjugate_gradient_.solve(
             [this](const data_type& target, data_type& result) {
@@ -153,9 +153,12 @@ public:
                     target;
             },
             temp_solution_, solution);
-        update_ = (solution - previous_solution_).norm();
+        update_rate_ = (solution - previous_solution_).norm() /
+            (solution.norm() + std::numeric_limits<scalar_type>::epsilon());
         residual_ = (*coeff_) * solution - (*data_);
 
+        // Update derivative.
+        previous_derivative_ = derivative_;
         derivative_ = (*derivative_matrix_) * solution +
             lagrange_multiplier_ / derivative_constraint_coeff_;
         const scalar_type shrinkage_threshold =
@@ -169,9 +172,16 @@ public:
                 derivative_[i] = static_cast<scalar_type>(0);
             }
         }
+        update_rate_ += (derivative_ - previous_derivative_).norm() /
+            (derivative_.norm() + std::numeric_limits<scalar_type>::epsilon());
 
-        lagrange_multiplier_ += derivative_constraint_coeff_ *
+        // Update lagrange multiplier.
+        lagrange_multiplier_update_ = derivative_constraint_coeff_ *
             ((*derivative_matrix_) * solution - derivative_);
+        lagrange_multiplier_ += lagrange_multiplier_update_;
+        update_rate_ += lagrange_multiplier_update_.norm() /
+            (lagrange_multiplier_.norm() +
+                std::numeric_limits<scalar_type>::epsilon());
 
         ++iterations_;
     }
@@ -179,8 +189,9 @@ public:
     //! \copydoc num_collect::regularization::iterative_regularized_solver_base::is_stop_criteria_satisfied
     [[nodiscard]] auto is_stop_criteria_satisfied(
         const data_type& solution) const -> bool {
+        (void)solution;
         return (iterations() > max_iterations()) ||
-            (update() < tol_update_rate() * solution.norm());
+            (update_rate() < tol_update_rate());
     }
 
     //! \copydoc num_collect::regularization::iterative_regularized_solver_base::configure_iteration_logger
@@ -190,7 +201,7 @@ public:
         iteration_logger.template append<index_type>(
             "Iter.", &this_type::iterations);
         iteration_logger.template append<scalar_type>(
-            "Update", &this_type::update);
+            "UpdateRate", &this_type::update_rate);
         iteration_logger.template append<scalar_type>(
             "Res.Rate", &this_type::residual_norm_rate);
     }
@@ -222,9 +233,11 @@ public:
     [[nodiscard]] auto param_search_region() const
         -> std::pair<scalar_type, scalar_type> {
         const data_type approx_order_of_solution =
-            coeff_->transpose() * (*data_);
-        const scalar_type approx_order_of_param = data_->squaredNorm() /
-            (*derivative_matrix_ * approx_order_of_solution).cwiseAbs().sum();
+            coeff_->transpose() * (*data_) / max_eigen_aat(*coeff_);
+        const scalar_type approx_order_of_param =
+            (*derivative_matrix_ * approx_order_of_solution)
+                .cwiseAbs()
+                .maxCoeff();
         NUM_COLLECT_LOG_TRACE(
             this->logger(), "approx_order_of_param={}", approx_order_of_param);
         constexpr auto tol_update_coeff_multiplier =
@@ -245,12 +258,13 @@ public:
     }
 
     /*!
-     * \brief Get the norm of the update of the solution in the last iteration.
+     * \brief Get the rate of the norm of the update of the solution in the last
+     * iteration.
      *
      * \return Value.
      */
-    [[nodiscard]] auto update() const noexcept -> scalar_type {
-        return update_;
+    [[nodiscard]] auto update_rate() const noexcept -> scalar_type {
+        return update_rate_;
     }
 
     /*!
@@ -311,6 +325,36 @@ public:
         return *this;
     }
 
+    /*!
+     * \brief Calculate the maximum eigenvalue of \f$ AA^T \f$ for coefficient
+     * matrix \f$ A \f$.
+     *
+     * \param[in] coeff Coefficient matrix.
+     * \return Eigenvalue.
+     */
+    static auto max_eigen_aat(const Coeff& coeff) -> scalar_type {
+        const index_type rows = coeff.rows();
+        data_type vec = Data::Random(rows);
+        vec.normalize();
+
+        data_type mul_vec = coeff * coeff.transpose() * vec;
+        scalar_type eigen = vec.dot(mul_vec) / vec.squaredNorm();
+        const index_type num_iterations = rows * 10;
+        for (index_type i = 0; i < num_iterations; ++i) {
+            const scalar_type eigen_before = eigen;
+            vec = mul_vec.normalized();
+            mul_vec = coeff * coeff.transpose() * vec;
+            eigen = vec.dot(mul_vec) / vec.squaredNorm();
+            using std::abs;
+            constexpr auto tol_update = static_cast<scalar_type>(1e-4);
+            if (abs(eigen - eigen_before) / abs(eigen) < tol_update) {
+                break;
+            }
+        }
+
+        return eigen;
+    }
+
 private:
     //! Coefficient matrix to compute data vector.
     const coeff_type* coeff_{nullptr};
@@ -336,11 +380,17 @@ private:
     //! Previous solution.
     data_type previous_solution_{};
 
+    //! Previous derivative.
+    data_type previous_derivative_{};
+
+    //! Update of lagrange multiplier.
+    data_type lagrange_multiplier_update_{};
+
     //! Residual vector.
     data_type residual_{};
 
-    //! Norm of the update of the solution in the last iteration.
-    scalar_type update_{};
+    //! Rate of norm of the update of the solution in the last iteration.
+    scalar_type update_rate_{};
 
     //! Conjugate gradient solver.
     linear::impl::operator_conjugate_gradient<data_type> conjugate_gradient_{};
