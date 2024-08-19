@@ -26,17 +26,17 @@
 #include <fmt/format.h>
 
 #include "num_collect/util/format_dense_vector.h"
-#include "num_prob_collect/regularization/dense_diff_matrix.h"
 #include "num_prob_collect/regularization/sparse_blur_matrix.h"
+#include "num_prob_collect/regularization/sparse_diff_matrix.h"
 
 TEST_CASE("num_collect::regularization::tv_admm") {
     using num_collect::regularization::tv_admm;
-    using num_prob_collect::regularization::dense_diff_matrix;
     using num_prob_collect::regularization::sparse_blur_matrix;
+    using num_prob_collect::regularization::sparse_diff_matrix;
 
     using scalar_type = double;
     using coeff_type = Eigen::SparseMatrix<scalar_type>;
-    using derivative_matrix_type = Eigen::MatrixXd;
+    using derivative_matrix_type = Eigen::SparseMatrix<scalar_type>;
     using data_type = Eigen::VectorX<scalar_type>;
     using solver_type = tv_admm<coeff_type, derivative_matrix_type, data_type>;
 
@@ -55,8 +55,8 @@ TEST_CASE("num_collect::regularization::tv_admm") {
         REQUIRE(true_solution.rows() == solution_size);
         REQUIRE(data.rows() == data_size);
 
-        const derivative_matrix_type derivative_matrix =
-            dense_diff_matrix<derivative_matrix_type>(solution_size);
+        const auto derivative_matrix =
+            sparse_diff_matrix<derivative_matrix_type>(solution_size);
 
         solver_type solver;
         REQUIRE_NOTHROW(solver.compute(coeff, derivative_matrix, data));
