@@ -74,8 +74,15 @@ static void add_noise(Eigen::MatrixXd& image, double rate) {
 auto main() -> int {
     num_collect::logging::logger logger;
 
+#ifndef NDEBUG
     constexpr num_collect::index_type rows = 20;
     constexpr num_collect::index_type cols = 20;
+    constexpr double noise_rate = 0.05;
+#else
+    constexpr num_collect::index_type rows = 40;
+    constexpr num_collect::index_type cols = 40;
+    constexpr double noise_rate = 0.1;
+#endif
     constexpr num_collect::index_type size = rows * cols;
 
     const Eigen::Vector2d center = Eigen::Vector2d(0.7, 0.6);
@@ -83,7 +90,6 @@ auto main() -> int {
     Eigen::MatrixXd origin = Eigen::MatrixXd::Zero(rows, cols);
     add_circle(origin, center, radius);
 
-    constexpr double noise_rate = 0.1;
     Eigen::MatrixXd data = origin;
     add_noise(data, noise_rate);
 

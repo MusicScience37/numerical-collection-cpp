@@ -5,4 +5,5 @@ set(SOURCE_FILES
     full_gen_tikhonov_test.cpp
     implicit_gcv_test.cpp
     tikhonov_test.cpp
+    tv_admm_test.cpp
 )

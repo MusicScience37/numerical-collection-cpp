@@ -7,6 +7,7 @@
 #include "impl/amg/create_prolongation_matrix_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/amg/node_connection_list_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/amg/tune_coarse_grid_selection_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "impl/operator_conjugate_gradient_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "parallel_symmetric_successive_over_relaxation.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "reverse_cuthill_mckee_ordering_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "symmetric_successive_over_relaxation.cpp"  // NOLINT(bugprone-suspicious-include)

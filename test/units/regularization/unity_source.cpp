@@ -4,3 +4,4 @@
 #include "full_gen_tikhonov_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "implicit_gcv_test.cpp"       // NOLINT(bugprone-suspicious-include)
 #include "tikhonov_test.cpp"           // NOLINT(bugprone-suspicious-include)
+#include "tv_admm_test.cpp"            // NOLINT(bugprone-suspicious-include)

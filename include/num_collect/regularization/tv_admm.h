@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 MusicScience37 (Kenta Kabashima)
+ * Copyright 2024 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,17 +15,20 @@
  */
 /*!
  * \file
- * \brief Definition of fista class.
+ * \brief Definition of tv_admm class.
  */
 #pragma once
 
 #include <algorithm>
-#include <cmath>
 #include <limits>
 #include <utility>
 
+#include "num_collect/base/concepts/dense_matrix.h"
+#include "num_collect/base/concepts/dense_vector.h"
+#include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/linear/impl/operator_conjugate_gradient.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
@@ -34,27 +37,30 @@
 
 namespace num_collect::regularization {
 
-//! Tag of fista.
-constexpr auto fista_tag =
-    logging::log_tag_view("num_collect::regularization::fista");
+//! Tag of tv_admm.
+constexpr auto tv_admm_tag =
+    logging::log_tag_view("num_collect::regularization::tv_admm");
 
 /*!
- * \brief Class for fast iterative shrinkage-thresholding algorithm (FISTA)
- * \cite Beck2009 for L1-regularization of linear equations.
- *
- * This class execute fast iterative shrinkage-thresholding algorithm (FISTA)
- * for L1-regularization of linear equations. This class is for large
- * inferior-determined problems, and implemented with OpenMP.
+ * \brief Class to solve linear equations with total variation (TV)
+ * regularization using the alternating direction method of multipliers (ADMM)
+ * \cite Boyd2010.
  *
  * \tparam Coeff Type of coefficient matrices.
+ * \tparam DerivativeMatrix Type of matrices to compute derivatives.
  * \tparam Data Type of data vectors.
  */
-template <typename Coeff, typename Data>
-class fista
-    : public iterative_regularized_solver_base<fista<Coeff, Data>, Data> {
+template <typename Coeff, typename DerivativeMatrix,
+    base::concepts::dense_vector Data>
+    requires((base::concepts::sparse_matrix<Coeff> ||
+                 base::concepts::dense_matrix<Coeff>) &&
+        (base::concepts::sparse_matrix<DerivativeMatrix> ||
+            base::concepts::dense_matrix<DerivativeMatrix>))
+class tv_admm : public iterative_regularized_solver_base<
+                    tv_admm<Coeff, DerivativeMatrix, Data>, Data> {
 public:
     //! This type.
-    using this_type = fista<Coeff, Data>;
+    using this_type = tv_admm<Coeff, DerivativeMatrix, Data>;
 
     //! Type of the base class.
     using base_type = iterative_regularized_solver_base<this_type, Data>;
@@ -65,27 +71,32 @@ public:
     //! Type of coefficient matrices.
     using coeff_type = Coeff;
 
+    //! Type of matrices to compute derivatives.
+    using derivative_matrix_type = DerivativeMatrix;
+
     /*!
      * \brief Constructor.
      */
-    fista() : base_type(fista_tag) {}
+    tv_admm() : base_type(tv_admm_tag) {
+        this->configure_child_algorithm_logger_if_exists(conjugate_gradient_);
+    }
 
     /*!
      * \brief Compute internal parameters.
      *
      * \param[in] coeff Coefficient matrix.
      * \param[in] data Data vector.
+     * \param[in] derivative_matrix Matrix to compute derivative.
      *
      * \note Pointers to the arguments are saved in this object, so don't
      * destruct those arguments.
      * \note Call this before init.
      */
-    void compute(const Coeff& coeff, const Data& data) {
+    void compute(const Coeff& coeff, const DerivativeMatrix& derivative_matrix,
+        const Data& data) {
         coeff_ = &coeff;
+        derivative_matrix_ = &derivative_matrix;
         data_ = &data;
-        inv_max_eigen_ = static_cast<scalar_type>(1) / max_eigen_aat(coeff);
-        NUM_COLLECT_LOG_TRACE(
-            this->logger(), "inv_max_eigen={}", inv_max_eigen_);
     }
 
     //! \copydoc num_collect::regularization::iterative_regularized_solver_base::init
@@ -106,76 +117,83 @@ public:
             NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Data and solution must have the same number of columns.");
         }
+        if (derivative_matrix_->cols() != solution.rows()) {
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
+                "The number of columns in the derivative matrix must match the "
+                "number of rows in solution vector.");
+        }
 
         iterations_ = 0;
-        t_ = static_cast<scalar_type>(1);
-        y_ = solution;
-        update_ = std::numeric_limits<scalar_type>::infinity();
+        derivative_ = (*derivative_matrix_) * solution;
+        lagrange_multiplier_ = data_type::Zero(derivative_matrix_->rows());
+        temp_solution_ = solution;
+        residual_ = (*coeff_) * solution - (*data_);
+        update_rate_ = std::numeric_limits<scalar_type>::infinity();
+
+        const scalar_type conjugate_gradient_tolerance_rate =
+            static_cast<scalar_type>(1e-2) * tol_update_rate_;
+        conjugate_gradient_.tolerances(conjugate_gradient_tolerance_rate);
     }
 
     //! \copydoc num_collect::regularization::iterative_regularized_solver_base::iterate
     void iterate(const scalar_type& param, data_type& solution) {
-        const scalar_type t_before = t_;
-        using std::sqrt;
-        t_ = static_cast<scalar_type>(0.5) *        // NOLINT
-            (static_cast<scalar_type>(1) +          // NOLINT
-                sqrt(static_cast<scalar_type>(1) +  // NOLINT
-                    static_cast<scalar_type>(4)     // NOLINT
-                        * t_before * t_before));
-        const scalar_type coeff_update =
-            (t_before - static_cast<scalar_type>(1)) / t_;
+        // Update solution.
+        temp_solution_ =
+            static_cast<scalar_type>(2) * (*coeff_).transpose() * (*data_) -
+            (*derivative_matrix_).transpose() * lagrange_multiplier_ +
+            derivative_constraint_coeff_ * (*derivative_matrix_).transpose() *
+                derivative_;
+        previous_solution_ = solution;
+        conjugate_gradient_.solve(
+            [this](const data_type& target, data_type& result) {
+                result = static_cast<scalar_type>(2) * (*coeff_).transpose() *
+                    (*coeff_) * target;
+                result += derivative_constraint_coeff_ *
+                    (*derivative_matrix_).transpose() * (*derivative_matrix_) *
+                    target;
+            },
+            temp_solution_, solution);
+        update_rate_ = (solution - previous_solution_).norm() /
+            (solution.norm() + std::numeric_limits<scalar_type>::epsilon());
+        residual_ = (*coeff_) * solution - (*data_);
 
-        const scalar_type twice_step = inv_max_eigen_;
-        const scalar_type step = static_cast<scalar_type>(0.5) * twice_step;
-        const scalar_type trunc_thresh = param * step;
-
-        residual_ = -(*data_);
-        auto update_sum2 = static_cast<scalar_type>(0);
-#pragma omp parallel default(shared)
-        {
-            const index_type size = solution.size();
-            data_type temp_res = Data::Zero(residual_.size());
-#pragma omp for nowait
-            for (index_type i = 0; i < size; ++i) {
-                using std::abs;
-                if (abs(y_(i)) > static_cast<scalar_type>(0)) {
-                    temp_res += y_(i) * coeff_->col(i);
-                }
-            }
-#pragma omp critical
-            residual_ += temp_res;
-#pragma omp barrier
-
-#pragma omp for reduction(+ : update_sum2)
-            for (index_type i = 0; i < size; ++i) {
-                scalar_type cur_next_sol =
-                    y_(i) - twice_step * coeff_->col(i).dot(residual_);
-
-                if (cur_next_sol > trunc_thresh) {
-                    cur_next_sol = cur_next_sol - trunc_thresh;
-                } else if (cur_next_sol < -trunc_thresh) {
-                    cur_next_sol = cur_next_sol + trunc_thresh;
-                } else {
-                    cur_next_sol = static_cast<scalar_type>(0);
-                }
-
-                const scalar_type current_update = cur_next_sol - solution(i);
-                update_sum2 += current_update * current_update;
-
-                y_(i) = cur_next_sol + coeff_update * current_update;
-                solution(i) = cur_next_sol;
+        // Update derivative.
+        previous_derivative_ = derivative_;
+        derivative_ = (*derivative_matrix_) * solution +
+            lagrange_multiplier_ / derivative_constraint_coeff_;
+        const scalar_type shrinkage_threshold =
+            param / derivative_constraint_coeff_;
+        const index_type derivative_size = derivative_.size();
+#pragma omp parallel for
+        for (index_type i = 0; i < derivative_size; ++i) {
+            if (derivative_[i] > shrinkage_threshold) {
+                derivative_[i] -= shrinkage_threshold;
+            } else if (derivative_[i] < -shrinkage_threshold) {
+                derivative_[i] += shrinkage_threshold;
+            } else {
+                derivative_[i] = static_cast<scalar_type>(0);
             }
         }
+        update_rate_ += (derivative_ - previous_derivative_).norm() /
+            (derivative_.norm() + std::numeric_limits<scalar_type>::epsilon());
 
-        update_ = sqrt(update_sum2);
+        // Update lagrange multiplier.
+        lagrange_multiplier_update_ = derivative_constraint_coeff_ *
+            ((*derivative_matrix_) * solution - derivative_);
+        lagrange_multiplier_ += lagrange_multiplier_update_;
+        update_rate_ += lagrange_multiplier_update_.norm() /
+            (lagrange_multiplier_.norm() +
+                std::numeric_limits<scalar_type>::epsilon());
+
         ++iterations_;
     }
 
     //! \copydoc num_collect::regularization::iterative_regularized_solver_base::is_stop_criteria_satisfied
     [[nodiscard]] auto is_stop_criteria_satisfied(
         const data_type& solution) const -> bool {
+        (void)solution;
         return (iterations() > max_iterations()) ||
-            (update() < tol_update_rate() * solution.norm());
+            (update_rate() < tol_update_rate());
     }
 
     //! \copydoc num_collect::regularization::iterative_regularized_solver_base::configure_iteration_logger
@@ -185,7 +203,7 @@ public:
         iteration_logger.template append<index_type>(
             "Iter.", &this_type::iterations);
         iteration_logger.template append<scalar_type>(
-            "Update", &this_type::update);
+            "UpdateRate", &this_type::update_rate);
         iteration_logger.template append<scalar_type>(
             "Res.Rate", &this_type::residual_norm_rate);
     }
@@ -199,7 +217,7 @@ public:
     //! \copydoc num_collect::regularization::implicit_regularized_solver_base::regularization_term
     [[nodiscard]] auto regularization_term(
         const data_type& solution) const -> scalar_type {
-        return solution.template lpNorm<1>();
+        return (*derivative_matrix_ * solution).template lpNorm<1>();
     }
 
     //! \copydoc num_collect::regularization::implicit_regularized_solver_base::change_data
@@ -216,15 +234,20 @@ public:
     //! \copydoc num_collect::regularization::regularized_solver_base::param_search_region
     [[nodiscard]] auto param_search_region() const
         -> std::pair<scalar_type, scalar_type> {
-        const scalar_type max_sol_est =
-            (coeff_->transpose() * (*data_)).cwiseAbs().maxCoeff();
-        NUM_COLLECT_LOG_TRACE(this->logger(), "max_sol_est={}", max_sol_est);
+        const data_type approx_order_of_solution =
+            coeff_->transpose() * (*data_) / max_eigen_aat(*coeff_);
+        const scalar_type approx_order_of_param =
+            (*derivative_matrix_ * approx_order_of_solution)
+                .cwiseAbs()
+                .maxCoeff();
+        NUM_COLLECT_LOG_TRACE(
+            this->logger(), "approx_order_of_param={}", approx_order_of_param);
         constexpr auto tol_update_coeff_multiplier =
             static_cast<scalar_type>(10);
-        return {max_sol_est *
+        return {approx_order_of_param *
                 std::max(impl::weak_coeff_min_param<scalar_type>,
                     tol_update_coeff_multiplier * tol_update_rate_),
-            max_sol_est * impl::weak_coeff_max_param<scalar_type>};
+            approx_order_of_param * impl::weak_coeff_max_param<scalar_type>};
     }
 
     /*!
@@ -237,12 +260,13 @@ public:
     }
 
     /*!
-     * \brief Get the norm of the update of the solution in the last iteration.
+     * \brief Get the rate of the norm of the update of the solution in the last
+     * iteration.
      *
      * \return Value.
      */
-    [[nodiscard]] auto update() const noexcept -> scalar_type {
-        return update_;
+    [[nodiscard]] auto update_rate() const noexcept -> scalar_type {
+        return update_rate_;
     }
 
     /*!
@@ -269,7 +293,7 @@ public:
      * \param[in] value Value.
      * \return This object.
      */
-    auto max_iterations(index_type value) -> fista& {
+    auto max_iterations(index_type value) -> tv_admm& {
         if (value <= 0) {
             NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Maximum number of iterations must be a positive integer.");
@@ -293,7 +317,7 @@ public:
      * \param[in] value Value.
      * \return This object.
      */
-    auto tol_update_rate(scalar_type value) -> fista& {
+    auto tol_update_rate(scalar_type value) -> tv_admm& {
         if (value <= static_cast<scalar_type>(0)) {
             NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Tolerance of update rate of the solution must be a positive "
@@ -334,32 +358,52 @@ public:
     }
 
 private:
-    //! Coefficient matrix.
+    //! Coefficient matrix to compute data vector.
     const coeff_type* coeff_{nullptr};
+
+    //! Matrix to compute derivative.
+    const derivative_matrix_type* derivative_matrix_{nullptr};
 
     //! Data vector.
     const data_type* data_{nullptr};
 
-    /*!
-     * \brief Inverse of maximum eigenvalue of \f$ AA^T \f$ for coefficient
-     * matrix \f$ A \f$.
-     */
-    scalar_type inv_max_eigen_{};
-
     //! Number of iterations.
     index_type iterations_{};
 
-    //! Parameter for step size of y_.
-    scalar_type t_{};
+    //! Derivative.
+    data_type derivative_{};
 
-    //! Another vector to update in FISTA.
-    data_type y_{};
+    //! Lagrange multiplier.
+    data_type lagrange_multiplier_{};
+
+    //! Temporary vector for the update of the solution.
+    data_type temp_solution_{};
+
+    //! Previous solution.
+    data_type previous_solution_{};
+
+    //! Previous derivative.
+    data_type previous_derivative_{};
+
+    //! Update of lagrange multiplier.
+    data_type lagrange_multiplier_update_{};
 
     //! Residual vector.
     data_type residual_{};
 
-    //! Norm of the update of the solution in the last iteration.
-    scalar_type update_{};
+    //! Rate of norm of the update of the solution in the last iteration.
+    scalar_type update_rate_{};
+
+    //! Conjugate gradient solver.
+    linear::impl::operator_conjugate_gradient<data_type> conjugate_gradient_{};
+
+    //! Default coefficient of the constraint for the derivative.
+    static constexpr auto default_derivative_constraint_coeff =
+        static_cast<scalar_type>(1);
+
+    //! Coefficient of the constraint for the derivative.
+    scalar_type derivative_constraint_coeff_{
+        default_derivative_constraint_coeff};
 
     //! Default maximum number of iterations.
     static constexpr index_type default_max_iterations = 1000;

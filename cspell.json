@@ -7,6 +7,7 @@
   // words - list of words to be always considered correct
   "words": [
     "addoption",
+    "ADMM",
     "alloc",
     "amsmath",
     "Andreas",
@@ -32,6 +33,7 @@
     "Blom",
     "boldsymbol",
     "booktitle",
+    "Borja",
     "Brochu",
     "Broyden",
     "bugprone",
@@ -85,6 +87,7 @@
     "doxygen",
     "doxylink",
     "DVCPKG",
+    "Eckstein",
     "Eigen",
     "Elden",
     "endfunction",
@@ -205,6 +208,8 @@
     "openmp",
     "optin",
     "Paolo",
+    "Parikh",
+    "Peleato",
     "Penrose",
     "Perttunen",
     "Physica",
