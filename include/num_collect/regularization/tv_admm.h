@@ -163,7 +163,9 @@ public:
             lagrange_multiplier_ / derivative_constraint_coeff_;
         const scalar_type shrinkage_threshold =
             param / derivative_constraint_coeff_;
-        for (index_type i = 0; i < derivative_.size(); ++i) {
+        const index_type derivative_size = derivative_.size();
+#pragma omp parallel for
+        for (index_type i = 0; i < derivative_size; ++i) {
             if (derivative_[i] > shrinkage_threshold) {
                 derivative_[i] -= shrinkage_threshold;
             } else if (derivative_[i] < -shrinkage_threshold) {

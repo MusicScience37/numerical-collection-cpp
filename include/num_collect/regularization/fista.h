@@ -131,8 +131,6 @@ public:
 
         residual_ = -(*data_);
         auto update_sum2 = static_cast<scalar_type>(0);
-        // TODO(kenta): Fix this warning.
-        // NOLINTNEXTLINE(openmp-use-default-none): Difficult to resolve.
 #pragma omp parallel default(shared)
         {
             const index_type size = solution.size();
