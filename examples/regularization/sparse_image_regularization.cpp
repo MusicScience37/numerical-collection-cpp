@@ -34,6 +34,7 @@
 #include "num_collect/logging/log_config.h"
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/log_tag_config.h"
+#include "num_collect/opt/gaussian_process_optimizer.h"
 #include "num_collect/regularization/fista.h"
 #include "num_collect/regularization/implicit_gcv.h"
 #include "num_collect/regularization/tv_admm.h"
@@ -99,14 +100,25 @@ static void write_image(
 }
 
 auto main() -> int {
-    num_collect::logging::set_default_tag_config(
+    auto log_tag_config =
         num_collect::logging::log_tag_config()
             .output_log_level(num_collect::logging::log_level::debug)
             .output_log_level_in_child_iterations(
-                num_collect::logging::log_level::warning));
+                num_collect::logging::log_level::warning);
+    num_collect::logging::set_default_tag_config(log_tag_config);
+    log_tag_config.iteration_output_period(1);
+    num_collect::logging::set_config_of(
+        num_collect::opt::gaussian_process_optimizer_tag, log_tag_config);
 
+#ifndef NDEBUG
     constexpr num_collect::index_type rows = 20;
     constexpr num_collect::index_type cols = 20;
+    constexpr double noise_rate = 0.05;
+#else
+    constexpr num_collect::index_type rows = 40;
+    constexpr num_collect::index_type cols = 40;
+    constexpr double noise_rate = 0.1;
+#endif
     constexpr num_collect::index_type size = rows * cols;
 
     const Eigen::Vector2d center = Eigen::Vector2d(0.7, 0.6);
@@ -115,7 +127,6 @@ auto main() -> int {
     add_circle(origin, center, radius);
     write_image(origin, "./sparse_image_origin.png");
 
-    constexpr double noise_rate = 0.05;
     Eigen::MatrixXd data = origin;
     add_noise(data, noise_rate);
     write_image(data, "./sparse_image_data.png");
