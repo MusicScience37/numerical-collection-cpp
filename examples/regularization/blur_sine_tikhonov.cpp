@@ -133,7 +133,8 @@ auto main() -> int {
 
     fig = px.attr("line")(pybind11::arg("x") = residual_norm_list,
         pybind11::arg("y") = regularization_term_list,
-        pybind11::arg("log_x") = true, pybind11::arg("log_y") = true,
+        pybind11::arg("title") = "L-curve", pybind11::arg("log_x") = true,
+        pybind11::arg("log_y") = true,
         pybind11::arg("labels") = std::unordered_map<std::string, std::string>{
             {"x", "Residual Norm"}, {"y", "Regularization Term"}});
 
