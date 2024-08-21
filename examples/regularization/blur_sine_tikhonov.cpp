@@ -80,6 +80,8 @@ auto main() -> int {
     std::vector<double> param_list;
     std::vector<std::string> type_list;
     std::vector<double> value_list;
+    std::vector<double> residual_norm_list;
+    std::vector<double> regularization_term_list;
     const auto [min_param, max_param] = tikhonov.param_search_region();
     constexpr std::size_t num_samples = 101;
     for (std::size_t i = 0; i < num_samples; ++i) {
@@ -91,11 +93,13 @@ auto main() -> int {
         param_list.push_back(param);
         type_list.emplace_back("residual norm");
         value_list.push_back(residual_norm);
+        residual_norm_list.push_back(residual_norm);
 
         const double regularization_term = tikhonov.regularization_term(param);
         param_list.push_back(param);
         type_list.emplace_back("regularization term");
         value_list.push_back(regularization_term);
+        regularization_term_list.push_back(regularization_term);
 
         const double curvature_value = tikhonov.l_curve_curvature(param);
         param_list.push_back(param);
@@ -126,4 +130,14 @@ auto main() -> int {
 
     fig.attr("write_html")("blur_sine_tikhonov_norms.html");
     fig.attr("write_image")("blur_sine_tikhonov_norms.png");
+
+    fig = px.attr("line")(pybind11::arg("x") = residual_norm_list,
+        pybind11::arg("y") = regularization_term_list,
+        pybind11::arg("title") = "L-curve", pybind11::arg("log_x") = true,
+        pybind11::arg("log_y") = true,
+        pybind11::arg("labels") = std::unordered_map<std::string, std::string>{
+            {"x", "Residual Norm"}, {"y", "Regularization Term"}});
+
+    fig.attr("write_html")("blur_sine_tikhonov_l_curve.html");
+    fig.attr("write_image")("blur_sine_tikhonov_l_curve.png");
 }
