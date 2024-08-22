@@ -37,7 +37,8 @@ constexpr auto operator_conjugate_gradient_tag = logging::log_tag_view(
     "num_collect::linear::impl::operator_conjugate_gradient");
 
 /*!
- * \brief Class to perform conjugate gradient (CG) method for linear operators.
+ * \brief Class to perform conjugate gradient (CG) method \cite Golub2013 for
+ * linear operators.
  *
  * \tparam Vector Type of vectors.
  */
