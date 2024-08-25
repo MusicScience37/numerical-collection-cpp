@@ -29,6 +29,7 @@
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
+#include "num_collect/regularization/impl/approximate_max_eigen_aat.h"
 #include "num_collect/regularization/impl/weak_coeff_param.h"  // IWYU pragma: keep
 #include "num_collect/regularization/iterative_regularized_solver_base.h"
 
@@ -83,7 +84,8 @@ public:
     void compute(const Coeff& coeff, const Data& data) {
         coeff_ = &coeff;
         data_ = &data;
-        inv_max_eigen_ = static_cast<scalar_type>(1) / max_eigen_aat(coeff);
+        inv_max_eigen_ = static_cast<scalar_type>(1) /
+            impl::approximate_max_eigen_aat(coeff);
         NUM_COLLECT_LOG_TRACE(
             this->logger(), "inv_max_eigen={}", inv_max_eigen_);
     }
@@ -301,36 +303,6 @@ public:
         }
         tol_update_rate_ = value;
         return *this;
-    }
-
-    /*!
-     * \brief Calculate the maximum eigenvalue of \f$ AA^T \f$ for coefficient
-     * matrix \f$ A \f$.
-     *
-     * \param[in] coeff Coefficient matrix.
-     * \return Eigenvalue.
-     */
-    static auto max_eigen_aat(const Coeff& coeff) -> scalar_type {
-        const index_type rows = coeff.rows();
-        data_type vec = Data::Random(rows);
-        vec.normalize();
-
-        data_type mul_vec = coeff * coeff.transpose() * vec;
-        scalar_type eigen = vec.dot(mul_vec) / vec.squaredNorm();
-        const index_type num_iterations = rows * 10;
-        for (index_type i = 0; i < num_iterations; ++i) {
-            const scalar_type eigen_before = eigen;
-            vec = mul_vec.normalized();
-            mul_vec = coeff * coeff.transpose() * vec;
-            eigen = vec.dot(mul_vec) / vec.squaredNorm();
-            using std::abs;
-            constexpr auto tol_update = static_cast<scalar_type>(1e-4);
-            if (abs(eigen - eigen_before) / abs(eigen) < tol_update) {
-                break;
-            }
-        }
-
-        return eigen;
     }
 
 private:
