@@ -32,6 +32,7 @@
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
+#include "num_collect/regularization/impl/approximate_max_eigen_aat.h"
 #include "num_collect/regularization/impl/weak_coeff_param.h"  // IWYU pragma: keep
 #include "num_collect/regularization/iterative_regularized_solver_base.h"
 
@@ -234,8 +235,8 @@ public:
     //! \copydoc num_collect::regularization::regularized_solver_base::param_search_region
     [[nodiscard]] auto param_search_region() const
         -> std::pair<scalar_type, scalar_type> {
-        const data_type approx_order_of_solution =
-            coeff_->transpose() * (*data_) / max_eigen_aat(*coeff_);
+        const data_type approx_order_of_solution = coeff_->transpose() *
+            (*data_) / impl::approximate_max_eigen_aat(*coeff_);
         const scalar_type approx_order_of_param =
             (*derivative_matrix_ * approx_order_of_solution)
                 .cwiseAbs()
@@ -325,36 +326,6 @@ public:
         }
         tol_update_rate_ = value;
         return *this;
-    }
-
-    /*!
-     * \brief Calculate the maximum eigenvalue of \f$ AA^T \f$ for coefficient
-     * matrix \f$ A \f$.
-     *
-     * \param[in] coeff Coefficient matrix.
-     * \return Eigenvalue.
-     */
-    static auto max_eigen_aat(const Coeff& coeff) -> scalar_type {
-        const index_type rows = coeff.rows();
-        data_type vec = Data::Random(rows);
-        vec.normalize();
-
-        data_type mul_vec = coeff * coeff.transpose() * vec;
-        scalar_type eigen = vec.dot(mul_vec) / vec.squaredNorm();
-        const index_type num_iterations = rows * 10;
-        for (index_type i = 0; i < num_iterations; ++i) {
-            const scalar_type eigen_before = eigen;
-            vec = mul_vec.normalized();
-            mul_vec = coeff * coeff.transpose() * vec;
-            eigen = vec.dot(mul_vec) / vec.squaredNorm();
-            using std::abs;
-            constexpr auto tol_update = static_cast<scalar_type>(1e-4);
-            if (abs(eigen - eigen_before) / abs(eigen) < tol_update) {
-                break;
-            }
-        }
-
-        return eigen;
     }
 
 private:
