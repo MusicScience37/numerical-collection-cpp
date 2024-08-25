@@ -1,5 +1,6 @@
 #include "adaptive_diagonal_curves_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "annealing_downhill_simplex_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "any_objective_function_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "backtracking_line_searcher_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "bfgs_optimizer_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "conjugate_gradient_optimizer_test.cpp"  // NOLINT(bugprone-suspicious-include)
