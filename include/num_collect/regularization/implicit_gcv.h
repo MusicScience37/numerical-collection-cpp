@@ -33,6 +33,7 @@
 #include "num_collect/opt/function_object_wrapper.h"
 #include "num_collect/opt/gaussian_process_optimizer.h"
 #include "num_collect/regularization/concepts/implicit_regularized_solver.h"
+#include "num_collect/util/vector.h"
 
 namespace num_collect::regularization {
 
@@ -71,6 +72,7 @@ public:
         const data_type& initial_solution)
         : solver_(&solver), data_(&data), initial_solution_(&initial_solution) {
         noise_rate(default_noise_rate);
+        num_samples(1);
     }
 
     /*!
@@ -81,31 +83,35 @@ public:
      */
     [[nodiscard]] auto operator()(scalar_type param) -> scalar_type {
         const index_type data_size = data_->size();
-        if (noise_.size() != data_size) {
+        if (noise_.back().size() != data_size) {
             generate_noise();
         }
-
-        solution_with_noise_ = *initial_solution_;
-        solver_->change_data(data_with_noise_);
-        solver_->solve(param, solution_with_noise_);
-        solver_->calculate_data_for(
-            solution_with_noise_, forwarded_data_with_noise_);
 
         solution_ = *initial_solution_;
         solver_->change_data(*data_);
         solver_->solve(param, solution_);
         solver_->calculate_data_for(solution_, forwarded_data_);
 
-        const scalar_type sqrt_denominator =
-            noise_.dot(noise_ -
-                (forwarded_data_with_noise_ - forwarded_data_) /
-                    noise_multiplier_) /
-            noise_.squaredNorm();
-        const scalar_type denominator = sqrt_denominator * sqrt_denominator;
+        auto trace_sum = static_cast<scalar_type>(0);
+        for (index_type i = 0; i < noise_.size(); ++i) {
+            solution_with_noise_ = *initial_solution_;
+            solver_->change_data(data_with_noise_[i]);
+            solver_->solve(param, solution_with_noise_);
+            solver_->calculate_data_for(
+                solution_with_noise_, forwarded_data_with_noise_);
 
+            trace_sum += noise_[i].dot(noise_[i] -
+                             (forwarded_data_with_noise_ - forwarded_data_) /
+                                 noise_multiplier_) /
+                noise_[i].squaredNorm();
+        }
+        trace_sum /= static_cast<scalar_type>(noise_.size());
+
+        solver_->change_data(*data_);
+
+        const scalar_type denominator = trace_sum * trace_sum;
         const scalar_type numerator = solver_->residual_norm(solution_) /
             static_cast<scalar_type>(data_size);
-
         return numerator / denominator;
     }
 
@@ -128,6 +134,22 @@ public:
     }
 
     /*!
+     * \brief Set the number of samples for approximation of denominator of GCV.
+     *
+     * \param[in] value Value.
+     * \return This object.
+     */
+    auto num_samples(index_type value) -> implicit_gcv_calculator& {
+        if (value <= 0) {
+            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
+                "Number of samples must be a positive value.");
+        }
+        noise_.resize(value);
+        data_with_noise_.resize(value);
+        return *this;
+    }
+
+    /*!
      * \brief Generate noise to use in calculation.
      *
      * \tparam RandomNumberGenerator Type of the generator of random numbers.
@@ -136,11 +158,13 @@ public:
     template <base::concepts::invocable<> RandomNumberGenerator>
     void generate_noise(RandomNumberGenerator& generator) {
         std::normal_distribution<scalar_type> distribution;
-        noise_.resize(data_->size());
-        for (index_type i = 0; i < data_->size(); ++i) {
-            noise_(i) = distribution(generator);
+        for (index_type i = 0; i < noise_.size(); ++i) {
+            noise_[i].resize(data_->size());
+            for (index_type j = 0; j < data_->size(); ++j) {
+                noise_[i](j) = distribution(generator);
+            }
+            data_with_noise_[i] = (*data_) + noise_multiplier_ * noise_[i];
         }
-        data_with_noise_ = (*data_) + noise_multiplier_ * noise_;
     }
 
     /*!
@@ -168,7 +192,7 @@ private:
     const data_type* data_;
 
     //! Vector of noise.
-    data_type noise_{};
+    util::vector<data_type> noise_;
 
     //! Default rate of noise.
     static constexpr scalar_type default_noise_rate = 1e-2;
@@ -180,7 +204,7 @@ private:
     scalar_type noise_multiplier_{};
 
     //! Data with noise.
-    data_type data_with_noise_{};
+    util::vector<data_type> data_with_noise_{};
 
     //! Initial solution.
     const data_type* initial_solution_;
@@ -292,6 +316,17 @@ public:
      */
     auto noise_rate(scalar_type value) -> implicit_gcv& {
         calculator_.noise_rate(value);
+        return *this;
+    }
+
+    /*!
+     * \brief Set the number of samples for approximation of denominator of GCV.
+     *
+     * \param[in] value Value.
+     * \return This object.
+     */
+    auto num_samples(index_type value) -> implicit_gcv& {
+        calculator_.num_samples(value);
         return *this;
     }
 

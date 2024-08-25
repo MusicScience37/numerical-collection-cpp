@@ -112,6 +112,8 @@ auto main() -> int {
     const Eigen::VectorXd& initial_solution_vec = data_vec;
     num_collect::regularization::implicit_gcv_calculator<solver_type>
         gcv_calculator{solver, data_vec, initial_solution_vec};
+    constexpr num_collect::index_type num_gcv_approximation_samples = 3;
+    gcv_calculator.num_samples(num_gcv_approximation_samples);
 
     constexpr num_collect::index_type num_samples = 41;
     constexpr double min_log_param = -3;

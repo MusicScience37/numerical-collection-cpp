@@ -22,6 +22,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 
+#include "num_collect/base/index_type.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/regularization/fista.h"
 #include "num_collect/util/format_dense_vector.h"
@@ -41,6 +42,7 @@ TEST_CASE("num_collect::regularization::implicit_gcv_calculator") {
     SECTION("calculate") {
         constexpr num_collect::index_type solution_size = 15;
         constexpr num_collect::index_type data_size = 15;
+        constexpr num_collect::index_type num_samples = 3;
 
         coeff_type coeff;
         sparse_blur_matrix(coeff, data_size, solution_size);
@@ -58,6 +60,7 @@ TEST_CASE("num_collect::regularization::implicit_gcv_calculator") {
 
         const data_type initial_solution = data_type::Zero(solution_size);
         calculator_type calculator{solver, data, initial_solution};
+        REQUIRE_NOTHROW(calculator.num_samples(num_samples));
         constexpr scalar_type param = 1e-2;
         CHECK(calculator(param) > 0.0);
     }
@@ -79,6 +82,7 @@ TEST_CASE("num_collect::regularization::implicit_gcv") {
     SECTION("solve") {
         constexpr num_collect::index_type solution_size = 15;
         constexpr num_collect::index_type data_size = 15;
+        constexpr num_collect::index_type num_samples = 3;
 
         coeff_type coeff;
         sparse_blur_matrix(coeff, data_size, solution_size);
@@ -96,6 +100,7 @@ TEST_CASE("num_collect::regularization::implicit_gcv") {
 
         const data_type initial_solution = data_type::Zero(solution_size);
         parameter_searcher_type searcher{solver, data, initial_solution};
+        REQUIRE_NOTHROW(searcher.num_samples(num_samples));
         REQUIRE_NOTHROW(searcher.search());
 
         data_type solution = initial_solution;
