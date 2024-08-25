@@ -21,6 +21,9 @@
 
 #include <functional>
 #include <type_traits>
+#include <utility>
+
+#include "num_collect/base/concepts/invocable_as.h"
 
 namespace num_collect::opt {
 
@@ -59,9 +62,10 @@ public:
      *
      * \param[in] function Function object of the objective function.
      */
+    template <base::concepts::invocable_as<Value(Variable)> Function>
     any_objective_function(  // NOLINT(*-explicit-constructor,*-explicit-conversions)
-        std::function<Value(Variable)> function)
-        : function_(std::move(function)) {}
+        Function&& function)
+        : function_(std::forward<Function>(function)) {}
 
     /*!
      * \brief Assign a function object.
@@ -69,9 +73,10 @@ public:
      * \param[in] function Function object of the objective function.
      * \return This object.
      */
+    template <base::concepts::invocable_as<Value(Variable)> Function>
     auto operator=(  // NOLINT(*-explicit-constructor,*-explicit-conversions)
-        std::function<Value(Variable)> function) -> any_objective_function& {
-        function_ = std::move(function);
+        Function&& function) -> any_objective_function& {
+        function_ = std::forward<Function>(function);
         return *this;
     }
 
