@@ -23,7 +23,6 @@
 #include <cmath>
 #include <cstdlib>
 #include <limits>
-#include <type_traits>
 #include <vector>
 
 #include <Eigen/Core>
@@ -36,9 +35,9 @@
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
+#include "num_collect/opt/any_objective_function.h"
 #include "num_collect/opt/concepts/objective_function.h"
 #include "num_collect/opt/dividing_rectangles.h"
-#include "num_collect/opt/function_object_wrapper.h"
 #include "num_collect/opt/optimizer_base.h"
 #include "num_collect/rbf/gaussian_process_interpolator.h"
 #include "num_collect/util/assert.h"
@@ -83,6 +82,19 @@ public:
               gaussian_process_optimizer_tag),
           obj_fun_(obj_fun) {
         this->configure_child_algorithm_logger_if_exists(interpolator_);
+        this->configure_child_algorithm_logger_if_exists(
+            lower_bound_optimizer_);
+        lower_bound_optimizer_.max_evaluations(
+            default_max_lower_bound_evaluations);
+    }
+
+    /*!
+     * \brief Change the objective function.
+     *
+     * \param[in] obj_fun Objective function.
+     */
+    void change_objective_function(const objective_function_type& obj_fun) {
+        obj_fun_ = obj_fun;
     }
 
     /*!
@@ -212,7 +224,7 @@ public:
                 "Maximum number of evaluations of lower bounds must be a "
                 "positive integer.");
         }
-        max_lower_bound_evaluations_ = value;
+        lower_bound_optimizer_.max_evaluations(value);
         return *this;
     }
 
@@ -284,22 +296,19 @@ private:
                 sqrt(
                     max(variance_coeff * variance, static_cast<value_type>(0)));
         };
-        const auto lower_bound_objective_function =
-            make_function_object_wrapper<value_type(variable_type)>(
-                lower_bound_function);
-        dividing_rectangles<
-            std::decay_t<decltype(lower_bound_objective_function)>>
-            lower_bound_optimizer{lower_bound_objective_function};
+        lower_bound_optimizer_.change_objective_function(lower_bound_function);
 
-        this->configure_child_algorithm_logger_if_exists(lower_bound_optimizer);
-        lower_bound_optimizer.max_evaluations(max_lower_bound_evaluations_);
-        lower_bound_optimizer.init(lower_, upper_);
-        lower_bound_optimizer.solve();
+        lower_bound_optimizer_.init(lower_, upper_);
+        lower_bound_optimizer_.solve();
 
-        evaluate_on(lower_bound_optimizer.opt_variable());
+        evaluate_on(lower_bound_optimizer_.opt_variable());
 
         return true;
     }
+
+    //! Optimizer of lower bounds.
+    dividing_rectangles<any_objective_function<value_type(variable_type)>>
+        lower_bound_optimizer_{};
 
     //! Objective function.
     objective_function_type obj_fun_;
@@ -342,10 +351,6 @@ private:
 
     //! Default value of the maximum number of evaluations of lower bounds.
     static constexpr index_type default_max_lower_bound_evaluations = 100;
-
-    //! Maximum number of function evaluations of lower bounds.
-    index_type max_lower_bound_evaluations_{
-        default_max_lower_bound_evaluations};
 };
 
 }  // namespace num_collect::opt

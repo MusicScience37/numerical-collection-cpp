@@ -21,7 +21,6 @@
 
 #include <cmath>
 #include <random>
-#include <type_traits>
 
 #include "num_collect/base/concepts/invocable.h"
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"
@@ -30,7 +29,7 @@
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/logging/logging_mixin.h"
-#include "num_collect/opt/function_object_wrapper.h"
+#include "num_collect/opt/any_objective_function.h"
 #include "num_collect/opt/gaussian_process_optimizer.h"
 #include "num_collect/regularization/concepts/implicit_regularized_solver.h"
 #include "num_collect/util/vector.h"
@@ -250,7 +249,9 @@ public:
         const data_type& initial_solution)
         : logging::logging_mixin(implicit_gcv_tag),
           calculator_(solver, data, initial_solution) {
-        this->configure_child_algorithm_logger_if_exists(solver);
+        this->configure_child_algorithm_logger_if_exists(optimizer_);
+        optimizer_.configure_child_algorithm_logger_if_exists(
+            calculator_.solver());
     }
 
     //! \copydoc explicit_param_searcher_base::search
@@ -275,29 +276,21 @@ public:
             NUM_COLLECT_LOG_TRACE(logger(), "gcv({}) = {}", param, gcv_value);
             return log10(gcv_value);
         };
+        optimizer_.change_objective_function(objective_function);
 
-        const auto objective_function_wrapper =
-            opt::make_function_object_wrapper<scalar_type(scalar_type)>(
-                objective_function);
-        using objective_function_wrapper_type =
-            std::decay_t<decltype(objective_function_wrapper)>;
-        using optimizer_type =
-            opt::gaussian_process_optimizer<objective_function_wrapper_type>;
-        optimizer_type optimizer{objective_function_wrapper};
-
-        this->configure_child_algorithm_logger_if_exists(optimizer);
-        optimizer.configure_child_algorithm_logger_if_exists(
+        this->configure_child_algorithm_logger_if_exists(optimizer_);
+        optimizer_.configure_child_algorithm_logger_if_exists(
             calculator_.solver());
 
         constexpr index_type max_evaluations = 20;
-        optimizer.max_evaluations(max_evaluations);
+        optimizer_.max_evaluations(max_evaluations);
 
-        optimizer.init(log_min_param, log_max_param);
-        optimizer.solve();
+        optimizer_.init(log_min_param, log_max_param);
+        optimizer_.solve();
         opt_param_ = pow(static_cast<scalar_type>(10),  // NOLINT
-            optimizer.opt_variable());
+            optimizer_.opt_variable());
 
-        NUM_COLLECT_LOG_DEBUG(logger(), "Selected parameter: {}", opt_param_);
+        NUM_COLLECT_LOG_SUMMARY(logger(), "Selected parameter: {}", opt_param_);
     }
 
     //! \copydoc explicit_param_searcher_base::opt_param
@@ -305,6 +298,8 @@ public:
 
     //! \copydoc explicit_param_searcher_base::solve
     void solve(data_type& solution) const {
+        NUM_COLLECT_LOG_DEBUG(
+            logger(), "Solve with an optimal parameter: {}", opt_param_);
         calculator_.solver().solve(opt_param_, solution);
     }
 
@@ -333,6 +328,11 @@ public:
 private:
     //! Calculator of GCV.
     implicit_gcv_calculator<solver_type> calculator_;
+
+    //! Optimizer.
+    opt::gaussian_process_optimizer<
+        opt::any_objective_function<scalar_type(scalar_type)>>
+        optimizer_{};
 
     //! Optimal regularization parameter.
     scalar_type opt_param_{};

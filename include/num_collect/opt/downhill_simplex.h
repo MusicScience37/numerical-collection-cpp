@@ -119,6 +119,15 @@ public:
           obj_fun_(obj_fun) {}
 
     /*!
+     * \brief Change the objective function.
+     *
+     * \param[in] obj_fun Objective function.
+     */
+    void change_objective_function(const objective_function_type& obj_fun) {
+        obj_fun_ = obj_fun;
+    }
+
+    /*!
      * \brief Initialize the algorithm.
      *
      * \param[in] init_var An initial variable.
