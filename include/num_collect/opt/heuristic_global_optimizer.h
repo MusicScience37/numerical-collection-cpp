@@ -83,6 +83,16 @@ public:
           opt2_(obj_fun) {}
 
     /*!
+     * \brief Change the objective function.
+     *
+     * \param[in] obj_fun Objective function.
+     */
+    void change_objective_function(const objective_function_type& obj_fun) {
+        opt1_.change_objective_function(obj_fun);
+        opt2_.change_objective_function(obj_fun);
+    }
+
+    /*!
      * \brief Initialize the algorithm.
      *
      * \param[in] lower Lower limit.
@@ -192,6 +202,16 @@ public:
           opt1_(obj_fun),
           opt2_(obj_fun) {
         opt1_.max_evaluations(default_opt1_max_evaluations);
+    }
+
+    /*!
+     * \brief Change the objective function.
+     *
+     * \param[in] obj_fun Objective function.
+     */
+    void change_objective_function(const objective_function_type& obj_fun) {
+        opt1_.change_objective_function(obj_fun);
+        opt2_.change_objective_function(obj_fun);
     }
 
     /*!

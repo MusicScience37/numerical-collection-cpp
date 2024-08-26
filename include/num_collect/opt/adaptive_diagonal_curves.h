@@ -94,6 +94,15 @@ public:
     }
 
     /*!
+     * \brief Change the objective function.
+     *
+     * \param[in] obj_fun Objective function.
+     */
+    void change_objective_function(const objective_function_type& obj_fun) {
+        obj_fun_ = obj_fun;
+    }
+
+    /*!
      * \brief Initialize this object.
      *
      * \param[in] lower Element-wise lower limit.
@@ -523,6 +532,15 @@ public:
         : optimizer_base<adaptive_diagonal_curves<ObjectiveFunction>>(
               adaptive_diagonal_curves_tag),
           value_dict_(obj_fun) {}
+
+    /*!
+     * \brief Change the objective function.
+     *
+     * \param[in] obj_fun Objective function.
+     */
+    void change_objective_function(const objective_function_type& obj_fun) {
+        value_dict_.change_objective_function(obj_fun);
+    }
 
     /*!
      * \brief Initialize the algorithm.
