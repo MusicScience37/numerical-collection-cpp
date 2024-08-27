@@ -132,8 +132,8 @@ public:
         update_rate_ = std::numeric_limits<scalar_type>::infinity();
 
         const scalar_type conjugate_gradient_tolerance_rate =
-            static_cast<scalar_type>(1e-2) * tol_update_rate_;
-        conjugate_gradient_.tolerances(conjugate_gradient_tolerance_rate);
+            rate_of_cg_tol_rate_to_tol_update_rate_ * tol_update_rate_;
+        conjugate_gradient_.tolerance_rate(conjugate_gradient_tolerance_rate);
     }
 
     //! \copydoc num_collect::regularization::iterative_regularized_solver_base::iterate
@@ -388,6 +388,14 @@ private:
 
     //! Tolerance of update rate of the solution.
     scalar_type tol_update_rate_{default_tol_update_rate};
+
+    //! Default value of the ratio of the rate of tolerance in CG method to the tolerance of update rate of the solution.
+    static constexpr auto default_rate_of_cg_tol_rate_to_tol_update_rate =
+        static_cast<scalar_type>(1e-2);
+
+    //! Rate of the ratio of the rate of tolerance in CG method to the tolerance of update rate of the solution.
+    scalar_type rate_of_cg_tol_rate_to_tol_update_rate_{
+        default_rate_of_cg_tol_rate_to_tol_update_rate};
 };
 
 }  // namespace num_collect::regularization
