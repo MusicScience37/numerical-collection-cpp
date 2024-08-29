@@ -17,11 +17,17 @@
  * \file
  * \brief Test of solving ODE of spring movement with fixed step sizes.
  */
+#include <array>
+#include <cmath>
+#include <string>
+#include <string_view>
+
 #include <Eigen/Core>
-#include <fmt/format.h>
+#include <fmt/base.h>
 
 #include "diagram_common.h"
 #include "fixed_step_bench_executor.h"
+#include "num_collect/base/index_type.h"
 #include "num_collect/ode/avf/avf2_formula.h"
 #include "num_collect/ode/avf/avf3_formula.h"
 #include "num_collect/ode/avf/avf4_formula.h"

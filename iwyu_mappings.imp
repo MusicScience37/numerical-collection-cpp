@@ -53,8 +53,6 @@
   { symbol: [ "std::FILE", private, "<cstdio>", public ] },
   { symbol: [ "char_traits", private, "<string>", public ] },
   { symbol: [ "errno", private, "<cerrno>", public ] },
-  # Custom (fmt)
-  { include: ["<fmt/core.h>", private, "<fmt/format.h>", public ] },
   # Custom (Eigen)
   { include: ["@<Eigen/src/Core/.*>", private, "<Eigen/Core>", public ] },
   { include: ["@\"src/Core/.*", private, "<Eigen/Core>", public ] },
@@ -88,4 +86,9 @@
   { include: ["<lyra/opt.hpp>", private, "<lyra/lyra.hpp>", public ] },
   { include: ["<lyra/parser.hpp>", private, "<lyra/lyra.hpp>", public ] },
   { include: ["<lyra/args.hpp>", private, "<lyra/lyra.hpp>", public ] },
+  # Custom (cpp-stat-bench)
+  { include: ["<stat_bench/bench_impl/benchmark_case_register.h>", private, "<stat_bench/benchmark_macros.h>", public ] },
+  { include: ["<stat_bench/bench_impl/default_main.h>", private, "<stat_bench/benchmark_macros.h>", public ] },
+  # Custom (cpp-stat-bench)
+  { include: ["<ApprovalTests.hpp>", private, "\"fmt_approval_tests.h\"", public ] },
 ]

@@ -19,6 +19,10 @@
  */
 #pragma once
 
+#include <cmath>
+
+#include <Eigen/Core>
+
 #include "num_collect/base/concepts/real_scalar_dense_matrix.h"
 #include "num_collect/base/concepts/real_scalar_sparse_matrix.h"
 #include "num_collect/base/index_type.h"

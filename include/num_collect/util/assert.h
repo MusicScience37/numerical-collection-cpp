@@ -23,7 +23,7 @@
 #include <cstdlib>
 #include <string_view>
 
-#include <fmt/format.h>
+#include <fmt/base.h>
 
 #include "num_collect/util/source_info_view.h"
 

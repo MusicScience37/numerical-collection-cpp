@@ -23,7 +23,7 @@
 
 #include <Eigen/Core>
 #include <Eigen/SparseCore>  // IWYU pragma: keep
-#include <fmt/format.h>
+#include <fmt/base.h>
 
 #include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/exception.h"
@@ -119,15 +119,13 @@ public:
     /*!
      * \brief Format a value.
      *
-     * \tparam FormatContext Type of the context.
      * \param[in] val Value.
      * \param[in] context Context.
      * \return Output iterator after formatting.
      */
-    template <typename FormatContext>
     auto format(
         const num_collect::util::impl::sparse_matrix_format_view<Matrix>& val,
-        FormatContext& context) const -> decltype(context.out()) {
+        format_context& context) const -> decltype(context.out()) {
         const auto& mat = val.mat();
         switch (val.type()) {
         case num_collect::util::sparse_matrix_format_type::one_line:
@@ -143,14 +141,12 @@ private:
     /*!
      * \brief Format a matrix in one line.
      *
-     * \tparam FormatContext Type of the context.
      * \param[in] mat Matrix.
      * \param[in] context Context.
      * \return Output iterator after formatting.
      */
-    template <typename FormatContext>
     auto format_one_line(const Matrix& mat,
-        FormatContext& context) const -> decltype(context.out()) {
+        format_context& context) const -> decltype(context.out()) {
         const Eigen::Index rows = mat.rows();
         const Eigen::Index cols = mat.cols();
         auto out = context.out();
@@ -181,14 +177,12 @@ private:
     /*!
      * \brief Format a matrix in multiple lines.
      *
-     * \tparam FormatContext Type of the context.
      * \param[in] mat Matrix.
      * \param[in] context Context.
      * \return Output iterator after formatting.
      */
-    template <typename FormatContext>
     auto format_multi_line(const Matrix& mat,
-        FormatContext& context) const -> decltype(context.out()) {
+        format_context& context) const -> decltype(context.out()) {
         const Eigen::Index rows = mat.rows();
         const Eigen::Index cols = mat.cols();
         auto out = context.out();
@@ -230,12 +224,11 @@ private:
     /*!
      * \brief Write a comma.
      *
-     * \tparam OutputIterator Type of the output iterator.
      * \param[in] out Output iterator.
      * \return Output iterator.
      */
-    template <typename OutputIterator>
-    static auto write_comma(OutputIterator out) -> OutputIterator {
+    static auto write_comma(
+        format_context::iterator out) -> format_context::iterator {
         *out = ',';
         ++out;
         *out = ' ';

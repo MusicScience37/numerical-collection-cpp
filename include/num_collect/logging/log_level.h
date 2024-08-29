@@ -22,7 +22,8 @@
 #include <cstdint>
 #include <string_view>
 
-#include <fmt/format.h>
+#include <fmt/base.h>
+#include <fmt/format.h>  // IWYU pragma: keep
 
 namespace num_collect::logging {
 
@@ -122,14 +123,12 @@ public:
     /*!
      * \brief Format a value.
      *
-     * \tparam FormatContext Type of the context.
      * \param[in] val Value.
      * \param[in] context Context.
      * \return Output iterator after formatting.
      */
-    template <typename FormatContext>
     auto format(
-        num_collect::logging::log_level val, FormatContext& context) const {
+        num_collect::logging::log_level val, format_context& context) const {
         return formatter<string_view>::format(
             num_collect::logging::get_log_level_str(val), context);
     }

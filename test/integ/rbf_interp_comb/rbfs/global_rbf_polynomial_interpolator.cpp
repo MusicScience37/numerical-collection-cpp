@@ -17,11 +17,16 @@
  * \file
  * \brief Test of different RBFs in RBF interpolation.
  */
+#include <cmath>
+#include <cstddef>
+#include <vector>
+
 #include <Eigen/Core>
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
 
 #include "comparison_approvals.h"
+#include "num_collect/base/index_type.h"
 #include "num_collect/constants/pi.h"
 #include "num_collect/rbf/rbf_polynomial_interpolator.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"

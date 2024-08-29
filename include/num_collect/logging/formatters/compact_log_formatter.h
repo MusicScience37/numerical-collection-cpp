@@ -23,6 +23,7 @@
 #include <iterator>
 #include <string_view>
 
+#include <fmt/base.h>
 #include <fmt/format.h>
 
 #include "num_collect/logging/formatters/get_log_level_str_for_log.h"

@@ -19,12 +19,12 @@
  */
 #include "num_collect/regularization/tv_admm.h"
 
-#include <ApprovalTests.hpp>
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <catch2/catch_test_macros.hpp>
 #include <fmt/format.h>
 
+#include "fmt_approval_tests.h"
 #include "num_collect/util/format_dense_vector.h"
 #include "num_prob_collect/regularization/sparse_blur_matrix.h"
 #include "num_prob_collect/regularization/sparse_diff_matrix.h"

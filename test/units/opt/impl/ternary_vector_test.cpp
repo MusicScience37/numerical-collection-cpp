@@ -26,8 +26,6 @@
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include "num_collect/base/exception.h"
-
 TEST_CASE("num_collect::opt::impl::ternary_vector") {
     using num_collect::opt::impl::ternary_vector;
 

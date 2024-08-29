@@ -22,10 +22,10 @@
 #include <string>
 #include <vector>
 
-#include <ApprovalTests.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <fmt/format.h>
 
+#include "fmt_approval_tests.h"
 #include "num_collect/base/index_type.h"
 
 TEST_CASE("num_collect::logging::formatters::compact_log_formatter") {

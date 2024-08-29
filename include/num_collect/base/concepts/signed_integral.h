@@ -52,7 +52,7 @@ constexpr bool is_signed_v = is_signed<T>::value;
  * \tparam T Type.
  */
 template <typename T>
-concept signed_integral = is_integral_v<T> && is_signed_v<T>;
+concept signed_integral = integral<T> && is_signed_v<T>;
 
 }  // namespace concepts
 }  // namespace base

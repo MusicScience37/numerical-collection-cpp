@@ -24,7 +24,6 @@
 #include <cstddef>
 #include <exception>
 #include <filesystem>
-#include <functional>
 #include <iostream>
 #include <string>
 #include <string_view>
@@ -32,12 +31,11 @@
 #include <unordered_map>
 #include <vector>
 
+#include <fmt/base.h>
 #include <fmt/format.h>
-#include <pybind11/cast.h>
 #include <pybind11/embed.h>
 #include <pybind11/gil.h>
 #include <pybind11/pybind11.h>
-#include <pybind11/pytypes.h>
 #include <pybind11/stl.h>  // IWYU pragma: keep
 
 #include "num_collect/base/concepts/invocable.h"

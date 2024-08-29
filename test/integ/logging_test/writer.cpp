@@ -17,15 +17,12 @@
  * \file
  * \brief Test to write logs.
  */
-#include <chrono>
 #include <exception>
 #include <iostream>
 #include <string>
 #include <string_view>
-#include <thread>
 #include <vector>
 
-#include <fmt/format.h>
 #include <fmt/ranges.h>
 
 #include "num_collect/logging/iterations/iteration_logger.h"

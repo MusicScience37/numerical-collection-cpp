@@ -5,7 +5,7 @@
 #include <fmt/format.h>
 
 #define APPROVALS_CATCH
-#include <ApprovalTests.hpp>
+#include "fmt_approval_tests.h"
 
 // NOLINTNEXTLINE: Usage of external library.
 static const auto directory_config =

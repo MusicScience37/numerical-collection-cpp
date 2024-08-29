@@ -17,7 +17,7 @@
  * \file
  * \brief Test of automatic differentiation of quadratic function.
  */
-#include <vector>
+#include <string>
 
 #include <stat_bench/benchmark_macros.h>
 

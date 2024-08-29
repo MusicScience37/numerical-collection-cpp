@@ -19,7 +19,11 @@
  */
 #include "num_collect/logging/logging_macros.h"
 
+#include <memory>
+#include <string>
+
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 
 #include "mock_log_sink.h"
@@ -28,6 +32,7 @@
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
+#include "num_collect/logging/time_stamp.h"
 #include "trompeloeil_catch2.h"
 
 TEST_CASE("NUM_COLLECT_LOG_XXX") {

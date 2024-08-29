@@ -20,7 +20,7 @@
 #pragma once
 
 #include <Eigen/Core>
-#include <fmt/format.h>
+#include <fmt/base.h>
 
 #include "num_collect/base/exception.h"
 #include "num_collect/logging/logging_macros.h"
@@ -93,15 +93,13 @@ public:
     /*!
      * \brief Format a value.
      *
-     * \tparam FormatContext Type of the context.
      * \param[in] val Value.
      * \param[in] context Context.
      * \return Output iterator after formatting.
      */
-    template <typename FormatContext>
     auto format(
         const num_collect::util::impl::dense_vector_format_view<Vector>& val,
-        FormatContext& context) const -> decltype(context.out()) {
+        format_context& context) const -> decltype(context.out()) {
         const auto& vec = val.vec();
         return format_impl(vec, context);
     }
@@ -110,14 +108,12 @@ private:
     /*!
      * \brief Format a vector.
      *
-     * \tparam FormatContext Type of the context.
      * \param[in] vec Vector.
      * \param[in] context Context.
      * \return Output iterator after formatting.
      */
-    template <typename FormatContext>
     auto format_impl(const Vector& vec,
-        FormatContext& context) const -> decltype(context.out()) {
+        format_context& context) const -> decltype(context.out()) {
         const Eigen::Index size = vec.size();
         auto out = context.out();
         *out = '[';
@@ -137,12 +133,11 @@ private:
     /*!
      * \brief Write a comma.
      *
-     * \tparam OutputIterator Type of the output iterator.
      * \param[in] out Output iterator.
      * \return Output iterator.
      */
-    template <typename OutputIterator>
-    static auto write_comma(OutputIterator out) -> OutputIterator {
+    static auto write_comma(
+        format_context::iterator out) -> format_context::iterator {
         *out = ',';
         ++out;
         *out = ' ';

@@ -22,11 +22,11 @@
 #include <optional>
 #include <string>
 
-#include <ApprovalTests.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <fmt/format.h>
 
 #include "../mock_log_sink.h"
+#include "fmt_approval_tests.h"
 #include "mock_algorithm.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/iterations/iteration_parameter_formatter.h"

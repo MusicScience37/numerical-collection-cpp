@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 MusicScience37 (Kenta Kabashima)
+ * Copyright 2024 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,24 +15,9 @@
  */
 /*!
  * \file
- * \brief Definition of formattable concept.
+ * \brief Header to include ApprovalTests correctly.
  */
-#pragma once
-
-#include <fmt/base.h>
-
-namespace num_collect {
-inline namespace base {
-namespace concepts {
-
-/*!
- * \brief Concept of types formattable using fmt library.
- *
- * \tparam T Type.
- */
-template <typename T>
-concept formattable = fmt::is_formattable<T>::value;
-
-}  // namespace concepts
-}  // namespace base
-}  // namespace num_collect
+// clang-format off
+#include <fmt/format.h>       // IWYU pragma: keep
+#include <ApprovalTests.hpp>  // IWYU pragma: export
+// clang-format on

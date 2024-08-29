@@ -18,8 +18,7 @@
  * \brief Test of automatic differentiation of sum.
  */
 #include <memory>
-#include <type_traits>
-#include <vector>
+#include <string>
 
 #include <Eigen/Core>
 #include <stat_bench/benchmark_macros.h>
@@ -29,6 +28,7 @@
 #include "auto_diff_fixture.h"
 #include "num_collect/auto_diff/backward/create_diff_variable.h"
 #include "num_collect/auto_diff/backward/differentiate.h"
+#include "num_collect/auto_diff/backward/variable.h"
 #include "num_collect/auto_diff/forward/create_diff_variable.h"
 #include "num_collect/auto_diff/forward/variable.h"
 #include "num_collect/base/index_type.h"

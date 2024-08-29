@@ -17,6 +17,8 @@
  * \file
  * \brief Benchmark of writing trace logs.
  */
+#include <string>
+
 #include <stat_bench/benchmark_macros.h>
 
 #include "num_collect/logging/log_config.h"

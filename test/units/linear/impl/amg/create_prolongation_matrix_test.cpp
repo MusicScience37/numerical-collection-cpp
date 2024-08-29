@@ -19,11 +19,11 @@
  */
 #include "num_collect/linear/impl/amg/create_prolongation_matrix.h"
 
-#include <ApprovalTests.hpp>
 #include <Eigen/SparseCore>
 #include <catch2/catch_test_macros.hpp>
 #include <fmt/format.h>
 
+#include "fmt_approval_tests.h"
 #include "num_collect/linear/impl/amg/node_connection_list.h"
 #include "num_collect/linear/impl/amg/node_layer.h"
 #include "num_collect/util/format_sparse_matrix.h"

@@ -21,9 +21,11 @@
 
 #include <vector>
 
-#include <ApprovalTests.hpp>
 #include <Eigen/SparseCore>
 #include <catch2/catch_test_macros.hpp>
+#include <fmt/format.h>
+
+#include "fmt_approval_tests.h"
 
 TEST_CASE("num_collect::util::format_sparse_matrix") {
     using num_collect::util::format_sparse_matrix;

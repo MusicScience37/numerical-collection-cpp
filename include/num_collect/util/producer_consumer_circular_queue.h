@@ -22,11 +22,8 @@
 #include <atomic>
 #include <cstddef>
 #include <limits>
-#include <string>
 #include <type_traits>  // IWYU pragma: keep
 #include <utility>
-
-#include <fmt/format.h>
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"

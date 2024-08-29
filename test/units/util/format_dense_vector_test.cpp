@@ -19,8 +19,10 @@
  */
 #include "num_collect/util/format_dense_vector.h"
 
-#include <ApprovalTests.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <fmt/format.h>
+
+#include "fmt_approval_tests.h"
 
 TEST_CASE("num_collect::util::format_dense_vector") {
     using num_collect::util::format_dense_vector;

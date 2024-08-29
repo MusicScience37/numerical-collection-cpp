@@ -23,6 +23,7 @@
 #include <string>
 #include <utility>
 
+#include <fmt/base.h>
 #include <fmt/format.h>
 
 #include "num_collect/base/exception.h"

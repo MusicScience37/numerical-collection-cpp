@@ -24,10 +24,10 @@
 #include <string_view>
 #include <vector>
 
-#include <ApprovalTests.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <fmt/format.h>
 
+#include "fmt_approval_tests.h"
 #include "num_collect/base/concepts/dense_vector_of.h"
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"

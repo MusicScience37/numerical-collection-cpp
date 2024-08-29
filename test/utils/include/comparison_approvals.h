@@ -23,9 +23,10 @@
 #include <limits>
 #include <string_view>
 
-#include <ApprovalTests.hpp>
+#include <fmt/base.h>
 #include <fmt/format.h>
 
+#include "fmt_approval_tests.h"
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/concepts/real_scalar_dense_matrix.h"
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"
