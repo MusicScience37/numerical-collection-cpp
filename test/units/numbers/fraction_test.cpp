@@ -27,6 +27,7 @@
 
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <fmt/format.h>
 
 TEMPLATE_TEST_CASE(
     "num_collect::numbers::fraction (signed)", "", std::int32_t, std::int64_t) {

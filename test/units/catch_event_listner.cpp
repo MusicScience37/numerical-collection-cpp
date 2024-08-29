@@ -24,24 +24,26 @@
 // clang-format on
 
 #include <algorithm>
-#include <memory>
+#include <cstddef>
 #include <optional>
+#include <string>
+#include <utility>
 
+#include <catch2/catch_section_info.hpp>
 #include <catch2/catch_test_case_info.hpp>
+#include <catch2/catch_totals.hpp>
 #include <catch2/reporters/catch_reporter_event_listener.hpp>
 #include <fmt/format.h>
-
-#include "num_collect/logging/log_level.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
 #include "num_collect/logging/log_config.h"
-#include "num_collect/logging/log_tag.h"
+#include "num_collect/logging/log_level.h"
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/logging/sinks/file_log_sink.h"
-#include "num_collect/opt/heuristic_global_optimizer.h"
+#include "num_collect/logging/sinks/log_sink.h"
 
 #define STRING1(STR) #STR
 #define STRING(STR) STRING1(STR)

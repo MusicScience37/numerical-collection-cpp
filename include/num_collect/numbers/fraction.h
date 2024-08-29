@@ -23,7 +23,6 @@
 #include <type_traits>  // IWYU pragma: keep
 
 #include <fmt/base.h>
-#include <fmt/format.h>
 #include <fmt/ostream.h>  // IWYU pragma: keep
 
 #include "num_collect/base/concepts/integral.h"

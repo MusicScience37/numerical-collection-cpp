@@ -20,8 +20,10 @@
 #include <cmath>
 #include <cstddef>
 #include <limits>
+#include <string>
 
 #include <stat_bench/benchmark_macros.h>
+#include <stat_bench/fixture_base.h>
 #include <stat_bench/invocation_context.h>
 
 #include "num_collect/constants/pi.h"

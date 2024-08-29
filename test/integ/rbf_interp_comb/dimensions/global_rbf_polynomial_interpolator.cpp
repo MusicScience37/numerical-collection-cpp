@@ -17,12 +17,17 @@
  * \file
  * \brief Test of different dimensions in RBF interpolation.
  */
+#include <cstddef>
+
+#include <Eigen/Core>
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
 
 #include "comparison_approvals.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
 #include "num_collect/rbf/generate_halton_nodes.h"
+#include "num_collect/rbf/impl/get_variable_type.h"
 #include "num_collect/rbf/rbf_polynomial_interpolator.h"
 
 TEMPLATE_TEST_CASE_SIG("global_rbf_polynomial_interpolator with dimensions", "",

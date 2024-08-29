@@ -17,7 +17,7 @@
  * \file
  * \brief Test of automatic differentiation to calculate a simple Jacobian.
  */
-#include <vector>
+#include <string>
 
 #include <Eigen/Core>
 #include <stat_bench/benchmark_macros.h>

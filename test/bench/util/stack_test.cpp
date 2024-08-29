@@ -17,11 +17,12 @@
  * \file
  * \brief Benchmark of stacks.
  */
+#include <cstddef>
 #include <stack>
+#include <string>
 
 #include <stat_bench/benchmark_macros.h>
 #include <stat_bench/do_not_optimize.h>
-#include <stat_bench/memory_barrier.h>
 
 #include "num_collect/util/static_stack.h"
 

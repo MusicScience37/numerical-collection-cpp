@@ -18,16 +18,14 @@
  * \brief Test of solving ODE of vibration with external force.
  */
 #include <array>
+#include <cmath>
 #include <string>
 #include <string_view>
 
-#include <Eigen/Core>
-#include <fmt/format.h>
+#include <fmt/base.h>
 
 #include "diagram_common.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/ode/basic_step_size_controller.h"
-#include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/rosenbrock/rodasp_formula.h"
 #include "num_collect/ode/rosenbrock/rodaspr_formula.h"
 #include "num_collect/ode/rosenbrock/ros34pw3_formula.h"
@@ -37,7 +35,6 @@
 #include "num_collect/ode/runge_kutta/ark54_esdirk_formula.h"
 #include "num_collect/ode/runge_kutta/dopri5_formula.h"
 #include "num_collect/ode/runge_kutta/esdirk45_formula.h"
-#include "num_collect/ode/runge_kutta/rk4_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
 #include "num_collect/ode/runge_kutta/sdirk4_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka1_formula.h"

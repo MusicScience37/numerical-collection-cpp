@@ -23,6 +23,7 @@
 #include <limits>
 #include <string_view>
 
+#include <fmt/base.h>
 #include <fmt/format.h>
 
 #include "fmt_approval_tests.h"

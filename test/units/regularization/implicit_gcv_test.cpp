@@ -19,8 +19,9 @@
  */
 #include "num_collect/regularization/implicit_gcv.h"
 
+#include <Eigen/Core>
+#include <Eigen/SparseCore>
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers.hpp>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/logger.h"
