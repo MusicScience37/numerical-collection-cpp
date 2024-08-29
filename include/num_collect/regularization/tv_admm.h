@@ -32,6 +32,7 @@
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
+#include "num_collect/regularization/impl/apply_shrinkage_operator.h"
 #include "num_collect/regularization/impl/approximate_max_eigen_aat.h"
 #include "num_collect/regularization/impl/weak_coeff_param.h"  // IWYU pragma: keep
 #include "num_collect/regularization/iterative_regularized_solver_base.h"
@@ -162,19 +163,10 @@ public:
         previous_derivative_ = derivative_;
         derivative_ = (*derivative_matrix_) * solution +
             lagrange_multiplier_ / derivative_constraint_coeff_;
-        const scalar_type shrinkage_threshold =
+        const scalar_type derivative_shrinkage_threshold =
             param / derivative_constraint_coeff_;
-        const index_type derivative_size = derivative_.size();
-#pragma omp parallel for
-        for (index_type i = 0; i < derivative_size; ++i) {
-            if (derivative_[i] > shrinkage_threshold) {
-                derivative_[i] -= shrinkage_threshold;
-            } else if (derivative_[i] < -shrinkage_threshold) {
-                derivative_[i] += shrinkage_threshold;
-            } else {
-                derivative_[i] = static_cast<scalar_type>(0);
-            }
-        }
+        impl::apply_shrinkage_operator(
+            derivative_, derivative_shrinkage_threshold);
         update_rate_ += (derivative_ - previous_derivative_).norm() /
             (derivative_.norm() + std::numeric_limits<scalar_type>::epsilon());
 
