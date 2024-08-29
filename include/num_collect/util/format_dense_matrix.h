@@ -22,7 +22,7 @@
 #include <cstdint>
 
 #include <Eigen/Core>
-#include <fmt/format.h>
+#include <fmt/base.h>
 
 #include "num_collect/base/exception.h"
 #include "num_collect/logging/logging_macros.h"
@@ -118,15 +118,13 @@ public:
     /*!
      * \brief Format a value.
      *
-     * \tparam FormatContext Type of the context.
      * \param[in] val Value.
      * \param[in] context Context.
      * \return Output iterator after formatting.
      */
-    template <typename FormatContext>
     auto format(
         const num_collect::util::impl::dense_matrix_format_view<Matrix>& val,
-        FormatContext& context) const -> decltype(context.out()) {
+        format_context& context) const -> decltype(context.out()) {
         const auto& mat = val.mat();
         switch (val.type()) {
         case num_collect::util::dense_matrix_format_type::one_line:

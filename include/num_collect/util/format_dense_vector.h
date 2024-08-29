@@ -20,7 +20,7 @@
 #pragma once
 
 #include <Eigen/Core>
-#include <fmt/format.h>
+#include <fmt/base.h>
 
 #include "num_collect/base/exception.h"
 #include "num_collect/logging/logging_macros.h"
@@ -93,15 +93,13 @@ public:
     /*!
      * \brief Format a value.
      *
-     * \tparam FormatContext Type of the context.
      * \param[in] val Value.
      * \param[in] context Context.
      * \return Output iterator after formatting.
      */
-    template <typename FormatContext>
     auto format(
         const num_collect::util::impl::dense_vector_format_view<Vector>& val,
-        FormatContext& context) const -> decltype(context.out()) {
+        format_context& context) const -> decltype(context.out()) {
         const auto& vec = val.vec();
         return format_impl(vec, context);
     }
