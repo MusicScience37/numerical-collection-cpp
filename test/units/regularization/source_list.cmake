@@ -3,6 +3,7 @@ set(SOURCE_FILES
     explicit_l_curve_test.cpp
     fista_test.cpp
     full_gen_tikhonov_test.cpp
+    impl/apply_shrinkage_operator_test.cpp
     implicit_gcv_test.cpp
     tikhonov_test.cpp
     tv_admm_test.cpp
