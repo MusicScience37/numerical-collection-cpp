@@ -22,11 +22,11 @@
 #include <string>
 #include <string_view>
 
-#include <ApprovalTests.hpp>
 #include <Eigen/SparseCore>
 #include <catch2/catch_test_macros.hpp>
 #include <fmt/format.h>
 
+#include "fmt_approval_tests.h"
 #include "num_collect/base/index_type.h"
 #include "num_prob_collect/linear/laplacian_2d_grid.h"
 

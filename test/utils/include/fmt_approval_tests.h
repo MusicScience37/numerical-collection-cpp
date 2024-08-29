@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 MusicScience37 (Kenta Kabashima)
+ * Copyright 2024 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,9 @@
  */
 /*!
  * \file
- * \brief Test of format_dense_vector function.
+ * \brief Header to include ApprovalTests correctly.
  */
-#include "num_collect/util/format_dense_vector.h"
-
-#include <catch2/catch_test_macros.hpp>
-#include <fmt/format.h>
-
-#include "fmt_approval_tests.h"
-
-TEST_CASE("num_collect::util::format_dense_vector") {
-    using num_collect::util::format_dense_vector;
-
-    SECTION("format dynamic vector") {
-        const auto vec = Eigen::VectorXd{{1.0, -2.0, 3.0}};
-
-        ApprovalTests::Approvals::verify(
-            fmt::format("{:> 6.3f}", format_dense_vector(vec)));
-    }
-}
+// clang-format off
+#include <fmt/format.h>       // IWYU pragma: export
+#include <ApprovalTests.hpp>  // IWYU pragma: export
+// clang-format on

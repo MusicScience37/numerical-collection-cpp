@@ -21,12 +21,12 @@
 
 #include <vector>
 
-#include <ApprovalTests.hpp>
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <catch2/catch_test_macros.hpp>
 #include <fmt/format.h>
 
+#include "fmt_approval_tests.h"
 #include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
 #include "num_collect/rbf/length_parameter_calculators/global_length_parameter_calculator.h"
 #include "num_collect/rbf/length_parameter_calculators/local_length_parameter_calculator.h"

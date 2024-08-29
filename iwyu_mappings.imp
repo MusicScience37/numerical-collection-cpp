@@ -88,4 +88,6 @@
   { include: ["<lyra/args.hpp>", private, "<lyra/lyra.hpp>", public ] },
   # Custom (cpp-stat-bench)
   { include: ["<stat_bench/bench_impl/benchmark_case_register.h>", private, "<stat_bench/benchmark_macros.h>", public ] },
+  # Custom (cpp-stat-bench)
+  { include: ["<ApprovalTests.hpp>", private, "\"fmt_approval_tests.h\"", public ] },
 ]

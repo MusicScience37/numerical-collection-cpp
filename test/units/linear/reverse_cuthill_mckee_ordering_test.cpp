@@ -23,13 +23,13 @@
 #include <cstddef>
 #include <vector>
 
-#include <ApprovalTests.hpp>
 #include <Eigen/SparseCore>
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <fmt/format.h>
 
 #include "calculate_sparse_matrix_profile.h"
+#include "fmt_approval_tests.h"
 #include "format_non_zeros.h"
 #include "num_collect/base/index_type.h"
 #include "num_prob_collect/linear/laplacian_2d_grid.h"

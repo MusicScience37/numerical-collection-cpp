@@ -22,6 +22,7 @@
 #include <ostream>
 #include <type_traits>  // IWYU pragma: keep
 
+#include <fmt/base.h>
 #include <fmt/format.h>
 #include <fmt/ostream.h>  // IWYU pragma: keep
 
@@ -374,14 +375,12 @@ public:
     /*!
      * \brief Format a value.
      *
-     * \tparam FormatContext Type of the context.
      * \param[in] val Value.
      * \param[in] context Context.
      * \return Output iterator after formatting.
      */
-    template <typename FormatContext>
     auto format(num_collect::numbers::fraction<Integer> val,
-        FormatContext& context) const {
+        format_context& context) const {
         return fmt::format_to(
             context.out(), "{} / {}", val.numerator(), val.denominator());
     }

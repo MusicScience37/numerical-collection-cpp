@@ -19,12 +19,12 @@
  */
 #include "num_collect/ode/impl/bicgstab.h"
 
-#include <ApprovalTests.hpp>
 #include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
 #include <fmt/format.h>
 
 #include "comparison_approvals.h"
+#include "fmt_approval_tests.h"
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/util/format_dense_vector.h"
 

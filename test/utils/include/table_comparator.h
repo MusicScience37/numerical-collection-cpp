@@ -23,8 +23,7 @@
 #include <string>
 #include <vector>
 
-#include <ApprovalTests.hpp>
-
+#include "fmt_approval_tests.h"
 #include "num_collect/base/index_type.h"
 
 class table_comparator : public ApprovalTests::ApprovalComparator {

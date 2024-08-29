@@ -23,13 +23,13 @@
 #include <string_view>
 #include <unordered_set>
 
-#include <ApprovalTests.hpp>
 #include <Eigen/SparseCore>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_range_equals.hpp>
 #include <fmt/format.h>
 
+#include "fmt_approval_tests.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/linear/impl/amg/build_first_coarse_grid_candidate.h"
 #include "num_collect/linear/impl/amg/compute_strong_connection_list.h"
