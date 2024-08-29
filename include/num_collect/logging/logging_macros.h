@@ -19,12 +19,14 @@
  */
 #pragma once
 
+// IWYU pragma: no_include "num_collect/base/exception.h"
+
 #include <concepts>
 #include <iterator>
 #include <string_view>
 #include <utility>
 
-#include <fmt/core.h>
+#include <fmt/base.h>
 #include <fmt/format.h>
 
 #include "num_collect/logging/log_level.h"

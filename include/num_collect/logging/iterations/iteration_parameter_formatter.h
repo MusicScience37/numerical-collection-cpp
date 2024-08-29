@@ -23,6 +23,7 @@
 #include <optional>
 #include <string_view>
 
+#include <fmt/base.h>
 #include <fmt/format.h>
 
 #include "num_collect/base/concepts/formattable.h"

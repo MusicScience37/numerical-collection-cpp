@@ -25,6 +25,7 @@
 #include <system_error>
 #include <utility>
 
+#include <fmt/base.h>
 #include <fmt/format.h>
 
 namespace num_collect::util {

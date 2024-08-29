@@ -22,6 +22,7 @@
 #include <cstdint>
 #include <ctime>
 
+#include <fmt/base.h>
 #include <fmt/chrono.h>
 #include <fmt/format.h>
 
@@ -98,14 +99,12 @@ public:
     /*!
      * \brief Format a value.
      *
-     * \tparam FormatContext Type of the context.
      * \param[in] val Value.
      * \param[in] context Context.
      * \return Output iterator after formatting.
      */
-    template <typename FormatContext>
-    auto format(
-        num_collect::logging::time_stamp val, FormatContext& context) const {
+    auto format(  // NOLINT
+        num_collect::logging::time_stamp val, format_context& context) const {
         const auto time_tm = fmt::gmtime(val.seconds());
         return fmt::format_to(context.out(), FMT_STRING("{0:%FT%T}.{1:09d}"),
             time_tm, val.nanoseconds());
