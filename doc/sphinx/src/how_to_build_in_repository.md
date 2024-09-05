@@ -20,11 +20,8 @@ you will require following dependencies:
 - [CMake](https://cmake.org/)
 - C++ 20 Compiler
   - Following compilers are tested in CI:
-    - GCC 10
-    - GCC 11
     - GCC 12
-    - Clang 16
-    - Clang 17
+    - Clang 18
     - MSVC 19
 
 Additionally, you will require following dependencies
