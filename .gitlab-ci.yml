@@ -172,18 +172,12 @@ test linux:
   extends: .test linux base
   parallel:
     matrix:
-      - COMPILER_TYPE: ["gcc10", "gcc11", "gcc12"]
-        IMAGE_PATH: "musicscience37/gcc-ci"
-        TEST_TYPE: "debug"
-      - COMPILER_TYPE: ["clang16", "clang17", "clang18"]
-        IMAGE_PATH: "musicscience37/clang-ci"
-        TEST_TYPE: "debug"
       - COMPILER_TYPE: "gcc12"
         IMAGE_PATH: "musicscience37/gcc-ci"
-        TEST_TYPE: ["release", "bench"]
+        TEST_TYPE: ["debug", "release", "bench"]
       - COMPILER_TYPE: "clang18"
         IMAGE_PATH: "musicscience37/clang-ci"
-        TEST_TYPE: ["release", "bench"]
+        TEST_TYPE: ["debug", "release", "bench"]
   script:
     - poetry run python ./scripts/ci_linux_test.py
       --compiler_type $COMPILER_TYPE --test_type $TEST_TYPE --build_dir $BUILD_DIR
