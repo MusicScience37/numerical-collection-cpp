@@ -33,7 +33,7 @@ set(CMAKE_REQUIRED_FLAGS)
 if(MSVC)
     set(CMAKE_REQUIRED_FLAGS "/arch:AVX2")
 else()
-    set(CMAKE_REQUIRED_FLAGS "-mavx2")
+    set(CMAKE_REQUIRED_FLAGS "-mfma -mavx2")
 endif()
 
 check_cxx_source_runs(
@@ -58,7 +58,7 @@ check_cxx_source_runs(
     HAVE_AVX2_EXTENSIONS)
 
 if(HAVE_AVX2_EXTENSIONS)
-    option(NUM_COLLECT_USE_AVX2 "use Intel AVX2 instructions" ON)
+    option(NUM_COLLECT_USE_AVX2 "use AVX2 instruction set" ON)
     if(NUM_COLLECT_USE_AVX2)
         if(MSVC)
             target_compile_options(num_collect_cpp_flags INTERFACE /arch:AVX2)
