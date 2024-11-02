@@ -187,6 +187,7 @@ public:
                 auto value = static_cast<scalar_type>(1);
                 for (index_type d = 0; d < num_dimensions; ++d) {
                     if (degrees_(p, d) > 0) {
+                        using std::pow;
                         value *= pow(variable(d), degrees_(p, d));
                     }
                 }
@@ -217,6 +218,7 @@ public:
             scalar_type current_term = coeffs(p);
             for (index_type d = 0; d < num_dimensions; ++d) {
                 if (degrees_(p, d) > 0) {
+                    using std::pow;
                     current_term *= pow(variable(d), degrees_(p, d));
                 }
             }
