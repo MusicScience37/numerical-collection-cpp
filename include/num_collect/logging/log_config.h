@@ -46,8 +46,8 @@ NUM_COLLECT_EXPORT void set_default_tag_config(const log_tag_config& config);
  * \param[in] tag Tag.
  * \return Configuration.
  */
-[[nodiscard]] NUM_COLLECT_EXPORT auto get_config_of(
-    log_tag_view tag) -> log_tag_config;
+[[nodiscard]] NUM_COLLECT_EXPORT auto get_config_of(log_tag_view tag)
+    -> log_tag_config;
 
 /*!
  * \brief Set the configuration of a tag.

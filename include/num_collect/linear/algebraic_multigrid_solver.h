@@ -213,8 +213,8 @@ public:
      * \param[in] value Value.
      * \return This.
      */
-    auto maximum_directly_solved_matrix_size(
-        index_type value) -> algebraic_multigrid_solver& {
+    auto maximum_directly_solved_matrix_size(index_type value)
+        -> algebraic_multigrid_solver& {
         if (value <= 0) {
             NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "THe maximum size of matrices to solve directly must be a "

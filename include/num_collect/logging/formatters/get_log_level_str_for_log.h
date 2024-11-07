@@ -31,8 +31,8 @@ namespace num_collect::logging::formatters {
  * \param[in] level Log level.
  * \return String.
  */
-[[nodiscard]] inline auto get_output_log_level_str(
-    log_level level) noexcept -> std::string_view {
+[[nodiscard]] inline auto get_output_log_level_str(log_level level) noexcept
+    -> std::string_view {
     switch (level) {
     case log_level::trace:
         return "trace";

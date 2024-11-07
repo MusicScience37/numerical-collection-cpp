@@ -62,7 +62,7 @@ TEST_CASE("num_collect::rbf::local_rbf_interpolator") {
         Eigen::VectorXd actual_values;
         actual_values.resize(interpolated_variables.size());
         for (num_collect::index_type i = 0; i < interpolated_variables.size();
-             ++i) {
+            ++i) {
             interpolated_values(i) =
                 interpolator.interpolate(interpolated_variables(i));
             actual_values(i) = function(interpolated_variables(i));
@@ -105,7 +105,7 @@ TEST_CASE("num_collect::rbf::global_rbf_interpolator") {
         Eigen::VectorXd actual_values;
         actual_values.resize(interpolated_variables.size());
         for (num_collect::index_type i = 0; i < interpolated_variables.size();
-             ++i) {
+            ++i) {
             interpolated_values(i) =
                 interpolator.interpolate(interpolated_variables(i));
             actual_values(i) = function(interpolated_variables(i));
@@ -139,7 +139,7 @@ TEST_CASE("num_collect::rbf::global_rbf_interpolator") {
         Eigen::VectorXd actual_values;
         actual_values.resize(interpolated_variables.size());
         for (num_collect::index_type i = 0; i < interpolated_variables.size();
-             ++i) {
+            ++i) {
             interpolated_values(i) =
                 interpolator.interpolate(interpolated_variables(i));
             actual_values(i) = function(interpolated_variables(i));
@@ -182,7 +182,7 @@ TEST_CASE("num_collect::rbf::local_csrbf_interpolator") {
         Eigen::VectorXd actual_values;
         actual_values.resize(interpolated_variables.size());
         for (num_collect::index_type i = 0; i < interpolated_variables.size();
-             ++i) {
+            ++i) {
             interpolated_values(i) =
                 interpolator.interpolate(interpolated_variables(i));
             actual_values(i) = function(interpolated_variables(i));

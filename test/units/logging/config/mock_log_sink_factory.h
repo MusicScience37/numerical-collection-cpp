@@ -48,8 +48,8 @@ public:
 
     mock_log_sink_factory(const mock_log_sink_factory&) = delete;
     mock_log_sink_factory(mock_log_sink_factory&&) = delete;
-    auto operator=(
-        const mock_log_sink_factory&) -> mock_log_sink_factory& = delete;
+    auto operator=(const mock_log_sink_factory&)
+        -> mock_log_sink_factory& = delete;
     auto operator=(mock_log_sink_factory&&) -> mock_log_sink_factory& = delete;
 };
 

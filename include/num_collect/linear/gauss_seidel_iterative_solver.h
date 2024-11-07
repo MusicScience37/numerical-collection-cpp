@@ -187,7 +187,7 @@ private:
         for (index_type i = 0; i < size; ++i) {
             scalar_type numerator = right(i);
             for (typename matrix_type::InnerIterator iter(coeff_ref, i); iter;
-                 ++iter) {
+                ++iter) {
                 if (iter.index() != i) {
                     numerator -= iter.value() * solution(iter.index());
                 }

@@ -32,9 +32,7 @@ namespace num_collect::ode::concepts {
  * \tparam T Type.
  */
 template <typename T>
-concept time_differentiable_problem = problem<T>&&
-    requires()
-{
+concept time_differentiable_problem = problem<T> && requires() {
     requires T::allowed_evaluations.allows(
         evaluation_type{.time_derivative = true});
 

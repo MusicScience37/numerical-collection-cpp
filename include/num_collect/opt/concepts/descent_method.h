@@ -32,9 +32,7 @@ namespace num_collect::opt::concepts {
  * \tparam T Type.
  */
 template <typename T>
-concept descent_method = optimizer<T>&&
-    requires()
-{
+concept descent_method = optimizer<T> && requires() {
     typename T::line_searcher_type;
     requires line_searcher<typename T::line_searcher_type>;
 

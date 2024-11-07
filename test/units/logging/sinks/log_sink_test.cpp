@@ -67,7 +67,9 @@ TEST_CASE("num_collect::logging::sinks::log_sink") {
         CHECK(user_data.write_count == 0);
         CHECK(user_data.finalize_count == 0);
 
-        { log_sink sink{&user_data, write_function, finalize_function}; }
+        {
+            log_sink sink{&user_data, write_function, finalize_function};
+        }
 
         CHECK(user_data.write_count == 0);
         CHECK(user_data.finalize_count == 1);

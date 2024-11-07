@@ -93,8 +93,8 @@ public:
      * \param[in] val Value.
      * \return This.
      */
-    auto step_size_factor_safety_coeff(
-        const scalar_type& val) -> basic_step_size_controller& {
+    auto step_size_factor_safety_coeff(const scalar_type& val)
+        -> basic_step_size_controller& {
         if (val <= static_cast<scalar_type>(0)) {
             NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Safety coefficient for factors of step sizes must be a "
@@ -110,8 +110,8 @@ public:
      * \param[in] val Value.
      * \return This.
      */
-    auto max_step_size_factor(
-        const scalar_type& val) -> basic_step_size_controller& {
+    auto max_step_size_factor(const scalar_type& val)
+        -> basic_step_size_controller& {
         if (val <= static_cast<scalar_type>(0)) {
             NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Maximum factor of step sizes must be a positive value.");

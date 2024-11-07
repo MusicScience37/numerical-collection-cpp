@@ -112,8 +112,8 @@ private:
      * \param[in] context Context.
      * \return Output iterator after formatting.
      */
-    auto format_impl(const Vector& vec,
-        format_context& context) const -> decltype(context.out()) {
+    auto format_impl(const Vector& vec, format_context& context) const
+        -> decltype(context.out()) {
         const Eigen::Index size = vec.size();
         auto out = context.out();
         *out = '[';
@@ -136,8 +136,8 @@ private:
      * \param[in] out Output iterator.
      * \return Output iterator.
      */
-    static auto write_comma(
-        format_context::iterator out) -> format_context::iterator {
+    static auto write_comma(format_context::iterator out)
+        -> format_context::iterator {
         *out = ',';
         ++out;
         *out = ' ';

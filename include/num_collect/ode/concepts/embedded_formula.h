@@ -29,9 +29,7 @@ namespace num_collect::ode::concepts {
  * \tparam T Type.
  */
 template <typename T>
-concept embedded_formula = formula<T>&&
-    requires()
-{
+concept embedded_formula = formula<T> && requires() {
     requires requires(T& obj, const typename T::scalar_type& time,
         const typename T::scalar_type& step_size,
         const typename T::variable_type& current,

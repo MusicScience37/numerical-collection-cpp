@@ -159,8 +159,8 @@ STAT_BENCH_CASE_F(
     const auto tol_abs_error_per_elem =
         1e+2 * rel_tol * rhs_.norm() / std::sqrt(rhs_.size());
     solver.tolerances(num_collect::ode::error_tolerances<Eigen::VectorXd>()
-                          .tol_rel_error(0.0)
-                          .tol_abs_error(tol_abs_error_per_elem));
+            .tol_rel_error(0.0)
+            .tol_abs_error(tol_abs_error_per_elem));
     const auto coeff_function = [coeff_ptr = &coeff_](
                                     const auto& target, auto& result) {
         result = (*coeff_ptr) * target;

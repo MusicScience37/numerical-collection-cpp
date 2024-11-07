@@ -36,13 +36,13 @@ public:
      * \param[in] sinks Other log sinks.
      * \return Created log sink.
      */
-    [[nodiscard]] virtual auto create(
-        log_sink_factory_table& sinks) -> sinks::log_sink = 0;
+    [[nodiscard]] virtual auto create(log_sink_factory_table& sinks)
+        -> sinks::log_sink = 0;
 
     log_sink_factory_base(const log_sink_factory_base&) = delete;
     log_sink_factory_base(log_sink_factory_base&&) = delete;
-    auto operator=(
-        const log_sink_factory_base&) -> log_sink_factory_base& = delete;
+    auto operator=(const log_sink_factory_base&)
+        -> log_sink_factory_base& = delete;
     auto operator=(log_sink_factory_base&&) -> log_sink_factory_base& = delete;
 
     /*!

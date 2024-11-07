@@ -114,8 +114,8 @@ public:
      * \param[in] val Value.
      * \return This.
      */
-    auto current_step_error_exponent(
-        const scalar_type& val) -> pi_step_size_controller& {
+    auto current_step_error_exponent(const scalar_type& val)
+        -> pi_step_size_controller& {
         if (val < previous_step_error_exponent_) {
             NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "0 <= previous_step_error_exponent <= "
@@ -131,8 +131,8 @@ public:
      * \param[in] val Value.
      * \return This.
      */
-    auto previous_step_error_exponent(
-        const scalar_type& val) -> pi_step_size_controller& {
+    auto previous_step_error_exponent(const scalar_type& val)
+        -> pi_step_size_controller& {
         if (val < static_cast<scalar_type>(0) ||
             current_step_error_exponent_ < val) {
             NUM_COLLECT_LOG_AND_THROW(invalid_argument,
@@ -149,8 +149,8 @@ public:
      * \param[in] val Value.
      * \return This.
      */
-    auto step_size_factor_safety_coeff(
-        const scalar_type& val) -> pi_step_size_controller& {
+    auto step_size_factor_safety_coeff(const scalar_type& val)
+        -> pi_step_size_controller& {
         if (val <= static_cast<scalar_type>(0)) {
             NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Safety coefficient for factors of step sizes must be a "
@@ -166,8 +166,8 @@ public:
      * \param[in] val Value.
      * \return This.
      */
-    auto max_step_size_factor(
-        const scalar_type& val) -> pi_step_size_controller& {
+    auto max_step_size_factor(const scalar_type& val)
+        -> pi_step_size_controller& {
         if (val <= min_step_size_factor_) {
             NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "0 < min_step_size_factor < max_step_size_factor must be "
@@ -183,8 +183,8 @@ public:
      * \param[in] val Value.
      * \return This.
      */
-    auto min_step_size_factor(
-        const scalar_type& val) -> pi_step_size_controller& {
+    auto min_step_size_factor(const scalar_type& val)
+        -> pi_step_size_controller& {
         if (val <= static_cast<scalar_type>(0) ||
             max_step_size_factor_ <= val) {
             NUM_COLLECT_LOG_AND_THROW(invalid_argument,

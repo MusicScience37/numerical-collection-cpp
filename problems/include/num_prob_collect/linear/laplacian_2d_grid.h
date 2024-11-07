@@ -157,12 +157,12 @@ private:
                          xj = std::max<num_collect::index_type>(xi - 1, 0),
                          xj_end = std::min<num_collect::index_type>(
                              xi + 2, grid_cols_);
-                     xj < xj_end; ++xj) {
+                    xj < xj_end; ++xj) {
                     for (num_collect::index_type
                              yj = std::max<num_collect::index_type>(yi - 1, 0),
                              yj_end = std::min<num_collect::index_type>(
                                  yi + 2, grid_rows_);
-                         yj < yj_end; ++yj) {
+                        yj < yj_end; ++yj) {
                         const num_collect::index_type j = index(xj, yj);
                         const scalar_type coeff =
                             (i == j) ? diag_coeff_ : off_diag_coeff_;

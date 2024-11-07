@@ -44,8 +44,8 @@ public:
      * \param[in] solution Solution.
      * \return Result.
      */
-    [[nodiscard]] auto residual_norm(
-        const data_type& solution) const -> scalar_type {
+    [[nodiscard]] auto residual_norm(const data_type& solution) const
+        -> scalar_type {
         return derived().residual_norm(solution);
     }
 
@@ -55,8 +55,8 @@ public:
      * \param[in] solution Solution.
      * \return Result.
      */
-    [[nodiscard]] auto regularization_term(
-        const data_type& solution) const -> scalar_type {
+    [[nodiscard]] auto regularization_term(const data_type& solution) const
+        -> scalar_type {
         return derived().regularization_term(solution);
     }
 

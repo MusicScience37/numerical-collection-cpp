@@ -116,9 +116,9 @@ public:
      * \return Result.
      */
     template <base::concepts::invocable_as<result_type(variable_type)> Function>
-    [[nodiscard]] auto integrate_once(const Function& function,
-        variable_type left,
-        variable_type right) const -> std::pair<result_type, result_type> {
+    [[nodiscard]] auto integrate_once(
+        const Function& function, variable_type left, variable_type right) const
+        -> std::pair<result_type, result_type> {
         const auto center = constants::half<variable_type> * (left + right);
         const auto half_width = constants::half<variable_type> * (right - left);
 
@@ -221,8 +221,8 @@ public:
      * \param[in] val Value.
      * \return This.
      */
-    auto tol_abs_error(
-        variable_type val) -> gauss_legendre_kronrod_integrator& {
+    auto tol_abs_error(variable_type val)
+        -> gauss_legendre_kronrod_integrator& {
         if (val <= static_cast<variable_type>(0)) {
             NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Tolerance of absolute error must be positive value.");
@@ -237,8 +237,8 @@ public:
      * \param[in] val Value.
      * \return This.
      */
-    auto tol_rel_error(
-        variable_type val) -> gauss_legendre_kronrod_integrator& {
+    auto tol_rel_error(variable_type val)
+        -> gauss_legendre_kronrod_integrator& {
         if (val <= static_cast<variable_type>(0)) {
             NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Tolerance of relative error must be positive value.");

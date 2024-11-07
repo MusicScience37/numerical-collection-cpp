@@ -179,8 +179,8 @@ public:
      * \param[in] val Relaxation coefficient.
      * \return This.
      */
-    auto relaxation_coeff(
-        const scalar_type& val) -> symmetric_successive_over_relaxation& {
+    auto relaxation_coeff(const scalar_type& val)
+        -> symmetric_successive_over_relaxation& {
         if (val <= static_cast<scalar_type>(0) ||
             static_cast<scalar_type>(2) <= val) {
             NUM_COLLECT_LOG_AND_THROW(
@@ -213,7 +213,7 @@ private:
         for (index_type i = 0; i < size; ++i) {
             scalar_type numerator = right(i);
             for (typename matrix_type::InnerIterator iter(coeff_ref, i); iter;
-                 ++iter) {
+                ++iter) {
                 if (iter.index() < i) {
                     numerator -=
                         iter.value() * intermidiate_solution_(iter.index());
@@ -232,7 +232,7 @@ private:
         for (index_type i = size - 1; i >= 0; --i) {
             scalar_type numerator = right(i);
             for (typename matrix_type::InnerIterator iter(coeff_ref, i); iter;
-                 ++iter) {
+                ++iter) {
                 if (iter.index() < i) {
                     numerator -=
                         iter.value() * intermidiate_solution_(iter.index());

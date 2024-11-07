@@ -36,8 +36,8 @@ namespace num_collect::logging::impl {
  * \param[in] tag Log tag.
  * \return Top level element and remaining.
  */
-[[nodiscard]] inline auto separate_top_log_tag_element(
-    std::string_view tag) -> std::pair<log_tag_element, std::string_view> {
+[[nodiscard]] inline auto separate_top_log_tag_element(std::string_view tag)
+    -> std::pair<log_tag_element, std::string_view> {
     const auto [element, remaining_after_elements] = parse_log_tag_element(tag);
     if (remaining_after_elements.empty()) {
         return {log_tag_element{std::string{element}}, std::string_view{}};

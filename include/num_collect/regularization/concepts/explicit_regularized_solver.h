@@ -80,7 +80,7 @@ concept explicit_regularized_solver = requires() {
         {
             solver.param_search_region()
         } -> base::concepts::decayed_to<
-              std::pair<typename T::scalar_type, typename T::scalar_type>>;
+            std::pair<typename T::scalar_type, typename T::scalar_type>>;
 
         {
             solver.l_curve_curvature(param)

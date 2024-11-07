@@ -72,8 +72,8 @@ public:
      * \param[in] right Right-hand-side object.
      * \return Result.
      */
-    constexpr auto operator<=>(
-        const log_tag_view& right) const noexcept -> std::strong_ordering {
+    constexpr auto operator<=>(const log_tag_view& right) const noexcept
+        -> std::strong_ordering {
         return this->name().compare(right.name()) <=> 0;
     }
 
@@ -83,8 +83,8 @@ public:
      * \param[in] right Right-hand-side object.
      * \return Result.
      */
-    constexpr auto operator==(
-        const log_tag_view& right) const noexcept -> bool {
+    constexpr auto operator==(const log_tag_view& right) const noexcept
+        -> bool {
         return this->name() == right.name();
     }
 
@@ -94,8 +94,8 @@ public:
      * \param[in] right Right-hand-side object.
      * \return Result.
      */
-    constexpr auto operator!=(
-        const log_tag_view& right) const noexcept -> bool = default;
+    constexpr auto operator!=(const log_tag_view& right) const noexcept
+        -> bool = default;
 
 private:
     //! Name.

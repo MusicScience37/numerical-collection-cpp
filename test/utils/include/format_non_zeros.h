@@ -34,8 +34,8 @@
  * \return Formatted string.
  */
 template <num_collect::concepts::sparse_matrix Matrix>
-[[nodiscard]] inline auto format_non_zeros(
-    const Matrix& matrix) -> std::string {
+[[nodiscard]] inline auto format_non_zeros(const Matrix& matrix)
+    -> std::string {
     using scalar_type = typename Matrix::Scalar;
 
     fmt::memory_buffer buffer;

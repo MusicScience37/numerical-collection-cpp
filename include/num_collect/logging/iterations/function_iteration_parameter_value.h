@@ -68,8 +68,8 @@ public:
      *
      * \return Value.
      */
-    [[nodiscard]] auto get(
-        const Algorithm* /*algorithm*/) const -> return_type {
+    [[nodiscard]] auto get(const Algorithm* /*algorithm*/) const
+        -> return_type {
         return get();
     }
 

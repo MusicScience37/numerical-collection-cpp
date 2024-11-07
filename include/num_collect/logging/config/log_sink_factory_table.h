@@ -103,8 +103,8 @@ private:
          * \param[in] sinks Other log sinks.
          * \return Sink.
          */
-        [[nodiscard]] auto get(
-            log_sink_factory_table& sinks) -> sinks::log_sink {
+        [[nodiscard]] auto get(log_sink_factory_table& sinks)
+            -> sinks::log_sink {
             if (!sink_) {
                 sink_ = factory_->create(sinks);
             }

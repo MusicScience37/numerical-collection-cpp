@@ -38,7 +38,7 @@ namespace num_collect::regularization::impl {
  */
 template <typename Matrix>
     requires(base::concepts::real_scalar_dense_matrix<Matrix> ||
-                base::concepts::real_scalar_sparse_matrix<Matrix>)
+        base::concepts::real_scalar_sparse_matrix<Matrix>)
 [[nodiscard]] auto approximate_max_eigen_aat(const Matrix& matrix) ->
     typename Matrix::Scalar {
     const index_type rows = matrix.rows();

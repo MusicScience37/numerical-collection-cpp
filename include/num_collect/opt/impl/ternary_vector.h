@@ -94,8 +94,8 @@ public:
      * \param[in] digit Digit index.
      * \return Reference to the digit.
      */
-    [[nodiscard]] auto operator()(
-        index_type dim, index_type digit) -> digit_type& {
+    [[nodiscard]] auto operator()(index_type dim, index_type digit)
+        -> digit_type& {
         NUM_COLLECT_DEBUG_ASSERT(dim < data_.rows());
         NUM_COLLECT_DEBUG_ASSERT(digit < data_(dim, 0));
         return data_(dim, digit + 1);
@@ -108,8 +108,8 @@ public:
      * \param[in] digit Digit index.
      * \return Reference to the digit.
      */
-    [[nodiscard]] auto operator()(
-        index_type dim, index_type digit) const -> digit_type {
+    [[nodiscard]] auto operator()(index_type dim, index_type digit) const
+        -> digit_type {
         NUM_COLLECT_DEBUG_ASSERT(dim < data_.rows());
         NUM_COLLECT_DEBUG_ASSERT(digit < data_(dim, 0));
         return data_(dim, digit + 1);
@@ -238,8 +238,8 @@ public:
      * \param[in] vec Vector.
      * \return Hash.
      */
-    [[nodiscard]] auto operator()(
-        const argument_type& vec) const -> result_type {
+    [[nodiscard]] auto operator()(const argument_type& vec) const
+        -> result_type {
         std::size_t res = 0;
         for (num_collect::index_type i = 0; i < vec.dim(); ++i) {
             std::size_t temp = 0;

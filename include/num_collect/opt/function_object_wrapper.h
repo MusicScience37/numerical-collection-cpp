@@ -97,8 +97,8 @@ private:
  * \return function_object_wrapper object.
  */
 template <typename Signature, typename Function>
-[[nodiscard]] inline auto make_function_object_wrapper(
-    Function&& function) -> function_object_wrapper<Signature, Function> {
+[[nodiscard]] inline auto make_function_object_wrapper(Function&& function)
+    -> function_object_wrapper<Signature, Function> {
     return function_object_wrapper<Signature, Function>(
         std::forward<Function>(function));
 }

@@ -76,8 +76,8 @@ public:
      * \param[in] col Column index.
      * \return Element.
      */
-    [[nodiscard]] auto operator()(
-        index_type row, index_type col) const -> value_type {
+    [[nodiscard]] auto operator()(index_type row, index_type col) const
+        -> value_type {
         return vector_(row).diff()(col);
     }
 

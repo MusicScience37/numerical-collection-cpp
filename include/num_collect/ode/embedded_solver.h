@@ -213,8 +213,8 @@ public:
      * \param[in] val Value.
      * \return This.
      */
-    auto tolerances(
-        const error_tolerances<variable_type>& val) -> embedded_solver& {
+    auto tolerances(const error_tolerances<variable_type>& val)
+        -> embedded_solver& {
         step_size_controller_.tolerances(val);
         if constexpr (requires(formula_type& formula,
                           const error_tolerances<variable_type>& val) {

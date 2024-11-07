@@ -74,7 +74,7 @@ concept step_size_controller = requires() {
         {
             obj.limits()
         } -> base::concepts::const_reference_of<
-              step_size_limits<typename T::scalar_type>>;
+            step_size_limits<typename T::scalar_type>>;
     };
 
     requires requires(
@@ -86,7 +86,7 @@ concept step_size_controller = requires() {
         {
             obj.tolerances()
         } -> base::concepts::const_reference_of<
-              error_tolerances<typename T::variable_type>>;
+            error_tolerances<typename T::variable_type>>;
     };
 };
 

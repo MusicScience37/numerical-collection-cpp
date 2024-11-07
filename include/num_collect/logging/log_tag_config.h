@@ -111,8 +111,8 @@ public:
      * \param[in] val Value.
      * \return This.
      */
-    auto output_log_level_in_child_iterations(
-        log_level val) -> log_tag_config& {
+    auto output_log_level_in_child_iterations(log_level val)
+        -> log_tag_config& {
         switch (val) {
         case log_level::trace:
         case log_level::debug:

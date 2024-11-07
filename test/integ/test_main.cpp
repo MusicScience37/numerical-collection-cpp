@@ -20,14 +20,14 @@ static const auto default_reporter_change =
 class custom_namer final : public ApprovalTests::ApprovalNamer {
 public:
     // NOLINTNEXTLINE: Usage of external library.
-    auto getApprovedFile(
-        std::string extensionWithDot) const -> std::string override {
+    auto getApprovedFile(std::string extensionWithDot) const
+        -> std::string override {
         return get_file(extensionWithDot, "approved");
     }
 
     // NOLINTNEXTLINE: Usage of external library.
-    auto getReceivedFile(
-        std::string extensionWithDot) const -> std::string override {
+    auto getReceivedFile(std::string extensionWithDot) const
+        -> std::string override {
         return get_file(extensionWithDot, "received");
     }
 
@@ -40,8 +40,8 @@ private:
             extension_with_dot.substr(1));
     }
 
-    static auto get_shorter_test_name(
-        const std::string& origin) -> std::string {
+    static auto get_shorter_test_name(const std::string& origin)
+        -> std::string {
         static std::regex target{R"(num_collect__([^_]+__)*)"};
         static std::string format;
         return std::regex_replace(origin, target, format);

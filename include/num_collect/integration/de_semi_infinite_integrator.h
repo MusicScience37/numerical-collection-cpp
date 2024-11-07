@@ -106,8 +106,8 @@ public:
      * \return Result.
      */
     template <base::concepts::invocable_as<result_type(variable_type)> Function>
-    [[nodiscard]] auto integrate(
-        const Function& function) const -> result_type {
+    [[nodiscard]] auto integrate(const Function& function) const
+        -> result_type {
         const variable_type interval =
             max_point_ / static_cast<variable_type>(points_);
 
@@ -143,8 +143,8 @@ public:
      * \return Result.
      */
     template <base::concepts::invocable_as<result_type(variable_type)> Function>
-    [[nodiscard]] auto operator()(
-        const Function& function) const -> result_type {
+    [[nodiscard]] auto operator()(const Function& function) const
+        -> result_type {
         return integrate(function);
     }
 
@@ -187,8 +187,8 @@ private:
      * \param[in] changed_var Changed variable.
      * \return Differential coefficient.
      */
-    [[nodiscard]] static auto diff_coeff(
-        variable_type changed_var) -> variable_type {
+    [[nodiscard]] static auto diff_coeff(variable_type changed_var)
+        -> variable_type {
         return constants::pi<variable_type> *
             std::exp(constants::pi<variable_type> * std::sinh(changed_var)) *
             std::cosh(changed_var);

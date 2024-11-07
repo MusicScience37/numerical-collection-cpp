@@ -43,8 +43,8 @@ namespace num_collect::auto_diff::forward {
  * \return Variable.
  */
 template <base::concepts::real_scalar Value>
-[[nodiscard]] inline auto create_diff_variable(
-    const Value& value) -> variable<Value> {
+[[nodiscard]] inline auto create_diff_variable(const Value& value)
+    -> variable<Value> {
     return variable<Value>(value, static_cast<Value>(1));
 }
 
@@ -118,8 +118,8 @@ public:
      * \param[in] col Column index.
      * \return Element.
      */
-    [[nodiscard]] auto operator()(
-        index_type row, index_type col) const -> variable_type {
+    [[nodiscard]] auto operator()(index_type row, index_type col) const
+        -> variable_type {
         NUM_COLLECT_DEBUG_ASSERT(col == 0);
         return create_diff_variable<value_type, diff_type>(
             value_vec_(row, col), value_vec_.size(), row);

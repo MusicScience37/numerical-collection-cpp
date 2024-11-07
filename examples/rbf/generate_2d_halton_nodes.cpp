@@ -37,12 +37,11 @@ auto main(int argc, char** argv) -> int {
     pybind11::scoped_interpreter interpreter;
     try {
         num_collect::index_type num_nodes = 200;  // NOLINT
-        const auto cli =
-            lyra::cli().add_argument(lyra::opt(num_nodes, "Number")
-                                         .name("--num_nodes")
-                                         .name("-n")
-                                         .optional()
-                                         .help("Set the number of nodes."));
+        const auto cli = lyra::cli().add_argument(lyra::opt(num_nodes, "Number")
+                .name("--num_nodes")
+                .name("-n")
+                .optional()
+                .help("Set the number of nodes."));
         const auto result = cli.parse({argc, argv});
         if (!result) {
             std::cerr << result.message() << "\n\n";

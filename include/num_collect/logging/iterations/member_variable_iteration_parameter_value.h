@@ -46,7 +46,7 @@ public:
      * \param[in] value Pointer to the member variable.
      */
     explicit member_variable_iteration_parameter_value(
-        const Value Algorithm::*value)
+        const Value Algorithm::* value)
         : value_(value) {}
 
     /*!
@@ -68,14 +68,14 @@ public:
      * \param[in] algorithm Algorithm.
      * \return Value.
      */
-    [[nodiscard]] auto get(
-        const Algorithm* algorithm) const noexcept -> const Value& {
+    [[nodiscard]] auto get(const Algorithm* algorithm) const noexcept
+        -> const Value& {
         return algorithm->*value_;
     }
 
 private:
     //! Pointer to the member variable.
-    const Value Algorithm::*value_;
+    const Value Algorithm::* value_;
 };
 
 }  // namespace num_collect::logging::iterations

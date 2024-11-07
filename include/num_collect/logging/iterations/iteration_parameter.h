@@ -101,10 +101,10 @@ public:
 
     iteration_parameter_base(const iteration_parameter_base&) = delete;
     iteration_parameter_base(iteration_parameter_base&&) = delete;
-    auto operator=(
-        const iteration_parameter_base&) -> iteration_parameter_base& = delete;
-    auto operator=(
-        iteration_parameter_base&&) -> iteration_parameter_base& = delete;
+    auto operator=(const iteration_parameter_base&)
+        -> iteration_parameter_base& = delete;
+    auto operator=(iteration_parameter_base&&)
+        -> iteration_parameter_base& = delete;
 
     /*!
      * \brief Destructor.

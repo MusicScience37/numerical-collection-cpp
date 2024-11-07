@@ -101,8 +101,8 @@ public:
      * \param[in] process Type of process.
      * \return Name of process.
      */
-    [[nodiscard]] static auto process_name(
-        process_type process) -> std::string_view {
+    [[nodiscard]] static auto process_name(process_type process)
+        -> std::string_view {
         switch (process) {
         case process_type::none:
             return "none";
@@ -169,7 +169,7 @@ public:
 
         value_order_.reserve(util::safe_cast<std::size_t>(dim_ + 1));
         for (std::size_t i = 0; i < util::safe_cast<std::size_t>(dim_ + 1);
-             ++i) {
+            ++i) {
             value_order_.push_back(i);
         }
         fluctuated_values_.resize(util::safe_cast<std::size_t>(dim_ + 1));
@@ -342,8 +342,8 @@ public:
      * \param[in] value Value.
      * \return This.
      */
-    auto max_iterations_per_trial(
-        index_type value) -> annealing_downhill_simplex& {
+    auto max_iterations_per_trial(index_type value)
+        -> annealing_downhill_simplex& {
         if (value == 0) {
             NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Maximum number of iterations in each trial must be a positive "

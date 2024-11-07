@@ -31,8 +31,8 @@ namespace num_collect::logging::impl {
  * \param[in] input Input starting with a separator.
  * \return Remaining inputs after a separator.
  */
-[[nodiscard]] inline auto parse_log_tag_separator(
-    std::string_view input) -> std::string_view {
+[[nodiscard]] inline auto parse_log_tag_separator(std::string_view input)
+    -> std::string_view {
     if (input.empty()) {
         throw base::invalid_argument("Log tag format error.");
     }

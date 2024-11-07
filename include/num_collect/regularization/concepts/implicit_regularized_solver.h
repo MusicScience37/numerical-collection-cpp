@@ -52,7 +52,7 @@ concept implicit_regularized_solver = requires() {
         {
             solver.param_search_region()
         } -> base::concepts::decayed_to<
-              std::pair<typename T::scalar_type, typename T::scalar_type>>;
+            std::pair<typename T::scalar_type, typename T::scalar_type>>;
     };
 
     requires requires(const T& solver, const typename T::data_type& solution) {
