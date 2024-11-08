@@ -40,6 +40,7 @@ Checks: >
     -bugprone-unchecked-optional-access,
     -bugprone-chained-comparison,
     -bugprone-optional-value-conversion,
+    -bugprone-crtp-constructor-accessibility,
   concurrency-*,
   boost-*,
   openmp-*,
@@ -73,6 +74,7 @@ Checks: >
 # - bugprone-optional-value-conversion has a bug to generate warnings even when checks of existence of values exist.
 # - cppcoreguidelines-avoid-do-while has a bug to ignore NOLINT.
 # - readability-math-missing-parentheses generates too many warnings in existing codes.
+# - bugprone-crtp-constructor-accessibility generates too many warnings in existing codes.
 
 CheckOptions:
   # Naming Conventions
