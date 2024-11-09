@@ -1,6 +1,5 @@
 HeaderFilterRegex: "include/num_collect/|test/"
 Checks: >
-  -boost-*,
   clang-diagnostic-*,
     -clang-diagnostic-unknown-pragmas,
   clang-analyzer-*,
@@ -44,7 +43,7 @@ Checks: >
     -bugprone-optional-value-conversion,
     -bugprone-crtp-constructor-accessibility,
   concurrency-*,
-  boost-*,
+  -boost-*,
   openmp-*,
     -openmp-use-default-none,
 
