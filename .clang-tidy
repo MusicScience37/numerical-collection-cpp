@@ -1,5 +1,6 @@
 HeaderFilterRegex: "include/num_collect/|test/"
 Checks: >
+  -boost-*,
   clang-diagnostic-*,
     -clang-diagnostic-unknown-pragmas,
   clang-analyzer-*,
@@ -31,6 +32,7 @@ Checks: >
     -modernize-concat-nested-namespaces,
     -modernize-use-std-numbers,
     -modernize-use-constraints,
+    -modernize-use-ranges,
   hicpp-*,
   cert-*,
     -cert-err58-cpp,
@@ -75,6 +77,7 @@ Checks: >
 # - cppcoreguidelines-avoid-do-while has a bug to ignore NOLINT.
 # - readability-math-missing-parentheses generates too many warnings in existing codes.
 # - bugprone-crtp-constructor-accessibility generates too many warnings in existing codes.
+# - modernize-use-ranges generates too many warnings in existing codes.
 
 CheckOptions:
   # Naming Conventions
