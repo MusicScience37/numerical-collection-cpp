@@ -219,7 +219,7 @@ TEST_CASE("num_collect::linear::impl::amg::tune_coarse_grid_selection") {
         fmt::memory_buffer buffer;
         buffer.append(std::string_view("Classification:"));
         for (num_collect::index_type i = 0; i < node_classification.size();
-             ++i) {
+            ++i) {
             if (i % grid_size == 0U) {
                 buffer.push_back('\n');
             }

@@ -61,8 +61,8 @@ TEMPLATE_PRODUCT_TEST_CASE(
 
         constexpr double tolerance = 1e-4;
         solver.tolerances(num_collect::ode::error_tolerances<Eigen::Vector2d>()
-                              .tol_rel_error(tolerance)
-                              .tol_abs_error(tolerance));
+                .tol_rel_error(tolerance)
+                .tol_abs_error(tolerance));
 
         solve_and_check_with_reference(
             solver, init_time, finish_time, num_time_samples,

@@ -30,9 +30,7 @@ namespace num_collect::rbf::concepts {
  * \tparam T Type.
  */
 template <typename T>
-concept csrbf = rbf<T>&&
-    requires()
-{
+concept csrbf = rbf<T> && requires() {
     {
         T::support_boundary()
     } -> base::concepts::same_as<typename T::scalar_type>;

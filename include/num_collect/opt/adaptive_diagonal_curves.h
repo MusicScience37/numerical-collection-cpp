@@ -897,7 +897,7 @@ private:
         const auto search_rect =
             determine_nondominated_rectangles(min_group, max_group);
         for (auto iter = std::rbegin(search_rect);
-             iter != std::rend(search_rect); ++iter) {
+            iter != std::rend(search_rect); ++iter) {
             divide_rectangle(iter->first);
         }
     }

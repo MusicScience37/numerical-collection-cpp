@@ -120,8 +120,8 @@ public:
      * \param[in] val Value.
      * \return This.
      */
-    auto tolerance_rate(
-        const scalar_type& val) -> operator_conjugate_gradient& {
+    auto tolerance_rate(const scalar_type& val)
+        -> operator_conjugate_gradient& {
         tolerance_rate_ = val;
         return *this;
     }

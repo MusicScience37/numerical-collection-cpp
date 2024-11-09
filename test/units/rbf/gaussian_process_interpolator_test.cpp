@@ -65,7 +65,7 @@ TEST_CASE("num_collect::rbf::gaussian_process_interpolator") {
         Eigen::VectorXd variances;
         variances.resize(interpolated_variables.size());
         for (num_collect::index_type i = 0; i < interpolated_variables.size();
-             ++i) {
+            ++i) {
             std::tie(interpolated_values(i), variances(i)) =
                 interpolator.evaluate_mean_and_variance_on(
                     interpolated_variables(i));
@@ -103,7 +103,7 @@ TEST_CASE("num_collect::rbf::gaussian_process_interpolator") {
         Eigen::VectorXd variances;
         variances.resize(interpolated_variables.size());
         for (num_collect::index_type i = 0; i < interpolated_variables.size();
-             ++i) {
+            ++i) {
             std::tie(interpolated_values(i), variances(i)) =
                 interpolator.evaluate_mean_and_variance_on(
                     interpolated_variables(i));

@@ -50,8 +50,8 @@ public:
     }
 
     //! \copydoc num_collect::logging::config::log_sink_factory_base::create
-    [[nodiscard]] auto create(
-        log_sink_factory_table& sinks) -> sinks::log_sink override {
+    [[nodiscard]] auto create(log_sink_factory_table& sinks)
+        -> sinks::log_sink override {
         (void)sinks;
         if (use_color_) {
             return sinks::create_colored_console_sink();

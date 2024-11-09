@@ -217,8 +217,8 @@ public:
      * \param[in] value Value.
      * \return This object.
      */
-    auto max_lower_bound_evaluations(
-        index_type value) -> gaussian_process_optimizer& {
+    auto max_lower_bound_evaluations(index_type value)
+        -> gaussian_process_optimizer& {
         if (value <= 0) {
             NUM_COLLECT_LOG_AND_THROW(invalid_argument,
                 "Maximum number of evaluations of lower bounds must be a "
@@ -259,8 +259,8 @@ private:
      * \param[in] value Function value.
      * \return Corrected value.
      */
-    [[nodiscard]] static auto correct_value_if_needed(
-        value_type value) noexcept -> value_type {
+    [[nodiscard]] static auto correct_value_if_needed(value_type value) noexcept
+        -> value_type {
         constexpr auto safe_limit =
             std::numeric_limits<value_type>::max() * 1e-2;
         if (!isfinite(value) || value > safe_limit) {

@@ -34,9 +34,7 @@ namespace num_collect::opt::concepts {
  * \tparam T Type.
  */
 template <typename T>
-concept optimizer = base::concepts::iterative_solver<T>&&
-    requires()
-{
+concept optimizer = base::concepts::iterative_solver<T> && requires() {
     typename T::objective_function_type;
     requires objective_function<typename T::objective_function_type>;
 
@@ -51,9 +49,7 @@ concept optimizer = base::concepts::iterative_solver<T>&&
         typename T::value_type>;
 
     requires requires(const typename T::objective_function_type& obj_fun) {
-        {
-            T { obj_fun }
-        };
+        { T{obj_fun} };
     };
 
     requires requires(const T& obj) {

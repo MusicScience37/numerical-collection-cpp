@@ -87,8 +87,8 @@ void generate_halton_nodes_impl(Eigen::VectorX<Scalar>& buffer,
  * \return Generated nodes.
  */
 template <base::concepts::real_scalar Scalar, index_type Dimensions>
-[[nodiscard]] auto generate_halton_nodes(
-    index_type num_nodes) -> std::vector<Eigen::Vector<Scalar, Dimensions>> {
+[[nodiscard]] auto generate_halton_nodes(index_type num_nodes)
+    -> std::vector<Eigen::Vector<Scalar, Dimensions>> {
     std::vector<Eigen::Vector<Scalar, Dimensions>> nodes(
         static_cast<std::size_t>(num_nodes));
 
@@ -119,8 +119,8 @@ template <base::concepts::real_scalar Scalar, index_type Dimensions>
  * \return Generated nodes.
  */
 template <base::concepts::real_scalar Scalar>
-[[nodiscard]] auto generate_1d_halton_nodes(
-    index_type num_nodes) -> std::vector<Scalar> {
+[[nodiscard]] auto generate_1d_halton_nodes(index_type num_nodes)
+    -> std::vector<Scalar> {
     Eigen::VectorX<Scalar> buffer;
     constexpr index_type base_sequence_size = 2;
     impl::generate_halton_nodes_impl(buffer, num_nodes, base_sequence_size);

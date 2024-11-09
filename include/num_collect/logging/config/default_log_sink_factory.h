@@ -38,8 +38,8 @@ public:
     default_log_sink_factory() = default;
 
     //! \copydoc num_collect::logging::config::log_sink_factory_base::create
-    [[nodiscard]] auto create(
-        log_sink_factory_table& sinks) -> sinks::log_sink override {
+    [[nodiscard]] auto create(log_sink_factory_table& sinks)
+        -> sinks::log_sink override {
         (void)sinks;
 
         return sinks::get_default_log_sink();
@@ -52,10 +52,10 @@ public:
 
     default_log_sink_factory(const default_log_sink_factory&) = delete;
     default_log_sink_factory(default_log_sink_factory&&) = delete;
-    auto operator=(
-        const default_log_sink_factory&) -> default_log_sink_factory& = delete;
-    auto operator=(
-        default_log_sink_factory&&) -> default_log_sink_factory& = delete;
+    auto operator=(const default_log_sink_factory&)
+        -> default_log_sink_factory& = delete;
+    auto operator=(default_log_sink_factory&&)
+        -> default_log_sink_factory& = delete;
 };
 
 }  // namespace num_collect::logging::config

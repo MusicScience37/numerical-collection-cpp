@@ -89,8 +89,8 @@ public:
      * \param[in] process Type of process.
      * \return Name of process.
      */
-    [[nodiscard]] static auto process_name(
-        process_type process) -> std::string_view {
+    [[nodiscard]] static auto process_name(process_type process)
+        -> std::string_view {
         switch (process) {
         case process_type::none:
             return "none";
@@ -157,7 +157,7 @@ public:
         value_order_.clear();
         value_order_.reserve(util::safe_cast<std::size_t>(dim_ + 1));
         for (std::size_t i = 0; i < util::safe_cast<std::size_t>(dim_ + 1);
-             ++i) {
+            ++i) {
             value_order_.push_back(i);
         }
         reorder();
@@ -284,8 +284,8 @@ public:
      * \param[in] value Value.
      * \return This object.
      */
-    auto tol_simplex_size(
-        const variable_scalar_type& value) -> downhill_simplex& {
+    auto tol_simplex_size(const variable_scalar_type& value)
+        -> downhill_simplex& {
         tol_simplex_size_ = value;
         return *this;
     }

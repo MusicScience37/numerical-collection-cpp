@@ -20,6 +20,7 @@
  */
 #pragma once
 
+#include <type_traits>
 #include <utility>  // IWYU pragma: keep
 
 #include <Eigen/LU>
@@ -163,9 +164,10 @@ private:
  */
 template <concepts::single_variate_problem Problem>
     requires concepts::mass_problem<Problem>
-[[nodiscard]] auto wrap_implicit_problem(
-    Problem problem) -> single_variate_implicit_problem_wrapper<Problem> {
-    return single_variate_implicit_problem_wrapper<Problem>(problem);
+[[nodiscard]] auto wrap_implicit_problem(Problem&& problem)
+    -> single_variate_implicit_problem_wrapper<std::decay_t<Problem>> {
+    return single_variate_implicit_problem_wrapper<std::decay_t<Problem>>(
+        std::forward<Problem>(problem));
 }
 
 #ifndef NUM_COLLECT_DOCUMENTATION
@@ -180,9 +182,10 @@ template <concepts::single_variate_problem Problem>
  */
 template <concepts::multi_variate_problem Problem>
     requires concepts::mass_problem<Problem>
-[[nodiscard]] auto wrap_implicit_problem(
-    Problem problem) -> multi_variate_implicit_problem_wrapper<Problem> {
-    return multi_variate_implicit_problem_wrapper<Problem>(problem);
+[[nodiscard]] auto wrap_implicit_problem(Problem&& problem)
+    -> multi_variate_implicit_problem_wrapper<std::decay_t<Problem>> {
+    return multi_variate_implicit_problem_wrapper<std::decay_t<Problem>>(
+        std::forward<Problem>(problem));
 }
 #endif
 

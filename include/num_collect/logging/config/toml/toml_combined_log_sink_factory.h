@@ -112,8 +112,8 @@ public:
     }
 
     //! \copydoc num_collect::logging::config::log_sink_factory_base::create
-    [[nodiscard]] auto create(
-        log_sink_factory_table& sinks) -> sinks::log_sink override {
+    [[nodiscard]] auto create(log_sink_factory_table& sinks)
+        -> sinks::log_sink override {
         std::vector<std::pair<sinks::log_sink, log_level>> inner_sinks;
         inner_sinks.reserve(inner_sink_names_.size());
         for (std::size_t i = 0; i < inner_sink_names_.size(); ++i) {

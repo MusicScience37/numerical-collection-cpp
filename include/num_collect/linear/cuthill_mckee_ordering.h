@@ -123,8 +123,8 @@ private:
      * \return Index with the lowest degree.
      */
     template <base::concepts::sparse_matrix MatrixType>
-    [[nodiscard]] auto calculate_degrees(
-        const MatrixType& matrix) -> storage_index_type {
+    [[nodiscard]] auto calculate_degrees(const MatrixType& matrix)
+        -> storage_index_type {
         const auto size = static_cast<storage_index_type>(matrix.outerSize());
         unused_index_to_degree_.clear();
         unused_index_to_degree_.reserve(static_cast<std::size_t>(size));
@@ -135,7 +135,7 @@ private:
         for (storage_index_type i = 0; i < size; ++i) {
             storage_index_type degree = 0;
             for (typename MatrixType::InnerIterator iter(matrix, i); iter;
-                 ++iter) {
+                ++iter) {
                 ++degree;
             }
             unused_index_to_degree_.emplace(i, degree);
@@ -171,7 +171,7 @@ private:
             // Remove from unused indices before checking adjacent indices.
             // Also, duplicated indices are removed.
             for (auto iter = current_indices_.begin();
-                 iter != current_indices_.end();) {
+                iter != current_indices_.end();) {
                 if (unused_index_to_degree_.erase(iter->index)) {
                     ++iter;
                 } else {
@@ -187,7 +187,7 @@ private:
 
                 for (typename MatrixType::InnerIterator iter(
                          matrix, data.index);
-                     iter; ++iter) {
+                    iter; ++iter) {
                     const storage_index_type* degree =
                         unused_index_to_degree_.try_get(iter.index());
                     if (degree == nullptr) {

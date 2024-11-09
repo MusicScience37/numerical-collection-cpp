@@ -264,8 +264,8 @@ private:
      * \param[in] index Index for this object.
      * \return Index in the container.
      */
-    [[nodiscard]] auto unsafe_container_index(
-        index_type index) const noexcept -> std::size_t {
+    [[nodiscard]] auto unsafe_container_index(index_type index) const noexcept
+        -> std::size_t {
         return static_cast<std::size_t>(index - origin_index_);
     }
 
@@ -314,8 +314,8 @@ private:
      * \param[in] offset Offset.
      * \return Result.
      */
-    [[nodiscard]] auto is_safe_offset(
-        index_type offset) const noexcept -> bool {
+    [[nodiscard]] auto is_safe_offset(index_type offset) const noexcept
+        -> bool {
         if (offset < 0) {
             return origin_index_ >=
                 std::numeric_limits<index_type>::min() - offset;

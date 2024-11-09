@@ -116,24 +116,20 @@ TEST_CASE("num_collect::regularization::full_gen_tikhonov") {
                     param)));
 
         REQUIRE_THAT(full_gen_tikhonov.first_derivative_of_residual_norm(param),
-            Catch::Matchers::WithinRel(
-                full_gen_tikhonov.internal_solver()
+            Catch::Matchers::WithinRel(full_gen_tikhonov.internal_solver()
                     .first_derivative_of_residual_norm(param)));
         REQUIRE_THAT(
             full_gen_tikhonov.first_derivative_of_regularization_term(param),
-            Catch::Matchers::WithinRel(
-                full_gen_tikhonov.internal_solver()
+            Catch::Matchers::WithinRel(full_gen_tikhonov.internal_solver()
                     .first_derivative_of_regularization_term(param)));
 
         REQUIRE_THAT(
             full_gen_tikhonov.second_derivative_of_residual_norm(param),
-            Catch::Matchers::WithinRel(
-                full_gen_tikhonov.internal_solver()
+            Catch::Matchers::WithinRel(full_gen_tikhonov.internal_solver()
                     .second_derivative_of_residual_norm(param)));
         REQUIRE_THAT(
             full_gen_tikhonov.second_derivative_of_regularization_term(param),
-            Catch::Matchers::WithinRel(
-                full_gen_tikhonov.internal_solver()
+            Catch::Matchers::WithinRel(full_gen_tikhonov.internal_solver()
                     .second_derivative_of_regularization_term(param)));
 
         REQUIRE_THAT(full_gen_tikhonov.sum_of_filter_factor(param),

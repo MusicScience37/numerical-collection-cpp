@@ -103,12 +103,12 @@ auto main(int argc, char** argv) -> int {
     try {
         // Parse command line arguments.
         std::string config_filepath;
-        const auto cli = lyra::cli().add_argument(
-            lyra::opt(config_filepath, "path")
-                .name("--config")
-                .name("-c")
-                .optional()
-                .help("Load a logging configuration file."));
+        const auto cli =
+            lyra::cli().add_argument(lyra::opt(config_filepath, "path")
+                    .name("--config")
+                    .name("-c")
+                    .optional()
+                    .help("Load a logging configuration file."));
         const auto result = cli.parse({argc, argv});
         if (!result) {
             std::cerr << result.message() << "\n\n";

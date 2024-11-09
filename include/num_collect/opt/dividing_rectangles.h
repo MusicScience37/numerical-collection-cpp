@@ -138,7 +138,7 @@ public:
     void iterate() {
         const auto divided_rects = determine_rects();
         for (auto iter = std::rbegin(divided_rects);
-             iter != std::rend(divided_rects); ++iter) {
+            iter != std::rend(divided_rects); ++iter) {
             divide_rect(iter->first);
         }
         ++iterations_;
@@ -328,8 +328,8 @@ private:
          * \return Divided rectangle.
          */
         [[nodiscard]] auto divide(index_type dim, value_type lower,
-            value_type upper,
-            value_type value) const -> std::shared_ptr<rectangle> {
+            value_type upper, value_type value) const
+            -> std::shared_ptr<rectangle> {
             auto ptr = std::make_shared<rectangle>(*this);
             ptr->divide_in_place(dim, lower, upper, value);
             return ptr;
@@ -382,8 +382,8 @@ private:
      * \param[in] variable Variable in unit hyper-cube.
      * \return Function value.
      */
-    [[nodiscard]] auto evaluate_on(
-        const variable_type& variable) -> value_type {
+    [[nodiscard]] auto evaluate_on(const variable_type& variable)
+        -> value_type {
         variable_type actual_var;
         if constexpr (is_eigen_vector_v<variable_type>) {
             actual_var = variable.cwiseProduct(width_) + lower_;
@@ -583,8 +583,8 @@ private:
      * \param[in] value Function value.
      * \return Corrected value.
      */
-    [[nodiscard]] static auto correct_value_if_needed(
-        value_type value) noexcept -> value_type {
+    [[nodiscard]] static auto correct_value_if_needed(value_type value) noexcept
+        -> value_type {
         constexpr auto safe_limit =
             std::numeric_limits<value_type>::max() * 1e-2;
         if (!isfinite(value) || value > safe_limit) {

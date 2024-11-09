@@ -105,8 +105,8 @@ public:
     }
 
     //! \copydoc num_collect::regularization::explicit_regularized_solver_base::residual_norm
-    [[nodiscard]] auto residual_norm(
-        const scalar_type& param) const -> scalar_type {
+    [[nodiscard]] auto residual_norm(const scalar_type& param) const
+        -> scalar_type {
         auto res = static_cast<scalar_type>(0);
         const index_type rank = svd_.nonzeroSingularValues();
         for (index_type i = 0; i < rank; ++i) {
@@ -119,8 +119,8 @@ public:
     }
 
     //! \copydoc num_collect::regularization::explicit_regularized_solver_base::regularization_term
-    [[nodiscard]] auto regularization_term(
-        const scalar_type& param) const -> scalar_type {
+    [[nodiscard]] auto regularization_term(const scalar_type& param) const
+        -> scalar_type {
         auto res = static_cast<scalar_type>(0);
         const index_type rank = svd_.nonzeroSingularValues();
         for (index_type i = 0; i < rank; ++i) {
@@ -195,8 +195,8 @@ public:
     }
 
     //! \copydoc num_collect::regularization::explicit_regularized_solver_base::sum_of_filter_factor
-    [[nodiscard]] auto sum_of_filter_factor(
-        const scalar_type& param) const -> scalar_type {
+    [[nodiscard]] auto sum_of_filter_factor(const scalar_type& param) const
+        -> scalar_type {
         auto res = static_cast<scalar_type>(0);
         const index_type rank = svd_.nonzeroSingularValues();
         for (index_type i = 0; i < rank; ++i) {

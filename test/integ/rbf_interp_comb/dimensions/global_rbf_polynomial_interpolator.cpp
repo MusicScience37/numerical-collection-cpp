@@ -65,7 +65,7 @@ TEMPLATE_TEST_CASE_SIG("global_rbf_polynomial_interpolator with dimensions", "",
     Eigen::VectorXd actual_values;
     actual_values.resize(interpolated_variable_elements.size());
     for (num_collect::index_type i = 0;
-         i < interpolated_variable_elements.size(); ++i) {
+        i < interpolated_variable_elements.size(); ++i) {
         const variable_type interpolated_variable =
             variable_type::Constant(interpolated_variable_elements(i));
         interpolated_values(i) =

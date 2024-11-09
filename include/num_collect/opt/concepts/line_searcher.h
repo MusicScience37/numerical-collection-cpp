@@ -66,7 +66,7 @@ concept line_searcher = requires() {
         {
             obj.obj_fun()
         } -> base::concepts::const_reference_of<
-              typename T::objective_function_type>;
+            typename T::objective_function_type>;
 
         {
             obj.opt_variable()

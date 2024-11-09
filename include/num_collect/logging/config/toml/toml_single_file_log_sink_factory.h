@@ -52,8 +52,8 @@ public:
     }
 
     //! \copydoc num_collect::logging::config::log_sink_factory_base::create
-    [[nodiscard]] auto create(
-        log_sink_factory_table& sinks) -> sinks::log_sink override {
+    [[nodiscard]] auto create(log_sink_factory_table& sinks)
+        -> sinks::log_sink override {
         (void)sinks;
         return sinks::create_single_file_sink(filepath_);
     }

@@ -58,8 +58,8 @@ public:
      * \param[in] log_param Logarithm of a regularization parameter.
      * \return Value.
      */
-    [[nodiscard]] auto operator()(
-        const scalar_type& log_param) const -> scalar_type {
+    [[nodiscard]] auto operator()(const scalar_type& log_param) const
+        -> scalar_type {
         using std::pow;
         const scalar_type param = pow(static_cast<scalar_type>(10),  // NOLINT
             log_param);

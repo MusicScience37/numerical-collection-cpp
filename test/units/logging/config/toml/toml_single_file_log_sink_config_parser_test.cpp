@@ -43,7 +43,7 @@ filepath = "logging/toml_single_file_log_sink_config_parser.log"
         const auto table = toml::parse(test_toml);
 
         CHECK_NOTHROW((void)toml_single_file_log_sink_config_parser()
-                          .parse(table)
-                          ->create(sinks));
+                .parse(table)
+                ->create(sinks));
     }
 }

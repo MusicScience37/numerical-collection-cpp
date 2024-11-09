@@ -140,9 +140,8 @@ public:
 
             solver.step_size_controller().limits(step_size_limits_);
 
-            solver.tolerances(
-                num_collect::ode::error_tolerances<
-                    typename Problem::variable_type>()
+            solver.tolerances(num_collect::ode::error_tolerances<
+                typename Problem::variable_type>()
                     .tol_rel_error(create_constant_variable(init_var, tol))
                     .tol_abs_error(create_constant_variable(init_var, tol)));
 
@@ -169,9 +168,9 @@ public:
             solver.step_size_controller().limits(step_size_limits_);
 
             solver.tolerances(num_collect::ode::error_tolerances<
-                              typename Problem::variable_type>()
-                                  .tol_rel_error(tol)
-                                  .tol_abs_error(tol));
+                typename Problem::variable_type>()
+                    .tol_rel_error(tol)
+                    .tol_abs_error(tol));
 
             solver.init(init_time, init_var);
             solver.solve_till(end_time);

@@ -217,8 +217,8 @@ public:
      * \param[in] val Whether to run in parallel.
      * \return This.
      */
-    auto run_parallel(
-        bool val) -> parallel_symmetric_successive_over_relaxation& {
+    auto run_parallel(bool val)
+        -> parallel_symmetric_successive_over_relaxation& {
         run_parallel_ = val;
         return *this;
     }
@@ -330,7 +330,7 @@ private:
         const scalar_type& prev_sol_coeff) const -> scalar_type {
         scalar_type numerator = right(i);
         for (typename matrix_type::InnerIterator iter(coeff_ref, i); iter;
-             ++iter) {
+            ++iter) {
             if (start_row <= iter.index() && iter.index() < i) {
                 numerator -=
                     iter.value() * intermidiate_solution_(iter.index());
@@ -364,7 +364,7 @@ private:
         const scalar_type& prev_sol_coeff) const {
         scalar_type numerator = right(i);
         for (typename matrix_type::InnerIterator iter(coeff_ref, i); iter;
-             ++iter) {
+            ++iter) {
             if (i < iter.index() && iter.index() < end_row) {
                 numerator -= iter.value() * solution(iter.index());
             } else if (iter.index() != i) {

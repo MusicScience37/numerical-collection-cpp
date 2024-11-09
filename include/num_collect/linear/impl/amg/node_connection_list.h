@@ -106,8 +106,8 @@ public:
      * \param[in] node_index Index of the node.
      * \return List of indices of connected nodes.
      */
-    [[nodiscard]] auto connected_nodes_to(
-        index_type node_index) const -> std::span<const storage_index_type> {
+    [[nodiscard]] auto connected_nodes_to(index_type node_index) const
+        -> std::span<const storage_index_type> {
         return std::span<const storage_index_type>(
             // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
             node_indices_.data() + begin_indices_[node_index],
