@@ -52,6 +52,8 @@ private:
     num_collect::index_type size_{};
 };
 
+STAT_BENCH_GROUP("sum").add_parameter_to_time_line_plot("size");
+
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(sum_fixture, "sum", "forward") {
     using scalar_type = double;

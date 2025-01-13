@@ -24,6 +24,7 @@
 #include <stat_bench/benchmark_macros.h>
 #include <stat_bench/fixture_base.h>
 #include <stat_bench/invocation_context.h>
+#include <stat_bench/plot_option.h>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/rbf/rbf_interpolator.h"
@@ -151,6 +152,15 @@ public:
             ;
     }
 };
+
+STAT_BENCH_GROUP("interpolate_1d")
+    .add_parameter_to_time_line_plot(
+        "points", stat_bench::PlotOption::log_parameter)
+    .add_parameter_to_output_line_plot("points", "error_rate",
+        stat_bench::PlotOption::log_parameter |
+            stat_bench::PlotOption::log_output)
+    .add_time_to_output_by_parameter_line_plot(
+        "points", "error_rate", stat_bench::PlotOption::log_output);
 
 STAT_BENCH_CASE_F(interpolate_1d_fixture_medium, "interpolate_1d",
     "global_rbf_interpolator") {

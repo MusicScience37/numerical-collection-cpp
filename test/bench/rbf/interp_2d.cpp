@@ -154,6 +154,15 @@ public:
     }
 };
 
+STAT_BENCH_GROUP("interpolate_2d")
+    .add_parameter_to_time_line_plot(
+        "points", stat_bench::PlotOption::log_parameter)
+    .add_parameter_to_output_line_plot("points", "error_rate",
+        stat_bench::PlotOption::log_parameter |
+            stat_bench::PlotOption::log_output)
+    .add_time_to_output_by_parameter_line_plot(
+        "points", "error_rate", stat_bench::PlotOption::log_output);
+
 STAT_BENCH_CASE_F(interpolate_2d_fixture_medium, "interpolate_2d",
     "global_rbf_interpolator") {
     STAT_BENCH_MEASURE() {

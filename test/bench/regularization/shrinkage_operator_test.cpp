@@ -23,6 +23,7 @@
 #include <stat_bench/benchmark_macros.h>
 #include <stat_bench/fixture_base.h>
 #include <stat_bench/invocation_context.h>
+#include <stat_bench/plot_option.h>
 
 #include "num_collect/base/index_type.h"
 
@@ -60,6 +61,9 @@ public:
 private:
     Eigen::VectorXd target_;
 };
+
+STAT_BENCH_GROUP("shrink").add_parameter_to_time_line_plot(
+    "size", stat_bench::PlotOption::log_parameter);
 
 STAT_BENCH_CASE_F(shrinkage_operator_fixture, "shrink", "coefficient-wise") {
     Eigen::VectorXd result = this->target();

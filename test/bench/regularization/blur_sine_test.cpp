@@ -25,6 +25,7 @@
 #include <Eigen/Core>
 #include <stat_bench/benchmark_macros.h>
 #include <stat_bench/invocation_context.h>
+#include <stat_bench/plot_option.h>
 
 #include "num_collect/regularization/explicit_gcv.h"
 #include "num_collect/regularization/explicit_l_curve.h"
@@ -38,10 +39,12 @@ class blur_sine_fixture : public stat_bench::FixtureBase {
 public:
     blur_sine_fixture() {
         add_param<double>("noise_rate")
-            ->add(1e-100)  // NOLINT
-            ->add(1e-4)    // NOLINT
-            ->add(1e-2)    // NOLINT
-            ->add(1.0)     // NOLINT
+            ->add(1e-10)  // NOLINT
+            ->add(1e-4)   // NOLINT
+            ->add(1e-3)   // NOLINT
+            ->add(1e-2)   // NOLINT
+            ->add(1e-1)   // NOLINT
+            ->add(1.0)    // NOLINT
             ;
     }
 
@@ -107,6 +110,14 @@ using coeff_type =
     typename num_prob_collect::regularization::blur_sine::coeff_type;
 using data_type =
     typename num_prob_collect::regularization::blur_sine::data_type;
+
+STAT_BENCH_GROUP("reg_blur_sine")
+    .add_parameter_to_time_line_plot("noise_rate")
+    .add_parameter_to_output_line_plot("noise_rate", "error_rate",
+        stat_bench::PlotOption::log_parameter |
+            stat_bench::PlotOption::log_output)
+    .add_time_to_output_by_parameter_line_plot(
+        "noise_rate", "error_rate", stat_bench::PlotOption::log_output);
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(blur_sine_fixture, "reg_blur_sine", "tikhonov_l_curve") {
