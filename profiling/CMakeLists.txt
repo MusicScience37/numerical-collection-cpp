@@ -18,5 +18,6 @@ function(add_profiling TARGET)
 endfunction()
 
 add_subdirectory(logging)
+add_subdirectory(rbf)
 add_subdirectory(opt)
 add_subdirectory(ode)

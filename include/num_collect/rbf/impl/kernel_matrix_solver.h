@@ -27,6 +27,7 @@
 #include <Eigen/IterativeLinearSolvers>
 #include <Eigen/LU>
 #include <Eigen/SparseCore>
+#include <Eigen/src/Core/util/Constants.h>
 
 #include "num_collect/base/concepts/dense_vector.h"
 #include "num_collect/base/exception.h"
@@ -302,7 +303,8 @@ class kernel_matrix_solver<KernelValue, FunctionValue,
     kernel_matrix_type::sparse, false> {
 public:
     //! Type of matrices.
-    using kernel_matrix_type = Eigen::SparseMatrix<KernelValue>;
+    using kernel_matrix_type =
+        Eigen::SparseMatrix<KernelValue, Eigen::RowMajor>;
 
     //! Type of vectors.
     using vector_type = Eigen::VectorX<FunctionValue>;
