@@ -27,6 +27,7 @@
 #include <stat_bench/benchmark_macros.h>
 #include <stat_bench/invocation_context.h>
 #include <stat_bench/param/parameter_value_vector.h>
+#include <stat_bench/plot_option.h>
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
@@ -135,6 +136,14 @@ public:
             ;
     }
 };
+
+STAT_BENCH_GROUP("opt_random_multi_quadratic_function")
+    .add_parameter_to_time_line_plot(
+        "dimension", stat_bench::PlotOption::log_parameter)
+    .add_parameter_to_time_violin_plot("dimension")
+    .add_parameter_to_output_line_plot("dimension", "evaluations",
+        stat_bench::PlotOption::log_parameter |
+            stat_bench::PlotOption::log_output);
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(large_random_multi_quadratic_function_fixture,

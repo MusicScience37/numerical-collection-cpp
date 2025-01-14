@@ -154,6 +154,33 @@ public:
     }
 };
 
+class interpolate_2d_fixture_large : public interpolate_2d_fixture_base {
+public:
+    interpolate_2d_fixture_large() {
+        add_param<num_collect::index_type>("points")
+            ->add(10)  // NOLINT
+            ->add(20)  // NOLINT
+            ->add(50)  // NOLINT
+#ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
+            ->add(100)   // NOLINT
+            ->add(200)   // NOLINT
+            ->add(500)   // NOLINT
+            ->add(1000)  // NOLINT
+            ->add(2000)  // NOLINT
+#endif
+            ;
+    }
+};
+
+STAT_BENCH_GROUP("interpolate_2d")
+    .add_parameter_to_time_line_plot(
+        "points", stat_bench::PlotOption::log_parameter)
+    .add_parameter_to_output_line_plot("points", "error_rate",
+        stat_bench::PlotOption::log_parameter |
+            stat_bench::PlotOption::log_output)
+    .add_time_to_output_by_parameter_line_plot(
+        "points", "error_rate", stat_bench::PlotOption::log_output);
+
 STAT_BENCH_CASE_F(interpolate_2d_fixture_medium, "interpolate_2d",
     "global_rbf_interpolator") {
     STAT_BENCH_MEASURE() {
@@ -173,7 +200,7 @@ STAT_BENCH_CASE_F(interpolate_2d_fixture_light, "interpolate_2d",
 }
 
 STAT_BENCH_CASE_F(
-    interpolate_2d_fixture_medium, "interpolate_2d", "local_rbf_interpolator") {
+    interpolate_2d_fixture_large, "interpolate_2d", "local_rbf_interpolator") {
     STAT_BENCH_MEASURE() {
         num_collect::rbf::local_rbf_interpolator<double(Eigen::Vector2d)>
             interpolator;
@@ -181,7 +208,7 @@ STAT_BENCH_CASE_F(
     };
 }
 
-STAT_BENCH_CASE_F(interpolate_2d_fixture_medium, "interpolate_2d",
+STAT_BENCH_CASE_F(interpolate_2d_fixture_large, "interpolate_2d",
     "local_csrbf_interpolator") {
     STAT_BENCH_MEASURE() {
         num_collect::rbf::local_csrbf_interpolator<double(Eigen::Vector2d)>

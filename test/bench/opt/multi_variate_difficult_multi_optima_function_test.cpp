@@ -24,6 +24,7 @@
 
 #include <stat_bench/benchmark_macros.h>
 #include <stat_bench/invocation_context.h>
+#include <stat_bench/plot_option.h>
 #include <stat_bench/stat/custom_stat_output.h>
 
 #include "num_collect/base/exception.h"
@@ -108,6 +109,11 @@ private:
 
     std::shared_ptr<stat_bench::stat::CustomStatOutput> evaluations_stat_;
 };
+
+STAT_BENCH_GROUP("opt_multi_variate_difficult_multi_optima_function")
+    .add_parameter_to_time_line_plot("dimension")
+    .add_parameter_to_output_line_plot(
+        "dimension", "evaluations", stat_bench::PlotOption::log_output);
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(multi_variate_difficult_multi_optima_function_fixture,

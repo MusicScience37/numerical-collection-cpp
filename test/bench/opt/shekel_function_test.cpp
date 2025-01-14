@@ -105,6 +105,11 @@ private:
     int num_terms_{};
 };
 
+STAT_BENCH_GROUP("opt_shekel_function")
+    .add_parameter_to_time_line_plot("num_terms")
+    .add_parameter_to_output_line_plot(
+        "num_terms", "evaluations", stat_bench::PlotOption::log_output);
+
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(
     shekel_function_fixture, "opt_shekel_function", "dividing_rectangles") {

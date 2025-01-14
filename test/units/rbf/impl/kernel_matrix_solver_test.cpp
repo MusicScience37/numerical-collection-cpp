@@ -217,7 +217,7 @@ TEST_CASE(
         const distance_function_type distance_function;
         const rbf_type rbf;
         length_parameter_calculator_type length_parameter_calculator;
-        Eigen::SparseMatrix<double> kernel_matrix;
+        kernel_matrix_solver_type::kernel_matrix_type kernel_matrix;
         compute_kernel_matrix(distance_function, rbf,
             length_parameter_calculator, sample_variables, kernel_matrix);
 

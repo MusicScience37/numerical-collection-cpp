@@ -25,6 +25,9 @@
 #include <omp.h>
 #endif
 
+STAT_BENCH_GROUP("laplacian_2d_grid")
+    .add_parameter_to_time_line_plot_log("size");
+
 auto main(int argc, const char** argv) -> int {
 #ifdef _OPENMP
     const int num_procs = omp_get_num_procs();
