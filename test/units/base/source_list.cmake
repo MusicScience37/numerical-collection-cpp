@@ -18,4 +18,5 @@ set(SOURCE_FILES
     get_size_test.cpp
     isfinite_test.cpp
     norm_test.cpp
+    precondition_test.cpp
 )
