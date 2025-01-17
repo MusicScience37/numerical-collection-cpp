@@ -19,10 +19,14 @@
  */
 #include "num_collect/base/precondition.h"
 
+#include <string>
+
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 
 #include "num_collect/logging/log_tag.h"
+#include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
 
 TEST_CASE("NUM_COLLECT_PRECONDITION") {

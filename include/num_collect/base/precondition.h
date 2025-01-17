@@ -21,7 +21,9 @@
 
 #include <iterator>
 #include <string_view>
+#include <utility>
 
+#include <fmt/base.h>
 #include <fmt/format.h>
 
 #include "num_collect/base/exception.h"
