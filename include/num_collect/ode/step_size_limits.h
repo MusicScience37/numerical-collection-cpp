@@ -23,6 +23,7 @@
 
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/exception.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/constants/sqrt.h"
 #include "num_collect/logging/logging_macros.h"
 
@@ -106,10 +107,8 @@ public:
      * \return This.
      */
     auto upper_limit(const scalar_type& val) -> step_size_limits& {
-        if (val <= lower_limit_) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "0 < lower_limit < upper_limit must be satisfied.");
-        }
+        NUM_COLLECT_PRECONDITION(val > lower_limit_,
+            "0 < lower_limit < upper_limit must be satisfied.");
         upper_limit_ = val;
         return *this;
     }
@@ -121,10 +120,9 @@ public:
      * \return This.
      */
     auto lower_limit(const scalar_type& val) -> step_size_limits& {
-        if (val <= static_cast<scalar_type>(0) || upper_limit_ <= val) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "0 < lower_limit < upper_limit must be satisfied.");
-        }
+        NUM_COLLECT_PRECONDITION(
+            static_cast<scalar_type>(0) < val && val < upper_limit_,
+            "0 < lower_limit < upper_limit must be satisfied.");
         lower_limit_ = val;
         return *this;
     }

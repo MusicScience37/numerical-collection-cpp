@@ -32,6 +32,7 @@
 #include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/linear/impl/amg/build_first_coarse_grid_candidate.h"
 #include "num_collect/linear/impl/amg/compute_strong_connection_list.h"
 #include "num_collect/linear/impl/amg/create_prolongation_matrix.h"
@@ -176,20 +177,16 @@ public:
     void solve_vector_in_place(const Right& right, Solution& solution) const {
         const auto& coeff_ref = coeff();
 
-        if (coeff_ref.rows() != coeff_ref.cols()) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Coefficient matrix must be a square matrix.");
-        }
-        if (right.rows() != coeff_ref.cols()) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Right-hand-side vector must have the number of elements same "
-                "as the size of the coefficient matrix.");
-        }
-        if (solution.rows() != coeff_ref.cols()) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Solution vector must have the number of elements same "
-                "as the size of the coefficient matrix.");
-        }
+        NUM_COLLECT_PRECONDITION(coeff_ref.rows() == coeff_ref.cols(),
+            this->logger(), "Coefficient matrix must be a square matrix.");
+        NUM_COLLECT_PRECONDITION(right.rows() == coeff_ref.cols(),
+            this->logger(),
+            "Right-hand-side vector must have the number of elements same as "
+            "the size of the coefficient matrix.");
+        NUM_COLLECT_PRECONDITION(solution.rows() == coeff_ref.cols(),
+            this->logger(),
+            "Solution vector must have the number of elements same as the size "
+            "of the coefficient matrix.");
 
         iterations_ = 0;
         const index_type max_iterations = base_type::max_iterations();
@@ -215,11 +212,9 @@ public:
      */
     auto maximum_directly_solved_matrix_size(index_type value)
         -> algebraic_multigrid_solver& {
-        if (value <= 0) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "THe maximum size of matrices to solve directly must be a "
-                "positive integer.");
-        }
+        NUM_COLLECT_PRECONDITION(value > 0, this->logger(),
+            "The maximum size of matrices to solve directly must be a positive "
+            "integer.");
         maximum_directly_solved_matrix_size_ = value;
         return *this;
     }

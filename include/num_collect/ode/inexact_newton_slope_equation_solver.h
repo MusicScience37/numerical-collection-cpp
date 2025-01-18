@@ -28,6 +28,7 @@
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/iterative_solver_base.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
@@ -163,10 +164,8 @@ public:
      * functions) are assumed to have been done.
      */
     void iterate() {
-        if (problem_ == nullptr || solution_ == nullptr) {
-            NUM_COLLECT_LOG_AND_THROW(
-                precondition_not_satisfied, "Initialization is not done yet.");
-        }
+        NUM_COLLECT_PRECONDITION(problem_ != nullptr && solution_ != nullptr,
+            this->logger(), "Initialization must be done before iterations.");
 
         temp_variable_ =
             variable_ + step_size_ * solution_coeff_ * (*solution_);
@@ -414,10 +413,8 @@ public:
      * functions) are assumed to have been done.
      */
     void iterate() {
-        if (problem_ == nullptr || solution_ == nullptr) {
-            NUM_COLLECT_LOG_AND_THROW(
-                precondition_not_satisfied, "Initialization is not done yet.");
-        }
+        NUM_COLLECT_PRECONDITION(problem_ != nullptr && solution_ != nullptr,
+            this->logger(), "Initialization must be done before iterations.");
 
         temp_variable_ =
             variable_ + step_size_ * solution_coeff_ * (*solution_);

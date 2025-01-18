@@ -27,16 +27,21 @@
 
 #include "num_collect/base/concepts/invocable_as.h"
 #include "num_collect/base/concepts/real_scalar.h"
-#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/constants/half.h"  // IWYU pragma: keep
 #include "num_collect/constants/one.h"   // IWYU pragma: keep
 #include "num_collect/constants/two.h"   // IWYU pragma: keep
 #include "num_collect/functions/legendre.h"
 #include "num_collect/functions/legendre_roots.h"
-#include "num_collect/logging/logging_macros.h"
+#include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_mixin.h"
 
 namespace num_collect::integration {
+
+//! Tag of gauss_legendre_integrator.
+constexpr auto gauss_legendre_integrator_tag = logging::log_tag_view(
+    "num_collect::integration::gauss_legendre_integrator");
 
 /*!
  * \brief Class to perform numerical integration with Gauss-Legendre formula.
@@ -53,7 +58,8 @@ class gauss_legendre_integrator;
  * \tparam Variable Type of variables.
  */
 template <typename Result, base::concepts::real_scalar Variable>
-class gauss_legendre_integrator<Result(Variable)> {
+class gauss_legendre_integrator<Result(Variable)>
+    : public logging::logging_mixin {
 public:
     //! Type of variables.
     using variable_type = std::decay_t<Variable>;
@@ -70,11 +76,10 @@ public:
      * \param[in] degree Degree.
      */
     explicit gauss_legendre_integrator(index_type degree = default_degree)
-        : roots_(degree) {
-        if (degree < 1) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Degree of Legendre function must be at least one.");
-        }
+        : logging::logging_mixin(gauss_legendre_integrator_tag),
+          roots_(degree) {
+        NUM_COLLECT_PRECONDITION(degree >= 1, this->logger(),
+            "Degree of Legendre function must be at least one.");
         update_weight();
     }
 
@@ -84,10 +89,8 @@ public:
      * \param[in] degree Degree.
      */
     void prepare(index_type degree) {
-        if (degree < 1) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Degree of Legendre function must be at least one.");
-        }
+        NUM_COLLECT_PRECONDITION(degree >= 1, this->logger(),
+            "Degree of Legendre function must be at least one.");
         roots_.compute(degree);
         update_weight();
     }

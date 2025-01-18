@@ -30,6 +30,7 @@
 #include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/linear/iterative_solver_base.h"
 #include "num_collect/logging/logging_macros.h"
 
@@ -97,11 +98,9 @@ public:
         base_type::compute(coeff);
         diag_ = coeff.diagonal();
         inv_diag_ = diag_.cwiseInverse();
-        if (!inv_diag_.array().isFinite().all()) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "All diagonal elements of the coefficient matrix must not be "
-                "zero.");
-        }
+        NUM_COLLECT_PRECONDITION(inv_diag_.array().isFinite().all(),
+            "All diagonal elements of the coefficient matrix must not be "
+            "zero.");
     }
 
     /*!
@@ -117,20 +116,14 @@ public:
     void solve_vector_in_place(const Right& right, Solution& solution) const {
         const auto& coeff_ref = coeff();
 
-        if (coeff_ref.rows() != coeff_ref.cols()) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Coefficient matrix must be a square matrix.");
-        }
-        if (right.rows() != coeff_ref.cols()) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Right-hand-side vector must have the number of elements same "
-                "as the size of the coefficient matrix.");
-        }
-        if (solution.rows() != coeff_ref.cols()) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Solution vector must have the number of elements same "
-                "as the size of the coefficient matrix.");
-        }
+        NUM_COLLECT_PRECONDITION(coeff_ref.rows() == coeff_ref.cols(),
+            "Coefficient matrix must be a square matrix.");
+        NUM_COLLECT_PRECONDITION(right.rows() == coeff_ref.cols(),
+            "Right-hand-side vector must have the number of elements same as "
+            "the size of the coefficient matrix.");
+        NUM_COLLECT_PRECONDITION(solution.rows() == coeff_ref.cols(),
+            "Solution vector must have the number of elements same as the size "
+            "of the coefficient matrix.");
 
         iterations_ = 0;
         const scalar_type right_norm = right.squaredNorm();

@@ -26,6 +26,7 @@
 #include "num_collect/base/concepts/dense_vector_of.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/util/assert.h"
 
@@ -137,10 +138,8 @@ public:
      * \return This.
      */
     auto tolerance(const real_scalar_type& val) -> Derived& {
-        if (val <= static_cast<real_scalar_type>(0)) {
-            NUM_COLLECT_LOG_AND_THROW(
-                invalid_argument, "Invalid tolerance of rate of residual.");
-        }
+        NUM_COLLECT_PRECONDITION(val > static_cast<real_scalar_type>(0),
+            "Tolerance of rate of residual must be positive value.");
         tolerance_ = val;
         return derived();
     }
@@ -161,10 +160,8 @@ public:
      * \return This.
      */
     auto max_iterations(index_type val) -> Derived& {
-        if (val <= 0) {
-            NUM_COLLECT_LOG_AND_THROW(
-                invalid_argument, "Invalid maximum number of iterations.");
-        }
+        NUM_COLLECT_PRECONDITION(val > 0,
+            "Maximum number of iterations must be a positive integer.");
         max_iterations_ = val;
         return derived();
     }

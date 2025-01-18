@@ -23,6 +23,7 @@
 #include <fmt/base.h>
 
 #include "num_collect/base/exception.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/logging/logging_macros.h"
 
 namespace num_collect::util {
@@ -70,10 +71,8 @@ private:
 template <typename Vector>
 [[nodiscard]] inline auto format_dense_vector(
     const Eigen::DenseBase<Vector>& vec) {
-    if (vec.cols() != 1) {
-        NUM_COLLECT_LOG_AND_THROW(
-            invalid_argument, "format_dense_vector requires a vector.");
-    }
+    NUM_COLLECT_PRECONDITION(
+        vec.cols() == 1, "format_dense_vector requires a vector.");
     return impl::dense_vector_format_view<Vector>(vec.derived());
 }
 

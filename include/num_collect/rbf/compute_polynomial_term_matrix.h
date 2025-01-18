@@ -26,6 +26,7 @@
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/rbf/polynomial_calculator.h"
 
@@ -70,9 +71,7 @@ inline void compute_polynomial_term_matrix(
     using scalar_type = typename Matrix::Scalar;
 
     const auto num_variables = static_cast<index_type>(variables.size());
-    if (num_variables == 0) {
-        NUM_COLLECT_LOG_AND_THROW(invalid_argument, "No variable is given.");
-    }
+    NUM_COLLECT_PRECONDITION(num_variables > 0, "Variables must be given.");
     const auto num_dimensions = variables.front().size();
 
     polynomial_calculator<Variable, PolynomialDegree> calculator;

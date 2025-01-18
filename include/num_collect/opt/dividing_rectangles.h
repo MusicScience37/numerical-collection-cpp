@@ -35,6 +35,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/isfinite.h"
 #include "num_collect/base/norm.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
@@ -100,10 +101,9 @@ public:
      */
     void init(const variable_type& lower, const variable_type& upper) {
         if constexpr (is_eigen_vector_v<variable_type>) {
-            if (lower.size() != upper.size()) {
-                NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                    "Lower and upper limits must have the same size.");
-            }
+            NUM_COLLECT_PRECONDITION(lower.size() == upper.size(),
+                this->logger(),
+                "Lower and upper limits must have the same size.");
         }
         lower_ = lower;
         upper_ = upper;
@@ -200,11 +200,9 @@ public:
      * \return This object.
      */
     auto max_evaluations(index_type value) -> dividing_rectangles& {
-        if (value <= 0) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Maximum number of function evaluations must be a positive "
-                "integer.");
-        }
+        NUM_COLLECT_PRECONDITION(value > 0, this->logger(),
+            "Maximum number of function evaluations must be a positive "
+            "integer.");
         max_evaluations_ = value;
         return *this;
     }
@@ -217,11 +215,10 @@ public:
      * \return This object.
      */
     auto min_rate_imp(value_type value) -> dividing_rectangles& {
-        if (value <= static_cast<value_type>(0)) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Minimum rate of improvement in the function value required "
-                "for potentially optimal rectangles must be a positive value.");
-        }
+        NUM_COLLECT_PRECONDITION(value > static_cast<value_type>(0),
+            this->logger(),
+            "Minimum rate of improvement in the function value required "
+            "for potentially optimal rectangles must be a positive value.");
         min_rate_imp_ = value;
         return *this;
     }

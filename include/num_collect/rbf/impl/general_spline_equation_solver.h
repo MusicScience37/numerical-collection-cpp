@@ -30,6 +30,7 @@
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/rbf/kernel_matrix_type.h"
 
@@ -86,21 +87,15 @@ public:
         const additional_matrix_type& additional_matrix,
         const vector_type& data) {
         num_variables_ = kernel_matrix.rows();
-        if (kernel_matrix.cols() != num_variables_) {
-            NUM_COLLECT_LOG_AND_THROW(
-                invalid_argument, "Kernel matrix must be a square matrix.");
-        }
-        if (additional_matrix.rows() != num_variables_) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Matrix of additional terms must have the same number of rows "
-                "as the kernel matrix.");
-        }
+        NUM_COLLECT_PRECONDITION(kernel_matrix.cols() == num_variables_,
+            "Kernel matrix must be a square matrix.");
+        NUM_COLLECT_PRECONDITION(additional_matrix.rows() == num_variables_,
+            "Matrix of additional terms must have the same number of rows as "
+            "the kernel matrix.");
         num_additional_terms_ = additional_matrix.cols();
-        if (num_variables_ <= num_additional_terms_) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "The number of variables must be larger than the number of "
-                "additional terms.");
-        }
+        NUM_COLLECT_PRECONDITION(num_variables_ > num_additional_terms_,
+            "The number of variables must be larger than the number of "
+            "additional terms.");
         kernel_subspace_dimensions_ = num_variables_ - num_additional_terms_;
 
         qr_decomposition_.compute(additional_matrix);
@@ -138,10 +133,8 @@ public:
      */
     void solve(vector_type& kernel_coefficients,
         vector_type& additional_coefficients, scalar_type reg_param) const {
-        if (kernel_matrix_ == nullptr || data_ == nullptr) {
-            NUM_COLLECT_LOG_AND_THROW(precondition_not_satisfied,
-                "compute() must be called before solve().");
-        }
+        NUM_COLLECT_PRECONDITION(kernel_matrix_ != nullptr && data_ != nullptr,
+            "compute() must be called before solve().");
 
         reg_param = correct_reg_param_if_needed(reg_param);
 

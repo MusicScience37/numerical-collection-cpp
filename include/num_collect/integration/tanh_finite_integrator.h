@@ -29,6 +29,7 @@
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/isfinite.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/constants/half.h"
 #include "num_collect/constants/one.h"
 #include "num_collect/logging/log_tag_view.h"
@@ -251,10 +252,8 @@ public:
      * \return This.
      */
     auto max_point(variable_type val) -> tanh_finite_integrator& {
-        if (val <= static_cast<variable_type>(0)) {
-            NUM_COLLECT_LOG_AND_THROW(
-                invalid_argument, "Maximum point must be a positive value.");
-        }
+        NUM_COLLECT_PRECONDITION(val > static_cast<variable_type>(0),
+            this->logger(), "Maximum point must be a positive value.");
         max_point_ = val;
         calculate_coefficients();
         return *this;
@@ -267,10 +266,8 @@ public:
      * \return This.
      */
     auto points(index_type val) -> tanh_finite_integrator& {
-        if (val <= 0) {
-            NUM_COLLECT_LOG_AND_THROW(
-                invalid_argument, "Number of points must a positive integer.");
-        }
+        NUM_COLLECT_PRECONDITION(val > 0, this->logger(),
+            "Number of points must a positive integer.");
         points_ = val;
         calculate_coefficients();
         return *this;

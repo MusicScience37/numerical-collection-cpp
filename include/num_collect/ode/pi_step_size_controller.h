@@ -23,6 +23,7 @@
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/ode/concepts/formula.h"
@@ -116,11 +117,9 @@ public:
      */
     auto current_step_error_exponent(const scalar_type& val)
         -> pi_step_size_controller& {
-        if (val < previous_step_error_exponent_) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "0 <= previous_step_error_exponent <= "
-                "current_step_error_exponent must be satisfied.");
-        }
+        NUM_COLLECT_PRECONDITION(val >= previous_step_error_exponent_,
+            "0 <= previous_step_error_exponent <= "
+            "current_step_error_exponent must be satisfied.");
         current_step_error_exponent_ = val;
         return *this;
     }
@@ -133,12 +132,10 @@ public:
      */
     auto previous_step_error_exponent(const scalar_type& val)
         -> pi_step_size_controller& {
-        if (val < static_cast<scalar_type>(0) ||
-            current_step_error_exponent_ < val) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "0 <= previous_step_error_exponent <= "
-                "current_step_error_exponent must be satisfied.");
-        }
+        NUM_COLLECT_PRECONDITION(static_cast<scalar_type>(0) <= val &&
+                val <= current_step_error_exponent_,
+            "0 <= previous_step_error_exponent <= "
+            "current_step_error_exponent must be satisfied.");
         previous_step_error_exponent_ = val;
         return *this;
     }
@@ -151,11 +148,9 @@ public:
      */
     auto step_size_factor_safety_coeff(const scalar_type& val)
         -> pi_step_size_controller& {
-        if (val <= static_cast<scalar_type>(0)) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Safety coefficient for factors of step sizes must be a "
-                "positive value.");
-        }
+        NUM_COLLECT_PRECONDITION(val > static_cast<scalar_type>(0),
+            "Safety coefficient for factors of step sizes must be a positive "
+            "value.");
         step_size_factor_safety_coeff_ = val;
         return *this;
     }
@@ -168,11 +163,9 @@ public:
      */
     auto max_step_size_factor(const scalar_type& val)
         -> pi_step_size_controller& {
-        if (val <= min_step_size_factor_) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "0 < min_step_size_factor < max_step_size_factor must be "
-                "satisfied.");
-        }
+        NUM_COLLECT_PRECONDITION(val > min_step_size_factor_,
+            "0 < min_step_size_factor < max_step_size_factor must be "
+            "satisfied.");
         max_step_size_factor_ = val;
         return *this;
     }
@@ -185,12 +178,10 @@ public:
      */
     auto min_step_size_factor(const scalar_type& val)
         -> pi_step_size_controller& {
-        if (val <= static_cast<scalar_type>(0) ||
-            max_step_size_factor_ <= val) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "0 < min_step_size_factor < max_step_size_factor must be "
-                "satisfied.");
-        }
+        NUM_COLLECT_PRECONDITION(
+            static_cast<scalar_type>(0) < val && val < max_step_size_factor_,
+            "0 < min_step_size_factor < max_step_size_factor must be "
+            "satisfied.");
         min_step_size_factor_ = val;
         return *this;
     }

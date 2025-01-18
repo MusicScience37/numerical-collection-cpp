@@ -21,6 +21,7 @@
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/logging/logging_macros.h"
 
 namespace num_collect::util {
@@ -36,10 +37,8 @@ public:
      * \param[in] period Period.
      */
     explicit iteration_period_checker(index_type period) : period_(period) {
-        if (period <= 0) [[unlikely]] {
-            NUM_COLLECT_LOG_AND_THROW(
-                invalid_argument, "Invalid period of iterations.");
-        }
+        NUM_COLLECT_PRECONDITION(
+            period > 0, "Period of iterations must be a positive integer.");
     }
 
     /*!

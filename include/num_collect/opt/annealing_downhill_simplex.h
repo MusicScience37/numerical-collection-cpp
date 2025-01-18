@@ -33,6 +33,7 @@
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
@@ -328,10 +329,8 @@ public:
      * \return This.
      */
     auto highest_temperature(value_type value) -> annealing_downhill_simplex& {
-        if (value <= static_cast<value_type>(0)) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Highest temperature must be a positive number.");
-        }
+        NUM_COLLECT_PRECONDITION(value > static_cast<value_type>(0),
+            this->logger(), "Highest temperature must be a positive number.");
         highest_temperature_ = value;
         return *this;
     }
@@ -344,11 +343,9 @@ public:
      */
     auto max_iterations_per_trial(index_type value)
         -> annealing_downhill_simplex& {
-        if (value == 0) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Maximum number of iterations in each trial must be a positive "
-                "number.");
-        }
+        NUM_COLLECT_PRECONDITION(value > 0, this->logger(),
+            "Maximum number of iterations in each trial must be a positive "
+            "number.");
         max_iterations_per_trial_ = value;
         return *this;
     }
@@ -360,10 +357,8 @@ public:
      * \return This.
      */
     auto max_iterations(index_type value) -> annealing_downhill_simplex& {
-        if (value == 0) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Maximum number of iterations must be a positive number.");
-        }
+        NUM_COLLECT_PRECONDITION(value > 0, this->logger(),
+            "Maximum number of iterations must be a positive number.");
         max_iterations_ = value;
         return *this;
     }
