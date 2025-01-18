@@ -27,6 +27,7 @@
 
 #include "num_collect/base/concepts/integral.h"
 #include "num_collect/base/exception.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/util/greatest_common_divisor.h"
 #include "num_collect/util/multiply_safely.h"
@@ -52,10 +53,8 @@ public:
      */
     constexpr fraction(integer_type numerator, integer_type denominator)
         : numerator_(numerator), denominator_(denominator) {
-        if (denominator_ == static_cast<integer_type>(0)) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "The denominator of a fraction must not be zero.");
-        }
+        NUM_COLLECT_PRECONDITION(denominator_ != static_cast<integer_type>(0),
+            "The denominator of a fraction must not be zero.");
         normalize();
     }
 

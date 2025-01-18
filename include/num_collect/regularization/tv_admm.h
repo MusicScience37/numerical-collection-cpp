@@ -28,6 +28,7 @@
 #include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/linear/impl/operator_conjugate_gradient.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
@@ -105,25 +106,21 @@ public:
     void init(const scalar_type& param, data_type& solution) {
         (void)param;
 
-        if (coeff_->rows() != data_->rows()) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Coefficient matrix and data vector must have the same number "
-                "of rows.");
-        }
-        if (coeff_->cols() != solution.rows()) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "The number of columns in the coefficient matrix must match "
-                "the number of rows in solution vector.");
-        }
-        if (data_->cols() != solution.cols()) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Data and solution must have the same number of columns.");
-        }
-        if (derivative_matrix_->cols() != solution.rows()) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "The number of columns in the derivative matrix must match the "
-                "number of rows in solution vector.");
-        }
+        NUM_COLLECT_PRECONDITION(coeff_->rows() == data_->rows(),
+            this->logger(),
+            "Coefficient matrix and data vector must have the same number of "
+            "rows.");
+        NUM_COLLECT_PRECONDITION(coeff_->cols() == solution.rows(),
+            this->logger(),
+            "The number of columns in the coefficient matrix must match the "
+            "number of rows in solution vector.");
+        NUM_COLLECT_PRECONDITION(data_->cols() == solution.cols(),
+            this->logger(),
+            "Data and solution must have the same number of columns.");
+        NUM_COLLECT_PRECONDITION(derivative_matrix_->cols() == solution.rows(),
+            this->logger(),
+            "The number of columns in the derivative matrix must match the "
+            "number of rows in solution vector.");
 
         iterations_ = 0;
         derivative_ = (*derivative_matrix_) * solution;
@@ -287,10 +284,8 @@ public:
      * \return This object.
      */
     auto max_iterations(index_type value) -> tv_admm& {
-        if (value <= 0) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Maximum number of iterations must be a positive integer.");
-        }
+        NUM_COLLECT_PRECONDITION(value > 0, this->logger(),
+            "Maximum number of iterations must be a positive integer.");
         max_iterations_ = value;
         return *this;
     }
@@ -311,11 +306,9 @@ public:
      * \return This object.
      */
     auto tol_update_rate(scalar_type value) -> tv_admm& {
-        if (value <= static_cast<scalar_type>(0)) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Tolerance of update rate of the solution must be a positive "
-                "value.");
-        }
+        NUM_COLLECT_PRECONDITION(value > 0, this->logger(),
+            "Tolerance of update rate of the solution must be a positive "
+            "value.");
         tol_update_rate_ = value;
         return *this;
     }

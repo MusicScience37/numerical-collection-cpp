@@ -21,6 +21,7 @@
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/constants/half.h"  // IWYU pragma: keep
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
@@ -91,10 +92,8 @@ public:
         const variable_type& current, variable_type& estimate) {
         const index_type dim = current.size();
         const index_type half_dim = dim / 2;
-        if (dim % 2 == 1) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "This formula requires vectors with even dimensions.");
-        }
+        NUM_COLLECT_PRECONDITION(dim % 2 == 0,
+            "This formula requires vectors with even dimensions.");
 
         estimate = current;
 

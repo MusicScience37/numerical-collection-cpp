@@ -27,6 +27,7 @@
 #include "num_collect/base/concepts/dense_matrix.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/regularization/explicit_regularized_solver_base.h"
@@ -83,22 +84,18 @@ public:
      */
     void compute(const coeff_type& coeff, const data_type& data,
         const coeff_type& reg_coeff) {
-        if (coeff.rows() != data.rows()) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "The number of rows in the coefficient matrix must match the "
-                "number of rows in data.");
-        }
-        if (coeff.cols() != reg_coeff.cols()) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "The number of columns in the coefficient matrix must match "
-                "the number of columns in the coefficient matrix of the "
-                "regularization term.");
-        }
-        if (reg_coeff.rows() >= reg_coeff.cols()) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Coefficient matrix for the regularization term must have rows "
-                "less than columns.");
-        }
+        NUM_COLLECT_PRECONDITION(coeff.rows() == data.rows(), this->logger(),
+            "The number of rows in the coefficient matrix must match the "
+            "number of rows in data.");
+        NUM_COLLECT_PRECONDITION(coeff.cols() == reg_coeff.cols(),
+            this->logger(),
+            "The number of columns in the coefficient matrix must match the "
+            "number of columns in the coefficient matrix of the regularization "
+            "term.");
+        NUM_COLLECT_PRECONDITION(reg_coeff.rows() < reg_coeff.cols(),
+            this->logger(),
+            "Coefficient matrix for the regularization term must have rows "
+            "less than columns.");
 
         // How can I implement those complex formulas with good variable names.
 
@@ -108,19 +105,16 @@ public:
 
         Eigen::ColPivHouseholderQR<coeff_type> qr_reg_adj;
         qr_reg_adj.compute(reg_coeff.adjoint());
-        if (qr_reg_adj.rank() < qr_reg_adj.cols()) {
-            NUM_COLLECT_LOG_AND_THROW(precondition_not_satisfied,
-                "reg_coeff must have full row rank.");
-        }
+        NUM_COLLECT_PRECONDITION(qr_reg_adj.rank() >= qr_reg_adj.cols(),
+            this->logger(), "reg_coeff must have full row rank.");
         const coeff_type v = qr_reg_adj.householderQ();
 
         Eigen::ColPivHouseholderQR<coeff_type> qr_coeff_v2;
         qr_coeff_v2.compute(coeff * v.rightCols(n - p));
-        if (qr_coeff_v2.rank() < qr_coeff_v2.cols()) {
-            NUM_COLLECT_LOG_AND_THROW(precondition_not_satisfied,
-                "reg_coeff and coeff must not have common elements "
-                "other than zero in their kernel.");
-        }
+        NUM_COLLECT_PRECONDITION(qr_coeff_v2.rank() >= qr_coeff_v2.cols(),
+            this->logger(),
+            "reg_coeff and coeff must not have common elements "
+            "other than zero in their kernel.");
         const coeff_type q = qr_coeff_v2.householderQ();
 
         const coeff_type coeff_arr =

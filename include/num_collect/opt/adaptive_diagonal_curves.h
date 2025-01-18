@@ -36,6 +36,7 @@
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
@@ -109,15 +110,11 @@ public:
      * \param[in] upper Element-wise upper limit.
      */
     void init(const variable_type& lower, const variable_type& upper) {
-        if (lower.size() != upper.size()) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Element-wise limits must have the same size.");
-        }
-        if (!(lower.array() < upper.array()).all()) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Element-wise limits must satisfy lower < upper for each "
-                "element.");
-        }
+        NUM_COLLECT_PRECONDITION(lower.size() == upper.size(),
+            "Element-wise limits must have the same size.");
+        NUM_COLLECT_PRECONDITION((lower.array() < upper.array()).all(),
+            "Element-wise limits must satisfy lower < upper for each element.");
+
         lower_ = lower;
         width_ = upper - lower;
         dim_ = lower.size();
@@ -667,11 +664,10 @@ public:
      * \return This object.
      */
     auto max_evaluations(index_type value) -> adaptive_diagonal_curves& {
-        if (value <= 0) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Maximum number of function evaluations must be a positive "
-                "integer.");
-        }
+        NUM_COLLECT_PRECONDITION(value > 0, this->logger(),
+            "Maximum number of function evaluations must be a positive "
+            "integer.");
+
         max_evaluations_ = value;
         return *this;
     }
@@ -684,11 +680,10 @@ public:
      * \return This object.
      */
     auto min_rate_imp(value_type value) -> adaptive_diagonal_curves& {
-        if (value <= static_cast<value_type>(0)) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Minimum rate of improvement in the function value required "
-                "for potentially optimal rectangles must be a positive value.");
-        }
+        NUM_COLLECT_PRECONDITION(value > static_cast<value_type>(0),
+            this->logger(),
+            "Minimum rate of improvement in the function value required for "
+            "potentially optimal rectangles must be a positive value.");
         min_rate_imp_ = value;
         return *this;
     }
@@ -701,12 +696,10 @@ public:
      * \return This object.
      */
     auto decrease_rate_bound(value_type value) -> adaptive_diagonal_curves& {
-        if (value <= static_cast<value_type>(0)) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Rate of function value used to check whether the function "
-                "value decreased in the current phase must be a positive "
-                "value.");
-        }
+        NUM_COLLECT_PRECONDITION(value > static_cast<value_type>(0),
+            this->logger(),
+            "Rate of function value used to check whether the function value "
+            "decreased in the current phase must be a positive value.");
         decrease_rate_bound_ = value;
         return *this;
     }

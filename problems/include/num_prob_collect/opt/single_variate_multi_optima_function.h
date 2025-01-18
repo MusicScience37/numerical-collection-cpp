@@ -26,6 +26,7 @@
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/logging/logging_macros.h"
 
 namespace num_prob_collect::opt {
@@ -148,10 +149,8 @@ public:
     explicit random_single_variate_multi_optima_function_generator(
         num_collect::index_type num_local_optima = default_num_local_optima)
         : num_local_optima_(num_local_optima) {
-        if (num_local_optima < 2) {
-            NUM_COLLECT_LOG_AND_THROW(num_collect::invalid_argument,
-                "num_local_optima must be at least 2");
-        }
+        NUM_COLLECT_PRECONDITION(
+            num_local_optima >= 2, "num_local_optima must be at least 2.");
     }
 
     /*!

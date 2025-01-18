@@ -27,8 +27,7 @@
 #include <optional>
 
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"
-#include "num_collect/base/exception.h"
-#include "num_collect/logging/logging_macros.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/ode/concepts/mass_problem.h"
 #include "num_collect/ode/concepts/multi_variate_problem.h"
 #include "num_collect/ode/concepts/time_differentiable_problem.h"
@@ -106,10 +105,8 @@ public:
     template <base::concepts::real_scalar_dense_vector Target,
         base::concepts::real_scalar_dense_vector Result>
     void apply_jacobian(const Target& target, Result& result) {
-        if (problem_ == nullptr) {
-            NUM_COLLECT_LOG_AND_THROW(precondition_not_satisfied,
-                "evaluate_and_update_jacobian is not called.");
-        }
+        NUM_COLLECT_PRECONDITION(
+            problem_ != nullptr, "evaluate_and_update_jacobian is not called.");
 
         const scalar_type target_norm = target.norm();
         if (target_norm < std::numeric_limits<scalar_type>::min()) {

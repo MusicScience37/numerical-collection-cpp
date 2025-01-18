@@ -23,6 +23,7 @@
 #include <new>
 
 #include "num_collect/base/exception.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/logging/logging_macros.h"
 
 namespace num_collect::util {
@@ -67,10 +68,7 @@ public:
      * \param[in] value Value.
      */
     void push(const T& value) {
-        if (end_ == storage_end_) {
-            NUM_COLLECT_LOG_AND_THROW(
-                precondition_not_satisfied, "Stack is full.");
-        }
+        NUM_COLLECT_PRECONDITION(end_ != storage_end_, "Stack is full.");
         new (end_) T(value);
         ++end_;
     }

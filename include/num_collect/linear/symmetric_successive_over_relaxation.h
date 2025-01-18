@@ -28,6 +28,7 @@
 #include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/linear/iterative_solver_base.h"
 #include "num_collect/logging/logging_macros.h"
 
@@ -97,11 +98,9 @@ public:
         diag_ = coeff.diagonal();
         inv_diag_ = diag_.cwiseInverse();
         intermidiate_solution_.resize(coeff.cols());
-        if (!inv_diag_.array().isFinite().all()) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "All diagonal elements of the coefficient matrix must not be "
-                "zero.");
-        }
+        NUM_COLLECT_PRECONDITION(inv_diag_.array().isFinite().all(),
+            "All diagonal elements of the coefficient matrix must not be "
+            "zero.");
     }
 
     /*!
@@ -117,20 +116,14 @@ public:
     void solve_vector_in_place(const Right& right, Solution& solution) const {
         const auto& coeff_ref = coeff();
 
-        if (coeff_ref.rows() != coeff_ref.cols()) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Coefficient matrix must be a square matrix.");
-        }
-        if (right.rows() != coeff_ref.cols()) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Right-hand-side vector must have the number of elements same "
-                "as the size of the coefficient matrix.");
-        }
-        if (solution.rows() != coeff_ref.cols()) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Solution vector must have the number of elements same "
-                "as the size of the coefficient matrix.");
-        }
+        NUM_COLLECT_PRECONDITION(coeff_ref.rows() == coeff_ref.cols(),
+            "Coefficient matrix must be a square matrix.");
+        NUM_COLLECT_PRECONDITION(right.rows() == coeff_ref.cols(),
+            "Right-hand-side vector must have the number of elements same as "
+            "the size of the coefficient matrix.");
+        NUM_COLLECT_PRECONDITION(solution.rows() == coeff_ref.cols(),
+            "Solution vector must have the number of elements same as the size "
+            "of the coefficient matrix.");
 
         iterations_ = 0;
         const scalar_type right_norm = right.squaredNorm();
@@ -181,11 +174,9 @@ public:
      */
     auto relaxation_coeff(const scalar_type& val)
         -> symmetric_successive_over_relaxation& {
-        if (val <= static_cast<scalar_type>(0) ||
-            static_cast<scalar_type>(2) <= val) {
-            NUM_COLLECT_LOG_AND_THROW(
-                invalid_argument, "Invalid relaxation coefficient.");
-        }
+        NUM_COLLECT_PRECONDITION(static_cast<scalar_type>(0) < val &&
+                val < static_cast<scalar_type>(2),
+            "Relaxation coefficient must be in the range (0, 2).");
         relaxation_coeff_ = val;
         return *this;
     }

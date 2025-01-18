@@ -31,6 +31,7 @@
 #include "num_collect/base/get_size.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/isfinite.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/constants/pi.h"  // IWYU pragma: keep
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
@@ -105,10 +106,9 @@ public:
      */
     void init(const variable_type& lower, const variable_type& upper) {
         if constexpr (is_eigen_vector_v<variable_type>) {
-            if (lower.size() != upper.size()) {
-                NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                    "Lower and upper limits must have the same size.");
-            }
+            NUM_COLLECT_PRECONDITION(lower.size() == upper.size(),
+                this->logger(),
+                "Lower and upper limits must have the same size.");
         }
         lower_ = lower;
         upper_ = upper;
@@ -202,11 +202,9 @@ public:
      * \return This object.
      */
     auto max_evaluations(index_type value) -> gaussian_process_optimizer& {
-        if (value <= 0) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Maximum number of function evaluations must be a positive "
-                "integer.");
-        }
+        NUM_COLLECT_PRECONDITION(value > 0, this->logger(),
+            "Maximum number of function evaluations must be a positive "
+            "integer.");
         max_evaluations_ = value;
         return *this;
     }
@@ -219,11 +217,9 @@ public:
      */
     auto max_lower_bound_evaluations(index_type value)
         -> gaussian_process_optimizer& {
-        if (value <= 0) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Maximum number of evaluations of lower bounds must be a "
-                "positive integer.");
-        }
+        NUM_COLLECT_PRECONDITION(value > 0, this->logger(),
+            "Maximum number of evaluations of lower bounds must be a positive "
+            "integer.");
         lower_bound_optimizer_.max_evaluations(value);
         return *this;
     }

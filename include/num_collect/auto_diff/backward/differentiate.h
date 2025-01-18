@@ -30,6 +30,7 @@
 #include "num_collect/auto_diff/backward/variable.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/util/safe_cast.h"
 
@@ -214,10 +215,8 @@ template <typename FuncValType, typename ArgType>
     using variable_type = typename FuncValType::Scalar;
     using scalar_type = typename variable_type::scalar_type;
 
-    if (func_value.cols() != 1 || arg.cols() != 1) {
-        NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-            "differentiate function requires vectors as arguments.");
-    }
+    NUM_COLLECT_PRECONDITION(func_value.cols() == 1 && arg.cols() == 1,
+        "differentiate function requires vectors as arguments.");
 
     auto diff = std::make_shared<
         std::vector<graph::node_differentiator<scalar_type>>>();

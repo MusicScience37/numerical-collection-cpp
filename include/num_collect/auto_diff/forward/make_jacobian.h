@@ -26,6 +26,7 @@
 #include "num_collect/base/concepts/dense_vector.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/util/assert.h"
 
@@ -103,15 +104,12 @@ template <base::concepts::dense_vector VectorType>
     using result_type =
         typename impl::make_jacobian_functor<VectorType>::result_type;
 
-    if (vector.cols() != 1) {
-        NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-            "differentiate function requires a vector as the argument.");
-    }
-    if (vector.rows() < 2) {
-        NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-            "differentiate function requires a vector with at least two "
-            "elements.");
-    }
+    NUM_COLLECT_PRECONDITION(vector.cols() == 1,
+        "differentiate function requires a vector as the argument.");
+    NUM_COLLECT_PRECONDITION(vector.rows() >= 2,
+        "differentiate function requires a vector with at least two "
+        "elements.");
+
     for (index_type i = 0; i < vector.rows(); ++i) {
         NUM_COLLECT_ASSERT(vector(i).diff().cols() == 1);
     }

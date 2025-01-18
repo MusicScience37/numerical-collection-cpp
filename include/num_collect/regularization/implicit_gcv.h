@@ -26,6 +26,7 @@
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/logging/logging_mixin.h"
@@ -121,10 +122,8 @@ public:
      * \return This object.
      */
     auto noise_rate(scalar_type value) -> implicit_gcv_calculator& {
-        if (value <= static_cast<scalar_type>(0)) {
-            NUM_COLLECT_LOG_AND_THROW(
-                invalid_argument, "Rate of noise must be a positive value.");
-        }
+        NUM_COLLECT_PRECONDITION(value > static_cast<scalar_type>(0),
+            "Rate of noise must be a positive value.");
         noise_rate_ = value;
         using std::sqrt;
         noise_multiplier_ = data_->norm() *
@@ -139,10 +138,8 @@ public:
      * \return This object.
      */
     auto num_samples(index_type value) -> implicit_gcv_calculator& {
-        if (value <= 0) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Number of samples must be a positive value.");
-        }
+        NUM_COLLECT_PRECONDITION(
+            value > 0, "Number of samples must be a positive value.");
         noise_.resize(value);
         data_with_noise_.resize(value);
         return *this;

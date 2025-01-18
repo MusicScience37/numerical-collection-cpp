@@ -24,16 +24,21 @@
 
 #include "num_collect/base/concepts/invocable_as.h"
 #include "num_collect/base/concepts/real_scalar.h"
-#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/constants/half.h"  // IWYU pragma: keep
 #include "num_collect/constants/one.h"   // IWYU pragma: keep
 #include "num_collect/constants/pi.h"    // IWYU pragma: keep
 #include "num_collect/constants/two.h"   // IWYU pragma: keep
 #include "num_collect/constants/zero.h"  // IWYU pragma: keep
-#include "num_collect/logging/logging_macros.h"
+#include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_mixin.h"
 
 namespace num_collect::integration {
+
+//! Tag of de_semi_infinite_integrator.
+constexpr auto de_semi_infinite_integrator_tag = logging::log_tag_view(
+    "num_collect::integration::de_semi_infinite_integrator");
 
 namespace impl {
 
@@ -85,7 +90,8 @@ class de_semi_infinite_integrator;
  * \tparam Variable Type of variables.
  */
 template <typename Result, base::concepts::real_scalar Variable>
-class de_semi_infinite_integrator<Result(Variable)> {
+class de_semi_infinite_integrator<Result(Variable)>
+    : public logging::logging_mixin {
 public:
     //! Type of variables.
     using variable_type = std::decay_t<Variable>;
@@ -96,7 +102,8 @@ public:
     /*!
      * \brief Constructor.
      */
-    de_semi_infinite_integrator() = default;
+    de_semi_infinite_integrator()
+        : logging::logging_mixin(de_semi_infinite_integrator_tag) {}
 
     /*!
      * \brief Integrate a function.
@@ -155,10 +162,8 @@ public:
      * \return This.
      */
     auto max_point(variable_type val) -> de_semi_infinite_integrator& {
-        if (val <= static_cast<variable_type>(0)) {
-            NUM_COLLECT_LOG_AND_THROW(
-                invalid_argument, "Maximum point must be a positive value.");
-        }
+        NUM_COLLECT_PRECONDITION(val > static_cast<variable_type>(0),
+            this->logger(), "Maximum point must be a positive value.");
         max_point_ = val;
         return *this;
     }
@@ -170,10 +175,8 @@ public:
      * \return This.
      */
     auto points(index_type val) -> de_semi_infinite_integrator& {
-        if (val <= 0) {
-            NUM_COLLECT_LOG_AND_THROW(
-                invalid_argument, "Number of points must a positive integer.");
-        }
+        NUM_COLLECT_PRECONDITION(val > 0, this->logger(),
+            "Number of points must be a positive integer.");
         points_ = val;
         return *this;
     }

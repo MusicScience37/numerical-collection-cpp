@@ -26,6 +26,7 @@
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/constants/one.h"   // IWYU pragma: keep
 #include "num_collect/constants/zero.h"  // IWYU pragma: keep
 #include "num_collect/logging/iterations/iteration_logger.h"
@@ -103,11 +104,9 @@ public:
 
     //! \copydoc ode::solver_base::step
     void step() {
-        if (!step_size_) {
-            NUM_COLLECT_LOG_AND_THROW(precondition_not_satisfied,
-                "Step size is not set yet. You may forget to call init "
-                "function.");
-        }
+        NUM_COLLECT_PRECONDITION(step_size_, this->logger(),
+            "Step size is not set yet. You may forget to call init "
+            "function.");
 
         prev_variable_ = variable_;
 
@@ -180,10 +179,8 @@ public:
 
     //! \copydoc ode::solver_base::step_size(scalar_type)
     auto step_size(scalar_type val) -> this_type& {
-        if (val <= static_cast<scalar_type>(0)) {
-            NUM_COLLECT_LOG_AND_THROW(
-                invalid_argument, "Step size must be a positive value.");
-        }
+        NUM_COLLECT_PRECONDITION(val > static_cast<scalar_type>(0),
+            this->logger(), "Step size must be a positive value.");
         step_size_ = val;
         return *this;
     }

@@ -38,16 +38,23 @@
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/norm.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/constants/half.h"  // IWYU pragma: keep
 #include "num_collect/constants/one.h"   // IWYU pragma: keep
 #include "num_collect/constants/two.h"   // IWYU pragma: keep
 #include "num_collect/constants/zero.h"  // IWYU pragma: keep
+#include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
+#include "num_collect/logging/logging_mixin.h"
 #include "num_collect/util/assert.h"
 #include "num_collect/util/safe_cast.h"
 #include "num_collect/util/static_stack.h"
 
 namespace num_collect::integration {
+
+//! Tag of gauss_legendre_kronrod_integrator.
+constexpr auto gauss_legendre_kronrod_integrator_tag = logging::log_tag_view(
+    "num_collect::integration::gauss_legendre_kronrod_integrator");
 
 /*!
  * \brief Class to perform numerical adaptive integration with
@@ -66,7 +73,8 @@ class gauss_legendre_kronrod_integrator;
  * \tparam Variable Type of variables.
  */
 template <typename Result, base::concepts::real_scalar Variable>
-class gauss_legendre_kronrod_integrator<Result(Variable)> {
+class gauss_legendre_kronrod_integrator<Result(Variable)>
+    : public logging::logging_mixin {
 public:
     //! Type of variables.
     using variable_type = std::decay_t<Variable>;
@@ -84,11 +92,10 @@ public:
      */
     explicit gauss_legendre_kronrod_integrator(
         index_type degree = default_degree)
-        : degree_(degree) {
-        if (degree < 1) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Degree of Legendre function must be at least one.");
-        }
+        : logging::logging_mixin(gauss_legendre_kronrod_integrator_tag),
+          degree_(degree) {
+        NUM_COLLECT_PRECONDITION(degree >= 1, this->logger(),
+            "Degree of Legendre function must be at least one.");
         compute_parameters();
     }
 
@@ -98,10 +105,8 @@ public:
      * \param[in] degree Degree.
      */
     void prepare(index_type degree) {
-        if (degree < 1) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Degree of Legendre function must be at least one.");
-        }
+        NUM_COLLECT_PRECONDITION(degree >= 1, this->logger(),
+            "Degree of Legendre function must be at least one.");
         degree_ = degree;
         compute_parameters();
     }
@@ -154,11 +159,9 @@ public:
     template <base::concepts::invocable_as<result_type(variable_type)> Function>
     [[nodiscard]] auto integrate(const Function& function, variable_type left,
         variable_type right) const -> result_type {
-        if (left >= right) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "The boundaries of the range to integrate on must satisfy left "
-                "< right.");
-        }
+        NUM_COLLECT_PRECONDITION(left < right, this->logger(),
+            "The boundaries of the range to integrate on must satisfy left < "
+            "right.");
 
         const variable_type inv_width =
             constants::one<variable_type> / (right - left);
@@ -223,10 +226,9 @@ public:
      */
     auto tol_abs_error(variable_type val)
         -> gauss_legendre_kronrod_integrator& {
-        if (val <= static_cast<variable_type>(0)) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Tolerance of absolute error must be positive value.");
-        }
+        NUM_COLLECT_PRECONDITION(val > static_cast<variable_type>(0),
+            this->logger(),
+            "Tolerance of absolute error must be positive value.");
         tol_abs_error_ = val;
         return *this;
     }
@@ -239,10 +241,9 @@ public:
      */
     auto tol_rel_error(variable_type val)
         -> gauss_legendre_kronrod_integrator& {
-        if (val <= static_cast<variable_type>(0)) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Tolerance of relative error must be positive value.");
-        }
+        NUM_COLLECT_PRECONDITION(val > static_cast<variable_type>(0),
+            this->logger(),
+            "Tolerance of relative error must be positive value.");
         tol_rel_error_ = val;
         return *this;
     }
@@ -254,11 +255,10 @@ public:
      * \return This.
      */
     auto min_div_rate(variable_type val) -> gauss_legendre_kronrod_integrator& {
-        if (val <= std::numeric_limits<variable_type>::epsilon) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Minimum rate of division of integration region must be larger "
-                "than the machine epsilon.");
-        }
+        NUM_COLLECT_PRECONDITION(
+            val > std::numeric_limits<variable_type>::epsilon(), this->logger(),
+            "Minimum rate of division of integration region must be larger "
+            "than the machine epsilon.");
         min_div_rate_ = val;
         return *this;
     }

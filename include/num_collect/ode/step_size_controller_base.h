@@ -20,6 +20,7 @@
 #pragma once
 
 #include "num_collect/base/exception.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/logging/logging_mixin.h"
@@ -98,11 +99,9 @@ public:
      * \return This.
      */
     auto reduction_rate(const scalar_type& val) -> Derived& {
-        if (val <= static_cast<scalar_type>(0)) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Rate to reduce step sizes when error is large must be a "
-                "positive value.");
-        }
+        NUM_COLLECT_PRECONDITION(val > static_cast<scalar_type>(0),
+            "Rate to reduce step sizes when error is large must be a positive "
+            "value.");
         reduction_rate_ = val;
         return derived();
     }

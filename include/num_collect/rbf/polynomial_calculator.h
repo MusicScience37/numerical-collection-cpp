@@ -30,6 +30,7 @@
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/logging/logging_macros.h"
 
 namespace num_collect::rbf {
@@ -74,10 +75,8 @@ public:
     void compute_polynomial_term_matrix(
         const std::vector<Variable>& variables, Matrix& matrix) const {
         const auto num_variables = static_cast<index_type>(variables.size());
-        if (num_variables < PolynomialDegree + 2) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "At least (PolynomialDegree + 2) variables must be given.");
-        }
+        NUM_COLLECT_PRECONDITION(num_variables >= PolynomialDegree + 2,
+            "At least (PolynomialDegree + 2) variables must be given.");
 
         matrix.resize(num_variables, PolynomialDegree + 1);
         {
@@ -103,10 +102,8 @@ public:
      */
     [[nodiscard]] auto evaluate_polynomial_for_variable(Variable variable,
         const Eigen::VectorX<Variable>& coeffs) const -> Variable {
-        if (coeffs.size() != PolynomialDegree + 1) {
-            NUM_COLLECT_LOG_AND_THROW(
-                invalid_argument, "Invalid size of coefficients.");
-        }
+        NUM_COLLECT_PRECONDITION(coeffs.size() == PolynomialDegree + 1,
+            "Size of coefficients must be (PolynomialDegree + 1).");
 
         // degree = 0 (constant)
         auto value = coeffs(0);
@@ -173,10 +170,7 @@ public:
     void compute_polynomial_term_matrix(
         const std::vector<Variable>& variables, Matrix& matrix) const {
         const auto num_variables = static_cast<index_type>(variables.size());
-        if (num_variables == 0) {
-            NUM_COLLECT_LOG_AND_THROW(
-                invalid_argument, "No variable is given.");
-        }
+        NUM_COLLECT_PRECONDITION(num_variables > 0, "Variables must be given.");
         const index_type num_dimensions = variables.front().size();
 
         const index_type num_patterns = degrees_.rows();
@@ -208,10 +202,8 @@ public:
         const index_type num_dimensions = variable.size();
 
         const index_type num_patterns = degrees_.rows();
-        if (coeffs.size() != num_patterns) {
-            NUM_COLLECT_LOG_AND_THROW(
-                invalid_argument, "Invalid size of coefficients.");
-        }
+        NUM_COLLECT_PRECONDITION(coeffs.size() == num_patterns,
+            "Size of coefficients must be the same as the number of patterns.");
 
         auto value = static_cast<scalar_type>(0);
         for (index_type p = 0; p < num_patterns; ++p) {

@@ -22,6 +22,7 @@
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/norm.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/constants/one.h"   // IWYU pragma: keep
 #include "num_collect/constants/zero.h"  // IWYU pragma: keep
 #include "num_collect/integration/gauss_legendre_integrator.h"
@@ -138,10 +139,8 @@ public:
      * \param[in] val Value.
      */
     void tol_residual_norm(scalar_type val) {
-        if (val <= static_cast<scalar_type>(0)) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Tolerance of residual norm must be a positive value.");
-        }
+        NUM_COLLECT_PRECONDITION(val > static_cast<scalar_type>(0),
+            "Tolerance of residual norm must be a positive value.");
         tol_residual_norm_ = val;
     }
 

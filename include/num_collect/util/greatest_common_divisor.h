@@ -21,6 +21,7 @@
 
 #include "num_collect/base/concepts/integral.h"
 #include "num_collect/base/exception.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/logging/logging_macros.h"
 
 namespace num_collect::util {
@@ -35,10 +36,8 @@ namespace num_collect::util {
  */
 template <base::concepts::integral T>
 [[nodiscard]] constexpr auto greatest_common_divisor(T a, T b) -> T {
-    if (a <= static_cast<T>(0) || b <= static_cast<T>(0)) {
-        NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-            "greatest_common_divisor requires positive integers.");
-    }
+    NUM_COLLECT_PRECONDITION(a > static_cast<T>(0) && b > static_cast<T>(0),
+        "greatest_common_divisor requires positive integers.");
     while (true) {
         const T x = a % b;
         if (x == static_cast<T>(0)) {

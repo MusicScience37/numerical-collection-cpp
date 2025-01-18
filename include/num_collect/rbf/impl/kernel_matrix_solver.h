@@ -31,6 +31,7 @@
 
 #include "num_collect/base/concepts/dense_vector.h"
 #include "num_collect/base/exception.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/rbf/kernel_matrix_type.h"
 
@@ -278,11 +279,9 @@ public:
      */
     void solve(vector_type& coefficients, scalar_type reg_param,
         const vector_type& data) const {
-        if (reg_param != static_cast<scalar_type>(0)) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Non-zero regularization parameter cannot be used in this "
-                "configuration.");
-        }
+        NUM_COLLECT_PRECONDITION(reg_param == static_cast<scalar_type>(0),
+            "Non-zero regularization parameter cannot be used in this "
+            "configuration.");
 
         coefficients = solver_.solve(data);
     }
@@ -337,11 +336,9 @@ public:
      */
     void solve(vector_type& coefficients, scalar_type reg_param,
         const vector_type& data) const {
-        if (reg_param != static_cast<scalar_type>(0)) {
-            NUM_COLLECT_LOG_AND_THROW(invalid_argument,
-                "Non-zero regularization parameter cannot be used in this "
-                "configuration.");
-        }
+        NUM_COLLECT_PRECONDITION(reg_param == static_cast<scalar_type>(0),
+            "Non-zero regularization parameter cannot be used in this "
+            "configuration.");
 
         coefficients = solver_.solve(data);
     }
