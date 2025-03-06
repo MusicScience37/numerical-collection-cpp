@@ -1,5 +1,4 @@
-"""Scrubber to use in approvaltests.
-"""
+"""Scrubber to use in approvaltests."""
 
 import pathlib
 import re

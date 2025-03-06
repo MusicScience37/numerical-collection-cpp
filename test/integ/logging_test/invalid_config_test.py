@@ -1,5 +1,4 @@
-"""Test of invalid logging configuration files.
-"""
+"""Test of invalid logging configuration files."""
 
 import pathlib
 import subprocess
