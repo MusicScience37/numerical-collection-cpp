@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""Helper script to perform profiling
-"""
+"""Helper script to perform profiling"""
 
 import os
 import subprocess

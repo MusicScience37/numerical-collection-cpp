@@ -1,5 +1,4 @@
-"""Test of console logs.
-"""
+"""Test of console logs."""
 
 import pathlib
 import subprocess

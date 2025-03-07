@@ -1,5 +1,4 @@
-"""Configure pytest.
-"""
+"""Configure pytest."""
 
 import pathlib
 
