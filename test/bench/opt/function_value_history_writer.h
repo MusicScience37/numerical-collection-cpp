@@ -19,14 +19,14 @@
  */
 #pragma once
 
+#include <algorithm>
+#include <cstddef>
 #include <optional>
 #include <string>
 #include <vector>
 
 #include "num_collect/base/concepts/invocable.h"
-#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/logging/logger.h"
 
 /*!
  * \brief Class to write history of function values.
@@ -44,6 +44,7 @@ public:
      * \brief Measure an optimizer.
      *
      * \tparam OptimizerFactory Type of a factory of optimizers.
+     * \param[in] optimizer_name Name of the optimizer.
      * \param[in] factory Factory of optimizers.
      * \param[in] tol_value Tolerance of function values.
      */
@@ -66,6 +67,83 @@ public:
             data.evaluations.push_back(optimizer.evaluations());
             data.function_values.push_back(optimizer.opt_value());
         }
+        measurements_.push_back(std::move(data));
+    }
+
+    /*!
+     * \brief Measure an optimizer.
+     *
+     * \tparam OptimizerFactory Type of a factory of optimizers.
+     * \param[in] optimizer_name Name of the optimizer.
+     * \param[in] factory Factory of optimizers.
+     * \param[in] tol_value Tolerance of function values.
+     * \param[in] num_samples Number of samples.
+     */
+    template <num_collect::concepts::invocable<std::size_t> OptimizerFactory>
+    void measure_multiple(std::string optimizer_name,
+        OptimizerFactory&& factory, double tol_value, std::size_t num_samples) {
+        if (has_measurement_of(optimizer_name)) {
+            return;
+        }
+
+        std::vector<double> evaluations_to_values_lower;
+        std::vector<double> evaluations_to_values_upper;
+        evaluations_to_values_lower.resize(
+            static_cast<std::size_t>(max_evaluations_),
+            std::numeric_limits<double>::infinity());
+        evaluations_to_values_upper.resize(
+            static_cast<std::size_t>(max_evaluations_),
+            -std::numeric_limits<double>::infinity());
+        for (std::size_t i = 0; i < num_samples; ++i) {
+            auto optimizer = factory(i);
+            while (true) {
+                optimizer.iterate();
+                if (optimizer.evaluations() >= max_evaluations_ ||
+                    optimizer.opt_value() <= tol_value) {
+                    break;
+                }
+
+                const auto evaluations =
+                    static_cast<std::size_t>(optimizer.evaluations());
+                evaluations_to_values_lower[evaluations] =
+                    std::min(evaluations_to_values_lower[evaluations],
+                        optimizer.opt_value());
+                evaluations_to_values_upper[evaluations] =
+                    std::max(evaluations_to_values_upper[evaluations],
+                        optimizer.opt_value());
+            }
+        }
+
+        measurement data;
+        data.optimizer_name = std::move(optimizer_name);
+
+        double value = std::numeric_limits<double>::infinity();
+        for (std::size_t i = 0; i < evaluations_to_values_lower.size(); ++i) {
+            const auto evaluations = static_cast<num_collect::index_type>(i);
+            const auto& function_value = evaluations_to_values_lower[i];
+            if (function_value < value) {
+                data.evaluations.push_back(evaluations);
+                data.function_values.push_back(function_value);
+                value = function_value;
+            }
+        }
+
+        value = -std::numeric_limits<double>::infinity();
+        data.evaluations_upper.emplace();
+        data.function_values_upper.emplace();
+        for (std::size_t i = evaluations_to_values_upper.size(); i > 0; --i) {
+            const auto evaluations =
+                static_cast<num_collect::index_type>(i - 1);
+            const auto& function_value = evaluations_to_values_upper[i - 1];
+            if (function_value > value) {
+                data.evaluations_upper->push_back(evaluations);
+                data.function_values_upper->push_back(function_value);
+                value = function_value;
+            }
+        }
+        std::ranges::reverse(*data.evaluations_upper);
+        std::ranges::reverse(*data.function_values_upper);
+
         measurements_.push_back(std::move(data));
     }
 

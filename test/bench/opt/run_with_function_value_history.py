@@ -49,8 +49,17 @@ def run_with_function_value_history(binary_path: str, reuse: bool):
     figure = plotly.graph_objects.Figure()
     for measurement in data:
         if measurement["evaluations_upper"] and measurement["function_values_upper"]:
-            # TODO Implement this case.
-            pass
+            figure.add_trace(
+                plotly.graph_objects.Scatter(
+                    x=measurement["evaluations"]
+                    + measurement["evaluations_upper"][::-1],
+                    y=measurement["function_values"]
+                    + measurement["function_values_upper"][::-1],
+                    name=measurement["optimizer_name"],
+                    mode="lines",
+                    fill="toself",
+                )
+            )
         else:
             figure.add_trace(
                 plotly.graph_objects.Scatter(
