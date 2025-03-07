@@ -20,6 +20,8 @@
 #include "function_value_history_writer.h"
 
 #include <algorithm>
+#include <cstdlib>
+#include <exception>
 #include <iostream>
 
 #include <msgpack_light/serialize.h>

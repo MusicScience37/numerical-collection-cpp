@@ -21,8 +21,10 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <limits>
 #include <optional>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "num_collect/base/concepts/invocable.h"
