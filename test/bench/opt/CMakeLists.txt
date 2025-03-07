@@ -12,7 +12,7 @@ function(target_add_to_opt_benchmark TARGET)
         add_test(
             NAME ${TARGET}
             COMMAND
-                ${POETRY_EXECUTABLE} run
+                ${POETRY_EXECUTABLE} run python
                 ${CMAKE_CURRENT_SOURCE_DIR}/run_with_function_value_history.py
                 $<TARGET_FILE:${TARGET}>)
     endif()
