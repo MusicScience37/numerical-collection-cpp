@@ -24,6 +24,7 @@
 #include <stat_bench/benchmark_macros.h>
 #include <stat_bench/invocation_context.h>
 
+#include "function_value_history_writer.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/opt/bfgs_optimizer.h"
 #include "num_collect/opt/dfp_optimizer.h"
@@ -32,7 +33,7 @@
 #include "num_collect/opt/heuristic_global_optimizer.h"
 #include "num_collect/opt/steepest_descent.h"
 
-STAT_BENCH_MAIN
+constexpr double tol_value = 1e-2;
 
 class rosenbrock_function_fixture : public stat_bench::FixtureBase {
 public:
@@ -40,7 +41,6 @@ public:
 
     template <typename Optimizer>
     void test_optimizer(Optimizer& optimizer) {
-        constexpr double tol_value = 1e-2;
         while (optimizer.opt_value() > tol_value) {
             optimizer.iterate();
         }
@@ -83,6 +83,16 @@ STAT_BENCH_CASE_F(rosenbrock_function_fixture, "opt_rosenbrock_function",
         optimizer.init(init_var());
         this->test_optimizer(optimizer);
     };
+
+    function_value_history_writer::instance().measure(
+        "steepest_descent",
+        [] {
+            auto optimizer = num_collect::opt::steepest_descent<
+                num_prob_collect::opt::rosenbrock_function>();
+            optimizer.init(init_var());
+            return optimizer;
+        },
+        tol_value);
 }
 
 // NOLINTNEXTLINE
@@ -94,6 +104,16 @@ STAT_BENCH_CASE_F(rosenbrock_function_fixture, "opt_rosenbrock_function",
         optimizer.init(init_var());
         this->test_optimizer(optimizer);
     };
+
+    function_value_history_writer::instance().measure(
+        "downhill_simplex",
+        [] {
+            auto optimizer = num_collect::opt::downhill_simplex<
+                num_prob_collect::opt::rosenbrock_function>();
+            optimizer.init(init_var());
+            return optimizer;
+        },
+        tol_value);
 }
 
 // NOLINTNEXTLINE
@@ -105,6 +125,16 @@ STAT_BENCH_CASE_F(
         optimizer.init(init_var());
         this->test_optimizer(optimizer);
     };
+
+    function_value_history_writer::instance().measure(
+        "dfp_optimizer",
+        [] {
+            auto optimizer = num_collect::opt::dfp_optimizer<
+                num_prob_collect::opt::rosenbrock_function>();
+            optimizer.init(init_var());
+            return optimizer;
+        },
+        tol_value);
 }
 
 // NOLINTNEXTLINE
@@ -116,6 +146,16 @@ STAT_BENCH_CASE_F(
         optimizer.init(init_var());
         this->test_optimizer(optimizer);
     };
+
+    function_value_history_writer::instance().measure(
+        "bfgs_optimizer",
+        [] {
+            auto optimizer = num_collect::opt::bfgs_optimizer<
+                num_prob_collect::opt::rosenbrock_function>();
+            optimizer.init(init_var());
+            return optimizer;
+        },
+        tol_value);
 }
 
 // NOLINTNEXTLINE
@@ -128,6 +168,17 @@ STAT_BENCH_CASE_F(rosenbrock_function_fixture, "opt_rosenbrock_function",
         optimizer.init(lower, upper);
         this->test_optimizer(optimizer);
     };
+
+    function_value_history_writer::instance().measure(
+        "dividing_rectangles",
+        [] {
+            auto optimizer = num_collect::opt::dividing_rectangles<
+                num_prob_collect::opt::rosenbrock_function>();
+            const auto [lower, upper] = search_region();
+            optimizer.init(lower, upper);
+            return optimizer;
+        },
+        tol_value);
 }
 
 // NOLINTNEXTLINE
@@ -140,4 +191,19 @@ STAT_BENCH_CASE_F(rosenbrock_function_fixture, "opt_rosenbrock_function",
         optimizer.init(lower, upper);
         this->test_optimizer(optimizer);
     };
+
+    function_value_history_writer::instance().measure(
+        "heuristic_global_optimizer",
+        [] {
+            auto optimizer = num_collect::opt::heuristic_global_optimizer<
+                num_prob_collect::opt::rosenbrock_function>();
+            const auto [lower, upper] = search_region();
+            optimizer.init(lower, upper);
+            return optimizer;
+        },
+        tol_value);
+}
+
+auto main(int argc, const char** argv) -> int {
+    return main_with_function_value_history_writer(argc, argv);
 }

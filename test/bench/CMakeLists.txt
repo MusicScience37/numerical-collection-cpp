@@ -29,6 +29,7 @@ function(target_add_to_benchmark TARGET)
         add_test(
             NAME ${TARGET}
             COMMAND ${TARGET} --plot "${TARGET}/" --json "${TARGET}/result.json"
+                    --compressed-msgpack "${TARGET}/result.data"
             WORKING_DIRECTORY ${NUM_COLLECT_BENCH_DIR})
     endif()
 endfunction()
