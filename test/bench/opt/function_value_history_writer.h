@@ -44,19 +44,21 @@ public:
      * \brief Measure an optimizer.
      *
      * \tparam OptimizerFactory Type of a factory of optimizers.
+     * \param[in] problem_name Name of the problem.
      * \param[in] optimizer_name Name of the optimizer.
      * \param[in] factory Factory of optimizers.
      * \param[in] tol_value Tolerance of function values.
      */
     template <num_collect::concepts::invocable<> OptimizerFactory>
-    void measure(std::string optimizer_name, OptimizerFactory&& factory,
-        double tol_value) {
-        if (has_measurement_of(optimizer_name)) {
+    void measure(std::string problem_name, std::string optimizer_name,
+        OptimizerFactory&& factory, double tol_value) {
+        if (has_measurement_of(problem_name, optimizer_name)) {
             return;
         }
 
         auto optimizer = factory();
         measurement data;
+        data.problem_name = std::move(problem_name);
         data.optimizer_name = std::move(optimizer_name);
         while (true) {
             optimizer.iterate();
@@ -74,15 +76,16 @@ public:
      * \brief Measure an optimizer.
      *
      * \tparam OptimizerFactory Type of a factory of optimizers.
+     * \param[in] problem_name Name of the problem.
      * \param[in] optimizer_name Name of the optimizer.
      * \param[in] factory Factory of optimizers.
      * \param[in] tol_value Tolerance of function values.
      * \param[in] num_samples Number of samples.
      */
     template <num_collect::concepts::invocable<std::size_t> OptimizerFactory>
-    void measure_multiple(std::string optimizer_name,
+    void measure_multiple(std::string problem_name, std::string optimizer_name,
         OptimizerFactory&& factory, double tol_value, std::size_t num_samples) {
-        if (has_measurement_of(optimizer_name)) {
+        if (has_measurement_of(problem_name, optimizer_name)) {
             return;
         }
 
@@ -115,6 +118,7 @@ public:
         }
 
         measurement data;
+        data.problem_name = std::move(problem_name);
         data.optimizer_name = std::move(optimizer_name);
 
         double value = std::numeric_limits<double>::infinity();
@@ -167,6 +171,9 @@ public:
      * \brief Struct of a result of a measurement for an optimizer.
      */
     struct measurement {
+        //! Name of the problem.
+        std::string problem_name;
+
         //! Name of the optimizer.
         std::string optimizer_name;
 
@@ -189,7 +196,7 @@ private:
      */
     function_value_history_writer();
 
-    [[nodiscard]] auto has_measurement_of(
+    [[nodiscard]] auto has_measurement_of(const std::string& problem_name,
         const std::string& optimizer_name) const -> bool;
 
     //! Measurements.

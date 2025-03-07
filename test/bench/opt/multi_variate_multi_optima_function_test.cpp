@@ -25,6 +25,7 @@
 #include <utility>
 #include <vector>
 
+#include <fmt/format.h>
 #include <stat_bench/benchmark_macros.h>
 #include <stat_bench/current_invocation_context.h>
 #include <stat_bench/invocation_context.h>
@@ -80,6 +81,7 @@ public:
     void test_optimizer(
         OptimizerFactory&& factory, const std::string& optimizer_name) {
         function_value_history_writer::instance().measure_multiple(
+            fmt::format("multi_variate_multi_optima_function_{}", dimensions_),
             optimizer_name, factory, tol_value,
             stat_bench::current_invocation_context().samples());
 

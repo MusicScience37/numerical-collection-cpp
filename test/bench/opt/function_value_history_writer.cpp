@@ -31,8 +31,8 @@
 #include "gzip_msgpack_output_stream.h"
 
 MSGPACK_LIGHT_STRUCT_MAP(function_value_history_writer::measurement,
-    optimizer_name, evaluations, function_values, evaluations_upper,
-    function_values_upper);
+    problem_name, optimizer_name, evaluations, function_values,
+    evaluations_upper, function_values_upper);
 
 auto function_value_history_writer::instance()
     -> function_value_history_writer& {
@@ -49,11 +49,12 @@ void function_value_history_writer::write_measurements(
 function_value_history_writer::function_value_history_writer() = default;
 
 auto function_value_history_writer::has_measurement_of(
-    const std::string& optimizer_name) const -> bool {
-    return std::any_of(measurements_.begin(), measurements_.end(),
-        [&optimizer_name](const auto& measurement) {
-            return measurement.optimizer_name == optimizer_name;
-        });
+    const std::string& problem_name, const std::string& optimizer_name) const
+    -> bool {
+    return std::ranges::any_of(measurements_, [&](const auto& measurement) {
+        return measurement.problem_name == problem_name &&
+            measurement.optimizer_name == optimizer_name;
+    });
 }
 
 auto main_with_function_value_history_writer(int argc, const char** argv)

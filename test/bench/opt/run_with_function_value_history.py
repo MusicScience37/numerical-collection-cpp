@@ -46,38 +46,46 @@ def run_with_function_value_history(binary_path: str, reuse: bool):
     with gzip.open(bench_dir / binary_name / "history.data", mode="rb") as file:
         data = msgpack.unpack(file)
 
-    figure = plotly.graph_objects.Figure()
-    for measurement in data:
-        if measurement["evaluations_upper"] and measurement["function_values_upper"]:
-            figure.add_trace(
-                plotly.graph_objects.Scatter(
-                    x=measurement["evaluations"]
-                    + measurement["evaluations_upper"][::-1],
-                    y=measurement["function_values"]
-                    + measurement["function_values_upper"][::-1],
-                    name=measurement["optimizer_name"],
-                    mode="lines",
-                    fill="toself",
-                )
-            )
-        else:
-            figure.add_trace(
-                plotly.graph_objects.Scatter(
-                    x=measurement["evaluations"],
-                    y=measurement["function_values"],
-                    name=measurement["optimizer_name"],
-                    mode="lines",
-                )
-            )
+    problem_names = {measurement["problem_name"] for measurement in data}
 
-    figure.update_layout(
-        title={"text": "Change of Function Values"},
-        xaxis={"title": "Number of Function Evaluations", "type": "log"},
-        yaxis={"title": "Function Value", "type": "log"},
-    )
+    for problem_name in problem_names:
+        figure = plotly.graph_objects.Figure()
+        for measurement in data:
+            if measurement["problem_name"] != problem_name:
+                continue
+            if (
+                measurement["evaluations_upper"]
+                and measurement["function_values_upper"]
+            ):
+                figure.add_trace(
+                    plotly.graph_objects.Scatter(
+                        x=measurement["evaluations"]
+                        + measurement["evaluations_upper"][::-1],
+                        y=measurement["function_values"]
+                        + measurement["function_values_upper"][::-1],
+                        name=measurement["optimizer_name"],
+                        mode="none",
+                        fill="toself",
+                    )
+                )
+            else:
+                figure.add_trace(
+                    plotly.graph_objects.Scatter(
+                        x=measurement["evaluations"],
+                        y=measurement["function_values"],
+                        name=measurement["optimizer_name"],
+                        mode="lines",
+                    )
+                )
 
-    figure.write_html(str(bench_dir / binary_name / "history.html"))
-    figure.write_image(str(bench_dir / binary_name / "history.png"))
+        figure.update_layout(
+            title={"text": "Change of Function Values"},
+            xaxis={"title": "Number of Function Evaluations", "type": "log"},
+            yaxis={"title": "Function Value", "type": "log"},
+        )
+
+        figure.write_html(str(bench_dir / binary_name / f"{problem_name}_history.html"))
+        figure.write_image(str(bench_dir / binary_name / f"{problem_name}_history.png"))
 
 
 if __name__ == "__main__":

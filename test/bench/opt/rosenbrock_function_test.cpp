@@ -54,7 +54,7 @@ public:
     void test_optimizer(
         OptimizerFactory&& factory, const std::string& optimizer_name) {
         function_value_history_writer::instance().measure(
-            optimizer_name, factory, tol_value);
+            "rosenbrock_function", optimizer_name, factory, tol_value);
 
         STAT_BENCH_MEASURE() {
             auto optimizer = factory();
