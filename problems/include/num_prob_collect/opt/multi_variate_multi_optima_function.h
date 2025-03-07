@@ -180,7 +180,8 @@ public:
 
         Eigen::ArrayXd coefficients;
         coefficients.resize(num_local_optima_);
-        std::generate(coefficients.begin(), coefficients.end(),
+        coefficients[0] = 1.0;  // NOLINT
+        std::generate(coefficients.begin() + 1, coefficients.end(),
             [this] { return coefficients_dist_(generator_); });
 
         return multi_variate_multi_optima_function{std::move(optimal_variables),

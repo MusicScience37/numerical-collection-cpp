@@ -57,6 +57,7 @@ public:
             ->add(3)  // NOLINT
             ->add(4)  // NOLINT
             ->add(5)  // NOLINT
+            ->add(6)  // NOLINT
 #endif
             ;
     }

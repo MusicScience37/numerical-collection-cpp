@@ -62,12 +62,16 @@ public:
         data.optimizer_name = std::move(optimizer_name);
         while (true) {
             optimizer.iterate();
-            if (optimizer.evaluations() >= max_evaluations_ ||
-                optimizer.opt_value() <= tol_value) {
+            if (optimizer.evaluations() >= max_evaluations_) {
+                data.evaluations.push_back(max_evaluations_);
+                data.function_values.push_back(optimizer.opt_value());
                 break;
             }
             data.evaluations.push_back(optimizer.evaluations());
             data.function_values.push_back(optimizer.opt_value());
+            if (optimizer.opt_value() <= tol_value) {
+                break;
+            }
         }
         measurements_.push_back(std::move(data));
     }
@@ -101,8 +105,15 @@ public:
             auto optimizer = factory(i);
             while (true) {
                 optimizer.iterate();
-                if (optimizer.evaluations() >= max_evaluations_ ||
-                    optimizer.opt_value() <= tol_value) {
+                if (optimizer.evaluations() >= max_evaluations_) {
+                    const auto evaluations =
+                        static_cast<std::size_t>(max_evaluations_ - 1);
+                    evaluations_to_values_lower[evaluations] =
+                        std::min(evaluations_to_values_lower[evaluations],
+                            optimizer.opt_value());
+                    evaluations_to_values_upper[evaluations] =
+                        std::max(evaluations_to_values_upper[evaluations],
+                            optimizer.opt_value());
                     break;
                 }
 
@@ -114,6 +125,10 @@ public:
                 evaluations_to_values_upper[evaluations] =
                     std::max(evaluations_to_values_upper[evaluations],
                         optimizer.opt_value());
+
+                if (optimizer.opt_value() <= tol_value) {
+                    break;
+                }
             }
         }
 
@@ -122,7 +137,8 @@ public:
         data.optimizer_name = std::move(optimizer_name);
 
         double value = std::numeric_limits<double>::infinity();
-        for (std::size_t i = 0; i < evaluations_to_values_lower.size(); ++i) {
+        for (std::size_t i = 0; i < evaluations_to_values_lower.size() - 1;
+            ++i) {
             const auto evaluations = static_cast<num_collect::index_type>(i);
             const auto& function_value = evaluations_to_values_lower[i];
             if (function_value < value) {
@@ -131,14 +147,23 @@ public:
                 value = function_value;
             }
         }
+        {
+            const auto evaluations = static_cast<num_collect::index_type>(
+                evaluations_to_values_lower.size() - 1);
+            const auto& function_value = evaluations_to_values_lower.back();
+            if (function_value <= value) {
+                data.evaluations.push_back(evaluations);
+                data.function_values.push_back(function_value);
+            }
+        }
 
         value = -std::numeric_limits<double>::infinity();
         data.evaluations_upper.emplace();
         data.function_values_upper.emplace();
-        for (std::size_t i = evaluations_to_values_upper.size(); i > 0; --i) {
-            const auto evaluations =
-                static_cast<num_collect::index_type>(i - 1);
-            const auto& function_value = evaluations_to_values_upper[i - 1];
+        for (std::size_t i = evaluations_to_values_upper.size() - 1; i > 0;
+            --i) {
+            const auto evaluations = static_cast<num_collect::index_type>(i);
+            const auto& function_value = evaluations_to_values_upper[i];
             if (function_value > value) {
                 data.evaluations_upper->push_back(evaluations);
                 data.function_values_upper->push_back(function_value);
