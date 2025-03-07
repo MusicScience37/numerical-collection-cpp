@@ -52,6 +52,7 @@ public:
 #ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
             ->add(3)  // NOLINT
             ->add(4)  // NOLINT
+            ->add(5)  // NOLINT
 #endif
             ;
     }
