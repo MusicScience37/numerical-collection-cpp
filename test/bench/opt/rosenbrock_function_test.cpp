@@ -19,6 +19,7 @@
  */
 #include "num_prob_collect/opt/rosenbrock_function.h"
 
+#include <concepts>
 #include <utility>
 
 #include <stat_bench/benchmark_macros.h>
@@ -27,6 +28,7 @@
 #include "function_value_history_writer.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/opt/bfgs_optimizer.h"
+#include "num_collect/opt/concepts/optimizer.h"
 #include "num_collect/opt/dfp_optimizer.h"
 #include "num_collect/opt/dividing_rectangles.h"
 #include "num_collect/opt/downhill_simplex.h"
@@ -39,13 +41,25 @@ class rosenbrock_function_fixture : public stat_bench::FixtureBase {
 public:
     rosenbrock_function_fixture() = default;
 
-    template <typename Optimizer>
+    template <num_collect::opt::concepts::optimizer Optimizer>
     void test_optimizer(Optimizer& optimizer) {
         while (optimizer.opt_value() > tol_value) {
             optimizer.iterate();
         }
         iterations_ = optimizer.iterations();
         evaluations_ = optimizer.evaluations();
+    }
+
+    template <std::invocable<> OptimizerFactory>
+    void test_optimizer(
+        OptimizerFactory&& factory, const std::string& optimizer_name) {
+        function_value_history_writer::instance().measure(
+            optimizer_name, factory, tol_value);
+
+        STAT_BENCH_MEASURE() {
+            auto optimizer = factory();
+            test_optimizer(optimizer);
+        };
     }
 
     void tear_down(stat_bench::InvocationContext& context) override {
@@ -77,100 +91,59 @@ private:
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(rosenbrock_function_fixture, "opt_rosenbrock_function",
     "steepest_descent") {
-    STAT_BENCH_MEASURE() {
-        auto optimizer = num_collect::opt::steepest_descent<
-            num_prob_collect::opt::rosenbrock_function>();
-        optimizer.init(init_var());
-        this->test_optimizer(optimizer);
-    };
-
-    function_value_history_writer::instance().measure(
-        "steepest_descent",
+    test_optimizer(
         [] {
             auto optimizer = num_collect::opt::steepest_descent<
                 num_prob_collect::opt::rosenbrock_function>();
             optimizer.init(init_var());
             return optimizer;
         },
-        tol_value);
+        "steepest_descent");
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(rosenbrock_function_fixture, "opt_rosenbrock_function",
     "downhill_simplex") {
-    STAT_BENCH_MEASURE() {
-        auto optimizer = num_collect::opt::downhill_simplex<
-            num_prob_collect::opt::rosenbrock_function>();
-        optimizer.init(init_var());
-        this->test_optimizer(optimizer);
-    };
-
-    function_value_history_writer::instance().measure(
-        "downhill_simplex",
+    test_optimizer(
         [] {
             auto optimizer = num_collect::opt::downhill_simplex<
                 num_prob_collect::opt::rosenbrock_function>();
             optimizer.init(init_var());
             return optimizer;
         },
-        tol_value);
+        "downhill_simplex");
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(
     rosenbrock_function_fixture, "opt_rosenbrock_function", "dfp_optimizer") {
-    STAT_BENCH_MEASURE() {
-        auto optimizer = num_collect::opt::dfp_optimizer<
-            num_prob_collect::opt::rosenbrock_function>();
-        optimizer.init(init_var());
-        this->test_optimizer(optimizer);
-    };
-
-    function_value_history_writer::instance().measure(
-        "dfp_optimizer",
+    test_optimizer(
         [] {
             auto optimizer = num_collect::opt::dfp_optimizer<
                 num_prob_collect::opt::rosenbrock_function>();
             optimizer.init(init_var());
             return optimizer;
         },
-        tol_value);
+        "dfp_optimizer");
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(
     rosenbrock_function_fixture, "opt_rosenbrock_function", "bfgs_optimizer") {
-    STAT_BENCH_MEASURE() {
-        auto optimizer = num_collect::opt::bfgs_optimizer<
-            num_prob_collect::opt::rosenbrock_function>();
-        optimizer.init(init_var());
-        this->test_optimizer(optimizer);
-    };
-
-    function_value_history_writer::instance().measure(
-        "bfgs_optimizer",
+    test_optimizer(
         [] {
             auto optimizer = num_collect::opt::bfgs_optimizer<
                 num_prob_collect::opt::rosenbrock_function>();
             optimizer.init(init_var());
             return optimizer;
         },
-        tol_value);
+        "bfgs_optimizer");
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(rosenbrock_function_fixture, "opt_rosenbrock_function",
     "dividing_rectangles") {
-    STAT_BENCH_MEASURE() {
-        auto optimizer = num_collect::opt::dividing_rectangles<
-            num_prob_collect::opt::rosenbrock_function>();
-        const auto [lower, upper] = search_region();
-        optimizer.init(lower, upper);
-        this->test_optimizer(optimizer);
-    };
-
-    function_value_history_writer::instance().measure(
-        "dividing_rectangles",
+    test_optimizer(
         [] {
             auto optimizer = num_collect::opt::dividing_rectangles<
                 num_prob_collect::opt::rosenbrock_function>();
@@ -178,22 +151,13 @@ STAT_BENCH_CASE_F(rosenbrock_function_fixture, "opt_rosenbrock_function",
             optimizer.init(lower, upper);
             return optimizer;
         },
-        tol_value);
+        "dividing_rectangles");
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(rosenbrock_function_fixture, "opt_rosenbrock_function",
     "heuristic_global_optimizer") {
-    STAT_BENCH_MEASURE() {
-        auto optimizer = num_collect::opt::heuristic_global_optimizer<
-            num_prob_collect::opt::rosenbrock_function>();
-        const auto [lower, upper] = search_region();
-        optimizer.init(lower, upper);
-        this->test_optimizer(optimizer);
-    };
-
-    function_value_history_writer::instance().measure(
-        "heuristic_global_optimizer",
+    test_optimizer(
         [] {
             auto optimizer = num_collect::opt::heuristic_global_optimizer<
                 num_prob_collect::opt::rosenbrock_function>();
@@ -201,7 +165,7 @@ STAT_BENCH_CASE_F(rosenbrock_function_fixture, "opt_rosenbrock_function",
             optimizer.init(lower, upper);
             return optimizer;
         },
-        tol_value);
+        "heuristic_global_optimizer");
 }
 
 auto main(int argc, const char** argv) -> int {
