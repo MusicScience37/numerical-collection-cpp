@@ -29,9 +29,11 @@
 #include <stat_bench/param/parameter_value_vector.h>
 #include <stat_bench/plot_option.h>
 
+#include "function_value_history_writer.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/opt/bfgs_optimizer.h"
+#include "num_collect/opt/concepts/optimizer.h"
 #include "num_collect/opt/conjugate_gradient_optimizer.h"
 #include "num_collect/opt/dfp_optimizer.h"
 #include "num_collect/opt/dividing_rectangles.h"
@@ -40,16 +42,15 @@
 #include "num_collect/opt/newton_optimizer.h"
 #include "num_collect/opt/steepest_descent.h"
 
-STAT_BENCH_MAIN
+constexpr double tol_value = 1e-4;
+constexpr num_collect::index_type max_evaluations = 10000;
 
 class random_multi_quadratic_function_fixture : public stat_bench::FixtureBase {
 public:
     random_multi_quadratic_function_fixture() = default;
 
-    template <typename Optimizer>
+    template <num_collect::opt::concepts::optimizer Optimizer>
     void test_optimizer(std::size_t sample_index, Optimizer& optimizer) {
-        constexpr double tol_value = 1e-4;
-        constexpr num_collect::index_type max_evaluations = 10000;
         while (optimizer.opt_value() > tol_value) {
             if (optimizer.evaluations() >= max_evaluations) {
                 throw num_collect::algorithm_failure("Failed to converge.");
@@ -62,6 +63,21 @@ public:
             static_cast<double>(optimizer.iterations()));
         evaluations_stat_->add(thread_index, sample_index,
             static_cast<double>(optimizer.evaluations()));
+    }
+
+    template <std::invocable<std::size_t> OptimizerFactory>
+    void test_optimizer(
+        OptimizerFactory&& factory, const std::string& optimizer_name) {
+        function_value_history_writer::instance().measure_multiple(
+            fmt::format("random_multi_quadratic_function_{}", dimensions_),
+            optimizer_name, factory, tol_value,
+            stat_bench::current_invocation_context().samples());
+
+        STAT_BENCH_MEASURE_INDEXED(
+            /*thread_index*/, sample_index, /*iteration_index*/) {
+            auto optimizer = factory(sample_index);
+            test_optimizer(sample_index, optimizer);
+        };
     }
 
     void setup(stat_bench::InvocationContext& context) override {
@@ -148,27 +164,29 @@ STAT_BENCH_GROUP("opt_random_multi_quadratic_function")
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(large_random_multi_quadratic_function_fixture,
     "opt_random_multi_quadratic_function", "steepest_descent") {
-    STAT_BENCH_MEASURE_INDEXED(
-        /*thread_index*/, sample_index, /*iteration_index*/) {
-        auto optimizer = num_collect::opt::steepest_descent<
-            num_prob_collect::opt::random_multi_quadratic_function>(
-            this->function(sample_index));
-        optimizer.init(this->init_variable());
-        this->test_optimizer(sample_index, optimizer);
-    };
+    test_optimizer(
+        [this](std::size_t sample_index) {
+            auto optimizer = num_collect::opt::steepest_descent<
+                num_prob_collect::opt::random_multi_quadratic_function>(
+                this->function(sample_index));
+            optimizer.init(this->init_variable());
+            return optimizer;
+        },
+        "steepest_descent");
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(small_random_multi_quadratic_function_fixture,
     "opt_random_multi_quadratic_function", "downhill_simplex") {
-    STAT_BENCH_MEASURE_INDEXED(
-        /*thread_index*/, sample_index, /*iteration_index*/) {
-        auto optimizer = num_collect::opt::downhill_simplex<
-            num_prob_collect::opt::random_multi_quadratic_function>(
-            this->function(sample_index));
-        optimizer.init(this->init_variable());
-        this->test_optimizer(sample_index, optimizer);
-    };
+    test_optimizer(
+        [this](std::size_t sample_index) {
+            auto optimizer = num_collect::opt::downhill_simplex<
+                num_prob_collect::opt::random_multi_quadratic_function>(
+                this->function(sample_index));
+            optimizer.init(this->init_variable());
+            return optimizer;
+        },
+        "downhill_simplex");
 }
 
 // NOLINTNEXTLINE
@@ -187,66 +205,77 @@ STAT_BENCH_CASE_F(large_random_multi_quadratic_function_fixture,
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(large_random_multi_quadratic_function_fixture,
     "opt_random_multi_quadratic_function", "dfp_optimizer") {
-    STAT_BENCH_MEASURE_INDEXED(
-        /*thread_index*/, sample_index, /*iteration_index*/) {
-        auto optimizer = num_collect::opt::dfp_optimizer<
-            num_prob_collect::opt::random_multi_quadratic_function>(
-            this->function(sample_index));
-        optimizer.init(this->init_variable());
-        this->test_optimizer(sample_index, optimizer);
-    };
+    test_optimizer(
+        [this](std::size_t sample_index) {
+            auto optimizer = num_collect::opt::dfp_optimizer<
+                num_prob_collect::opt::random_multi_quadratic_function>(
+                this->function(sample_index));
+            optimizer.init(this->init_variable());
+            return optimizer;
+        },
+        "dfp_optimizer");
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(large_random_multi_quadratic_function_fixture,
     "opt_random_multi_quadratic_function", "bfgs_optimizer") {
-    STAT_BENCH_MEASURE_INDEXED(
-        /*thread_index*/, sample_index, /*iteration_index*/) {
-        auto optimizer = num_collect::opt::bfgs_optimizer<
-            num_prob_collect::opt::random_multi_quadratic_function>(
-            this->function(sample_index));
-        optimizer.init(this->init_variable());
-        this->test_optimizer(sample_index, optimizer);
-    };
+    test_optimizer(
+        [this](std::size_t sample_index) {
+            auto optimizer = num_collect::opt::bfgs_optimizer<
+                num_prob_collect::opt::random_multi_quadratic_function>(
+                this->function(sample_index));
+            optimizer.init(this->init_variable());
+            return optimizer;
+        },
+        "bfgs_optimizer");
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(large_random_multi_quadratic_function_fixture,
     "opt_random_multi_quadratic_function", "conjugate_gradient") {
-    STAT_BENCH_MEASURE_INDEXED(
-        /*thread_index*/, sample_index, /*iteration_index*/) {
-        auto optimizer = num_collect::opt::conjugate_gradient_optimizer<
-            num_prob_collect::opt::random_multi_quadratic_function>(
-            this->function(sample_index));
-        optimizer.init(this->init_variable());
-        this->test_optimizer(sample_index, optimizer);
-    };
+    test_optimizer(
+        [this](std::size_t sample_index) {
+            auto optimizer = num_collect::opt::conjugate_gradient_optimizer<
+                num_prob_collect::opt::random_multi_quadratic_function>(
+                this->function(sample_index));
+            optimizer.init(this->init_variable());
+            return optimizer;
+        },
+        "conjugate_gradient");
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(small_random_multi_quadratic_function_fixture,
     "opt_random_multi_quadratic_function", "dividing_rectangles") {
-    STAT_BENCH_MEASURE_INDEXED(
-        /*thread_index*/, sample_index, /*iteration_index*/) {
-        auto optimizer = num_collect::opt::dividing_rectangles<
-            num_prob_collect::opt::random_multi_quadratic_function>(
-            this->function(sample_index));
-        const auto [lower, upper] = this->search_region();
-        optimizer.init(lower, upper);
-        this->test_optimizer(sample_index, optimizer);
-    };
+    test_optimizer(
+        [this](std::size_t sample_index) {
+            auto optimizer = num_collect::opt::dividing_rectangles<
+                num_prob_collect::opt::random_multi_quadratic_function>(
+                this->function(sample_index));
+            const auto [lower, upper] = this->search_region();
+            optimizer.init(lower, upper);
+            return optimizer;
+        },
+        "dividing_rectangles");
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(small_random_multi_quadratic_function_fixture,
     "opt_random_multi_quadratic_function", "heuristic_global_optimizer") {
-    STAT_BENCH_MEASURE_INDEXED(
-        /*thread_index*/, sample_index, /*iteration_index*/) {
-        auto optimizer = num_collect::opt::heuristic_global_optimizer<
-            num_prob_collect::opt::random_multi_quadratic_function>(
-            this->function(sample_index));
-        const auto [lower, upper] = this->search_region();
-        optimizer.init(lower, upper);
-        this->test_optimizer(sample_index, optimizer);
-    };
+    test_optimizer(
+        [this](std::size_t sample_index) {
+            auto optimizer = num_collect::opt::heuristic_global_optimizer<
+                num_prob_collect::opt::random_multi_quadratic_function>(
+                this->function(sample_index));
+            const auto [lower, upper] = this->search_region();
+            optimizer.init(lower, upper);
+            return optimizer;
+        },
+        "heuristic_global_optimizer");
+}
+
+auto main(int argc, const char** argv) -> int {
+    function_value_history_writer::instance().set_max_evaluations(
+        max_evaluations);
+    return main_with_function_value_history_writer(argc, argv);
 }

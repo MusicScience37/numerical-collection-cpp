@@ -51,7 +51,7 @@ public:
      */
     template <num_collect::concepts::invocable<> OptimizerFactory>
     void measure(std::string problem_name, std::string optimizer_name,
-        OptimizerFactory&& factory, double tol_value) {
+        OptimizerFactory&& factory, double tol_value, double min_value = 0.0) {
         if (has_measurement_of(problem_name, optimizer_name)) {
             return;
         }
@@ -60,16 +60,21 @@ public:
         measurement data;
         data.problem_name = std::move(problem_name);
         data.optimizer_name = std::move(optimizer_name);
+        if (optimizer.evaluations() > 0) {
+            data.evaluations.push_back(optimizer.evaluations());
+            data.function_values.push_back(optimizer.opt_value() - min_value);
+        }
         while (true) {
             optimizer.iterate();
             if (optimizer.evaluations() >= max_evaluations_) {
                 data.evaluations.push_back(max_evaluations_);
-                data.function_values.push_back(optimizer.opt_value());
+                data.function_values.push_back(
+                    optimizer.opt_value() - min_value);
                 break;
             }
             data.evaluations.push_back(optimizer.evaluations());
-            data.function_values.push_back(optimizer.opt_value());
-            if (optimizer.opt_value() <= tol_value) {
+            data.function_values.push_back(optimizer.opt_value() - min_value);
+            if (optimizer.opt_value() <= min_value + tol_value) {
                 break;
             }
         }
@@ -103,6 +108,16 @@ public:
             -std::numeric_limits<double>::infinity());
         for (std::size_t i = 0; i < num_samples; ++i) {
             auto optimizer = factory(i);
+            if (optimizer.evaluations() > 0) {
+                const auto evaluations =
+                    static_cast<std::size_t>(optimizer.evaluations());
+                evaluations_to_values_lower[evaluations] =
+                    std::min(evaluations_to_values_lower[evaluations],
+                        optimizer.opt_value());
+                evaluations_to_values_upper[evaluations] =
+                    std::max(evaluations_to_values_upper[evaluations],
+                        optimizer.opt_value());
+            }
             while (true) {
                 optimizer.iterate();
                 if (optimizer.evaluations() >= max_evaluations_) {

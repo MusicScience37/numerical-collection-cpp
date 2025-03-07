@@ -27,13 +27,21 @@
 #include <stat_bench/plot_option.h>
 #include <stat_bench/stat/custom_stat_output.h>
 
+#include "function_value_history_writer.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/opt/adaptive_diagonal_curves.h"
+#include "num_collect/opt/concepts/optimizer.h"
 #include "num_collect/opt/dividing_rectangles.h"
 #include "num_prob_collect/opt/multi_variate_multi_optima_function.h"
 
-STAT_BENCH_MAIN
+#ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
+constexpr num_collect::index_type max_evaluations = 100000;
+#else
+constexpr num_collect::index_type max_evaluations = 1000;
+#endif
+
+constexpr double tol_value = 1e-1;
 
 class multi_variate_difficult_multi_optima_function_fixture
     : public stat_bench::FixtureBase {
@@ -43,14 +51,13 @@ public:
             ->add(2)  // NOLINT
 #ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
             ->add(3)  // NOLINT
+            ->add(4)  // NOLINT
 #endif
             ;
     }
 
-    template <typename Optimizer>
+    template <num_collect::opt::concepts::optimizer Optimizer>
     void test_optimizer(std::size_t sample_index, Optimizer& optimizer) {
-        constexpr double tol_value = 1e-1;
-        constexpr num_collect::index_type max_evaluations = 100000;
         while (optimizer.opt_value() > tol_value) {
             if (optimizer.evaluations() >= max_evaluations) {
                 throw num_collect::algorithm_failure("Failed to converge.");
@@ -63,6 +70,22 @@ public:
             static_cast<double>(optimizer.iterations()));
         evaluations_stat_->add(thread_index, sample_index,
             static_cast<double>(optimizer.evaluations()));
+    }
+
+    template <std::invocable<std::size_t> OptimizerFactory>
+    void test_optimizer(
+        OptimizerFactory&& factory, const std::string& optimizer_name) {
+        function_value_history_writer::instance().measure_multiple(
+            fmt::format("multi_variate_difficult_multi_optima_function_{}",
+                dimensions_),
+            optimizer_name, factory, tol_value,
+            stat_bench::current_invocation_context().samples());
+
+        STAT_BENCH_MEASURE_INDEXED(
+            /*thread_index*/, sample_index, /*iteration_index*/) {
+            auto optimizer = factory(sample_index);
+            test_optimizer(sample_index, optimizer);
+        };
     }
 
     void setup(stat_bench::InvocationContext& context) override {
@@ -119,28 +142,36 @@ STAT_BENCH_GROUP("opt_multi_variate_difficult_multi_optima_function")
 STAT_BENCH_CASE_F(multi_variate_difficult_multi_optima_function_fixture,
     "opt_multi_variate_difficult_multi_optima_function",
     "dividing_rectangles") {
-    STAT_BENCH_MEASURE_INDEXED(
-        /*thread_index*/, sample_index, /*iteration_index*/) {
-        auto optimizer = num_collect::opt::dividing_rectangles<
-            num_prob_collect::opt::multi_variate_multi_optima_function>(
-            this->function(sample_index));
-        const auto [lower, upper] = this->search_region();
-        optimizer.init(lower, upper);
-        this->test_optimizer(sample_index, optimizer);
-    };
+    test_optimizer(
+        [this](std::size_t sample_index) {
+            auto optimizer = num_collect::opt::dividing_rectangles<
+                num_prob_collect::opt::multi_variate_multi_optima_function>(
+                this->function(sample_index));
+            const auto [lower, upper] = this->search_region();
+            optimizer.init(lower, upper);
+            return optimizer;
+        },
+        "dividing_rectangles");
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(multi_variate_difficult_multi_optima_function_fixture,
     "opt_multi_variate_difficult_multi_optima_function",
     "adaptive_diagonal_curves") {
-    STAT_BENCH_MEASURE_INDEXED(
-        /*thread_index*/, sample_index, /*iteration_index*/) {
-        auto optimizer = num_collect::opt::adaptive_diagonal_curves<
-            num_prob_collect::opt::multi_variate_multi_optima_function>(
-            this->function(sample_index));
-        const auto [lower, upper] = this->search_region();
-        optimizer.init(lower, upper);
-        this->test_optimizer(sample_index, optimizer);
-    };
+    test_optimizer(
+        [this](std::size_t sample_index) {
+            auto optimizer = num_collect::opt::adaptive_diagonal_curves<
+                num_prob_collect::opt::multi_variate_multi_optima_function>(
+                this->function(sample_index));
+            const auto [lower, upper] = this->search_region();
+            optimizer.init(lower, upper);
+            return optimizer;
+        },
+        "adaptive_diagonal_curves");
+}
+
+auto main(int argc, const char** argv) -> int {
+    function_value_history_writer::instance().set_max_evaluations(
+        max_evaluations);
+    return main_with_function_value_history_writer(argc, argv);
 }

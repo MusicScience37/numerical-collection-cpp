@@ -24,17 +24,25 @@
 #include <type_traits>
 #include <utility>
 
+#include <fmt/format.h>
 #include <stat_bench/benchmark_macros.h>
 #include <stat_bench/invocation_context.h>
 #include <stat_bench/param/parameter_value_vector.h>
 
+#include "function_value_history_writer.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/opt/adaptive_diagonal_curves.h"
+#include "num_collect/opt/concepts/optimizer.h"
 #include "num_collect/opt/dividing_rectangles.h"
 #include "num_collect/opt/heuristic_global_optimizer.h"
 
-STAT_BENCH_MAIN
+#ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
+constexpr num_collect::index_type max_evaluations = 1000;
+#else
+constexpr num_collect::index_type max_evaluations = 100000;
+#endif
+constexpr double tol_value = 1e-4;
 
 class shekel_function_fixture : public stat_bench::FixtureBase {
 public:
@@ -70,15 +78,9 @@ public:
         return func.value();
     }
 
-    template <typename Optimizer>
+    template <num_collect::opt::concepts::optimizer Optimizer>
     void test_optimizer(Optimizer& optimizer) {
-        constexpr double tol_value = 1e-4;
         const auto value_bound = minimum_value() + tol_value;
-#ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
-        constexpr num_collect::index_type max_evaluations = 1000;
-#else
-        constexpr num_collect::index_type max_evaluations = 100000;
-#endif
         while (optimizer.opt_value() > value_bound) {
             if (optimizer.evaluations() >= max_evaluations) {
                 throw num_collect::algorithm_failure("Failed to converge.");
@@ -88,6 +90,19 @@ public:
         }
         iterations_ = optimizer.iterations();
         evaluations_ = optimizer.evaluations();
+    }
+
+    template <std::invocable<> OptimizerFactory>
+    void test_optimizer(
+        OptimizerFactory&& factory, const std::string& optimizer_name) {
+        function_value_history_writer::instance().measure(
+            fmt::format("shekel_function_{}", num_terms_), optimizer_name,
+            factory, tol_value, minimum_value());
+
+        STAT_BENCH_MEASURE() {
+            auto optimizer = factory();
+            test_optimizer(optimizer);
+        };
     }
 
     void tear_down(stat_bench::InvocationContext& context) override {
@@ -113,61 +128,77 @@ STAT_BENCH_GROUP("opt_shekel_function")
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(
     shekel_function_fixture, "opt_shekel_function", "dividing_rectangles") {
-    STAT_BENCH_MEASURE() {
-        auto optimizer = num_collect::opt::dividing_rectangles<
-            num_prob_collect::opt::shekel_function>(this->function());
-        const auto [lower, upper] = shekel_function_fixture::search_region();
-        optimizer.init(lower, upper);
-        this->test_optimizer(optimizer);
-    };
+    test_optimizer(
+        [this] {
+            auto optimizer = num_collect::opt::dividing_rectangles<
+                num_prob_collect::opt::shekel_function>(this->function());
+            const auto [lower, upper] = search_region();
+            optimizer.init(lower, upper);
+            return optimizer;
+        },
+        "dividing_rectangles");
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(shekel_function_fixture, "opt_shekel_function",
     "adaptive_diagonal_curves") {
-    STAT_BENCH_MEASURE() {
-        auto optimizer = num_collect::opt::adaptive_diagonal_curves<
-            num_prob_collect::opt::shekel_function>(this->function());
-        const auto [lower, upper] = shekel_function_fixture::search_region();
-        optimizer.init(lower, upper);
-        this->test_optimizer(optimizer);
-    };
+    test_optimizer(
+        [this] {
+            auto optimizer = num_collect::opt::adaptive_diagonal_curves<
+                num_prob_collect::opt::shekel_function>(this->function());
+            const auto [lower, upper] = search_region();
+            optimizer.init(lower, upper);
+            return optimizer;
+        },
+        "adaptive_diagonal_curves");
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(shekel_function_fixture, "opt_shekel_function",
     "heuristic_global_optimizer") {
-    STAT_BENCH_MEASURE() {
-        auto optimizer = num_collect::opt::heuristic_global_optimizer<
-            num_prob_collect::opt::shekel_function>(this->function());
-        const auto [lower, upper] = shekel_function_fixture::search_region();
-        optimizer.init(lower, upper);
-        this->test_optimizer(optimizer);
-    };
+    test_optimizer(
+        [this] {
+            auto optimizer = num_collect::opt::heuristic_global_optimizer<
+                num_prob_collect::opt::shekel_function>(this->function());
+            const auto [lower, upper] = search_region();
+            optimizer.init(lower, upper);
+            return optimizer;
+        },
+        "heuristic_global_optimizer");
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(shekel_function_fixture, "opt_shekel_function",
     "heuristic_global_optimizer_light") {
-    STAT_BENCH_MEASURE() {
-        auto optimizer = num_collect::opt::heuristic_global_optimizer<
-            num_prob_collect::opt::shekel_function>(this->function());
-        const auto [lower, upper] = shekel_function_fixture::search_region();
-        optimizer.light_mode();
-        optimizer.init(lower, upper);
-        this->test_optimizer(optimizer);
-    };
+    test_optimizer(
+        [this] {
+            auto optimizer = num_collect::opt::heuristic_global_optimizer<
+                num_prob_collect::opt::shekel_function>(this->function());
+            const auto [lower, upper] = search_region();
+            optimizer.light_mode();
+            optimizer.init(lower, upper);
+            return optimizer;
+        },
+        "heuristic_global_optimizer_light");
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(shekel_function_fixture, "opt_shekel_function",
     "heuristic_global_optimizer_heavy") {
-    STAT_BENCH_MEASURE() {
-        auto optimizer = num_collect::opt::heuristic_global_optimizer<
-            num_prob_collect::opt::shekel_function>(this->function());
-        const auto [lower, upper] = shekel_function_fixture::search_region();
-        optimizer.heavy_mode();
-        optimizer.init(lower, upper);
-        this->test_optimizer(optimizer);
-    };
+    test_optimizer(
+        [this] {
+            auto optimizer = num_collect::opt::heuristic_global_optimizer<
+                num_prob_collect::opt::shekel_function>(this->function());
+            const auto [lower, upper] = search_region();
+            optimizer.heavy_mode();
+            optimizer.init(lower, upper);
+            return optimizer;
+        },
+        "heuristic_global_optimizer_heavy");
+}
+
+auto main(int argc, const char** argv) -> int {
+    function_value_history_writer::instance().set_max_evaluations(
+        max_evaluations);
+    return main_with_function_value_history_writer(argc, argv);
 }
