@@ -36,6 +36,7 @@
 #include "num_collect/opt/concepts/optimizer.h"
 #include "num_collect/opt/dividing_rectangles.h"
 #include "num_collect/opt/heuristic_global_optimizer.h"
+#include "num_collect/opt/real_value_genetic_optimizer.h"
 
 #ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
 constexpr num_collect::index_type max_evaluations = 1000;
@@ -151,6 +152,21 @@ STAT_BENCH_CASE_F(shekel_function_fixture, "opt_shekel_function",
             return optimizer;
         },
         "adaptive_diagonal_curves");
+}
+
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(shekel_function_fixture, "opt_shekel_function",
+    "real_value_genetic_optimizer") {
+    test_optimizer(
+        [this] {
+            auto optimizer = num_collect::opt::real_value_genetic_optimizer<
+                num_prob_collect::opt::shekel_function>(this->function());
+            optimizer.seed(0);  // For reproducibility.
+            const auto [lower, upper] = search_region();
+            optimizer.init(lower, upper);
+            return optimizer;
+        },
+        "real_value_genetic_optimizer");
 }
 
 // NOLINTNEXTLINE
