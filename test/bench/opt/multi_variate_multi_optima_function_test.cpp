@@ -20,21 +20,32 @@
 #include "num_prob_collect/opt/multi_variate_multi_optima_function.h"
 
 #include <algorithm>
+#include <concepts>
 #include <iterator>
 #include <utility>
 #include <vector>
 
+#include <fmt/format.h>
 #include <stat_bench/benchmark_macros.h>
+#include <stat_bench/current_invocation_context.h>
 #include <stat_bench/invocation_context.h>
 #include <stat_bench/stat/custom_stat_output.h>
 
+#include "function_value_history_writer.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/opt/adaptive_diagonal_curves.h"
 #include "num_collect/opt/annealing_downhill_simplex.h"
+#include "num_collect/opt/concepts/optimizer.h"
 #include "num_collect/opt/dividing_rectangles.h"
 
-STAT_BENCH_MAIN
+#ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
+constexpr num_collect::index_type max_evaluations = 100000;
+#else
+constexpr num_collect::index_type max_evaluations = 1000;
+#endif
+
+constexpr double tol_value = 1e-1;
 
 class multi_variate_multi_optima_function_fixture
     : public stat_bench::FixtureBase {
@@ -46,14 +57,13 @@ public:
             ->add(3)  // NOLINT
             ->add(4)  // NOLINT
             ->add(5)  // NOLINT
+            ->add(6)  // NOLINT
 #endif
             ;
     }
 
-    template <typename Optimizer>
+    template <num_collect::opt::concepts::optimizer Optimizer>
     void test_optimizer(std::size_t sample_index, Optimizer& optimizer) {
-        constexpr double tol_value = 1e-1;
-        constexpr num_collect::index_type max_evaluations = 100000;
         while (optimizer.opt_value() > tol_value) {
             if (optimizer.evaluations() >= max_evaluations) {
                 throw num_collect::algorithm_failure("Failed to converge.");
@@ -66,6 +76,21 @@ public:
             static_cast<double>(optimizer.iterations()));
         evaluations_stat_->add(thread_index, sample_index,
             static_cast<double>(optimizer.evaluations()));
+    }
+
+    template <std::invocable<std::size_t> OptimizerFactory>
+    void test_optimizer(
+        OptimizerFactory&& factory, const std::string& optimizer_name) {
+        function_value_history_writer::instance().measure_multiple(
+            fmt::format("multi_variate_multi_optima_function_{}", dimensions_),
+            optimizer_name, factory, tol_value,
+            stat_bench::current_invocation_context().samples());
+
+        STAT_BENCH_MEASURE_INDEXED(
+            /*thread_index*/, sample_index, /*iteration_index*/) {
+            auto optimizer = factory(sample_index);
+            test_optimizer(sample_index, optimizer);
+        };
     }
 
     void setup(stat_bench::InvocationContext& context) override {
@@ -122,44 +147,53 @@ STAT_BENCH_GROUP("opt_multi_variate_multi_optima_function")
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(multi_variate_multi_optima_function_fixture,
     "opt_multi_variate_multi_optima_function", "dividing_rectangles") {
-    STAT_BENCH_MEASURE_INDEXED(
-        /*thread_index*/, sample_index, /*iteration_index*/) {
-        auto optimizer = num_collect::opt::dividing_rectangles<
-            num_prob_collect::opt::multi_variate_multi_optima_function>(
-            this->function(sample_index));
-        const auto [lower, upper] = this->search_region();
-        optimizer.init(lower, upper);
-        this->test_optimizer(sample_index, optimizer);
-    };
+    test_optimizer(
+        [this](std::size_t sample_index) {
+            auto optimizer = num_collect::opt::dividing_rectangles<
+                num_prob_collect::opt::multi_variate_multi_optima_function>(
+                this->function(sample_index));
+            const auto [lower, upper] = this->search_region();
+            optimizer.init(lower, upper);
+            return optimizer;
+        },
+        "dividing_rectangles");
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(multi_variate_multi_optima_function_fixture,
     "opt_multi_variate_multi_optima_function", "adaptive_diagonal_curves") {
-    STAT_BENCH_MEASURE_INDEXED(
-        /*thread_index*/, sample_index, /*iteration_index*/) {
-        auto optimizer = num_collect::opt::adaptive_diagonal_curves<
-            num_prob_collect::opt::multi_variate_multi_optima_function>(
-            this->function(sample_index));
-        const auto [lower, upper] = this->search_region();
-        optimizer.init(lower, upper);
-        this->test_optimizer(sample_index, optimizer);
-    };
+    test_optimizer(
+        [this](std::size_t sample_index) {
+            auto optimizer = num_collect::opt::adaptive_diagonal_curves<
+                num_prob_collect::opt::multi_variate_multi_optima_function>(
+                this->function(sample_index));
+            const auto [lower, upper] = this->search_region();
+            optimizer.init(lower, upper);
+            return optimizer;
+        },
+        "adaptive_diagonal_curves");
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(multi_variate_multi_optima_function_fixture,
     "opt_multi_variate_multi_optima_function", "annealing_downhill_simplex") {
-    STAT_BENCH_MEASURE_INDEXED(
-        /*thread_index*/, sample_index, /*iteration_index*/) {
-        auto optimizer = num_collect::opt::annealing_downhill_simplex<
-            num_prob_collect::opt::multi_variate_multi_optima_function>(
-            this->function(sample_index));
-        optimizer.seed(0);  // For reproducibility.
-        const auto [lower, upper] = this->search_region();
-        optimizer.init((lower + upper) * 0.5);    // NOLINT
-        optimizer.highest_temperature(100.0);     // NOLINT
-        optimizer.max_iterations_per_trial(100);  // NOLINT
-        this->test_optimizer(sample_index, optimizer);
-    };
+    test_optimizer(
+        [this](std::size_t sample_index) {
+            auto optimizer = num_collect::opt::annealing_downhill_simplex<
+                num_prob_collect::opt::multi_variate_multi_optima_function>(
+                this->function(sample_index));
+            optimizer.seed(0);  // For reproducibility.
+            const auto [lower, upper] = this->search_region();
+            optimizer.init((lower + upper) * 0.5);    // NOLINT
+            optimizer.highest_temperature(100.0);     // NOLINT
+            optimizer.max_iterations_per_trial(100);  // NOLINT
+            return optimizer;
+        },
+        "annealing_downhill_simplex");
+}
+
+auto main(int argc, const char** argv) -> int {
+    function_value_history_writer::instance().set_max_evaluations(
+        max_evaluations);
+    return main_with_function_value_history_writer(argc, argv);
 }

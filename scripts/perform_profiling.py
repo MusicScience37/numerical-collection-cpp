@@ -84,6 +84,7 @@ def perform_profiling(
     process_result = subprocess.run(
         pprof_command,
         stdout=open(str(PROF_RESULTS_DIR / f"{name}.pdf"), mode="wb"),
+        check=False,
     )
     click.echo(
         click.style(
@@ -93,4 +94,4 @@ def perform_profiling(
 
 
 if __name__ == "__main__":
-    perform_profiling()
+    perform_profiling()  # pylint: disable=no-value-for-parameter

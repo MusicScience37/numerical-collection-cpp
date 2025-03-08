@@ -24,28 +24,41 @@
 #include <stat_bench/benchmark_macros.h>
 #include <stat_bench/invocation_context.h>
 
+#include "function_value_history_writer.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/opt/bfgs_optimizer.h"
+#include "num_collect/opt/concepts/optimizer.h"
 #include "num_collect/opt/dfp_optimizer.h"
 #include "num_collect/opt/dividing_rectangles.h"
 #include "num_collect/opt/downhill_simplex.h"
 #include "num_collect/opt/heuristic_global_optimizer.h"
 #include "num_collect/opt/steepest_descent.h"
 
-STAT_BENCH_MAIN
+constexpr double tol_value = 1e-2;
 
 class powell4_function_fixture : public stat_bench::FixtureBase {
 public:
     powell4_function_fixture() = default;
 
-    template <typename Optimizer>
+    template <num_collect::opt::concepts::optimizer Optimizer>
     void test_optimizer(Optimizer& optimizer) {
-        constexpr double tol_value = 1e-2;
         while (optimizer.opt_value() > tol_value) {
             optimizer.iterate();
         }
         iterations_ = optimizer.iterations();
         evaluations_ = optimizer.evaluations();
+    }
+
+    template <std::invocable<> OptimizerFactory>
+    void test_optimizer(
+        OptimizerFactory&& factory, const std::string& optimizer_name) {
+        function_value_history_writer::instance().measure(
+            "powell4_function", optimizer_name, factory, tol_value);
+
+        STAT_BENCH_MEASURE() {
+            auto optimizer = factory();
+            test_optimizer(optimizer);
+        };
     }
 
     void tear_down(stat_bench::InvocationContext& context) override {
@@ -77,67 +90,83 @@ private:
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(
     powell4_function_fixture, "opt_powell4_function", "steepest_descent") {
-    STAT_BENCH_MEASURE() {
-        auto optimizer = num_collect::opt::steepest_descent<
-            num_prob_collect::opt::powell4_function>();
-        optimizer.init(init_var());
-        this->test_optimizer(optimizer);
-    };
+    test_optimizer(
+        [] {
+            auto optimizer = num_collect::opt::steepest_descent<
+                num_prob_collect::opt::powell4_function>();
+            optimizer.init(init_var());
+            return optimizer;
+        },
+        "steepest_descent");
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(
     powell4_function_fixture, "opt_powell4_function", "downhill_simplex") {
-    STAT_BENCH_MEASURE() {
-        auto optimizer = num_collect::opt::downhill_simplex<
-            num_prob_collect::opt::powell4_function>();
-        optimizer.init(init_var());
-        this->test_optimizer(optimizer);
-    };
+    test_optimizer(
+        [] {
+            auto optimizer = num_collect::opt::downhill_simplex<
+                num_prob_collect::opt::powell4_function>();
+            optimizer.init(init_var());
+            return optimizer;
+        },
+        "downhill_simplex");
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(
     powell4_function_fixture, "opt_powell4_function", "dfp_optimizer") {
-    STAT_BENCH_MEASURE() {
-        auto optimizer = num_collect::opt::dfp_optimizer<
-            num_prob_collect::opt::powell4_function>();
-        optimizer.init(init_var());
-        this->test_optimizer(optimizer);
-    };
+    test_optimizer(
+        [] {
+            auto optimizer = num_collect::opt::dfp_optimizer<
+                num_prob_collect::opt::powell4_function>();
+            optimizer.init(init_var());
+            return optimizer;
+        },
+        "dfp_optimizer");
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(
     powell4_function_fixture, "opt_powell4_function", "bfgs_optimizer") {
-    STAT_BENCH_MEASURE() {
-        auto optimizer = num_collect::opt::bfgs_optimizer<
-            num_prob_collect::opt::powell4_function>();
-        optimizer.init(init_var());
-        this->test_optimizer(optimizer);
-    };
+    test_optimizer(
+        [] {
+            auto optimizer = num_collect::opt::bfgs_optimizer<
+                num_prob_collect::opt::powell4_function>();
+            optimizer.init(init_var());
+            return optimizer;
+        },
+        "bfgs_optimizer");
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(
     powell4_function_fixture, "opt_powell4_function", "dividing_rectangles") {
-    STAT_BENCH_MEASURE() {
-        auto optimizer = num_collect::opt::dividing_rectangles<
-            num_prob_collect::opt::powell4_function>();
-        const auto [lower, upper] = search_region();
-        optimizer.init(lower, upper);
-        this->test_optimizer(optimizer);
-    };
+    test_optimizer(
+        [] {
+            auto optimizer = num_collect::opt::dividing_rectangles<
+                num_prob_collect::opt::powell4_function>();
+            const auto [lower, upper] = search_region();
+            optimizer.init(lower, upper);
+            return optimizer;
+        },
+        "dividing_rectangles");
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE_F(powell4_function_fixture, "opt_powell4_function",
     "heuristic_global_optimizer") {
-    STAT_BENCH_MEASURE() {
-        auto optimizer = num_collect::opt::heuristic_global_optimizer<
-            num_prob_collect::opt::powell4_function>();
-        const auto [lower, upper] = search_region();
-        optimizer.init(lower, upper);
-        this->test_optimizer(optimizer);
-    };
+    test_optimizer(
+        [] {
+            auto optimizer = num_collect::opt::heuristic_global_optimizer<
+                num_prob_collect::opt::powell4_function>();
+            const auto [lower, upper] = search_region();
+            optimizer.init(lower, upper);
+            return optimizer;
+        },
+        "heuristic_global_optimizer");
+}
+
+auto main(int argc, const char** argv) -> int {
+    return main_with_function_value_history_writer(argc, argv);
 }
