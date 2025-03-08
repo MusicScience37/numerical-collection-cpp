@@ -382,8 +382,8 @@ private:
             binary_scalar ^= binary_scalar >> 1U;
             binary_scalar ^= binary_scalar >> 2U;
             binary_scalar ^= binary_scalar >> 4U;
-            binary_scalar ^= binary_scalar >> 8U;
-            binary_scalar ^= binary_scalar >> 16U;
+            binary_scalar ^= binary_scalar >> 8U;   // NOLINT(*-magic-numbers)
+            binary_scalar ^= binary_scalar >> 16U;  // NOLINT(*-magic-numbers)
 
             buffer_variable_(d) =
                 static_cast<variable_scalar_type>(binary_scalar) *
