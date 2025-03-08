@@ -38,6 +38,7 @@
 #include "num_collect/opt/concepts/objective_function.h"
 #include "num_collect/opt/optimizer_base.h"
 #include "num_collect/util/assert.h"
+#include "num_collect/util/gray_code.h"
 #include "num_collect/util/vector.h"
 
 namespace num_collect::opt {
@@ -376,15 +377,8 @@ private:
             static_cast<variable_scalar_type>(1) /
             static_cast<variable_scalar_type>(binary_mask);
         for (index_type d = 0; d < dim_; ++d) {
-            binary_scalar_type binary_scalar = binary_variable(d);
-
-            // Gray code to binary.
-            binary_scalar ^= binary_scalar >> 1U;
-            binary_scalar ^= binary_scalar >> 2U;
-            binary_scalar ^= binary_scalar >> 4U;
-            binary_scalar ^= binary_scalar >> 8U;   // NOLINT(*-magic-numbers)
-            binary_scalar ^= binary_scalar >> 16U;  // NOLINT(*-magic-numbers)
-
+            const binary_scalar_type binary_scalar =
+                util::gray_code_to_binary(binary_variable(d));
             buffer_variable_(d) =
                 static_cast<variable_scalar_type>(binary_scalar) *
                     binary_to_rate * width_(d) +
