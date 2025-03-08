@@ -48,7 +48,7 @@ constexpr auto real_value_genetic_optimizer_tag =
 
 /*!
  * \brief Class to perform optimization for real-valued variables using genetic
- * algorithm.
+ * algorithm \cite Iba1994.
  *
  * \tparam ObjectiveFunction Type of the objective function.
  * \tparam BitsPerDimension Number of bits per dimension.
@@ -59,7 +59,7 @@ class real_value_genetic_optimizer;
 
 /*!
  * \brief Class to perform optimization for real-valued variables using genetic
- * algorithm.
+ * algorithm \cite Iba1994.
  *
  * \tparam ObjectiveFunction Type of the objective function.
  * \tparam BitsPerDimension Number of bits per dimension.
