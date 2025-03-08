@@ -9,17 +9,18 @@
 
 ## Optimization (`opt` Module)
 
-| Algorithm                                                                | Class                                            |
-| :----------------------------------------------------------------------- | :----------------------------------------------- |
-| Adaptive diagonal curves (ADC) {cite:p}`Sergeyev2006`                    | `num_collect::opt::adaptive_diagonal_curves`     |
-| Backtracking line search                                                 | `num_collect::opt::backtracking_line_searcher`   |
-| Conjugate gradient method                                                | `num_collect::opt::conjugate_gradient_optimizer` |
-| Dividing rectangles (DIRECT) method                                      | `num_collect::opt::dividing_rectangles`          |
-| Downhill simplex method {cite:p}`Press2007`                              | `num_collect::opt::downhill_simplex`             |
-| Downhill simplex method with simulated annealing {cite:p}`Press2007`     | `num_collect::opt::annealing_downhill_simplex`   |
-| Gaussian process optimization {cite:p}`Srinivas2010,Brochu2010`          | `num_collect::opt::gaussian_process_optimizer`   |
-| Quasi-Newton method with Broyden-Fletcher-Goldfarb-Shanno (BFGS) formula | `num_collect::opt::bfgs_optimizer`               |
-| Quasi-Newton method with Davidon-Fletcher-Powell (DFP) formula           | `num_collect::opt::dfp_optimizer`                |
+| Algorithm                                                                  | Class                                            |
+| :------------------------------------------------------------------------- | :----------------------------------------------- |
+| Adaptive diagonal curves (ADC) {cite:p}`Sergeyev2006`                      | `num_collect::opt::adaptive_diagonal_curves`     |
+| Backtracking line search                                                   | `num_collect::opt::backtracking_line_searcher`   |
+| Conjugate gradient method                                                  | `num_collect::opt::conjugate_gradient_optimizer` |
+| Dividing rectangles (DIRECT) method {cite:p}`Jones1993`                    | `num_collect::opt::dividing_rectangles`          |
+| Downhill simplex method {cite:p}`Press2007`                                | `num_collect::opt::downhill_simplex`             |
+| Downhill simplex method with simulated annealing {cite:p}`Press2007`       | `num_collect::opt::annealing_downhill_simplex`   |
+| Gaussian process optimization {cite:p}`Srinivas2010,Brochu2010`            | `num_collect::opt::gaussian_process_optimizer`   |
+| Genetic algorithm {cite:p}`Iba1994` for functions of real-valued variables | `num_collect::opt::real_value_genetic_optimizer` |
+| Quasi-Newton method with Broyden-Fletcher-Goldfarb-Shanno (BFGS) formula   | `num_collect::opt::bfgs_optimizer`               |
+| Quasi-Newton method with Davidon-Fletcher-Powell (DFP) formula             | `num_collect::opt::dfp_optimizer`                |
 
 ## Regularization (`regularization` Module)
 
