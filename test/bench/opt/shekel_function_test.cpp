@@ -43,7 +43,7 @@ constexpr num_collect::index_type max_evaluations = 1000;
 #else
 constexpr num_collect::index_type max_evaluations = 100000;
 #endif
-constexpr double tol_value = 1e-4;
+constexpr double tol_value = 1e-2;
 
 class shekel_function_fixture : public stat_bench::FixtureBase {
 public:

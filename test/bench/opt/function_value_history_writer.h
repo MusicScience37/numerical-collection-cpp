@@ -54,9 +54,7 @@ public:
     template <num_collect::concepts::invocable<> OptimizerFactory>
     void measure(std::string problem_name, std::string optimizer_name,
         OptimizerFactory&& factory, double tol_value, double min_value = 0.0) {
-        if (has_measurement_of(problem_name, optimizer_name)) {
-            return;
-        }
+        remove_old_measurement_of(problem_name, optimizer_name);
 
         auto optimizer = factory();
         measurement data;
@@ -96,32 +94,19 @@ public:
     template <num_collect::concepts::invocable<std::size_t> OptimizerFactory>
     void measure_multiple(std::string problem_name, std::string optimizer_name,
         OptimizerFactory&& factory, double tol_value, std::size_t num_samples) {
-        if (has_measurement_of(problem_name, optimizer_name)) {
-            return;
-        }
+        remove_old_measurement_of(problem_name, optimizer_name);
 
         std::vector<double> evaluations_to_values_lower;
         std::vector<double> evaluations_to_values_upper;
         evaluations_to_values_lower.resize(
             static_cast<std::size_t>(max_evaluations_),
-            std::numeric_limits<double>::infinity());
+            std::numeric_limits<double>::max());
         evaluations_to_values_upper.resize(
             static_cast<std::size_t>(max_evaluations_),
-            -std::numeric_limits<double>::infinity());
+            std::numeric_limits<double>::min());
         for (std::size_t i = 0; i < num_samples; ++i) {
             auto optimizer = factory(i);
-            if (optimizer.evaluations() > 0) {
-                const auto evaluations =
-                    static_cast<std::size_t>(optimizer.evaluations());
-                evaluations_to_values_lower[evaluations] =
-                    std::min(evaluations_to_values_lower[evaluations],
-                        optimizer.opt_value());
-                evaluations_to_values_upper[evaluations] =
-                    std::max(evaluations_to_values_upper[evaluations],
-                        optimizer.opt_value());
-            }
-            while (true) {
-                optimizer.iterate();
+            while (optimizer.opt_value() > tol_value) {
                 if (optimizer.evaluations() >= max_evaluations_) {
                     const auto evaluations =
                         static_cast<std::size_t>(max_evaluations_ - 1);
@@ -143,9 +128,7 @@ public:
                     std::max(evaluations_to_values_upper[evaluations],
                         optimizer.opt_value());
 
-                if (optimizer.opt_value() <= tol_value) {
-                    break;
-                }
+                optimizer.iterate();
             }
         }
 
@@ -153,7 +136,9 @@ public:
         data.problem_name = std::move(problem_name);
         data.optimizer_name = std::move(optimizer_name);
 
-        double value = std::numeric_limits<double>::infinity();
+        double value = std::numeric_limits<double>::max();
+        data.evaluations.reserve(evaluations_to_values_lower.size());
+        data.function_values.reserve(evaluations_to_values_lower.size());
         for (std::size_t i = 0; i < evaluations_to_values_lower.size() - 1;
             ++i) {
             const auto evaluations = static_cast<num_collect::index_type>(i);
@@ -174,9 +159,11 @@ public:
             }
         }
 
-        value = -std::numeric_limits<double>::infinity();
+        value = std::numeric_limits<double>::min();
         data.evaluations_upper.emplace();
         data.function_values_upper.emplace();
+        data.evaluations_upper->reserve(evaluations_to_values_lower.size());
+        data.function_values_upper->reserve(evaluations_to_values_lower.size());
         for (std::size_t i = evaluations_to_values_upper.size() - 1; i > 0;
             --i) {
             const auto evaluations = static_cast<num_collect::index_type>(i);
@@ -238,8 +225,8 @@ private:
      */
     function_value_history_writer();
 
-    [[nodiscard]] auto has_measurement_of(const std::string& problem_name,
-        const std::string& optimizer_name) const -> bool;
+    void remove_old_measurement_of(
+        const std::string& problem_name, const std::string& optimizer_name);
 
     //! Measurements.
     std::vector<measurement> measurements_;

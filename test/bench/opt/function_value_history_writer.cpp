@@ -50,13 +50,15 @@ void function_value_history_writer::write_measurements(
 
 function_value_history_writer::function_value_history_writer() = default;
 
-auto function_value_history_writer::has_measurement_of(
-    const std::string& problem_name, const std::string& optimizer_name) const
-    -> bool {
-    return std::ranges::any_of(measurements_, [&](const auto& measurement) {
-        return measurement.problem_name == problem_name &&
-            measurement.optimizer_name == optimizer_name;
-    });
+void function_value_history_writer::remove_old_measurement_of(
+    const std::string& problem_name, const std::string& optimizer_name) {
+    measurements_.erase(
+        std::remove_if(measurements_.begin(), measurements_.end(),
+            [&](const auto& measurement) {
+                return measurement.problem_name == problem_name &&
+                    measurement.optimizer_name == optimizer_name;
+            }),
+        measurements_.end());
 }
 
 auto main_with_function_value_history_writer(int argc, const char** argv)

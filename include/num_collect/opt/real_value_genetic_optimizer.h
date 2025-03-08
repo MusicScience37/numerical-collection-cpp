@@ -126,6 +126,9 @@ public:
         iterations_ = 0;
         evaluations_ = 0;
 
+        // Allocate memory. (This value is not used.)
+        buffer_variable_ = lower_;
+
         binary_population_.reserve(population_size_);
         std::generate_n(
             std::back_inserter(binary_population_), population_size_, [this]() {
@@ -141,9 +144,8 @@ public:
             population_values_.begin(),
             [this](const auto& binary_var) { return evaluate_on(binary_var); });
 
-        // Allocate memory here.
+        // Allocate memory. (This value is not used.)
         prev_binary_population_ = binary_population_;
-        buffer_variable_ = lower_;
         buffer_probabilities_.resize(population_size_);
     }
 
@@ -373,11 +375,21 @@ private:
         static constexpr variable_scalar_type binary_to_rate =
             static_cast<variable_scalar_type>(1) /
             static_cast<variable_scalar_type>(binary_mask);
-        buffer_variable_ =
-            (binary_variable.template cast<variable_scalar_type>() *
-                binary_to_rate)
-                .cwiseProduct(width_) +
-            lower_;
+        for (index_type d = 0; d < dim_; ++d) {
+            binary_scalar_type binary_scalar = binary_variable(d);
+
+            // Gray code to binary.
+            binary_scalar ^= binary_scalar >> 1U;
+            binary_scalar ^= binary_scalar >> 2U;
+            binary_scalar ^= binary_scalar >> 4U;
+            binary_scalar ^= binary_scalar >> 8U;
+            binary_scalar ^= binary_scalar >> 16U;
+
+            buffer_variable_(d) =
+                static_cast<variable_scalar_type>(binary_scalar) *
+                    binary_to_rate * width_(d) +
+                lower_(d);
+        }
 
         obj_fun_.evaluate_on(buffer_variable_);
         const value_type value = correct_value_if_needed(obj_fun_.value());
@@ -420,7 +432,7 @@ private:
     index_type dim_{0};
 
     //! Default size of population.
-    static constexpr index_type default_population_size = 20;
+    static constexpr index_type default_population_size = 200;
 
     //! Size of population.
     index_type population_size_{default_population_size};
@@ -445,7 +457,7 @@ private:
 
     //! Default probability of crossover.
     static constexpr auto default_crossover_probability =
-        static_cast<variable_scalar_type>(0.8);
+        static_cast<variable_scalar_type>(0.6);
 
     //! Distribution to determine whether to crossover.
     std::bernoulli_distribution crossover_distribution_{
