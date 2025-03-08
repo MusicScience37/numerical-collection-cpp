@@ -31,6 +31,7 @@
 #include <Eigen/Core>
 
 #include "num_collect/base/index_type.h"
+#include "num_collect/base/isfinite.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
