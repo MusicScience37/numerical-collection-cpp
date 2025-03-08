@@ -14,6 +14,7 @@ set(SOURCE_FILES
     heuristic_global_optimizer_test.cpp
     impl/ternary_vector_test.cpp
     newton_optimizer_test.cpp
+    real_value_genetic_optimizer_test.cpp
     sampling_optimizer_test.cpp
     steepest_descent_test.cpp
 )
