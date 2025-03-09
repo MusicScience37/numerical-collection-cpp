@@ -8,6 +8,7 @@ set(SOURCE_FILES
     dfp_optimizer_test.cpp
     dividing_rectangles_test.cpp
     downhill_simplex_test.cpp
+    firefly_optimizer_test.cpp
     function_object_wrapper_test.cpp
     gaussian_process_optimizer_test.cpp
     golden_section_search_test.cpp

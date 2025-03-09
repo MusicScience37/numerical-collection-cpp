@@ -17,6 +17,7 @@
 | Dividing rectangles (DIRECT) method {cite:p}`Jones1993`                    | `num_collect::opt::dividing_rectangles`          |
 | Downhill simplex method {cite:p}`Press2007`                                | `num_collect::opt::downhill_simplex`             |
 | Downhill simplex method with simulated annealing {cite:p}`Press2007`       | `num_collect::opt::annealing_downhill_simplex`   |
+| Firefly algorithm {cite:p}`Yang2009,Yang2010`                              | `num_collect::opt::firefly_optimizer`            |
 | Gaussian process optimization {cite:p}`Srinivas2010,Brochu2010`            | `num_collect::opt::gaussian_process_optimizer`   |
 | Genetic algorithm {cite:p}`Iba1994` for functions of real-valued variables | `num_collect::opt::real_value_genetic_optimizer` |
 | Quasi-Newton method with Broyden-Fletcher-Goldfarb-Shanno (BFGS) formula   | `num_collect::opt::bfgs_optimizer`               |

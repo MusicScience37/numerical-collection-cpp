@@ -7,6 +7,7 @@
 #include "dfp_optimizer_test.cpp"        // NOLINT(bugprone-suspicious-include)
 #include "dividing_rectangles_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "downhill_simplex_test.cpp"     // NOLINT(bugprone-suspicious-include)
+#include "firefly_optimizer_test.cpp"    // NOLINT(bugprone-suspicious-include)
 #include "function_object_wrapper_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "gaussian_process_optimizer_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "golden_section_search_test.cpp"  // NOLINT(bugprone-suspicious-include)
