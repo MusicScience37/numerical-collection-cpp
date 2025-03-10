@@ -133,64 +133,69 @@ public:
         std::transform(variables_.begin(), variables_.end(), values_.begin(),
             [this](const auto& variable) { return evaluate_on(variable); });
 
-        sorted_indices_.reserve(num_fireflies_);
-        for (index_type i = 0; i < num_fireflies_; ++i) {
-            sorted_indices_.push_back(i);
-        }
+        // Allocate memory. (This value is not used.)
+        variable_changes_ = variables_;
     }
 
     /*!
      * \copydoc num_collect::opt::optimizer_base::iterate
      */
     void iterate() {
-        std::sort(sorted_indices_.begin(), sorted_indices_.end(),
-            [this](index_type i, index_type j) {
-                return values_[i] < values_[j];
-            });
-
-        // Move to brighter fireflies.
-        for (auto moved_iter = sorted_indices_.begin() + 1;
-            moved_iter != sorted_indices_.end(); ++moved_iter) {
-            const index_type moved_index = *moved_iter;
-            variable_type& moved_variable = variables_[moved_index];
-            const value_type moved_value = values_[moved_index];
-            for (auto brighter_iter = sorted_indices_.begin();
-                brighter_iter != moved_iter; ++brighter_iter) {
-                const index_type brighter_index = *brighter_iter;
-                const variable_type& brighter_variable =
-                    variables_[brighter_index];
-                const value_type brighter_value = values_[brighter_index];
-                if (brighter_value >= moved_value) {
-                    continue;
+#pragma omp parallel
+        {
+            // Move to brighter fireflies.
+#pragma omp for
+            for (index_type i = 0; i < num_fireflies_; ++i) {
+                variable_changes_[i] = variable_type::Zero(dim_);
+                const variable_type& moved_variable = variables_[i];
+                const value_type moved_value = values_[i];
+                for (index_type j = 0; j < num_fireflies_; ++j) {
+                    const value_type brighter_value = values_[j];
+                    if (brighter_value >= moved_value) {
+                        continue;
+                    }
+                    const variable_type& brighter_variable = variables_[j];
+                    const variable_type diff =
+                        brighter_variable - moved_variable;
+                    const variable_scalar_type squared_distance =
+                        diff.cwiseQuotient(width_).squaredNorm() /
+                        static_cast<variable_scalar_type>(dim_);
+                    using std::exp;
+                    variable_changes_[i] += attractiveness_coeff_ *
+                        exp(-absorption_coeff_ * squared_distance) * diff;
                 }
-                const variable_type diff = brighter_variable - moved_variable;
-                const variable_scalar_type squared_distance =
-                    diff.cwiseQuotient(width_).squaredNorm() /
-                    static_cast<variable_scalar_type>(dim_);
-                using std::exp;
-                moved_variable += attractiveness_coeff_ *
-                    exp(-absorption_coeff_ * squared_distance) * diff;
             }
-        }
-
-        // Random walk.
-        for (auto& variable : variables_) {
-            for (index_type d = 0; d < dim_; ++d) {
-                variable(d) += random_coeff_ *
-                    random_walk_distribution_(random_number_generator_) *
-                    width_(d);
+#pragma omp barrier
+#pragma omp for
+            for (index_type i = 0; i < num_fireflies_; ++i) {
+                variables_[i] += variable_changes_[i];
             }
-        }
+#pragma omp barrier
 
-        // Move to the feasible region.
-        for (auto& variable : variables_) {
-            variable = variable.cwiseMax(lower_).cwiseMin(upper_);
+            // Random walk.
+#pragma omp master
+            {
+                for (auto& variable : variables_) {
+                    for (index_type d = 0; d < dim_; ++d) {
+                        variable(d) += random_coeff_ *
+                            random_walk_distribution_(
+                                random_number_generator_) *
+                            width_(d);
+                    }
+                }
+            }
+#pragma omp barrier
+
+            // Move to the feasible region.
+#pragma omp for
+            for (index_type i = 0; i < num_fireflies_; ++i) {
+                variables_[i] = variables_[i].cwiseMax(lower_).cwiseMin(upper_);
+            }
         }
 
         // Update function values.
         std::transform(variables_.begin(), variables_.end(), values_.begin(),
             [this](const auto& variable) { return evaluate_on(variable); });
-
         ++iterations_;
     }
 
@@ -314,6 +319,17 @@ public:
         return *this;
     }
 
+    /*!
+     * \brief Change the seed of the random number generator.
+     *
+     * \param[in] value Value.
+     * \return This.
+     */
+    auto seed(random_number_generator_type::result_type value) -> this_type& {
+        random_number_generator_.seed(value);
+        return *this;
+    }
+
 private:
     /*!
      * \brief Evaluate a function value.
@@ -364,7 +380,7 @@ private:
     index_type dim_{0};
 
     //! Default value of the number of fireflies.
-    static constexpr index_type default_num_fireflies = 100;
+    static constexpr index_type default_num_fireflies = 200;
 
     //! Number of fireflies.
     index_type num_fireflies_{default_num_fireflies};
@@ -382,7 +398,7 @@ private:
 
     //! Default value of the light absorption coefficient.
     static constexpr auto default_absorption_coeff =
-        static_cast<variable_scalar_type>(5);
+        static_cast<variable_scalar_type>(300);
 
     /*!
      * \brief Light absorption coefficient.
@@ -393,7 +409,7 @@ private:
 
     //! Default value of the coefficient of the random walk.
     static constexpr auto default_random_coeff =
-        static_cast<variable_scalar_type>(0.05);
+        static_cast<variable_scalar_type>(0.1);
 
     /*!
      * \brief Coefficient of the random walk.
@@ -405,11 +421,11 @@ private:
     //! Current variables. (Positions of fireflies.)
     util::vector<variable_type> variables_;
 
+    //! Buffer of variable changes.
+    util::vector<variable_type> variable_changes_;
+
     //! Function values of the current variables.
     Eigen::VectorX<value_type> values_;
-
-    //! Sorted indices of the fireflies.
-    util::vector<index_type> sorted_indices_;
 
     //! Random number generator.
     random_number_generator_type random_number_generator_{

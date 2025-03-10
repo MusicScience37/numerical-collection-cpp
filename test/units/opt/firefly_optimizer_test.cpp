@@ -44,7 +44,7 @@ TEST_CASE("num_collect::opt::firefly_optimizer (multi variables)") {
         opt.init(Eigen::VectorXd::Constant(3, -1.0),  // NOLINT
             Eigen::VectorXd::Constant(3, 2.0));       // NOLINT
         CHECK(opt.iterations() == 0);
-        CHECK(opt.evaluations() == 100);  // NOLINT
+        CHECK(opt.evaluations() == 200);  // NOLINT
     }
 
     SECTION("iterate") {
@@ -55,7 +55,7 @@ TEST_CASE("num_collect::opt::firefly_optimizer (multi variables)") {
 
         opt.iterate();
         CHECK(opt.iterations() == 1);
-        CHECK(opt.evaluations() == 200);
+        CHECK(opt.evaluations() == 400);
         CHECK(opt.opt_value() <= prev_value);
     }
 
