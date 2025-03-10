@@ -138,6 +138,7 @@
     "includesub",
     "infty",
     "INLINES",
+    "inproceedings",
     "installargs",
     "INTEG",
     "interp",
@@ -192,6 +193,7 @@
     "msgpack",
     "MSVC",
     "Multigrid",
+    "Multimodal",
     "MusicScience37",
     "mypy",
     "Nando",
@@ -208,6 +210,7 @@
     "openmetrics",
     "openmp",
     "optin",
+    "Osamu",
     "Paolo",
     "Parikh",
     "Peleato",
@@ -296,6 +299,7 @@
     "Vetterling",
     "Virtualenv",
     "virtualenvs",
+    "Watanabe",
     "Wconversion",
     "Wendland",
     "Wextra",
@@ -304,7 +308,8 @@
     "xexp",
     "Xiwyu",
     "Yaroslav",
-    "yaxis"
+    "yaxis",
+    "Zeugmann"
   ],
   // flagWords - list of words to be always considered incorrect
   // This is useful for offensive words and common spelling errors.
