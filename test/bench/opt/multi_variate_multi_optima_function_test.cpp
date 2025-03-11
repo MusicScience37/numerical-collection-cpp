@@ -38,6 +38,7 @@
 #include "num_collect/opt/annealing_downhill_simplex.h"
 #include "num_collect/opt/concepts/optimizer.h"
 #include "num_collect/opt/dividing_rectangles.h"
+#include "num_collect/opt/firefly_optimizer.h"
 #include "num_collect/opt/real_value_genetic_optimizer.h"
 
 #ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
@@ -207,6 +208,22 @@ STAT_BENCH_CASE_F(multi_variate_multi_optima_function_fixture,
             return optimizer;
         },
         "real_value_genetic_optimizer");
+}
+
+// NOLINTNEXTLINE
+STAT_BENCH_CASE_F(multi_variate_multi_optima_function_fixture,
+    "opt_multi_variate_multi_optima_function", "firefly_optimizer") {
+    test_optimizer(
+        [this](std::size_t sample_index) {
+            auto optimizer = num_collect::opt::firefly_optimizer<
+                num_prob_collect::opt::multi_variate_multi_optima_function>(
+                this->function(sample_index));
+            optimizer.seed(0);  // For reproducibility.
+            const auto [lower, upper] = this->search_region();
+            optimizer.init(lower, upper);
+            return optimizer;
+        },
+        "firefly_optimizer");
 }
 
 auto main(int argc, const char** argv) -> int {
