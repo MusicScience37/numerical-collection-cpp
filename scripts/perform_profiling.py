@@ -74,10 +74,10 @@ def perform_profiling(
 
     pprof_command = [
         "pprof",
-        "--pdf",
+        "-pdf",
+        f"-nodecount={nodecount}",
         str(binary_path),
         str(PROF_RESULTS_DIR / f"{name}.prof"),
-        f"--nodecount={nodecount}",
     ]
     if focus != "":
         pprof_command.append(f"--focus={focus}")
