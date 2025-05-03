@@ -20,13 +20,15 @@
 #include <algorithm>
 
 #include <stat_bench/benchmark_macros.h>
+#include <stat_bench/plot_options.h>
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
 STAT_BENCH_GROUP("laplacian_2d_grid")
-    .add_parameter_to_time_line_plot_log("size");
+    .add_parameter_to_time_line_plot(
+        "size", stat_bench::PlotOptions().log_parameter(true));
 
 auto main(int argc, const char** argv) -> int {
 #ifdef _OPENMP
