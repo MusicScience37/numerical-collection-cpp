@@ -32,6 +32,7 @@
 #include <plotly_plotter/eigen.h>
 #include <plotly_plotter/figure.h>
 #include <plotly_plotter/write_html.h>
+#include <plotly_plotter/write_png.h>
 #include <toml++/toml.h>
 
 #include "num_collect/base/index_type.h"
@@ -163,6 +164,9 @@ static auto plot_result(const vec_type& expected, const vec_type& actual,
         plotly_plotter::color_scales::autumn());
 
     plotly_plotter::write_html("laplacian_2d_grid.html", figure);
+    if (plotly_plotter::is_png_supported()) {
+        plotly_plotter::write_png("laplacian_2d_grid.png", figure);
+    }
 }
 
 auto main(int argc, char** argv) -> int {
