@@ -87,6 +87,7 @@ if(NUM_COLLECT_BUILD_EXAMPLES)
     find_package(PNG REQUIRED)
     target_link_libraries(pngpp_pngpp INTERFACE PNG::PNG)
     add_library(pngpp::pngpp ALIAS pngpp_pngpp)
+    find_package(cpp-plotly-plotter REQUIRED)
 endif()
 
 # ##############################################################################
