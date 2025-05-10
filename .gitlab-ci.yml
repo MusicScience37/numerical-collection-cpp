@@ -135,7 +135,7 @@ spell check:
     - poetry install
     - mkdir -p $VCPKG_DEFAULT_BINARY_CACHE
     - mkdir $BUILD_DIR
-    - poetry run playwright install --only-shell chromium
+    - poetry run playwright install --only-shell --with-deps chromium
   script:
     - poetry run python ./scripts/ci_linux_test.py
       --compiler_type $COMPILER_TYPE --test_type $TEST_TYPE --build_dir $BUILD_DIR

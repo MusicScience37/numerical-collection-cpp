@@ -11,7 +11,7 @@ poetry install
 
 poetry run pre-commit install
 
-poetry run playwright install --only-shell chromium
+poetry run playwright install --only-shell --with-deps chromium
 
 git config commit.template .gitmessage
 
