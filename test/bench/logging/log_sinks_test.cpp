@@ -17,10 +17,8 @@
  * \file
  * \brief Test of log sinks.
  */
-#include <algorithm>
 #include <atomic>
 #include <chrono>
-#include <cmath>
 #include <cstddef>
 #include <exception>
 #include <filesystem>
@@ -28,15 +26,14 @@
 #include <string>
 #include <string_view>
 #include <thread>
-#include <unordered_map>
 #include <vector>
 
 #include <fmt/base.h>
 #include <fmt/format.h>
-#include <pybind11/embed.h>
-#include <pybind11/gil.h>
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>  // IWYU pragma: keep
+#include <plotly_plotter/data_table.h>
+#include <plotly_plotter/figure_builders/violin.h>
+#include <plotly_plotter/write_html.h>
+#include <plotly_plotter/write_png.h>
 
 #include "num_collect/base/concepts/invocable.h"
 #include "num_collect/logging/config/toml/toml_log_config_parser.h"
@@ -77,55 +74,32 @@ public:
     void write_result(std::string_view output_directory) {
         this->logger().info()("Write results.");
 
-        static pybind11::scoped_interpreter interpreter;
-        pybind11::gil_scoped_acquire gil;
-
-        auto pd = pybind11::module::import("pandas");
-        auto px = pybind11::module::import("plotly.express");
-
         const std::string log_sink_name_key = "Log Sink";
         const std::string log_type_name_key = "Type of Logs";
         const std::string mean_time_sec_key = "Time [sec]";
 
-        std::unordered_map<std::string, pybind11::object> data;
-        data.try_emplace(
-            log_sink_name_key, pybind11::cast(log_sink_name_list_));
-        data.try_emplace(
-            log_type_name_key, pybind11::cast(log_type_name_list_));
-        data.try_emplace(
-            mean_time_sec_key, pybind11::cast(mean_time_sec_list_));
+        plotly_plotter::data_table data;
+        data.emplace(log_sink_name_key, log_sink_name_list_);
+        data.emplace(log_type_name_key, log_type_name_list_);
+        data.emplace(mean_time_sec_key, mean_time_sec_list_);
 
-        auto fig = px.attr("violin")(                    //
-            pybind11::arg("data_frame") = data,          //
-            pybind11::arg("x") = log_type_name_key,      //
-            pybind11::arg("y") = mean_time_sec_key,      //
-            pybind11::arg("color") = log_sink_name_key,  //
-            pybind11::arg("box") = true,                 //
-            pybind11::arg("log_y") = true,               //
-            pybind11::arg("title") = "Time to Write Logs in Caller Thread");
-
-        const double log_time_lower_limit =
-            std::log10(*std::min_element(mean_time_sec_list_.begin(),
-                           mean_time_sec_list_.end()) /
-                1.5);  // NOLINT
-        const double log_time_upper_limit =
-            std::log10(*std::max_element(mean_time_sec_list_.begin(),
-                           mean_time_sec_list_.end()) *
-                1.5);  // NOLINT
-        fig.attr("update_layout")(pybind11::dict(
-            pybind11::arg("yaxis") =
-                pybind11::dict(pybind11::arg("constrain") = "range",  //
-                    pybind11::arg("range") =
-                        std::vector{fmt::format("{}", log_time_lower_limit),
-                            fmt::format("{}", log_time_upper_limit)})));
+        const auto fig = plotly_plotter::figure_builders::violin(data)
+                             .x(log_type_name_key)
+                             .y(mean_time_sec_key)
+                             .group(log_sink_name_key)
+                             .show_box(true)
+                             .show_mean_line(true)
+                             .log_y(true)
+                             .title("Time to Write Logs in Caller Thread")
+                             .create();
 
         const std::string base_name = fmt::format(
             "{}/num_collect_bench_logging_log_sinks", output_directory);
         std::filesystem::create_directories(
             std::filesystem::path(base_name).parent_path());
 
-        fig.attr("write_html")(fmt::format("{}.html", base_name));
-        fig.attr("write_image")(fmt::format("{}.png", base_name));
+        plotly_plotter::write_html(fmt::format("{}.html", base_name), fig);
+        plotly_plotter::write_png(fmt::format("{}.png", base_name), fig);
 
         this->logger().info()("Wrote results to {}.", base_name);
     }

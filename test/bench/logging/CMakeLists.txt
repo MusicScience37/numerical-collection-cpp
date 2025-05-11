@@ -5,4 +5,6 @@ add_executable(num_collect_bench_logging_write_trace_logs write_trace_logs.cpp)
 target_add_to_benchmark(num_collect_bench_logging_write_trace_logs)
 
 add_executable(num_collect_bench_logging_log_sinks log_sinks_test.cpp)
-add_bench_using_pybind11(num_collect_bench_logging_log_sinks)
+target_add_to_benchmark(num_collect_bench_logging_log_sinks)
+target_link_libraries(num_collect_bench_logging_log_sinks
+                      PRIVATE cpp_plotly_plotter::plotly_plotter)
