@@ -23,10 +23,10 @@
 
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
-#include <pybind11/eigen.h>  // IWYU pragma: keep
-#include <pybind11/embed.h>
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>  // IWYU pragma: keep
+#include <plotly_plotter/data_table.h>
+#include <plotly_plotter/figure_builders/line.h>
+#include <plotly_plotter/write_html.h>
+#include <plotly_plotter/write_png.h>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_config.h"
@@ -131,20 +131,24 @@ auto main() -> int {
         gcv_value_vec(i) = gcv_value;
     }
 
-    pybind11::scoped_interpreter interpreter;
-    auto pd = pybind11::module::import("pandas");
-    auto px = pybind11::module::import("plotly.express");
-
     const std::string param_key = "Regularization parameter";
     const std::string value_key = "Value of Objective Function in GCV";
-    std::unordered_map<std::string, pybind11::object> plot_data;
-    plot_data.try_emplace(param_key, pybind11::cast(param_vec));
-    plot_data.try_emplace(value_key, pybind11::cast(gcv_value_vec));
+    plotly_plotter::data_table plot_data;
+    plot_data.emplace(
+        param_key, std::vector<double>(param_vec.begin(), param_vec.end()));
+    plot_data.emplace(value_key,
+        std::vector<double>(gcv_value_vec.begin(), gcv_value_vec.end()));
 
-    auto fig = px.attr("line")(pybind11::arg("data_frame") = plot_data,
-        pybind11::arg("x") = param_key, pybind11::arg("y") = value_key,
-        pybind11::arg("log_x") = true, pybind11::arg("log_y") = true);
+    auto fig = plotly_plotter::figure_builders::line(plot_data)
+                   .x(param_key)
+                   .y(value_key)
+                   .log_x(true)
+                   .log_y(true)
+                   .title("GCV for FISTA")
+                   .create();
 
-    fig.attr("write_html")("plot_gcv_with_fista.html");
-    fig.attr("write_image")("plot_gcv_with_fista.png");
+    plotly_plotter::write_html("plot_gcv_with_fista.html", fig);
+    if (plotly_plotter::is_png_supported()) {
+        plotly_plotter::write_png("plot_gcv_with_fista.png", fig);
+    }
 }

@@ -28,9 +28,11 @@
 #include <Eigen/Core>
 #include <Eigen/IterativeLinearSolvers>
 #include <Eigen/SparseCore>
-#include <pybind11/eigen.h>  // IWYU pragma: keep
-#include <pybind11/embed.h>
-#include <pybind11/pybind11.h>
+#include <plotly_plotter/color_scales.h>
+#include <plotly_plotter/eigen.h>
+#include <plotly_plotter/figure.h>
+#include <plotly_plotter/write_html.h>
+#include <plotly_plotter/write_png.h>
 #include <toml++/toml.h>
 
 #include "num_collect/base/index_type.h"
@@ -134,87 +136,85 @@ static auto make_right_vec(
 
 static auto plot_result(const vec_type& expected, const vec_type& actual,
     num_collect::index_type grid_size) {
-    auto plotly_subplots = pybind11::module::import("plotly.subplots");
-    auto plotly_graph_objects =
-        pybind11::module::import("plotly.graph_objects");
-
-    auto fig = plotly_subplots.attr("make_subplots")(
-        pybind11::arg("rows") = 1, pybind11::arg("cols") = 2);
+    plotly_plotter::figure figure;
 
     const Eigen::MatrixXd expected_mat =
         expected.reshaped(grid_size - 1, grid_size - 1);
     const Eigen::MatrixXd actual_mat =
         actual.reshaped(grid_size - 1, grid_size - 1);
 
-    fig.attr("add_trace")(
-        plotly_graph_objects.attr("Heatmap")(pybind11::arg("z") = expected_mat,
-            pybind11::arg("coloraxis") = "coloraxis"),
-        pybind11::arg("row") = 1, pybind11::arg("col") = 1);
+    auto heatmap = figure.add_heatmap();
+    heatmap.z(expected_mat);
+    heatmap.xaxis("x");
+    heatmap.yaxis("y");
+    heatmap.color_axis("coloraxis");
 
-    fig.attr("add_trace")(
-        plotly_graph_objects.attr("Heatmap")(pybind11::arg("z") = actual_mat,
-            pybind11::arg("coloraxis") = "coloraxis"),
-        pybind11::arg("row") = 1, pybind11::arg("col") = 2);
+    heatmap = figure.add_heatmap();
+    heatmap.z(actual_mat);
+    heatmap.xaxis("x2");
+    heatmap.yaxis("y");
+    heatmap.color_axis("coloraxis");
 
-    fig.attr("write_html")("laplacian_2d_grid.html");
-    fig.attr("write_image")("laplacian_2d_grid.png");
+    figure.layout().grid().rows(1);
+    figure.layout().grid().columns(2);
+    figure.layout().grid().pattern("coupled");
+
+    figure.layout().yaxis(2).matches("y");
+    figure.layout().color_axis().color_scale(
+        plotly_plotter::color_scales::autumn());
+
+    plotly_plotter::write_html("laplacian_2d_grid.html", figure);
+    if (plotly_plotter::is_png_supported()) {
+        plotly_plotter::write_png("laplacian_2d_grid.png", figure);
+    }
 }
 
 auto main(int argc, char** argv) -> int {
-    pybind11::scoped_interpreter interpreter;
-
-    try {
-        std::string_view config_filepath =
-            "examples/linear/laplacian_2d_grid.toml";
-        if (argc == 2) {
-            config_filepath = argv[1];  // NOLINT
-        }
-        num_collect::logging::load_logging_config_file(
-            std::string(config_filepath));
-        num_collect::logging::logger logger;
-
-        const auto config_table = toml::parse_file(config_filepath);
-        const auto grid_size =
-            config_table.at_path("laplacian_2d_grid.grid_size")
-                .value<num_collect::index_type>()
-                .value();
-        logger.info()("Grid size: {} x {}", grid_size, grid_size);
-
-        const double grid_width = region_size / static_cast<double>(grid_size);
-        logger.info()("Grid width: {}", grid_width);
-
-        grid_type grid{grid_size - 1, grid_size - 1, grid_width};
-        logger.info()("Generated grid.");
-
-        vec_type expected_sol(grid.mat_size());
-        for (num_collect::index_type xi = 0; xi < grid_size - 1; ++xi) {
-            const double x =
-                static_cast<double>(xi + 1) / static_cast<double>(grid_size);
-            for (num_collect::index_type yi = 0; yi < grid_size - 1; ++yi) {
-                const double y = static_cast<double>(yi + 1) /
-                    static_cast<double>(grid_size);
-                const num_collect::index_type i = grid.index(xi, yi);
-                expected_sol(i) = expected_function(x, y);
-            }
-        }
-
-        const vec_type right_vec = make_right_vec(grid_size, grid);
-
-        logger.info()("Start preparation.");
-        Eigen::ConjugateGradient<mat_type, Eigen::Upper | Eigen::Lower> solver;
-        solver.compute(grid.mat());
-        logger.info()("Start to solve.");
-        const vec_type sol = solver.solve(right_vec);
-        logger.info()("Finished to solve.");
-
-        const double max_err = (sol - expected_sol).cwiseAbs().maxCoeff();
-        logger.info()("Maximum error: {}", max_err);
-
-        plot_result(expected_sol, sol, grid_size);
-
-        return 0;
-    } catch (const std::exception& e) {
-        std::cerr << "Exception: " << e.what() << std::endl;
-        return 1;
+    std::string_view config_filepath = "examples/linear/laplacian_2d_grid.toml";
+    if (argc == 2) {
+        config_filepath = argv[1];  // NOLINT
     }
+    num_collect::logging::load_logging_config_file(
+        std::string(config_filepath));
+    num_collect::logging::logger logger;
+
+    const auto config_table = toml::parse_file(config_filepath);
+    const auto grid_size = config_table.at_path("laplacian_2d_grid.grid_size")
+                               .value<num_collect::index_type>()
+                               .value();
+    logger.info()("Grid size: {} x {}", grid_size, grid_size);
+
+    const double grid_width = region_size / static_cast<double>(grid_size);
+    logger.info()("Grid width: {}", grid_width);
+
+    grid_type grid{grid_size - 1, grid_size - 1, grid_width};
+    logger.info()("Generated grid.");
+
+    vec_type expected_sol(grid.mat_size());
+    for (num_collect::index_type xi = 0; xi < grid_size - 1; ++xi) {
+        const double x =
+            static_cast<double>(xi + 1) / static_cast<double>(grid_size);
+        for (num_collect::index_type yi = 0; yi < grid_size - 1; ++yi) {
+            const double y =
+                static_cast<double>(yi + 1) / static_cast<double>(grid_size);
+            const num_collect::index_type i = grid.index(xi, yi);
+            expected_sol(i) = expected_function(x, y);
+        }
+    }
+
+    const vec_type right_vec = make_right_vec(grid_size, grid);
+
+    logger.info()("Start preparation.");
+    Eigen::ConjugateGradient<mat_type, Eigen::Upper | Eigen::Lower> solver;
+    solver.compute(grid.mat());
+    logger.info()("Start to solve.");
+    const vec_type sol = solver.solve(right_vec);
+    logger.info()("Finished to solve.");
+
+    const double max_err = (sol - expected_sol).cwiseAbs().maxCoeff();
+    logger.info()("Maximum error: {}", max_err);
+
+    plot_result(expected_sol, sol, grid_size);
+
+    return 0;
 }

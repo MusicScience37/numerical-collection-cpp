@@ -89,6 +89,10 @@ if(NUM_COLLECT_BUILD_EXAMPLES)
     add_library(pngpp::pngpp ALIAS pngpp_pngpp)
 endif()
 
+if(NUM_COLLECT_BUILD_EXAMPLES OR NUM_COLLECT_TESTING)
+    find_package(cpp-plotly-plotter REQUIRED)
+endif()
+
 # ##############################################################################
 # Import modules for configurations
 # ##############################################################################
@@ -116,16 +120,6 @@ find_program(
     NO_DEFAULT_PATH)
 if(PYTHON_EXECUTABLE AND POETRY_EXECUTABLE)
     message(STATUS "Found Python: ${PYTHON_EXECUTABLE}")
-    execute_process(
-        COMMAND "${POETRY_EXECUTABLE}" run pybind11-config --cmakedir
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        OUTPUT_VARIABLE pybind11_DIR
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-    if(NUM_COLLECT_TESTING OR NUM_COLLECT_BUILD_EXAMPLES)
-        set(Python_EXECUTABLE ${PYTHON_EXECUTABLE})
-        find_package(Python REQUIRED COMPONENTS Interpreter Development)
-        find_package(pybind11 REQUIRED)
-    endif()
 else()
     message(STATUS "Python not found for Python interface")
 endif()

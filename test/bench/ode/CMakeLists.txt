@@ -6,7 +6,7 @@ macro(add_bench_ode PROBLEM)
     add_executable(
         num_collect_bench_ode_${PROBLEM} ${PROBLEM}_test.cpp diagram_common.cpp
                                          fixed_step_bench_executor.cpp)
-    add_bench_using_pybind11(num_collect_bench_ode_${PROBLEM})
+    target_add_custom_benchmark(num_collect_bench_ode_${PROBLEM})
 endmacro()
 
 add_bench_ode(exponential)

@@ -23,13 +23,13 @@
 #include <iostream>
 #include <random>
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 #include <Eigen/Core>
-#include <pybind11/embed.h>
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>  // IWYU pragma: keep
+#include <plotly_plotter/data_table.h>
+#include <plotly_plotter/figure_builders/line.h>
+#include <plotly_plotter/write_html.h>
+#include <plotly_plotter/write_png.h>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/regularization/explicit_l_curve.h"
@@ -78,6 +78,7 @@ auto main() -> int {
 
     // plot graphs
     std::vector<double> param_list;
+    std::vector<double> param_per_value_list;
     std::vector<std::string> type_list;
     std::vector<double> value_list;
     std::vector<double> residual_norm_list;
@@ -88,56 +89,70 @@ auto main() -> int {
         const double rate =
             static_cast<double>(i) / static_cast<double>(num_samples - 1);
         const double param = min_param * std::pow(max_param / min_param, rate);
+        param_list.push_back(param);
 
         const double residual_norm = tikhonov.residual_norm(param);
-        param_list.push_back(param);
+        param_per_value_list.push_back(param);
         type_list.emplace_back("residual norm");
         value_list.push_back(residual_norm);
         residual_norm_list.push_back(residual_norm);
 
         const double regularization_term = tikhonov.regularization_term(param);
-        param_list.push_back(param);
+        param_per_value_list.push_back(param);
         type_list.emplace_back("regularization term");
         value_list.push_back(regularization_term);
         regularization_term_list.push_back(regularization_term);
 
         const double curvature_value = tikhonov.l_curve_curvature(param);
-        param_list.push_back(param);
+        param_per_value_list.push_back(param);
         type_list.emplace_back("curvature");
         value_list.push_back(curvature_value);
 
         tikhonov.solve(param, solution);
         const double error = (solution - prob.solution()).squaredNorm() /
             prob.solution().squaredNorm();
-        param_list.push_back(param);
+        param_per_value_list.push_back(param);
         type_list.emplace_back("error rate");
         value_list.push_back(error);
     }
 
-    pybind11::scoped_interpreter interpreter;
-    auto pd = pybind11::module::import("pandas");
-    auto px = pybind11::module::import("plotly.express");
+    {
+        plotly_plotter::data_table data;
+        data.emplace("Regularization Parameter", param_per_value_list);
+        data.emplace("Value Type", type_list);
+        data.emplace("Value", value_list);
 
-    std::unordered_map<std::string, pybind11::object> data;
-    data.try_emplace("param", pybind11::cast(param_list));
-    data.try_emplace("type", pybind11::cast(type_list));
-    data.try_emplace("value", pybind11::cast(value_list));
+        const auto fig =
+            plotly_plotter::figure_builders::line(data)
+                .x("Regularization Parameter")
+                .y("Value")
+                .group("Value Type")
+                .log_x(true)
+                .log_y(true)
+                .title("Values of L-curve in Tikhonov Regularization")
+                .create();
 
-    auto fig = px.attr("line")(pybind11::arg("data_frame") = data,
-        pybind11::arg("x") = "param", pybind11::arg("y") = "value",
-        pybind11::arg("color") = "type", pybind11::arg("log_x") = true,
-        pybind11::arg("log_y") = true);
+        plotly_plotter::write_html("blur_sine_tikhonov_values.html", fig);
+        plotly_plotter::write_png("blur_sine_tikhonov_values.png", fig);
+    }
+    {
+        plotly_plotter::data_table data;
+        data.emplace("Regularization Parameter", param_list);
+        data.emplace("Residual Norm", residual_norm_list);
+        data.emplace("Regularization Term", regularization_term_list);
 
-    fig.attr("write_html")("blur_sine_tikhonov_norms.html");
-    fig.attr("write_image")("blur_sine_tikhonov_norms.png");
+        const auto fig = plotly_plotter::figure_builders::line(data)
+                             .x("Residual Norm")
+                             .y("Regularization Term")
+                             .hover_data({"Regularization Parameter"})
+                             .log_x(true)
+                             .log_y(true)
+                             .title("L-curve in Tikhonov Regularization")
+                             .create();
 
-    fig = px.attr("line")(pybind11::arg("x") = residual_norm_list,
-        pybind11::arg("y") = regularization_term_list,
-        pybind11::arg("title") = "L-curve", pybind11::arg("log_x") = true,
-        pybind11::arg("log_y") = true,
-        pybind11::arg("labels") = std::unordered_map<std::string, std::string>{
-            {"x", "Residual Norm"}, {"y", "Regularization Term"}});
-
-    fig.attr("write_html")("blur_sine_tikhonov_l_curve.html");
-    fig.attr("write_image")("blur_sine_tikhonov_l_curve.png");
+        plotly_plotter::write_html("blur_sine_tikhonov_l_curve.html", fig);
+        if (plotly_plotter::is_png_supported()) {
+            plotly_plotter::write_png("blur_sine_tikhonov_l_curve.png", fig);
+        }
+    }
 }

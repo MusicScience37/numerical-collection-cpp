@@ -25,10 +25,10 @@
 
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
-#include <pybind11/eigen.h>  // IWYU pragma: keep
-#include <pybind11/embed.h>
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>  // IWYU pragma: keep
+#include <plotly_plotter/data_table.h>
+#include <plotly_plotter/figure_builders/line.h>
+#include <plotly_plotter/write_html.h>
+#include <plotly_plotter/write_png.h>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/logger.h"
@@ -128,24 +128,22 @@ auto main() -> int {
         regularization_term_list.push_back(regularization_term);
     }
 
-    pybind11::scoped_interpreter interpreter;
-    auto pd = pybind11::module::import("pandas");
-    auto px = pybind11::module::import("plotly.express");
+    plotly_plotter::data_table plot_data;
+    plot_data.emplace("Regularization Parameter", param_list);
+    plot_data.emplace("Residual Norm", residual_norm_list);
+    plot_data.emplace("Regularization Term", regularization_term_list);
 
-    std::unordered_map<std::string, pybind11::object> plot_data;
-    plot_data.try_emplace(
-        "Regularization Parameter", pybind11::cast(param_list));
-    plot_data.try_emplace("Residual Norm", pybind11::cast(residual_norm_list));
-    plot_data.try_emplace(
-        "Regularization Term", pybind11::cast(regularization_term_list));
+    auto fig = plotly_plotter::figure_builders::line(plot_data)
+                   .x("Residual Norm")
+                   .y("Regularization Term")
+                   .title("L-curve")
+                   .log_x(true)
+                   .log_y(true)
+                   .hover_data({"Regularization Parameter"})
+                   .create();
 
-    auto fig = px.attr("line")(plot_data, pybind11::arg("x") = "Residual Norm",
-        pybind11::arg("y") = "Regularization Term",
-        pybind11::arg("title") = "L-curve", pybind11::arg("log_x") = true,
-        pybind11::arg("log_y") = true,
-        pybind11::arg("hover_data") =
-            std::vector<std::string>{"Regularization Parameter"});
-
-    fig.attr("write_html")("plot_l_curve_with_fista.html");
-    fig.attr("write_image")("plot_l_curve_with_fista.png");
+    plotly_plotter::write_html("plot_l_curve_with_fista.html", fig);
+    if (plotly_plotter::is_png_supported()) {
+        plotly_plotter::write_png("plot_l_curve_with_fista.png", fig);
+    }
 }

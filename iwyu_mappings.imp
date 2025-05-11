@@ -76,11 +76,6 @@
   # Custom (trompeloeil)
   { include: ["<trompeloeil.hpp>", private, "\"trompeloeil_catch2.h\"", public ] },
   { include: ["<trompeloeil/mock.hpp>", private, "\"trompeloeil_catch2.h\"", public ] },
-  # Custom (Pybind11)
-  { include: ["<cast.h>", private, "<pybind11/pybind11.h>", public ] },
-  { include: ["<pytypes.h>", private, "<pybind11/pybind11.h>", public ] },
-  { include: ["<pybind11/cast.h>", private, "<pybind11/pybind11.h>", public ] },
-  { include: ["<pybind11/pytypes.h>", private, "<pybind11/pybind11.h>", public ] },
   # Custom (lyra)
   { include: ["<lyra/cli.hpp>", private, "<lyra/lyra.hpp>", public ] },
   { include: ["<lyra/opt.hpp>", private, "<lyra/lyra.hpp>", public ] },

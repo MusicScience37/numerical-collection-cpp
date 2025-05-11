@@ -15,6 +15,7 @@ target_link_libraries(
            $<BUILD_INTERFACE:num_collect_cpp_warnings>
            $<BUILD_INTERFACE:num_collect_cpp_flags>)
 target_compile_features(num_collect PUBLIC cxx_std_20)
+target_add_ausan(num_collect)
 
 set_target_properties(
     num_collect
