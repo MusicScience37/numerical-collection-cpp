@@ -34,22 +34,6 @@ function(target_add_to_benchmark TARGET)
     endif()
 endfunction()
 
-function(add_bench_using_pybind11 TARGET)
-    if(PYTHON_EXECUTABLE)
-        target_link_libraries(
-            ${TARGET}
-            PRIVATE num_collect num_prob_collect num_collect_test_utils
-                    num_collect_bench_common pybind11::embed)
-        if(NUM_COLLECT_TEST_BENCHMARKS)
-            add_test(
-                NAME ${TARGET}
-                COMMAND ${POETRY_EXECUTABLE} run $<TARGET_FILE:${TARGET}>
-                        ${NUM_COLLECT_BENCH_DIR}
-                WORKING_DIRECTORY ${NUM_COLLECT_SOURCE_DIR})
-        endif()
-    endif()
-endfunction()
-
 add_subdirectory(util)
 add_subdirectory(logging)
 add_subdirectory(linear)
