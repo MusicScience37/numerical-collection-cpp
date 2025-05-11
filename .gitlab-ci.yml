@@ -128,14 +128,12 @@ spell check:
     CCACHE_MAXSIZE: 1G
     VCPKG_DEFAULT_BINARY_CACHE: ${CI_PROJECT_DIR}/.vcpkg-cache
     POETRY_CACHE_DIR: ${CI_PROJECT_DIR}/.poetry-cache
-    PLAYWRIGHT_BROWSERS_PATH: ${CI_PROJECT_DIR}/.playwright
   before_script:
     - poetry config virtualenvs.in-project true
     - poetry env use 3.13
     - poetry install
     - mkdir -p $VCPKG_DEFAULT_BINARY_CACHE
     - mkdir $BUILD_DIR
-    - poetry run playwright install --only-shell --with-deps chromium
   script:
     - poetry run python ./scripts/ci_linux_test.py
       --compiler_type $COMPILER_TYPE --test_type $TEST_TYPE --build_dir $BUILD_DIR
