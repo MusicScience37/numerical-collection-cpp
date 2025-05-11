@@ -96,7 +96,9 @@ void fixed_step_bench_executor::write_result(std::string_view problem_name,
         std::filesystem::path(base_name).parent_path());
 
     plotly_plotter::write_html(fmt::format("{}_err.html", base_name), fig);
-    plotly_plotter::write_png(fmt::format("{}_err.png", base_name), fig);
+    if (plotly_plotter::is_png_supported()) {
+        plotly_plotter::write_png(fmt::format("{}_err.png", base_name), fig);
+    }
 
     fig = plotly_plotter::figure_builders::line(data)
               .x(time_key)
@@ -113,8 +115,10 @@ void fixed_step_bench_executor::write_result(std::string_view problem_name,
 
     plotly_plotter::write_html(
         fmt::format("{}_energy_change.html", base_name), fig);
-    plotly_plotter::write_png(
-        fmt::format("{}_energy_change.png", base_name), fig);
+    if (plotly_plotter::is_png_supported()) {
+        plotly_plotter::write_png(
+            fmt::format("{}_energy_change.png", base_name), fig);
+    }
 
     this->logger().info()("Wrote results to {}.", base_name);
 

@@ -99,7 +99,9 @@ public:
             std::filesystem::path(base_name).parent_path());
 
         plotly_plotter::write_html(fmt::format("{}.html", base_name), fig);
-        plotly_plotter::write_png(fmt::format("{}.png", base_name), fig);
+        if (plotly_plotter::is_png_supported()) {
+            plotly_plotter::write_png(fmt::format("{}.png", base_name), fig);
+        }
 
         this->logger().info()("Wrote results to {}.", base_name);
     }
