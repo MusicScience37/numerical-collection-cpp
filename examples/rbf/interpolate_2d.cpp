@@ -29,7 +29,6 @@
 #include <plotly_plotter/figure.h>
 #include <plotly_plotter/figure_builders/scatter.h>
 #include <plotly_plotter/write_html.h>
-#include <plotly_plotter/write_png.h>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/rbf/distance_functions/euclidean_distance_function.h"

@@ -148,5 +148,7 @@ auto main() -> int {
                    .create();
 
     plotly_plotter::write_html("plot_gcv_with_fista.html", fig);
-    plotly_plotter::write_png("plot_gcv_with_fista.png", fig);
+    if (plotly_plotter::is_png_supported()) {
+        plotly_plotter::write_png("plot_gcv_with_fista.png", fig);
+    }
 }

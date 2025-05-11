@@ -157,7 +157,9 @@ static void set_layout(plotly_plotter::figure& fig) {
 
 static void save(plotly_plotter::figure& fig, std::string_view name) {
     plotly_plotter::write_html(fmt::format("rbf_{}.html", name), fig);
-    plotly_plotter::write_png(fmt::format("rbf_{}.png", name), fig);
+    if (plotly_plotter::is_png_supported()) {
+        plotly_plotter::write_png(fmt::format("rbf_{}.png", name), fig);
+    }
 }
 
 auto main() -> int {

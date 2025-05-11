@@ -64,5 +64,7 @@ auto main(int argc, char** argv) -> int {
             .create();
 
     plotly_plotter::write_html("2d_halton_nodes.html", figure);
-    plotly_plotter::write_png("2d_halton_nodes.png", figure);
+    if (plotly_plotter::is_png_supported()) {
+        plotly_plotter::write_png("2d_halton_nodes.png", figure);
+    }
 }

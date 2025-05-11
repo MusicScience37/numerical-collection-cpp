@@ -151,6 +151,8 @@ auto main() -> int {
                              .create();
 
         plotly_plotter::write_html("blur_sine_tikhonov_l_curve.html", fig);
-        plotly_plotter::write_png("blur_sine_tikhonov_l_curve.png", fig);
+        if (plotly_plotter::is_png_supported()) {
+            plotly_plotter::write_png("blur_sine_tikhonov_l_curve.png", fig);
+        }
     }
 }
