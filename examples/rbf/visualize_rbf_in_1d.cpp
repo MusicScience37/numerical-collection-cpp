@@ -18,17 +18,15 @@
  * \brief Example to visualize RBFs used in interpolation in 1D.
  */
 #include <cstdio>
-#include <exception>
 #include <string_view>
-#include <utility>
 #include <vector>
 
 #include <Eigen/Core>
 #include <fmt/format.h>
-#include <pybind11/eigen.h>  // IWYU pragma: keep
-#include <pybind11/embed.h>
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>  // IWYU pragma: keep
+#include <plotly_plotter/eigen.h>
+#include <plotly_plotter/figure.h>
+#include <plotly_plotter/write_html.h>
+#include <plotly_plotter/write_png.h>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
@@ -44,21 +42,19 @@ static constexpr std::size_t line_points = 101;
 using interpolator_type =
     num_collect::rbf::global_rbf_interpolator<double(double)>;
 
-static void plot_sample_points(const pybind11::object& fig,
-    const pybind11::module& go, const std::vector<double>& sample_point_x_list,
+static void plot_sample_points(plotly_plotter::figure& fig,
+    const std::vector<double>& sample_point_x_list,
     const Eigen::VectorXd& sample_point_y_list) {
-    fig.attr("add_trace")(
-        go.attr("Scatter")(pybind11::arg("x") = sample_point_x_list,
-            pybind11::arg("y") = sample_point_y_list,
-            pybind11::arg("mode") = "markers",
-            pybind11::arg("marker") =
-                pybind11::dict(pybind11::arg("color") = "#66F",
-                    // NOLINTNEXTLINE
-                    pybind11::arg("size") = 10)));
+    auto trace = fig.add_scatter();
+    trace.x(sample_point_x_list);
+    trace.y(sample_point_y_list);
+    trace.mode("markers");
+    trace.marker().color("#66F");
+    trace.marker().size(10);  // NOLINT(*-magic-numbers)
 }
 
-static void plot_rbfs_without_coeffs(const pybind11::object& fig,
-    const pybind11::module& go, const interpolator_type& interpolator,
+static void plot_rbfs_without_coeffs(plotly_plotter::figure& fig,
+    const interpolator_type& interpolator,
     const std::vector<double>& sample_point_x_list) {
     const double length_parameter =
         interpolator.length_parameter_calculator().length_parameter_at(0);
@@ -81,15 +77,16 @@ static void plot_rbfs_without_coeffs(const pybind11::object& fig,
         }
     }
     for (const auto& y_list : y_list_list) {
-        fig.attr("add_trace")(go.attr("Scatter")(pybind11::arg("x") = x_list,
-            pybind11::arg("y") = y_list, pybind11::arg("mode") = "lines",
-            pybind11::arg("line") =
-                pybind11::dict(pybind11::arg("color") = "#2A2")));
+        auto trace = fig.add_scatter();
+        trace.x(x_list);
+        trace.y(y_list);
+        trace.mode("lines");
+        trace.color("#2A2");
     }
 }
 
-static void plot_rbfs_with_coeffs(const pybind11::object& fig,
-    const pybind11::module& go, const interpolator_type& interpolator,
+static void plot_rbfs_with_coeffs(plotly_plotter::figure& fig,
+    const interpolator_type& interpolator,
     const std::vector<double>& sample_point_x_list) {
     const double length_parameter =
         interpolator.length_parameter_calculator().length_parameter_at(0);
@@ -114,15 +111,16 @@ static void plot_rbfs_with_coeffs(const pybind11::object& fig,
         }
     }
     for (const auto& y_list : y_list_list) {
-        fig.attr("add_trace")(go.attr("Scatter")(pybind11::arg("x") = x_list,
-            pybind11::arg("y") = y_list, pybind11::arg("mode") = "lines",
-            pybind11::arg("line") =
-                pybind11::dict(pybind11::arg("color") = "#2A2")));
+        auto trace = fig.add_scatter();
+        trace.x(x_list);
+        trace.y(y_list);
+        trace.mode("lines");
+        trace.color("#2A2");
     }
 }
 
-static void plot_interpolated_curve(const pybind11::object& fig,
-    const pybind11::module& go, const interpolator_type& interpolator) {
+static void plot_interpolated_curve(
+    plotly_plotter::figure& fig, const interpolator_type& interpolator) {
     std::vector<double> x_list;
     std::vector<double> y_list;
     x_list.reserve(line_points);
@@ -134,92 +132,77 @@ static void plot_interpolated_curve(const pybind11::object& fig,
         x_list.push_back(x);
         y_list.push_back(y);
     }
-    fig.attr("add_trace")(go.attr("Scatter")(pybind11::arg("x") = x_list,
-        pybind11::arg("y") = y_list, pybind11::arg("mode") = "lines",
-        pybind11::arg("line") =
-            pybind11::dict(pybind11::arg("color") = "#E53")));
+    auto trace = fig.add_scatter();
+    trace.x(x_list);
+    trace.y(y_list);
+    trace.mode("lines");
+    trace.color("#E53");
 }
 
-static void set_layout(const pybind11::object& fig) {
-    // cspell: ignore showlegend,xaxes,yaxes,showticklabels,showline,linecolor,linewidth
-    fig.attr("update_layout")(pybind11::arg("xaxis_title") = "x",
-        pybind11::arg("yaxis_title") = "y",
-        pybind11::arg("xaxis_range") = std::make_pair(0.0, x_max),
-        pybind11::arg("yaxis_range") = std::make_pair(y_min, y_max),
-        pybind11::arg("plot_bgcolor") = "white",
-        pybind11::arg("showlegend") = false);
-    fig.attr("update_xaxes")(pybind11::arg("showticklabels") = false,
-        pybind11::arg("showline") = true, pybind11::arg("linecolor") = "black",
-        pybind11::arg("linewidth") = 2);
-    fig.attr("update_yaxes")(pybind11::arg("showticklabels") = false,
-        pybind11::arg("showline") = true, pybind11::arg("linecolor") = "black",
-        pybind11::arg("linewidth") = 2);
+static void set_layout(plotly_plotter::figure& fig) {
+    fig.x_title("x");
+    fig.y_title("y");
+    fig.layout().xaxis().range(0.0, x_max);
+    fig.layout().yaxis().range(y_min, y_max);
+    fig.layout().show_legend(false);
+    fig.layout().xaxis().show_tick_labels(false);
+    fig.layout().xaxis().show_line(true);
+    fig.layout().xaxis().line_color("black");
+    fig.layout().yaxis().show_tick_labels(false);
+    fig.layout().yaxis().show_line(true);
+    fig.layout().yaxis().line_color("black");
+    // TODO set background color to white
+    // TODO set line width to 2
 }
 
-static void save(const pybind11::object& fig, std::string_view name) {
-    fig.attr("write_image")(fmt::format("rbf_{}.png", name));
+static void save(plotly_plotter::figure& fig, std::string_view name) {
+    plotly_plotter::write_html(fmt::format("rbf_{}.html", name), fig);
+    plotly_plotter::write_png(fmt::format("rbf_{}.png", name), fig);
 }
 
 auto main() -> int {
-    pybind11::scoped_interpreter interpreter;
-    try {
-        pybind11::module::import("pandas");
-        auto px = pybind11::module::import("plotly.express");
-        auto go = pybind11::module::import("plotly.graph_objects");
+    const auto sample_point_x_list = std::vector<double>{1.0, 4.0, 9.0};
+    const auto sample_point_y_list = Eigen::VectorXd{{3.0, 4.0, 2.0}};
 
-        const auto sample_point_x_list = std::vector<double>{1.0, 4.0, 9.0};
-        const auto sample_point_y_list = Eigen::VectorXd{{3.0, 4.0, 2.0}};
+    {
+        plotly_plotter::figure fig;
+        plot_sample_points(fig, sample_point_x_list, sample_point_y_list);
+        set_layout(fig);
+        save(fig, "sample_points");
+    }
 
-        {
-            auto fig = go.attr("Figure")();
-            plot_sample_points(
-                fig, go, sample_point_x_list, sample_point_y_list);
-            set_layout(fig);
-            save(fig, "sample_points");
-        }
+    interpolator_type interpolator;
+    constexpr double length_parameter_scale = 0.7;
+    interpolator.fix_length_parameter_scale(length_parameter_scale);
+    interpolator.compute(sample_point_x_list, sample_point_y_list);
 
-        interpolator_type interpolator;
-        constexpr double length_parameter_scale = 0.7;
-        interpolator.fix_length_parameter_scale(length_parameter_scale);
-        interpolator.compute(sample_point_x_list, sample_point_y_list);
-
-        {
-            auto fig = go.attr("Figure")();
-            plot_interpolated_curve(fig, go, interpolator);
-            plot_sample_points(
-                fig, go, sample_point_x_list, sample_point_y_list);
-            set_layout(fig);
-            save(fig, "interpolated_curve");
-        }
-        {
-            auto fig = go.attr("Figure")();
-            plot_rbfs_with_coeffs(fig, go, interpolator, sample_point_x_list);
-            plot_interpolated_curve(fig, go, interpolator);
-            plot_sample_points(
-                fig, go, sample_point_x_list, sample_point_y_list);
-            set_layout(fig);
-            save(fig, "interpolated_curve_with_used_rbfs");
-        }
-        {
-            auto fig = go.attr("Figure")();
-            plot_rbfs_with_coeffs(fig, go, interpolator, sample_point_x_list);
-            plot_sample_points(
-                fig, go, sample_point_x_list, sample_point_y_list);
-            set_layout(fig);
-            save(fig, "used_rbfs");
-        }
-        {
-            auto fig = go.attr("Figure")();
-            plot_rbfs_without_coeffs(
-                fig, go, interpolator, sample_point_x_list);
-            plot_sample_points(
-                fig, go, sample_point_x_list, sample_point_y_list);
-            set_layout(fig);
-            save(fig, "plain_rbfs");
-        }
-    } catch (const std::exception& e) {
-        fmt::print(stderr, "Exception thrown: {}\n", e.what());
-        (void)std::fflush(stderr);
-        return 1;
+    {
+        plotly_plotter::figure fig;
+        plot_interpolated_curve(fig, interpolator);
+        plot_sample_points(fig, sample_point_x_list, sample_point_y_list);
+        set_layout(fig);
+        save(fig, "interpolated_curve");
+    }
+    {
+        plotly_plotter::figure fig;
+        plot_rbfs_with_coeffs(fig, interpolator, sample_point_x_list);
+        plot_interpolated_curve(fig, interpolator);
+        plot_sample_points(fig, sample_point_x_list, sample_point_y_list);
+        set_layout(fig);
+        save(fig, "interpolated_curve_with_used_rbfs");
+    }
+    {
+        plotly_plotter::figure fig;
+        plot_rbfs_with_coeffs(fig, interpolator, sample_point_x_list);
+        plot_sample_points(fig, sample_point_x_list, sample_point_y_list);
+        set_layout(fig);
+        save(fig, "used_rbfs");
+    }
+    {
+        plotly_plotter::figure fig;
+        plot_rbfs_without_coeffs(fig, interpolator, sample_point_x_list);
+        plot_sample_points(fig, sample_point_x_list, sample_point_y_list);
+        set_layout(fig);
+        save(fig, "plain_rbfs");
     }
 }
