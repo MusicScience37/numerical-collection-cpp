@@ -148,11 +148,12 @@ static void set_layout(plotly_plotter::figure& fig) {
     fig.layout().xaxis().show_tick_labels(false);
     fig.layout().xaxis().show_line(true);
     fig.layout().xaxis().line_color("black");
+    fig.layout().xaxis().line_width(2.0);  // NOLINT(*-magic-numbers)
     fig.layout().yaxis().show_tick_labels(false);
     fig.layout().yaxis().show_line(true);
     fig.layout().yaxis().line_color("black");
-    // TODO set background color to white
-    // TODO set line width to 2
+    fig.layout().yaxis().line_width(2.0);  // NOLINT(*-magic-numbers)
+    fig.layout().plot_bg_color("#FFFFFF");
 }
 
 static void save(plotly_plotter::figure& fig, std::string_view name) {
