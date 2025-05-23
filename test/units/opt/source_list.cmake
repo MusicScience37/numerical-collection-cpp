@@ -13,7 +13,10 @@ set(SOURCE_FILES
     gaussian_process_optimizer_test.cpp
     golden_section_search_test.cpp
     heuristic_global_optimizer_test.cpp
-    impl/ternary_vector_test.cpp
+    impl/adc_group_test.cpp
+    impl/adc_rectangle_test.cpp
+    impl/adc_sample_dict_test.cpp
+    impl/adc_ternary_vector_test.cpp
     newton_optimizer_test.cpp
     real_value_genetic_optimizer_test.cpp
     sampling_optimizer_test.cpp
