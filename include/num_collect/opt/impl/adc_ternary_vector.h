@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of ternary_vector class.
+ * \brief Definition of adc_ternary_vector class.
  */
 #pragma once
 
@@ -34,9 +34,10 @@
 namespace num_collect::opt::impl {
 
 /*!
- * \brief Class of vectors of ternary floating-point numbers.
+ * \brief Class of vectors of ternary floating-point numbers in \ref
+ * num_collect::opt::adaptive_diagonal_curves.
  */
-class ternary_vector {
+class adc_ternary_vector {
 public:
     //! Type of a digit.
     using digit_type = std::int8_t;
@@ -48,14 +49,14 @@ public:
     /*!
      * \brief Constructor.
      */
-    ternary_vector() = default;
+    adc_ternary_vector() = default;
 
     /*!
      * \brief Constructor.
      *
      * \param[in] dim Number of digits.
      */
-    explicit ternary_vector(index_type dim)
+    explicit adc_ternary_vector(index_type dim)
         : data_(data_type::Zero(dim, init_digits_per_dimensions + 1)) {}
 
     /*!
@@ -139,7 +140,8 @@ public:
      * \param[in] right Right-hand-side object.
      * \return Whether the two object are same.
      */
-    [[nodiscard]] auto operator==(const ternary_vector& right) const -> bool {
+    [[nodiscard]] auto operator==(const adc_ternary_vector& right) const
+        -> bool {
         NUM_COLLECT_ASSERT(data_.rows() == right.data_.rows());
         for (index_type i = 0; i < data_.rows(); ++i) {
             // NOLINTNEXTLINE: false positive
@@ -172,7 +174,8 @@ public:
      * \param[in] right Right-hand-side object.
      * \return Whether the two object are different.
      */
-    [[nodiscard]] auto operator!=(const ternary_vector& right) const -> bool {
+    [[nodiscard]] auto operator!=(const adc_ternary_vector& right) const
+        -> bool {
         return !operator==(right);
     }
 
@@ -221,13 +224,13 @@ namespace std {
 
 /*!
  * \brief Implementation of std::hash for
- * num_collect::opt::impl::ternary_vector.
+ * num_collect::opt::impl::adc_ternary_vector.
  */
 template <>
-class hash<num_collect::opt::impl::ternary_vector> {
+class hash<num_collect::opt::impl::adc_ternary_vector> {
 public:
     //! Type of argument.
-    using argument_type = num_collect::opt::impl::ternary_vector;
+    using argument_type = num_collect::opt::impl::adc_ternary_vector;
 
     //! Type of result.
     using result_type = std::size_t;
