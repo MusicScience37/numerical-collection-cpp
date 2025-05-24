@@ -135,7 +135,7 @@ public:
         -> digit_type {
         NUM_COLLECT_DEBUG_ASSERT(dim < data_.rows());
         NUM_COLLECT_DEBUG_ASSERT(digit < max_digits_at_compile_time);
-        return data_(dim, digit);
+        return data_.coeff(dim, digit);
     }
 
     /*!
@@ -149,7 +149,7 @@ public:
         -> digit_type& {
         NUM_COLLECT_DEBUG_ASSERT(dim < data_.rows());
         NUM_COLLECT_DEBUG_ASSERT(digit < max_digits_at_compile_time);
-        return data_(dim, digit);
+        return data_.coeffRef(dim, digit);
     }
 
     /*!
@@ -171,7 +171,8 @@ public:
         NUM_COLLECT_DEBUG_ASSERT(current_max_digits_ - 1 >= 0);
         NUM_COLLECT_DEBUG_ASSERT(current_max_digits_ - 1 < data_.cols());
         NUM_COLLECT_DEBUG_ASSERT(next_divided_dimension_index_ < data_.rows());
-        data_(next_divided_dimension_index_, current_max_digits_ - 1) = digit;
+        data_.coeffRef(next_divided_dimension_index_, current_max_digits_ - 1) =
+            digit;
         const index_type divided_dimension_index =
             next_divided_dimension_index_;
         next_divided_dimension_index_ =
@@ -216,7 +217,7 @@ public:
         static const Scalar inv_base =
             static_cast<Scalar>(1) / static_cast<Scalar>(3);
         for (index_type i = 0; i < current_max_digits_; ++i) {
-            num += coeff * static_cast<Scalar>(data_(dim, i));
+            num += coeff * static_cast<Scalar>(data_.coeff(dim, i));
             coeff *= inv_base;
         }
         return num;
@@ -248,8 +249,8 @@ public:
         std::size_t res = 0;
         for (index_type i = 0; i < data_.rows(); ++i) {
             for (index_type j = 0; j < data_.cols(); ++j) {
-                res += static_cast<std::size_t>(data_(i, j)) + (res << 1U) +
-                    (res >> 2U);
+                res += static_cast<std::size_t>(data_.coeff(i, j)) +
+                    (res << 1U) + (res >> 2U);
             }
         }
         return res;
