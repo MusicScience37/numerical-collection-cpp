@@ -28,69 +28,103 @@
 #include "num_collect/opt/impl/adc_ternary_vector.h"
 
 TEST_CASE("num_collect::opt::impl::adc_group") {
-    using group_type = num_collect::opt::impl::adc_group<double>;
+    constexpr num_collect::index_type dim = 2;
+    constexpr num_collect::index_type max_digits = 2;
+    using variable_type = Eigen::Vector<double, dim>;
+    using ternary_vector_type =
+        num_collect::opt::impl::adc_ternary_vector<variable_type, max_digits>;
+    using group_type =
+        num_collect::opt::impl::adc_group<double, ternary_vector_type>;
     using rectangle_type = typename group_type::rectangle_type;
-    using num_collect::opt::impl::adc_ternary_vector;
 
     constexpr double dist = 0.1;
     auto group = group_type(dist);
 
     SECTION("construct") {
-        REQUIRE_THAT(group.dist(), Catch::Matchers::WithinRel(dist));
-        REQUIRE(group.empty());
+        CHECK_THAT(group.dist(), Catch::Matchers::WithinRel(dist));
+        CHECK(group.empty());
     }
 
     SECTION("push a rectangle") {
-        auto point1 = adc_ternary_vector(2);
-        point1.push_back(0, 0);
-        point1.push_back(0, 1);
-        point1.push_back(1, 0);
+        auto point1 = ternary_vector_type(dim);
+        point1.push_back(0);
+        point1.push_back(0);
+        point1.push_back(1);
         constexpr double ave_value1 = 3.14;
         group.push(std::make_shared<rectangle_type>(point1, ave_value1));
 
-        REQUIRE(group.min_rect()->vertex() == point1);
-        REQUIRE_FALSE(group.empty());
+        CHECK(group.min_rect()->vertex() == point1);
+        CHECK_FALSE(group.empty());
     }
 
     SECTION("push rectangles") {
-        auto point1 = adc_ternary_vector(2);
-        point1.push_back(0, 0);
-        point1.push_back(0, 1);
-        point1.push_back(1, 0);
+        auto point1 = ternary_vector_type(dim);
+        point1.push_back(0);
+        point1.push_back(0);
+        point1.push_back(1);
         constexpr double ave_value1 = 3.14;
         group.push(std::make_shared<rectangle_type>(point1, ave_value1));
 
-        auto point2 = adc_ternary_vector(2);
-        point2.push_back(0, 0);
-        point2.push_back(1, 0);
+        auto point2 = ternary_vector_type(dim);
+        point2.push_back(0);
+        point2.push_back(0);
+        point2.push_back(0);
         constexpr double ave_value2 = 1.23;
         group.push(std::make_shared<rectangle_type>(point2, ave_value2));
 
-        REQUIRE(group.min_rect()->vertex() == point2);
-        REQUIRE_FALSE(group.empty());
+        CHECK(group.min_rect()->vertex() == point2);
+        CHECK_FALSE(group.empty());
     }
 
     SECTION("pop rectangles") {
-        auto point1 = adc_ternary_vector(2);
-        point1.push_back(0, 0);
-        point1.push_back(0, 1);
-        point1.push_back(1, 0);
+        auto point1 = ternary_vector_type(dim);
+        point1.push_back(0);
+        point1.push_back(0);
+        point1.push_back(1);
         constexpr double ave_value1 = 3.14;
         group.push(std::make_shared<rectangle_type>(point1, ave_value1));
 
-        auto point2 = adc_ternary_vector(2);
-        point2.push_back(0, 0);
-        point2.push_back(1, 0);
+        auto point2 = ternary_vector_type(dim);
+        point2.push_back(0);
+        point2.push_back(0);
+        point2.push_back(0);
         constexpr double ave_value2 = 1.23;
         group.push(std::make_shared<rectangle_type>(point2, ave_value2));
 
         auto popped_rect = group.pop();
-        REQUIRE(popped_rect->vertex() == point2);
-        REQUIRE(group.min_rect()->vertex() == point1);
-        REQUIRE_FALSE(group.empty());
+        CHECK(popped_rect->vertex() == point2);
+        CHECK(group.min_rect()->vertex() == point1);
+        CHECK_FALSE(group.empty());
 
         popped_rect = group.pop();
-        REQUIRE(popped_rect->vertex() == point1);
-        REQUIRE(group.empty());
+        CHECK(popped_rect->vertex() == point1);
+        CHECK(group.empty());
+    }
+
+    SECTION("check whether dividable") {
+        SECTION("empty group") { CHECK_FALSE(group.is_dividable()); }
+
+        SECTION("non-full digits") {
+            auto point1 = ternary_vector_type(dim);
+            point1.push_back(0);
+            point1.push_back(0);
+            point1.push_back(0);
+            constexpr double ave_value1 = 3.14;
+            group.push(std::make_shared<rectangle_type>(point1, ave_value1));
+
+            CHECK(group.is_dividable());
+        }
+
+        SECTION("full digits") {
+            auto point1 = ternary_vector_type(dim);
+            point1.push_back(0);
+            point1.push_back(0);
+            point1.push_back(0);
+            point1.push_back(0);
+            constexpr double ave_value1 = 3.14;
+            group.push(std::make_shared<rectangle_type>(point1, ave_value1));
+
+            CHECK_FALSE(group.is_dividable());
+        }
     }
 }

@@ -25,7 +25,6 @@
 
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/opt/impl/adc_ternary_vector.h"
 #include "num_collect/util/assert.h"
 
 namespace num_collect::opt::impl {
@@ -35,12 +34,16 @@ namespace num_collect::opt::impl {
  * num_collect::opt::adaptive_diagonal_curves.
  *
  * \tparam Value Type of function values.
+ * \tparam TernaryVector Type of ternary vectors.
  */
-template <base::concepts::real_scalar Value>
+template <base::concepts::real_scalar Value, typename TernaryVector>
 class adc_rectangle {
 public:
     //! Type of function values.
     using value_type = Value;
+
+    //! Type of ternary vectors.
+    using ternary_vector_type = TernaryVector;
 
     /*!
      * \brief Constructor.
@@ -49,7 +52,7 @@ public:
      * \param[in] ave_value Average function value.
      */
     adc_rectangle(
-        const impl::adc_ternary_vector& vertex, const value_type& ave_value)
+        const ternary_vector_type& vertex, const value_type& ave_value)
         : vertex_(vertex), ave_value_(ave_value) {}
 
     /*!
@@ -57,7 +60,7 @@ public:
      *
      * \return A vertex with lower first component.
      */
-    [[nodiscard]] auto vertex() const -> const impl::adc_ternary_vector& {
+    [[nodiscard]] auto vertex() const -> const ternary_vector_type& {
         return vertex_;
     }
 
@@ -76,7 +79,7 @@ public:
      * \return Sampling points.
      */
     [[nodiscard]] auto sample_points() const
-        -> std::pair<adc_ternary_vector, adc_ternary_vector> {
+        -> std::pair<ternary_vector_type, ternary_vector_type> {
         return determine_sample_points(vertex_);
     }
 
@@ -104,8 +107,8 @@ public:
      * \return Sampling points.
      */
     [[nodiscard]] static auto determine_sample_points(
-        const adc_ternary_vector& lowest_vertex)
-        -> std::pair<adc_ternary_vector, adc_ternary_vector> {
+        const ternary_vector_type& lowest_vertex)
+        -> std::pair<ternary_vector_type, ternary_vector_type> {
         auto res = std::make_pair(lowest_vertex, lowest_vertex);
         const auto dim = lowest_vertex.dim();
         for (index_type i = 0; i < dim; ++i) {
@@ -113,7 +116,8 @@ public:
             NUM_COLLECT_DEBUG_ASSERT(digits > 0);
             std::uint_fast32_t one_count = 0;
             for (index_type j = 0; j < digits; ++j) {
-                if (lowest_vertex(i, j) == adc_ternary_vector::digit_type{1}) {
+                if (lowest_vertex(i, j) ==
+                    typename ternary_vector_type::digit_type{1}) {
                     ++one_count;
                 }
             }
@@ -124,10 +128,12 @@ public:
             constexpr std::uint_fast32_t odd_mask = 1;
             if ((one_count & odd_mask) == odd_mask) {
                 res.first(i, digits - 1) =
-                    static_cast<adc_ternary_vector::digit_type>(last_digit);
+                    static_cast<typename ternary_vector_type::digit_type>(
+                        last_digit);
             } else {
                 res.second(i, digits - 1) =
-                    static_cast<adc_ternary_vector::digit_type>(last_digit);
+                    static_cast<typename ternary_vector_type::digit_type>(
+                        last_digit);
             }
         }
         normalize_point(res.first);
@@ -141,23 +147,25 @@ private:
      *
      * \param[in,out] point Point.
      */
-    static void normalize_point(adc_ternary_vector& point) {
+    static void normalize_point(ternary_vector_type& point) {
         for (index_type i = 0; i < point.dim(); ++i) {
             for (index_type j = point.digits(i) - 1; j > 0; --j) {
-                if (point(i, j) == adc_ternary_vector::digit_type{3}) {
+                if (point(i, j) ==
+                    typename ternary_vector_type::digit_type{3}) {
                     point(i, j) = 0;
                     std::int_fast32_t temp =
                         point(i, j - 1);  // NOLINT: false positive
                     ++temp;
                     point(i, j - 1) =
-                        static_cast<adc_ternary_vector::digit_type>(temp);
+                        static_cast<typename ternary_vector_type::digit_type>(
+                            temp);
                 }
             }
         }
     }
 
     //! A vertex with lower first component.
-    impl::adc_ternary_vector vertex_;
+    ternary_vector_type vertex_;
 
     //! Average function value.
     value_type ave_value_;

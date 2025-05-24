@@ -35,15 +35,16 @@ namespace num_collect::opt::impl {
  * num_collect::opt::adaptive_diagonal_curves.
  *
  * \tparam Value Type of function values.
+ * \tparam TernaryVector Type of ternary vectors.
  */
-template <base::concepts::real_scalar Value>
+template <base::concepts::real_scalar Value, typename TernaryVector>
 class adc_group {
 public:
     //! Type of function values.
     using value_type = Value;
 
     //! Type of hyper-rectangles.
-    using rectangle_type = adc_rectangle<value_type>;
+    using rectangle_type = adc_rectangle<value_type, TernaryVector>;
 
     //! Type of pointers of hyper-rectangles.
     using rectangle_pointer_type = std::shared_ptr<rectangle_type>;
@@ -94,6 +95,20 @@ public:
         auto rect = rects_.top();
         rects_.pop();
         return rect;
+    }
+
+    /*!
+     * \brief Check whether the hyper-rectangle in this group can be divided.
+     *
+     * \retval true The hyper-rectangle can be divided.
+     * \retval false The hyper-rectangle cannot be divided.
+     */
+    [[nodiscard]] auto is_dividable() const -> bool {
+        if (rects_.empty()) {
+            return false;
+        }
+        const auto& rect = rects_.top();
+        return !rect->vertex().is_full();
     }
 
     /*!

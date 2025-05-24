@@ -29,28 +29,33 @@
 #include "num_collect/opt/impl/adc_ternary_vector.h"
 
 TEST_CASE("num_collect::opt::impl::adc_rectangle") {
-    using rectangle_type = num_collect::opt::impl::adc_rectangle<double>;
-    using num_collect::opt::impl::adc_ternary_vector;
+    constexpr num_collect::index_type dim = 2;
+    constexpr num_collect::index_type max_digits = 3;
+    using variable_type = Eigen::Vector<double, dim>;
+    using ternary_vector_type =
+        num_collect::opt::impl::adc_ternary_vector<variable_type, max_digits>;
+    using rectangle_type =
+        num_collect::opt::impl::adc_rectangle<double, ternary_vector_type>;
 
     SECTION("construct") {
-        auto vertex = adc_ternary_vector(2);
-        vertex.push_back(0, 0);
-        vertex.push_back(0, 1);
-        vertex.push_back(1, 0);
+        auto vertex = ternary_vector_type(dim);
+        vertex.push_back(0);
+        vertex.push_back(0);
+        vertex.push_back(1);
         constexpr double ave_value = 3.14;
         const auto rect = rectangle_type(vertex, ave_value);
 
-        REQUIRE(rect.vertex() == vertex);
-        REQUIRE_THAT(rect.ave_value(), Catch::Matchers::WithinRel(ave_value));
+        CHECK(rect.vertex() == vertex);
+        CHECK_THAT(rect.ave_value(), Catch::Matchers::WithinRel(ave_value));
 
         auto sample_points = std::make_pair(vertex, vertex);
         sample_points.first(0, 1) =
-            static_cast<adc_ternary_vector::digit_type>(2);
+            static_cast<typename ternary_vector_type::digit_type>(2);
         sample_points.second(1, 0) =
-            static_cast<adc_ternary_vector::digit_type>(1);
-        REQUIRE(rect.sample_points() == sample_points);
+            static_cast<typename ternary_vector_type::digit_type>(1);
+        CHECK(rect.sample_points() == sample_points);
 
         const double dist = 0.5 * std::sqrt(1.0 / 9.0 + 1.0);
-        REQUIRE_THAT(rect.dist(), Catch::Matchers::WithinRel(dist));
+        CHECK_THAT(rect.dist(), Catch::Matchers::WithinRel(dist));
     }
 }

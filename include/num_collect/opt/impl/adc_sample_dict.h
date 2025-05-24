@@ -38,8 +38,9 @@ namespace num_collect::opt::impl {
  * num_collect::opt::adaptive_diagonal_curves.
  *
  * \tparam ObjectiveFunction Type of objective function.
+ * \tparam MaxDigits Maximum number of digits per dimension at compile time.
  */
-template <concepts::objective_function ObjectiveFunction>
+template <concepts::objective_function ObjectiveFunction, index_type MaxDigits>
 class adc_sample_dict;
 
 /*!
@@ -47,9 +48,11 @@ class adc_sample_dict;
  * num_collect::opt::adaptive_diagonal_curves.
  *
  * \tparam ObjectiveFunction Type of objective function.
+ * \tparam MaxDigits Maximum number of digits per dimension at compile time.
  */
-template <concepts::multi_variate_objective_function ObjectiveFunction>
-class adc_sample_dict<ObjectiveFunction> {
+template <concepts::multi_variate_objective_function ObjectiveFunction,
+    index_type MaxDigits>
+class adc_sample_dict<ObjectiveFunction, MaxDigits> {
 public:
     //! Type of the objective function.
     using objective_function_type = ObjectiveFunction;
@@ -59,6 +62,9 @@ public:
 
     //! Type of function values.
     using value_type = typename objective_function_type::value_type;
+
+    //! Type of ternary vectors.
+    using ternary_vector_type = adc_ternary_vector<variable_type, MaxDigits>;
 
     /*!
      * \brief Constructor.
@@ -107,7 +113,7 @@ public:
      * \param[in] point Point in the unit hyper-cube.
      * \return Function value.
      */
-    [[nodiscard]] auto operator()(const adc_ternary_vector& point)
+    [[nodiscard]] auto operator()(const ternary_vector_type& point)
         -> value_type {
         return value_dict_.get_or_create_with_factory(
             point, [this, &point] { return evaluate_on(point); });
@@ -133,7 +139,7 @@ public:
      *
      * \return Point in the unit hyper-cube for the current optimal variable.
      */
-    [[nodiscard]] auto opt_point() const -> const adc_ternary_vector& {
+    [[nodiscard]] auto opt_point() const -> const ternary_vector_type& {
         return opt_point_;
     }
 
@@ -160,14 +166,10 @@ private:
      * \param[in] point Point in the unit hyper-cube.
      * \return Function value.
      */
-    [[nodiscard]] auto evaluate_on(const adc_ternary_vector& point)
+    [[nodiscard]] auto evaluate_on(const ternary_vector_type& point)
         -> value_type {
         NUM_COLLECT_DEBUG_ASSERT(point.dim() == dim_);
-        auto var = variable_type(dim_);
-        for (index_type i = 0; i < dim_; ++i) {
-            var(i) = lower_(i) +
-                width_(i) * point.elem_as<typename variable_type::Scalar>(i);
-        }
+        const auto var = point.as_variable(lower_, width_);
         obj_fun_.evaluate_on(var);
 
         if (value_dict_.empty() || obj_fun_.value() < opt_value_) {
@@ -192,12 +194,12 @@ private:
     index_type dim_{0};
 
     //! Dictionary of sampled points.
-    hash_tables::maps::multi_open_address_map_st<impl::adc_ternary_vector,
+    hash_tables::maps::multi_open_address_map_st<ternary_vector_type,
         value_type>
         value_dict_{};
 
     //! Point in the unit hyper-cube for the current optimal variable.
-    adc_ternary_vector opt_point_{};
+    ternary_vector_type opt_point_{};
 
     //! Current optimal variable.
     variable_type opt_variable_{};
