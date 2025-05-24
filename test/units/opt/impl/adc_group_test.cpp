@@ -51,9 +51,9 @@ TEST_CASE("num_collect::opt::impl::adc_group") {
         point1.push_back(0);
         point1.push_back(1);
         constexpr double ave_value1 = 3.14;
-        group.push(std::make_shared<rectangle_type>(point1, ave_value1));
+        group.push(rectangle_type(point1, ave_value1));
 
-        CHECK(group.min_rect()->vertex() == point1);
+        CHECK(group.min_rect().vertex() == point1);
         CHECK_FALSE(group.empty());
     }
 
@@ -63,16 +63,16 @@ TEST_CASE("num_collect::opt::impl::adc_group") {
         point1.push_back(0);
         point1.push_back(1);
         constexpr double ave_value1 = 3.14;
-        group.push(std::make_shared<rectangle_type>(point1, ave_value1));
+        group.push(rectangle_type(point1, ave_value1));
 
         auto point2 = ternary_vector_type(dim);
         point2.push_back(0);
         point2.push_back(0);
         point2.push_back(0);
         constexpr double ave_value2 = 1.23;
-        group.push(std::make_shared<rectangle_type>(point2, ave_value2));
+        group.push(rectangle_type(point2, ave_value2));
 
-        CHECK(group.min_rect()->vertex() == point2);
+        CHECK(group.min_rect().vertex() == point2);
         CHECK_FALSE(group.empty());
     }
 
@@ -82,22 +82,22 @@ TEST_CASE("num_collect::opt::impl::adc_group") {
         point1.push_back(0);
         point1.push_back(1);
         constexpr double ave_value1 = 3.14;
-        group.push(std::make_shared<rectangle_type>(point1, ave_value1));
+        group.push(rectangle_type(point1, ave_value1));
 
         auto point2 = ternary_vector_type(dim);
         point2.push_back(0);
         point2.push_back(0);
         point2.push_back(0);
         constexpr double ave_value2 = 1.23;
-        group.push(std::make_shared<rectangle_type>(point2, ave_value2));
+        group.push(rectangle_type(point2, ave_value2));
 
         auto popped_rect = group.pop();
-        CHECK(popped_rect->vertex() == point2);
-        CHECK(group.min_rect()->vertex() == point1);
+        CHECK(popped_rect.vertex() == point2);
+        CHECK(group.min_rect().vertex() == point1);
         CHECK_FALSE(group.empty());
 
         popped_rect = group.pop();
-        CHECK(popped_rect->vertex() == point1);
+        CHECK(popped_rect.vertex() == point1);
         CHECK(group.empty());
     }
 
@@ -110,7 +110,7 @@ TEST_CASE("num_collect::opt::impl::adc_group") {
             point1.push_back(0);
             point1.push_back(0);
             constexpr double ave_value1 = 3.14;
-            group.push(std::make_shared<rectangle_type>(point1, ave_value1));
+            group.push(rectangle_type(point1, ave_value1));
 
             CHECK(group.is_dividable());
         }
@@ -122,7 +122,7 @@ TEST_CASE("num_collect::opt::impl::adc_group") {
             point1.push_back(0);
             point1.push_back(0);
             constexpr double ave_value1 = 3.14;
-            group.push(std::make_shared<rectangle_type>(point1, ave_value1));
+            group.push(rectangle_type(point1, ave_value1));
 
             CHECK_FALSE(group.is_dividable());
         }

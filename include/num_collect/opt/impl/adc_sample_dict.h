@@ -22,7 +22,7 @@
 #include <cstddef>
 #include <string_view>
 
-#include <hash_tables/maps/multi_open_address_map_st.h>
+#include <hash_tables/maps/open_address_map_st.h>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
@@ -73,10 +73,7 @@ public:
      */
     explicit adc_sample_dict(
         const objective_function_type& obj_fun = objective_function_type())
-        : obj_fun_(obj_fun) {
-        constexpr std::size_t initial_space = 10000;
-        value_dict_.reserve_approx(initial_space);
-    }
+        : obj_fun_(obj_fun) {}
 
     /*!
      * \brief Change the objective function.
@@ -103,6 +100,15 @@ public:
         width_ = upper - lower;
         dim_ = lower.size();
         value_dict_.clear();
+    }
+
+    /*!
+     * \brief Reserve memory for the dictionary.
+     *
+     * \param[in] size Approximate size of the dictionary.
+     */
+    void reserve(index_type size) {
+        value_dict_.reserve(static_cast<std::size_t>(size));
     }
 
     /*!
@@ -194,8 +200,7 @@ private:
     index_type dim_{0};
 
     //! Dictionary of sampled points.
-    hash_tables::maps::multi_open_address_map_st<ternary_vector_type,
-        value_type>
+    hash_tables::maps::open_address_map_st<ternary_vector_type, value_type>
         value_dict_{};
 
     //! Point in the unit hyper-cube for the current optimal variable.

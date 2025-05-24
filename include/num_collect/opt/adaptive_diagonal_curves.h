@@ -25,7 +25,6 @@
 #include <cstdint>
 #include <iterator>
 #include <limits>
-#include <memory>
 #include <string_view>
 #include <utility>
 #include <vector>
@@ -147,6 +146,8 @@ public:
 
         // prec_optimal_value_, prec_optimal_group_index, and
         // iterations_in_current_phase_ are initialized in switch_state().
+
+        value_dict_.reserve(max_evaluations_);
     }
 
     /*!
@@ -327,9 +328,9 @@ private:
         const auto lower_vertex_value = value_dict_(lower_vertex);
         const auto upper_vertex_value = value_dict_(upper_vertex);
         const auto ave_value = half * (lower_vertex_value + upper_vertex_value);
-        const auto rect = std::make_shared<rectangle_type>(point, ave_value);
+        const auto rect = rectangle_type(point, ave_value);
 
-        groups_.emplace_back(rect->dist());
+        groups_.emplace_back(rect.dist());
         groups_.front().push(rect);
         using std::min;
         optimal_value_ = min(lower_vertex_value, upper_vertex_value);
@@ -545,7 +546,7 @@ private:
             optimal_value_ - min_rate_imp_ * abs(optimal_value_);
         for (auto iter = search_rects.begin(); iter != search_rects.end();) {
             const auto& [ind, slope] = *iter;
-            if (groups_[ind].min_rect()->ave_value() -
+            if (groups_[ind].min_rect().ave_value() -
                     slope * groups_[ind].dist() <=
                 value_bound) {
                 ++iter;
@@ -566,8 +567,8 @@ private:
      */
     [[nodiscard]] auto calculate_slope(
         std::size_t group_ind1, std::size_t group_ind2) const -> value_type {
-        return (groups_[group_ind1].min_rect()->ave_value() -
-                   groups_[group_ind2].min_rect()->ave_value()) /
+        return (groups_[group_ind1].min_rect().ave_value() -
+                   groups_[group_ind2].min_rect().ave_value()) /
             (groups_[group_ind1].dist() - groups_[group_ind2].dist());
     }
 
@@ -583,7 +584,8 @@ private:
             return false;
         }
 
-        impl::adc_ternary_vector vertex = groups_[group_ind].pop()->vertex();
+        impl::adc_ternary_vector vertex =
+            std::move(groups_[group_ind].pop().vertex());
 
         const auto [dim, digit] = vertex.push_back(0);
         const auto rect0 = create_rect(vertex, group_ind + 1);
@@ -593,7 +595,7 @@ private:
         const auto rect2 = create_rect(vertex, group_ind + 1);
 
         if (groups_.size() == group_ind + 1) {
-            groups_.emplace_back(rect0->dist());
+            groups_.emplace_back(rect0.dist());
         }
         groups_[group_ind + 1].push(rect0);
         groups_[group_ind + 1].push(rect1);
@@ -610,7 +612,7 @@ private:
      * \return Hyper-rectangle.
      */
     [[nodiscard]] auto create_rect(const ternary_vector_type& vertex,
-        std::size_t group_ind) -> std::shared_ptr<rectangle_type> {
+        std::size_t group_ind) -> rectangle_type {
         const auto [vertex1, vertex2] =
             rectangle_type::determine_sample_points(vertex);
         const auto value1 = value_dict_(vertex1);
@@ -630,7 +632,7 @@ private:
             group_ind > optimal_group_index_) {
             optimal_group_index_ = group_ind;
         }
-        return std::make_shared<rectangle_type>(vertex, ave_value);
+        return rectangle_type(vertex, ave_value);
     }
 
     //! Half.
