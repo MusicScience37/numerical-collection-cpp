@@ -86,4 +86,22 @@ TEST_CASE("num_collect::opt::adaptive_diagonal_curves") {
             eigen_approx(Eigen::VectorXd::Zero(3), sol_tol));
         REQUIRE_THAT(opt.opt_value(), Catch::Matchers::WithinAbs(0.0, sol_tol));
     }
+
+    SECTION("try to solve with small MaxDigits") {
+        auto opt = adaptive_diagonal_curves<multi_quadratic_function, 2>();
+        opt.init(Eigen::VectorXd::Constant(3, -2.0),  // NOLINT
+            Eigen::VectorXd::Constant(3, 2.0));       // NOLINT
+        opt.max_evaluations(1000);                    // NOLINT
+        REQUIRE_NOTHROW(opt.solve());
+        CHECK(opt.last_state() ==
+            adaptive_diagonal_curves<multi_quadratic_function,
+                2>::state_type::non_dividable);
+
+        SECTION("try to iterate further") {
+            REQUIRE_NOTHROW(opt.iterate());
+            CHECK(opt.last_state() ==
+                adaptive_diagonal_curves<multi_quadratic_function,
+                    2>::state_type::non_dividable);
+        }
+    }
 }

@@ -63,7 +63,7 @@ class adaptive_diagonal_curves
           adaptive_diagonal_curves<ObjectiveFunction, MaxDigits>> {
 public:
     //! This class.
-    using this_type = adaptive_diagonal_curves<ObjectiveFunction>;
+    using this_type = adaptive_diagonal_curves<ObjectiveFunction, MaxDigits>;
 
     //! Type of the objective function.
     using objective_function_type = ObjectiveFunction;
@@ -104,6 +104,8 @@ public:
             return "global";
         case state_type::global_last:
             return "global (last)";
+        case state_type::non_dividable:
+            return "non dividable";
         default:
             return "invalid process";
         }
@@ -116,8 +118,7 @@ public:
      */
     explicit adaptive_diagonal_curves(
         const objective_function_type& obj_fun = objective_function_type())
-        : optimizer_base<adaptive_diagonal_curves<ObjectiveFunction>>(
-              adaptive_diagonal_curves_tag),
+        : optimizer_base<this_type>(adaptive_diagonal_curves_tag),
           value_dict_(obj_fun) {}
 
     /*!
