@@ -19,7 +19,6 @@
  */
 #pragma once
 
-#include <memory>
 #include <queue>
 #include <utility>
 #include <vector>
@@ -35,18 +34,16 @@ namespace num_collect::opt::impl {
  * num_collect::opt::adaptive_diagonal_curves.
  *
  * \tparam Value Type of function values.
+ * \tparam TernaryVector Type of ternary vectors.
  */
-template <base::concepts::real_scalar Value>
+template <base::concepts::real_scalar Value, typename TernaryVector>
 class adc_group {
 public:
     //! Type of function values.
     using value_type = Value;
 
     //! Type of hyper-rectangles.
-    using rectangle_type = adc_rectangle<value_type>;
-
-    //! Type of pointers of hyper-rectangles.
-    using rectangle_pointer_type = std::shared_ptr<rectangle_type>;
+    using rectangle_type = adc_rectangle<value_type, TernaryVector>;
 
     /*!
      * \brief Constructor.
@@ -60,18 +57,15 @@ public:
      *
      * \param[in] rect Rectangle.
      */
-    void push(rectangle_pointer_type rect) {
-        NUM_COLLECT_DEBUG_ASSERT(rect);
-        rects_.push(std::move(rect));
-    }
+    void push(rectangle_type rect) { rects_.push(std::move(rect)); }
 
     /*!
      * \brief Access the hyper-rectangle with the smallest average of
      * function values at diagonal vertices.
      *
-     * \return Reference of pointer to the rectangle.
+     * \return Reference to the rectangle.
      */
-    [[nodiscard]] auto min_rect() const -> const rectangle_pointer_type& {
+    [[nodiscard]] auto min_rect() const -> const rectangle_type& {
         NUM_COLLECT_DEBUG_ASSERT(!rects_.empty());
         return rects_.top();
     }
@@ -89,11 +83,25 @@ public:
      *
      * \return Rectangle.
      */
-    [[nodiscard]] auto pop() -> rectangle_pointer_type {
+    [[nodiscard]] auto pop() -> rectangle_type {
         NUM_COLLECT_DEBUG_ASSERT(!rects_.empty());
-        auto rect = rects_.top();
+        auto rect = std::move(rects_.top());
         rects_.pop();
         return rect;
+    }
+
+    /*!
+     * \brief Check whether the hyper-rectangle in this group can be divided.
+     *
+     * \retval true The hyper-rectangle can be divided.
+     * \retval false The hyper-rectangle cannot be divided.
+     */
+    [[nodiscard]] auto is_dividable() const -> bool {
+        if (rects_.empty()) {
+            return false;
+        }
+        const auto& rect = rects_.top();
+        return !rect.vertex().is_full();
     }
 
     /*!
@@ -115,15 +123,15 @@ private:
          * \param[in] right Right-hand-side rectangle.
          * \return Result of left > right.
          */
-        [[nodiscard]] auto operator()(const rectangle_pointer_type& left,
-            const rectangle_pointer_type& right) const -> bool {
-            return left->ave_value() > right->ave_value();
+        [[nodiscard]] auto operator()(const rectangle_type& left,
+            const rectangle_type& right) const -> bool {
+            return left.ave_value() > right.ave_value();
         }
     };
 
     //! Type of queues of rectangles.
-    using queue_type = std::priority_queue<rectangle_pointer_type,
-        std::vector<rectangle_pointer_type>, greater>;
+    using queue_type = std::priority_queue<rectangle_type,
+        std::vector<rectangle_type>, greater>;
 
     //! Rectangles.
     queue_type rects_{};

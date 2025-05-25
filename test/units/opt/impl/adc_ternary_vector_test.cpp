@@ -21,6 +21,7 @@
 
 #include <type_traits>
 
+#include <Eigen/Core>
 #include <catch2/catch_message.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
@@ -30,34 +31,36 @@ TEST_CASE("num_collect::opt::impl::adc_ternary_vector") {
     using num_collect::opt::impl::adc_ternary_vector;
 
     SECTION("basic functions") {
-        using test_type = adc_ternary_vector;
-        STATIC_REQUIRE(std::is_copy_constructible_v<test_type>);
-        STATIC_REQUIRE(std::is_copy_assignable_v<test_type>);
-        STATIC_REQUIRE(std::is_nothrow_move_constructible_v<test_type>);
-        STATIC_REQUIRE(std::is_nothrow_move_assignable_v<test_type>);
+        constexpr num_collect::index_type dim = 4;
+        using variable_type = Eigen::Vector<double, dim>;
+        using ternary_vector_type = adc_ternary_vector<variable_type, dim>;
+
+        STATIC_REQUIRE(std::is_copy_constructible_v<ternary_vector_type>);
+        STATIC_REQUIRE(std::is_copy_assignable_v<ternary_vector_type>);
+        STATIC_REQUIRE(
+            std::is_nothrow_move_constructible_v<ternary_vector_type>);
+        STATIC_REQUIRE(std::is_nothrow_move_assignable_v<ternary_vector_type>);
     }
 
     SECTION("default constructor") {
-        adc_ternary_vector vec;
-        REQUIRE(vec.dim() == 0);
+        constexpr num_collect::index_type dim = 4;
+        constexpr num_collect::index_type max_digits = 3;
+        using variable_type = Eigen::Vector<double, dim>;
+        using ternary_vector_type =
+            adc_ternary_vector<variable_type, max_digits>;
+
+        ternary_vector_type vec;
+        REQUIRE(vec.dim() == dim);
     }
 
     SECTION("construct with number of dimensions") {
         constexpr num_collect::index_type dim = 4;
-        const auto vec = adc_ternary_vector(dim);
-        REQUIRE(vec.dim() == dim);
-        for (num_collect::index_type i = 0; i < dim; ++i) {
-            INFO("i = " << i);
-            REQUIRE(vec.digits(i) == 0);
-        }
-    }
+        constexpr num_collect::index_type max_digits = 3;
+        using variable_type = Eigen::Vector<double, dim>;
+        using ternary_vector_type =
+            adc_ternary_vector<variable_type, max_digits>;
 
-    SECTION("change the number of dimensions") {
-        adc_ternary_vector vec;
-        REQUIRE(vec.dim() == 0);
-
-        constexpr num_collect::index_type dim = 4;
-        REQUIRE_NOTHROW(vec.change_dim(dim));
+        const auto vec = ternary_vector_type(dim);
         REQUIRE(vec.dim() == dim);
         for (num_collect::index_type i = 0; i < dim; ++i) {
             INFO("i = " << i);
@@ -67,181 +70,205 @@ TEST_CASE("num_collect::opt::impl::adc_ternary_vector") {
 
     SECTION("add digits") {
         constexpr num_collect::index_type dim = 3;
-        auto vec = adc_ternary_vector(dim);
+        constexpr num_collect::index_type max_digits = 3;
+        using variable_type = Eigen::Vector<double, dim>;
+        using ternary_vector_type =
+            adc_ternary_vector<variable_type, max_digits>;
+
+        auto vec = ternary_vector_type(dim);
         const auto& const_vec = vec;
         REQUIRE(vec.dim() == dim);
+        CHECK(const_vec.current_max_digits() == 0);
+        CHECK(const_vec.next_divided_dimension_index() == 0);
 
-        // ignore warnings of magic numbers
-        vec.push_back(2, 1);                // NOLINT
-        REQUIRE(const_vec.digits(0) == 0);  // NOLINT
-        REQUIRE(const_vec.digits(1) == 0);  // NOLINT
-        REQUIRE(const_vec.digits(2) == 1);  // NOLINT
-        REQUIRE(const_vec(2, 0) == 1);      // NOLINT
+        auto [dimension_index, digit_index] = vec.push_back(1);
+        CHECK(dimension_index == 0);
+        CHECK(digit_index == 0);
+        CHECK(const_vec.digits(0) == 1);
+        CHECK(const_vec.digits(1) == 0);
+        CHECK(const_vec.digits(2) == 0);
+        CHECK(const_vec(0, 0) == 1);
+        CHECK(const_vec.current_max_digits() == 1);
+        CHECK(const_vec.next_divided_dimension_index() == 1);
 
-        vec.push_back(2, 0);                // NOLINT
-        REQUIRE(const_vec.digits(0) == 0);  // NOLINT
-        REQUIRE(const_vec.digits(1) == 0);  // NOLINT
-        REQUIRE(const_vec.digits(2) == 2);  // NOLINT
-        REQUIRE(const_vec(2, 0) == 1);      // NOLINT
-        REQUIRE(const_vec(2, 1) == 0);      // NOLINT
+        std::tie(dimension_index, digit_index) = vec.push_back(0);
+        CHECK(dimension_index == 1);
+        CHECK(digit_index == 0);
+        CHECK(const_vec.digits(0) == 1);
+        CHECK(const_vec.digits(1) == 1);
+        CHECK(const_vec.digits(2) == 0);
+        CHECK(const_vec(0, 0) == 1);
+        CHECK(const_vec(1, 0) == 0);
+        CHECK(const_vec.current_max_digits() == 1);
+        CHECK(const_vec.next_divided_dimension_index() == 2);
 
-        vec.push_back(1, 2);                // NOLINT
-        REQUIRE(const_vec.digits(0) == 0);  // NOLINT
-        REQUIRE(const_vec.digits(1) == 1);  // NOLINT
-        REQUIRE(const_vec.digits(2) == 2);  // NOLINT
-        REQUIRE(const_vec(1, 0) == 2);      // NOLINT
-        REQUIRE(const_vec(2, 0) == 1);      // NOLINT
-        REQUIRE(const_vec(2, 1) == 0);      // NOLINT
+        std::tie(dimension_index, digit_index) = vec.push_back(2);
+        CHECK(dimension_index == 2);
+        CHECK(digit_index == 0);
+        CHECK(const_vec.digits(0) == 1);
+        CHECK(const_vec.digits(1) == 1);
+        CHECK(const_vec.digits(2) == 1);
+        CHECK(const_vec(0, 0) == 1);
+        CHECK(const_vec(1, 0) == 0);
+        CHECK(const_vec(2, 0) == 2);
+        CHECK(const_vec.current_max_digits() == 1);
+        CHECK(const_vec.next_divided_dimension_index() == 0);
 
-        vec.push_back(2, 0);                // NOLINT
-        REQUIRE(const_vec.digits(0) == 0);  // NOLINT
-        REQUIRE(const_vec.digits(1) == 1);  // NOLINT
-        REQUIRE(const_vec.digits(2) == 3);  // NOLINT
-        REQUIRE(const_vec(1, 0) == 2);      // NOLINT
-        REQUIRE(const_vec(2, 0) == 1);      // NOLINT
-        REQUIRE(const_vec(2, 1) == 0);      // NOLINT
-        REQUIRE(const_vec(2, 2) == 0);      // NOLINT
+        std::tie(dimension_index, digit_index) = vec.push_back(0);
+        CHECK(dimension_index == 0);
+        CHECK(digit_index == 1);
+        CHECK(const_vec.digits(0) == 2);
+        CHECK(const_vec.digits(1) == 1);
+        CHECK(const_vec.digits(2) == 1);
+        CHECK(const_vec(0, 0) == 1);
+        CHECK(const_vec(1, 0) == 0);
+        CHECK(const_vec(2, 0) == 2);
+        CHECK(const_vec(0, 1) == 0);
+        CHECK(const_vec.current_max_digits() == 2);
+        CHECK(const_vec.next_divided_dimension_index() == 1);
     }
 
     SECTION("add more digits") {
         constexpr num_collect::index_type dim = 3;
-        auto vec = adc_ternary_vector(dim);
+        constexpr num_collect::index_type max_digits = 2;
+        using variable_type = Eigen::Vector<double, dim>;
+        using ternary_vector_type =
+            adc_ternary_vector<variable_type, max_digits>;
+        auto vec = ternary_vector_type(dim);
         REQUIRE(vec.dim() == dim);
 
-        constexpr num_collect::index_type size = 100;
-        for (num_collect::index_type i = 0; i < size; ++i) {
-            const auto digit =
-                static_cast<adc_ternary_vector::digit_type>(i % 3);
-            vec.push_back(0, digit);
-        }
-        REQUIRE(vec.digits(0) == size);
-        for (num_collect::index_type i = 0; i < size; ++i) {
-            const auto digit =
-                static_cast<adc_ternary_vector::digit_type>(i % 3);
-            INFO("i = " << i);
-            CHECK(vec(0, i) == digit);
-        }
+        CHECK_NOTHROW(vec.push_back(0));
+        CHECK_FALSE(vec.is_full());
+
+        CHECK_NOTHROW(vec.push_back(0));
+        CHECK_FALSE(vec.is_full());
+
+        CHECK_NOTHROW(vec.push_back(0));
+        CHECK_FALSE(vec.is_full());
+
+        CHECK_NOTHROW(vec.push_back(0));
+        CHECK_FALSE(vec.is_full());
+
+        CHECK_NOTHROW(vec.push_back(0));
+        CHECK_FALSE(vec.is_full());
+
+        CHECK_NOTHROW(vec.push_back(0));
+        CHECK(vec.is_full());
+
+        CHECK_THROWS(vec.push_back(0));
+        CHECK(vec.is_full());
     }
 
     SECTION("compare same vectors") {
         constexpr num_collect::index_type dim = 3;
-        auto vec1 = adc_ternary_vector(dim);
-        vec1.push_back(2, 1);  // NOLINT
-        auto vec2 = adc_ternary_vector(dim);
-        vec2.push_back(2, 1);  // NOLINT
-        REQUIRE(vec1 == vec2);
+        constexpr num_collect::index_type max_digits = 2;
+        using variable_type = Eigen::Vector<double, dim>;
+        using ternary_vector_type =
+            adc_ternary_vector<variable_type, max_digits>;
+
+        auto vec1 = ternary_vector_type(dim);
+        vec1.push_back(1);
+        auto vec2 = ternary_vector_type(dim);
+        vec2.push_back(1);
+        CHECK(vec1 == vec2);
     }
 
     SECTION("compare vectors with different digit") {
         constexpr num_collect::index_type dim = 3;
-        auto vec1 = adc_ternary_vector(dim);
-        vec1.push_back(2, 1);  // NOLINT
-        auto vec2 = adc_ternary_vector(dim);
-        vec2.push_back(2, 0);  // NOLINT
-        REQUIRE(vec1 != vec2);
-    }
+        constexpr num_collect::index_type max_digits = 2;
+        using variable_type = Eigen::Vector<double, dim>;
+        using ternary_vector_type =
+            adc_ternary_vector<variable_type, max_digits>;
 
-    SECTION("compare vectors with different digits but same (lhs is larger)") {
-        constexpr num_collect::index_type dim = 3;
-        auto vec1 = adc_ternary_vector(dim);
-        vec1.push_back(2, 1);  // NOLINT
-        vec1.push_back(2, 0);  // NOLINT
-        auto vec2 = adc_ternary_vector(dim);
-        vec2.push_back(2, 1);  // NOLINT
-        REQUIRE(vec1 == vec2);
-    }
-
-    SECTION("compare vectors with different digits but same (rhs is larger)") {
-        constexpr num_collect::index_type dim = 3;
-        auto vec1 = adc_ternary_vector(dim);
-        vec1.push_back(2, 1);  // NOLINT
-        auto vec2 = adc_ternary_vector(dim);
-        vec2.push_back(2, 1);  // NOLINT
-        vec2.push_back(2, 0);  // NOLINT
-        REQUIRE(vec1 == vec2);
-    }
-
-    SECTION("compare vectors with non-zero additional digits in lhs") {
-        constexpr num_collect::index_type dim = 3;
-        auto vec1 = adc_ternary_vector(dim);
-        vec1.push_back(2, 1);  // NOLINT
-        vec1.push_back(2, 1);  // NOLINT
-        auto vec2 = adc_ternary_vector(dim);
-        vec2.push_back(2, 1);  // NOLINT
-        REQUIRE(vec1 != vec2);
-    }
-
-    SECTION("compare vectors with non-zero additional digits in rhs") {
-        constexpr num_collect::index_type dim = 3;
-        auto vec1 = adc_ternary_vector(dim);
-        vec1.push_back(2, 1);  // NOLINT
-        auto vec2 = adc_ternary_vector(dim);
-        vec2.push_back(2, 1);  // NOLINT
-        vec2.push_back(2, 1);  // NOLINT
-        REQUIRE(vec1 != vec2);
+        auto vec1 = ternary_vector_type(dim);
+        vec1.push_back(1);
+        auto vec2 = ternary_vector_type(dim);
+        vec2.push_back(0);
+        CHECK(vec1 != vec2);
     }
 
     SECTION("get element as double") {
-        auto vec = adc_ternary_vector(1);
-        vec.push_back(0, 0);  // NOLINT
-        vec.push_back(0, 2);  // NOLINT
-        vec.push_back(0, 0);  // NOLINT
-        vec.push_back(0, 1);  // NOLINT
+        constexpr num_collect::index_type dim = 1;
+        constexpr num_collect::index_type max_digits = 10;
+        using variable_type = Eigen::Vector<double, dim>;
+        using ternary_vector_type =
+            adc_ternary_vector<variable_type, max_digits>;
+
+        auto vec = ternary_vector_type(dim);
+        vec.push_back(0);
+        vec.push_back(2);
+        vec.push_back(0);
+        vec.push_back(1);
         constexpr double expected = 2.0 / 3.0 + 1.0 / 27.0;
-        REQUIRE_THAT(
+        CHECK_THAT(
             vec.elem_as<double>(0), Catch::Matchers::WithinRel(expected));
+    }
+
+    SECTION("get as a variable") {
+        constexpr num_collect::index_type dim = 2;
+        constexpr num_collect::index_type max_digits = 3;
+        using variable_type = Eigen::Vector<double, dim>;
+        using ternary_vector_type =
+            adc_ternary_vector<variable_type, max_digits>;
+
+        auto vec = ternary_vector_type(dim);
+        vec.push_back(0);
+        vec.push_back(0);
+        vec.push_back(2);
+        vec.push_back(0);
+        vec.push_back(0);
+        vec.push_back(1);
+
+        const variable_type lower_bound = variable_type::Constant(-1.0);
+        const variable_type width = variable_type::Constant(3.0);
+        const variable_type variable = vec.as_variable(lower_bound, width);
+        CHECK_THAT(variable(0), Catch::Matchers::WithinRel(1.0));
+        CHECK_THAT(variable(1),
+            Catch::Matchers::WithinRel(-2.0 / 3.0));  // NOLINT(*-magic-numbers)
     }
 }
 
 TEST_CASE("std::hash<num_collect::opt::impl::adc_ternary_vector>") {
     using num_collect::opt::impl::adc_ternary_vector;
 
-    const std::hash<adc_ternary_vector> hash;
+    constexpr num_collect::index_type dim = 3;
+    constexpr num_collect::index_type max_digits = 5;
+    using variable_type = Eigen::Vector<double, dim>;
+    using ternary_vector_type = adc_ternary_vector<variable_type, max_digits>;
+    const std::hash<ternary_vector_type> hash;
 
     SECTION("compare same vectors") {
-        constexpr num_collect::index_type dim = 3;
-        auto vec1 = adc_ternary_vector(dim);
-        vec1.push_back(2, 1);  // NOLINT
-        auto vec2 = adc_ternary_vector(dim);
-        vec2.push_back(2, 1);  // NOLINT
-        REQUIRE(hash(vec1) == hash(vec2));
+        auto vec1 = ternary_vector_type(dim);
+        vec1.push_back(1);
+        auto vec2 = ternary_vector_type(dim);
+        vec2.push_back(1);
+        CHECK(hash(vec1) == hash(vec2));
     }
 
     SECTION("compare vectors with a different digit") {
-        constexpr num_collect::index_type dim = 3;
-        auto vec1 = adc_ternary_vector(dim);
-        vec1.push_back(2, 1);  // NOLINT
-        auto vec2 = adc_ternary_vector(dim);
-        vec2.push_back(2, 2);  // NOLINT
-        REQUIRE(hash(vec1) != hash(vec2));
+        auto vec1 = ternary_vector_type(dim);
+        vec1.push_back(1);
+        auto vec2 = ternary_vector_type(dim);
+        vec2.push_back(2);
+        CHECK(hash(vec1) != hash(vec2));
     }
 
     SECTION("compare vectors with a digit in different dimensions") {
-        constexpr num_collect::index_type dim = 3;
-        auto vec1 = adc_ternary_vector(dim);
-        vec1.push_back(2, 1);  // NOLINT
-        auto vec2 = adc_ternary_vector(dim);
-        vec2.push_back(1, 1);  // NOLINT
-        REQUIRE(hash(vec1) != hash(vec2));
+        auto vec1 = ternary_vector_type(dim);
+        vec1.push_back(1);
+        vec1.push_back(0);
+        auto vec2 = ternary_vector_type(dim);
+        vec2.push_back(0);
+        vec2.push_back(1);
+        CHECK(hash(vec1) != hash(vec2));
     }
 
-    SECTION("compare vectors with different digits but same (lhs is larger)") {
-        constexpr num_collect::index_type dim = 3;
-        auto vec1 = adc_ternary_vector(dim);
-        vec1.push_back(2, 1);  // NOLINT
-        vec1.push_back(2, 0);  // NOLINT
-        auto vec2 = adc_ternary_vector(dim);
-        vec2.push_back(2, 1);  // NOLINT
-        REQUIRE(hash(vec1) == hash(vec2));
-    }
-
-    SECTION("compare vectors with different digits but same (rhs is larger)") {
-        constexpr num_collect::index_type dim = 3;
-        auto vec1 = adc_ternary_vector(dim);
-        vec1.push_back(2, 1);  // NOLINT
-        auto vec2 = adc_ternary_vector(dim);
-        vec2.push_back(2, 1);  // NOLINT
-        vec2.push_back(2, 0);  // NOLINT
-        REQUIRE(hash(vec1) == hash(vec2));
+    SECTION("compare vectors with different digits but same") {
+        auto vec1 = ternary_vector_type(dim);
+        vec1.push_back(1);
+        vec1.push_back(0);
+        auto vec2 = ternary_vector_type(dim);
+        vec2.push_back(1);
+        CHECK(hash(vec1) == hash(vec2));
     }
 }

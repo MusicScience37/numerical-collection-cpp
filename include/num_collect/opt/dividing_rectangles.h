@@ -24,13 +24,11 @@
 #include <cstddef>
 #include <iterator>
 #include <limits>
-#include <memory>
 #include <queue>
 #include <tuple>
 #include <utility>
 #include <vector>
 
-#include "num_collect/base/exception.h"
 #include "num_collect/base/get_size.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/isfinite.h"
@@ -38,7 +36,6 @@
 #include "num_collect/base/precondition.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/logging/logging_macros.h"
 #include "num_collect/opt/concepts/objective_function.h"
 #include "num_collect/opt/optimizer_base.h"
 #include "num_collect/util/assert.h"
@@ -122,13 +119,11 @@ public:
         rects_.clear();
         rects_.emplace_back();
         if constexpr (is_eigen_vector_v<variable_type>) {
-            rects_[0].push(
-                std::make_shared<rectangle>(variable_type::Zero(dim_),
-                    variable_type::Ones(dim_), opt_value_));
+            rects_[0].push(rectangle(variable_type::Zero(dim_),
+                variable_type::Ones(dim_), opt_value_));
         } else {
-            rects_[0].push(
-                std::make_shared<rectangle>(static_cast<variable_type>(0),
-                    static_cast<variable_type>(1), opt_value_));
+            rects_[0].push(rectangle(static_cast<variable_type>(0),
+                static_cast<variable_type>(1), opt_value_));
         }
     }
 
@@ -325,11 +320,10 @@ private:
          * \return Divided rectangle.
          */
         [[nodiscard]] auto divide(index_type dim, value_type lower,
-            value_type upper, value_type value) const
-            -> std::shared_ptr<rectangle> {
-            auto ptr = std::make_shared<rectangle>(*this);
-            ptr->divide_in_place(dim, lower, upper, value);
-            return ptr;
+            value_type upper, value_type value) const -> rectangle {
+            auto copy = rectangle(*this);
+            copy.divide_in_place(dim, lower, upper, value);
+            return copy;
         }
 
     private:
@@ -367,9 +361,9 @@ private:
          * \param[in] right Right-hand-side rectangle.
          * \return Result of left > right.
          */
-        [[nodiscard]] auto operator()(const std::shared_ptr<rectangle>& left,
-            const std::shared_ptr<rectangle>& right) const -> bool {
-            return left->value() > right->value();
+        [[nodiscard]] auto operator()(
+            const rectangle& left, const rectangle& right) const -> bool {
+            return left.value() > right.value();
         }
     };
 
@@ -421,8 +415,8 @@ private:
             }
             while (true) {
                 const auto& [last_ind, last_slope] = search_rects.back();
-                const auto slope = calculate_slope(
-                    *(rects_[last_ind].top()), *(rects_[ind].top()));
+                const auto slope =
+                    calculate_slope(rects_[last_ind].top(), rects_[ind].top());
                 if (slope <= last_slope) {
                     search_rects.emplace_back(ind, slope);
                     break;
@@ -435,8 +429,7 @@ private:
         const auto value_bound = opt_value_ - min_rate_imp_ * abs(opt_value_);
         for (auto iter = search_rects.begin(); iter != search_rects.end();) {
             const auto& [ind, slope] = *iter;
-            if (rects_[ind].top()->value() -
-                    slope * rects_[ind].top()->dist() <=
+            if (rects_[ind].top().value() - slope * rects_[ind].top().dist() <=
                 value_bound) {
                 ++iter;
             } else {
@@ -468,30 +461,30 @@ private:
         if (index + 1 == rects_.size()) {
             rects_.emplace_back();
         }
-        const auto origin = rects_[index].top();
+        rectangle origin = std::move(rects_[index].top());
         rects_[index].pop();
 
         const auto [divided_dim, lower_value, upper_value] =
-            determine_divided_dimension(*origin);
+            determine_divided_dimension(origin);
         value_type divided_lowest;
         value_type divided_highest;
         if constexpr (is_eigen_vector_v<variable_type>) {
-            divided_lowest = origin->lower()(divided_dim);
-            divided_highest = origin->upper()(divided_dim);
+            divided_lowest = origin.lower()(divided_dim);
+            divided_highest = origin.upper()(divided_dim);
         } else {
-            divided_lowest = origin->lower();
-            divided_highest = origin->upper();
+            divided_lowest = origin.lower();
+            divided_highest = origin.upper();
         }
         const auto [divided_lower, divided_upper] =
             separate_section(divided_lowest, divided_highest);
 
-        rects_[index + 1].push(origin->divide(
+        rects_[index + 1].push(origin.divide(
             divided_dim, divided_lowest, divided_lower, lower_value));
-        rects_[index + 1].push(origin->divide(
+        rects_[index + 1].push(origin.divide(
             divided_dim, divided_upper, divided_highest, upper_value));
-        origin->divide_in_place(
-            divided_dim, divided_lower, divided_upper, origin->value());
-        rects_[index + 1].push(origin);
+        origin.divide_in_place(
+            divided_dim, divided_lower, divided_upper, origin.value());
+        rects_[index + 1].push(std::move(origin));
     }
 
     /*!
@@ -598,8 +591,8 @@ private:
      *
      * Rectangles are listed per size.
      */
-    std::vector<std::priority_queue<std::shared_ptr<rectangle>,
-        std::vector<std::shared_ptr<rectangle>>, greater_rectangle>>
+    std::vector<std::priority_queue<rectangle, std::vector<rectangle>,
+        greater_rectangle>>
         rects_{};
 
     //! Element-wise lower limit.

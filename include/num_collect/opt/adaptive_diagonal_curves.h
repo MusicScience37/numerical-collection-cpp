@@ -25,7 +25,6 @@
 #include <cstdint>
 #include <iterator>
 #include <limits>
-#include <memory>
 #include <string_view>
 #include <utility>
 #include <vector>
@@ -36,10 +35,9 @@
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
-#include "num_collect/opt/concepts/objective_function.h"
+#include "num_collect/opt/concepts/multi_variate_objective_function.h"
 #include "num_collect/opt/impl/adc_group.h"
 #include "num_collect/opt/impl/adc_sample_dict.h"
-#include "num_collect/opt/impl/adc_ternary_vector.h"
 #include "num_collect/opt/optimizer_base.h"
 #include "num_collect/util/assert.h"
 #include "num_collect/util/safe_cast.h"
@@ -55,13 +53,17 @@ constexpr auto adaptive_diagonal_curves_tag =
  * optimization.
  *
  * \tparam ObjectiveFunction Type of the objective function.
+ * \tparam MaxDigits Maximum number of ternary digits per dimension at compile
+ * time.
  */
-template <concepts::objective_function ObjectiveFunction>
+template <concepts::multi_variate_objective_function ObjectiveFunction,
+    index_type MaxDigits = 8>  // NOLINT(*-magic-numbers)
 class adaptive_diagonal_curves
-    : public optimizer_base<adaptive_diagonal_curves<ObjectiveFunction>> {
+    : public optimizer_base<
+          adaptive_diagonal_curves<ObjectiveFunction, MaxDigits>> {
 public:
     //! This class.
-    using this_type = adaptive_diagonal_curves<ObjectiveFunction>;
+    using this_type = adaptive_diagonal_curves<ObjectiveFunction, MaxDigits>;
 
     //! Type of the objective function.
     using objective_function_type = ObjectiveFunction;
@@ -76,11 +78,12 @@ public:
      * \brief Enumeration of states in ADC method.
      */
     enum class state_type : std::uint8_t {
-        none,         //!< No operation.
-        local,        //!< Local phase (not last iteration).
-        local_last,   //!< Last iteration in local phase.
-        global,       //!< Global phase (not last iteration).
-        global_last,  //!< Last iteration in global phase.
+        none,          //!< No operation.
+        local,         //!< Local phase (not last iteration).
+        local_last,    //!< Last iteration in local phase.
+        global,        //!< Global phase (not last iteration).
+        global_last,   //!< Last iteration in global phase.
+        non_dividable  //!< No rectangle can be divided.
     };
 
     /*!
@@ -101,6 +104,8 @@ public:
             return "global";
         case state_type::global_last:
             return "global (last)";
+        case state_type::non_dividable:
+            return "non dividable";
         default:
             return "invalid process";
         }
@@ -113,8 +118,7 @@ public:
      */
     explicit adaptive_diagonal_curves(
         const objective_function_type& obj_fun = objective_function_type())
-        : optimizer_base<adaptive_diagonal_curves<ObjectiveFunction>>(
-              adaptive_diagonal_curves_tag),
+        : optimizer_base<this_type>(adaptive_diagonal_curves_tag),
           value_dict_(obj_fun) {}
 
     /*!
@@ -143,6 +147,8 @@ public:
 
         // prec_optimal_value_, prec_optimal_group_index, and
         // iterations_in_current_phase_ are initialized in switch_state().
+
+        value_dict_.reserve(max_evaluations_);
     }
 
     /*!
@@ -164,6 +170,9 @@ public:
         case state_type::global_last:
             iterate_globally_last();
             break;
+        case state_type::non_dividable:
+            // Nothing can be done.
+            break;
         default:
             NUM_COLLECT_LOG_AND_THROW(algorithm_failure,
                 "invalid state (bug in adaptive_diagonal_curve class)");
@@ -176,7 +185,8 @@ public:
      * \copydoc num_collect::base::iterative_solver_base::is_stop_criteria_satisfied
      */
     [[nodiscard]] auto is_stop_criteria_satisfied() const -> bool {
-        return evaluations() >= max_evaluations_;
+        return evaluations() >= max_evaluations_ ||
+            state_ == state_type::non_dividable;
     }
 
     /*!
@@ -293,10 +303,13 @@ public:
 
 private:
     //! Type of dictionaries of sample points.
-    using dict_type = impl::adc_sample_dict<objective_function_type>;
+    using dict_type = impl::adc_sample_dict<objective_function_type, MaxDigits>;
+
+    //! Type of ternary vectors.
+    using ternary_vector_type = typename dict_type::ternary_vector_type;
 
     //! Type of groups of hyper-rectangles.
-    using group_type = impl::adc_group<value_type>;
+    using group_type = impl::adc_group<value_type, ternary_vector_type>;
 
     //! Type of hyper-rectangles.
     using rectangle_type = typename group_type::rectangle_type;
@@ -306,9 +319,9 @@ private:
      */
     void create_first_rectangle() {
         const index_type dim = value_dict_.dim();
-        auto point = impl::adc_ternary_vector{dim};
+        auto point = ternary_vector_type{dim};
         for (index_type i = 0; i < dim; ++i) {
-            point.push_back(i, 0);
+            point.push_back(0);
         }
 
         const auto [lower_vertex, upper_vertex] =
@@ -316,9 +329,9 @@ private:
         const auto lower_vertex_value = value_dict_(lower_vertex);
         const auto upper_vertex_value = value_dict_(upper_vertex);
         const auto ave_value = half * (lower_vertex_value + upper_vertex_value);
-        const auto rect = std::make_shared<rectangle_type>(point, ave_value);
+        const auto rect = rectangle_type(point, ave_value);
 
-        groups_.emplace_back(rect->dist());
+        groups_.emplace_back(rect.dist());
         groups_.front().push(rect);
         using std::min;
         optimal_value_ = min(lower_vertex_value, upper_vertex_value);
@@ -371,6 +384,9 @@ private:
             state_ = state_type::global;
             iterations_in_current_phase_ = 1;
             prec_optimal_group_index_ = optimal_group_index_;
+            return;
+        case state_type::non_dividable:
+            // Nothing can be done.
             return;
         default:
             state_ = state_type::local;
@@ -476,9 +492,18 @@ private:
         std::size_t min_group, std::size_t max_group) {
         const auto search_rect =
             determine_nondominated_rectangles(min_group, max_group);
+        bool divided_rectangle = false;
         for (auto iter = std::rbegin(search_rect);
             iter != std::rend(search_rect); ++iter) {
-            divide_rectangle(iter->first);
+            if (divide_rectangle(iter->first)) {
+                divided_rectangle = true;
+            }
+        }
+        if (!divided_rectangle) {
+            state_ = state_type::non_dividable;
+            this->logger().warning()(
+                "No rectangle can be divided. "
+                "Stop the iteration or tune the parameter MaxDigits.");
         }
     }
 
@@ -522,7 +547,7 @@ private:
             optimal_value_ - min_rate_imp_ * abs(optimal_value_);
         for (auto iter = search_rects.begin(); iter != search_rects.end();) {
             const auto& [ind, slope] = *iter;
-            if (groups_[ind].min_rect()->ave_value() -
+            if (groups_[ind].min_rect().ave_value() -
                     slope * groups_[ind].dist() <=
                 value_bound) {
                 ++iter;
@@ -543,8 +568,8 @@ private:
      */
     [[nodiscard]] auto calculate_slope(
         std::size_t group_ind1, std::size_t group_ind2) const -> value_type {
-        return (groups_[group_ind1].min_rect()->ave_value() -
-                   groups_[group_ind2].min_rect()->ave_value()) /
+        return (groups_[group_ind1].min_rect().ave_value() -
+                   groups_[group_ind2].min_rect().ave_value()) /
             (groups_[group_ind1].dist() - groups_[group_ind2].dist());
     }
 
@@ -552,32 +577,32 @@ private:
      * \brief Divide a hyper-rectangle.
      *
      * \param[in] group_ind Index of group.
+     * \retval true The hyper-rectangle is divided.
+     * \retval false The hyper-rectangle is not divided.
      */
-    void divide_rectangle(std::size_t group_ind) {
-        impl::adc_ternary_vector vertex = groups_[group_ind].pop()->vertex();
-        index_type divided_dim = 1;
-        for (; divided_dim < vertex.dim(); ++divided_dim) {
-            if (vertex.digits(divided_dim) < vertex.digits(0)) {
-                break;
-            }
-        }
-        if (divided_dim == vertex.dim()) {
-            divided_dim = 0;
+    [[nodiscard]] auto divide_rectangle(std::size_t group_ind) -> bool {
+        if (!groups_[group_ind].is_dividable()) {
+            return false;
         }
 
-        vertex.push_back(divided_dim, 0);
+        impl::adc_ternary_vector vertex =
+            std::move(groups_[group_ind].pop().vertex());
+
+        const auto [dim, digit] = vertex.push_back(0);
         const auto rect0 = create_rect(vertex, group_ind + 1);
-        vertex(divided_dim, vertex.digits(divided_dim) - 1) = 1;
+        vertex(dim, digit) = 1;
         const auto rect1 = create_rect(vertex, group_ind + 1);
-        vertex(divided_dim, vertex.digits(divided_dim) - 1) = 2;
+        vertex(dim, digit) = 2;
         const auto rect2 = create_rect(vertex, group_ind + 1);
 
         if (groups_.size() == group_ind + 1) {
-            groups_.emplace_back(rect0->dist());
+            groups_.emplace_back(rect0.dist());
         }
         groups_[group_ind + 1].push(rect0);
         groups_[group_ind + 1].push(rect1);
         groups_[group_ind + 1].push(rect2);
+
+        return true;
     }
 
     /*!
@@ -587,8 +612,8 @@ private:
      * \param[in] group_ind Group index.
      * \return Hyper-rectangle.
      */
-    [[nodiscard]] auto create_rect(const impl::adc_ternary_vector& vertex,
-        std::size_t group_ind) -> std::shared_ptr<rectangle_type> {
+    [[nodiscard]] auto create_rect(const ternary_vector_type& vertex,
+        std::size_t group_ind) -> rectangle_type {
         const auto [vertex1, vertex2] =
             rectangle_type::determine_sample_points(vertex);
         const auto value1 = value_dict_(vertex1);
@@ -608,7 +633,7 @@ private:
             group_ind > optimal_group_index_) {
             optimal_group_index_ = group_ind;
         }
-        return std::make_shared<rectangle_type>(vertex, ave_value);
+        return rectangle_type(vertex, ave_value);
     }
 
     //! Half.
