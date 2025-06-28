@@ -13,6 +13,8 @@ poetry run pre-commit install
 
 poetry run playwright install --only-shell --with-deps chromium
 
+poetry run plotly_get_chrome -y
+
 git config commit.template .gitmessage
 
 git config gpg.program gpg2
