@@ -27,5 +27,5 @@ A collection of algorithms in numerical analysis implemented in C++.
 
     how_to_build_in_repository
     directories
-    convention
+    conventions
     basic_design/index
