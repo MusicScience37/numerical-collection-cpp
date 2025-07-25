@@ -295,7 +295,7 @@ test msvc release:
   stage: test
   needs: []
   tags:
-    - saas-windows-medium-amd64
+    - ms37win
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
     BUILD_TYPE: Release
@@ -309,11 +309,6 @@ test msvc release:
     POETRY_CACHE_DIR: ${CI_PROJECT_DIR}/.poetry-cache
   before_script:
     - New-Item -ItemType Directory -Force -Path $VCPKG_DEFAULT_BINARY_CACHE
-    - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
-    - choco install cmake -y --installargs 'ADD_CMAKE_TO_PATH=System'
-    - choco install python313 -y
-    - choco install ccache -y
-    - RefreshEnv
     - pip install poetry
     - poetry config virtualenvs.in-project true
     - poetry install --only test
