@@ -42,12 +42,11 @@
 #ifndef NDEBUG
 constexpr num_collect::index_type rows = 20;
 constexpr num_collect::index_type cols = 20;
-constexpr double noise_rate = 0.05;
 #else
 constexpr num_collect::index_type rows = 40;
 constexpr num_collect::index_type cols = 40;
-constexpr double noise_rate = 0.1;
 #endif
+constexpr double noise_rate = 0.05;
 
 /*!
  * \brief Perform common initialization for image denoising examples and
@@ -78,7 +77,9 @@ constexpr double noise_rate = 0.1;
                 .name("-i")
                 .optional()
                 .help("Index of the sample image to be generated. "
-                      "1 (default): One constant circle."));
+                      "1 (default): One constant circle. "
+                      "2: Two constant circles. "
+                      "3: One quadratic circle."));
     const auto result = cli.parse({argc, argv});
     if (!result) {
         std::cerr << result.message() << "\n\n";
@@ -105,7 +106,16 @@ constexpr double noise_rate = 0.1;
             generate_sparse_sample_image_with_one_constant_circle(
                 origin, rows, cols);
         break;
-        // TODO more sample images
+    case 2:
+        num_prob_collect::regularization::
+            generate_sparse_sample_image_with_two_constant_circles(
+                origin, rows, cols);
+        break;
+    case 3:
+        num_prob_collect::regularization::
+            generate_sparse_sample_image_with_one_quadratic_circle(
+                origin, rows, cols);
+        break;
     default:
         std::cerr << "Unknown sample image index: " << sample_image_index
                   << std::endl;
