@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Test of downhill_simplex class.
+ * \brief Example to use downhill_simplex class.
  */
 #include "num_collect/opt/downhill_simplex.h"
 

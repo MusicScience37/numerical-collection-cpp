@@ -1,1 +1,1 @@
-add_example(num_collect_ex_newton_raphson newton_raphson.cpp)
+add_example(example_roots_newton_raphson newton_raphson.cpp)

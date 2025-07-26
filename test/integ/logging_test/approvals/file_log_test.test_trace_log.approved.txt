@@ -3,7 +3,7 @@ stdout:
 
 stderr:
 
-num_collect_test_integ_logging.log:
+test_integ_logging.log:
 [<time-stamp>] [trace] [example_tag] trace (writer.cpp:41:<col>, <function-name>)
 [<time-stamp>] [debug] [example_tag] debug (writer.cpp:42:<col>, <function-name>)
 [<time-stamp>] [iteration] [example_tag] iteration (writer.cpp:43:<col>, <function-name>)

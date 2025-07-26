@@ -1,1 +1,1 @@
-add_profiling(num_collect_prof_rodasp_solver rodasp_solver.cpp)
+add_profiling(profile_ode_rodasp_solver rodasp_solver.cpp)

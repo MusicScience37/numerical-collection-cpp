@@ -1,2 +1,2 @@
-add_profiling(num_collect_prof_write_trace_logs write_trace_logs.cpp)
-add_profiling(num_collect_prof_ignore_logs ignore_logs.cpp)
+add_profiling(profile_logging_write_trace_logs write_trace_logs.cpp)
+add_profiling(profile_logging_ignore_logs ignore_logs.cpp)

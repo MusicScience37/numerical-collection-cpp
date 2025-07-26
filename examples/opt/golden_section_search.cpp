@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Test of golden_section_search class.
+ * \brief Example to use golden_section_search class.
  */
 #include "num_collect/opt/golden_section_search.h"
 

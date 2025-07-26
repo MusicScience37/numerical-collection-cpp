@@ -1,2 +1,2 @@
-add_example(num_collect_ex_auto_diff_forward forward.cpp)
-add_example(num_collect_ex_auto_diff_backward backward.cpp)
+add_example(example_auto_diff_forward forward.cpp)
+add_example(example_auto_diff_backward backward.cpp)

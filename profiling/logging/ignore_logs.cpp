@@ -41,11 +41,11 @@ auto main() -> int {
     num_collect::logging::set_default_tag_config(
         num_collect::logging::log_tag_config()
             .sink(num_collect::logging::sinks::create_single_file_sink(
-                "num_collect_prof_ignore_logs_out.log"))
+                "profile_logging_ignore_logs_out.log"))
             .output_log_level(num_collect::logging::log_level::info));
 
     constexpr std::size_t repetition = 100;
-    ProfilerStart("num_collect_prof_ignore_logs.prof");
+    ProfilerStart("profile_logging_ignore_logs.prof");
     for (std::size_t i = 0; i < repetition; ++i) {
         test();
     }

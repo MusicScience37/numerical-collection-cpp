@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Example of forward-mode automatic differentiation.
+ * \brief Example of backward-mode automatic differentiation.
  */
 #include <cmath>
 #include <iomanip>

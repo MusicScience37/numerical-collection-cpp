@@ -1,2 +1,2 @@
-add_example(num_collect_ex_write_logs write_logs.cpp)
-target_link_libraries(num_collect_ex_write_logs PRIVATE bfg::lyra)
+add_example(example_logging_write_logs write_logs.cpp)
+target_link_libraries(example_logging_write_logs PRIVATE bfg::lyra)

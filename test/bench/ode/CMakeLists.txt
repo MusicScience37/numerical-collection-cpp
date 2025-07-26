@@ -1,12 +1,10 @@
-add_executable(num_collect_bench_sparse_linear_equation
-               sparse_linear_equation_test.cpp)
-target_add_to_benchmark(num_collect_bench_sparse_linear_equation)
+add_executable(bench_ode_sparse_linear_equation sparse_linear_equation_test.cpp)
+target_add_to_benchmark(bench_ode_sparse_linear_equation)
 
 macro(add_bench_ode PROBLEM)
-    add_executable(
-        num_collect_bench_ode_${PROBLEM} ${PROBLEM}_test.cpp diagram_common.cpp
-                                         fixed_step_bench_executor.cpp)
-    target_add_custom_benchmark(num_collect_bench_ode_${PROBLEM})
+    add_executable(bench_ode_${PROBLEM} ${PROBLEM}_test.cpp diagram_common.cpp
+                                        fixed_step_bench_executor.cpp)
+    target_add_custom_benchmark(bench_ode_${PROBLEM})
 endmacro()
 
 add_bench_ode(exponential)

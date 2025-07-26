@@ -31,6 +31,8 @@ include(CTest)
 option(NUM_COLLECT_BUILD_DOC "build documentation of ${FULL_PROJECT_NAME}" OFF)
 option(NUM_COLLECT_TESTING "enable tests of ${FULL_PROJECT_NAME}" OFF)
 option(NUM_COLLECT_BUILD_EXAMPLES "build examples of ${FULL_PROJECT_NAME}" OFF)
+option(NUM_COLLECT_BUILD_EXPERIMENTS
+       "build experiments of ${FULL_PROJECT_NAME}" OFF)
 option(NUM_COLLECT_ENABLE_PROFILING "enable profiling" OFF)
 option(NUM_COLLECT_ENABLE_INSTALL
        "enable CMake target to install ${FULL_PROJECT_NAME}" ON)
@@ -66,7 +68,6 @@ if(NUM_COLLECT_TESTING)
     find_package(Catch2 REQUIRED)
     find_package(trompeloeil REQUIRED)
     find_package(cpp-stat-bench REQUIRED)
-    find_package(lyra REQUIRED)
     find_package(cpp-msgpack-light REQUIRED)
     find_package(ZLIB REQUIRED)
 
@@ -78,7 +79,7 @@ if(NUM_COLLECT_TESTING)
     add_library(ApprovalTests::ApprovalTests ALIAS ApprovalTests_ApprovalTests)
 endif()
 
-if(NUM_COLLECT_BUILD_EXAMPLES)
+if(NUM_COLLECT_BUILD_EXAMPLES OR NUM_COLLECT_BUILD_EXPERIMENTS)
     # pngpp
     find_path(PNGPP_INCLUDE_DIRS "png++/color.hpp")
     add_library(pngpp_pngpp INTERFACE)
@@ -90,6 +91,12 @@ if(NUM_COLLECT_BUILD_EXAMPLES)
 endif()
 
 if(NUM_COLLECT_BUILD_EXAMPLES OR NUM_COLLECT_TESTING)
+    find_package(lyra REQUIRED)
+endif()
+
+if(NUM_COLLECT_BUILD_EXAMPLES
+   OR NUM_COLLECT_BUILD_EXPERIMENTS
+   OR NUM_COLLECT_TESTING)
     find_package(cpp-plotly-plotter REQUIRED)
 endif()
 
@@ -149,6 +156,10 @@ endif()
 
 if(NUM_COLLECT_BUILD_EXAMPLES)
     add_subdirectory(examples)
+endif()
+
+if(NUM_COLLECT_BUILD_EXPERIMENTS)
+    add_subdirectory(experiments)
 endif()
 
 add_subdirectory(config_schema)

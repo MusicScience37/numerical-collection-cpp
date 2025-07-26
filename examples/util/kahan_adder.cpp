@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Example of kahan_adder class.
+ * \brief Example to use kahan_adder class.
  */
 #include "num_collect/util/kahan_adder.h"
 

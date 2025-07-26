@@ -36,7 +36,7 @@ static void test() {
 
 auto main() -> int {
     constexpr std::size_t repetition = 100;
-    ProfilerStart("num_collect_prof_adaptive_diagonal_curves.prof");
+    ProfilerStart("profile_opt_adaptive_diagonal_curves.prof");
     for (std::size_t i = 0; i < repetition; ++i) {
         test();
     }

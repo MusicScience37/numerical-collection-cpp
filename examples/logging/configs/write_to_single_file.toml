@@ -39,4 +39,4 @@ name = "file sink"
 type = "single_file"
 
 # Filepath. (Required.)
-filepath = "num_collect_ex_write_logs.log"
+filepath = "example_logging_write_logs.log"

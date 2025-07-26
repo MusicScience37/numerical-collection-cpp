@@ -1,1 +1,1 @@
-add_example(num_collect_ex_kahan_adder kahan_adder.cpp)
+add_example(example_util_kahan_adder kahan_adder.cpp)

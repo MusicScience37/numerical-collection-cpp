@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Test of steepest_descent class.
+ * \brief Example to use steepest_descent class.
  */
 #include "num_collect/opt/steepest_descent.h"
 

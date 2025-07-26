@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Test of dividing_rectangles class.
+ * \brief Example to use dividing_rectangles class.
  */
 #include "num_collect/opt/dividing_rectangles.h"
 
