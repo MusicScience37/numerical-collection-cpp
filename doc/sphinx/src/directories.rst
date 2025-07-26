@@ -10,11 +10,10 @@ Directory Structure
     ++ cmake                    | CMake scripts.
     ++ config_schema            | Schema of configuration files.
     ++ doc                      | Documentation.
-    +++ adr                     | Architectural Decision Records.
     +++ doxygen                 | Configuration of documentation generated using Doxygen.
     +++ sphinx                  | Documentation generated using Sphinx.
-    ++++ src                    | Source of documentation generated using Sphinx.
     ++ examples                 | Examples.
+    ++ experiments              | Experiments which are not tests, but not examples for users.
     ++ include                  | Include directory of this library itself.
     ++ problems                 | Test problems.
     +++ doc                     | Files for documentation of test problems.
