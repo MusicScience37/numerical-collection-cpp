@@ -1,2 +1,2 @@
-add_example(num_collect_ex_rk4_solver rk4_solver.cpp)
-add_example(num_collect_ex_rkf45_solver rkf45_solver.cpp)
+add_example(example_ode_rk4_solver rk4_solver.cpp)
+add_example(example_ode_rkf45_solver rkf45_solver.cpp)

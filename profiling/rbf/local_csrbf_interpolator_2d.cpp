@@ -83,7 +83,7 @@ auto main() -> int {
     }
 
     constexpr std::size_t repetition = 1000;
-    ProfilerStart("num_collect_prof_local_csrbf_interpolator_2d.prof");
+    ProfilerStart("profile_rbf_local_csrbf_interpolator_2d.prof");
     for (std::size_t i = 0; i < repetition; ++i) {
         test(sample_variables, sample_values, evaluation_variables,
             evaluation_interpolated_values);

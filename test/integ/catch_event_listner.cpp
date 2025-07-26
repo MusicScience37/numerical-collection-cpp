@@ -53,8 +53,8 @@ public:
         : EventListenerBase(std::forward<Args>(args)...) {}
 
     void testRunStarting(const Catch::TestRunInfo& /*testRunInfo*/) override {
-        const auto file_path = fmt::format("num_collect_test_integ_{}.log",
-            STRING(NUM_COLLECT_TEST_MODULE_NAME));
+        const auto file_path = fmt::format(
+            "test_integ_{}.log", STRING(NUM_COLLECT_TEST_MODULE_NAME));
         const auto sink =
             num_collect::logging::sinks::create_single_file_sink(file_path);
         const auto config =

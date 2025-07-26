@@ -52,7 +52,7 @@ def test_trace_log(
         writer_path=writer_path,
         config_file_path=config_dir_path / "file_log_trace.toml",
         test_temp_dir_path=test_temp_dir_path,
-        log_path=test_temp_dir_path / "num_collect_test_integ_logging.log",
+        log_path=test_temp_dir_path / "test_integ_logging.log",
     )
 
 
@@ -67,5 +67,5 @@ def test_combined_file_console_log(
         writer_path=writer_path,
         config_file_path=config_dir_path / "combined_file_console_log.toml",
         test_temp_dir_path=test_temp_dir_path,
-        log_path=test_temp_dir_path / "num_collect_test_integ_logging.log",
+        log_path=test_temp_dir_path / "test_integ_logging.log",
     )

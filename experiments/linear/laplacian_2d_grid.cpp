@@ -170,7 +170,8 @@ static auto plot_result(const vec_type& expected, const vec_type& actual,
 }
 
 auto main(int argc, char** argv) -> int {
-    std::string_view config_filepath = "examples/linear/laplacian_2d_grid.toml";
+    std::string_view config_filepath =
+        "experiments/linear/laplacian_2d_grid.toml";
     if (argc == 2) {
         config_filepath = argv[1];  // NOLINT
     }

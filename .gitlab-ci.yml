@@ -210,6 +210,7 @@ static analysis:
       -DNUM_COLLECT_ENABLE_BENCH=ON
       -DNUM_COLLECT_ENABLE_HEAVY_BENCH=OFF
       -DNUM_COLLECT_BUILD_EXAMPLES=ON
+      -DNUM_COLLECT_BUILD_EXPERIMENTS=ON
       -DNUM_COLLECT_ENABLE_CPP_WARNINGS:BOOL=ON
     - cd ..
     - poetry run clang-tidy-checker -b ${BUILD_DIR} --cache_dir ./.clang-tidy-cache

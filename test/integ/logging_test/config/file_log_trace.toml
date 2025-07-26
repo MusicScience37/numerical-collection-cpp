@@ -6,4 +6,4 @@ output_log_level = "trace"
 [[num_collect.logging.sinks]]
 name = "file"
 type = "single_file"
-filepath = "num_collect_test_integ_logging.log"
+filepath = "test_integ_logging.log"

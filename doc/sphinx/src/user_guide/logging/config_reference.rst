@@ -69,7 +69,7 @@ Configuration of a log sink to write to a single file
     type = "single_file"
 
     # Filepath. (Required.)
-    filepath = "num_collect_test_integ_logging.log"
+    filepath = "example.log"
 
 Configuration of a log sink to write to multiple log sinks
 -----------------------------------------------------------------

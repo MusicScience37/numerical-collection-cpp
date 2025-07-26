@@ -4,9 +4,7 @@ import subprocess
 
 def test_integer_success(build_dir_path: pathlib.Path) -> None:
     """Test of a success of an assertion with integers."""
-    binary_path = (
-        build_dir_path / "bin" / "num_collect_test_integ_assert_integer_success"
-    )
+    binary_path = build_dir_path / "bin" / "test_integ_assert_integer_success"
 
     result = subprocess.run(
         [str(binary_path)],
@@ -22,9 +20,7 @@ def test_integer_success(build_dir_path: pathlib.Path) -> None:
 
 def test_integer_failure(build_dir_path: pathlib.Path) -> None:
     """Test of a failure of an assertion with integers."""
-    binary_path = (
-        build_dir_path / "bin" / "num_collect_test_integ_assert_integer_failure"
-    )
+    binary_path = build_dir_path / "bin" / "test_integ_assert_integer_failure"
 
     result = subprocess.run(
         [str(binary_path)],

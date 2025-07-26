@@ -73,6 +73,7 @@ for example, `ex_interp_interp1d`.
   | Benchmarks        | `bench`         |
   | Experiments       | `experiment`    |
   | Examples          | `example`       |
+  | Profiling         | `profile`       |
 
 - `<module>` specifies the module name in this library.
   In most cases, modules use the same name as the directory name,

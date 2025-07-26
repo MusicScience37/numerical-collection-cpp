@@ -31,7 +31,7 @@ def build_dir_path(request: pytest.FixtureRequest) -> pathlib.Path:
 
 @pytest.fixture
 def writer_path(build_dir_path: pathlib.Path) -> pathlib.Path:
-    return build_dir_path / "bin" / "num_collect_test_integ_logging_write_log_writer"
+    return build_dir_path / "bin" / "test_integ_logging_write_log_writer"
 
 
 @pytest.fixture
