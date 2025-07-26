@@ -208,6 +208,10 @@ inline void visualize_result(const Eigen::MatrixXd& origin,
     annotation.align("center");
     annotation.text("Error");
 
+    figure.layout().xaxis(2).matches("x");
+    figure.layout().yaxis().scale_anchor("x");
+    figure.layout().yaxis(2).matches("y");
+
     figure.layout().color_axis().color_scale(
         plotly_plotter::color_scales::autumn_full());
     figure.layout().color_axis().c_min(0.0);
