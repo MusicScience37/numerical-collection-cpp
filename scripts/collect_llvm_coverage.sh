@@ -8,7 +8,7 @@ DIR=$1
 
 # make a file for codecov
 llvm-profdata merge -o $DIR/coverage/coverage.profdata $DIR/coverage/coverage_*.profraw
-for a in $(find $DIR/bin/num_collect_test_*); do
+for a in $(find $DIR/bin/test_* $DIR/lib/lib*.so.*); do
     opts="$opts -object $a"
 done
 llvm-cov show -ignore-filename-regex='(problems|test|include/num_collect/constants)/*' -instr-profile=$DIR/coverage/coverage.profdata $opts \
