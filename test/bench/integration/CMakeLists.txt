@@ -1,8 +1,8 @@
-add_executable(num_collect_bench_integ_exp exp_integration_test.cpp)
-target_add_to_benchmark(num_collect_bench_integ_exp)
+add_executable(bench_integ_exp exp_integration_test.cpp)
+target_add_to_benchmark(bench_integ_exp)
 
-add_executable(num_collect_bench_integ_sqrt_1mx2 sqrt_1mx2_test.cpp)
-target_add_to_benchmark(num_collect_bench_integ_sqrt_1mx2)
+add_executable(bench_integ_sqrt_1mx2 sqrt_1mx2_test.cpp)
+target_add_to_benchmark(bench_integ_sqrt_1mx2)
 
-add_executable(num_collect_bench_integ_inv_sqrt_1mx2 inv_sqrt_1mx2_test.cpp)
-target_add_to_benchmark(num_collect_bench_integ_inv_sqrt_1mx2)
+add_executable(bench_integ_inv_sqrt_1mx2 inv_sqrt_1mx2_test.cpp)
+target_add_to_benchmark(bench_integ_inv_sqrt_1mx2)
