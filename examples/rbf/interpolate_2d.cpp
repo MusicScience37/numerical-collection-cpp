@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Example to interpolate in 2D.
+ * \brief Example of RBF interpolation in 2D.
  */
 #include <cstdio>
 #include <string_view>

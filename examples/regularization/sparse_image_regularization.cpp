@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Example of tikhonov class with blurred sine test problem.
+ * \brief Example of regularization using sparsity for image data.
  */
 #include <algorithm>
 #include <cmath>

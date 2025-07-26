@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Test of adaptive_diagonal_curves class.
+ * \brief Example to use adaptive_diagonal_curves class.
  */
 #include "num_collect/opt/adaptive_diagonal_curves.h"
 

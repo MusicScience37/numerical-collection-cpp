@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Test of newton_raphson class.
+ * \brief Example to use newton_raphson class.
  */
 #include "num_collect/roots/newton_raphson.h"
 

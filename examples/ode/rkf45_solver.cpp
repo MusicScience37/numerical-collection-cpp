@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Test of rk4_solver class.
+ * \brief Example to use rkf45_solver class.
  */
 #include <cmath>
 #include <iomanip>
