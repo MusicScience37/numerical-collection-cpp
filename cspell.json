@@ -236,6 +236,7 @@
     "Pybind11",
     "pyenv",
     "pygment",
+    "Pylint",
     "pytest",
     "pytomlpp",
     "Quispel",
