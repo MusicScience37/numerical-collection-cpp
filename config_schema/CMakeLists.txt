@@ -15,9 +15,8 @@ endif()
 
 if(NUM_COLLECT_TESTING)
     add_test(
-        NAME num_collect_test_config_schema
-        COMMAND
-            ${POETRY_EXECUTABLE} run pytest ${CMAKE_CURRENT_SOURCE_DIR}
-            "--junit-xml=${NUM_COLLECT_JUNIT_DIR}/num_collect_test_config_schema.xml"
+        NAME test_config_schema
+        COMMAND ${POETRY_EXECUTABLE} run pytest ${CMAKE_CURRENT_SOURCE_DIR}
+                "--junit-xml=${NUM_COLLECT_JUNIT_DIR}/test_config_schema.xml"
         WORKING_DIRECTORY ${NUM_COLLECT_SOURCE_DIR})
 endif()
