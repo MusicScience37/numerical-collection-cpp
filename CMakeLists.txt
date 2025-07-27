@@ -90,14 +90,11 @@ if(NUM_COLLECT_BUILD_EXAMPLES OR NUM_COLLECT_BUILD_EXPERIMENTS)
     add_library(pngpp::pngpp ALIAS pngpp_pngpp)
 endif()
 
-if(NUM_COLLECT_BUILD_EXAMPLES OR NUM_COLLECT_TESTING)
-    find_package(lyra REQUIRED)
-endif()
-
 if(NUM_COLLECT_BUILD_EXAMPLES
    OR NUM_COLLECT_BUILD_EXPERIMENTS
    OR NUM_COLLECT_TESTING)
     find_package(cpp-plotly-plotter REQUIRED)
+    find_package(lyra REQUIRED)
 endif()
 
 # ##############################################################################

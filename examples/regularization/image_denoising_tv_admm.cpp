@@ -62,7 +62,7 @@ auto main(int argc, char** argv) -> int {
     using derivative_matrix_type = Eigen::SparseMatrix<double>;
     const auto derivative_matrix =
         num_prob_collect::regularization::sparse_diff_matrix_2d<
-            derivative_matrix_type>(rows, cols);
+            derivative_matrix_type>(cols, rows);
 
     // Prepare a solver.
     using solver_type = num_collect::regularization::tv_admm<coeff_type,
