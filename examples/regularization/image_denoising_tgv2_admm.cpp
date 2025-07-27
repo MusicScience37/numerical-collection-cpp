@@ -67,7 +67,7 @@ auto main(int argc, char** argv) -> int {
 
     // Prepare a matrix for the divergence operator.
     const auto divergence_matrix =
-        num_prob_collect::regularization::sparse_div_matrix_2d<
+        num_prob_collect::regularization::sparse_div_matrix_2d_with_boundaries<
             derivative_matrix_type>(cols, rows);
 
     // Prepare a solver.

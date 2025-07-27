@@ -51,7 +51,7 @@ static void visualize_derivatives(const Eigen::MatrixXd& origin,
         derivative1_vec.tail((rows - 1) * cols)
             .reshaped<Eigen::ColMajor>(rows - 1, cols);
     const Eigen::MatrixXd derivative2 =
-        derivative2_vec.reshaped<Eigen::ColMajor>(rows - 2, cols - 2);
+        derivative2_vec.reshaped<Eigen::ColMajor>(rows, cols);
 
     plotly_plotter::figure figure;
 
@@ -145,7 +145,7 @@ auto main() -> int {
         num_prob_collect::regularization::sparse_diff_matrix_2d<
             Eigen::SparseMatrix<double>>(cols, rows);
     const auto div_matrix =
-        num_prob_collect::regularization::sparse_div_matrix_2d<
+        num_prob_collect::regularization::sparse_div_matrix_2d_with_boundaries<
             Eigen::SparseMatrix<double>>(cols, rows);
 
     Eigen::MatrixXd origin;
