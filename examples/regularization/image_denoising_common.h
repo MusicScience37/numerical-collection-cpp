@@ -40,8 +40,9 @@
 #include "num_prob_collect/regularization/generate_sparse_sample_image.h"
 
 #ifndef NDEBUG
-constexpr num_collect::index_type rows = 20;
-constexpr num_collect::index_type cols = 20;
+// These sizes are too small for practical use, but useful for debugging.
+constexpr num_collect::index_type rows = 5;
+constexpr num_collect::index_type cols = 5;
 #else
 constexpr num_collect::index_type rows = 40;
 constexpr num_collect::index_type cols = 40;
