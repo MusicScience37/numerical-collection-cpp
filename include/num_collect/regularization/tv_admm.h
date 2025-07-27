@@ -115,6 +115,7 @@ public:
         coeff_ = &coeff;
         derivative_matrix_ = &derivative_matrix;
         data_ = &data;
+        // Sizes will be checked in init.
     }
 
     //! \copydoc num_collect::regularization::iterative_regularized_solver_base::init
