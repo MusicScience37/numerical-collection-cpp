@@ -84,3 +84,63 @@ for example, `ex_interp_interp1d`.
 - `<name>` specifies what the executable does.
   This can be omitted if the module has only one executable
   as in unit tests.
+
+## Documentation
+
+### Documentation in C++
+
+Documentation in C++ must follow the Doxygen style.
+
+- Use `//!` for single-line comments.
+- Use `/*! */` for multi-line comments.
+- Commands in Doxygen must be written using backslashes like `\command`.
+- `\param` command must be followed by `[in]`, `[out]`, or `[in,out]`.
+- `\brief` should be used to write a brief description.
+  - For functions, the description should start with a verb in the present tense
+    like "Calculate", "Get", etc.
+  - For classes, the description should start with "Class", sometimes "Base class".
+  - For variables, the description should start with a noun
+    like "Coefficient", "Number", etc.
+
+Example of Doxygen comments for a function:
+
+```cpp
+/*!
+ * \brief This is a brief description of the function.
+ *
+ * \param[in] param1 This is the first parameter.
+ * \param[out] param2 This is the second parameter.
+ * \return Return value description.
+ *
+ * \note If you need to write a note, use the \note command.
+ * \warning If you need to write a warning, use the \warning command.
+ */
+```
+
+Example of Doxygen comments for a class:
+
+```cpp
+/*!
+ * \brief This is a brief description of the class.
+ *
+ * \tparam T This is a template parameter.
+ *
+ * \note If you need to write a note, use the \note command.
+ * \warning If you need to write a warning, use the \warning command.
+ */
+```
+
+Example of Doxygen comments for a variable:
+
+```cpp
+//! Single-line comment for a variable.
+```
+
+```cpp
+/*!
+ * \brief This is a brief description of the variable using multi-line comments.
+ *
+ * \note If you need to write a note, use the \note command.
+ * \warning If you need to write a warning, use the \warning command.
+ */
+```

@@ -76,6 +76,8 @@
     "DCMAKE",
     "deadcode",
     "dealloc",
+    "denoised",
+    "Denoising",
     "devcontainer",
     "DFMT",
     "Discretization",

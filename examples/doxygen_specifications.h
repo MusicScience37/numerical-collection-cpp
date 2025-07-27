@@ -85,8 +85,13 @@
  */
 
 /*!
- * \example regularization/sparse_image_regularization.cpp
- * Example of regularization using sparsity for image data.
+ * \example regularization/image_denoising_fista.cpp
+ * Example of image denoising using FISTA.
+ */
+
+/*!
+ * \example regularization/image_denoising_tv_admm.cpp
+ * Example of image denoising using tv_admm class.
  */
 
 /*!
