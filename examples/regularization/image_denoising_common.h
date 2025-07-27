@@ -80,7 +80,8 @@ constexpr double noise_rate = 0.05;
                 .help("Index of the sample image to be generated. "
                       "1 (default): One constant circle. "
                       "2: Two constant circles. "
-                      "3: One quadratic circle."));
+                      "3: One quadratic circle. "
+                      "4: One smooth circle."));
     const auto result = cli.parse({argc, argv});
     if (!result) {
         std::cerr << result.message() << "\n\n";
@@ -115,6 +116,11 @@ constexpr double noise_rate = 0.05;
     case 3:
         num_prob_collect::regularization::
             generate_sparse_sample_image_with_one_quadratic_circle(
+                origin, rows, cols);
+        break;
+    case 4:
+        num_prob_collect::regularization::
+            generate_sparse_sample_image_with_one_smooth_circle(
                 origin, rows, cols);
         break;
     default:

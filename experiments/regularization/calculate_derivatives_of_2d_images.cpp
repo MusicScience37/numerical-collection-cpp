@@ -167,5 +167,10 @@ auto main() -> int {
     visualize_derivatives(origin, diff_matrix, div_matrix,
         "./calculate_derivatives_of_2d_images_one_quadratic_circle.html");
 
+    num_prob_collect::regularization::
+        generate_sparse_sample_image_with_one_smooth_circle(origin, rows, cols);
+    visualize_derivatives(origin, diff_matrix, div_matrix,
+        "./calculate_derivatives_of_2d_images_one_smooth_circle.html");
+
     return 0;
 }

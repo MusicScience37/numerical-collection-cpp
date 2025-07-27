@@ -22,6 +22,7 @@
 #include <Eigen/Core>
 
 #include "num_collect/base/index_type.h"
+#include "num_collect/rbf/rbfs/wendland_csrbf.h"
 
 namespace num_prob_collect::regularization {
 
@@ -82,6 +83,41 @@ inline void add_quadratic_circle(Eigen::MatrixXd& image,
 }
 
 /*!
+ * \brief Add a circle with values given by a smooth function to an image.
+ *
+ * \param[out] image Image to add a circle.
+ * \param[in] center Center of the circle to be drawn.
+ * \param[in] radius Radius of the circle to be drawn.
+ * \param[in] center_value Value at the center of the circle.
+ *
+ * This function uses Wendland's compactly supported radial basis function for a
+ * smooth function.
+ */
+inline void add_smooth_circle(Eigen::MatrixXd& image,
+    const Eigen::Vector2d& center, double radius, double center_value = 1.0) {
+    const num_collect::index_type rows = image.rows();
+    const num_collect::index_type cols = image.cols();
+
+    const num_collect::rbf::rbfs::wendland_csrbf<double, 3, 1> rbf;
+    const double scaling_factor = center_value / rbf(0.0);
+
+    Eigen::Vector2d point;
+    for (num_collect::index_type j = 0; j < cols; ++j) {
+        const double x = static_cast<double>(j) / static_cast<double>(cols - 1);
+        point.x() = x;
+        for (num_collect::index_type i = 0; i < rows; ++i) {
+            const double y =
+                static_cast<double>(i) / static_cast<double>(rows - 1);
+            point.y() = y;
+            const double dist = (point - center).norm();
+            const double dist_ratio = dist / radius;
+            image(i, j) =
+                std::max(image(i, j), scaling_factor * rbf(dist_ratio));
+        }
+    }
+}
+
+/*!
  * \brief Generate a sparse sample image with one constant circle.
  *
  * \param[out] image Image to be generated.
@@ -136,6 +172,24 @@ inline void generate_sparse_sample_image_with_one_quadratic_circle(
 
     image = Eigen::MatrixXd::Zero(rows, cols);
     add_quadratic_circle(image, center, radius, center_value);
+}
+
+/*!
+ * \brief Generate a sparse sample image with one smooth circle.
+ *
+ * \param[out] image Image to be generated.
+ * \param[in] rows Number of rows of the image.
+ * \param[in] cols Number of columns of the image.
+ */
+inline void generate_sparse_sample_image_with_one_smooth_circle(
+    Eigen::MatrixXd& image, num_collect::index_type rows,
+    num_collect::index_type cols) {
+    const Eigen::Vector2d center = Eigen::Vector2d(0.7, 0.6);
+    constexpr double radius = 0.3;
+    constexpr double center_value = 1.0;
+
+    image = Eigen::MatrixXd::Zero(rows, cols);
+    add_smooth_circle(image, center, radius, center_value);
 }
 
 }  // namespace num_prob_collect::regularization
