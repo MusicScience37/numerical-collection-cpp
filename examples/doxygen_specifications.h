@@ -95,6 +95,11 @@
  */
 
 /*!
+ * \example regularization/image_denoising_tgv2_admm.cpp
+ * Example of image denoising using tgv2_admm class.
+ */
+
+/*!
  * \example roots/newton_raphson.cpp
  * Example to use newton_raphson class.
  */

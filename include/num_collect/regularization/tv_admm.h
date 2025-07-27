@@ -52,6 +52,21 @@ constexpr auto tv_admm_tag =
  * \tparam Coeff Type of coefficient matrices.
  * \tparam DerivativeMatrix Type of matrices to compute derivatives.
  * \tparam Data Type of data vectors.
+ *
+ * This class minimizes the following evaluation function:
+ *
+ * \f[
+ * \| A \boldsymbol{x} - \boldsymbol{y} \|_2^2
+ * + \lambda \| D \boldsymbol{x} \|_1
+ * \f]
+ *
+ * where variables are defined as follows:
+ *
+ * - \f$A\f$ is a coefficient matrix.
+ * - \f$\boldsymbol{x}\f$ is a solution vector.
+ * - \f$\boldsymbol{y}\f$ is a data vector.
+ * - \f$\lambda\f$ is a regularization parameter.
+ * - \f$D\f$ is a matrix to compute derivatives.
  */
 template <typename Coeff, typename DerivativeMatrix,
     base::concepts::dense_vector Data>
@@ -100,6 +115,7 @@ public:
         coeff_ = &coeff;
         derivative_matrix_ = &derivative_matrix;
         data_ = &data;
+        // Sizes will be checked in init.
     }
 
     //! \copydoc num_collect::regularization::iterative_regularized_solver_base::init
