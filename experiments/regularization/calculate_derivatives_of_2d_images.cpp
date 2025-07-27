@@ -127,8 +127,15 @@ static void visualize_derivatives(const Eigen::MatrixXd& origin,
     figure.layout().yaxis().scale_anchor("x");
     figure.layout().yaxis(2).matches("y");
 
+    const double max_abs_value = std::max(
+        {origin.cwiseAbs().maxCoeff(), derivative1_x.cwiseAbs().maxCoeff(),
+            derivative1_y.cwiseAbs().maxCoeff(),
+            derivative2.cwiseAbs().maxCoeff()});
+
     figure.layout().color_axis().color_scale(
-        plotly_plotter::color_scales::purple_green_yellow());
+        plotly_plotter::color_scales::blue_to_red());
+    figure.layout().color_axis().c_min(-max_abs_value);
+    figure.layout().color_axis().c_max(max_abs_value);
 
     plotly_plotter::write_html(file_name, figure);
 }
