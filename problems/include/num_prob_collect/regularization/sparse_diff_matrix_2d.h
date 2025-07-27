@@ -58,7 +58,7 @@ template <num_collect::concepts::sparse_matrix Matrix>
         }
     }
 
-    //! Difference for the inner index.
+    // Difference for the inner index.
     for (num_collect::index_type o = 0; o < outer_size; ++o) {
         for (num_collect::index_type i = 0; i < inner_size - 1; ++i) {
             const num_collect::index_type row =
