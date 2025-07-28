@@ -59,14 +59,14 @@ auto main(int argc, char** argv) -> int {
     coeff.resize(size, size);
     coeff.setIdentity();
 
-    // Prepare a matrix for the derivative operator.
+    // Prepare a matrix for the 1st order derivative operator.
     using derivative_matrix_type = Eigen::SparseMatrix<double>;
-    const auto derivative_matrix =
+    const auto first_derivative_matrix =
         num_prob_collect::regularization::sparse_diff_matrix_2d<
             derivative_matrix_type>(cols, rows);
 
-    // Prepare a matrix for the divergence operator.
-    const auto divergence_matrix =
+    // Prepare a matrix for the 2nd order derivative operator.
+    const auto second_derivative_matrix =
         num_prob_collect::regularization::sparse_div_matrix_2d_with_boundaries<
             derivative_matrix_type>(cols, rows);
 
@@ -74,7 +74,8 @@ auto main(int argc, char** argv) -> int {
     using solver_type = num_collect::regularization::tgv2_admm<coeff_type,
         derivative_matrix_type, Eigen::VectorXd>;
     solver_type solver;
-    solver.compute(coeff, derivative_matrix, divergence_matrix, data_vec);
+    solver.compute(
+        coeff, first_derivative_matrix, second_derivative_matrix, data_vec);
 
     // Search for an optimal regularization parameter.
     const auto& initial_solution = data_vec;
