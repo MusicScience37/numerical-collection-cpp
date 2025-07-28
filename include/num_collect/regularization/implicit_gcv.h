@@ -249,6 +249,8 @@ public:
         this->configure_child_algorithm_logger_if_exists(optimizer_);
         optimizer_.configure_child_algorithm_logger_if_exists(
             calculator_.solver());
+        constexpr index_type max_evaluations = 10;
+        optimizer_.max_evaluations(max_evaluations);
     }
 
     //! \copydoc explicit_param_searcher_base::search
@@ -278,9 +280,6 @@ public:
         this->configure_child_algorithm_logger_if_exists(optimizer_);
         optimizer_.configure_child_algorithm_logger_if_exists(
             calculator_.solver());
-
-        constexpr index_type max_evaluations = 20;
-        optimizer_.max_evaluations(max_evaluations);
 
         optimizer_.init(log_min_param, log_max_param);
         optimizer_.solve();
@@ -319,6 +318,17 @@ public:
      */
     auto num_samples(index_type value) -> implicit_gcv& {
         calculator_.num_samples(value);
+        return *this;
+    }
+
+    /*!
+     * \brief Set the maximum number of evaluations of GCV.
+     *
+     * \param[in] value Value.
+     * \return This object.
+     */
+    auto max_evaluations(index_type value) -> implicit_gcv& {
+        optimizer_.max_evaluations(value);
         return *this;
     }
 
