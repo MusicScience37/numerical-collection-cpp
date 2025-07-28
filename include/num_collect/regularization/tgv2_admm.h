@@ -68,7 +68,7 @@ constexpr auto tgv2_admm_tag =
  * - \f$\boldsymbol{z}\f$ is a component of the 1st order derivative
  *   of the solution which is used to compute the 2nd order derivative.
  * - \f$\lambda\f$ is a regularization parameter.
- * - \f$D\f$ is a matrix to compute derivatives.
+ * - \f$D\f$ is a matrix to compute the 1st order derivatives.
  * - \f$E\f$ is a matrix to compute the 2nd order derivative
  *   from the 1st order derivative.
  *
@@ -164,8 +164,8 @@ constexpr auto tgv2_admm_tag =
  * | \f$\boldsymbol{p}\f$ | `p` |
  * | \f$\boldsymbol{u}\f$ | `u` |
  * | \f$A\f$ | `coeff` |
- * | \f$D\f$ | `derivative_matrix` |
- * | \f$E\f$ | `divergence_matrix` |
+ * | \f$D\f$ | `first_derivative_matrix` |
+ * | \f$E\f$ | `second_derivative_matrix` |
  * | \f$\lambda\f$ | `param` |
  * | \f$\alpha\f$ | `second_derivative_ratio` |
  * | \f$\rho\f$ | `constraint_coeff` |
@@ -207,19 +207,22 @@ public:
      * \brief Compute internal parameters.
      *
      * \param[in] coeff Coefficient matrix.
-     * \param[in] derivative_matrix Matrix to compute derivative.
-     * \param[in] divergence_matrix Matrix to compute divergence.
+     * \param[in] first_derivative_matrix Matrix to compute the first
+     * derivative.
+     * \param[in] second_derivative_matrix Matrix to compute the second
+     * derivative from the first order derivative.
      * \param[in] data Data vector.
      *
      * \note Pointers to the arguments are saved in this object, so don't
      * destruct those arguments.
      * \note Call this before init.
      */
-    void compute(const Coeff& coeff, const DerivativeMatrix& derivative_matrix,
-        const DerivativeMatrix& divergence_matrix, const Data& data) {
+    void compute(const Coeff& coeff,
+        const DerivativeMatrix& first_derivative_matrix,
+        const DerivativeMatrix& second_derivative_matrix, const Data& data) {
         coeff_ = &coeff;
-        derivative_matrix_ = &derivative_matrix;
-        divergence_matrix_ = &divergence_matrix;
+        first_derivative_matrix_ = &first_derivative_matrix;
+        second_derivative_matrix_ = &second_derivative_matrix;
         data_ = &data;
         // Sizes will be checked in init.
     }
@@ -230,10 +233,10 @@ public:
 
         NUM_COLLECT_PRECONDITION(coeff_ != nullptr, this->logger(),
             "Coefficient matrix is not set.");
-        NUM_COLLECT_PRECONDITION(derivative_matrix_ != nullptr, this->logger(),
-            "Derivative matrix is not set.");
-        NUM_COLLECT_PRECONDITION(divergence_matrix_ != nullptr, this->logger(),
-            "Divergence matrix is not set.");
+        NUM_COLLECT_PRECONDITION(first_derivative_matrix_ != nullptr,
+            this->logger(), "First order derivative matrix is not set.");
+        NUM_COLLECT_PRECONDITION(second_derivative_matrix_ != nullptr,
+            this->logger(), "Second order derivative matrix is not set.");
         NUM_COLLECT_PRECONDITION(
             data_ != nullptr, this->logger(), "Data vector is not set.");
 
@@ -248,28 +251,28 @@ public:
         NUM_COLLECT_PRECONDITION(data_->cols() == solution.cols(),
             this->logger(),
             "Data and solution must have the same number of columns.");
-        NUM_COLLECT_PRECONDITION(derivative_matrix_->cols() == solution.rows(),
-            this->logger(),
-            "The number of columns in the derivative matrix must match the "
-            "number of rows in solution vector.");
         NUM_COLLECT_PRECONDITION(
-            divergence_matrix_->cols() == derivative_matrix_->rows(),
+            first_derivative_matrix_->cols() == solution.rows(), this->logger(),
+            "The number of columns in the first order derivative matrix must "
+            "match the number of rows in solution vector.");
+        NUM_COLLECT_PRECONDITION(second_derivative_matrix_->cols() ==
+                first_derivative_matrix_->rows(),
             this->logger(),
-            "The number of columns in the divergence matrix must match the "
-            "number of rows in the derivative matrix.");
+            "The number of columns in the second order derivative matrix must "
+            "match the number of rows in the first order derivative matrix.");
 
         iterations_ = 0;
 
         // Set variables to one of feasible solutions.
-        z_ = data_type::Zero(derivative_matrix_->rows());
-        s_ = (*derivative_matrix_) * solution;
-        t_ = data_type::Zero(divergence_matrix_->rows());
-        p_ = data_type::Zero(derivative_matrix_->rows());
-        u_ = data_type::Zero(divergence_matrix_->rows());
+        z_ = data_type::Zero(first_derivative_matrix_->rows());
+        s_ = (*first_derivative_matrix_) * solution;
+        t_ = data_type::Zero(second_derivative_matrix_->rows());
+        p_ = data_type::Zero(first_derivative_matrix_->rows());
+        u_ = data_type::Zero(second_derivative_matrix_->rows());
 
         // Pre-allocate temporary vectors.
         temp_solution_ = data_type::Zero(solution.rows());
-        temp_z_ = data_type::Zero(derivative_matrix_->rows());
+        temp_z_ = data_type::Zero(first_derivative_matrix_->rows());
         previous_solution_ = data_type::Zero(solution.rows());
         previous_z_ = data_type::Zero(z_.rows());
         previous_s_ = data_type::Zero(s_.rows());
@@ -330,7 +333,7 @@ public:
     //! \copydoc num_collect::regularization::implicit_regularized_solver_base::regularization_term
     [[nodiscard]] auto regularization_term(const data_type& solution) const
         -> scalar_type {
-        return (*derivative_matrix_ * solution).template lpNorm<1>();
+        return (*first_derivative_matrix_ * solution).template lpNorm<1>();
     }
 
     //! \copydoc num_collect::regularization::implicit_regularized_solver_base::change_data
@@ -350,7 +353,7 @@ public:
         const data_type approx_order_of_solution = coeff_->transpose() *
             (*data_) / impl::approximate_max_eigen_aat(*coeff_);
         const scalar_type approx_order_of_param =
-            (*derivative_matrix_ * approx_order_of_solution)
+            (*first_derivative_matrix_ * approx_order_of_solution)
                 .cwiseAbs()
                 .maxCoeff();
         NUM_COLLECT_LOG_TRACE(
@@ -449,15 +452,15 @@ private:
         temp_z_ = -p_ + constraint_coeff_ * z_ + constraint_coeff_ * s_;
         temp_solution_ =
             static_cast<scalar_type>(2) * (*coeff_).transpose() * (*data_) +
-            (*derivative_matrix_).transpose() * temp_z_;
+            (*first_derivative_matrix_).transpose() * temp_z_;
         previous_solution_ = solution;
         conjugate_gradient_solution_.solve(
             [this](const data_type& target, data_type& result) {
                 result = static_cast<scalar_type>(2) * (*coeff_).transpose() *
                     (*coeff_) * target;
                 result += constraint_coeff_ *
-                    (*derivative_matrix_).transpose() * (*derivative_matrix_) *
-                    target;
+                    (*first_derivative_matrix_).transpose() *
+                    (*first_derivative_matrix_) * target;
             },
             temp_solution_, solution);
         update_rate_ += (solution - previous_solution_).norm() /
@@ -474,17 +477,17 @@ private:
     void update_z(const scalar_type& param, const data_type& solution) {
         (void)param;  // Not used for update of z_.
 
-        temp_z_ = p_ - (*divergence_matrix_).transpose() * u_ +
-            constraint_coeff_ * (*derivative_matrix_) * solution -
+        temp_z_ = p_ - (*second_derivative_matrix_).transpose() * u_ +
+            constraint_coeff_ * (*first_derivative_matrix_) * solution -
             constraint_coeff_ * s_ +
-            constraint_coeff_ * (*divergence_matrix_).transpose() * t_;
+            constraint_coeff_ * (*second_derivative_matrix_).transpose() * t_;
         previous_z_ = z_;
         conjugate_gradient_z_.solve(
             [this](const data_type& target, data_type& result) {
                 result = constraint_coeff_ * target;
                 result += constraint_coeff_ *
-                    (*divergence_matrix_).transpose() * (*divergence_matrix_) *
-                    target;
+                    (*second_derivative_matrix_).transpose() *
+                    (*second_derivative_matrix_) * target;
             },
             temp_z_, z_);
         update_rate_ += (z_ - previous_z_).norm() /
@@ -499,7 +502,8 @@ private:
      */
     void update_s(const scalar_type& param, const data_type& solution) {
         previous_s_ = s_;
-        s_ = (*derivative_matrix_) * solution - z_ + p_ / constraint_coeff_;
+        s_ = (*first_derivative_matrix_) * solution - z_ +
+            p_ / constraint_coeff_;
         impl::apply_shrinkage_operator(s_, param / constraint_coeff_);
         update_rate_ += (s_ - previous_s_).norm() /
             (s_.norm() + std::numeric_limits<scalar_type>::epsilon());
@@ -515,7 +519,7 @@ private:
         (void)solution;  // Not used for update of t_.
 
         previous_t_ = t_;
-        t_ = (*divergence_matrix_) * z_ + u_ / constraint_coeff_;
+        t_ = (*second_derivative_matrix_) * z_ + u_ / constraint_coeff_;
         impl::apply_shrinkage_operator(
             t_, param / constraint_coeff_ / second_derivative_ratio_);
         update_rate_ += (t_ - previous_t_).norm() /
@@ -531,8 +535,8 @@ private:
     void update_p(const scalar_type& param, const data_type& solution) {
         (void)param;  // Not used for update of p_.
 
-        p_update_ =
-            constraint_coeff_ * ((*derivative_matrix_) * solution - z_ - s_);
+        p_update_ = constraint_coeff_ *
+            ((*first_derivative_matrix_) * solution - z_ - s_);
         p_ += p_update_;
         update_rate_ += p_update_.norm() /
             (p_.norm() + std::numeric_limits<scalar_type>::epsilon());
@@ -548,7 +552,8 @@ private:
         (void)param;     // Not used for update of u_.
         (void)solution;  // Not used for update of u_.
 
-        u_update_ = constraint_coeff_ * ((*divergence_matrix_) * z_ - t_);
+        u_update_ =
+            constraint_coeff_ * ((*second_derivative_matrix_) * z_ - t_);
         u_ += u_update_;
         update_rate_ += u_update_.norm() /
             (u_.norm() + std::numeric_limits<scalar_type>::epsilon());
@@ -557,11 +562,11 @@ private:
     //! Coefficient matrix to compute data vector.
     const coeff_type* coeff_{nullptr};
 
-    //! Matrix to compute derivative.
-    const derivative_matrix_type* derivative_matrix_{nullptr};
+    //! Matrix to compute the first order derivative.
+    const derivative_matrix_type* first_derivative_matrix_{nullptr};
 
-    //! Matrix to compute divergence.
-    const derivative_matrix_type* divergence_matrix_{nullptr};
+    //! Matrix to compute the second order derivative.
+    const derivative_matrix_type* second_derivative_matrix_{nullptr};
 
     //! Data vector.
     const data_type* data_{nullptr};

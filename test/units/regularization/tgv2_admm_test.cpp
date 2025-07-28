@@ -55,14 +55,14 @@ TEST_CASE("num_collect::regularization::tgv2_admm") {
         REQUIRE(true_solution.rows() == solution_size);
         REQUIRE(data.rows() == data_size);
 
-        const auto derivative_matrix =
+        const auto first_derivative_matrix =
             sparse_diff_matrix<derivative_matrix_type>(solution_size);
-        const auto divergence_matrix =
+        const auto second_derivative_matrix =
             sparse_diff_matrix<derivative_matrix_type>(solution_size - 1);
 
         solver_type solver;
-        REQUIRE_NOTHROW(
-            solver.compute(coeff, derivative_matrix, divergence_matrix, data));
+        REQUIRE_NOTHROW(solver.compute(
+            coeff, first_derivative_matrix, second_derivative_matrix, data));
 
         constexpr scalar_type param = 0.5e-2;
         data_type solution = data_type::Zero(solution_size);
