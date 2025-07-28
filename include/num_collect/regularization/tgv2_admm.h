@@ -272,7 +272,9 @@ public:
 
         // Pre-allocate temporary vectors.
         temp_solution_ = data_type::Zero(solution.rows());
-        temp_z_ = data_type::Zero(first_derivative_matrix_->rows());
+        temp_data_ = data_type::Zero(data_->rows());
+        temp_z_ = data_type::Zero(z_.rows());
+        temp_t_ = data_type::Zero(t_.rows());
         previous_solution_ = data_type::Zero(solution.rows());
         previous_z_ = data_type::Zero(z_.rows());
         previous_s_ = data_type::Zero(s_.rows());
@@ -450,22 +452,25 @@ private:
         (void)param;  // Not used for update of solution.
 
         temp_z_ = -p_ + constraint_coeff_ * z_ + constraint_coeff_ * s_;
-        temp_solution_ =
-            static_cast<scalar_type>(2) * (*coeff_).transpose() * (*data_) +
+        temp_solution_.noalias() =
+            static_cast<scalar_type>(2) * (*coeff_).transpose() * (*data_);
+        temp_solution_.noalias() +=
             (*first_derivative_matrix_).transpose() * temp_z_;
         previous_solution_ = solution;
         conjugate_gradient_solution_.solve(
             [this](const data_type& target, data_type& result) {
-                result = static_cast<scalar_type>(2) * (*coeff_).transpose() *
-                    (*coeff_) * target;
-                result += constraint_coeff_ *
-                    (*first_derivative_matrix_).transpose() *
-                    (*first_derivative_matrix_) * target;
+                temp_data_.noalias() = (*coeff_) * target;
+                result.noalias() = static_cast<scalar_type>(2) *
+                    (*coeff_).transpose() * temp_data_;
+                temp_z_.noalias() = (*first_derivative_matrix_) * target;
+                result.noalias() += constraint_coeff_ *
+                    (*first_derivative_matrix_).transpose() * temp_z_;
             },
             temp_solution_, solution);
         update_rate_ += (solution - previous_solution_).norm() /
             (solution.norm() + std::numeric_limits<scalar_type>::epsilon());
-        residual_ = (*coeff_) * solution - (*data_);
+        residual_.noalias() = (*coeff_) * solution;
+        residual_ -= (*data_);
     }
 
     /*!
@@ -477,17 +482,20 @@ private:
     void update_z(const scalar_type& param, const data_type& solution) {
         (void)param;  // Not used for update of z_.
 
-        temp_z_ = p_ - (*second_derivative_matrix_).transpose() * u_ +
-            constraint_coeff_ * (*first_derivative_matrix_) * solution -
-            constraint_coeff_ * s_ +
+        temp_z_ = p_;
+        temp_z_.noalias() -= (*second_derivative_matrix_).transpose() * u_;
+        temp_z_.noalias() +=
+            constraint_coeff_ * (*first_derivative_matrix_) * solution;
+        temp_z_.noalias() -= constraint_coeff_ * s_;
+        temp_z_.noalias() +=
             constraint_coeff_ * (*second_derivative_matrix_).transpose() * t_;
         previous_z_ = z_;
         conjugate_gradient_z_.solve(
             [this](const data_type& target, data_type& result) {
-                result = constraint_coeff_ * target;
-                result += constraint_coeff_ *
-                    (*second_derivative_matrix_).transpose() *
-                    (*second_derivative_matrix_) * target;
+                result.noalias() = constraint_coeff_ * target;
+                temp_t_.noalias() = (*second_derivative_matrix_) * target;
+                result.noalias() += constraint_coeff_ *
+                    (*second_derivative_matrix_).transpose() * temp_t_;
             },
             temp_z_, z_);
         update_rate_ += (z_ - previous_z_).norm() /
@@ -502,8 +510,8 @@ private:
      */
     void update_s(const scalar_type& param, const data_type& solution) {
         previous_s_ = s_;
-        s_ = (*first_derivative_matrix_) * solution - z_ +
-            p_ / constraint_coeff_;
+        s_.noalias() = (*first_derivative_matrix_) * solution;
+        s_ += -z_ + p_ / constraint_coeff_;
         impl::apply_shrinkage_operator(s_, param / constraint_coeff_);
         update_rate_ += (s_ - previous_s_).norm() /
             (s_.norm() + std::numeric_limits<scalar_type>::epsilon());
@@ -519,7 +527,8 @@ private:
         (void)solution;  // Not used for update of t_.
 
         previous_t_ = t_;
-        t_ = (*second_derivative_matrix_) * z_ + u_ / constraint_coeff_;
+        t_.noalias() = (*second_derivative_matrix_) * z_;
+        t_ += u_ / constraint_coeff_;
         impl::apply_shrinkage_operator(
             t_, param / constraint_coeff_ / second_derivative_ratio_);
         update_rate_ += (t_ - previous_t_).norm() /
@@ -535,8 +544,9 @@ private:
     void update_p(const scalar_type& param, const data_type& solution) {
         (void)param;  // Not used for update of p_.
 
-        p_update_ = constraint_coeff_ *
-            ((*first_derivative_matrix_) * solution - z_ - s_);
+        p_update_.noalias() =
+            constraint_coeff_ * (*first_derivative_matrix_) * solution;
+        p_update_ += constraint_coeff_ * (-z_ - s_);
         p_ += p_update_;
         update_rate_ += p_update_.norm() /
             (p_.norm() + std::numeric_limits<scalar_type>::epsilon());
@@ -552,8 +562,9 @@ private:
         (void)param;     // Not used for update of u_.
         (void)solution;  // Not used for update of u_.
 
-        u_update_ =
-            constraint_coeff_ * ((*second_derivative_matrix_) * z_ - t_);
+        u_update_.noalias() =
+            constraint_coeff_ * (*second_derivative_matrix_) * z_;
+        u_update_ -= constraint_coeff_ * t_;
         u_ += u_update_;
         update_rate_ += u_update_.norm() /
             (u_.norm() + std::numeric_limits<scalar_type>::epsilon());
@@ -592,8 +603,14 @@ private:
     //! Temporary vector for the update of the solution.
     data_type temp_solution_{};
 
+    //! Temporary vector with the size of data.
+    data_type temp_data_{};
+
     //! Temporary vector for the update of the 1st order derivative.
     data_type temp_z_{};
+
+    //! Temporary vector for the update of the 2nd order derivative.
+    data_type temp_t_{};
 
     //! Previous solution.
     data_type previous_solution_{};
