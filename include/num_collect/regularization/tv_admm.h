@@ -142,6 +142,8 @@ public:
         derivative_ = (*derivative_matrix_) * solution;
         lagrange_multiplier_ = data_type::Zero(derivative_matrix_->rows());
         temp_solution_ = solution;
+        temp_data_ = data_type::Zero(data_->rows());
+        temp_derivative_ = data_type::Zero(derivative_matrix_->rows());
         residual_ = (*coeff_) * solution - (*data_);
         update_rate_ = std::numeric_limits<scalar_type>::infinity();
 
@@ -153,29 +155,32 @@ public:
     //! \copydoc num_collect::regularization::iterative_regularized_solver_base::iterate
     void iterate(const scalar_type& param, data_type& solution) {
         // Update solution.
-        temp_solution_ =
-            static_cast<scalar_type>(2) * (*coeff_).transpose() * (*data_) -
-            (*derivative_matrix_).transpose() * lagrange_multiplier_ +
-            derivative_constraint_coeff_ * (*derivative_matrix_).transpose() *
-                derivative_;
+        temp_solution_.noalias() =
+            static_cast<scalar_type>(2) * (*coeff_).transpose() * (*data_);
+        temp_solution_.noalias() -=
+            (*derivative_matrix_).transpose() * lagrange_multiplier_;
+        temp_solution_.noalias() += derivative_constraint_coeff_ *
+            (*derivative_matrix_).transpose() * derivative_;
         previous_solution_ = solution;
         conjugate_gradient_.solve(
             [this](const data_type& target, data_type& result) {
-                result = static_cast<scalar_type>(2) * (*coeff_).transpose() *
-                    (*coeff_) * target;
-                result += derivative_constraint_coeff_ *
-                    (*derivative_matrix_).transpose() * (*derivative_matrix_) *
-                    target;
+                temp_data_.noalias() = (*coeff_) * target;
+                result.noalias() = static_cast<scalar_type>(2) *
+                    (*coeff_).transpose() * temp_data_;
+                temp_derivative_.noalias() = (*derivative_matrix_) * target;
+                result.noalias() += derivative_constraint_coeff_ *
+                    (*derivative_matrix_).transpose() * temp_derivative_;
             },
             temp_solution_, solution);
         update_rate_ = (solution - previous_solution_).norm() /
             (solution.norm() + std::numeric_limits<scalar_type>::epsilon());
-        residual_ = (*coeff_) * solution - (*data_);
+        residual_.noalias() = (*coeff_) * solution;
+        residual_ -= (*data_);
 
         // Update derivative.
         previous_derivative_ = derivative_;
-        derivative_ = (*derivative_matrix_) * solution +
-            lagrange_multiplier_ / derivative_constraint_coeff_;
+        derivative_.noalias() = (*derivative_matrix_) * solution;
+        derivative_ += lagrange_multiplier_ / derivative_constraint_coeff_;
         const scalar_type derivative_shrinkage_threshold =
             param / derivative_constraint_coeff_;
         impl::apply_shrinkage_operator(
@@ -184,8 +189,10 @@ public:
             (derivative_.norm() + std::numeric_limits<scalar_type>::epsilon());
 
         // Update lagrange multiplier.
-        lagrange_multiplier_update_ = derivative_constraint_coeff_ *
-            ((*derivative_matrix_) * solution - derivative_);
+        lagrange_multiplier_update_.noalias() =
+            derivative_constraint_coeff_ * (*derivative_matrix_) * solution;
+        lagrange_multiplier_update_ -=
+            derivative_constraint_coeff_ * derivative_;
         lagrange_multiplier_ += lagrange_multiplier_update_;
         update_rate_ += lagrange_multiplier_update_.norm() /
             (lagrange_multiplier_.norm() +
@@ -351,6 +358,12 @@ private:
     //! Temporary vector for the update of the solution.
     data_type temp_solution_{};
 
+    //! Temporary vector with the size of data.
+    data_type temp_data_{};
+
+    //! Temporary vector with the size of the derivative.
+    data_type temp_derivative_{};
+
     //! Previous solution.
     data_type previous_solution_{};
 
@@ -378,7 +391,7 @@ private:
         default_derivative_constraint_coeff};
 
     //! Default maximum number of iterations.
-    static constexpr index_type default_max_iterations = 1000;
+    static constexpr index_type default_max_iterations = 10000;
 
     //! Maximum number of iterations.
     index_type max_iterations_{default_max_iterations};
