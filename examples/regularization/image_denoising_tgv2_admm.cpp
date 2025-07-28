@@ -28,7 +28,7 @@
 #include "num_collect/regularization/tgv2_admm.h"
 #include "num_prob_collect/regularization/add_noise.h"
 #include "num_prob_collect/regularization/sparse_diff_matrix_2d.h"
-#include "num_prob_collect/regularization/sparse_div_matrix_2d.h"
+#include "num_prob_collect/regularization/tgv2_second_derivative_matrix_2d.h"
 
 auto main(int argc, char** argv) -> int {
     constexpr num_collect::index_type size = rows * cols;
@@ -67,7 +67,7 @@ auto main(int argc, char** argv) -> int {
 
     // Prepare a matrix for the 2nd order derivative operator.
     const auto second_derivative_matrix =
-        num_prob_collect::regularization::sparse_div_matrix_2d_with_boundaries<
+        num_prob_collect::regularization::tgv2_second_derivative_matrix_2d<
             derivative_matrix_type>(cols, rows);
 
     // Prepare a solver.
