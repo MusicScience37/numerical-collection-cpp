@@ -24,7 +24,6 @@
 
 #include "image_denoising_common.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/logging/logger.h"
 #include "num_collect/regularization/implicit_gcv.h"
 #include "num_collect/regularization/tv_admm.h"
 #include "num_prob_collect/regularization/add_noise.h"
@@ -80,9 +79,6 @@ auto main(int argc, char** argv) -> int {
     // Solve the problem using the optimal parameter.
     Eigen::VectorXd solution_vec = initial_solution;
     gcv.solve(solution_vec);
-
-    num_collect::logging::logger logger;
-    logger.info()("iterations: {}", solver.iterations());
 
     // Reshape the solution vector to a matrix for visualization.
     // The solution is the denoised image.
