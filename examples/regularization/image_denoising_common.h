@@ -20,6 +20,7 @@
 #pragma once
 
 #include <iostream>
+#include <optional>
 #include <string>
 
 #include <Eigen/Core>
@@ -29,25 +30,20 @@
 #include <plotly_plotter/eigen.h>
 #include <plotly_plotter/figure.h>
 #include <plotly_plotter/write_html.h>
+#include <toml++/toml.h>
 
 #include "num_collect/base/index_type.h"
-#include "num_collect/logging/log_config.h"
-#include "num_collect/logging/log_level.h"
-#include "num_collect/logging/log_tag_config.h"
+#include "num_collect/logging/load_logging_config.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/logging/logging_macros.h"
-#include "num_collect/opt/gaussian_process_optimizer.h"
 #include "num_prob_collect/regularization/generate_sparse_sample_image.h"
 
-#ifndef NDEBUG
-// These sizes are too small for practical use, but useful for debugging.
-constexpr num_collect::index_type rows = 5;
-constexpr num_collect::index_type cols = 5;
-#else
-constexpr num_collect::index_type rows = 40;
-constexpr num_collect::index_type cols = 40;
-#endif
-constexpr double noise_rate = 0.05;
+struct image_denoising_config {
+    num_collect::index_type rows;
+    num_collect::index_type cols;
+    double noise_rate;
+    int sample_image_index;
+};
 
 /*!
  * \brief Perform common initialization for image denoising examples and
@@ -55,76 +51,88 @@ constexpr double noise_rate = 0.05;
  *
  * \param[in] argc Number of command line arguments.
  * \param[in] argv Command line arguments.
- * \param[out] sample_image_index Index of the sample image to be generated.
- * \retval true Initialization succeeded.
- * \retval false Initialization failed.
+ * \return Configuration for image denoising or `std::nullopt` if failed.
  */
-[[nodiscard]] inline auto initialize(
-    int argc, char** argv, int& sample_image_index) -> bool {
-    auto log_tag_config =
-        num_collect::logging::log_tag_config()
-            .output_log_level(num_collect::logging::log_level::debug)
-            .output_log_level_in_child_iterations(
-                num_collect::logging::log_level::warning);
-    num_collect::logging::set_default_tag_config(log_tag_config);
-    log_tag_config.iteration_output_period(1);
-    num_collect::logging::set_config_of(
-        num_collect::opt::gaussian_process_optimizer_tag, log_tag_config);
-
-    sample_image_index = 1;
+[[nodiscard]] inline auto initialize(int argc, char** argv)
+    -> std::optional<image_denoising_config> {
+#ifndef NDEBUG
+    std::string config_file_path =
+        "examples/regularization/image_denoising_config_small.toml";
+#else
+    std::string config_file_path =
+        "examples/regularization/image_denoising_config.toml";
+#endif
     const auto cli =
-        lyra::cli().add_argument(lyra::opt(sample_image_index, "index")
-                .name("--image-index")
-                .name("-i")
+        lyra::cli().add_argument(lyra::arg(config_file_path, "config_file_path")
                 .optional()
-                .help("Index of the sample image to be generated. "
-                      "1 (default): One constant circle. "
-                      "2: Two constant circles. "
-                      "3: One quadratic circle. "
-                      "4: One smooth circle."));
+                .help("Path to the configuration file."));
     const auto result = cli.parse({argc, argv});
     if (!result) {
         std::cerr << result.message() << "\n\n";
         std::cerr << cli << std::endl;
-        return false;
+        return std::nullopt;
     }
 
-    return true;
+    num_collect::logging::load_logging_config_file(config_file_path);
+
+    const auto config_table = toml::parse_file(config_file_path);
+    image_denoising_config config;
+    try {
+        config.rows = config_table.at_path("image_denoising.rows")
+                          .value<num_collect::index_type>()
+                          .value();
+        config.cols = config_table.at_path("image_denoising.cols")
+                          .value<num_collect::index_type>()
+                          .value();
+        config.noise_rate = config_table.at_path("image_denoising.noise_rate")
+                                .value<double>()
+                                .value();
+        config.sample_image_index =
+            config_table.at_path("image_denoising.sample_image_index")
+                .value<int>()
+                .value();
+    } catch (const std::exception& /*exception*/) {
+        std::cerr << "Invalid configuration file: " << config_file_path
+                  << std::endl;
+        return std::nullopt;
+    }
+
+    return config;
 }
 
 /*!
  * \brief Generate a sample image matrix.
  *
- * \param[in] sample_image_index Index of the sample image to be generated.
+ * \param[in] config Configuration for image denoising.
  * \param[out] origin Original image matrix.
  * \retval true Sample image generated successfully.
  * \retval false Failed to generate the sample image.
  */
 [[nodiscard]] inline auto generate_sample_image(
-    int sample_image_index, Eigen::MatrixXd& origin) -> bool {
-    switch (sample_image_index) {
+    const image_denoising_config& config, Eigen::MatrixXd& origin) -> bool {
+    switch (config.sample_image_index) {
     case 1:
         num_prob_collect::regularization::
             generate_sparse_sample_image_with_one_constant_circle(
-                origin, rows, cols);
+                origin, config.rows, config.cols);
         break;
     case 2:
         num_prob_collect::regularization::
             generate_sparse_sample_image_with_two_constant_circles(
-                origin, rows, cols);
+                origin, config.rows, config.cols);
         break;
     case 3:
         num_prob_collect::regularization::
             generate_sparse_sample_image_with_one_quadratic_circle(
-                origin, rows, cols);
+                origin, config.rows, config.cols);
         break;
     case 4:
         num_prob_collect::regularization::
             generate_sparse_sample_image_with_one_smooth_circle(
-                origin, rows, cols);
+                origin, config.rows, config.cols);
         break;
     default:
-        std::cerr << "Unknown sample image index: " << sample_image_index
+        std::cerr << "Unknown sample image index: " << config.sample_image_index
                   << std::endl;
         return false;
     }
