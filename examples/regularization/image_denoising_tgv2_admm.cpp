@@ -31,23 +31,24 @@
 #include "num_prob_collect/regularization/tgv2_second_derivative_matrix_2d.h"
 
 auto main(int argc, char** argv) -> int {
-    constexpr num_collect::index_type size = rows * cols;
-
     // Perform common initialization for examples.
-    int sample_image_index = 1;
-    if (!initialize(argc, argv, sample_image_index)) {
+    const auto config_result = initialize(argc, argv);
+    if (!config_result) {
         return 1;
     }
 
+    const auto& config = *config_result;
+    const num_collect::index_type size = config.rows * config.cols;
+
     // Generate the original image.
     Eigen::MatrixXd origin;
-    if (!generate_sample_image(sample_image_index, origin)) {
+    if (!generate_sample_image(config, origin)) {
         return 1;
     }
 
     // Prepare data with noise.
     Eigen::MatrixXd data = origin;
-    num_prob_collect::regularization::add_noise(data, noise_rate);
+    num_prob_collect::regularization::add_noise(data, config.noise_rate);
 
     // Reshape the data to a vector for processing.
     const Eigen::VectorXd data_vec = data.reshaped<Eigen::ColMajor>();
@@ -63,12 +64,12 @@ auto main(int argc, char** argv) -> int {
     using derivative_matrix_type = Eigen::SparseMatrix<double>;
     const auto first_derivative_matrix =
         num_prob_collect::regularization::sparse_diff_matrix_2d<
-            derivative_matrix_type>(cols, rows);
+            derivative_matrix_type>(config.cols, config.rows);
 
     // Prepare a matrix for the 2nd order derivative operator.
     const auto second_derivative_matrix =
         num_prob_collect::regularization::tgv2_second_derivative_matrix_2d<
-            derivative_matrix_type>(cols, rows);
+            derivative_matrix_type>(config.cols, config.rows);
 
     // Prepare a solver.
     using solver_type = num_collect::regularization::tgv2_admm<coeff_type,
@@ -90,7 +91,7 @@ auto main(int argc, char** argv) -> int {
     // Reshape the solution vector to a matrix for visualization.
     // The solution is the denoised image.
     const Eigen::MatrixXd solution =
-        solution_vec.reshaped<Eigen::ColMajor>(rows, cols);
+        solution_vec.reshaped<Eigen::ColMajor>(config.rows, config.cols);
 
     // Visualize the result.
     visualize_result(
