@@ -131,6 +131,11 @@ struct image_denoising_config {
             generate_sparse_sample_image_with_one_smooth_circle(
                 origin, config.rows, config.cols);
         break;
+    case 5:
+        num_prob_collect::regularization::
+            generate_sparse_sample_image_with_two_smooth_circles(
+                origin, config.rows, config.cols);
+        break;
     default:
         std::cerr << "Unknown sample image index: " << config.sample_image_index
                   << std::endl;

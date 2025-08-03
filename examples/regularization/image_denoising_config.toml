@@ -10,7 +10,8 @@ noise_rate = 0.05
 # 2: Two constant circles.
 # 3: One quadratic circle.
 # 4: One smooth circle.
-sample_image_index = 4
+# 5: Two smooth circles.
+sample_image_index = 5
 
 # Configurations of numerical-collection-cpp library.
 "$schema" = "https://numcollect.musicscience37.com/config_schema/v2/config_schema.json"
