@@ -32,7 +32,9 @@ Checks: >
     -modernize-use-std-numbers,
     -modernize-use-constraints,
     -modernize-use-ranges,
+    -modernize-use-auto,
   hicpp-*,
+    -hicpp-use-auto,
   cert-*,
     -cert-err58-cpp,
   bugprone-*,
@@ -77,6 +79,7 @@ Checks: >
 # - readability-math-missing-parentheses generates too many warnings in existing codes.
 # - bugprone-crtp-constructor-accessibility generates too many warnings in existing codes.
 # - modernize-use-ranges generates too many warnings in existing codes.
+# - hicpp-use-auto, modernize-use-auto should not be fixed in source codes using Eigen library.
 
 CheckOptions:
   # Naming Conventions
