@@ -49,7 +49,7 @@ auto main(int argc, char** argv) -> int {
     const Eigen::VectorXd origin_vec = origin.reshaped<Eigen::ColMajor>();
 
     // Prepare a coefficient matrix from parameters to data.
-    using coeff_type = Eigen::SparseMatrix<double>;
+    using coeff_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
     const coeff_type coeff =
         num_prob_collect::regularization::sparse_ct_matrix_2d<coeff_type>(
             config.image_size, config.num_directions,
@@ -60,7 +60,7 @@ auto main(int argc, char** argv) -> int {
     num_prob_collect::regularization::add_noise(data, config.noise_rate);
 
     // Prepare a matrix for the 1st order derivative operator.
-    using derivative_matrix_type = Eigen::SparseMatrix<double>;
+    using derivative_matrix_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
     const auto first_derivative_matrix =
         num_prob_collect::regularization::sparse_diff_matrix_2d<
             derivative_matrix_type>(config.image_size, config.image_size);
