@@ -21,7 +21,6 @@
 
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
-#include <Eigen/src/Core/util/Constants.h>
 
 #include "image_denoising_common.h"
 #include "num_collect/base/index_type.h"
