@@ -21,6 +21,7 @@
 
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
+#include <Eigen/src/Core/util/Constants.h>
 
 #include "image_denoising_common.h"
 #include "num_collect/base/index_type.h"
@@ -55,13 +56,13 @@ auto main(int argc, char** argv) -> int {
 
     // Prepare a coefficient matrix from parameters to data.
     // For denoising, the coefficient matrix is an identity matrix.
-    using coeff_type = Eigen::SparseMatrix<double>;
+    using coeff_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
     coeff_type coeff;
     coeff.resize(size, size);
     coeff.setIdentity();
 
     // Prepare a matrix for the 1st order derivative operator.
-    using derivative_matrix_type = Eigen::SparseMatrix<double>;
+    using derivative_matrix_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
     const auto first_derivative_matrix =
         num_prob_collect::regularization::sparse_diff_matrix_2d<
             derivative_matrix_type>(config.cols, config.rows);
