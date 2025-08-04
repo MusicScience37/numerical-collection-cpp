@@ -22,3 +22,5 @@ git config commit.gpgsign true
 git config tag.gpgsign true
 
 echo "source /usr/share/bash-completion/completions/git" >>~/.bashrc
+
+echo "source /workspaces/numerical-collection-cpp/.devcontainer/set_num_threads.bash" >>~/.bashrc
