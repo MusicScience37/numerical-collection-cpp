@@ -43,6 +43,7 @@ public:
 #ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
             ->add(32 * 32)    // NOLINT
             ->add(100 * 100)  // NOLINT
+            ->add(320 * 320)  // NOLINT
 #endif
             ;
     }
@@ -94,8 +95,9 @@ public:
         add_param<num_collect::index_type>("size")
             ->add(4 * 4)  // NOLINT
 #ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
-            ->add(10 * 10)  // NOLINT
-            ->add(32 * 32)  // NOLINT
+            ->add(10 * 10)    // NOLINT
+            ->add(32 * 32)    // NOLINT
+            ->add(100 * 100)  // NOLINT
 #endif
             ;
     }

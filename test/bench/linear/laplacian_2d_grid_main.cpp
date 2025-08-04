@@ -20,6 +20,7 @@
 #include <algorithm>
 
 #include <stat_bench/benchmark_macros.h>
+#include <stat_bench/measurement_config.h>
 #include <stat_bench/plot_options.h>
 
 #ifdef _OPENMP
@@ -28,7 +29,13 @@
 
 STAT_BENCH_GROUP("laplacian_2d_grid")
     .add_parameter_to_time_line_plot(
-        "size", stat_bench::PlotOptions().log_parameter(true));
+        "size", stat_bench::PlotOptions().log_parameter(true))
+    .clear_measurement_configs()
+    .add_measurement_config(stat_bench::MeasurementConfig()
+            .type("Processing Time")
+            .iterations(1)
+            .samples(10)
+            .warming_up_samples(1));
 
 auto main(int argc, const char** argv) -> int {
 #ifdef _OPENMP
