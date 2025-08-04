@@ -23,6 +23,9 @@
 #include <limits>
 #include <utility>
 
+#include <Eigen/IterativeLinearSolvers>
+#include <Eigen/SparseCore>
+
 #include "num_collect/base/concepts/dense_matrix.h"
 #include "num_collect/base/concepts/dense_vector.h"
 #include "num_collect/base/concepts/sparse_matrix.h"
@@ -174,8 +177,7 @@ template <typename Coeff, typename DerivativeMatrix,
     base::concepts::dense_vector Data>
     requires((base::concepts::sparse_matrix<Coeff> ||
                  base::concepts::dense_matrix<Coeff>) &&
-        (base::concepts::sparse_matrix<DerivativeMatrix> ||
-            base::concepts::dense_matrix<DerivativeMatrix>))
+        base::concepts::sparse_matrix<DerivativeMatrix>)
 class tgv2_admm : public iterative_regularized_solver_base<
                       tgv2_admm<Coeff, DerivativeMatrix, Data>, Data> {
 public:
@@ -262,6 +264,13 @@ public:
             "match the number of rows in the first order derivative matrix.");
 
         iterations_ = 0;
+
+        z_coeff_.resize(second_derivative_matrix_->cols(),
+            second_derivative_matrix_->cols());
+        z_coeff_.setIdentity();
+        z_coeff_ += (*second_derivative_matrix_).transpose() *
+            (*second_derivative_matrix_);
+        z_coeff_ *= constraint_coeff_;
 
         // Set variables to one of feasible solutions.
         z_ = data_type::Zero(first_derivative_matrix_->rows());
@@ -492,10 +501,7 @@ private:
         previous_z_ = z_;
         conjugate_gradient_z_.solve(
             [this](const data_type& target, data_type& result) {
-                result.noalias() = constraint_coeff_ * target;
-                temp_t_.noalias() = (*second_derivative_matrix_) * target;
-                result.noalias() += constraint_coeff_ *
-                    (*second_derivative_matrix_).transpose() * temp_t_;
+                result.noalias() = z_coeff_ * target;
             },
             temp_z_, z_);
         update_rate_ += (z_ - previous_z_).norm() /
@@ -584,6 +590,9 @@ private:
 
     //! Number of iterations.
     index_type iterations_{};
+
+    //! Coefficient matrix to solve the linear equation of z_.
+    derivative_matrix_type z_coeff_{};
 
     //! Component of the 1st order derivative.
     data_type z_{};
