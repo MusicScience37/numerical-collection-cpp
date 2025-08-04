@@ -265,6 +265,9 @@ public:
 
         iterations_ = 0;
 
+        dtd_ = constraint_coeff_ * (*first_derivative_matrix_).transpose() *
+            (*first_derivative_matrix_);
+
         z_coeff_.resize(second_derivative_matrix_->cols(),
             second_derivative_matrix_->cols());
         z_coeff_.setIdentity();
@@ -468,12 +471,10 @@ private:
         previous_solution_ = solution;
         conjugate_gradient_solution_.solve(
             [this](const data_type& target, data_type& result) {
+                result.noalias() = dtd_ * target;
                 temp_data_.noalias() = (*coeff_) * target;
-                result.noalias() = static_cast<scalar_type>(2) *
+                result.noalias() += static_cast<scalar_type>(2) *
                     (*coeff_).transpose() * temp_data_;
-                temp_z_.noalias() = (*first_derivative_matrix_) * target;
-                result.noalias() += constraint_coeff_ *
-                    (*first_derivative_matrix_).transpose() * temp_z_;
             },
             temp_solution_, solution);
         update_rate_ += (solution - previous_solution_).norm() /
@@ -590,6 +591,9 @@ private:
 
     //! Number of iterations.
     index_type iterations_{};
+
+    //! Matrix \f$D^\top D\f$.
+    derivative_matrix_type dtd_{};
 
     //! Coefficient matrix to solve the linear equation of z_.
     derivative_matrix_type z_coeff_{};
