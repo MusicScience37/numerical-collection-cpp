@@ -23,6 +23,7 @@
 
 #include <Eigen/Core>
 
+#include "num_collect/base/concepts/dense_matrix.h"
 #include "num_collect/base/index_type.h"
 
 namespace num_prob_collect::regularization {
@@ -30,10 +31,12 @@ namespace num_prob_collect::regularization {
 /*!
  * \brief Add noise to data.
  *
+ * \tparam Matrix Type of the matrix.
  * \param[in,out] data Data to which noise is added.
  * \param[in] rate Rate of noise in squared norm.
  */
-inline void add_noise(Eigen::MatrixXd& data, double rate) {
+template <num_collect::base::concepts::dense_matrix Matrix>
+inline void add_noise(Matrix& data, double rate) {
     std::mt19937 engine;  // NOLINT: fix seed for reproducibility
     const double sigma =
         std::sqrt(data.squaredNorm() / static_cast<double>(data.size()) * rate);

@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of common functions for image denoising.
+ * \brief Definition of common functions for CT simulation.
  */
 #pragma once
 
@@ -38,29 +38,29 @@
 #include "num_collect/logging/logging_macros.h"
 #include "num_prob_collect/regularization/generate_sparse_sample_image.h"
 
-struct image_denoising_config {
-    num_collect::index_type rows;
-    num_collect::index_type cols;
+struct ct_simulation_config {
+    num_collect::index_type image_size;
+    num_collect::index_type num_directions;
+    num_collect::index_type num_rays_per_direction;
     double noise_rate;
     int sample_image_index;
 };
 
 /*!
- * \brief Perform common initialization for image denoising examples and
- * generate a matrix of the original image.
+ * \brief Perform common initialization for CT simulation examples.
  *
  * \param[in] argc Number of command line arguments.
  * \param[in] argv Command line arguments.
- * \return Configuration for image denoising or `std::nullopt` if failed.
+ * \return Configuration for CT simulation or `std::nullopt` if failed.
  */
 [[nodiscard]] inline auto initialize(int argc, char** argv)
-    -> std::optional<image_denoising_config> {
+    -> std::optional<ct_simulation_config> {
 #ifndef NDEBUG
     std::string config_file_path =
-        "examples/regularization/image_denoising_config_small.toml";
+        "examples/regularization/ct_simulation_config_small.toml";
 #else
     std::string config_file_path =
-        "examples/regularization/image_denoising_config.toml";
+        "examples/regularization/ct_simulation_config.toml";
 #endif
     const auto cli =
         lyra::cli().add_argument(lyra::arg(config_file_path, "config_file_path")
@@ -76,19 +76,24 @@ struct image_denoising_config {
     num_collect::logging::load_logging_config_file(config_file_path);
 
     const auto config_table = toml::parse_file(config_file_path);
-    image_denoising_config config;
+    ct_simulation_config config;
     try {
-        config.rows = config_table.at_path("image_denoising.rows")
-                          .value<num_collect::index_type>()
-                          .value();
-        config.cols = config_table.at_path("image_denoising.cols")
-                          .value<num_collect::index_type>()
-                          .value();
-        config.noise_rate = config_table.at_path("image_denoising.noise_rate")
+        config.image_size = config_table.at_path("ct_simulation.image_size")
+                                .value<num_collect::index_type>()
+                                .value();
+        config.num_directions =
+            config_table.at_path("ct_simulation.num_directions")
+                .value<num_collect::index_type>()
+                .value();
+        config.num_rays_per_direction =
+            config_table.at_path("ct_simulation.num_rays_per_direction")
+                .value<num_collect::index_type>()
+                .value();
+        config.noise_rate = config_table.at_path("ct_simulation.noise_rate")
                                 .value<double>()
                                 .value();
         config.sample_image_index =
-            config_table.at_path("image_denoising.sample_image_index")
+            config_table.at_path("ct_simulation.sample_image_index")
                 .value<int>()
                 .value();
     } catch (const std::exception& /*exception*/) {
@@ -109,32 +114,32 @@ struct image_denoising_config {
  * \retval false Failed to generate the sample image.
  */
 [[nodiscard]] inline auto generate_sample_image(
-    const image_denoising_config& config, Eigen::MatrixXd& origin) -> bool {
+    const ct_simulation_config& config, Eigen::MatrixXd& origin) -> bool {
     switch (config.sample_image_index) {
     case 1:
         num_prob_collect::regularization::
             generate_sparse_sample_image_with_one_constant_circle(
-                origin, config.rows, config.cols);
+                origin, config.image_size, config.image_size);
         break;
     case 2:
         num_prob_collect::regularization::
             generate_sparse_sample_image_with_two_constant_circles(
-                origin, config.rows, config.cols);
+                origin, config.image_size, config.image_size);
         break;
     case 3:
         num_prob_collect::regularization::
             generate_sparse_sample_image_with_one_quadratic_circle(
-                origin, config.rows, config.cols);
+                origin, config.image_size, config.image_size);
         break;
     case 4:
         num_prob_collect::regularization::
             generate_sparse_sample_image_with_one_smooth_circle(
-                origin, config.rows, config.cols);
+                origin, config.image_size, config.image_size);
         break;
     case 5:
         num_prob_collect::regularization::
             generate_sparse_sample_image_with_two_smooth_circles(
-                origin, config.rows, config.cols);
+                origin, config.image_size, config.image_size);
         break;
     default:
         std::cerr << "Unknown sample image index: " << config.sample_image_index
@@ -148,7 +153,6 @@ struct image_denoising_config {
  * \brief Visualize the result using heatmaps.
  *
  * \param[in] origin Original image.
- * \param[in] data Data image with noise.
  * \param[in] solution Solution image.
  * \param[in] algorithm_name_for_title Name of the algorithm used for solving,
  * for title of the plot.
@@ -156,23 +160,16 @@ struct image_denoising_config {
  * solving, for file name of the plot.
  */
 inline void visualize_result(const Eigen::MatrixXd& origin,
-    const Eigen::MatrixXd& data, const Eigen::MatrixXd& solution,
+    const Eigen::MatrixXd& solution,
     const std::string& algorithm_name_for_title,
     const std::string& algorithm_name_for_file_name) {
     num_collect::logging::logger logger;
 
-    const Eigen::MatrixXd error = (solution - origin).cwiseAbs();
-    const double error_rate = error.squaredNorm() / origin.squaredNorm();
-    const double actual_noise_rate =
-        (data - origin).squaredNorm() / origin.squaredNorm();
-    NUM_COLLECT_LOG_INFO(logger, "Noise rate: {}", actual_noise_rate);
-    NUM_COLLECT_LOG_INFO(logger, "Error rate: {}", error_rate);
-
     plotly_plotter::figure figure;
 
-    figure.layout().grid().rows(2);
+    figure.layout().grid().rows(1);
     figure.layout().grid().columns(2);
-    figure.layout().grid().pattern("coupled");
+    figure.layout().grid().pattern("independent");
 
     constexpr double annotation_x = 0.5;
     constexpr double annotation_y = 1.0;
@@ -194,37 +191,7 @@ inline void visualize_result(const Eigen::MatrixXd& origin,
     annotation.text("Original Image");
 
     heatmap = figure.add_heatmap();
-    heatmap.z(data);
-    heatmap.xaxis("x2");
-    heatmap.yaxis("y");
-    heatmap.color_axis("coloraxis");
-    annotation = figure.layout().add_annotation();
-    annotation.x_ref("x2 domain");
-    annotation.y_ref("y domain");
-    annotation.x(annotation_x);
-    annotation.y(annotation_y);
-    annotation.y_shift(annotation_y_shift);
-    annotation.show_arrow(false);
-    annotation.align("center");
-    annotation.text("Data Image with Noise");
-
-    heatmap = figure.add_heatmap();
     heatmap.z(solution);
-    heatmap.xaxis("x");
-    heatmap.yaxis("y2");
-    heatmap.color_axis("coloraxis");
-    annotation = figure.layout().add_annotation();
-    annotation.x_ref("x domain");
-    annotation.y_ref("y2 domain");
-    annotation.x(annotation_x);
-    annotation.y(annotation_y);
-    annotation.y_shift(annotation_y_shift);
-    annotation.show_arrow(false);
-    annotation.align("center");
-    annotation.text("Solution Image");
-
-    heatmap = figure.add_heatmap();
-    heatmap.z(error);
     heatmap.xaxis("x2");
     heatmap.yaxis("y2");
     heatmap.color_axis("coloraxis");
@@ -236,11 +203,10 @@ inline void visualize_result(const Eigen::MatrixXd& origin,
     annotation.y_shift(annotation_y_shift);
     annotation.show_arrow(false);
     annotation.align("center");
-    annotation.text("Error");
+    annotation.text("Reconstructed Image");
 
-    figure.layout().xaxis(2).matches("x");
     figure.layout().yaxis().scale_anchor("x");
-    figure.layout().yaxis(2).matches("y");
+    figure.layout().yaxis(2).scale_anchor("x2");
 
     figure.layout().color_axis().color_scale(
         plotly_plotter::color_scales::autumn_full());
@@ -248,10 +214,10 @@ inline void visualize_result(const Eigen::MatrixXd& origin,
     figure.layout().color_axis().c_max(1.0);
 
     figure.title(
-        fmt::format("Image Denoising with {}", algorithm_name_for_title));
+        fmt::format("CT Simulation with {}", algorithm_name_for_title));
 
     const auto file_path =
-        fmt::format("./image_denoising_{}.html", algorithm_name_for_file_name);
+        fmt::format("./ct_simulation_{}.html", algorithm_name_for_file_name);
     plotly_plotter::write_html(file_path, figure);
     NUM_COLLECT_LOG_INFO(logger, "Wrote a plot to {}", file_path);
 }

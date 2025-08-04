@@ -40,11 +40,12 @@ inline void add_constant_circle(Eigen::MatrixXd& image,
     const num_collect::index_type cols = image.cols();
     Eigen::Vector2d point;
     for (num_collect::index_type j = 0; j < cols; ++j) {
-        const double x = static_cast<double>(j) / static_cast<double>(cols - 1);
+        const double x =
+            (static_cast<double>(j) + 0.5) / static_cast<double>(cols);
         point.x() = x;
         for (num_collect::index_type i = 0; i < rows; ++i) {
             const double y =
-                static_cast<double>(i) / static_cast<double>(rows - 1);
+                (static_cast<double>(i) + 0.5) / static_cast<double>(rows);
             point.y() = y;
             const double dist = (point - center).norm();
             if (dist <= radius) {
@@ -68,11 +69,12 @@ inline void add_quadratic_circle(Eigen::MatrixXd& image,
     const num_collect::index_type cols = image.cols();
     Eigen::Vector2d point;
     for (num_collect::index_type j = 0; j < cols; ++j) {
-        const double x = static_cast<double>(j) / static_cast<double>(cols - 1);
+        const double x =
+            (static_cast<double>(j) + 0.5) / static_cast<double>(cols);
         point.x() = x;
         for (num_collect::index_type i = 0; i < rows; ++i) {
             const double y =
-                static_cast<double>(i) / static_cast<double>(rows - 1);
+                (static_cast<double>(i) + 0.5) / static_cast<double>(rows);
             point.y() = y;
             const double dist = (point - center).norm();
             const double dist_ratio = dist / radius;
@@ -103,11 +105,12 @@ inline void add_smooth_circle(Eigen::MatrixXd& image,
 
     Eigen::Vector2d point;
     for (num_collect::index_type j = 0; j < cols; ++j) {
-        const double x = static_cast<double>(j) / static_cast<double>(cols - 1);
+        const double x =
+            (static_cast<double>(j) + 0.5) / static_cast<double>(cols);
         point.x() = x;
         for (num_collect::index_type i = 0; i < rows; ++i) {
             const double y =
-                static_cast<double>(i) / static_cast<double>(rows - 1);
+                (static_cast<double>(i) + 0.5) / static_cast<double>(rows);
             point.y() = y;
             const double dist = (point - center).norm();
             const double dist_ratio = dist / radius;
@@ -190,6 +193,29 @@ inline void generate_sparse_sample_image_with_one_smooth_circle(
 
     image = Eigen::MatrixXd::Zero(rows, cols);
     add_smooth_circle(image, center, radius, center_value);
+}
+
+/*!
+ * \brief Generate a sparse sample image with two smooth circles.
+ *
+ * \param[out] image Image to be generated.
+ * \param[in] rows Number of rows of the image.
+ * \param[in] cols Number of columns of the image.
+ */
+inline void generate_sparse_sample_image_with_two_smooth_circles(
+    Eigen::MatrixXd& image, num_collect::index_type rows,
+    num_collect::index_type cols) {
+    const Eigen::Vector2d center1 = Eigen::Vector2d(0.7, 0.6);
+    constexpr double radius1 = 0.3;
+    constexpr double center_value1 = 1.0;
+
+    const Eigen::Vector2d center2 = Eigen::Vector2d(0.3, 0.4);
+    constexpr double radius2 = 0.2;
+    constexpr double center_value2 = 0.5;
+
+    image = Eigen::MatrixXd::Zero(rows, cols);
+    add_smooth_circle(image, center1, radius1, center_value1);
+    add_smooth_circle(image, center2, radius2, center_value2);
 }
 
 }  // namespace num_prob_collect::regularization

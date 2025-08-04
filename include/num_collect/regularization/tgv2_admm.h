@@ -659,7 +659,7 @@ private:
     scalar_type constraint_coeff_{default_constraint_coeff};
 
     //! Default maximum number of iterations.
-    static constexpr index_type default_max_iterations = 100000;
+    static constexpr index_type default_max_iterations = 10000;
 
     //! Maximum number of iterations.
     index_type max_iterations_{default_max_iterations};
