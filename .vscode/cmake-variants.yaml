@@ -37,6 +37,7 @@ buildType:
         NUM_COLLECT_ENABLE_PROFILING: ON
         NUM_COLLECT_ENABLE_CCACHE: ON
         NUM_COLLECT_ENABLE_CPP_WARNINGS: ON
+        NUM_COLLECT_ENABLE_EIGEN_RUNTIME_NO_MALLOC: ON
     clang-asan-ubsan-unit-dox:
       short: ClangAUSan-Unit-Dox
       long: ASan and USan in Clang + Unit Tests + Doxygen
@@ -54,6 +55,7 @@ buildType:
         NUM_COLLECT_ENABLE_PROFILING: ON
         NUM_COLLECT_ENABLE_CCACHE: ON
         NUM_COLLECT_ENABLE_CPP_WARNINGS: ON
+        NUM_COLLECT_ENABLE_EIGEN_RUNTIME_NO_MALLOC: ON
     clang-asan-ubsan-unit-docs:
       short: ClangAUSan-Unit-Documents
       long: ASan and USan in Clang + Unit Tests + All documents
@@ -71,6 +73,7 @@ buildType:
         NUM_COLLECT_ENABLE_PROFILING: ON
         NUM_COLLECT_ENABLE_CCACHE: ON
         NUM_COLLECT_ENABLE_CPP_WARNINGS: ON
+        NUM_COLLECT_ENABLE_EIGEN_RUNTIME_NO_MALLOC: ON
     debug-unit:
       short: Debug-Unit
       long: Debug build + Unit Tests
@@ -87,6 +90,7 @@ buildType:
         NUM_COLLECT_ENABLE_PROFILING: ON
         NUM_COLLECT_ENABLE_CCACHE: ON
         NUM_COLLECT_ENABLE_CPP_WARNINGS: ON
+        NUM_COLLECT_ENABLE_EIGEN_RUNTIME_NO_MALLOC: ON
     relwithdebinfo-unit:
       short: RelWithDebInfo-Unit
       long: Release build with debug info + Unit Tests
@@ -103,6 +107,7 @@ buildType:
         NUM_COLLECT_ENABLE_PROFILING: ON
         NUM_COLLECT_ENABLE_CCACHE: ON
         NUM_COLLECT_ENABLE_CPP_WARNINGS: ON
+        NUM_COLLECT_ENABLE_EIGEN_RUNTIME_NO_MALLOC: ON
     release-unit:
       short: Release-Unit
       long: Release build + Unit Tests
@@ -119,6 +124,7 @@ buildType:
         NUM_COLLECT_ENABLE_PROFILING: OFF
         NUM_COLLECT_ENABLE_CCACHE: ON
         NUM_COLLECT_ENABLE_CPP_WARNINGS: ON
+        NUM_COLLECT_ENABLE_EIGEN_RUNTIME_NO_MALLOC: OFF
     release-bench:
       short: Release-Bench
       long: Release build + Benchmarks execution
@@ -135,3 +141,4 @@ buildType:
         NUM_COLLECT_ENABLE_PROFILING: OFF
         NUM_COLLECT_ENABLE_CCACHE: ON
         NUM_COLLECT_ENABLE_CPP_WARNINGS: ON
+        NUM_COLLECT_ENABLE_EIGEN_RUNTIME_NO_MALLOC: OFF
