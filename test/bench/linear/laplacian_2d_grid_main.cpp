@@ -37,6 +37,16 @@ STAT_BENCH_GROUP("laplacian_2d_grid")
             .samples(10)
             .warming_up_samples(1));
 
+STAT_BENCH_GROUP("laplacian_2d_grid_solve")
+    .add_parameter_to_time_line_plot(
+        "size", stat_bench::PlotOptions().log_parameter(true))
+    .clear_measurement_configs()
+    .add_measurement_config(stat_bench::MeasurementConfig()
+            .type("Processing Time")
+            .iterations(1)
+            .samples(10)
+            .warming_up_samples(1));
+
 auto main(int argc, const char** argv) -> int {
 #ifdef _OPENMP
     const int num_procs = omp_get_num_procs();
