@@ -79,7 +79,7 @@ template <num_collect::concepts::sparse_matrix Matrix>
     std::vector<Eigen::Triplet<scalar_type, storage_index_type>> triplets;
     for (num_collect::index_type direction_index = 0;
         direction_index < num_directions; ++direction_index) {
-        const double center_angle = num_collect::constants::pi<double> *
+        const double center_angle = 2.0 * num_collect::constants::pi<double> *
             static_cast<double>(direction_index) /
             static_cast<double>(num_directions);
         const Eigen::Vector2d center =

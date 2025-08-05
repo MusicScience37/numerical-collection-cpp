@@ -36,6 +36,7 @@ public:
 #ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
             ->add(32 * 32)    // NOLINT
             ->add(100 * 100)  // NOLINT
+            ->add(320 * 320)  // NOLINT
 #endif
             ;
     }

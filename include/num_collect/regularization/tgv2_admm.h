@@ -23,6 +23,9 @@
 #include <limits>
 #include <utility>
 
+#include <Eigen/IterativeLinearSolvers>
+#include <Eigen/SparseCore>
+
 #include "num_collect/base/concepts/dense_matrix.h"
 #include "num_collect/base/concepts/dense_vector.h"
 #include "num_collect/base/concepts/sparse_matrix.h"
@@ -50,6 +53,10 @@ constexpr auto tgv2_admm_tag =
  * \tparam Coeff Type of coefficient matrices.
  * \tparam DerivativeMatrix Type of matrices to compute derivatives.
  * \tparam Data Type of data vectors.
+ *
+ * \note Parallelization in Eigen library is enabled when
+ * - `Coeff` is a sparse matrix in row major order, or a dense matrix,
+ * - and `DerivativeMatrix` is a sparse matrix in row major order.
  *
  * This class minimizes the following evaluation function \cite Li2016 :
  *
@@ -174,8 +181,7 @@ template <typename Coeff, typename DerivativeMatrix,
     base::concepts::dense_vector Data>
     requires((base::concepts::sparse_matrix<Coeff> ||
                  base::concepts::dense_matrix<Coeff>) &&
-        (base::concepts::sparse_matrix<DerivativeMatrix> ||
-            base::concepts::dense_matrix<DerivativeMatrix>))
+        base::concepts::sparse_matrix<DerivativeMatrix>)
 class tgv2_admm : public iterative_regularized_solver_base<
                       tgv2_admm<Coeff, DerivativeMatrix, Data>, Data> {
 public:
@@ -262,6 +268,21 @@ public:
             "match the number of rows in the first order derivative matrix.");
 
         iterations_ = 0;
+
+        coeff_transpose_ = coeff_->transpose();
+
+        dtd_ = constraint_coeff_ * (*first_derivative_matrix_).transpose() *
+            (*first_derivative_matrix_);
+
+        z_coeff_.resize(second_derivative_matrix_->cols(),
+            second_derivative_matrix_->cols());
+        z_coeff_.setIdentity();
+        // Matrix E^\top E. Without this temporary matrix, compilation fails.
+        const derivative_matrix_type ete =
+            (*second_derivative_matrix_).transpose() *
+            (*second_derivative_matrix_);
+        z_coeff_ += ete;
+        z_coeff_ *= constraint_coeff_;
 
         // Set variables to one of feasible solutions.
         z_ = data_type::Zero(first_derivative_matrix_->rows());
@@ -459,12 +480,10 @@ private:
         previous_solution_ = solution;
         conjugate_gradient_solution_.solve(
             [this](const data_type& target, data_type& result) {
+                result.noalias() = dtd_ * target;
                 temp_data_.noalias() = (*coeff_) * target;
-                result.noalias() = static_cast<scalar_type>(2) *
-                    (*coeff_).transpose() * temp_data_;
-                temp_z_.noalias() = (*first_derivative_matrix_) * target;
-                result.noalias() += constraint_coeff_ *
-                    (*first_derivative_matrix_).transpose() * temp_z_;
+                result.noalias() +=
+                    static_cast<scalar_type>(2) * coeff_transpose_ * temp_data_;
             },
             temp_solution_, solution);
         update_rate_ += (solution - previous_solution_).norm() /
@@ -492,10 +511,7 @@ private:
         previous_z_ = z_;
         conjugate_gradient_z_.solve(
             [this](const data_type& target, data_type& result) {
-                result.noalias() = constraint_coeff_ * target;
-                temp_t_.noalias() = (*second_derivative_matrix_) * target;
-                result.noalias() += constraint_coeff_ *
-                    (*second_derivative_matrix_).transpose() * temp_t_;
+                result.noalias() = z_coeff_ * target;
             },
             temp_z_, z_);
         update_rate_ += (z_ - previous_z_).norm() /
@@ -584,6 +600,15 @@ private:
 
     //! Number of iterations.
     index_type iterations_{};
+
+    //! Transposed coefficient matrix.
+    coeff_type coeff_transpose_{};
+
+    //! Matrix \f$D^\top D\f$.
+    derivative_matrix_type dtd_{};
+
+    //! Coefficient matrix to solve the linear equation of z_.
+    derivative_matrix_type z_coeff_{};
 
     //! Component of the 1st order derivative.
     data_type z_{};

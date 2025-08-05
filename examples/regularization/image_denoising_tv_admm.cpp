@@ -54,13 +54,13 @@ auto main(int argc, char** argv) -> int {
 
     // Prepare a coefficient matrix from parameters to data.
     // For denoising, the coefficient matrix is an identity matrix.
-    using coeff_type = Eigen::SparseMatrix<double>;
+    using coeff_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
     coeff_type coeff;
     coeff.resize(size, size);
     coeff.setIdentity();
 
     // Prepare a matrix for the derivative operator.
-    using derivative_matrix_type = Eigen::SparseMatrix<double>;
+    using derivative_matrix_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
     const auto derivative_matrix =
         num_prob_collect::regularization::sparse_diff_matrix_2d<
             derivative_matrix_type>(config.cols, config.rows);
