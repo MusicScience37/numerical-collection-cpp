@@ -139,6 +139,9 @@ public:
             "number of rows in solution vector.");
 
         iterations_ = 0;
+        coeff_transpose_ = coeff_->transpose();
+        dtd_ = derivative_constraint_coeff_ *
+            (*derivative_matrix_).transpose() * (*derivative_matrix_);
         derivative_ = (*derivative_matrix_) * solution;
         lagrange_multiplier_ = data_type::Zero(derivative_matrix_->rows());
         temp_solution_ = solution;
@@ -156,20 +159,18 @@ public:
     void iterate(const scalar_type& param, data_type& solution) {
         // Update solution.
         temp_solution_.noalias() =
-            static_cast<scalar_type>(2) * (*coeff_).transpose() * (*data_);
-        temp_solution_.noalias() -=
-            (*derivative_matrix_).transpose() * lagrange_multiplier_;
-        temp_solution_.noalias() += derivative_constraint_coeff_ *
-            (*derivative_matrix_).transpose() * derivative_;
+            static_cast<scalar_type>(2) * coeff_transpose_ * (*data_);
+        temp_derivative_ =
+            -lagrange_multiplier_ + derivative_constraint_coeff_ * derivative_;
+        temp_solution_.noalias() +=
+            (*derivative_matrix_).transpose() * temp_derivative_;
         previous_solution_ = solution;
         conjugate_gradient_.solve(
             [this](const data_type& target, data_type& result) {
                 temp_data_.noalias() = (*coeff_) * target;
-                result.noalias() = static_cast<scalar_type>(2) *
-                    (*coeff_).transpose() * temp_data_;
-                temp_derivative_.noalias() = (*derivative_matrix_) * target;
-                result.noalias() += derivative_constraint_coeff_ *
-                    (*derivative_matrix_).transpose() * temp_derivative_;
+                result.noalias() =
+                    static_cast<scalar_type>(2) * coeff_transpose_ * temp_data_;
+                result.noalias() += dtd_ * target;
             },
             temp_solution_, solution);
         update_rate_ = (solution - previous_solution_).norm() /
@@ -348,6 +349,12 @@ private:
 
     //! Number of iterations.
     index_type iterations_{};
+
+    //! Transposed coefficient matrix.
+    coeff_type coeff_transpose_{};
+
+    //! Matrix \f$D^\top D\f$.
+    derivative_matrix_type dtd_{};
 
     //! Derivative.
     data_type derivative_{};
