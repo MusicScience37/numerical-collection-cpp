@@ -24,6 +24,7 @@
 #include <string_view>
 
 #include <fmt/base.h>
+#include <fmt/format.h>
 
 #include "num_collect/util/source_info_view.h"
 
