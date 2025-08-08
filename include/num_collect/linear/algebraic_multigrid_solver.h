@@ -42,6 +42,7 @@
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/logging/logging_mixin.h"
+#include "num_collect/util/scoped_eigen_no_malloc.h"
 
 namespace num_collect::linear {
 
@@ -151,11 +152,17 @@ public:
 
         // Initialization of buffers.
         residual_buffers_.resize(intermidiate_layers_.size() + 1U);
+        residual_buffers_before_prolongation_.resize(
+            intermidiate_layers_.size() + 1U);
         solution_buffers_.resize(intermidiate_layers_.size() + 1U);
+        residual_buffers_before_prolongation_.front() =
+            dense_vector_type::Zero(coeff.cols());
         for (std::size_t i = 0; i < intermidiate_layers_.size(); ++i) {
             const index_type size = intermidiate_layers_[i].coeff_matrix.cols();
             residual_buffers_[i] = dense_vector_type::Zero(size);
             solution_buffers_[i] = dense_vector_type::Zero(size);
+            residual_buffers_before_prolongation_[i + 1] =
+                dense_vector_type::Zero(size);
         }
         {
             const index_type size = final_layer_.coeff_matrix.cols();
@@ -187,6 +194,8 @@ public:
             this->logger(),
             "Solution vector must have the number of elements same as the size "
             "of the coefficient matrix.");
+
+        util::scoped_eigen_no_malloc no_malloc;
 
         iterations_ = 0;
         const index_type max_iterations = base_type::max_iterations();
@@ -253,9 +262,12 @@ private:
     void iterate(const Right& right, Solution& solution) const {
         // First layer.
         first_layer_.smoother.solve_vector_in_place(right, solution);
-        residual_buffers_.front() =
+        residual_buffers_before_prolongation_.front() = right;
+        residual_buffers_before_prolongation_.front().noalias() -=
+            coeff() * solution;
+        residual_buffers_.front().noalias() =
             first_layer_.prolongation_matrix.transpose() *
-            (right - coeff() * solution);
+            residual_buffers_before_prolongation_.front();
 
         // Intermidiate layers.
         for (std::size_t i = 0; i < intermidiate_layers_.size(); ++i) {
@@ -264,9 +276,13 @@ private:
                 dense_vector_type::Zero(layer.coeff_matrix.cols());
             layer.smoother.solve_vector_in_place(
                 residual_buffers_[i], solution_buffers_[i]);
-            residual_buffers_[i + 1U] = layer.prolongation_matrix.transpose() *
-                (residual_buffers_[i] -
-                    layer.coeff_matrix * solution_buffers_[i]);
+            residual_buffers_before_prolongation_[i + 1U] =
+                residual_buffers_[i];
+            residual_buffers_before_prolongation_[i + 1U].noalias() -=
+                layer.coeff_matrix * solution_buffers_[i];
+            residual_buffers_[i + 1U].noalias() =
+                layer.prolongation_matrix.transpose() *
+                residual_buffers_before_prolongation_[i + 1U];
         }
 
         // Final layer.
@@ -276,14 +292,14 @@ private:
         // Intermidiate layers.
         for (std::size_t i = intermidiate_layers_.size(); i > 0; --i) {
             const intermidiate_layer_data& layer = intermidiate_layers_[i - 1U];
-            solution_buffers_[i - 1U] +=
+            solution_buffers_[i - 1U].noalias() +=
                 layer.prolongation_matrix * solution_buffers_[i];
             layer.smoother.solve_vector_in_place(
                 residual_buffers_[i - 1U], solution_buffers_[i - 1U]);
         }
 
         // First layer.
-        solution +=
+        solution.noalias() +=
             first_layer_.prolongation_matrix * solution_buffers_.front();
         first_layer_.smoother.solve_vector_in_place(right, solution);
     }
@@ -359,6 +375,10 @@ private:
 
     //! Buffers of residuals in layers except for the first layer.
     mutable std::vector<dense_vector_type> residual_buffers_{};
+
+    //! Buffers of residuals before prolongation.
+    mutable std::vector<dense_vector_type>
+        residual_buffers_before_prolongation_{};
 
     //! Buffers of solutions in layers except for the first layer.
     mutable std::vector<dense_vector_type> solution_buffers_{};
