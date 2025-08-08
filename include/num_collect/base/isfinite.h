@@ -24,8 +24,7 @@
 
 #include "num_collect/base/concepts/real_scalar.h"
 
-namespace num_collect {
-inline namespace base {
+namespace num_collect::inline base {
 
 /*!
  * \brief Check whether a number is finite.
@@ -55,5 +54,4 @@ auto isfinite(const std::complex<T>& val) -> bool {
     return isfinite(val.real()) && isfinite(val.imag());
 }
 
-}  // namespace base
-}  // namespace num_collect
+}  // namespace num_collect::inline base

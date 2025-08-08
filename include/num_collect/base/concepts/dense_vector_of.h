@@ -23,9 +23,7 @@
 
 #include "num_collect/base/concepts/dense_vector.h"
 
-namespace num_collect {
-inline namespace base {
-namespace concepts {
+namespace num_collect::inline base::concepts {
 
 /*!
  * \brief Concept of Eigen's dense vectors with scalars of the given type.
@@ -39,6 +37,4 @@ concept dense_vector_of = dense_vector<T> && requires {
     requires std::is_same_v<typename T::Scalar, Scalar>;
 };
 
-}  // namespace concepts
-}  // namespace base
-}  // namespace num_collect
+}  // namespace num_collect::inline base::concepts

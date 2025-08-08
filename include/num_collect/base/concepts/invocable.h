@@ -22,9 +22,7 @@
 #include <functional>
 #include <utility>
 
-namespace num_collect {
-inline namespace base {
-namespace concepts {
+namespace num_collect::inline base::concepts {
 
 /*!
  * \brief Concept of functions invocable with given arguments.
@@ -37,6 +35,4 @@ concept invocable = requires(Func&& func, Args&&... args) {
     std::invoke(std::forward<Func>(func), std::forward<Args>(args)...);
 };
 
-}  // namespace concepts
-}  // namespace base
-}  // namespace num_collect
+}  // namespace num_collect::inline base::concepts

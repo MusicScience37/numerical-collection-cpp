@@ -23,9 +23,7 @@
 
 #include "num_collect/base/concepts/sparse_matrix.h"
 
-namespace num_collect {
-inline namespace base {
-namespace concepts {
+namespace num_collect::inline base::concepts {
 
 /*!
  * \brief Concept of Eigen's sparse matrices with scalars of the given type.
@@ -39,6 +37,4 @@ concept sparse_matrix_of = sparse_matrix<T> && requires {
     requires std::is_same_v<typename T::Scalar, Scalar>;
 };
 
-}  // namespace concepts
-}  // namespace base
-}  // namespace num_collect
+}  // namespace num_collect::inline base::concepts

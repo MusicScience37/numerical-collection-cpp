@@ -21,9 +21,7 @@
 
 #include <type_traits>
 
-namespace num_collect {
-inline namespace base {
-namespace concepts {
+namespace num_collect::inline base::concepts {
 
 /*!
  * \brief Class to check whether a type is a real scalar (a floating-point value
@@ -54,6 +52,4 @@ constexpr bool is_real_scalar_v = is_real_scalar<T>::value;
 template <typename T>
 concept real_scalar = is_real_scalar_v<T>;
 
-}  // namespace concepts
-}  // namespace base
-}  // namespace num_collect
+}  // namespace num_collect::inline base::concepts

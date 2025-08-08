@@ -19,9 +19,7 @@
  */
 #pragma once
 
-namespace num_collect {
-inline namespace base {
-namespace concepts {
+namespace num_collect::inline base::concepts {
 
 /*!
  * \brief Concept of types convertible from the given type.
@@ -33,6 +31,4 @@ template <typename From, typename To>
 concept convertible_to =
     requires(const From& from, To& to) { to = static_cast<To>(from); };
 
-}  // namespace concepts
-}  // namespace base
-}  // namespace num_collect
+}  // namespace num_collect::inline base::concepts

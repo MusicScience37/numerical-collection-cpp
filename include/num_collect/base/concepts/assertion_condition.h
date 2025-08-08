@@ -21,9 +21,7 @@
 
 #include <utility>
 
-namespace num_collect {
-inline namespace base {
-namespace concepts {
+namespace num_collect::inline base::concepts {
 
 /*!
  * \brief Concept of types usable as conditions in assertions.
@@ -35,6 +33,4 @@ concept assertion_condition = requires(T&& obj) {
     { (!std::forward<T>(obj)) ? 0 : 1 };
 };
 
-}  // namespace concepts
-}  // namespace base
-}  // namespace num_collect
+}  // namespace num_collect::inline base::concepts

@@ -25,8 +25,7 @@
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/index_type.h"
 
-namespace num_collect {
-inline namespace base {
+namespace num_collect::inline base {
 
 /*!
  * \brief Get the size.
@@ -66,5 +65,4 @@ auto get_size(const std::complex<T>& val) -> index_type {
     return 1;
 }
 
-}  // namespace base
-}  // namespace num_collect
+}  // namespace num_collect::inline base

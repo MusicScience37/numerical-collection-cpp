@@ -21,9 +21,7 @@
 
 #include <type_traits>
 
-namespace num_collect {
-inline namespace base {
-namespace concepts {
+namespace num_collect::inline base::concepts {
 
 /*!
  * \brief Concept of same types.
@@ -34,6 +32,4 @@ namespace concepts {
 template <typename T, typename U>
 concept decayed_to = std::is_same_v<std::decay_t<T>, U>;
 
-}  // namespace concepts
-}  // namespace base
-}  // namespace num_collect
+}  // namespace num_collect::inline base::concepts

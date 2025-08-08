@@ -21,9 +21,7 @@
 
 #include "num_collect/base/concepts/dense_matrix.h"
 
-namespace num_collect {
-inline namespace base {
-namespace concepts {
+namespace num_collect::inline base::concepts {
 
 /*!
  * \brief Concept of Eigen's dense vectors.
@@ -36,6 +34,4 @@ concept dense_vector = dense_matrix<T> && requires {
     requires T::ColsAtCompileTime == 1;
 };
 
-}  // namespace concepts
-}  // namespace base
-}  // namespace num_collect
+}  // namespace num_collect::inline base::concepts

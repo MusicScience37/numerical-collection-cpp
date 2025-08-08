@@ -21,8 +21,7 @@
 
 #include <cstddef>
 
-namespace num_collect {
-inline namespace base {
+namespace num_collect::inline base {
 
 /*!
  * \brief Type of indices in this library.
@@ -32,5 +31,4 @@ inline namespace base {
  */
 using index_type = std::ptrdiff_t;
 
-}  // namespace base
-}  // namespace num_collect
+}  // namespace num_collect::inline base
