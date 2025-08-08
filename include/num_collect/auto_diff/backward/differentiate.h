@@ -25,6 +25,7 @@
 #include <vector>
 
 #include <Eigen/Core>
+#include <fmt/format.h>
 
 #include "num_collect/auto_diff/backward/graph/node_differentiator.h"
 #include "num_collect/auto_diff/backward/variable.h"
