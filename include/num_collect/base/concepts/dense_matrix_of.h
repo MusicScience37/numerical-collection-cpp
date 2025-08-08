@@ -23,7 +23,9 @@
 
 #include "num_collect/base/concepts/dense_matrix.h"
 
-namespace num_collect::inline base::concepts {
+namespace num_collect {
+inline namespace base {
+namespace concepts {
 
 /*!
  * \brief Concept of Eigen's dense matrices with scalars of the given type.
@@ -37,4 +39,6 @@ concept dense_matrix_of = dense_matrix<T> && requires {
     requires std::is_same_v<typename T::Scalar, Scalar>;
 };
 
-}  // namespace num_collect::inline base::concepts
+}  // namespace concepts
+}  // namespace base
+}  // namespace num_collect

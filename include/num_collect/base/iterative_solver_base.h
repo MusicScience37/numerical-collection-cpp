@@ -23,7 +23,8 @@
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_mixin.h"
 
-namespace num_collect::inline base {
+namespace num_collect {
+inline namespace base {
 
 /*!
  * \brief Base class of iterative solvers.
@@ -100,4 +101,5 @@ protected:
     }
 };
 
-}  // namespace num_collect::inline base
+}  // namespace base
+}  // namespace num_collect

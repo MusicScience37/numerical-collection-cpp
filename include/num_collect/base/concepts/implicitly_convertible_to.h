@@ -19,7 +19,9 @@
  */
 #pragma once
 
-namespace num_collect::inline base::concepts {
+namespace num_collect {
+inline namespace base {
+namespace concepts {
 
 /*!
  * \brief Concept of types implicitly convertible from the given type.
@@ -31,4 +33,6 @@ template <typename From, typename To>
 concept implicitly_convertible_to =
     requires(const From& from, To& to) { to = from; };
 
-}  // namespace num_collect::inline base::concepts
+}  // namespace concepts
+}  // namespace base
+}  // namespace num_collect

@@ -22,7 +22,9 @@
 #include "num_collect/base/concepts/dense_matrix.h"
 #include "num_collect/base/concepts/real_scalar.h"
 
-namespace num_collect::inline base::concepts {
+namespace num_collect {
+inline namespace base {
+namespace concepts {
 
 /*!
  * \brief Concept of Eigen's dense matrices with real scalars.
@@ -35,4 +37,6 @@ concept real_scalar_dense_matrix = dense_matrix<T> && requires {
     requires real_scalar<typename T::Scalar>;
 };
 
-}  // namespace num_collect::inline base::concepts
+}  // namespace concepts
+}  // namespace base
+}  // namespace num_collect

@@ -25,7 +25,9 @@
 
 #include "num_collect/base/concepts/implicitly_convertible_to.h"
 
-namespace num_collect::inline base::concepts {
+namespace num_collect {
+inline namespace base {
+namespace concepts {
 
 namespace impl {
 
@@ -91,4 +93,6 @@ constexpr bool is_invocable_as_v = is_invocable_as<Func, Signature>::value;
 template <typename Func, typename Signature>
 concept invocable_as = is_invocable_as_v<Func, Signature>;
 
-}  // namespace num_collect::inline base::concepts
+}  // namespace concepts
+}  // namespace base
+}  // namespace num_collect

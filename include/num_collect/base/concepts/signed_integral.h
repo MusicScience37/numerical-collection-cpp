@@ -23,7 +23,9 @@
 
 #include "num_collect/base/concepts/integral.h"
 
-namespace num_collect::inline base::concepts {
+namespace num_collect {
+inline namespace base {
+namespace concepts {
 
 /*!
  * \brief Class to check whether a type is signed.
@@ -52,4 +54,6 @@ constexpr bool is_signed_v = is_signed<T>::value;
 template <typename T>
 concept signed_integral = integral<T> && is_signed_v<T>;
 
-}  // namespace num_collect::inline base::concepts
+}  // namespace concepts
+}  // namespace base
+}  // namespace num_collect

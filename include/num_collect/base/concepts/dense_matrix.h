@@ -23,7 +23,9 @@
 
 #include <Eigen/Core>
 
-namespace num_collect::inline base::concepts {
+namespace num_collect {
+inline namespace base {
+namespace concepts {
 
 /*!
  * \brief Concept of Eigen's dense matrices.
@@ -33,4 +35,6 @@ namespace num_collect::inline base::concepts {
 template <typename T>
 concept dense_matrix = std::is_base_of_v<Eigen::MatrixBase<T>, T>;
 
-}  // namespace num_collect::inline base::concepts
+}  // namespace concepts
+}  // namespace base
+}  // namespace num_collect

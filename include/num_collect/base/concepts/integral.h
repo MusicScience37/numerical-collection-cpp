@@ -21,7 +21,9 @@
 
 #include <type_traits>
 
-namespace num_collect::inline base::concepts {
+namespace num_collect {
+inline namespace base {
+namespace concepts {
 
 /*!
  * \brief Class to check whether a type is an integer.
@@ -50,4 +52,6 @@ constexpr bool is_integral_v = is_integral<T>::value;
 template <typename T>
 concept integral = is_integral_v<T>;
 
-}  // namespace num_collect::inline base::concepts
+}  // namespace concepts
+}  // namespace base
+}  // namespace num_collect

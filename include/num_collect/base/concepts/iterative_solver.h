@@ -24,7 +24,9 @@
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/logger.h"
 
-namespace num_collect::inline base::concepts {
+namespace num_collect {
+inline namespace base {
+namespace concepts {
 
 /*!
  * \brief Concept of iterative solvers.
@@ -48,4 +50,6 @@ concept iterative_solver = requires(T& solver, const T& const_solver) {
     };
 };
 
-}  // namespace num_collect::inline base::concepts
+}  // namespace concepts
+}  // namespace base
+}  // namespace num_collect

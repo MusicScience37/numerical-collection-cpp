@@ -28,7 +28,8 @@
 
 #include "num_collect/util/source_info_view.h"
 
-namespace num_collect::inline base {
+namespace num_collect {
+inline namespace base {
 
 namespace impl {
 
@@ -103,4 +104,5 @@ public:
     using num_collect_exception::num_collect_exception;
 };
 
-}  // namespace num_collect::inline base
+}  // namespace base
+}  // namespace num_collect

@@ -22,7 +22,9 @@
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/concepts/sparse_matrix.h"
 
-namespace num_collect::inline base::concepts {
+namespace num_collect {
+inline namespace base {
+namespace concepts {
 
 /*!
  * \brief Concept of Eigen's sparse matrices with real scalars.
@@ -35,4 +37,6 @@ concept real_scalar_sparse_matrix = sparse_matrix<T> && requires {
     requires real_scalar<typename T::Scalar>;
 };
 
-}  // namespace num_collect::inline base::concepts
+}  // namespace concepts
+}  // namespace base
+}  // namespace num_collect

@@ -25,7 +25,8 @@
 #include "num_collect/base/concepts/dense_matrix.h"
 #include "num_collect/base/concepts/real_scalar.h"
 
-namespace num_collect::inline base {
+namespace num_collect {
+inline namespace base {
 
 /*!
  * \brief Calculate norm of a matrix.
@@ -64,4 +65,5 @@ auto norm(const std::complex<T>& val) -> T {
     return std::abs(val);
 }
 
-}  // namespace num_collect::inline base
+}  // namespace base
+}  // namespace num_collect

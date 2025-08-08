@@ -23,7 +23,9 @@
 
 #include <Eigen/SparseCore>
 
-namespace num_collect::inline base::concepts {
+namespace num_collect {
+inline namespace base {
+namespace concepts {
 
 /*!
  * \brief Check whether a type is a sparse matrix.
@@ -60,4 +62,6 @@ constexpr bool is_sparse_matrix_v = is_sparse_matrix<T>::value;
 template <typename T>
 concept sparse_matrix = is_sparse_matrix_v<T>;
 
-}  // namespace num_collect::inline base::concepts
+}  // namespace concepts
+}  // namespace base
+}  // namespace num_collect

@@ -19,7 +19,9 @@
  */
 #pragma once
 
-namespace num_collect::inline base::concepts {
+namespace num_collect {
+inline namespace base {
+namespace concepts {
 
 /*!
  * \brief Concept of Eigen's solvers of linear equations.
@@ -35,4 +37,6 @@ concept eigen_solver_of = requires(
     solution = solver.solve(right);
 };
 
-}  // namespace num_collect::inline base::concepts
+}  // namespace concepts
+}  // namespace base
+}  // namespace num_collect

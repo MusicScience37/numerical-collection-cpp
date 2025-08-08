@@ -21,7 +21,9 @@
 
 #include <fmt/base.h>
 
-namespace num_collect::inline base::concepts {
+namespace num_collect {
+inline namespace base {
+namespace concepts {
 
 /*!
  * \brief Concept of types formattable using fmt library.
@@ -31,4 +33,6 @@ namespace num_collect::inline base::concepts {
 template <typename T>
 concept formattable = fmt::is_formattable<T>::value;
 
-}  // namespace num_collect::inline base::concepts
+}  // namespace concepts
+}  // namespace base
+}  // namespace num_collect

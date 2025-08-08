@@ -21,7 +21,9 @@
 
 #include <type_traits>  // IWYU pragma: keep
 
-namespace num_collect::inline base::concepts {
+namespace num_collect {
+inline namespace base {
+namespace concepts {
 
 /*!
  * \brief Concept of constant references.
@@ -32,4 +34,6 @@ namespace num_collect::inline base::concepts {
 template <typename T, typename U>
 concept const_reference_of = std::is_same_v<T, const U&>;
 
-}  // namespace num_collect::inline base::concepts
+}  // namespace concepts
+}  // namespace base
+}  // namespace num_collect

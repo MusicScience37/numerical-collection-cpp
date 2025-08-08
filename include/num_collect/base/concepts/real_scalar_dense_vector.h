@@ -22,7 +22,9 @@
 #include "num_collect/base/concepts/dense_vector.h"
 #include "num_collect/base/concepts/real_scalar_dense_matrix.h"
 
-namespace num_collect::inline base::concepts {
+namespace num_collect {
+inline namespace base {
+namespace concepts {
 
 /*!
  * \brief Concept of Eigen's dense vectors with real scalars.
@@ -33,4 +35,6 @@ template <typename T>
 concept real_scalar_dense_vector =
     real_scalar_dense_matrix<T> && dense_vector<T>;
 
-}  // namespace num_collect::inline base::concepts
+}  // namespace concepts
+}  // namespace base
+}  // namespace num_collect
