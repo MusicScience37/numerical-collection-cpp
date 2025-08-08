@@ -14,19 +14,19 @@ setuptools = "^80.9.0"
 
 [tool.poetry.group.test.dependencies]
 kaleido = "^1.0.0"
-pandas = "^2.3.0"
+pandas = "^2.3.1"
 plotly = "^6.2.0"
 pytest = "^8.4.1"
 pytest-approvaltests = "^0.2.4"
 fastjsonschema = "^2.21.1"
 pytomlpp = "^1.0.13"
 msgpack = "^1.1.1"
-playwright = "^1.53.0"
+playwright = "^1.54.0"
 
 [tool.poetry.group.doc.dependencies]
 # Sphinx 8.2 causes errors in shpinxcontrib-bibtex.
 sphinx = "^8.2.3"
-sphinx-orange-book-theme = "^0.15.0"
+sphinx-orange-book-theme = "^0.16.0"
 myst-parser = "^4.0.1"
 sphinxcontrib-plantuml = "^0.30"
 sphinxcontrib-bibtex = "^2.6.5"
@@ -43,10 +43,10 @@ lizard = "^1.17.31"
 lcov-cobertura = "^2.1.1"
 clang-tidy-checker = "^0.6.0"
 isort = "^6.0.1"
-jsonschema2md = "^1.5.2"
+jsonschema2md = "^1.6.1"
 pylint = "^3.3.7"
 flake8 = "^7.3.0"
-mypy = "^1.16.1"
+mypy = "^1.17.1"
 pandas-stubs = "^2.2.3.250527"
 
 [build-system]
