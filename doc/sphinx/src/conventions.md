@@ -101,6 +101,8 @@ Documentation in C++ must follow the Doxygen style.
   - For classes, the description should start with "Class", sometimes "Base class".
   - For variables, the description should start with a noun
     like "Coefficient", "Number", etc.
+  - For concepts, the description should start with "Concept".
+  - In this project, the first word in a description is not written in the third person singular form.
 
 Example of Doxygen comments for a function:
 

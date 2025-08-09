@@ -28,7 +28,7 @@ namespace concepts {
 /*!
  * \brief Class to check whether a type is an integer.
  *
- * \tparam T Type to be checked.
+ * \tparam T Type to check.
  *
  * \note For user-defined types, write specializations of
  * this class.
@@ -39,15 +39,15 @@ struct is_integral : public std::is_integral<T> {};
 /*!
  * \brief Get whether a type is an integer.
  *
- * \tparam T Type to be checked.
+ * \tparam T Type to check.
  */
 template <typename T>
 constexpr bool is_integral_v = is_integral<T>::value;
 
 /*!
- * \brief Concept of integers.
+ * \brief Concept to check if T is an integer.
  *
- * \tparam T Type.
+ * \tparam T Type to check.
  */
 template <typename T>
 concept integral = is_integral_v<T>;

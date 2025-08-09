@@ -26,10 +26,10 @@ inline namespace base {
 namespace concepts {
 
 /*!
- * \brief Concept of same types.
+ * \brief Concept to check if std::decay_t<T> is same as U.
  *
- * \tparam T Type.
- * \tparam U Type.
+ * \tparam T Type to check (before decay).
+ * \tparam U Type to compare with (after decay).
  */
 template <typename T, typename U>
 concept decayed_to = std::is_same_v<std::decay_t<T>, U>;

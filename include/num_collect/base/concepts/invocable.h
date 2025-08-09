@@ -27,7 +27,7 @@ inline namespace base {
 namespace concepts {
 
 /*!
- * \brief Concept of functions invocable with given arguments.
+ * \brief Concept to check if Func is invocable with `Args...`.
  *
  * \tparam Func Type of the function.
  * \tparam Args Type of arguments.

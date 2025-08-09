@@ -28,9 +28,10 @@ inline namespace base {
 namespace concepts {
 
 /*!
- * \brief Concept of Eigen's dense matrices with scalars of the given type.
+ * \brief Concept to check if T is an Eigen's dense matrix with scalar type
+ * Scalar.
  *
- * \tparam T Type.
+ * \tparam T Type to check.
  * \tparam Scalar Type of the scalars.
  */
 template <typename T, typename Scalar>

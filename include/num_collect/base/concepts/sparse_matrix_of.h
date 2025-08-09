@@ -28,9 +28,10 @@ inline namespace base {
 namespace concepts {
 
 /*!
- * \brief Concept of Eigen's sparse matrices with scalars of the given type.
+ * \brief Concept to check if T is an Eigen's sparse matrix with scalars of
+ * Scalar.
  *
- * \tparam T Type.
+ * \tparam T Type to check.
  * \tparam Scalar Type of the scalars.
  */
 template <typename T, typename Scalar>

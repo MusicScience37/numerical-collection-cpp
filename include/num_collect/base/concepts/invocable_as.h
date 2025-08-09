@@ -32,12 +32,12 @@ namespace concepts {
 namespace impl {
 
 /*!
- * \brief Concept of functions which are invocable with given argument types and
- * returns objects with given result type.
+ * \brief Concept to check if Func can be invoked with Args... and the result is
+ * convertible to Result.
  *
  * \tparam Func Type of the function.
- * \tparam Result Type of the arguments.
- * \tparam Args Type of the result.
+ * \tparam Result Expected result type.
+ * \tparam Args Argument types.
  */
 template <typename Func, typename Result, typename... Args>
 concept invocable_as_impl = requires(Func&& func, Args&&... args) {
@@ -59,12 +59,11 @@ template <typename Func, typename Signature>
 struct is_invocable_as : public std::false_type {};
 
 /*!
- * \brief Check whether the given function is invocable as a function with the
- * given signature.
+ * \brief Check if Func can be invoked as a function with the given signature.
  *
  * \tparam Func Type of the function.
- * \tparam Result Type of the arguments.
- * \tparam Args Type of the result.
+ * \tparam Result Expected result type.
+ * \tparam Args Argument types.
  */
 template <typename Func, typename Result, typename... Args>
 struct is_invocable_as<Func, Result(Args...)> {
@@ -75,20 +74,20 @@ public:
 };
 
 /*!
- * \brief Check whether the given function is invocable as a function with the
- * given signature.
+ * \brief Check if Func can be invoked as a function with the given signature.
  *
  * \tparam Func Type of the function.
- * \tparam Signature Type of the function signature.
+ * \tparam Signature Function signature type (e.g., Result(Args...)).
  */
 template <typename Func, typename Signature>
 constexpr bool is_invocable_as_v = is_invocable_as<Func, Signature>::value;
 
 /*!
- * \brief Concept of functions invocable as a function with the given signature.
+ * \brief Concept to check if Func can be invoked as a function with the given
+ * signature.
  *
  * \tparam Func Type of the function.
- * \tparam Signature Type of the function signature.
+ * \tparam Signature Function signature type (e.g., Result(Args...)).
  */
 template <typename Func, typename Signature>
 concept invocable_as = is_invocable_as_v<Func, Signature>;

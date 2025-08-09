@@ -24,9 +24,9 @@ inline namespace base {
 namespace concepts {
 
 /*!
- * \brief Concept of Eigen's solvers of linear equations.
+ * \brief Concept to check if T is an Eigen's solver of linear equations.
  *
- * \tparam T Type.
+ * \tparam T Type to check.
  * \tparam Matrix Type of matrices.
  * \tparam Vector Type of vectors.
  */

@@ -55,9 +55,9 @@ template <typename T>
 constexpr bool is_sparse_matrix_v = is_sparse_matrix<T>::value;
 
 /*!
- * \brief Concept of sparse matrices.
+ * \brief Concept to check if T is an Eigen's sparse matrix.
  *
- * \tparam T Type.
+ * \tparam T Type to check.
  */
 template <typename T>
 concept sparse_matrix = is_sparse_matrix_v<T>;

@@ -27,9 +27,9 @@ inline namespace base {
 namespace concepts {
 
 /*!
- * \brief Concept of Eigen's dense vectors with real scalars.
+ * \brief Concept to check if T is an Eigen's dense vector with real scalars.
  *
- * \tparam T Type.
+ * \tparam T Type to check.
  */
 template <typename T>
 concept real_scalar_dense_vector =
