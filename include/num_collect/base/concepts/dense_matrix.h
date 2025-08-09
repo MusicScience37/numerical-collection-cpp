@@ -28,9 +28,11 @@ inline namespace base {
 namespace concepts {
 
 /*!
- * \brief Concept of Eigen's dense matrices.
+ * \brief Concept to check if T is an Eigen's dense matrix.
  *
- * \tparam T Type.
+ * \tparam T Type to check.
+ *
+ * This checks that T is derived from Eigen::MatrixBase.
  */
 template <typename T>
 concept dense_matrix = std::is_base_of_v<Eigen::MatrixBase<T>, T>;

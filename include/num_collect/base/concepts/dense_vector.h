@@ -26,9 +26,9 @@ inline namespace base {
 namespace concepts {
 
 /*!
- * \brief Concept of Eigen's dense vectors.
+ * \brief Concept to check if T is an Eigen's dense vector.
  *
- * \tparam T Type.
+ * \tparam T Type to check.
  */
 template <typename T>
 concept dense_vector = dense_matrix<T> && requires {

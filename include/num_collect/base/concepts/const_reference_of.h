@@ -26,10 +26,10 @@ inline namespace base {
 namespace concepts {
 
 /*!
- * \brief Concept of constant references.
+ * \brief Concept to check if T is a const reference to U.
  *
- * \tparam T Type.
- * \tparam U Type.
+ * \tparam T Type to check (should be a reference type).
+ * \tparam U The referred type.
  */
 template <typename T, typename U>
 concept const_reference_of = std::is_same_v<T, const U&>;

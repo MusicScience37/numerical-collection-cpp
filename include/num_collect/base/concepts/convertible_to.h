@@ -19,19 +19,23 @@
  */
 #pragma once
 
+#include <concepts>
+
 namespace num_collect {
 inline namespace base {
 namespace concepts {
 
 /*!
- * \brief Concept of types convertible from the given type.
+ * \brief Concept to check if `From` can be converted to `To`.
  *
  * \tparam From Type to convert from.
  * \tparam To Type to convert to.
+ *
+ * \note This concept was originally implemented when some of C++ standard
+ * library implementations did not have `std::convertible_to`.
  */
 template <typename From, typename To>
-concept convertible_to =
-    requires(const From& from, To& to) { to = static_cast<To>(from); };
+concept convertible_to = std::convertible_to<From, To>;
 
 }  // namespace concepts
 }  // namespace base

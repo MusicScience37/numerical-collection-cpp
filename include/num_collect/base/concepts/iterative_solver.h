@@ -29,9 +29,12 @@ inline namespace base {
 namespace concepts {
 
 /*!
- * \brief Concept of iterative solvers.
+ * \brief Concept of iterative solvers in this library.
  *
- * \tparam T Type.
+ * \tparam T Type to check.
+ *
+ * This concept can be satisfied by deriving from
+ * \ref num_collect::base::iterative_solver_base class.
  */
 template <typename T>
 concept iterative_solver = requires(T& solver, const T& const_solver) {

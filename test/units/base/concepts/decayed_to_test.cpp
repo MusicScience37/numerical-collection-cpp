@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 MusicScience37 (Kenta Kabashima)
+ * Copyright 2025 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,25 +15,19 @@
  */
 /*!
  * \file
- * \brief Definition of reference_of concept.
+ * \brief Test of decayed_to concept.
  */
-#pragma once
+#include "num_collect/base/concepts/decayed_to.h"
 
-#include <type_traits>  // IWYU pragma: keep
+#include <catch2/catch_test_macros.hpp>
 
-namespace num_collect {
-inline namespace base {
-namespace concepts {
+TEST_CASE("num_collect::concepts::decayed_to") {
+    using num_collect::concepts::decayed_to;
 
-/*!
- * \brief Concept to check if T is a reference to U.
- *
- * \tparam T Type to check.
- * \tparam U Type to reference to.
- */
-template <typename T, typename U>
-concept reference_of = std::is_same_v<T, U&>;
-
-}  // namespace concepts
-}  // namespace base
-}  // namespace num_collect
+    SECTION("check some types") {
+        STATIC_REQUIRE(decayed_to<const int, int>);
+        STATIC_REQUIRE(decayed_to<int&, int>);
+        STATIC_REQUIRE(decayed_to<int&&, int>);
+        STATIC_REQUIRE_FALSE(decayed_to<int, const int>);
+    }
+}

@@ -86,4 +86,11 @@ TEST_CASE("num_collect::norm") {
         const double true_norm = std::abs(var);
         REQUIRE_THAT(norm, Catch::Matchers::WithinRel(true_norm));
     }
+
+    SECTION("norm of int") {
+        const int var = -5;
+        const int norm = num_collect::norm(var);
+        const int true_norm = std::abs(var);
+        CHECK(norm == true_norm);
+    }
 }

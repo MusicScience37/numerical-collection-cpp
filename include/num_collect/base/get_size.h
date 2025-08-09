@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of get_size class.
+ * \brief Definition of get_size function.
  */
 #pragma once
 
@@ -29,11 +29,11 @@ namespace num_collect {
 inline namespace base {
 
 /*!
- * \brief Get the size.
+ * \brief Get the number of elements.
  *
  * \tparam Matrix Type of matrix.
  * \param[in] matrix Matrix.
- * \return Size.
+ * \return Number of elements (number of rows times number of columns).
  */
 template <concepts::dense_matrix Matrix>
 auto get_size(const Matrix& matrix) -> index_type {
@@ -41,11 +41,13 @@ auto get_size(const Matrix& matrix) -> index_type {
 }
 
 /*!
- * \brief Get the size.
+ * \brief Get the number of elements. (Overload for scalars.)
  *
  * \tparam T Type of the number.
  * \param[in] val Value.
  * \return Size.
+ *
+ * \note For this case, this function always returns 1.
  */
 template <concepts::real_scalar T>
 auto get_size(const T& val) -> index_type {
@@ -54,11 +56,13 @@ auto get_size(const T& val) -> index_type {
 }
 
 /*!
- * \brief Get the size.
+ * \brief Get the number of elements. (Overload for scalars.)
  *
  * \tparam T Type of the number.
  * \param[in] val Value.
  * \return Size.
+ *
+ * \note For this case, this function always returns 1.
  */
 template <concepts::real_scalar T>
 auto get_size(const std::complex<T>& val) -> index_type {

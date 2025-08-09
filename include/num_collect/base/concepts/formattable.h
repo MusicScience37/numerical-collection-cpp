@@ -26,9 +26,9 @@ inline namespace base {
 namespace concepts {
 
 /*!
- * \brief Concept of types formattable using fmt library.
+ * \brief Concept to check if T is formattable using fmt library.
  *
- * \tparam T Type.
+ * \tparam T Type to check.
  */
 template <typename T>
 concept formattable = fmt::is_formattable<T>::value;

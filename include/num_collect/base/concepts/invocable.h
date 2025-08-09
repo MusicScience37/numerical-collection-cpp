@@ -19,23 +19,23 @@
  */
 #pragma once
 
-#include <functional>
-#include <utility>
+#include <concepts>
 
 namespace num_collect {
 inline namespace base {
 namespace concepts {
 
 /*!
- * \brief Concept of functions invocable with given arguments.
+ * \brief Concept to check if Func is invocable with `Args...`.
  *
  * \tparam Func Type of the function.
  * \tparam Args Type of arguments.
+ *
+ * \note This concept was originally implemented when some of C++ standard
+ * library implementations did not have `std::invocable`.
  */
 template <typename Func, typename... Args>
-concept invocable = requires(Func&& func, Args&&... args) {
-    std::invoke(std::forward<Func>(func), std::forward<Args>(args)...);
-};
+concept invocable = std::invocable<Func, Args...>;
 
 }  // namespace concepts
 }  // namespace base

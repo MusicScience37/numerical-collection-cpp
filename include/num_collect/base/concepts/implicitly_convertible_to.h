@@ -24,7 +24,7 @@ inline namespace base {
 namespace concepts {
 
 /*!
- * \brief Concept of types implicitly convertible from the given type.
+ * \brief Concept to check if `From` is implicitly convertible to `To`.
  *
  * \tparam From Type to convert from.
  * \tparam To Type to convert to.

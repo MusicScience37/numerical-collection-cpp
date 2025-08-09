@@ -22,6 +22,7 @@
 #include <cmath>
 #include <complex>
 
+#include "num_collect/base/concepts/integral.h"
 #include "num_collect/base/concepts/real_scalar.h"
 
 namespace num_collect {
@@ -39,6 +40,19 @@ template <concepts::real_scalar T>
 auto isfinite(const T& val) -> bool {
     using std::isfinite;
     return isfinite(val);
+}
+
+/*!
+ * \brief Check whether a number is finite.
+ *
+ * \tparam T Floating-point number type.
+ * \param[in] val Number.
+ * \return Always true for this overload.
+ */
+template <concepts::integral T>
+auto isfinite(const T& val) -> bool {
+    (void)val;
+    return true;
 }
 
 /*!

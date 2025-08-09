@@ -26,9 +26,10 @@ inline namespace base {
 namespace concepts {
 
 /*!
- * \brief Concept of types usable as conditions in assertions.
+ * \brief Concept to check if T can be used as a condition in assertions (i.e.,
+ * convertible to bool).
  *
- * \tparam T Type.
+ * \tparam T Type to check.
  */
 template <typename T>
 concept assertion_condition = requires(T&& obj) {
