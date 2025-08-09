@@ -19,8 +19,7 @@
  */
 #pragma once
 
-#include <functional>
-#include <utility>
+#include <concepts>
 
 namespace num_collect {
 inline namespace base {
@@ -31,11 +30,12 @@ namespace concepts {
  *
  * \tparam Func Type of the function.
  * \tparam Args Type of arguments.
+ *
+ * \note This concept was originally implemented when some of C++ standard
+ * library implementations did not have `std::invocable`.
  */
 template <typename Func, typename... Args>
-concept invocable = requires(Func&& func, Args&&... args) {
-    std::invoke(std::forward<Func>(func), std::forward<Args>(args)...);
-};
+concept invocable = std::invocable<Func, Args...>;
 
 }  // namespace concepts
 }  // namespace base

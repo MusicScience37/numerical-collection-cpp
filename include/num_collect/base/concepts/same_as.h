@@ -19,7 +19,7 @@
  */
 #pragma once
 
-#include <type_traits>  // IWYU pragma: keep
+#include <concepts>
 
 namespace num_collect {
 inline namespace base {
@@ -30,9 +30,12 @@ namespace concepts {
  *
  * \tparam T Type.
  * \tparam U Type.
+ *
+ * \note This concept was originally implemented when some of C++ standard
+ * library implementations did not have `std::same_as`.
  */
 template <typename T, typename U>
-concept same_as = std::is_same_v<T, U>;
+concept same_as = std::same_as<T, U>;
 
 }  // namespace concepts
 }  // namespace base
