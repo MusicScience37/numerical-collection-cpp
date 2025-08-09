@@ -31,9 +31,8 @@
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("exceptions", "", num_collect::num_collect_exception,
-    num_collect::assertion_failure, num_collect::precondition_not_satisfied,
-    num_collect::invalid_argument, num_collect::algorithm_failure,
-    num_collect::file_error) {
+    num_collect::precondition_not_satisfied, num_collect::invalid_argument,
+    num_collect::algorithm_failure, num_collect::file_error) {
     using test_type = TestType;
 
     SECTION("basic functions") {

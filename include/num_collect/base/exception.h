@@ -49,7 +49,10 @@ namespace impl {
 }  // namespace impl
 
 /*!
- * \brief Class of exception in this project.
+ * \brief Base class of exception in this project.
+ *
+ * \note Implementations of algorithms in this project should throw exceptions
+ * of classes inherited from this class.
  */
 class num_collect_exception : public std::runtime_error {
 public:
@@ -58,6 +61,8 @@ public:
      *
      * \param[in] message Error message.
      * \param[in] source_info Information of source codes.
+     * This argument should be left as default value
+     * when the automatically acquired information is sufficient.
      */
     explicit num_collect_exception(std::string_view message,
         util::source_info_view source_info = util::source_info_view())
@@ -65,15 +70,7 @@ public:
 };
 
 /*!
- * \brief Class of exception on assertion failure.
- */
-class assertion_failure : public num_collect_exception {
-public:
-    using num_collect_exception::num_collect_exception;
-};
-
-/*!
- * \brief Class of exception on not satisfying a precondition.
+ * \brief Class of exceptions thrown when a precondition is not satisfied.
  */
 class precondition_not_satisfied : public num_collect_exception {
 public:
@@ -81,7 +78,7 @@ public:
 };
 
 /*!
- * \brief Class of exception on invalid arguments.
+ * \brief Class of exceptions thrown when an argument in a function is invalid.
  */
 class invalid_argument : public num_collect_exception {
 public:
@@ -89,7 +86,11 @@ public:
 };
 
 /*!
- * \brief Class of exception on failure in algorithm.
+ * \brief Class of exceptions thrown when an algorithm fails to solve a problem.
+ *
+ * \note \ref num_collect::base::precondition_not_satisfied or
+ * \ref num_collect::base::invalid_argument should be used
+ * when the algorithm fails due to bad usage.
  */
 class algorithm_failure : public num_collect_exception {
 public:
@@ -97,7 +98,7 @@ public:
 };
 
 /*!
- * \brief Class of exception on errors in files.
+ * \brief Class of exceptions thrown when an error occurs in file operations.
  */
 class file_error : public num_collect_exception {
 public:
