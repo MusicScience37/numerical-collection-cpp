@@ -66,7 +66,8 @@ public:
     /*!
      * \brief Solve the problem.
      *
-     * Iterate the algorithm until the stopping criteria are satisfied.
+     * Iterate the algorithm until the stopping criteria are satisfied with
+     * logging.
      *
      * \warning Any required initializations (with `init` functions) are assumed
      * to have been done.

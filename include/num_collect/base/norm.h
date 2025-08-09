@@ -23,13 +23,14 @@
 #include <complex>
 
 #include "num_collect/base/concepts/dense_matrix.h"
+#include "num_collect/base/concepts/integral.h"
 #include "num_collect/base/concepts/real_scalar.h"
 
 namespace num_collect {
 inline namespace base {
 
 /*!
- * \brief Calculate norm of a matrix.
+ * \brief Calculate L2 norm of a matrix.
  *
  * \tparam Matrix Matrix type.
  * \param[in] matrix Matrix.
@@ -63,6 +64,19 @@ auto norm(const T& val) -> T {
 template <concepts::real_scalar T>
 auto norm(const std::complex<T>& val) -> T {
     return std::abs(val);
+}
+
+/*!
+ * \brief Calculate the absolute value of a number.
+ *
+ * \tparam T Integer type.
+ * \param[in] val Number.
+ * \return Absolute value.
+ */
+template <concepts::integral T>
+auto norm(const T& val) -> T {
+    using std::abs;
+    return abs(val);
 }
 
 }  // namespace base
