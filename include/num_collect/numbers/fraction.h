@@ -25,6 +25,7 @@
 #include <fmt/base.h>
 #include <fmt/ostream.h>  // IWYU pragma: keep
 
+#include "num_collect/base/abs.h"
 #include "num_collect/base/concepts/integral.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/precondition.h"
@@ -261,27 +262,9 @@ private:
         }
 
         const auto common_divisor =
-            util::greatest_common_divisor(int_abs(numerator_), denominator_);
+            util::greatest_common_divisor(base::abs(numerator_), denominator_);
         numerator_ /= common_divisor;
         denominator_ /= common_divisor;
-    }
-
-    /*!
-     * \brief Get the absolute value of an integer.
-     *
-     * \param[in] x Integer.
-     * \return Absolute value.
-     */
-    static constexpr auto int_abs(integer_type x) noexcept -> integer_type {
-        // TODO: move to utility or base.
-        if constexpr (std::is_unsigned_v<integer_type>) {
-            return x;
-        } else {
-            if (x < static_cast<integer_type>(0)) {
-                return -x;
-            }
-            return x;
-        }
     }
 
     //! Numerator.

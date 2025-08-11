@@ -1,4 +1,5 @@
 set(SOURCE_FILES
+    abs_test.cpp
     concepts/assertion_condition_test.cpp
     concepts/const_reference_of_test.cpp
     concepts/convertible_to_test.cpp

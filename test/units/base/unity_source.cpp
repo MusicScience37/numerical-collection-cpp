@@ -1,3 +1,4 @@
+#include "abs_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "concepts/assertion_condition_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "concepts/const_reference_of_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "concepts/convertible_to_test.cpp"  // NOLINT(bugprone-suspicious-include)
