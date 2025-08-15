@@ -33,10 +33,17 @@ auto main() -> int {
     using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
     num_prob_collect::linear::laplacian_2d_grid<mat_type> grid{
         grid_size, grid_size, grid_width};
-    num_collect::linear::algebraic_multigrid_solver<mat_type> solver;
 
     ProfilerStart("profile_linear_algebraic_multigrid_solver_compute.prof");
-    solver.compute(grid.mat());
+#ifdef NDEBUG
+    // NOLINTNEXTLINE
+    for (std::size_t i = 0; i < 10; ++i) {
+#endif
+        num_collect::linear::algebraic_multigrid_solver<mat_type> solver;
+        solver.compute(grid.mat());
+#ifdef NDEBUG
+    }
+#endif
     ProfilerStop();
 
     return 0;
