@@ -61,7 +61,11 @@ TEST_CASE("num_collect::linear::impl::amg::compute_node_scores") {
         connections.finish_current_node();
         const auto transposed_connections = connections.transpose();
 
-        const auto scores = compute_node_scores(transposed_connections);
+        const auto table = compute_node_scores(transposed_connections);
+        std::vector<int> scores(5);  // NOLINT(*-magic-numbers)
+        for (const auto& [score, index] : table.score_to_index_map()) {
+            scores.at(static_cast<std::size_t>(index)) = score;
+        }
 
         CHECK_THAT(scores,
             Catch::Matchers::RangeEquals(std::vector<int>{1, 2, 1, 2, 0}));

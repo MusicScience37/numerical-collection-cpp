@@ -23,6 +23,7 @@
 #include <optional>
 
 #include "num_collect/base/index_type.h"
+#include "num_collect/linear/impl/amg/index_score_table.h"
 #include "num_collect/linear/impl/amg/node_connection_list.h"
 #include "num_collect/linear/impl/amg/node_layer.h"
 #include "num_collect/util/vector.h"
@@ -39,39 +40,14 @@ namespace num_collect::linear::impl::amg {
 template <typename StorageIndex>
 [[nodiscard]] inline auto compute_node_scores(
     const node_connection_list<StorageIndex>& transposed_connections)
-    -> util::vector<StorageIndex> {
-    util::vector<StorageIndex> scores(transposed_connections.num_nodes());
+    -> index_score_table<StorageIndex> {
+    index_score_table<StorageIndex> scores(transposed_connections.num_nodes());
     for (StorageIndex i = 0; i < transposed_connections.num_nodes(); ++i) {
-        scores[i] = static_cast<StorageIndex>(
-            transposed_connections.connected_nodes_to(i).size());
+        scores.assign(i,
+            static_cast<StorageIndex>(
+                transposed_connections.connected_nodes_to(i).size()));
     }
     return scores;
-}
-
-/*!
- * \brief Find the index of the maximum score among unclassified nodes.
- *
- * \tparam StorageIndex Type of indices in storage.
- * \param[in] scores Current score.
- * \param[in] classification Classification of nodes.
- * \return Index. (Null if no unclassified nodes.)
- */
-template <typename StorageIndex>
-[[nodiscard]] auto find_max_score_index(
-    const util::vector<StorageIndex>& scores,
-    const util::vector<node_layer>& classification)
-    -> std::optional<index_type> {
-    std::optional<index_type> index;
-    auto score = std::numeric_limits<StorageIndex>::min();
-    for (index_type i = 0; i < scores.size(); ++i) {
-        if (classification[i] == node_layer::unclassified) {
-            if (scores[i] > score) {
-                index = i;
-                score = scores[i];
-            }
-        }
-    }
-    return index;
 }
 
 /*!
@@ -90,28 +66,27 @@ template <typename StorageIndex>
     util::vector<node_layer> classification(
         connections.num_nodes(), node_layer::unclassified);
 
-    util::vector<StorageIndex> scores =
+    index_score_table<StorageIndex> table =
         compute_node_scores(transposed_connections);
 
-    while (true) {
-        auto selection = find_max_score_index(scores, classification);
-        if (!selection) {
-            break;
-        }
+    while (!table.empty()) {
+        auto selection = table.find_max_score_index();
 
-        classification[*selection] = node_layer::coarse;
+        classification[selection] = node_layer::coarse;
+        table.remove(selection);
         for (const auto j :
-            transposed_connections.connected_nodes_to(*selection)) {
+            transposed_connections.connected_nodes_to(selection)) {
             if (classification[j] == node_layer::unclassified) {
                 classification[j] = node_layer::fine;
+                table.remove(j);
                 for (const auto k : connections.connected_nodes_to(j)) {
-                    scores[k] += 1;
+                    table.add_score(k, 1);
                 }
             }
         }
-        for (const auto j : connections.connected_nodes_to(*selection)) {
+        for (const auto j : connections.connected_nodes_to(selection)) {
             if (classification[j] == node_layer::unclassified) {
-                scores[j] -= 1;
+                table.add_score(j, -1);
             }
         }
     }
