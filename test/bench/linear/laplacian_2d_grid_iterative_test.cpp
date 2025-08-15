@@ -27,6 +27,7 @@
 #include "laplacian_2d_grid_make_sol.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/linear/algebraic_multigrid_solver.h"
+#include "num_collect/linear/amg_preconditioner.h"
 #include "num_collect/linear/cuthill_mckee_ordering.h"
 #include "num_collect/linear/gauss_seidel_iterative_solver.h"
 #include "num_collect/linear/parallel_symmetric_successive_over_relaxation.h"
@@ -643,6 +644,52 @@ STAT_BENCH_CASE_F(
     const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
     const Eigen::VectorXd right = grid.mat() * true_sol;
     num_collect::linear::algebraic_multigrid_solver<mat_type> solver;
+    Eigen::VectorXd sol;
+    solver.compute(grid.mat());
+
+    STAT_BENCH_MEASURE() {
+        sol = solver.solve(right);
+        stat_bench::memory_barrier();
+    };
+
+    set_iterations(solver.iterations());
+    set_residual(grid.mat(), sol, right);
+}
+
+STAT_BENCH_CASE_F(
+    laplacian_2d_grid_iterative_fixture, "laplacian_2d_grid", "AMG-CG") {
+    using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
+
+    num_prob_collect::linear::laplacian_2d_grid<mat_type> grid{
+        grid_rows(), grid_cols(), grid_width()};
+    const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
+    const Eigen::VectorXd right = grid.mat() * true_sol;
+    Eigen::ConjugateGradient<mat_type, Eigen::Upper | Eigen::Lower,
+        num_collect::linear::amg_preconditioner<mat_type>>
+        solver;
+    Eigen::VectorXd sol;
+
+    STAT_BENCH_MEASURE() {
+        solver.compute(grid.mat());
+        sol = solver.solve(right);
+        stat_bench::memory_barrier();
+    };
+
+    set_iterations(solver.iterations());
+    set_residual(grid.mat(), sol, right);
+}
+
+STAT_BENCH_CASE_F(
+    laplacian_2d_grid_iterative_fixture, "laplacian_2d_grid_solve", "AMG-CG") {
+    using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
+
+    num_prob_collect::linear::laplacian_2d_grid<mat_type> grid{
+        grid_rows(), grid_cols(), grid_width()};
+    const Eigen::VectorXd true_sol = laplacian_2d_grid_make_sol(grid);
+    const Eigen::VectorXd right = grid.mat() * true_sol;
+    Eigen::ConjugateGradient<mat_type, Eigen::Upper | Eigen::Lower,
+        num_collect::linear::amg_preconditioner<mat_type>>
+        solver;
     Eigen::VectorXd sol;
     solver.compute(grid.mat());
 
