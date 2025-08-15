@@ -11,6 +11,7 @@ BUILD_TYPE_DICT = {
     "debug": "Debug",
     "release": "Release",
     "bench": "Release",
+    "example": "Release",
     "asan_ubsan": "Debug",
 }
 
