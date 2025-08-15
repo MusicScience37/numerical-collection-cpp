@@ -183,12 +183,20 @@ test linux:
   extends: .test linux base
   parallel:
     matrix:
-      - COMPILER_TYPE: "gcc13"
+      # Test multiple compilers in debug build.
+      - COMPILER_TYPE: ["gcc12", "gcc13"]
         IMAGE_PATH: "musicscience37/gcc-ci"
-        TEST_TYPE: ["debug", "release", "bench"]
+        TEST_TYPE: ["debug"]
       - COMPILER_TYPE: ["clang19", "clang20"]
         IMAGE_PATH: "musicscience37/clang-ci"
-        TEST_TYPE: ["debug", "release", "bench"]
+        TEST_TYPE: ["debug"]
+      # Test multiple types of binaries in some compilers.
+      - COMPILER_TYPE: "gcc13"
+        IMAGE_PATH: "musicscience37/gcc-ci"
+        TEST_TYPE: ["release", "bench", "example"]
+      - COMPILER_TYPE: "clang20"
+        IMAGE_PATH: "musicscience37/clang-ci"
+        TEST_TYPE: ["release", "bench", "example"]
   script:
     - poetry run python ./scripts/ci_linux_test.py
       --compiler_type $COMPILER_TYPE --test_type $TEST_TYPE --build_dir $BUILD_DIR
