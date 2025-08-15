@@ -244,6 +244,7 @@
     "pngpp",
     "pprof",
     "Preconditioner",
+    "preconditioners",
     "profdata",
     "profraw",
     "pseudoinverse",
