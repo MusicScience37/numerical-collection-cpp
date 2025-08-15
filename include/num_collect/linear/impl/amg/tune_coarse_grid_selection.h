@@ -21,7 +21,8 @@
 
 #include <algorithm>
 #include <optional>
-#include <unordered_set>
+
+#include <hash_tables/sets/open_address_set_st.h>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/linear/impl/amg/node_connection_list.h"
@@ -44,18 +45,25 @@ namespace num_collect::linear::impl::amg {
 template <typename StorageIndex>
 [[nodiscard]] inline auto find_node_unsatisfying_interpolation_condition(
     const node_connection_list<StorageIndex>& connections,
-    const std::unordered_set<StorageIndex>& neighbors_in_coarse_grid,
-    const std::unordered_set<StorageIndex>& neighbors_in_fine_grid)
-    -> std::optional<StorageIndex> {
-    for (const auto neighbor : neighbors_in_fine_grid) {
-        if (std::ranges::none_of(connections.connected_nodes_to(neighbor),
-                [neighbors_in_coarse_grid](StorageIndex index) {
-                    return neighbors_in_coarse_grid.contains(index);
-                })) {
-            return neighbor;
-        }
-    }
-    return std::nullopt;
+    const hash_tables::sets::open_address_set_st<StorageIndex>&
+        neighbors_in_coarse_grid,
+    const hash_tables::sets::open_address_set_st<StorageIndex>&
+        neighbors_in_fine_grid) -> std::optional<StorageIndex> {
+    std::optional<StorageIndex> result;
+    neighbors_in_fine_grid.for_all(
+        [&result, &connections, &neighbors_in_coarse_grid](
+            const StorageIndex& neighbor) {
+            if (result) {
+                return;
+            }
+            if (std::ranges::none_of(connections.connected_nodes_to(neighbor),
+                    [neighbors_in_coarse_grid](StorageIndex index) {
+                        return neighbors_in_coarse_grid.has(index);
+                    })) {
+                result = neighbor;
+            }
+        });
+    return result;
 }
 
 /*!
@@ -66,17 +74,24 @@ template <typename StorageIndex>
  * \param[in] connections List of connections.
  * \param[in,out] node_classification Classification of nodes.
  * \param[in] tested_node_index Index of the tested node.
+ * \param[out] neighbors_in_coarse_grid Buffer of Indices of neighbors in coarse
+ * grid.
+ * \param[out] neighbors_in_fine_grid Buffer of Indices of neighbors in fine
+ * grid.
  */
 template <typename StorageIndex>
 void tune_coarse_grid_selection_for_one_node(
     const node_connection_list<StorageIndex>& connections,
-    util::vector<node_layer>& node_classification,
-    index_type tested_node_index) {
+    util::vector<node_layer>& node_classification, index_type tested_node_index,
+    hash_tables::sets::open_address_set_st<StorageIndex>&
+        neighbors_in_coarse_grid,
+    hash_tables::sets::open_address_set_st<StorageIndex>&
+        neighbors_in_fine_grid) {
     NUM_COLLECT_DEBUG_ASSERT(
         node_classification[tested_node_index] == node_layer::fine);
 
-    std::unordered_set<StorageIndex> neighbors_in_coarse_grid;
-    std::unordered_set<StorageIndex> neighbors_in_fine_grid;
+    neighbors_in_coarse_grid.clear();
+    neighbors_in_fine_grid.clear();
     for (const auto neighbor :
         connections.connected_nodes_to(tested_node_index)) {
         if (node_classification[neighbor] == node_layer::coarse) {
@@ -140,10 +155,14 @@ void tune_coarse_grid_selection(
         }
     }
 
+    hash_tables::sets::open_address_set_st<StorageIndex>
+        neighbors_in_coarse_grid;
+    hash_tables::sets::open_address_set_st<StorageIndex> neighbors_in_fine_grid;
     for (index_type i = 0; i < node_classification.size(); ++i) {
         if (node_classification[i] == node_layer::fine) {
-            tune_coarse_grid_selection_for_one_node(
-                connections, node_classification, i);
+            tune_coarse_grid_selection_for_one_node(connections,
+                node_classification, i, neighbors_in_coarse_grid,
+                neighbors_in_fine_grid);
         }
     }
 }
