@@ -129,15 +129,14 @@ public:
      *
      * \note This function is for unit tests.
      */
-    [[nodiscard]] auto score_to_index_map() const noexcept -> const
-        std::multimap<score_type, index_type, std::greater<score_type>>& {
+    [[nodiscard]] auto score_to_index_map() const noexcept
+        -> const std::multimap<score_type, index_type, std::greater<>>& {
         return score_to_index_map_;
     }
 
 private:
     //! Mapping from scores to indices.
-    std::multimap<score_type, index_type, std::greater<score_type>>
-        score_to_index_map_;
+    std::multimap<score_type, index_type, std::greater<>> score_to_index_map_;
 
     //! Mapping from indices to the iterators in score_to_index_map_.
     util::vector<
