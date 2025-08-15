@@ -23,18 +23,23 @@ line count:
   extends: .retry setting
   stage: test
   needs: []
-  image: registry.gitlab.com/musicscience37projects/docker/scc-docker
+  image:
+    name: ghcr.io/boyter/scc:master
+    entrypoint: [""]
   script:
     - mkdir -p line_count
     - scc
       --format-multi "tabular:stdout,html:line_count/line_count.html"
+      --count-as "h:C++,hpp:C++"
       .
     - scc
       --format-multi "openmetrics:line_count/cpp_line_count.txt"
-      -i h,cpp
+      --count-as "h:C++,hpp:C++"
+      -i h,hpp,cpp
       .
     - scc
       --format-multi "tabular:stdout,html:line_count/src_line_count.html"
+      --count-as "h:C++,hpp:C++"
       --by-file -s complexity
       include src
   artifacts:
