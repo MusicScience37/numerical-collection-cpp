@@ -5,6 +5,7 @@
 #include "impl/amg/compute_strong_connection_list_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/amg/create_coarse_grid_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/amg/create_prolongation_matrix_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "impl/amg/index_score_table_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/amg/node_connection_list_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/amg/tune_coarse_grid_selection_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/operator_conjugate_gradient_test.cpp"  // NOLINT(bugprone-suspicious-include)

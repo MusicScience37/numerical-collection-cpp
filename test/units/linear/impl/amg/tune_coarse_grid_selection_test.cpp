@@ -21,13 +21,13 @@
 
 #include <string>
 #include <string_view>
-#include <unordered_set>
 
 #include <Eigen/SparseCore>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_range_equals.hpp>
 #include <fmt/format.h>
+#include <hash_tables/sets/open_address_set_st.h>
 
 #include "fmt_approval_tests.h"
 #include "num_collect/base/index_type.h"
@@ -56,8 +56,12 @@ TEST_CASE(
         connections.push_back(0);
         connections.push_back(2);
         connections.finish_current_node();
-        const auto neighbors_in_coarse_grid = std::unordered_set<int>{1, 3};
-        const auto neighbors_in_fine_grid = std::unordered_set<int>{2, 4};
+        hash_tables::sets::open_address_set_st<int> neighbors_in_coarse_grid;
+        neighbors_in_coarse_grid.insert(1);
+        neighbors_in_coarse_grid.insert(3);
+        hash_tables::sets::open_address_set_st<int> neighbors_in_fine_grid;
+        neighbors_in_fine_grid.insert(2);
+        neighbors_in_fine_grid.insert(4);
 
         const auto node = find_node_unsatisfying_interpolation_condition(
             connections, neighbors_in_coarse_grid, neighbors_in_fine_grid);
@@ -77,8 +81,12 @@ TEST_CASE(
         connections.push_back(1);
         connections.push_back(2);
         connections.finish_current_node();
-        const auto neighbors_in_coarse_grid = std::unordered_set<int>{1, 3};
-        const auto neighbors_in_fine_grid = std::unordered_set<int>{2, 4};
+        hash_tables::sets::open_address_set_st<int> neighbors_in_coarse_grid;
+        neighbors_in_coarse_grid.insert(1);
+        neighbors_in_coarse_grid.insert(3);
+        hash_tables::sets::open_address_set_st<int> neighbors_in_fine_grid;
+        neighbors_in_fine_grid.insert(2);
+        neighbors_in_fine_grid.insert(4);
 
         const auto node = find_node_unsatisfying_interpolation_condition(
             connections, neighbors_in_coarse_grid, neighbors_in_fine_grid);
@@ -94,6 +102,9 @@ TEST_CASE(
     using num_collect::linear::impl::amg::
         tune_coarse_grid_selection_for_one_node;
     using num_collect::util::vector;
+
+    hash_tables::sets::open_address_set_st<int> neighbors_in_coarse_grid;
+    hash_tables::sets::open_address_set_st<int> neighbors_in_fine_grid;
 
     SECTION("change no nodes when all neighbors are OK") {
         node_connection_list<int> connections;
@@ -116,8 +127,9 @@ TEST_CASE(
             node_layer::fine};
         constexpr num_collect::index_type tested_node_index = 0;
 
-        tune_coarse_grid_selection_for_one_node(
-            connections, node_classification, tested_node_index);
+        tune_coarse_grid_selection_for_one_node(connections,
+            node_classification, tested_node_index, neighbors_in_coarse_grid,
+            neighbors_in_fine_grid);
 
         CHECK_THAT(node_classification,
             Catch::Matchers::RangeEquals(
@@ -147,8 +159,9 @@ TEST_CASE(
             node_layer::fine};
         constexpr num_collect::index_type tested_node_index = 0;
 
-        tune_coarse_grid_selection_for_one_node(
-            connections, node_classification, tested_node_index);
+        tune_coarse_grid_selection_for_one_node(connections,
+            node_classification, tested_node_index, neighbors_in_coarse_grid,
+            neighbors_in_fine_grid);
 
         CHECK_THAT(node_classification,
             Catch::Matchers::RangeEquals(
@@ -173,8 +186,9 @@ TEST_CASE(
             node_layer::fine};
         constexpr num_collect::index_type tested_node_index = 0;
 
-        tune_coarse_grid_selection_for_one_node(
-            connections, node_classification, tested_node_index);
+        tune_coarse_grid_selection_for_one_node(connections,
+            node_classification, tested_node_index, neighbors_in_coarse_grid,
+            neighbors_in_fine_grid);
 
         CHECK_THAT(node_classification,
             Catch::Matchers::RangeEquals(

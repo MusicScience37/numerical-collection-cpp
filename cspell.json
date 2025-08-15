@@ -310,6 +310,7 @@
     "tsan",
     "ubsan",
     "unformattable",
+    "unsynchronized",
     "upsampled",
     "upsampling",
     "vcpkg",

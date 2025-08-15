@@ -6,6 +6,7 @@ set(SOURCE_FILES
     impl/amg/compute_strong_connection_list_test.cpp
     impl/amg/create_coarse_grid_test.cpp
     impl/amg/create_prolongation_matrix_test.cpp
+    impl/amg/index_score_table_test.cpp
     impl/amg/node_connection_list_test.cpp
     impl/amg/tune_coarse_grid_selection_test.cpp
     impl/operator_conjugate_gradient_test.cpp
