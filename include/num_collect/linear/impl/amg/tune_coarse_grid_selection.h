@@ -57,7 +57,7 @@ template <typename StorageIndex>
                 return;
             }
             if (std::ranges::none_of(connections.connected_nodes_to(neighbor),
-                    [neighbors_in_coarse_grid](StorageIndex index) {
+                    [&neighbors_in_coarse_grid](StorageIndex index) {
                         return neighbors_in_coarse_grid.has(index);
                     })) {
                 result = neighbor;
@@ -92,6 +92,10 @@ void tune_coarse_grid_selection_for_one_node(
 
     neighbors_in_coarse_grid.clear();
     neighbors_in_fine_grid.clear();
+    neighbors_in_coarse_grid.reserve(
+        connections.connected_nodes_to(tested_node_index).size());
+    neighbors_in_fine_grid.reserve(
+        connections.connected_nodes_to(tested_node_index).size());
     for (const auto neighbor :
         connections.connected_nodes_to(tested_node_index)) {
         if (node_classification[neighbor] == node_layer::coarse) {
