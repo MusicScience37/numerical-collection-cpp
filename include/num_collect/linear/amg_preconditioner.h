@@ -64,11 +64,7 @@ public:
      */
     template <typename MatType>
     amg_preconditioner& factorize(const MatType& mat) {  // NOLINT
-        // CG solver gives Eigen::Reg<Matrix>, but AMG solver requires Matrix,
-        // so copy is required here.
-        // TODO Fix this problem.
-        matrix_ = mat;
-        solver_.compute(matrix_);
+        solver_.compute(mat);
         return *this;
     }
 
@@ -110,9 +106,6 @@ public:
 private:
     //! AMG solver.
     algebraic_multigrid_solver<Matrix> solver_;
-
-    //! Buffer of the matrix.
-    Matrix matrix_;
 };
 
 }  // namespace num_collect::linear

@@ -104,18 +104,27 @@ public:
     /*!
      * \brief Prepare to solve.
      *
-     * \param[in] coeff Coefficient matrix.
+     * \tparam InputMatrix Type of the matrix.
+     * \param[in] matrix Coefficient matrix.
+     * \return This object.
      */
-    void compute(const matrix_type& coeff) {
-        base_type::compute(coeff);
-        diag_ = coeff.diagonal();
+    template <typename InputMatrix>
+    auto compute(const Eigen::EigenBase<InputMatrix>& matrix)
+        -> parallel_symmetric_successive_over_relaxation& {
+        base_type::compute(matrix);
+        const auto& coeff_ref = coeff();
+        diag_.resize(coeff_ref.cols());
+        for (index_type i = 0; i < coeff_ref.cols(); ++i) {
+            diag_(i) = coeff_ref.coeff(i, i);
+        }
         inv_diag_ = diag_.cwiseInverse();
-        intermidiate_solution_.resize(coeff.cols());
+        intermidiate_solution_.resize(coeff().cols());
         NUM_COLLECT_PRECONDITION(inv_diag_.array().isFinite().all(),
             "All diagonal elements of the coefficient matrix must not be "
             "zero.");
         run_parallel_ =
-            (coeff.nonZeros() / omp_get_max_threads() > 1000);  // NOLINT
+            (coeff().nonZeros() / omp_get_max_threads() > 1000);  // NOLINT
+        return *this;
     }
 
     /*!
@@ -218,15 +227,17 @@ private:
     /*!
      * \brief Iterate once in parallel.
      *
+     * \tparam InputMatrix Type of the matrix.
      * \tparam Right Type of the right-hand-side vector.
      * \tparam Solution Type of the solution vector.
      * \param[in] coeff_ref Coefficient matrix.
      * \param[in] right Right-hand-side vector.
      * \param[in,out] solution Solution vector.
      */
-    template <base::concepts::dense_vector_of<scalar_type> Right,
+    template <typename InputMatrix,
+        base::concepts::dense_vector_of<scalar_type> Right,
         base::concepts::dense_vector_of<scalar_type> Solution>
-    void iterate_parallel(const matrix_type& coeff_ref, const Right& right,
+    void iterate_parallel(const InputMatrix& coeff_ref, const Right& right,
         Solution& solution) const {
         const index_type size = coeff_ref.rows();
         const scalar_type prev_sol_coeff =
@@ -273,15 +284,17 @@ private:
     /*!
      * \brief Iterate once in single thread.
      *
+     * \tparam InputMatrix Type of the matrix.
      * \tparam Right Type of the right-hand-side vector.
      * \tparam Solution Type of the solution vector.
      * \param[in] coeff_ref Coefficient matrix.
      * \param[in] right Right-hand-side vector.
      * \param[in,out] solution Solution vector.
      */
-    template <base::concepts::dense_vector_of<scalar_type> Right,
+    template <typename InputMatrix,
+        base::concepts::dense_vector_of<scalar_type> Right,
         base::concepts::dense_vector_of<scalar_type> Solution>
-    void iterate_no_parallel(const matrix_type& coeff_ref, const Right& right,
+    void iterate_no_parallel(const InputMatrix& coeff_ref, const Right& right,
         Solution& solution) const {
         const index_type size = coeff_ref.rows();
         const scalar_type prev_sol_coeff =
@@ -304,6 +317,7 @@ private:
     /*!
      * \brief Process a row in the forward update.
      *
+     * \tparam InputMatrix Type of the matrix.
      * \tparam Right Type of the right-hand-side vector.
      * \tparam Solution Type of the solution vector.
      * \param[in] coeff_ref Coefficient matrix.
@@ -314,13 +328,14 @@ private:
      * \param[in] prev_sol_coeff Coefficient for the previous solution.
      * \return Residual of this row.
      */
-    template <base::concepts::dense_vector_of<scalar_type> Right,
+    template <typename InputMatrix,
+        base::concepts::dense_vector_of<scalar_type> Right,
         base::concepts::dense_vector_of<scalar_type> Solution>
-    auto process_row_forward(const matrix_type& coeff_ref, const Right& right,
+    auto process_row_forward(const InputMatrix& coeff_ref, const Right& right,
         Solution& solution, index_type i, index_type start_row,
         const scalar_type& prev_sol_coeff) const -> scalar_type {
         scalar_type numerator = right(i);
-        for (typename matrix_type::InnerIterator iter(coeff_ref, i); iter;
+        for (typename InputMatrix::InnerIterator iter(coeff_ref, i); iter;
             ++iter) {
             if (start_row <= iter.index() && iter.index() < i) {
                 numerator -=
@@ -339,6 +354,7 @@ private:
     /*!
      * \brief Process a row in the backward update.
      *
+     * \tparam InputMatrix Type of the matrix.
      * \tparam Right Type of the right-hand-side vector.
      * \tparam Solution Type of the solution vector.
      * \param[in] coeff_ref Coefficient matrix.
@@ -348,13 +364,14 @@ private:
      * \param[in] end_row Index of the pat-the-last row in this thread.
      * \param[in] prev_sol_coeff Coefficient for the previous solution.
      */
-    template <base::concepts::dense_vector_of<scalar_type> Right,
+    template <typename InputMatrix,
+        base::concepts::dense_vector_of<scalar_type> Right,
         base::concepts::dense_vector_of<scalar_type> Solution>
-    void process_row_backward(const matrix_type& coeff_ref, const Right& right,
+    void process_row_backward(const InputMatrix& coeff_ref, const Right& right,
         Solution& solution, index_type i, index_type end_row,
         const scalar_type& prev_sol_coeff) const {
         scalar_type numerator = right(i);
-        for (typename matrix_type::InnerIterator iter(coeff_ref, i); iter;
+        for (typename InputMatrix::InnerIterator iter(coeff_ref, i); iter;
             ++iter) {
             if (i < iter.index() && iter.index() < end_row) {
                 numerator -= iter.value() * solution(iter.index());
