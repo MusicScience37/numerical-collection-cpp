@@ -194,15 +194,17 @@ private:
     /*!
      * \brief Iterate once.
      *
+     * \tparam InputMatrix Type of the matrix.
      * \tparam Right Type of the right-hand-side vector.
      * \tparam Solution Type of the solution vector.
      * \param[in] coeff_ref Coefficient matrix.
      * \param[in] right Right-hand-side vector.
      * \param[in,out] solution Solution vector.
      */
-    template <base::concepts::dense_vector_of<scalar_type> Right,
+    template <typename InputMatrix,
+        base::concepts::dense_vector_of<scalar_type> Right,
         base::concepts::dense_vector_of<scalar_type> Solution>
-    void iterate(const matrix_type& coeff_ref, const Right& right,
+    void iterate(const InputMatrix& coeff_ref, const Right& right,
         Solution& solution) const {
         const index_type size = coeff_ref.rows();
         const scalar_type prev_sol_coeff =
@@ -212,7 +214,7 @@ private:
         // Forward update.
         for (index_type i = 0; i < size; ++i) {
             scalar_type numerator = right(i);
-            for (typename matrix_type::InnerIterator iter(coeff_ref, i); iter;
+            for (typename InputMatrix::InnerIterator iter(coeff_ref, i); iter;
                 ++iter) {
                 if (iter.index() < i) {
                     numerator -=
@@ -231,7 +233,7 @@ private:
         // Backward update.
         for (index_type i = size - 1; i >= 0; --i) {
             scalar_type numerator = right(i);
-            for (typename matrix_type::InnerIterator iter(coeff_ref, i); iter;
+            for (typename InputMatrix::InnerIterator iter(coeff_ref, i); iter;
                 ++iter) {
                 if (iter.index() < i) {
                     numerator -=
