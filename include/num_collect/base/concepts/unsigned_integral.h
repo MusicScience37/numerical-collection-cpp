@@ -19,40 +19,22 @@
  */
 #pragma once
 
-#include <type_traits>
-
-#include "num_collect/base/concepts/integral.h"
+#include <concepts>
 
 namespace num_collect {
 inline namespace base {
 namespace concepts {
 
 /*!
- * \brief Class to check whether a type is unsigned.
- *
- * \tparam T Type to be checked.
- *
- * \note For user-defined types, write specializations of
- * this class.
- */
-template <typename T>
-struct is_unsigned : public std::is_unsigned<T> {};
-
-/*!
- * \brief Get whether a type is unsigned.
- *
- * \tparam T Type to be checked.
- */
-template <typename T>
-constexpr bool is_unsigned_v = is_unsigned<T>::value;
-
-/*!
  * \brief Concept of unsigned integers.
  *
  * \tparam T Type.
+ *
+ * \note This concept was originally implemented when some of C++ standard
+ * library implementations did not have `std::unsigned_integral`.
  */
 template <typename T>
-concept unsigned_integral = integral<T> && is_unsigned_v<T>;
+concept unsigned_integral = std::unsigned_integral<T>;
 
 }  // namespace concepts
 }  // namespace base

@@ -19,38 +19,22 @@
  */
 #pragma once
 
-#include <type_traits>
+#include <concepts>
 
 namespace num_collect {
 inline namespace base {
 namespace concepts {
 
 /*!
- * \brief Class to check whether a type is an integer.
- *
- * \tparam T Type to check.
- *
- * \note For user-defined types, write specializations of
- * this class.
- */
-template <typename T>
-struct is_integral : public std::is_integral<T> {};
-
-/*!
- * \brief Get whether a type is an integer.
- *
- * \tparam T Type to check.
- */
-template <typename T>
-constexpr bool is_integral_v = is_integral<T>::value;
-
-/*!
  * \brief Concept to check if T is an integer.
  *
  * \tparam T Type to check.
+ *
+ * \note This concept was originally implemented when some of C++ standard
+ * library implementations did not have `std::integral`.
  */
 template <typename T>
-concept integral = is_integral_v<T>;
+concept integral = std::integral<T>;
 
 }  // namespace concepts
 }  // namespace base
