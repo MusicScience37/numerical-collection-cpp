@@ -92,15 +92,24 @@ public:
     /*!
      * \brief Prepare to solve.
      *
-     * \param[in] coeff Coefficient matrix.
+     * \tparam InputMatrix Type of the matrix.
+     * \param[in] matrix Coefficient matrix.
+     * \return This object.
      */
-    void compute(const matrix_type& coeff) {
-        base_type::compute(coeff);
-        diag_ = coeff.diagonal();
+    template <typename InputMatrix>
+    auto compute(const Eigen::EigenBase<InputMatrix>& matrix)
+        -> gauss_seidel_iterative_solver& {
+        base_type::compute(matrix);
+        const auto& coeff_ref = coeff();
+        diag_.resize(coeff_ref.cols());
+        for (index_type i = 0; i < coeff_ref.cols(); ++i) {
+            diag_(i) = coeff_ref.coeff(i, i);
+        }
         inv_diag_ = diag_.cwiseInverse();
         NUM_COLLECT_PRECONDITION(inv_diag_.array().isFinite().all(),
             "All diagonal elements of the coefficient matrix must not be "
             "zero.");
+        return *this;
     }
 
     /*!

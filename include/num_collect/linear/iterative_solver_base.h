@@ -19,6 +19,8 @@
  */
 #pragma once
 
+#include <optional>
+
 #include <Eigen/Core>
 #include <Eigen/IterativeLinearSolvers>
 #include <Eigen/SparseCore>
@@ -95,11 +97,13 @@ public:
      *
      * \note This function will save the pointer to the argument.
      *
-     * \param[in] coeff Coefficient matrix.
+     * \tparam InputMatrix Type of the matrix.
+     * \param[in] matrix Coefficient matrix.
      * \return This.
      */
-    auto compute(const matrix_type& coeff) -> Derived& {
-        coeff_ = &coeff;
+    template <typename InputMatrix>
+    auto compute(const Eigen::EigenBase<InputMatrix>& matrix) -> Derived& {
+        coeff_.emplace(matrix.derived());
         m_isInitialized = true;
         return derived();
     }
@@ -240,8 +244,8 @@ protected:
      *
      * \return Coefficient matrix.
      */
-    [[nodiscard]] auto coeff() const noexcept -> const matrix_type& {
-        NUM_COLLECT_ASSERT(static_cast<const void*>(coeff_) != nullptr);
+    [[nodiscard]] auto coeff() const noexcept -> Eigen::Ref<const matrix_type> {
+        NUM_COLLECT_ASSERT(coeff_.has_value());
         return *coeff_;
     }
 
@@ -260,7 +264,7 @@ private:
     real_scalar_type tolerance_{default_tolerance};
 
     //! Coefficient matrix.
-    const matrix_type* coeff_{nullptr};
+    std::optional<Eigen::Ref<const matrix_type>> coeff_{};
 };
 
 }  // namespace num_collect::linear

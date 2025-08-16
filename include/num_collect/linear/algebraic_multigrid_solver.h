@@ -106,23 +106,26 @@ public:
     /*!
      * \brief Prepare to solve.
      *
-     * \param[in] coeff Coefficient matrix.
+     * \tparam InputMatrix Type of the matrix.
+     * \param[in] matrix Coefficient matrix.
+     * \return This object.
      */
-    void compute(const matrix_type& coeff) {
-        base_type::compute(coeff);
+    template <typename InputMatrix>
+    auto compute(const Eigen::EigenBase<InputMatrix>& matrix) -> this_type& {
+        base_type::compute(matrix);
 
         constexpr index_type smoother_iterations = 1;
 
         // Initialization of the first layer.
         NUM_COLLECT_LOG_TRACE(
-            this->logger(), "AMG layer size {} (first layer)", coeff.cols());
-        compute_prolongation_matrix(first_layer_.prolongation_matrix, coeff);
-        first_layer_.smoother.compute(coeff);
+            this->logger(), "AMG layer size {} (first layer)", coeff().cols());
+        compute_prolongation_matrix(first_layer_.prolongation_matrix, coeff());
+        first_layer_.smoother.compute(coeff());
         first_layer_.smoother.max_iterations(smoother_iterations);
 
         // Initialization of the intermidiate layers.
         intermidiate_layers_.clear();
-        const matrix_type* current_matrix = &coeff;
+        const matrix_type* current_matrix = &matrix.derived();
         const matrix_type* current_prolongation =
             &first_layer_.prolongation_matrix;
         index_type next_matrix_size = first_layer_.prolongation_matrix.cols();
@@ -156,7 +159,7 @@ public:
             intermidiate_layers_.size() + 1U);
         solution_buffers_.resize(intermidiate_layers_.size() + 1U);
         residual_buffers_before_prolongation_.front() =
-            dense_vector_type::Zero(coeff.cols());
+            dense_vector_type::Zero(coeff().cols());
         for (std::size_t i = 0; i < intermidiate_layers_.size(); ++i) {
             const index_type size = intermidiate_layers_[i].coeff_matrix.cols();
             residual_buffers_[i] = dense_vector_type::Zero(size);
@@ -169,6 +172,8 @@ public:
             residual_buffers_.back() = dense_vector_type::Zero(size);
             solution_buffers_.back() = dense_vector_type::Zero(size);
         }
+
+        return *this;
     }
 
     /*!
