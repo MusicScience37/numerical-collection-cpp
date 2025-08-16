@@ -19,40 +19,22 @@
  */
 #pragma once
 
-#include <type_traits>
-
-#include "num_collect/base/concepts/integral.h"
+#include <concepts>
 
 namespace num_collect {
 inline namespace base {
 namespace concepts {
 
 /*!
- * \brief Class to check whether a type is signed.
- *
- * \tparam T Type to be checked.
- *
- * \note For user-defined types, write specializations of
- * this class.
- */
-template <typename T>
-struct is_signed : public std::is_signed<T> {};
-
-/*!
- * \brief Get whether a type is signed.
- *
- * \tparam T Type to be checked.
- */
-template <typename T>
-constexpr bool is_signed_v = is_signed<T>::value;
-
-/*!
  * \brief Concept of signed integers.
  *
  * \tparam T Type.
+ *
+ * \note This concept was originally implemented when some of C++ standard
+ * library implementations did not have `std::signed_integral`.
  */
 template <typename T>
-concept signed_integral = integral<T> && is_signed_v<T>;
+concept signed_integral = std::signed_integral<T>;
 
 }  // namespace concepts
 }  // namespace base
