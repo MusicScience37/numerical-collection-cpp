@@ -122,7 +122,10 @@ public:
         std::optional<Eigen::Ref<const matrix_type>> current_prolongation;
         index_type next_matrix_size = current_matrix->cols();
 
+        matrix_type matrix_product_buffer;
+
         intermidiate_layers_.clear();
+        matrix_buffers_.clear();
         while (next_matrix_size > maximum_directly_solved_matrix_size_) {
             NUM_COLLECT_LOG_TRACE(
                 this->logger(), "AMG layer size {}", next_matrix_size);
@@ -130,15 +133,19 @@ public:
                 intermidiate_layers_.emplace_back(*current_matrix);
             compute_prolongation_matrix(
                 next_layer.prolongation_matrix, next_layer.coeff_matrix);
+            next_layer.restrict_matrix =
+                next_layer.prolongation_matrix.transpose();
             next_layer.smoother.compute(next_layer.coeff_matrix);
             next_layer.smoother.max_iterations(smoother_iterations);
 
-            current_prolongation.emplace(next_layer.prolongation_matrix);
-
             matrix_type& next_matrix = matrix_buffers_.emplace_back();
-            next_matrix = (*current_prolongation).transpose() *
-                (*current_matrix) * (*current_prolongation);
+            matrix_product_buffer =
+                next_layer.restrict_matrix * (*current_matrix);
+            next_matrix =
+                matrix_product_buffer * next_layer.prolongation_matrix;
             current_matrix.emplace(next_matrix);
+
+            current_prolongation.emplace(next_layer.prolongation_matrix);
 
             next_matrix_size = current_matrix->cols();
         }
@@ -272,6 +279,8 @@ private:
             return;
         }
 
+        util::scoped_eigen_no_malloc no_malloc;
+
         // First layer.
         intermidiate_layers_.front().smoother.solve_vector_in_place(
             right, solution);
@@ -279,7 +288,7 @@ private:
         residual_buffers_before_prolongation_.front().noalias() -=
             coeff() * solution;
         residual_buffers_.front().noalias() =
-            intermidiate_layers_.front().prolongation_matrix.transpose() *
+            intermidiate_layers_.front().restrict_matrix *
             residual_buffers_before_prolongation_.front();
 
         // Intermidiate layers.
@@ -293,8 +302,7 @@ private:
                 residual_buffers_[i - 1U];
             residual_buffers_before_prolongation_[i].noalias() -=
                 layer.coeff_matrix * solution_buffers_[i - 1];
-            residual_buffers_[i].noalias() =
-                layer.prolongation_matrix.transpose() *
+            residual_buffers_[i].noalias() = layer.restrict_matrix *
                 residual_buffers_before_prolongation_[i];
         }
 
@@ -350,6 +358,9 @@ private:
 
         //! Prolongation matrix from the next layer.
         matrix_type prolongation_matrix;
+
+        //! Restrict matrix to the next layer.
+        matrix_type restrict_matrix;
 
         //! Smoother in this layer.
         parallel_symmetric_successive_over_relaxation<matrix_type> smoother;
