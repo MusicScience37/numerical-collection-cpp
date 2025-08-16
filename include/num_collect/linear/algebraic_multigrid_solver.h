@@ -371,7 +371,7 @@ private:
          * \param[in] input_coeff_matrix Coefficient matrix in this layer.
          */
         explicit intermidiate_layer_data(
-            Eigen::Ref<const matrix_type> input_coeff_matrix)
+            const Eigen::Ref<const matrix_type>& input_coeff_matrix)
             : coeff_matrix(input_coeff_matrix) {}
     };
 
