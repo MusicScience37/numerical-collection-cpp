@@ -27,10 +27,12 @@
 
 ### Computation of Regularized Solutions
 
-| Algorithm                                                                  | Class                                                                                     |
-| :------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
-| Fast iterative shrinkage-thresholding algorithm (FISTA) {cite:p}`Beck2009` | `num_collect::regularization::fista`                                                      |
-| Tikhonov regularization {cite:p}`Elden1982,Hansen1994`                     | `num_collect::regularization::tikhonov`, `num_collect::regularization::full_gen_tikhonov` |
+| Algorithm                                                                                                                                             | Class                                                                                     |
+| :---------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
+| Fast iterative shrinkage-thresholding algorithm (FISTA) {cite:p}`Beck2009`                                                                            | `num_collect::regularization::fista`                                                      |
+| Tikhonov regularization {cite:p}`Elden1982,Hansen1994`                                                                                                | `num_collect::regularization::tikhonov`, `num_collect::regularization::full_gen_tikhonov` |
+| Total generalized variation (TGV) regularization in 2nd order using alternating direction method of multipliers (ADMM) {cite:p}`Bredies2010,Boyd2010` | `num_collect::regularization::tgv2_admm`                                                  |
+| Total variation (TV) regularization using alternating direction method of multipliers (ADMM) {cite:p}`Boyd2010`                                       | `num_collect::regularization::tv_admm`                                                    |
 
 ### Selection of Regularization Parameters
 
