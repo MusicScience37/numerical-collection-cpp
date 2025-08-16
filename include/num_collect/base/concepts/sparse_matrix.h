@@ -28,39 +28,12 @@ inline namespace base {
 namespace concepts {
 
 /*!
- * \brief Check whether a type is a sparse matrix.
- *
- * \tparam T Type.
- */
-template <typename T>
-struct is_sparse_matrix : public std::false_type {};
-
-/*!
- * \brief Check whether a type is a sparse matrix.
- *
- * \tparam Scalar Type of the scalar.
- * \tparam Options Options.
- * \tparam StorageIndex Type of storage indices.
- */
-template <typename Scalar, int Options, typename StorageIndex>
-struct is_sparse_matrix<Eigen::SparseMatrix<Scalar, Options, StorageIndex>>
-    : public std::true_type {};
-
-/*!
- * \brief Check whether a type is a sparse matrix.
- *
- * \tparam T Type.
- */
-template <typename T>
-constexpr bool is_sparse_matrix_v = is_sparse_matrix<T>::value;
-
-/*!
  * \brief Concept to check if T is an Eigen's sparse matrix.
  *
  * \tparam T Type to check.
  */
 template <typename T>
-concept sparse_matrix = is_sparse_matrix_v<T>;
+concept sparse_matrix = std::is_base_of_v<Eigen::SparseMatrixBase<T>, T>;
 
 }  // namespace concepts
 }  // namespace base

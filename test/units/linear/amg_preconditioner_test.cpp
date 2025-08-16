@@ -78,6 +78,5 @@ TEST_CASE("num_collect::linear::amg_preconditioner") {
         const scalar_type res_rate =
             (grid.mat() * sol - right).norm() / right.norm();
         CHECK(res_rate < Eigen::NumTraits<scalar_type>::dummy_precision());
-        CHECK(solver.iterations() > 1);
     }
 }

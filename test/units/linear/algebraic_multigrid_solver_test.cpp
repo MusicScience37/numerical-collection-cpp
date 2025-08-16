@@ -90,4 +90,18 @@ TEST_CASE("num_collect::linear::algebraic_multigrid_solver") {
         CHECK(res_rate < Eigen::NumTraits<scalar_type>::dummy_precision());
         CHECK(solver.iterations() == 1);
     }
+
+    SECTION("solve only in final layer") {
+        constexpr num_collect::index_type maximum_directly_solved_matrix_size =
+            1000;
+        solver.maximum_directly_solved_matrix_size(
+            maximum_directly_solved_matrix_size);
+
+        solver.compute(grid.mat());
+        const vector_type sol = solver.solve(right);
+
+        const scalar_type res_rate =
+            (grid.mat() * sol - right).norm() / right.norm();
+        CHECK(res_rate < Eigen::NumTraits<scalar_type>::dummy_precision());
+    }
 }
