@@ -38,6 +38,8 @@ TEST_CASE("num_collect::logging::log_tag_config_node") {
             log_tag("num_collect_test::logging::log_tag_config_node");
         const auto child_tag =
             log_tag("num_collect_test::logging::log_tag_config_node::child");
+        // Create internal data of child node for test.
+        (void)edit_log_tag_config(child_tag);
         auto parent = edit_log_tag_config(parent_tag);
 
         SECTION("sink") {
