@@ -26,11 +26,9 @@
 #include <Eigen/Householder>
 
 #include "num_collect/base/concepts/dense_matrix.h"
-#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/logging/logging_macros.h"
 #include "num_collect/regularization/explicit_regularized_solver_base.h"
 #include "num_collect/regularization/tikhonov.h"
 #include "num_collect/util/assert.h"
@@ -102,6 +100,9 @@ public:
      * \param[in] coeff Coefficient matrix.
      * \param[in] data Data vector.
      * \param[in] reg_coeff Coefficient matrix for the regularization term.
+     *
+     * \note Pointers to the arguments are saved in this object, so don't
+     * destruct those arguments.
      */
     void compute(const coeff_type& coeff, const data_type& data,
         const coeff_type& reg_coeff) {

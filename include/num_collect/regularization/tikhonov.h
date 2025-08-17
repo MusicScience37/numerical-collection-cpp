@@ -83,6 +83,9 @@ public:
      *
      * \param[in] coeff Coefficient matrix.
      * \param[in] data Data vector.
+     *
+     * \note Pointers to the arguments are saved in this object, so don't
+     * destruct those arguments.
      */
     void compute(const coeff_type& coeff, const data_type& data) {
         svd_.compute(coeff, Eigen::ComputeThinU | Eigen::ComputeThinV);
