@@ -19,7 +19,8 @@
  */
 #pragma once
 
-#include "num_collect/base/concepts/same_as.h"
+#include <concepts>
+
 #include "num_collect/rbf/concepts/rbf.h"
 
 namespace num_collect::rbf::concepts {
@@ -31,9 +32,7 @@ namespace num_collect::rbf::concepts {
  */
 template <typename T>
 concept csrbf = rbf<T> && requires() {
-    {
-        T::support_boundary()
-    } -> base::concepts::same_as<typename T::scalar_type>;
+    { T::support_boundary() } -> std::same_as<typename T::scalar_type>;
 };
 
 }  // namespace num_collect::rbf::concepts

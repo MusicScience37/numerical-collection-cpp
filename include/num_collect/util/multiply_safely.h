@@ -19,7 +19,8 @@
  */
 #pragma once
 
-#include "num_collect/base/concepts/integral.h"
+#include <concepts>
+
 #include "num_collect/base/exception.h"
 #include "num_collect/logging/logging_macros.h"
 
@@ -33,7 +34,7 @@ namespace num_collect::util {
  * \param[in] b An integer.
  * \return Result of multiplication.
  */
-template <base::concepts::integral T>
+template <std::integral T>
 [[nodiscard]] constexpr auto multiply_safely(T a, T b) -> T {
     const T res = a * b;
     if (a != static_cast<T>(0) && res / a != b) {

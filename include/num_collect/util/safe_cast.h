@@ -22,13 +22,13 @@
 // IWYU pragma: no_include <string_view>
 // IWYU pragma: no_include "num_collect/util/source_info_view.h"
 
+#include <concepts>
 #include <limits>
 #include <type_traits>  // IWYU pragma: keep
 #include <typeinfo>
 
 #include <fmt/format.h>  // IWYU pragma: keep
 
-#include "num_collect/base/concepts/integral.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/logging/logging_macros.h"
 
@@ -50,7 +50,7 @@ public:
  * \param[in] value Value.
  * \return Casted value.
  */
-template <base::concepts::integral To, base::concepts::integral From>
+template <std::integral To, std::integral From>
 [[nodiscard]] inline auto safe_cast(const From& value) -> To {
     // Check upper bound.
     if constexpr (std::numeric_limits<To>::digits <

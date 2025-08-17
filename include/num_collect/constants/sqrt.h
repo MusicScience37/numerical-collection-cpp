@@ -19,8 +19,8 @@
  */
 #pragma once
 
+#include <concepts>
 #include <limits>
-#include <type_traits>
 
 #include "num_collect/constants/half.h"  // IWYU pragma: keep
 #include "num_collect/constants/one.h"   // IWYU pragma: keep
@@ -39,8 +39,7 @@ namespace num_collect::constants {
  * \param[in] x Value to calculate square root of.
  * \return Square root.
  */
-template <typename F,
-    std::enable_if_t<std::is_floating_point_v<F>, void*> = nullptr>
+template <std::floating_point F>
 constexpr auto sqrt(F x) -> F {
     if (x < zero<F>) {
         return std::numeric_limits<F>::quiet_NaN();
@@ -74,7 +73,7 @@ constexpr auto sqrt(F x) -> F {
  * \param[in] x Value to calculate square root of.
  * \return Square root.
  */
-template <typename I, std::enable_if_t<std::is_integral_v<I>, void*> = nullptr>
+template <std::integral I>
 constexpr auto sqrt(I x) -> double {
     return sqrt(static_cast<double>(x));
 }

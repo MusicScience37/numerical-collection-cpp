@@ -23,9 +23,9 @@
 // IWYU pragma: no_include <Eigen/SparseCore>
 
 #include <cmath>
+#include <concepts>
 #include <limits>
 
-#include "num_collect/base/concepts/invocable.h"
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
@@ -75,8 +75,7 @@ public:
      * \param[in,out] solution Solution. (Given vector is used as the initial
      * solution.)
      */
-    template <base::concepts::invocable<const vector_type&, vector_type&>
-            CoeffFunction>
+    template <std::invocable<const vector_type&, vector_type&> CoeffFunction>
     void solve(CoeffFunction&& coeff_function, const vector_type& rhs,
         vector_type& solution) {
         using std::abs;
@@ -161,8 +160,7 @@ private:
      * \param[in] solution Solution. (Given vector is used as the initial
      * solution.)
      */
-    template <base::concepts::invocable<const vector_type&, vector_type&>
-            CoeffFunction>
+    template <std::invocable<const vector_type&, vector_type&> CoeffFunction>
     void initialize(CoeffFunction&& coeff_function, const vector_type& rhs,
         const vector_type& solution) {
         coeff_function(solution, residual_);

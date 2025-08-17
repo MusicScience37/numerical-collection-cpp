@@ -21,10 +21,7 @@
 
 #include <cmath>
 #include <complex>
-
-#include "num_collect/base/concepts/real_scalar.h"
-#include "num_collect/base/concepts/signed_integral.h"
-#include "num_collect/base/concepts/unsigned_integral.h"
+#include <concepts>
 
 namespace num_collect {
 inline namespace base {
@@ -36,7 +33,7 @@ inline namespace base {
  * \param[in] val Number.
  * \return Absolute value.
  */
-template <concepts::real_scalar T>
+template <std::floating_point T>
 auto abs(const T& val) -> T {
     return std::abs(val);
 }
@@ -48,7 +45,7 @@ auto abs(const T& val) -> T {
  * \param[in] val Number.
  * \return Absolute value.
  */
-template <concepts::real_scalar T>
+template <std::floating_point T>
 auto abs(const std::complex<T>& val) -> T {
     return std::abs(val);
 }
@@ -60,7 +57,7 @@ auto abs(const std::complex<T>& val) -> T {
  * \param[in] val Number.
  * \return Absolute value.
  */
-template <concepts::signed_integral T>
+template <std::signed_integral T>
 auto abs(const T& val) -> T {
     return std::abs(val);
 }
@@ -72,7 +69,7 @@ auto abs(const T& val) -> T {
  * \param[in] val Number.
  * \return Absolute value. (In this case, the input value is returned as is.)
  */
-template <concepts::unsigned_integral T>
+template <std::unsigned_integral T>
 auto abs(const T& val) -> T {
     return val;
 }

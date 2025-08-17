@@ -23,8 +23,6 @@
 
 #include "num_collect/base/abs.h"
 #include "num_collect/base/concepts/dense_matrix.h"
-#include "num_collect/base/concepts/integral.h"
-#include "num_collect/base/concepts/real_scalar.h"
 
 namespace num_collect {
 inline namespace base {
@@ -48,7 +46,7 @@ auto norm(const Matrix& matrix) {
  * \param[in] val Number.
  * \return Absolute value.
  */
-template <concepts::real_scalar T>
+template <std::floating_point T>
 auto norm(const T& val) -> T {
     return abs(val);
 }
@@ -60,7 +58,7 @@ auto norm(const T& val) -> T {
  * \param[in] val Number.
  * \return Absolute value.
  */
-template <concepts::real_scalar T>
+template <std::floating_point T>
 auto norm(const std::complex<T>& val) -> T {
     return abs(val);
 }
@@ -72,7 +70,7 @@ auto norm(const std::complex<T>& val) -> T {
  * \param[in] val Number.
  * \return Absolute value.
  */
-template <concepts::integral T>
+template <std::integral T>
 auto norm(const T& val) -> T {
     return abs(val);
 }

@@ -19,6 +19,7 @@
  */
 #include <atomic>
 #include <chrono>
+#include <concepts>
 #include <cstddef>
 #include <exception>
 #include <filesystem>
@@ -35,7 +36,6 @@
 #include <plotly_plotter/write_html.h>
 #include <plotly_plotter/write_png.h>
 
-#include "num_collect/base/concepts/invocable.h"
 #include "num_collect/logging/config/toml/toml_log_config_parser.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/iterations/iteration_parameter.h"
@@ -107,7 +107,7 @@ public:
     }
 
 private:
-    template <num_collect::concepts::invocable<> Function>
+    template <std::invocable<> Function>
     void measure_impl(Function&& logging_function,
         std::string_view log_type_name, std::string_view log_sink_name) {
         log_sink_name_ = log_sink_name;
