@@ -27,6 +27,7 @@ set(SOURCE_FILES
     load_logging_config_test.cpp
     log_config_test.cpp
     log_level_test.cpp
+    log_tag_config_node_test.cpp
     log_tag_config_test.cpp
     log_tag_test.cpp
     log_tag_view_test.cpp

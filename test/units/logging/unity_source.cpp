@@ -26,6 +26,7 @@
 #include "load_logging_config_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "log_config_test.cpp"           // NOLINT(bugprone-suspicious-include)
 #include "log_level_test.cpp"            // NOLINT(bugprone-suspicious-include)
+#include "log_tag_config_node_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "log_tag_config_test.cpp"       // NOLINT(bugprone-suspicious-include)
 #include "log_tag_test.cpp"              // NOLINT(bugprone-suspicious-include)
 #include "log_tag_view_test.cpp"         // NOLINT(bugprone-suspicious-include)
