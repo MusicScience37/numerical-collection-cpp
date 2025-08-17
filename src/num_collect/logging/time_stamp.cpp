@@ -22,6 +22,9 @@
 #include <cassert>
 #include <ctime>
 
+#include <fmt/chrono.h>
+#include <fmt/format.h>
+
 namespace num_collect::logging {
 
 time_stamp::time_stamp(std::time_t seconds, std::uint32_t nanoseconds) noexcept
@@ -42,3 +45,15 @@ auto time_stamp::now() noexcept -> time_stamp {
 }
 
 }  // namespace num_collect::logging
+
+namespace fmt {
+
+auto formatter<num_collect::logging::time_stamp>::format(  // NOLINT
+    num_collect::logging::time_stamp val, format_context& context) const
+    -> format_context::iterator {
+    const auto time_tm = fmt::gmtime(val.seconds());
+    return fmt::format_to(context.out(), FMT_STRING("{0:%FT%T}.{1:09d}"),
+        time_tm, val.nanoseconds());
+}
+
+}  // namespace fmt

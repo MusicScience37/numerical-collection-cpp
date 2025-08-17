@@ -93,7 +93,7 @@ namespace impl {
 /*!
  * \brief Class to format logs compactly with colors.
  *
- * \note This formatter is meant for logs written to files.
+ * \note This formatter is meant for logs written to standard outputs.
  *
  * \thread_safety Thread-safe for all operations.
  */

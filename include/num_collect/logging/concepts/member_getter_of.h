@@ -24,7 +24,7 @@
 namespace num_collect::logging::concepts {
 
 /*!
- * \brief Concept of getter functions.
+ * \brief Concept of pointers to member functions to get values.
  *
  * \tparam Func Type of the function.
  * \tparam Value Type of returned values.

@@ -26,6 +26,7 @@
 #include <string>
 
 #include <catch2/catch_test_macros.hpp>
+#include <fmt/format.h>
 
 TEST_CASE("num_collect::logging::time_stamp") {
     using num_collect::logging::time_stamp;

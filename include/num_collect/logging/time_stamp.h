@@ -23,8 +23,6 @@
 #include <ctime>
 
 #include <fmt/base.h>
-#include <fmt/chrono.h>
-#include <fmt/format.h>
 
 #include "num_collect/impl/num_collect_export.h"
 
@@ -103,12 +101,9 @@ public:
      * \param[in] context Context.
      * \return Output iterator after formatting.
      */
-    auto format(  // NOLINT
-        num_collect::logging::time_stamp val, format_context& context) const {
-        const auto time_tm = fmt::gmtime(val.seconds());
-        return fmt::format_to(context.out(), FMT_STRING("{0:%FT%T}.{1:09d}"),
-            time_tm, val.nanoseconds());
-    }
+    NUM_COLLECT_EXPORT auto format(  // NOLINT
+        num_collect::logging::time_stamp val, format_context& context) const
+        -> format_context::iterator;
 };
 
 }  // namespace fmt

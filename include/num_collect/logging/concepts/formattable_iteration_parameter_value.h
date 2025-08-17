@@ -30,6 +30,9 @@ namespace num_collect::logging::concepts {
  * \brief Concept of formattable parameter values in iterations.
  *
  * \tparam T Type.
+ *
+ * \note For APIs of functions, see implementations of
+ * \ref num_collect::logging::iterations::iteration_parameter_formatter.
  */
 template <typename T>
 concept formattable_iteration_parameter_value = requires() {
