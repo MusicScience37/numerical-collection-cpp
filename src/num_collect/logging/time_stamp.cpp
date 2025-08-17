@@ -24,6 +24,7 @@
 
 #include <fmt/chrono.h>
 #include <fmt/format.h>
+#include <time.h>  // NOLINT: For platform-dependent functions.
 
 namespace num_collect::logging {
 
@@ -51,7 +52,13 @@ namespace fmt {
 auto formatter<num_collect::logging::time_stamp>::format(  // NOLINT
     num_collect::logging::time_stamp val, format_context& context) const
     -> format_context::iterator {
-    const auto time_tm = fmt::gmtime(val.seconds());
+    std::tm time_tm{};
+    std::time_t seconds = val.seconds();
+#if defined(_WIN32)
+    gmtime_s(&time_tm, &seconds);
+#else
+    (void)gmtime_r(&seconds, &time_tm);
+#endif
     return fmt::format_to(context.out(), FMT_STRING("{0:%FT%T}.{1:09d}"),
         time_tm, val.nanoseconds());
 }
