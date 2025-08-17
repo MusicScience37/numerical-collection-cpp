@@ -20,6 +20,7 @@
 #pragma once
 
 #include <algorithm>
+#include <concepts>
 #include <cstddef>
 #include <limits>
 #include <optional>
@@ -27,7 +28,6 @@
 #include <utility>
 #include <vector>
 
-#include "num_collect/base/concepts/invocable.h"
 #include "num_collect/base/index_type.h"
 
 /*!
@@ -51,7 +51,7 @@ public:
      * \param[in] factory Factory of optimizers.
      * \param[in] tol_value Tolerance of function values.
      */
-    template <num_collect::concepts::invocable<> OptimizerFactory>
+    template <std::invocable<> OptimizerFactory>
     void measure(std::string problem_name, std::string optimizer_name,
         OptimizerFactory&& factory, double tol_value, double min_value = 0.0) {
         remove_old_measurement_of(problem_name, optimizer_name);
@@ -91,7 +91,7 @@ public:
      * \param[in] tol_value Tolerance of function values.
      * \param[in] num_samples Number of samples.
      */
-    template <num_collect::concepts::invocable<std::size_t> OptimizerFactory>
+    template <std::invocable<std::size_t> OptimizerFactory>
     void measure_multiple(std::string problem_name, std::string optimizer_name,
         OptimizerFactory&& factory, double tol_value, std::size_t num_samples) {
         remove_old_measurement_of(problem_name, optimizer_name);

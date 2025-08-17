@@ -10,7 +10,6 @@
 #include "concepts/formattable_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "concepts/implicitly_convertible_to_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "concepts/invocable_as_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "concepts/invocable_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "concepts/iterative_solver_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "concepts/real_scalar_dense_matrix_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "concepts/real_scalar_dense_vector_test.cpp"  // NOLINT(bugprone-suspicious-include)

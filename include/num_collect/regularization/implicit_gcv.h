@@ -20,9 +20,9 @@
 #pragma once
 
 #include <cmath>
+#include <concepts>
 #include <random>
 
-#include "num_collect/base/concepts/invocable.h"
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
@@ -151,7 +151,7 @@ public:
      * \tparam RandomNumberGenerator Type of the generator of random numbers.
      * \param[in] generator Generator of random numbers.
      */
-    template <base::concepts::invocable<> RandomNumberGenerator>
+    template <std::invocable<> RandomNumberGenerator>
     void generate_noise(RandomNumberGenerator& generator) {
         std::normal_distribution<scalar_type> distribution;
         for (index_type i = 0; i < noise_.size(); ++i) {

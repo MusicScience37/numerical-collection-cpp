@@ -19,12 +19,12 @@
  */
 #pragma once
 
+#include <concepts>
 #include <limits>
 
 #include <Eigen/Core>
 
 #include "num_collect/base/concepts/dense_vector.h"
-#include "num_collect/base/concepts/invocable.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
@@ -73,8 +73,7 @@ public:
      * \param[in,out] solution Solution. (Given vector is used as the initial
      * solution.)
      */
-    template <base::concepts::invocable<const vector_type&, vector_type&>
-            CoeffFunction>
+    template <std::invocable<const vector_type&, vector_type&> CoeffFunction>
     void solve(CoeffFunction&& coeff_function, const vector_type& rhs,
         vector_type& solution) {
         iterations_ = 0;
