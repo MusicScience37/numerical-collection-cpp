@@ -19,8 +19,9 @@
  */
 #pragma once
 
+#include <concepts>
+
 #include "num_collect/base/concepts/real_scalar.h"
-#include "num_collect/base/concepts/same_as.h"
 
 namespace num_collect::rbf::concepts {
 
@@ -38,7 +39,7 @@ concept distance_function = requires() {
 
     requires requires(const T& obj, const typename T::variable_type& var1,
         const typename T::variable_type& var2) {
-        { obj(var1, var2) } -> base::concepts::same_as<typename T::value_type>;
+        { obj(var1, var2) } -> std::same_as<typename T::value_type>;
     };
 };
 

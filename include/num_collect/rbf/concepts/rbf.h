@@ -19,8 +19,9 @@
  */
 #pragma once
 
+#include <concepts>
+
 #include "num_collect/base/concepts/real_scalar.h"
-#include "num_collect/base/concepts/same_as.h"
 
 namespace num_collect::rbf::concepts {
 
@@ -37,9 +38,7 @@ concept rbf = requires() {
 
     requires requires(
         const T& obj, const typename T::scalar_type& distance_rate) {
-        {
-            obj(distance_rate)
-        } -> base::concepts::same_as<typename T::scalar_type>;
+        { obj(distance_rate) } -> std::same_as<typename T::scalar_type>;
     };
 };
 

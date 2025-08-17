@@ -19,9 +19,8 @@
  */
 #pragma once
 
+#include <concepts>
 #include <cstddef>
-
-#include "num_collect/base/concepts/same_as.h"
 
 namespace num_collect::util::concepts {
 
@@ -33,7 +32,7 @@ namespace num_collect::util::concepts {
  */
 template <typename Hash, typename Key>
 concept hash_function = requires(const Hash& hash, const Key& key) {
-    { hash(key) } -> base::concepts::same_as<std::size_t>;
+    { hash(key) } -> std::same_as<std::size_t>;
 };
 
 }  // namespace num_collect::util::concepts

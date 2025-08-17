@@ -16,7 +16,6 @@
 #include "concepts/real_scalar_sparse_matrix_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "concepts/real_scalar_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "concepts/reference_of_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "concepts/same_as_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "concepts/sparse_matrix_of_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "concepts/sparse_matrix_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "exception_test.cpp"     // NOLINT(bugprone-suspicious-include)

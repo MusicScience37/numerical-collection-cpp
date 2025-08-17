@@ -17,7 +17,6 @@ set(SOURCE_FILES
     concepts/real_scalar_sparse_matrix_test.cpp
     concepts/real_scalar_test.cpp
     concepts/reference_of_test.cpp
-    concepts/same_as_test.cpp
     concepts/sparse_matrix_of_test.cpp
     concepts/sparse_matrix_test.cpp
     exception_test.cpp

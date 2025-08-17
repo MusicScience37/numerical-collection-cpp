@@ -19,10 +19,11 @@
  */
 #pragma once
 
+#include <concepts>
+
 #include "num_collect/base/concepts/const_reference_of.h"
 #include "num_collect/base/concepts/implicitly_convertible_to.h"
 #include "num_collect/base/concepts/iterative_solver.h"
-#include "num_collect/base/concepts/same_as.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/opt/concepts/objective_function.h"
 
@@ -39,13 +40,11 @@ concept optimizer = base::concepts::iterative_solver<T> && requires() {
     requires objective_function<typename T::objective_function_type>;
 
     typename T::variable_type;
-    requires base::concepts::same_as<
-        typename T::objective_function_type::variable_type,
+    requires std::same_as<typename T::objective_function_type::variable_type,
         typename T::variable_type>;
 
     typename T::value_type;
-    requires base::concepts::same_as<
-        typename T::objective_function_type::value_type,
+    requires std::same_as<typename T::objective_function_type::value_type,
         typename T::value_type>;
 
     requires requires(const typename T::objective_function_type& obj_fun) {
