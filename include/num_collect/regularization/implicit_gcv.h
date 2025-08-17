@@ -167,7 +167,7 @@ public:
      * \brief Generate noise with a random seed.
      */
     void generate_noise() {
-        std::mt19937 generator{std::random_device{}()};
+        std::mt19937 generator{};  // NOLINT: For reproducibility.
         generate_noise(generator);
     }
 

@@ -267,6 +267,10 @@ public:
             "The number of columns in the second order derivative matrix must "
             "match the number of rows in the first order derivative matrix.");
 
+        constraint_coeff_ = param_to_constraint_coeff_ * param;
+        NUM_COLLECT_LOG_TRACE(this->logger(), "param={}, constraint_coeff={}",
+            param, constraint_coeff_);
+
         iterations_ = 0;
 
         coeff_transpose_ = coeff_->transpose();
@@ -375,18 +379,21 @@ public:
         -> std::pair<scalar_type, scalar_type> {
         const data_type approx_order_of_solution = coeff_->transpose() *
             (*data_) / impl::approximate_max_eigen_aat(*coeff_);
-        const scalar_type approx_order_of_param =
-            (*first_derivative_matrix_ * approx_order_of_solution)
-                .cwiseAbs()
-                .maxCoeff();
+        const data_type approx_order_of_derivative =
+            *first_derivative_matrix_ * approx_order_of_solution;
+        const data_type approx_order_of_second_derivative =
+            *second_derivative_matrix_ * approx_order_of_derivative;
+        const scalar_type approx_order_of_param = (*data_).squaredNorm() /
+            std::min(approx_order_of_derivative.cwiseAbs().sum(),
+                approx_order_of_second_derivative.cwiseAbs().sum() *
+                    second_derivative_ratio_);
         NUM_COLLECT_LOG_TRACE(
             this->logger(), "approx_order_of_param={}", approx_order_of_param);
-        constexpr auto tol_update_coeff_multiplier =
-            static_cast<scalar_type>(10);
-        return {approx_order_of_param *
-                std::max(impl::weak_coeff_min_param<scalar_type>,
-                    tol_update_coeff_multiplier * tol_update_rate_),
-            approx_order_of_param * impl::weak_coeff_max_param<scalar_type>};
+        // Experimentally selected parameters.
+        constexpr auto coeff_min_param = static_cast<scalar_type>(1e-4);
+        constexpr auto coeff_max_param = static_cast<scalar_type>(1e+4);
+        return {approx_order_of_param * coeff_min_param,
+            approx_order_of_param * coeff_max_param};
     }
 
     /*!
@@ -676,12 +683,18 @@ private:
     //! Ratio of regularization term for the 2nd order derivative.
     scalar_type second_derivative_ratio_{default_second_derivative_ratio};
 
-    //! Default coefficient of the constraint for the derivative.
-    static constexpr auto default_constraint_coeff =
-        static_cast<scalar_type>(1);
+    /*!
+     * \brief Default ratio of coefficient of the constraint to regularization
+     * parameter. (Value in \cite Li2016.)
+     */
+    static constexpr auto default_param_to_constraint_coeff =
+        static_cast<scalar_type>(10);
 
-    //! Coefficient of the constraint for the derivative.
-    scalar_type constraint_coeff_{default_constraint_coeff};
+    //! Coefficient of the constraint to regularization parameter.
+    scalar_type param_to_constraint_coeff_{default_param_to_constraint_coeff};
+
+    //! Coefficient of the constraint.
+    scalar_type constraint_coeff_{};
 
     //! Default maximum number of iterations.
     static constexpr index_type default_max_iterations = 10000;

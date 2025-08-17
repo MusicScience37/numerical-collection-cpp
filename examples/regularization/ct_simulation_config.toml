@@ -2,9 +2,9 @@
 # Size of the image. (Rows and columns of the image.)
 image_size = 40
 # Number of directions of centers of rays.
-num_directions = 10
+num_directions = 9
 # Number of rays per direction.
-num_rays_per_direction = 10
+num_rays_per_direction = 16
 # Noise rate.
 noise_rate = 1e-6
 # Index of the sample image to be generated.
@@ -27,6 +27,10 @@ output_log_level_in_child_iterations = "warning"
 tag = "num_collect::opt::gaussian_process_optimizer"
 iteration_output_period = 1
 
+# Enable following configuration for more logging.
 [[num_collect.logging.tag_configs]]
-tag = "num_collect::regularization::tgv2_admm"
+tag = "num_collect::regularization::tv_admm"
 output_log_level_in_child_iterations = "summary"
+# [[num_collect.logging.tag_configs]]
+# tag = "num_collect::regularization::tgv2_admm"
+# output_log_level_in_child_iterations = "summary"

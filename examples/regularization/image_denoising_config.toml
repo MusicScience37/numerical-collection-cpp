@@ -23,6 +23,9 @@ output_log_level_in_child_iterations = "warning"
 
 [[num_collect.logging.tag_configs]]
 tag = "num_collect::opt::gaussian_process_optimizer"
-output_log_level = "debug"
-output_log_level_in_child_iterations = "warning"
 iteration_output_period = 1
+
+# Enable following configuration for more logging.
+# [[num_collect.logging.tag_configs]]
+# tag = "num_collect::regularization::tgv2_admm"
+# output_log_level_in_child_iterations = "summary"

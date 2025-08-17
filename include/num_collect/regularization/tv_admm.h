@@ -138,10 +138,14 @@ public:
             "The number of columns in the derivative matrix must match the "
             "number of rows in solution vector.");
 
+        constraint_coeff_ = param_to_constraint_coeff_ * param;
+        NUM_COLLECT_LOG_TRACE(this->logger(), "param={}, constraint_coeff={}",
+            param, constraint_coeff_);
+
         iterations_ = 0;
         coeff_transpose_ = coeff_->transpose();
-        dtd_ = derivative_constraint_coeff_ *
-            (*derivative_matrix_).transpose() * (*derivative_matrix_);
+        dtd_ = constraint_coeff_ * (*derivative_matrix_).transpose() *
+            (*derivative_matrix_);
         derivative_ = (*derivative_matrix_) * solution;
         lagrange_multiplier_ = data_type::Zero(derivative_matrix_->rows());
         temp_solution_ = solution;
@@ -161,7 +165,7 @@ public:
         temp_solution_.noalias() =
             static_cast<scalar_type>(2) * coeff_transpose_ * (*data_);
         temp_derivative_ =
-            -lagrange_multiplier_ + derivative_constraint_coeff_ * derivative_;
+            -lagrange_multiplier_ + constraint_coeff_ * derivative_;
         temp_solution_.noalias() +=
             (*derivative_matrix_).transpose() * temp_derivative_;
         previous_solution_ = solution;
@@ -181,9 +185,9 @@ public:
         // Update derivative.
         previous_derivative_ = derivative_;
         derivative_.noalias() = (*derivative_matrix_) * solution;
-        derivative_ += lagrange_multiplier_ / derivative_constraint_coeff_;
+        derivative_ += lagrange_multiplier_ / constraint_coeff_;
         const scalar_type derivative_shrinkage_threshold =
-            param / derivative_constraint_coeff_;
+            param / constraint_coeff_;
         impl::apply_shrinkage_operator(
             derivative_, derivative_shrinkage_threshold);
         update_rate_ += (derivative_ - previous_derivative_).norm() /
@@ -191,9 +195,8 @@ public:
 
         // Update lagrange multiplier.
         lagrange_multiplier_update_.noalias() =
-            derivative_constraint_coeff_ * (*derivative_matrix_) * solution;
-        lagrange_multiplier_update_ -=
-            derivative_constraint_coeff_ * derivative_;
+            constraint_coeff_ * (*derivative_matrix_) * solution;
+        lagrange_multiplier_update_ -= constraint_coeff_ * derivative_;
         lagrange_multiplier_ += lagrange_multiplier_update_;
         update_rate_ += lagrange_multiplier_update_.norm() /
             (lagrange_multiplier_.norm() +
@@ -250,18 +253,17 @@ public:
         -> std::pair<scalar_type, scalar_type> {
         const data_type approx_order_of_solution = coeff_->transpose() *
             (*data_) / impl::approximate_max_eigen_aat(*coeff_);
-        const scalar_type approx_order_of_param =
-            (*derivative_matrix_ * approx_order_of_solution)
-                .cwiseAbs()
-                .maxCoeff();
+        const data_type approx_order_of_derivative =
+            *derivative_matrix_ * approx_order_of_solution;
+        const scalar_type approx_order_of_param = (*data_).squaredNorm() /
+            approx_order_of_derivative.cwiseAbs().sum();
         NUM_COLLECT_LOG_TRACE(
             this->logger(), "approx_order_of_param={}", approx_order_of_param);
-        constexpr auto tol_update_coeff_multiplier =
-            static_cast<scalar_type>(10);
-        return {approx_order_of_param *
-                std::max(impl::weak_coeff_min_param<scalar_type>,
-                    tol_update_coeff_multiplier * tol_update_rate_),
-            approx_order_of_param * impl::weak_coeff_max_param<scalar_type>};
+        // Experimentally selected parameters.
+        constexpr auto coeff_min_param = static_cast<scalar_type>(1e-8);
+        constexpr auto coeff_max_param = static_cast<scalar_type>(1e+2);
+        return {approx_order_of_param * coeff_min_param,
+            approx_order_of_param * coeff_max_param};
     }
 
     /*!
@@ -389,13 +391,18 @@ private:
     //! Conjugate gradient solver.
     linear::impl::operator_conjugate_gradient<data_type> conjugate_gradient_{};
 
-    //! Default coefficient of the constraint for the derivative.
-    static constexpr auto default_derivative_constraint_coeff =
-        static_cast<scalar_type>(1);
+    /*!
+     * \brief Default ratio of coefficient of the constraint to regularization
+     * parameter. (Value in \cite Li2016.)
+     */
+    static constexpr auto default_param_to_constraint_coeff =
+        static_cast<scalar_type>(10);
 
-    //! Coefficient of the constraint for the derivative.
-    scalar_type derivative_constraint_coeff_{
-        default_derivative_constraint_coeff};
+    //! Coefficient of the constraint to regularization parameter.
+    scalar_type param_to_constraint_coeff_{default_param_to_constraint_coeff};
+
+    //! Coefficient of the constraint.
+    scalar_type constraint_coeff_{};
 
     //! Default maximum number of iterations.
     static constexpr index_type default_max_iterations = 10000;
