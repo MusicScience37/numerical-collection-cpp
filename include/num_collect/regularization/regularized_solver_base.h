@@ -77,6 +77,28 @@ public:
         return derived().param_search_region();
     }
 
+    /*!
+     * \brief Calculate the squared norm of the residual.
+     *
+     * \param[in] solution Solution.
+     * \return Result.
+     */
+    [[nodiscard]] auto residual_norm(const data_type& solution) const
+        -> scalar_type {
+        return derived().residual_norm(solution);
+    }
+
+    /*!
+     * \brief Calculate the regularization term.
+     *
+     * \param[in] solution Solution.
+     * \return Result.
+     */
+    [[nodiscard]] auto regularization_term(const data_type& solution) const
+        -> scalar_type {
+        return derived().regularization_term(solution);
+    }
+
 protected:
     /*!
      * \brief Constructor.

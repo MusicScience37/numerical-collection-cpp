@@ -39,28 +39,6 @@ public:
     using typename regularized_solver_base<Derived, Data>::scalar_type;
 
     /*!
-     * \brief Calculate the squared norm of the residual.
-     *
-     * \param[in] solution Solution.
-     * \return Result.
-     */
-    [[nodiscard]] auto residual_norm(const data_type& solution) const
-        -> scalar_type {
-        return derived().residual_norm(solution);
-    }
-
-    /*!
-     * \brief Calculate the regularization term.
-     *
-     * \param[in] solution Solution.
-     * \return Result.
-     */
-    [[nodiscard]] auto regularization_term(const data_type& solution) const
-        -> scalar_type {
-        return derived().regularization_term(solution);
-    }
-
-    /*!
      * \brief Change data.
      *
      * \param[in] data New data.

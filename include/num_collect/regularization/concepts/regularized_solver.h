@@ -62,6 +62,18 @@ concept regularized_solver = requires() {
         } -> base::concepts::decayed_to<
             std::pair<typename T::scalar_type, typename T::scalar_type>>;
     };
+
+    requires requires(const T& solver, const typename T::data_type& solution) {
+        {
+            solver.residual_norm(solution)
+        } -> base::concepts::decayed_to<typename T::scalar_type>;
+    };
+
+    requires requires(const T& solver, const typename T::data_type& solution) {
+        {
+            solver.regularization_term(solution)
+        } -> base::concepts::decayed_to<typename T::scalar_type>;
+    };
 };
 
 }  // namespace num_collect::regularization::concepts

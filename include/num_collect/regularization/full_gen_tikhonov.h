@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <optional>
 #include <type_traits>
 
 #include <Eigen/Core>
@@ -47,6 +48,26 @@ constexpr auto full_gen_tikhonov_tag =
  *
  * \tparam Coeff Type of coefficient matrices.
  * \tparam Data Type of data vectors.
+ *
+ * This class minimizes the following function:
+ *
+ * \f[
+ *     \| A \boldsymbol{x} - \boldsymbol{y} \|_2^2
+ *     + \lambda \| L \boldsymbol{x} \|_2^2
+ * \f]
+ *
+ * where \f$ A \f$ is a coefficient matrix,
+ * \f$ L \f$ is a coefficient matrix for the regularization term,
+ * \f$ \boldsymbol{x} \f$ is a solution vector,
+ * \f$ \boldsymbol{y} \f$ is a data vector,
+ * \f$ \lambda \f$ is a regularization parameter.
+ *
+ * In this class, following conditions must be satisfied:
+ *
+ * - \f$ L \f$ must have full row rank because of the formula used in this
+ * class.
+ * - \f$ A \f$ and \f$ L \f$ must have only the zero vector in the intersection
+ * of their null spaces. This is a requirement for uniqueness of the solution.
  */
 template <base::concepts::dense_matrix Coeff, base::concepts::dense_matrix Data>
 class full_gen_tikhonov
@@ -97,7 +118,10 @@ public:
             "Coefficient matrix for the regularization term must have rows "
             "less than columns.");
 
-        // How can I implement those complex formulas with good variable names.
+        reg_coeff_.emplace(reg_coeff);
+
+        // TODO How can I implement those complex formulas with good variable
+        // names?
 
         const index_type m = coeff.rows();
         const index_type n = coeff.cols();
@@ -113,8 +137,8 @@ public:
         qr_coeff_v2.compute(coeff * v.rightCols(n - p));
         NUM_COLLECT_PRECONDITION(qr_coeff_v2.rank() >= qr_coeff_v2.cols(),
             this->logger(),
-            "reg_coeff and coeff must not have common elements "
-            "other than zero in their kernel.");
+            "reg_coeff and coeff must have only the zero vector in the "
+            "intersection of their null spaces.");
         const coeff_type q = qr_coeff_v2.householderQ();
 
         const coeff_type coeff_arr =
@@ -158,10 +182,24 @@ public:
         return tikhonov_.residual_norm(param);
     }
 
+    //! \copydoc num_collect::regularization::regularized_solver_base::residual_norm
+    [[nodiscard]] auto residual_norm(const data_type& solution) const
+        -> scalar_type {
+        NUM_COLLECT_ASSERT(reg_coeff_.has_value());
+        return tikhonov_.residual_norm((*reg_coeff_) * solution);
+    }
+
     //! \copydoc num_collect::regularization::explicit_regularized_solver_base::regularization_term
     [[nodiscard]] auto regularization_term(const scalar_type& param) const
         -> scalar_type {
         return tikhonov_.regularization_term(param);
+    }
+
+    //! \copydoc num_collect::regularization::regularized_solver_base::regularization_term
+    [[nodiscard]] auto regularization_term(const data_type& solution) const
+        -> scalar_type {
+        NUM_COLLECT_ASSERT(reg_coeff_.has_value());
+        return ((*reg_coeff_) * solution).squaredNorm();
     }
 
     //! \copydoc num_collect::regularization::explicit_regularized_solver_base::first_derivative_of_residual_norm
@@ -224,6 +262,9 @@ private:
 
     //! Offset vector to calculate actual solution.
     Data offset_actual_solution_{};
+
+    //! Coefficient matrix for the regularization term.
+    std::optional<Eigen::Ref<const coeff_type>> reg_coeff_;
 };
 
 }  // namespace num_collect::regularization

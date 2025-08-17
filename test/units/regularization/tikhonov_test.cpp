@@ -109,16 +109,29 @@ TEST_CASE("num_collect::regularization::tikhonov") {
 
         constexpr double rel_tol = 1e-6;
 
-        SECTION("residual_norm") {
+        SECTION("residual_norm(param)") {
             const double expected =
                 (prob.coeff() * solution - prob.data()).squaredNorm();
             REQUIRE_THAT(tikhonov.residual_norm(param),
                 Catch::Matchers::WithinRel(expected, rel_tol));
         }
 
-        SECTION("regularization term") {
+        SECTION("residual_norm(solution)") {
+            const double expected =
+                (prob.coeff() * solution - prob.data()).squaredNorm();
+            REQUIRE_THAT(tikhonov.residual_norm(solution),
+                Catch::Matchers::WithinRel(expected, rel_tol));
+        }
+
+        SECTION("regularization_term(param)") {
             const double expected = solution.squaredNorm();
             REQUIRE_THAT(tikhonov.regularization_term(param),
+                Catch::Matchers::WithinRel(expected, rel_tol));
+        }
+
+        SECTION("regularization_term(solution)") {
+            const double expected = solution.squaredNorm();
+            REQUIRE_THAT(tikhonov.regularization_term(solution),
                 Catch::Matchers::WithinRel(expected, rel_tol));
         }
     }
