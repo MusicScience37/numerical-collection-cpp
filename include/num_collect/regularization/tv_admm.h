@@ -138,7 +138,10 @@ public:
             "The number of columns in the derivative matrix must match the "
             "number of rows in solution vector.");
 
-        constraint_coeff_ = param_to_constraint_coeff_ * param;
+        // Experimentally selected value.
+        constexpr auto minimum_constrain_coeff = static_cast<scalar_type>(1);
+        constraint_coeff_ = std::max(
+            param_to_constraint_coeff_ * param, minimum_constrain_coeff);
         NUM_COLLECT_LOG_TRACE(this->logger(), "param={}, constraint_coeff={}",
             param, constraint_coeff_);
 
@@ -257,12 +260,16 @@ public:
             *derivative_matrix_ * approx_order_of_solution;
         const scalar_type approx_order_of_param = (*data_).squaredNorm() /
             approx_order_of_derivative.cwiseAbs().sum();
-        NUM_COLLECT_LOG_TRACE(
-            this->logger(), "approx_order_of_param={}", approx_order_of_param);
+        const scalar_type minimum_param =
+            approx_order_of_derivative.cwiseAbs().maxCoeff() * tol_update_rate_;
+        NUM_COLLECT_LOG_INFO(this->logger(),
+            "approx_order_of_param={}, minimum_param={}", approx_order_of_param,
+            minimum_param);
         // Experimentally selected parameters.
-        constexpr auto coeff_min_param = static_cast<scalar_type>(1e-8);
+        constexpr auto coeff_min_param = static_cast<scalar_type>(1e-6);
         constexpr auto coeff_max_param = static_cast<scalar_type>(1e+2);
-        return {approx_order_of_param * coeff_min_param,
+        return {
+            std::max(approx_order_of_param * coeff_min_param, minimum_param),
             approx_order_of_param * coeff_max_param};
     }
 
