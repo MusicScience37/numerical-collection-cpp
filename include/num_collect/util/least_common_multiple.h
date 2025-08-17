@@ -19,7 +19,8 @@
  */
 #pragma once
 
-#include "num_collect/base/concepts/integral.h"
+#include <concepts>
+
 #include "num_collect/util/greatest_common_divisor.h"
 #include "num_collect/util/multiply_safely.h"
 
@@ -33,7 +34,7 @@ namespace num_collect::util {
  * \param[in] b An integer.
  * \return Least common multiple of the integers.
  */
-template <base::concepts::integral T>
+template <std::integral T>
 [[nodiscard]] constexpr auto least_common_multiple(T a, T b) -> T {
     return multiply_safely(a / greatest_common_divisor(a, b), b);
 }

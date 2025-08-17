@@ -19,8 +19,8 @@
  */
 #pragma once
 
+#include <concepts>
 #include <limits>
-#include <type_traits>
 
 #include "num_collect/constants/half.h"  // IWYU pragma: keep
 #include "num_collect/constants/impl/pow_pos_int.h"
@@ -38,9 +38,7 @@ namespace num_collect::constants {
  * \param[in] n Exponent.
  * \return n-th root of x.
  */
-template <typename F, typename I,
-    std::enable_if_t<std::is_floating_point_v<F> && std::is_integral_v<I>,
-        void*> = nullptr>
+template <std::floating_point F, std::integral I>
 constexpr auto root(F x, I n) -> F {
     if (n < 2) {
         return std::numeric_limits<F>::quiet_NaN();
@@ -80,9 +78,7 @@ constexpr auto root(F x, I n) -> F {
  * \param[in] n Exponent.
  * \return n-th root of x.
  */
-template <typename IB, typename IE,
-    std::enable_if_t<std::is_integral_v<IB> && std::is_integral_v<IE>, void*> =
-        nullptr>
+template <std::integral IB, std::integral IE>
 constexpr auto root(IB x, IE n) -> double {
     return root(static_cast<double>(x), n);
 }

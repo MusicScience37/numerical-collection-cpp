@@ -22,9 +22,6 @@
 #include <cmath>
 #include <complex>
 
-#include "num_collect/base/concepts/integral.h"
-#include "num_collect/base/concepts/real_scalar.h"
-
 namespace num_collect {
 inline namespace base {
 
@@ -36,10 +33,9 @@ inline namespace base {
  * \retval true The input number is finite.
  * \retval false The input number is infinite or NAN.
  */
-template <concepts::real_scalar T>
+template <std::floating_point T>
 auto isfinite(const T& val) -> bool {
-    using std::isfinite;
-    return isfinite(val);
+    return std::isfinite(val);
 }
 
 /*!
@@ -49,7 +45,7 @@ auto isfinite(const T& val) -> bool {
  * \param[in] val Number.
  * \return Always true for this overload.
  */
-template <concepts::integral T>
+template <std::integral T>
 auto isfinite(const T& val) -> bool {
     (void)val;
     return true;
@@ -63,10 +59,9 @@ auto isfinite(const T& val) -> bool {
  * \retval true The input number is finite.
  * \retval false The input number is infinite or NAN.
  */
-template <concepts::real_scalar T>
+template <std::floating_point T>
 auto isfinite(const std::complex<T>& val) -> bool {
-    using std::isfinite;
-    return isfinite(val.real()) && isfinite(val.imag());
+    return std::isfinite(val.real()) && std::isfinite(val.imag());
 }
 
 }  // namespace base

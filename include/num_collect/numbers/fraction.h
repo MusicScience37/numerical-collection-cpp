@@ -26,7 +26,6 @@
 #include <fmt/ostream.h>  // IWYU pragma: keep
 
 #include "num_collect/base/abs.h"
-#include "num_collect/base/concepts/integral.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/logging/logging_macros.h"
@@ -40,7 +39,7 @@ namespace num_collect::numbers {
  *
  * \tparam IntegerType Type of integers.
  */
-template <base::concepts::integral IntegerType>
+template <std::integral IntegerType>
 class fraction {
 public:
     //! Type of integers.
@@ -282,7 +281,7 @@ private:
  * \param[in] right Right-hand-side value.
  * \return Sum of the fractions.
  */
-template <num_collect::base::concepts::integral Integer>
+template <std::integral Integer>
 constexpr auto operator+(const fraction<Integer>& left,
     const fraction<Integer>& right) -> fraction<Integer> {
     return fraction<Integer>(left) += right;
@@ -296,7 +295,7 @@ constexpr auto operator+(const fraction<Integer>& left,
  * \param[in] right Right-hand-side value.
  * \return Difference of the fractions.
  */
-template <num_collect::base::concepts::integral Integer>
+template <std::integral Integer>
 constexpr auto operator-(const fraction<Integer>& left,
     const fraction<Integer>& right) -> fraction<Integer> {
     return fraction<Integer>(left) -= right;
@@ -310,7 +309,7 @@ constexpr auto operator-(const fraction<Integer>& left,
  * \param[in] right Right-hand-side value.
  * \return Product of the fractions.
  */
-template <num_collect::base::concepts::integral Integer>
+template <std::integral Integer>
 constexpr auto operator*(const fraction<Integer>& left,
     const fraction<Integer>& right) -> fraction<Integer> {
     return fraction<Integer>(left) *= right;
@@ -324,7 +323,7 @@ constexpr auto operator*(const fraction<Integer>& left,
  * \param[in] right Right-hand-side value.
  * \return Quotient of the fractions.
  */
-template <num_collect::base::concepts::integral Integer>
+template <std::integral Integer>
 constexpr auto operator/(const fraction<Integer>& left,
     const fraction<Integer>& right) -> fraction<Integer> {
     return fraction<Integer>(left) /= right;
@@ -339,7 +338,7 @@ namespace fmt {
  *
  * \tparam Integer Type of integers in fractions.
  */
-template <num_collect::base::concepts::integral Integer>
+template <std::integral Integer>
 struct formatter<num_collect::numbers::fraction<Integer>> {
 public:
     /*!
@@ -379,7 +378,7 @@ namespace num_collect::numbers {
  * \param[in] val Fraction value.
  * \return Output stream.
  */
-template <num_collect::base::concepts::integral Integer>
+template <std::integral Integer>
 inline auto operator<<(std::ostream& stream, const fraction<Integer>& val)
     -> std::ostream& {
     fmt::print(stream, "{}", val);

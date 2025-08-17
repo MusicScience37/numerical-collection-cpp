@@ -10,7 +10,6 @@ set(SOURCE_FILES
     concepts/eigen_solver_of_test.cpp
     concepts/formattable_test.cpp
     concepts/implicitly_convertible_to_test.cpp
-    concepts/integral_test.cpp
     concepts/invocable_as_test.cpp
     concepts/invocable_test.cpp
     concepts/iterative_solver_test.cpp
@@ -20,7 +19,6 @@ set(SOURCE_FILES
     concepts/real_scalar_test.cpp
     concepts/reference_of_test.cpp
     concepts/same_as_test.cpp
-    concepts/signed_integral_test.cpp
     concepts/sparse_matrix_of_test.cpp
     concepts/sparse_matrix_test.cpp
     exception_test.cpp

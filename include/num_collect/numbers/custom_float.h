@@ -19,11 +19,10 @@
  */
 #pragma once
 
+#include <concepts>
 #include <cstdint>
 #include <limits>
 
-#include "num_collect/base/concepts/integral.h"
-#include "num_collect/base/concepts/signed_integral.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/util/bidirectional_vector.h"
 
@@ -36,8 +35,8 @@ namespace num_collect::numbers {
  * \tparam Digit Type of digits.
  * \tparam DigitCalc Type of digits for calculation.
  */
-template <index_type Radix, base::concepts::integral Digit = std::uint8_t,
-    base::concepts::signed_integral DigitCalc = std::int32_t>
+template <index_type Radix, std::integral Digit = std::uint8_t,
+    std::signed_integral DigitCalc = std::int32_t>
 class custom_float {
 public:
     static_assert(std::numeric_limits<Digit>::max() > Radix);

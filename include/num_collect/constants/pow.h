@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <concepts>
 #include <type_traits>
 
 #include "num_collect/constants/exp.h"
@@ -42,8 +43,7 @@ namespace num_collect::constants {
  * \param[in] exp Exponent.
  * \return Power.
  */
-template <typename B, typename E,
-    std::enable_if_t<std::is_integral_v<E>, void*> = nullptr>
+template <typename B, std::integral E>
 constexpr auto pow(B base, E exp) -> B {
     if constexpr (std::is_signed_v<E>) {
         if (exp < zero<E>) {
@@ -65,8 +65,7 @@ constexpr auto pow(B base, E exp) -> B {
  * \param[in] exp Exponent.
  * \return Power.
  */
-template <typename T,
-    std::enable_if_t<std::is_floating_point_v<T>, void*> = nullptr>
+template <std::floating_point T>
 constexpr auto pow(T base, T exp) -> T {
     return ::num_collect::constants::exp(exp * log(base));
 }

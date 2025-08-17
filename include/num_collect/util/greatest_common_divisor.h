@@ -19,7 +19,8 @@
  */
 #pragma once
 
-#include "num_collect/base/concepts/integral.h"
+#include <concepts>
+
 #include "num_collect/base/exception.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/logging/logging_macros.h"
@@ -34,7 +35,7 @@ namespace num_collect::util {
  * \param[in] b An integer.
  * \return Greatest common divisor of the integers.
  */
-template <base::concepts::integral T>
+template <std::integral T>
 [[nodiscard]] constexpr auto greatest_common_divisor(T a, T b) -> T {
     NUM_COLLECT_PRECONDITION(a > static_cast<T>(0) && b > static_cast<T>(0),
         "greatest_common_divisor requires positive integers.");
