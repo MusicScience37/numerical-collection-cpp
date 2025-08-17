@@ -25,9 +25,11 @@
 
 #include "mock_log_sink.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/logging/log_tag_config_node.h"
 #include "trompeloeil_catch2.h"
 
 TEST_CASE("num_collect::logging::logger") {
+    using num_collect::logging::edit_log_tag_config;
     using num_collect::logging::log_level;
     using num_collect::logging::log_tag_config;
     using num_collect::logging::log_tag_view;
@@ -38,9 +40,7 @@ TEST_CASE("num_collect::logging::logger") {
     SECTION("construct") {
         constexpr auto tag = log_tag_view("num_collect::logging::logger_test1");
         const num_collect::index_type iteration_label_period = 123;
-        const auto config =
-            log_tag_config().iteration_label_period(iteration_label_period);
-        CHECK_NOTHROW(set_config_of(tag, config));
+        edit_log_tag_config(tag).iteration_label_period(iteration_label_period);
 
         const auto l = logger(tag);
         CHECK(l.config().iteration_label_period() == iteration_label_period);
@@ -49,10 +49,9 @@ TEST_CASE("num_collect::logging::logger") {
     SECTION("write logs with various log levels") {
         constexpr auto tag = log_tag_view("num_collect::logging::logger_test2");
         const auto sink = std::make_shared<mock_log_sink>();
-        const auto config = log_tag_config()
-                                .output_log_level(log_level::trace)
-                                .sink(sink->to_log_sink());
-        CHECK_NOTHROW(set_config_of(tag, config));
+        edit_log_tag_config(tag)
+            .output_log_level(log_level::trace)
+            .sink(sink->to_log_sink());
 
         REQUIRE_CALL(*sink, write_impl(_, _, _, _, _)).TIMES(9);
 
@@ -71,8 +70,7 @@ TEST_CASE("num_collect::logging::logger") {
     SECTION("write logs with formatting") {
         constexpr auto tag = log_tag_view("num_collect::logging::logger_test3");
         const auto sink = std::make_shared<mock_log_sink>();
-        const auto config = log_tag_config().sink(sink->to_log_sink());
-        CHECK_NOTHROW(set_config_of(tag, config));
+        edit_log_tag_config(tag).sink(sink->to_log_sink());
 
         REQUIRE_CALL(*sink,
             write_impl(_, std::string_view(tag.name()), log_level::info, _,

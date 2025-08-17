@@ -40,10 +40,9 @@
 #include "num_collect/logging/config/toml/toml_helper.h"
 #include "num_collect/logging/config/toml/toml_log_sink_config_parser_base.h"
 #include "num_collect/logging/config/toml/toml_single_file_log_sink_config_parser.h"
-#include "num_collect/logging/log_config.h"
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/log_tag.h"
-#include "num_collect/logging/log_tag_config.h"
+#include "num_collect/logging/log_tag_config_node.h"
 
 namespace num_collect::logging::config::toml {
 
@@ -71,7 +70,7 @@ inline auto require_log_level(const ::toml::table& table, std::string_view path,
  * \param[in] table Table in toml++ library.
  * \param[in] sinks Log sinks.
  */
-inline void parse_log_tag_config_to(log_tag_config& config,
+inline void parse_log_tag_config_to(log_tag_config_node& config,
     const ::toml::table& table, log_sink_factory_table& sinks) {
     if (table.contains("sink")) {
         const auto sink_name = require_value<std::string>(table, "sink",
@@ -280,11 +279,9 @@ private:
                 "a string");
             const auto tag = log_tag(tag_string);
 
-            auto config = get_config_of(tag);
+            auto config = edit_log_tag_config(tag);
 
             impl::parse_log_tag_config_to(config, *elem_table, sinks);
-
-            set_config_of(tag, config);
         }
     }
 

@@ -184,8 +184,8 @@ private:
  * \param[in] log_tag Log tag.
  * \return Node of logging configuration.
  */
-[[nodiscard]] NUM_COLLECT_EXPORT auto get_log_tag_config_node(
-    log_tag_view log_tag) -> log_tag_config_node;
+[[nodiscard]] NUM_COLLECT_EXPORT auto edit_log_tag_config(log_tag_view log_tag)
+    -> log_tag_config_node;
 
 /*!
  * \brief Get the node of the default logging configuration for setting
@@ -196,7 +196,7 @@ private:
  *
  * \return Node of logging configuration.
  */
-[[nodiscard]] NUM_COLLECT_EXPORT auto get_default_log_tag_config_node()
+[[nodiscard]] NUM_COLLECT_EXPORT auto edit_default_log_tag_config()
     -> log_tag_config_node;
 
 }  // namespace num_collect::logging

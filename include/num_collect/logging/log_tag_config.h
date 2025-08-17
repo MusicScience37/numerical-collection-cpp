@@ -211,7 +211,7 @@ private:
  * \return Configuration.
  */
 [[nodiscard]] NUM_COLLECT_EXPORT auto get_log_tag_config(log_tag_view log_tag)
-    -> log_tag_config;
+    -> const log_tag_config;
 
 /*!
  * \brief Get the default logging configuration.
@@ -222,6 +222,6 @@ private:
  * \return Default configuration of log tags.
  */
 [[nodiscard]] NUM_COLLECT_EXPORT auto get_default_log_tag_config()
-    -> log_tag_config;
+    -> const log_tag_config;
 
 }  // namespace num_collect::logging

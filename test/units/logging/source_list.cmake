@@ -12,7 +12,6 @@ set(SOURCE_FILES
     formatters/get_log_level_str_for_log_test.cpp
     impl/is_log_tag_element_char_test.cpp
     impl/iteration_layer_handler_test.cpp
-    impl/log_tag_config_tree_test.cpp
     impl/log_tag_element_test.cpp
     impl/parse_log_tag_element_test.cpp
     impl/parse_log_tag_separator_test.cpp
@@ -25,7 +24,6 @@ set(SOURCE_FILES
     iterations/member_variable_iteration_parameter_value_test.cpp
     iterations/variable_iteration_parameter_value_test.cpp
     load_logging_config_test.cpp
-    log_config_test.cpp
     log_level_test.cpp
     log_tag_config_node_test.cpp
     log_tag_config_test.cpp

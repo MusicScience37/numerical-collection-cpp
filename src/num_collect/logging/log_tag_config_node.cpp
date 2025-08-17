@@ -163,7 +163,7 @@ auto log_tag_config_node::iteration_label_period(index_type val)
     return *this;
 }
 
-auto get_log_tag_config_node(log_tag_view log_tag) -> log_tag_config_node {
+auto edit_log_tag_config(log_tag_view log_tag) -> log_tag_config_node {
     auto* current = impl::get_root_log_tag_config_node_impl();
     std::string_view remaining_tag = log_tag.name();
     while (!remaining_tag.empty()) {
@@ -185,11 +185,12 @@ auto get_log_tag_config_node(log_tag_view log_tag) -> log_tag_config_node {
     return log_tag_config_node(current);
 }
 
-auto get_default_log_tag_config_node() -> log_tag_config_node {
-    return get_log_tag_config_node(log_tag_view{""});
+auto edit_default_log_tag_config() -> log_tag_config_node {
+    return edit_log_tag_config(log_tag_view{""});
 }
 
-auto get_log_tag_config(log_tag_view log_tag) -> log_tag_config {
+// NOLINTNEXTLINE(readability-const-return-type): false positive
+auto get_log_tag_config(log_tag_view log_tag) -> const log_tag_config {
     auto* current = impl::get_root_log_tag_config_node_impl();
     std::string_view remaining_tag = log_tag.name();
     while (!remaining_tag.empty()) {
@@ -209,7 +210,8 @@ auto get_log_tag_config(log_tag_view log_tag) -> log_tag_config {
     return current->config;
 }
 
-auto get_default_log_tag_config() -> log_tag_config {
+// NOLINTNEXTLINE(readability-const-return-type): false positive
+auto get_default_log_tag_config() -> const log_tag_config {
     return get_log_tag_config(log_tag_view{""});
 }
 

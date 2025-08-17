@@ -27,8 +27,8 @@
 #include "num_collect/logging/log_tag_config.h"
 
 TEST_CASE("num_collect::logging::log_tag_config_node") {
+    using num_collect::logging::edit_log_tag_config;
     using num_collect::logging::get_log_tag_config;
-    using num_collect::logging::get_log_tag_config_node;
     using num_collect::logging::log_level;
     using num_collect::logging::log_tag;
     using num_collect::logging::log_tag_config_node;
@@ -38,7 +38,7 @@ TEST_CASE("num_collect::logging::log_tag_config_node") {
             log_tag("num_collect_test::logging::log_tag_config_node");
         const auto child_tag =
             log_tag("num_collect_test::logging::log_tag_config_node::child");
-        auto parent = get_log_tag_config_node(parent_tag);
+        auto parent = edit_log_tag_config(parent_tag);
 
         SECTION("sink") {
             auto sink =

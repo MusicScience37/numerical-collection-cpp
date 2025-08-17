@@ -38,8 +38,7 @@
 
 #include "gzip_msgpack_output_stream.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
-#include "num_collect/logging/log_config.h"
-#include "num_collect/logging/log_tag_config.h"
+#include "num_collect/logging/log_tag_config_node.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/logging/logging_mixin.h"
@@ -150,12 +149,10 @@ void bench_executor::step_size_limits(
 }
 
 void configure_logging() {
-    num_collect::logging::set_default_tag_config(
-        num_collect::logging::log_tag_config().output_log_level(
-            num_collect::logging::log_level::info));
+    num_collect::logging::edit_default_log_tag_config().output_log_level(
+        num_collect::logging::log_level::info);
 
-    num_collect::logging::set_config_of(benchmark_tag,
-        num_collect::logging::log_tag_config()
-            .output_log_level(num_collect::logging::log_level::iteration)
-            .iteration_output_period(1));
+    num_collect::logging::edit_log_tag_config(benchmark_tag)
+        .output_log_level(num_collect::logging::log_level::iteration)
+        .iteration_output_period(1);
 }
