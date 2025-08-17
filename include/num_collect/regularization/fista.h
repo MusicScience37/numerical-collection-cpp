@@ -24,7 +24,6 @@
 #include <limits>
 #include <utility>
 
-#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
@@ -44,12 +43,26 @@ constexpr auto fista_tag =
  * \brief Class for fast iterative shrinkage-thresholding algorithm (FISTA)
  * \cite Beck2009 for L1-regularization of linear equations.
  *
+ * \tparam Coeff Type of coefficient matrices.
+ * \tparam Data Type of data vectors.
+ *
  * This class execute fast iterative shrinkage-thresholding algorithm (FISTA)
  * for L1-regularization of linear equations. This class is for large
  * inferior-determined problems, and implemented with OpenMP.
  *
- * \tparam Coeff Type of coefficient matrices.
- * \tparam Data Type of data vectors.
+ * This class minimizes the following evaluation function:
+ *
+ * \f[
+ * \| A \boldsymbol{x} - \boldsymbol{y} \|_2^2
+ * + \lambda \| \boldsymbol{x} \|_1
+ * \f]
+ *
+ * where variables are defined as follows:
+ *
+ * - \f$A\f$ is a coefficient matrix.
+ * - \f$\boldsymbol{x}\f$ is a solution vector.
+ * - \f$\boldsymbol{y}\f$ is a data vector.
+ * - \f$\lambda\f$ is a regularization parameter.
  */
 template <typename Coeff, typename Data>
 class fista
