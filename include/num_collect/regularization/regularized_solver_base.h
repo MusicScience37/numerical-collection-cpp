@@ -74,6 +74,16 @@ public:
     }
 
     /*!
+     * \brief Calculate data for a solution.
+     *
+     * \param[in] solution Solution.
+     * \param[out] data Data.
+     */
+    void calculate_data_for(const data_type& solution, data_type& data) const {
+        derived().calculate_data_for(solution, data);
+    }
+
+    /*!
      * \brief Get the default region to search for the optimal regularization
      * parameter.
      *

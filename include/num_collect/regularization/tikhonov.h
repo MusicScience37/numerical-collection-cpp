@@ -119,6 +119,13 @@ public:
                        .squaredNorm();
     }
 
+    //! \copydoc num_collect::regularization::regularized_solver_base::calculate_data_for
+    void calculate_data_for(const data_type& solution, data_type& data) const {
+        data = svd_.matrixU() *
+            svd_.singularValues().cwiseProduct(
+                svd_.matrixV().adjoint() * solution);
+    }
+
     /*!
      * \brief Get the singular values.
      *

@@ -140,6 +140,12 @@ public:
         compute_impl(*coeff_, data, *reg_coeff_);
     }
 
+    //! \copydoc num_collect::regularization::regularized_solver_base::calculate_data_for
+    void calculate_data_for(const data_type& solution, data_type& data) const {
+        NUM_COLLECT_ASSERT(coeff_.has_value());
+        data = (*coeff_) * solution;
+    }
+
     /*!
      * \brief Get the singular values.
      *

@@ -19,9 +19,6 @@
  */
 #pragma once
 
-#include <Eigen/Core>
-
-#include "num_collect/base/concepts/decayed_to.h"
 #include "num_collect/regularization/concepts/regularized_solver.h"
 
 namespace num_collect::regularization::concepts {
@@ -35,11 +32,6 @@ namespace num_collect::regularization::concepts {
  * \ref num_collect::regularization::implicit_regularized_solver_base class.
  */
 template <typename T>
-concept implicit_regularized_solver = regularized_solver<T> && requires() {
-    requires requires(const T& solver, const typename T::data_type& solution,
-        typename T::data_type& data) {
-        solver.calculate_data_for(solution, data);
-    };
-};
+concept implicit_regularized_solver = regularized_solver<T>;
 
 }  // namespace num_collect::regularization::concepts

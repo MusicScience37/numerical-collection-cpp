@@ -60,6 +60,11 @@ concept regularized_solver = requires() {
         { solver.data_size() } -> base::concepts::decayed_to<index_type>;
     };
 
+    requires requires(const T& solver, const typename T::data_type& solution,
+        typename T::data_type& data) {
+        solver.calculate_data_for(solution, data);
+    };
+
     requires requires(const T& solver) {
         {
             solver.param_search_region()
