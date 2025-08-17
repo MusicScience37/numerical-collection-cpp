@@ -39,13 +39,6 @@ public:
     using typename regularized_solver_base<Derived, Data>::scalar_type;
 
     /*!
-     * \brief Change data.
-     *
-     * \param[in] data New data.
-     */
-    void change_data(const data_type& data) { derived().change_data(data); }
-
-    /*!
      * \brief Calculate data for a solution.
      *
      * \param[in] solution Solution.

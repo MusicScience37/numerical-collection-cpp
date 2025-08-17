@@ -202,7 +202,7 @@ public:
         return solution.template lpNorm<1>();
     }
 
-    //! \copydoc num_collect::regularization::implicit_regularized_solver_base::change_data
+    //! \copydoc num_collect::regularization::regularized_solver_base::change_data
     void change_data(const data_type& data) { data_ = &data; }
 
     //! \copydoc num_collect::regularization::implicit_regularized_solver_base::calculate_data_for

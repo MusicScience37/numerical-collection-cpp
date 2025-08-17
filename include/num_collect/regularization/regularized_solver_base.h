@@ -58,6 +58,13 @@ public:
     }
 
     /*!
+     * \brief Change data.
+     *
+     * \param[in] data New data.
+     */
+    void change_data(const data_type& data) { derived().change_data(data); }
+
+    /*!
      * \brief Get the size of data.
      *
      * \return Size of data.

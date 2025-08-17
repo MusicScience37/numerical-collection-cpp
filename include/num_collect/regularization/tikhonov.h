@@ -109,6 +109,16 @@ public:
         }
     }
 
+    //! \copydoc num_collect::regularization::regularized_solver_base::change_data
+    void change_data(const data_type& data) {
+        rot_data_ = svd_.matrixU().adjoint() * data;
+        const index_type rank = svd_.nonzeroSingularValues();
+        min_res_ = (data -
+            svd_.matrixU().leftCols(rank) *
+                svd_.matrixU().leftCols(rank).adjoint() * data)
+                       .squaredNorm();
+    }
+
     /*!
      * \brief Get the singular values.
      *

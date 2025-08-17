@@ -119,44 +119,10 @@ public:
             "Coefficient matrix for the regularization term must have rows "
             "less than columns.");
 
+        coeff_.emplace(coeff);
         reg_coeff_.emplace(reg_coeff);
 
-        // TODO How can I implement those complex formulas with good variable
-        // names?
-
-        const index_type m = coeff.rows();
-        const index_type n = coeff.cols();
-        const index_type p = reg_coeff.rows();
-
-        Eigen::ColPivHouseholderQR<coeff_type> qr_reg_adj;
-        qr_reg_adj.compute(reg_coeff.adjoint());
-        NUM_COLLECT_PRECONDITION(qr_reg_adj.rank() >= qr_reg_adj.cols(),
-            this->logger(), "reg_coeff must have full row rank.");
-        const coeff_type v = qr_reg_adj.householderQ();
-
-        Eigen::ColPivHouseholderQR<coeff_type> qr_coeff_v2;
-        qr_coeff_v2.compute(coeff * v.rightCols(n - p));
-        NUM_COLLECT_PRECONDITION(qr_coeff_v2.rank() >= qr_coeff_v2.cols(),
-            this->logger(),
-            "reg_coeff and coeff must have only the zero vector in the "
-            "intersection of their null spaces.");
-        const coeff_type q = qr_coeff_v2.householderQ();
-
-        const coeff_type coeff_arr =
-            qr_reg_adj.solve(coeff.adjoint() * q.rightCols(m - n + p))
-                .adjoint();
-        const data_type data_arr = q.rightCols(m - n + p).adjoint() * data;
-        tikhonov_.compute(coeff_arr, data_arr);
-
-        const coeff_type coeff_v2_inv_coeff = qr_coeff_v2.solve(coeff);
-        const coeff_type i_minus_v2_coeff_v2_inv_coeff =
-            coeff_type::Identity(n, n) -
-            v.rightCols(n - p) * coeff_v2_inv_coeff;
-        coeff_actual_solution_ =
-            qr_reg_adj.solve(i_minus_v2_coeff_v2_inv_coeff.adjoint()).adjoint();
-
-        const data_type coeff_v2_inv_data = qr_coeff_v2.solve(data);
-        offset_actual_solution_ = v.rightCols(n - p) * coeff_v2_inv_data;
+        compute_impl(coeff, data, reg_coeff);
     }
 
     //! \copydoc num_collect::regularization::explicit_regularized_solver_base::solve
@@ -165,6 +131,13 @@ public:
         tikhonov_.solve(param, tikhonov_solution);
         solution = coeff_actual_solution_ * tikhonov_solution +
             offset_actual_solution_;
+    }
+
+    //! \copydoc num_collect::regularization::regularized_solver_base::change_data
+    void change_data(const data_type& data) {
+        NUM_COLLECT_ASSERT(coeff_.has_value());
+        NUM_COLLECT_ASSERT(reg_coeff_.has_value());
+        compute_impl(*coeff_, data, *reg_coeff_);
     }
 
     /*!
@@ -255,6 +228,58 @@ public:
     }
 
 private:
+    /*!
+     * \brief Compute internal matrices.
+     *
+     * This generate arranged problem of Tikhonov regularization as in
+     * \cite Elden1982, \cite Hansen1994.
+     *
+     * \param[in] coeff Coefficient matrix.
+     * \param[in] data Data vector.
+     * \param[in] reg_coeff Coefficient matrix for the regularization term.
+     */
+    template <typename InputMatrix>
+    void compute_impl(const Eigen::MatrixBase<InputMatrix>& coeff,
+        const data_type& data,
+        const Eigen::MatrixBase<InputMatrix>& reg_coeff) {
+        // TODO How can I implement those complex formulas with good variable
+        // names?
+
+        const index_type m = coeff.rows();
+        const index_type n = coeff.cols();
+        const index_type p = reg_coeff.rows();
+
+        Eigen::ColPivHouseholderQR<coeff_type> qr_reg_adj;
+        qr_reg_adj.compute(reg_coeff.adjoint());
+        NUM_COLLECT_PRECONDITION(qr_reg_adj.rank() >= qr_reg_adj.cols(),
+            this->logger(), "reg_coeff must have full row rank.");
+        const coeff_type v = qr_reg_adj.householderQ();
+
+        Eigen::ColPivHouseholderQR<coeff_type> qr_coeff_v2;
+        qr_coeff_v2.compute(coeff * v.rightCols(n - p));
+        NUM_COLLECT_PRECONDITION(qr_coeff_v2.rank() >= qr_coeff_v2.cols(),
+            this->logger(),
+            "reg_coeff and coeff must have only the zero vector in the "
+            "intersection of their null spaces.");
+        const coeff_type q = qr_coeff_v2.householderQ();
+
+        const coeff_type coeff_arr =
+            qr_reg_adj.solve(coeff.adjoint() * q.rightCols(m - n + p))
+                .adjoint();
+        const data_type data_arr = q.rightCols(m - n + p).adjoint() * data;
+        tikhonov_.compute(coeff_arr, data_arr);
+
+        const coeff_type coeff_v2_inv_coeff = qr_coeff_v2.solve(coeff);
+        const coeff_type i_minus_v2_coeff_v2_inv_coeff =
+            coeff_type::Identity(n, n) -
+            v.rightCols(n - p) * coeff_v2_inv_coeff;
+        coeff_actual_solution_ =
+            qr_reg_adj.solve(i_minus_v2_coeff_v2_inv_coeff.adjoint()).adjoint();
+
+        const data_type coeff_v2_inv_data = qr_coeff_v2.solve(data);
+        offset_actual_solution_ = v.rightCols(n - p) * coeff_v2_inv_data;
+    }
+
     //! Object to perform Tikhonov regularization.
     tikhonov<coeff_type, data_type> tikhonov_{};
 
@@ -263,6 +288,9 @@ private:
 
     //! Offset vector to calculate actual solution.
     Data offset_actual_solution_{};
+
+    //! Coefficient matrix.
+    std::optional<Eigen::Ref<const coeff_type>> coeff_;
 
     //! Coefficient matrix for the regularization term.
     std::optional<Eigen::Ref<const coeff_type>> reg_coeff_;

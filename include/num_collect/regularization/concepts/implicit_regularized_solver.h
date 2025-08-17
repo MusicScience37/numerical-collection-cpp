@@ -36,10 +36,6 @@ namespace num_collect::regularization::concepts {
  */
 template <typename T>
 concept implicit_regularized_solver = regularized_solver<T> && requires() {
-    requires requires(T& solver, const typename T::data_type& data) {
-        solver.change_data(data);
-    };
-
     requires requires(const T& solver, const typename T::data_type& solution,
         typename T::data_type& data) {
         solver.calculate_data_for(solution, data);

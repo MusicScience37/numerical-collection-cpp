@@ -78,6 +78,21 @@ TEST_CASE("num_collect::regularization::tikhonov") {
         REQUIRE(solution_large.squaredNorm() < solution_small.squaredNorm());
     }
 
+    SECTION("change_data") {
+        constexpr num_collect::index_type solution_size = 15;
+        constexpr num_collect::index_type data_size = 30;
+        const auto prob = num_prob_collect::regularization::blur_sine(
+            data_size, solution_size);
+
+        num_collect::regularization::tikhonov<coeff_type, data_type> tikhonov;
+        tikhonov.compute(prob.coeff(), prob.data());
+        tikhonov.change_data(prob.data());
+        Eigen::VectorXd solution;
+        tikhonov.solve(0.0, solution);
+
+        REQUIRE_THAT(solution, eigen_approx(prob.solution()));
+    }
+
     SECTION("singular_values") {
         constexpr num_collect::index_type solution_size = 15;
         constexpr num_collect::index_type data_size = 30;

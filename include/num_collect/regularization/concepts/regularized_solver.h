@@ -52,6 +52,10 @@ concept regularized_solver = requires() {
     requires requires(T& solver, const typename T::scalar_type& param,
         typename T::data_type& solution) { solver.solve(param, solution); };
 
+    requires requires(T& solver, const typename T::data_type& data) {
+        solver.change_data(data);
+    };
+
     requires requires(const T& solver) {
         { solver.data_size() } -> base::concepts::decayed_to<index_type>;
     };
