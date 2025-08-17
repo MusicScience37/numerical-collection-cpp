@@ -34,16 +34,15 @@
 #include <catch2/catch_totals.hpp>
 #include <catch2/reporters/catch_reporter_event_listener.hpp>
 #include <fmt/format.h>
+
+#include "num_collect/logging/log_tag_config_node.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
-#include "num_collect/logging/log_config.h"
 #include "num_collect/logging/log_level.h"
-#include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/logging/sinks/file_log_sink.h"
-#include "num_collect/logging/sinks/log_sink.h"
 
 #define STRING1(STR) #STR
 #define STRING(STR) STRING1(STR)
@@ -59,13 +58,11 @@ public:
             STRING(NUM_COLLECT_TEST_MODULE_NAME));
         const auto sink =
             num_collect::logging::sinks::create_single_file_sink(file_path);
-        const auto config =
-            num_collect::logging::log_tag_config()
-                .sink(sink)
-                .output_log_level(num_collect::logging::log_level::trace)
-                .output_log_level_in_child_iterations(
-                    num_collect::logging::log_level::summary);
-        num_collect::logging::set_default_tag_config(config);
+        num_collect::logging::edit_default_log_tag_config()
+            .sink(sink)
+            .output_log_level(num_collect::logging::log_level::trace)
+            .output_log_level_in_child_iterations(
+                num_collect::logging::log_level::summary);
 
         logger_ = num_collect::logging::logger();
         logger_.value().info()(std::string(line_length, '='));

@@ -29,10 +29,10 @@
 
 #include "../../mock_log_sink.h"
 #include "../mock_log_sink_factory.h"
-#include "num_collect/logging/log_config.h"
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/log_tag.h"
 #include "num_collect/logging/log_tag_config.h"
+#include "num_collect/logging/log_tag_config_node.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "trompeloeil_catch2.h"
 
@@ -86,9 +86,11 @@ invalid2 = 123
 }
 
 TEST_CASE("num_collect::logging::config::toml::impl::parse_log_tag_config_to") {
+    using num_collect::logging::edit_log_tag_config;
     using num_collect::logging::log_level;
     using num_collect::logging::log_tag;
     using num_collect::logging::log_tag_config;
+    using num_collect::logging::log_tag_view;
     using num_collect::logging::config::log_sink_factory_table;
     using num_collect::logging::config::toml::impl::parse_log_tag_config_to;
     using num_collect_test::logging::mock_log_sink;
@@ -125,7 +127,9 @@ sink = "not_exist"
     SECTION("all configurations") {
         const auto* table = test_table.at_path("test.all").as_table();
         REQUIRE(static_cast<const void*>(table) != nullptr);
-        log_tag_config config;
+        auto config = edit_log_tag_config(
+            log_tag_view{"num_collect_test::logging::config:"
+                         ":toml::impl::require_log_level"});
         CHECK_NOTHROW(parse_log_tag_config_to(config, *table, sinks));
         CHECK(config.output_log_level() == log_level::iteration);
         CHECK(config.output_log_level_in_child_iterations() ==
@@ -137,21 +141,25 @@ sink = "not_exist"
     SECTION("tag only") {
         const auto* table = test_table.at_path("test.tag_only").as_table();
         REQUIRE(static_cast<const void*>(table) != nullptr);
-        log_tag_config config;
+        auto config = edit_log_tag_config(
+            log_tag_view{"num_collect_test::logging::config:"
+                         ":toml::impl::require_log_level"});
         CHECK_NOTHROW(parse_log_tag_config_to(config, *table, sinks));
     }
 
     SECTION("sink not found") {
         const auto* table = test_table.at_path("test.invalid_sink").as_table();
         REQUIRE(static_cast<const void*>(table) != nullptr);
-        log_tag_config config;
+        auto config = edit_log_tag_config(
+            log_tag_view{"num_collect_test::logging::config:"
+                         ":toml::impl::require_log_level"});
         CHECK_THROWS_WITH(parse_log_tag_config_to(config, *table, sinks),
             Catch::Matchers::ContainsSubstring("not_exist"));
     }
 }
 
 TEST_CASE("num_collect::logging::config::toml::toml_log_config_parser") {
-    using num_collect::logging::get_config_of;
+    using num_collect::logging::get_log_tag_config;
     using num_collect::logging::log_level;
     using num_collect::logging::log_tag_view;
     using num_collect::logging::config::toml::toml_log_config_parser;
@@ -199,11 +207,11 @@ tag_configs = [123]
         const auto* table = test_table.at_path("test.valid").as_table();
         REQUIRE(static_cast<const void*>(table) != nullptr);
         CHECK_NOTHROW(toml_log_config_parser().parse_from_table(*table));
-        CHECK(get_config_of(log_tag_view("num_collect::logging::config::"
-                                         "toml::toml_log_config_parser1"))
+        CHECK(get_log_tag_config(log_tag_view("num_collect::logging::config::"
+                                              "toml::toml_log_config_parser1"))
                   .output_log_level() == log_level::iteration);
-        CHECK(get_config_of(log_tag_view("num_collect::logging::config::"
-                                         "toml::toml_log_config_parser2"))
+        CHECK(get_log_tag_config(log_tag_view("num_collect::logging::config::"
+                                              "toml::toml_log_config_parser2"))
                   .output_log_level() == log_level::summary);
     }
 
@@ -254,8 +262,8 @@ filepath = "logging/toml_log_config_parser3.log"
 )";
         }
         CHECK_NOTHROW(toml_log_config_parser().parse_from_file(filepath));
-        CHECK(get_config_of(log_tag_view("num_collect::logging::config::"
-                                         "toml::toml_log_config_parser3"))
+        CHECK(get_log_tag_config(log_tag_view("num_collect::logging::config::"
+                                              "toml::toml_log_config_parser3"))
                   .output_log_level() == log_level::debug);
     }
 
@@ -273,8 +281,8 @@ type = "single_file"
 filepath = "logging/toml_log_config_parser44.log"
 )";
         CHECK_NOTHROW(toml_log_config_parser().parse_from_text(config_text));
-        CHECK(get_config_of(log_tag_view("num_collect::logging::config::"
-                                         "toml::toml_log_config_parser4"))
+        CHECK(get_log_tag_config(log_tag_view("num_collect::logging::config::"
+                                              "toml::toml_log_config_parser4"))
                   .output_log_level() == log_level::iteration);
     }
 }

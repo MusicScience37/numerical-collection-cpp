@@ -26,11 +26,15 @@
 namespace num_collect::logging::concepts {
 
 /*!
- * \brief Concept of parameters values in iterations.
+ * \brief Concept of classes used to get parameters values in iterations.
  *
  * \tparam T Type.
  * \tparam Algorithm Type of the algorithm.
  * \tparam Value Type of values.
+ *
+ * \note For APIs of functions, see implementations, for example
+ * \ref num_collect::logging::iterations::variable_iteration_parameter_value
+ * class.
  */
 template <typename T, typename Algorithm, typename Value>
 concept iteration_parameter_value = requires(const T& obj) {

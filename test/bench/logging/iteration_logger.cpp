@@ -24,9 +24,8 @@
 #include <stat_bench/benchmark_macros.h>
 
 #include "num_collect/base/index_type.h"
-#include "num_collect/logging/log_config.h"
 #include "num_collect/logging/log_level.h"
-#include "num_collect/logging/log_tag_config.h"
+#include "num_collect/logging/log_tag_config_node.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/logging/sinks/file_log_sink.h"
@@ -57,9 +56,8 @@ static void perform() {
 STAT_BENCH_CASE("iteration_logger", "write no log") {
     const std::string log_file_path =
         "num_collect_bench_logging_iteration_logger.log";
-    const auto config = num_collect::logging::log_tag_config().sink(
+    num_collect::logging::edit_log_tag_config(tag).sink(
         num_collect::logging::sinks::create_single_file_sink(log_file_path));
-    num_collect::logging::set_config_of(tag, config);
 
     perform();
 }
@@ -68,12 +66,10 @@ STAT_BENCH_CASE("iteration_logger", "write no log") {
 STAT_BENCH_CASE("iteration_logger", "write log") {
     const std::string log_file_path =
         "num_collect_bench_logging_iteration_logger.log";
-    const auto config =
-        num_collect::logging::log_tag_config()
-            .sink(num_collect::logging::sinks::create_single_file_sink(
-                log_file_path))
-            .output_log_level(num_collect::logging::log_level::trace);
-    num_collect::logging::set_config_of(tag, config);
+    num_collect::logging::edit_log_tag_config(tag)
+        .sink(
+            num_collect::logging::sinks::create_single_file_sink(log_file_path))
+        .output_log_level(num_collect::logging::log_level::trace);
 
     perform();
 }

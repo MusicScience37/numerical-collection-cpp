@@ -27,13 +27,12 @@
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 
-#include "num_collect/logging/log_config.h"
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/log_tag_view.h"
 
 TEST_CASE("num_collect::logging::load_logging_config") {
-    using num_collect::logging::get_config_of;
+    using num_collect::logging::get_log_tag_config;
     using num_collect::logging::load_logging_config_file;
     using num_collect::logging::log_level;
     using num_collect::logging::log_tag_view;
@@ -94,13 +93,13 @@ output_log_level = "summary"
 
         CHECK_THROWS_WITH(load_logging_config_file(filepath),
             Catch::Matchers::ContainsSubstring(filepath));
-        CHECK(
-            get_config_of(log_tag_view("num_collect_test::logging::impl::toml_"
-                                       "config::load_logging_config1"))
-                .output_log_level() == log_level::iteration);
-        CHECK(
-            get_config_of(log_tag_view("num_collect_test::logging::impl::toml_"
-                                       "config::load_logging_config2"))
-                .output_log_level() == log_level::summary);
+        CHECK(get_log_tag_config(
+                  log_tag_view("num_collect_test::logging::impl::toml_"
+                               "config::load_logging_config1"))
+                  .output_log_level() == log_level::iteration);
+        CHECK(get_log_tag_config(
+                  log_tag_view("num_collect_test::logging::impl::toml_"
+                               "config::load_logging_config2"))
+                  .output_log_level() == log_level::summary);
     }
 }

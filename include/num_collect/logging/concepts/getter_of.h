@@ -15,11 +15,9 @@
  */
 /*!
  * \file
- * \brief Definition of getter_of class.
+ * \brief Definition of getter_of concept.
  */
 #pragma once
-
-#include <type_traits>  // IWYU pragma: keep
 
 #include "num_collect/base/concepts/decayed_to.h"
 

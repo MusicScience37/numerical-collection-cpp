@@ -20,18 +20,15 @@
 #pragma once
 
 #include "num_collect/base/index_type.h"
-#include "num_collect/logging/log_config.h"
 #include "num_collect/logging/log_level.h"
-#include "num_collect/logging/log_tag_config.h"
+#include "num_collect/logging/log_tag_config_node.h"
 
 /*!
  * \brief Configure logging for examples.
  */
 inline void configure_logging(
     num_collect::index_type iteration_output_period = 1) {
-    const auto config =
-        num_collect::logging::log_tag_config()
-            .output_log_level(num_collect::logging::log_level::iteration)
-            .iteration_output_period(iteration_output_period);
-    set_default_tag_config(config);
+    num_collect::logging::edit_default_log_tag_config()
+        .output_log_level(num_collect::logging::log_level::iteration)
+        .iteration_output_period(iteration_output_period);
 }

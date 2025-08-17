@@ -23,7 +23,9 @@
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/impl/num_collect_export.h"
 #include "num_collect/logging/log_level.h"
+#include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/sinks/default_log_sink.h"
 #include "num_collect/logging/sinks/log_sink.h"
 
@@ -201,5 +203,25 @@ private:
     //! Period to write labels of iteration logs.
     index_type iteration_label_period_{default_iteration_label_period};
 };
+
+/*!
+ * \brief Get the logging configuration for a log tag.
+ *
+ * \param[in] log_tag Log tag.
+ * \return Configuration.
+ */
+[[nodiscard]] NUM_COLLECT_EXPORT auto get_log_tag_config(log_tag_view log_tag)
+    -> const log_tag_config;
+
+/*!
+ * \brief Get the default logging configuration.
+ *
+ * \note The default configuration is the configuration in the root node in the
+ * logging configuration tree.
+ *
+ * \return Default configuration of log tags.
+ */
+[[nodiscard]] NUM_COLLECT_EXPORT auto get_default_log_tag_config()
+    -> const log_tag_config;
 
 }  // namespace num_collect::logging

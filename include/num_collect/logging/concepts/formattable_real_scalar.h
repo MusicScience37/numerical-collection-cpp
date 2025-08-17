@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of formattable_real_scalar class.
+ * \brief Definition of formattable_real_scalar concept.
  */
 #pragma once
 

@@ -29,7 +29,6 @@
 #include <fmt/format.h>
 
 #include "num_collect/logging/impl/iteration_layer_handler.h"
-#include "num_collect/logging/log_config.h"
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/log_tag.h"
 #include "num_collect/logging/log_tag_config.h"
@@ -154,7 +153,7 @@ public:
      *
      * \param[in] tag Tag.
      */
-    explicit logger(log_tag_view tag) : logger(tag, get_config_of(tag)) {}
+    explicit logger(log_tag_view tag) : logger(tag, get_log_tag_config(tag)) {}
 
     /*!
      * \brief Constructor.

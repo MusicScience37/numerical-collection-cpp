@@ -21,9 +21,8 @@
 
 #include <stat_bench/benchmark_macros.h>
 
-#include "num_collect/logging/log_config.h"
 #include "num_collect/logging/log_level.h"
-#include "num_collect/logging/log_tag_config.h"
+#include "num_collect/logging/log_tag_config_node.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/logging/sinks/file_log_sink.h"
@@ -39,22 +38,20 @@ static void perform() {
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE("trace_logs", "write no log") {
-    num_collect::logging::set_default_tag_config(
-        num_collect::logging::log_tag_config()
-            .sink(num_collect::logging::sinks::create_single_file_sink(
-                "num_collect_bench_logging_write_trace_logs.log"))
-            .output_log_level(num_collect::logging::log_level::iteration));
+    num_collect::logging::edit_default_log_tag_config()
+        .sink(num_collect::logging::sinks::create_single_file_sink(
+            "num_collect_bench_logging_write_trace_logs.log"))
+        .output_log_level(num_collect::logging::log_level::iteration);
 
     perform();
 }
 
 // NOLINTNEXTLINE
 STAT_BENCH_CASE("trace_logs", "write log") {
-    num_collect::logging::set_default_tag_config(
-        num_collect::logging::log_tag_config()
-            .sink(num_collect::logging::sinks::create_single_file_sink(
-                "num_collect_bench_logging_write_trace_logs.log"))
-            .output_log_level(num_collect::logging::log_level::trace));
+    num_collect::logging::edit_default_log_tag_config()
+        .sink(num_collect::logging::sinks::create_single_file_sink(
+            "num_collect_bench_logging_write_trace_logs.log"))
+        .output_log_level(num_collect::logging::log_level::trace);
 
     perform();
 }

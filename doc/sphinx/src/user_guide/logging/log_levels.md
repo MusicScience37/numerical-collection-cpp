@@ -2,16 +2,16 @@
 
 ```{table} Log levels in the ascending order of severity
 
-| Log level       | Usage in this library                                                   |
-| :-------------- | :---------------------------------------------------------------------- |
-| trace           | Internal trace logs for developer of this library.                      |
-| debug           | Log for debugging.                                                      |
-| iteration       | Log of each iteration.                                                  |
-| iteration_label | Label of iteration logs. (Not usable for output log level.)             |
-| summary         | Summary of calculations.                                                |
-| info            | None. (Meant for use in user code to show some information.)            |
-| warning         | Warnings of undesirable conditions.                                     |
-| error           | Errors preventing further processing. (Usually used with exceptions.)   |
-| critical        | None. (Meant for use in conditions which may cause death of processes.) |
-| off             | Turn off output. (Only for output log level.)                           |
+| Log level       | Meaning                                                      | Usage in this library                                         |
+| :-------------- | :----------------------------------------------------------- | :------------------------------------------------------------ |
+| trace           | Logs for debugging.                                          | Internal trace logs for developer of this library.            |
+| debug           | Logs for debugging.                                          | Logs for debugging.                                           |
+| iteration       | Logs of each iteration.                                      | Logs of each iteration.                                       |
+| iteration_label | Labels of iteration logs. Not usable as output log level.    | Labels of iteration logs.                                     |
+| summary         | Summary of calculations.                                     | Summary of calculations.                                      |
+| info            | Some information.                                            | None.                                                         |
+| warning         | Warnings of undesirable conditions.                          | Warnings of undesirable conditions.                           |
+| error           | Errors preventing further processing.                        | Errors preventing further processing. Used with exceptions.   |
+| critical        | Errors which may cause death of processes.                   | None.                                                         |
+| off             | Turn off output. Used in output log level.                   | None.                                                         |
 ```

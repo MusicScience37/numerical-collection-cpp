@@ -29,9 +29,6 @@
 #include <plotly_plotter/write_png.h>
 
 #include "num_collect/base/index_type.h"
-#include "num_collect/logging/log_config.h"
-#include "num_collect/logging/log_level.h"
-#include "num_collect/logging/log_tag_config.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/regularization/fista.h"
 #include "num_collect/regularization/implicit_gcv.h"

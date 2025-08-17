@@ -17,14 +17,10 @@
  * \file
  * \brief Profiling of ignore logs.
  */
-#include <chrono>
-#include <memory>
-
 #include <gperftools/profiler.h>
 
-#include "num_collect/logging/log_config.h"
 #include "num_collect/logging/log_level.h"
-#include "num_collect/logging/log_tag_config.h"
+#include "num_collect/logging/log_tag_config_node.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/logging/sinks/file_log_sink.h"
@@ -38,11 +34,10 @@ static void test() {
 }
 
 auto main() -> int {
-    num_collect::logging::set_default_tag_config(
-        num_collect::logging::log_tag_config()
-            .sink(num_collect::logging::sinks::create_single_file_sink(
-                "profile_logging_ignore_logs_out.log"))
-            .output_log_level(num_collect::logging::log_level::info));
+    num_collect::logging::edit_default_log_tag_config()
+        .sink(num_collect::logging::sinks::create_single_file_sink(
+            "profile_logging_ignore_logs_out.log"))
+        .output_log_level(num_collect::logging::log_level::info);
 
     constexpr std::size_t repetition = 100;
     ProfilerStart("profile_logging_ignore_logs.prof");
