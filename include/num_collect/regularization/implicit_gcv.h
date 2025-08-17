@@ -32,7 +32,7 @@
 #include "num_collect/logging/logging_mixin.h"
 #include "num_collect/opt/any_objective_function.h"
 #include "num_collect/opt/gaussian_process_optimizer.h"
-#include "num_collect/regularization/concepts/implicit_regularized_solver.h"
+#include "num_collect/regularization/concepts/regularized_solver.h"
 #include "num_collect/util/vector.h"
 
 namespace num_collect::regularization {
@@ -46,7 +46,7 @@ constexpr auto implicit_gcv_tag =
  *
  * \tparam Solver Type of solvers.
  */
-template <concepts::implicit_regularized_solver Solver>
+template <concepts::regularized_solver Solver>
 class implicit_gcv_calculator {
 public:
     //! Type of solvers.
@@ -223,7 +223,7 @@ private:
  *
  * \tparam Solver Type of solvers.
  */
-template <concepts::implicit_regularized_solver Solver>
+template <concepts::regularized_solver Solver>
 class implicit_gcv : public logging::logging_mixin {
 public:
     //! Type of solvers.
