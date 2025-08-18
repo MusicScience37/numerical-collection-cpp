@@ -321,7 +321,7 @@ public:
                 pow(static_cast<scalar_type>(10),  // NOLINT
                     log_param);
             const scalar_type gcv_value = calculator_(param);
-            NUM_COLLECT_LOG_TRACE(logger(), "gcv({}) = {}", param, gcv_value);
+            NUM_COLLECT_LOG_DEBUG(logger(), "gcv({}) = {}", param, gcv_value);
             return log10(gcv_value);
         };
         optimizer_.change_objective_function(objective_function);
