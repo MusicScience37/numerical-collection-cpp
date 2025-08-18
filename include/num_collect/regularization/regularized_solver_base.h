@@ -58,12 +58,29 @@ public:
     }
 
     /*!
+     * \brief Change data.
+     *
+     * \param[in] data New data.
+     */
+    void change_data(const data_type& data) { derived().change_data(data); }
+
+    /*!
      * \brief Get the size of data.
      *
      * \return Size of data.
      */
     [[nodiscard]] auto data_size() const -> index_type {
         return derived().data_size();
+    }
+
+    /*!
+     * \brief Calculate data for a solution.
+     *
+     * \param[in] solution Solution.
+     * \param[out] data Data.
+     */
+    void calculate_data_for(const data_type& solution, data_type& data) const {
+        derived().calculate_data_for(solution, data);
     }
 
     /*!
@@ -75,6 +92,28 @@ public:
     [[nodiscard]] auto param_search_region() const
         -> std::pair<scalar_type, scalar_type> {
         return derived().param_search_region();
+    }
+
+    /*!
+     * \brief Calculate the squared norm of the residual.
+     *
+     * \param[in] solution Solution.
+     * \return Result.
+     */
+    [[nodiscard]] auto residual_norm(const data_type& solution) const
+        -> scalar_type {
+        return derived().residual_norm(solution);
+    }
+
+    /*!
+     * \brief Calculate the regularization term.
+     *
+     * \param[in] solution Solution.
+     * \return Result.
+     */
+    [[nodiscard]] auto regularization_term(const data_type& solution) const
+        -> scalar_type {
+        return derived().regularization_term(solution);
     }
 
 protected:

@@ -24,7 +24,6 @@
 #include <limits>
 #include <utility>
 
-#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
@@ -44,12 +43,26 @@ constexpr auto fista_tag =
  * \brief Class for fast iterative shrinkage-thresholding algorithm (FISTA)
  * \cite Beck2009 for L1-regularization of linear equations.
  *
+ * \tparam Coeff Type of coefficient matrices.
+ * \tparam Data Type of data vectors.
+ *
  * This class execute fast iterative shrinkage-thresholding algorithm (FISTA)
  * for L1-regularization of linear equations. This class is for large
  * inferior-determined problems, and implemented with OpenMP.
  *
- * \tparam Coeff Type of coefficient matrices.
- * \tparam Data Type of data vectors.
+ * This class minimizes the following evaluation function:
+ *
+ * \f[
+ * \| A \boldsymbol{x} - \boldsymbol{y} \|_2^2
+ * + \lambda \| \boldsymbol{x} \|_1
+ * \f]
+ *
+ * where variables are defined as follows:
+ *
+ * - \f$A\f$ is a coefficient matrix.
+ * - \f$\boldsymbol{x}\f$ is a solution vector.
+ * - \f$\boldsymbol{y}\f$ is a data vector.
+ * - \f$\lambda\f$ is a regularization parameter.
  */
 template <typename Coeff, typename Data>
 class fista
@@ -190,22 +203,22 @@ public:
             "Res.Rate", &this_type::residual_norm_rate);
     }
 
-    //! \copydoc num_collect::regularization::implicit_regularized_solver_base::residual_norm
+    //! \copydoc num_collect::regularization::regularized_solver_base::residual_norm
     [[nodiscard]] auto residual_norm(const data_type& solution) const
         -> scalar_type {
         return ((*coeff_) * solution - (*data_)).squaredNorm();
     }
 
-    //! \copydoc num_collect::regularization::implicit_regularized_solver_base::regularization_term
+    //! \copydoc num_collect::regularization::regularized_solver_base::regularization_term
     [[nodiscard]] auto regularization_term(const data_type& solution) const
         -> scalar_type {
         return solution.template lpNorm<1>();
     }
 
-    //! \copydoc num_collect::regularization::implicit_regularized_solver_base::change_data
+    //! \copydoc num_collect::regularization::regularized_solver_base::change_data
     void change_data(const data_type& data) { data_ = &data; }
 
-    //! \copydoc num_collect::regularization::implicit_regularized_solver_base::calculate_data_for
+    //! \copydoc num_collect::regularization::regularized_solver_base::calculate_data_for
     void calculate_data_for(const data_type& solution, data_type& data) const {
         data = (*coeff_) * solution;
     }

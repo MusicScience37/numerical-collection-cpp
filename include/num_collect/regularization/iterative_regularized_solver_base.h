@@ -22,7 +22,7 @@
 #include "num_collect/base/concepts/dense_matrix.h"
 #include "num_collect/logging/iterations/iteration_logger_mixin.h"
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/regularization/implicit_regularized_solver_base.h"
+#include "num_collect/regularization/regularized_solver_base.h"
 
 namespace num_collect::regularization {
 
@@ -34,16 +34,16 @@ namespace num_collect::regularization {
  */
 template <typename Derived, base::concepts::dense_matrix Data>
 class iterative_regularized_solver_base
-    : public implicit_regularized_solver_base<Derived, Data>,
+    : public regularized_solver_base<Derived, Data>,
       public logging::iterations::iteration_logger_mixin<Derived> {
 public:
     //! Type of data.
-    using typename implicit_regularized_solver_base<Derived, Data>::data_type;
+    using typename regularized_solver_base<Derived, Data>::data_type;
 
     //! Type of scalars.
-    using typename implicit_regularized_solver_base<Derived, Data>::scalar_type;
+    using typename regularized_solver_base<Derived, Data>::scalar_type;
 
-    using implicit_regularized_solver_base<Derived, Data>::logger;
+    using regularized_solver_base<Derived, Data>::logger;
 
     /*!
      * \brief Initialize.
@@ -106,7 +106,7 @@ public:
     }
 
 protected:
-    using implicit_regularized_solver_base<Derived, Data>::derived;
+    using regularized_solver_base<Derived, Data>::derived;
 
     /*!
      * \brief Constructor.
@@ -114,7 +114,7 @@ protected:
      * \param[in] tag Log tag.
      */
     explicit iterative_regularized_solver_base(logging::log_tag_view tag)
-        : implicit_regularized_solver_base<Derived, Data>(tag) {
+        : regularized_solver_base<Derived, Data>(tag) {
         this->logger().set_iterative();
     }
 };

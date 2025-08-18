@@ -32,7 +32,7 @@
 #include "num_collect/logging/logging_mixin.h"
 #include "num_collect/opt/any_objective_function.h"
 #include "num_collect/opt/gaussian_process_optimizer.h"
-#include "num_collect/regularization/concepts/implicit_regularized_solver.h"
+#include "num_collect/regularization/concepts/regularized_solver.h"
 #include "num_collect/util/vector.h"
 
 namespace num_collect::regularization {
@@ -45,8 +45,51 @@ constexpr auto implicit_gcv_tag =
  * \brief Class to calculate the objective function of GCV.
  *
  * \tparam Solver Type of solvers.
+ *
+ * GCV is given by the following formula:
+ *
+ * \f[
+ *     V(\lambda)
+ *     = \frac{\frac{1}{m} \|A \boldsymbol{x}_\lambda - \boldsymbol{y}\|^2}
+ *     {\left|\frac{1}{m} \mathrm{tr}\{I - P_A(\lambda)\}\right|^2}
+ * \f]
+ *
+ * where variables are
+ *
+ * - \f$ \lambda \f$: Regularization parameter.
+ * - \f$ m \f$: Number of data points.
+ * - \f$ A \f$: Operator to calculate forward model.
+ * - \f$ \boldsymbol{x}_\lambda \f$: Solution with regularization parameter \f$
+ * \lambda \f$.
+ * - \f$ \boldsymbol{y} \f$: Observed data.
+ * - \f$ P_A(\lambda) \f$: Influence matrix.
+ *   When \f$ A_\lambda^\# \f$ is the operator to solve the inverse problem,
+ *   influence matrix is given by
+ *   \f$ P_A(\lambda) = \frac{\partial A A_\lambda^\# \boldsymbol{y}}{\partial
+ *   \boldsymbol{y}} \f$.
+ *
+ * This class uses the following formula in \cite Deshpande1991 to approximate
+ * the denominator of GCV:
+ *
+ * \f[
+ * \frac{1}{m} \mathrm{tr}(I - P_A(\lambda))
+ * \approx \frac{\boldsymbol{w}^T}{\boldsymbol{w}^T \boldsymbol{w}}
+ * \left(\boldsymbol{w} - \frac{A A_\lambda^\#(\boldsymbol{y} + h
+ * \boldsymbol{w}) - A A_\lambda^\#
+ * \boldsymbol{y}}{h}\right)
+ * \f]
+ *
+ * where additional variables are
+ *
+ * - \f$ \boldsymbol{w} \f$: Random vector in the normal distribution.
+ * - \f$ h \f$: Small positive value to approximate derivative.
+ *
+ * Additionally, this class adds \f$ h \f$ to both the denominator and numerator
+ * of the GCV formula to improve stability. This modification does not exist in
+ * the original paper. However, without this heuristic, parameter search using
+ * GCV became unstable in my experiments due to approximation errors.
  */
-template <concepts::implicit_regularized_solver Solver>
+template <concepts::regularized_solver Solver>
 class implicit_gcv_calculator {
 public:
     //! Type of solvers.
@@ -109,9 +152,11 @@ public:
 
         solver_->change_data(*data_);
 
-        const scalar_type denominator = trace_sum * trace_sum;
+        const scalar_type denominator =
+            trace_sum * trace_sum + noise_multiplier_;
         const scalar_type numerator = solver_->residual_norm(solution_) /
-            static_cast<scalar_type>(data_size);
+                static_cast<scalar_type>(data_size) +
+            noise_multiplier_;
         return numerator / denominator;
     }
 
@@ -167,7 +212,7 @@ public:
      * \brief Generate noise with a random seed.
      */
     void generate_noise() {
-        std::mt19937 generator{std::random_device{}()};
+        std::mt19937 generator{};  // NOLINT: For reproducibility.
         generate_noise(generator);
     }
 
@@ -191,7 +236,7 @@ private:
     util::vector<data_type> noise_;
 
     //! Default rate of noise.
-    static constexpr scalar_type default_noise_rate = 1e-2;
+    static constexpr scalar_type default_noise_rate = 1e-6;
 
     //! Rate of noise.
     scalar_type noise_rate_{default_noise_rate};
@@ -219,11 +264,15 @@ private:
 };
 
 /*!
- * \brief Class to search optimal regularization parameter using GCV.
+ * \brief Class to search optimal regularization parameter using GCV for solvers
+ * using implicit formulas.
  *
  * \tparam Solver Type of solvers.
+ *
+ * For the method of computation of values of GCV, see \ref
+ * implicit_gcv_calculator.
  */
-template <concepts::implicit_regularized_solver Solver>
+template <concepts::regularized_solver Solver>
 class implicit_gcv : public logging::logging_mixin {
 public:
     //! Type of solvers.
@@ -272,7 +321,7 @@ public:
                 pow(static_cast<scalar_type>(10),  // NOLINT
                     log_param);
             const scalar_type gcv_value = calculator_(param);
-            NUM_COLLECT_LOG_TRACE(logger(), "gcv({}) = {}", param, gcv_value);
+            NUM_COLLECT_LOG_DEBUG(logger(), "gcv({}) = {}", param, gcv_value);
             return log10(gcv_value);
         };
         optimizer_.change_objective_function(objective_function);

@@ -25,6 +25,7 @@
 #include <fmt/format.h>
 
 #include "comparison_approvals.h"
+#include "num_collect/regularization/concepts/regularized_solver.h"
 #include "num_prob_collect/regularization/sparse_blur_matrix.h"
 #include "num_prob_collect/regularization/sparse_diff_matrix.h"
 
@@ -39,6 +40,9 @@ TEST_CASE("num_collect::regularization::tgv2_admm") {
     using data_type = Eigen::VectorX<scalar_type>;
     using solver_type =
         tgv2_admm<coeff_type, derivative_matrix_type, data_type>;
+
+    STATIC_CHECK(
+        num_collect::regularization::concepts::regularized_solver<solver_type>);
 
     SECTION("solve 1D problem") {
         constexpr num_collect::index_type solution_size = 15;

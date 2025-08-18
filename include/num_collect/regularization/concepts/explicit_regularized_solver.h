@@ -19,14 +19,10 @@
  */
 #pragma once
 
-#include <utility>
-
 #include <Eigen/Core>
 
 #include "num_collect/base/concepts/decayed_to.h"
-#include "num_collect/base/concepts/dense_matrix.h"
-#include "num_collect/base/concepts/real_scalar.h"
-#include "num_collect/base/index_type.h"
+#include "num_collect/regularization/concepts/regularized_solver.h"
 
 namespace num_collect::regularization::concepts {
 
@@ -34,22 +30,13 @@ namespace num_collect::regularization::concepts {
  * \brief Concept of solvers using explicit formulas for regularization.
  *
  * \tparam T Type.
+ *
+ * \note For APIs of functions, see
+ * \ref num_collect::regularization::explicit_regularized_solver_base class.
  */
 template <typename T>
-concept explicit_regularized_solver = requires() {
-    typename T::scalar_type;
-    requires base::concepts::real_scalar<typename T::scalar_type>;
-
-    typename T::data_type;
-    requires base::concepts::dense_matrix<typename T::data_type>;
-
-    requires std::is_same_v<typename T::scalar_type,
-        typename Eigen::NumTraits<typename T::data_type::Scalar>::Real>;
-
-    requires requires(T& solver, const typename T::scalar_type& param,
-        typename T::data_type& solution) { solver.solve(param, solution); };
-
-    requires requires(T& solver, const typename T::scalar_type& param) {
+concept explicit_regularized_solver = regularized_solver<T> && requires() {
+    requires requires(const T& solver, const typename T::scalar_type& param) {
         {
             solver.residual_norm(param)
         } -> base::concepts::decayed_to<typename T::scalar_type>;
@@ -74,13 +61,6 @@ concept explicit_regularized_solver = requires() {
         {
             solver.sum_of_filter_factor(param)
         } -> base::concepts::decayed_to<typename T::scalar_type>;
-
-        { solver.data_size() } -> base::concepts::decayed_to<index_type>;
-
-        {
-            solver.param_search_region()
-        } -> base::concepts::decayed_to<
-            std::pair<typename T::scalar_type, typename T::scalar_type>>;
 
         {
             solver.l_curve_curvature(param)

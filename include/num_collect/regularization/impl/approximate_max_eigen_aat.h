@@ -15,11 +15,12 @@
  */
 /*!
  * \file
- * \brief Definition of max_eigen_aat function.
+ * \brief Definition of approximate_max_eigen_aat function.
  */
 #pragma once
 
 #include <cmath>
+#include <random>
 
 #include <Eigen/Core>
 
@@ -34,26 +35,36 @@ namespace num_collect::regularization::impl {
  * for a matrix \f$ A \f$.
  *
  * \param[in] matrix Matrix.
- * \return Eigenvalue.
+ * \return Approximate value of the maximum eigenvalue.
  */
 template <typename Matrix>
     requires(base::concepts::real_scalar_dense_matrix<Matrix> ||
         base::concepts::real_scalar_sparse_matrix<Matrix>)
 [[nodiscard]] auto approximate_max_eigen_aat(const Matrix& matrix) ->
     typename Matrix::Scalar {
-    const index_type rows = matrix.rows();
     using scalar_type = typename Matrix::Scalar;
     using vector_type = Eigen::VectorX<scalar_type>;
-    vector_type vec = vector_type::Random(rows);
+
+    const index_type rows = matrix.rows();
+
+    std::mt19937 generator;  // NOLINT: For reproducibility.
+    std::uniform_real_distribution<scalar_type> distribution(
+        static_cast<scalar_type>(-1), static_cast<scalar_type>(1));
+    vector_type vec = vector_type::Zero(rows);
+    for (index_type i = 0; i < rows; ++i) {
+        vec(i) = distribution(generator);
+    }
     vec.normalize();
 
-    vector_type mul_vec = matrix * matrix.transpose() * vec;
+    vector_type at_vec = matrix.transpose() * vec;
+    vector_type mul_vec = matrix * at_vec;
     scalar_type eigen = vec.dot(mul_vec) / vec.squaredNorm();
     const index_type num_iterations = rows * 10;
     for (index_type i = 0; i < num_iterations; ++i) {
         const scalar_type eigen_before = eigen;
         vec = mul_vec.normalized();
-        mul_vec = matrix * matrix.transpose() * vec;
+        at_vec = matrix.transpose() * vec;
+        mul_vec = matrix * at_vec;
         eigen = vec.dot(mul_vec) / vec.squaredNorm();
         using std::abs;
         constexpr auto tol_update = static_cast<scalar_type>(1e-4);

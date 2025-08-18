@@ -1,8 +1,8 @@
 [image_denoising]
 # Number of rows.
-rows = 50
+rows = 40
 # Number of columns.
-cols = 50
+cols = 40
 # Noise rate.
 noise_rate = 0.05
 # Index of the sample image to be generated.
@@ -23,6 +23,12 @@ output_log_level_in_child_iterations = "warning"
 
 [[num_collect.logging.tag_configs]]
 tag = "num_collect::opt::gaussian_process_optimizer"
-output_log_level = "debug"
-output_log_level_in_child_iterations = "warning"
 iteration_output_period = 1
+
+# Enable following configuration for more logging.
+# [[num_collect.logging.tag_configs]]
+# tag = "num_collect::regularization::tv_admm"
+# output_log_level_in_child_iterations = "summary"
+# [[num_collect.logging.tag_configs]]
+# tag = "num_collect::regularization::tgv2_admm"
+# output_log_level_in_child_iterations = "summary"

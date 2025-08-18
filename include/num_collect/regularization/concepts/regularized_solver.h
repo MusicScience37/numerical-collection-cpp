@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 MusicScience37 (Kenta Kabashima)
+ * Copyright 2025 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of implicit_regularized_solver concept.
+ * \brief Definition of regularized_solver concept.
  */
 #pragma once
 
@@ -30,8 +30,16 @@
 
 namespace num_collect::regularization::concepts {
 
+/*!
+ * \brief Concept of solvers for regularization.
+ *
+ * \tparam T Type.
+ *
+ * \note For APIs of functions, see
+ * \ref num_collect::regularization::regularized_solver_base class.
+ */
 template <typename T>
-concept implicit_regularized_solver = requires() {
+concept regularized_solver = requires() {
     typename T::scalar_type;
     requires base::concepts::real_scalar<typename T::scalar_type>;
 
@@ -44,8 +52,17 @@ concept implicit_regularized_solver = requires() {
     requires requires(T& solver, const typename T::scalar_type& param,
         typename T::data_type& solution) { solver.solve(param, solution); };
 
+    requires requires(T& solver, const typename T::data_type& data) {
+        solver.change_data(data);
+    };
+
     requires requires(const T& solver) {
         { solver.data_size() } -> base::concepts::decayed_to<index_type>;
+    };
+
+    requires requires(const T& solver, const typename T::data_type& solution,
+        typename T::data_type& data) {
+        solver.calculate_data_for(solution, data);
     };
 
     requires requires(const T& solver) {
@@ -65,10 +82,6 @@ concept implicit_regularized_solver = requires() {
         {
             solver.regularization_term(solution)
         } -> base::concepts::decayed_to<typename T::scalar_type>;
-    };
-
-    requires requires(T& solver, const typename T::data_type& data) {
-        solver.change_data(data);
     };
 };
 

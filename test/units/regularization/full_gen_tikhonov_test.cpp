@@ -88,6 +88,43 @@ TEST_CASE("num_collect::regularization::full_gen_tikhonov") {
             (reg_mat * solution_small).squaredNorm());
     }
 
+    SECTION("change_data") {
+        constexpr num_collect::index_type solution_size = 15;
+        constexpr num_collect::index_type data_size = 30;
+        const auto prob = num_prob_collect::regularization::blur_sine(
+            data_size, solution_size);
+        const coeff_type reg_mat =
+            num_prob_collect::regularization::dense_diff_matrix<coeff_type>(
+                solution_size);
+
+        num_collect::regularization::full_gen_tikhonov<coeff_type, data_type>
+            full_gen_tikhonov;
+        full_gen_tikhonov.compute(prob.coeff(), prob.data(), reg_mat);
+        full_gen_tikhonov.change_data(prob.data());
+        Eigen::VectorXd solution;
+        full_gen_tikhonov.solve(0.0, solution);
+
+        REQUIRE_THAT(solution, eigen_approx(prob.solution()));
+    }
+
+    SECTION("calculate_data_for") {
+        constexpr num_collect::index_type solution_size = 15;
+        constexpr num_collect::index_type data_size = 30;
+        const auto prob = num_prob_collect::regularization::blur_sine(
+            data_size, solution_size);
+        const coeff_type reg_mat =
+            num_prob_collect::regularization::dense_diff_matrix<coeff_type>(
+                solution_size);
+
+        num_collect::regularization::full_gen_tikhonov<coeff_type, data_type>
+            full_gen_tikhonov;
+        full_gen_tikhonov.compute(prob.coeff(), prob.data(), reg_mat);
+        Eigen::VectorXd estimated_data;
+        full_gen_tikhonov.calculate_data_for(prob.solution(), estimated_data);
+
+        REQUIRE_THAT(estimated_data, eigen_approx(prob.data()));
+    }
+
     SECTION("check functions of the internal solver") {
         constexpr num_collect::index_type solution_size = 15;
         constexpr num_collect::index_type data_size = 30;
@@ -102,6 +139,8 @@ TEST_CASE("num_collect::regularization::full_gen_tikhonov") {
         full_gen_tikhonov.compute(prob.coeff(), prob.data(), reg_mat);
 
         constexpr double param = 1e-2;
+        Eigen::VectorXd solution;
+        full_gen_tikhonov.solve(param, solution);
 
         REQUIRE_THAT(full_gen_tikhonov.singular_values(),
             eigen_approx(
@@ -111,6 +150,15 @@ TEST_CASE("num_collect::regularization::full_gen_tikhonov") {
             Catch::Matchers::WithinRel(
                 full_gen_tikhonov.internal_solver().residual_norm(param)));
         REQUIRE_THAT(full_gen_tikhonov.regularization_term(param),
+            Catch::Matchers::WithinRel(
+                full_gen_tikhonov.internal_solver().regularization_term(
+                    param)));
+
+        REQUIRE_THAT(full_gen_tikhonov.residual_norm(solution),
+            Catch::Matchers::WithinRel(
+                full_gen_tikhonov.internal_solver().residual_norm(param),
+                1e-10));  // NOLINT
+        REQUIRE_THAT(full_gen_tikhonov.regularization_term(solution),
             Catch::Matchers::WithinRel(
                 full_gen_tikhonov.internal_solver().regularization_term(
                     param)));

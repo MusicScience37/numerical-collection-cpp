@@ -25,6 +25,7 @@
 #include <Eigen/Core>
 #include <stat_bench/benchmark_macros.h>
 #include <stat_bench/invocation_context.h>
+#include <stat_bench/measurement_config.h>
 #include <stat_bench/plot_option.h>
 
 #include "num_collect/regularization/explicit_gcv.h"
@@ -94,7 +95,7 @@ private:
     static constexpr num_collect::index_type solution_size = 30;
     static constexpr num_collect::index_type data_size = solution_size;
 #else
-    static constexpr num_collect::index_type solution_size = 60;
+    static constexpr num_collect::index_type solution_size = 100;
     static constexpr num_collect::index_type data_size = solution_size;
 #endif
     num_prob_collect::regularization::blur_sine prob_{data_size, solution_size};
@@ -112,6 +113,12 @@ using data_type =
     typename num_prob_collect::regularization::blur_sine::data_type;
 
 STAT_BENCH_GROUP("reg_blur_sine")
+    .clear_measurement_configs()
+    .add_measurement_config(stat_bench::MeasurementConfig()
+            .type("Processing Time")
+            .iterations(1)
+            .warming_up_samples(1)
+            .samples(10))
     .add_parameter_to_time_line_plot("noise_rate")
     .add_parameter_to_output_line_plot("noise_rate", "error_rate",
         stat_bench::PlotOption::log_parameter |

@@ -76,11 +76,11 @@ def perform_profiling(
         "pprof",
         "-pdf",
         f"-nodecount={nodecount}",
-        str(binary_path),
-        str(PROF_RESULTS_DIR / f"{name}.prof"),
     ]
     if focus != "":
-        pprof_command.append(f"--focus={focus}")
+        pprof_command.append(f"-focus={focus}")
+    pprof_command.append(str(binary_path))
+    pprof_command.append(str(PROF_RESULTS_DIR / f"{name}.prof"))
     process_result = subprocess.run(
         pprof_command,
         stdout=open(str(PROF_RESULTS_DIR / f"{name}.pdf"), mode="wb"),

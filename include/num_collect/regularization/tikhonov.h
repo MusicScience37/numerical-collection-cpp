@@ -27,6 +27,7 @@
 #include "num_collect/base/concepts/dense_matrix.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/regularization/explicit_regularized_solver_base.h"
 #include "num_collect/regularization/impl/coeff_param.h"  // IWYU pragma: keep
 #include "num_collect/util/impl/warn_fast_math_for_bdcsvc.h"  // IWYU pragma: keep
@@ -42,6 +43,18 @@ constexpr auto tikhonov_tag =
  *
  * \tparam Coeff Type of coefficient matrices.
  * \tparam Data Type of data vectors.
+ *
+ * This class minimizes the following function:
+ *
+ * \f[
+ *     \| A \boldsymbol{x} - \boldsymbol{y} \|_2^2
+ *     + \lambda \| \boldsymbol{x} \|_2^2
+ * \f]
+ *
+ * where \f$ A \f$ is a coefficient matrix,
+ * \f$ \boldsymbol{x} \f$ is a solution vector,
+ * \f$ \boldsymbol{y} \f$ is a data vector,
+ * \f$ \lambda \f$ is a regularization parameter.
  */
 template <base::concepts::dense_matrix Coeff, base::concepts::dense_matrix Data>
 class tikhonov
@@ -71,11 +84,19 @@ public:
      *
      * \param[in] coeff Coefficient matrix.
      * \param[in] data Data vector.
+     *
+     * \note Pointers to the arguments are saved in this object, so don't
+     * destruct those arguments.
      */
     void compute(const coeff_type& coeff, const data_type& data) {
         svd_.compute(coeff, Eigen::ComputeThinU | Eigen::ComputeThinV);
         rot_data_ = svd_.matrixU().adjoint() * data;
         const index_type rank = svd_.nonzeroSingularValues();
+        NUM_COLLECT_LOG_DEBUG(
+            this->logger(), "Rank of the coefficient matrix: {}", rank);
+        NUM_COLLECT_LOG_DEBUG(this->logger(),
+            "Maximum and minimum singular values: {}, {}",
+            svd_.singularValues()(0), svd_.singularValues()(rank - 1));
         min_res_ = (data -
             svd_.matrixU().leftCols(rank) *
                 svd_.matrixU().leftCols(rank).adjoint() * data)
@@ -92,6 +113,23 @@ public:
                 singular_value / (singular_value * singular_value + param);
             solution += factor * svd_.matrixV().col(i) * rot_data_.row(i);
         }
+    }
+
+    //! \copydoc num_collect::regularization::regularized_solver_base::change_data
+    void change_data(const data_type& data) {
+        rot_data_ = svd_.matrixU().adjoint() * data;
+        const index_type rank = svd_.nonzeroSingularValues();
+        min_res_ = (data -
+            svd_.matrixU().leftCols(rank) *
+                svd_.matrixU().leftCols(rank).adjoint() * data)
+                       .squaredNorm();
+    }
+
+    //! \copydoc num_collect::regularization::regularized_solver_base::calculate_data_for
+    void calculate_data_for(const data_type& solution, data_type& data) const {
+        data = svd_.matrixU() *
+            svd_.singularValues().cwiseProduct(
+                svd_.matrixV().adjoint() * solution);
     }
 
     /*!
@@ -118,6 +156,18 @@ public:
         return res + min_res_;
     }
 
+    //! \copydoc num_collect::regularization::regularized_solver_base::residual_norm
+    [[nodiscard]] auto residual_norm(const data_type& solution) const
+        -> scalar_type {
+        const index_type rank = svd_.nonzeroSingularValues();
+        const scalar_type nonzero_singular_value_term =
+            (svd_.singularValues().head(rank).cwiseProduct(
+                 svd_.matrixV().leftCols(rank).adjoint() * solution) -
+                rot_data_.head(rank))
+                .squaredNorm();
+        return nonzero_singular_value_term + min_res_;
+    }
+
     //! \copydoc num_collect::regularization::explicit_regularized_solver_base::regularization_term
     [[nodiscard]] auto regularization_term(const scalar_type& param) const
         -> scalar_type {
@@ -130,6 +180,12 @@ public:
                 rot_data_.row(i).squaredNorm();
         }
         return res;
+    }
+
+    //! \copydoc num_collect::regularization::regularized_solver_base::regularization_term
+    [[nodiscard]] auto regularization_term(const data_type& solution) const
+        -> scalar_type {
+        return solution.squaredNorm();
     }
 
     //! \copydoc num_collect::regularization::explicit_regularized_solver_base::first_derivative_of_residual_norm

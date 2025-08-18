@@ -30,6 +30,26 @@ namespace num_collect::regularization::impl {
  * \tparam Vector Type of the vector.
  * \param[in,out] target Vector to apply shrinkage operator.
  * \param[in] threshold Threshold.
+ *
+ * This function calculates the following function:
+ *
+ * \f[
+ * \mathcal{T}_a(x) \equiv
+ * \begin{cases}
+ *     x - a & \text{for $x > a$}  \\
+ *     x + a & \text{for $x < -a$} \\
+ *     0     & \text{otherwise}
+ * \end{cases}
+ * \f]
+ *
+ * This function has following meaning:
+ *
+ * \f[
+ * \mathcal{T}_a(x) =
+ * \mathrm{argmin}_{\boldsymbol{y}} \left(
+ * \|\boldsymbol{y}\|_1 + \frac{1}{2a} \|\boldsymbol{y} - \boldsymbol{x}\|_2^2
+ * \right)
+ * \f]
  */
 template <base::concepts::real_scalar_dense_vector Vector>
 void apply_shrinkage_operator(
@@ -43,7 +63,7 @@ void apply_shrinkage_operator(
         } else if (target(i) < -threshold) {
             target(i) += threshold;
         } else {
-            target(i) = 0.0;
+            target(i) = static_cast<typename Vector::Scalar>(0);
         }
     }
 }
