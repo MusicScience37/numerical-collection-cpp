@@ -126,6 +126,17 @@ public:
     }
 
     /*!
+     * \brief Set the maximum number of iterations.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto max_iterations(const index_type& val) -> operator_conjugate_gradient& {
+        max_iterations_ = val;
+        return *this;
+    }
+
+    /*!
      * \brief Get the number of iterations.
      *
      * \return Number of iterations.

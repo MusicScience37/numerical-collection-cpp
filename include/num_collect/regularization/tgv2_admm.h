@@ -317,7 +317,9 @@ public:
             rate_of_cg_tol_rate_to_tol_update_rate_ * tol_update_rate_;
         conjugate_gradient_solution_.tolerance_rate(
             conjugate_gradient_tolerance_rate);
+        conjugate_gradient_solution_.max_iterations(solution.rows());
         conjugate_gradient_z_.tolerance_rate(conjugate_gradient_tolerance_rate);
+        conjugate_gradient_z_.max_iterations(z_.rows());
     }
 
     //! \copydoc num_collect::regularization::iterative_regularized_solver_base::iterate
