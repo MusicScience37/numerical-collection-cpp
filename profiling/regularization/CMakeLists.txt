@@ -1,0 +1,1 @@
+add_profiling(profile_reg_ct_simulation_tgv2_admm ct_simulation_tgv2_admm.cpp)
