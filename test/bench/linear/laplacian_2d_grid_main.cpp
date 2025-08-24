@@ -17,15 +17,9 @@
  * \file
  * \brief Benchmark of solving equations of Laplacian matrices.
  */
-#include <algorithm>
-
 #include <stat_bench/benchmark_macros.h>
 #include <stat_bench/measurement_config.h>
 #include <stat_bench/plot_options.h>
-
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 
 STAT_BENCH_GROUP("laplacian_2d_grid")
     .add_parameter_to_time_line_plot(
@@ -47,13 +41,4 @@ STAT_BENCH_GROUP("laplacian_2d_grid_solve")
             .samples(10)
             .warming_up_samples(1));
 
-auto main(int argc, const char** argv) -> int {
-#ifdef _OPENMP
-    const int num_procs = omp_get_num_procs();
-    constexpr double threads_rate = 0.5;
-    const auto num_threads =
-        std::max(static_cast<int>(num_procs * threads_rate), 2);
-    omp_set_num_threads(num_threads);
-#endif
-    return stat_bench::impl::default_main(argc, argv);
-}
+STAT_BENCH_MAIN

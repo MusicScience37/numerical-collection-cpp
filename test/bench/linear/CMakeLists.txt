@@ -7,3 +7,4 @@ target_add_to_benchmark(bench_linear_laplacian_2d_grid)
 
 add_executable(bench_linear_csrbf_2d csrbf_2d_test.cpp)
 target_add_to_benchmark(bench_linear_csrbf_2d)
+target_link_libraries(bench_linear_csrbf_2d PRIVATE superlu::superlu metis)

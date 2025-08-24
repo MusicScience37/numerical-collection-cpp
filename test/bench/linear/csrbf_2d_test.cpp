@@ -22,6 +22,7 @@
 #include <Eigen/IterativeLinearSolvers>
 #include <Eigen/LU>
 #include <Eigen/SparseLU>
+#include <Eigen/SuperLUSupport>
 #include <stat_bench/benchmark_macros.h>
 #include <stat_bench/fixture_base.h>
 
@@ -156,6 +157,24 @@ STAT_BENCH_CASE_F(csrbf_2d_large_fixture, "csrbf_2d", "BiCGstab") {
     set_residual(matrix, sol, right);
 }
 
+STAT_BENCH_CASE_F(csrbf_2d_middle_fixture, "csrbf_2d", "BiCGstab-ILU") {
+    using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
+
+    const auto [matrix, right] = generate_problem<mat_type>(size());
+    Eigen::BiCGSTAB<mat_type, Eigen::IncompleteLUT<double>> solver;
+    Eigen::VectorXd sol;
+
+    STAT_BENCH_MEASURE() {
+        solver.setTolerance(tolerance);
+        solver.compute(matrix);
+        sol = solver.solve(right);
+        stat_bench::memory_barrier();
+    };
+
+    set_iterations(solver.iterations());
+    set_residual(matrix, sol, right);
+}
+
 STAT_BENCH_CASE_F(csrbf_2d_small_fixture, "csrbf_2d", "PartialPivLU") {
     using mat_type = Eigen::SparseMatrix<double, Eigen::ColMajor>;
 
@@ -179,6 +198,23 @@ STAT_BENCH_CASE_F(csrbf_2d_middle_fixture, "csrbf_2d", "SparseLU") {
 
     const auto [matrix, right] = generate_problem<mat_type>(size());
     Eigen::SparseLU<mat_type> solver;
+    Eigen::VectorXd sol;
+
+    STAT_BENCH_MEASURE() {
+        solver.compute(matrix);
+        sol = solver.solve(right);
+        stat_bench::memory_barrier();
+    };
+
+    set_iterations(1);
+    set_residual(matrix, sol, right);
+}
+
+STAT_BENCH_CASE_F(csrbf_2d_middle_fixture, "csrbf_2d", "SuperLU") {
+    using mat_type = Eigen::SparseMatrix<double, Eigen::ColMajor>;
+
+    const auto [matrix, right] = generate_problem<mat_type>(size());
+    Eigen::SuperLU<mat_type> solver;
     Eigen::VectorXd sol;
 
     STAT_BENCH_MEASURE() {

@@ -95,6 +95,8 @@ if(NUM_COLLECT_BUILD_EXAMPLES
    OR NUM_COLLECT_TESTING)
     find_package(cpp-plotly-plotter REQUIRED)
     find_package(lyra REQUIRED)
+    find_package(superlu REQUIRED)
+    find_package(metis REQUIRED)
 endif()
 
 # ##############################################################################
