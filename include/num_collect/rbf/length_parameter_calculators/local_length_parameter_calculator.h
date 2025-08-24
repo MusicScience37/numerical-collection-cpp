@@ -74,6 +74,7 @@ public:
             num_samples > 0, "Sample points must be given.");
 
         length_parameters_.resize(static_cast<index_type>(num_samples));
+        // TODO parallelization for many points
         for (std::size_t i = 0; i < num_samples; ++i) {
             auto min_distance = std::numeric_limits<scalar_type>::max();
             for (std::size_t j = 0; j < num_samples; ++j) {

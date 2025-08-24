@@ -45,6 +45,17 @@ namespace num_collect::rbf::impl {
  * \tparam KernelMatrixType Type of the kernel matrices.
  * \tparam UsesGlobalLengthParameter Whether to uses the globally fixed length
  * parameters.
+ *
+ * This class solves the following linear equations:
+ *
+ * \f[
+ * K \boldsymbol{c} = \boldsymbol{y}
+ * \f]
+ *
+ * where
+ * - \f$ K \f$ is a kernel matrix,
+ * - \f$ \boldsymbol{c} \f$ is a vector of coefficients for the kernel,
+ * - \f$ \boldsymbol{y} \f$ is a vector of function values.
  */
 template <typename KernelValue, typename FunctionValue,
     kernel_matrix_type KernelMatrixType, bool UsesGlobalLengthParameter>
@@ -55,6 +66,20 @@ class kernel_matrix_solver;
  *
  * \tparam KernelValue Type of values of the kernel.
  * \tparam FunctionValue Type of the function values.
+ *
+ * This class solves the following linear equations:
+ *
+ * \f[
+ * K \boldsymbol{c} = \boldsymbol{y}
+ * \f]
+ *
+ * where
+ * - \f$ K \f$ is a kernel matrix,
+ * - \f$ \boldsymbol{c} \f$ is a vector of coefficients for the kernel,
+ * - \f$ \boldsymbol{y} \f$ is a vector of function values.
+ *
+ * This specialization handles the case where the kernel matrix is dense and
+ * uses a global length parameter (i.e. the kernel matrix is symmetric).
  */
 template <typename KernelValue, typename FunctionValue>
 class kernel_matrix_solver<KernelValue, FunctionValue,
@@ -240,6 +265,21 @@ private:
  *
  * \tparam KernelValue Type of values of the kernel.
  * \tparam FunctionValue Type of the function values.
+ *
+ * This class solves the following linear equations:
+ *
+ * \f[
+ * K \boldsymbol{c} = \boldsymbol{y}
+ * \f]
+ *
+ * where
+ * - \f$ K \f$ is a kernel matrix,
+ * - \f$ \boldsymbol{c} \f$ is a vector of coefficients for the kernel,
+ * - \f$ \boldsymbol{y} \f$ is a vector of function values.
+ *
+ * This specialization handles the case where the kernel matrix is dense and
+ * uses the localized length parameters which causes a non-symmetric kernel
+ * matrix.
  */
 template <typename KernelValue, typename FunctionValue>
 class kernel_matrix_solver<KernelValue, FunctionValue,
@@ -296,6 +336,21 @@ private:
  *
  * \tparam KernelValue Type of values of the kernel.
  * \tparam FunctionValue Type of the function values.
+ *
+ * This class solves the following linear equations:
+ *
+ * \f[
+ * K \boldsymbol{c} = \boldsymbol{y}
+ * \f]
+ *
+ * where
+ * - \f$ K \f$ is a kernel matrix,
+ * - \f$ \boldsymbol{c} \f$ is a vector of coefficients for the kernel,
+ * - \f$ \boldsymbol{y} \f$ is a vector of function values.
+ *
+ * This specialization handles the case where the kernel matrix is sparse and
+ * uses the localized length parameters which causes a non-symmetric kernel
+ * matrix.
  */
 template <typename KernelValue, typename FunctionValue>
 class kernel_matrix_solver<KernelValue, FunctionValue,

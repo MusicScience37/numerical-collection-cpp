@@ -29,6 +29,11 @@ namespace num_collect::rbf::concepts {
  * \brief Concept of RBFs.
  *
  * \tparam T Type.
+ *
+ * For types and functions in this concept, see RBFs in
+ * \ref num_collect::rbf::rbfs namespace,
+ * for example
+ * \ref num_collect::rbf::rbfs::gaussian_rbf class.
  */
 template <typename T>
 concept rbf = requires() {

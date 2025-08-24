@@ -45,6 +45,32 @@ namespace num_collect::rbf::impl {
  * \tparam KernelMatrixType Type of the kernel matrices.
  * \tparam UsesGlobalLengthParameter Whether to uses the globally fixed length
  * parameters.
+ *
+ * This class solves the following linear equations:
+ *
+ * \f[
+ * \begin{pmatrix}
+ * K & P \\
+ * P^T & O
+ * \end{pmatrix}
+ * \begin{pmatrix}
+ * \boldsymbol{c} \\
+ * \boldsymbol{d}
+ * \end{pmatrix}
+ * =
+ * \begin{pmatrix}
+ * \boldsymbol{y} \\
+ * \boldsymbol{0}
+ * \end{pmatrix}
+ * \f]
+ *
+ * where
+ * - \f$ K \f$ is a kernel matrix,
+ * - \f$ P \f$ is a matrix of additional terms,
+ * - \f$ \boldsymbol{c} \f$ is a vector of coefficients for the kernel,
+ * - \f$ \boldsymbol{d} \f$ is a vector of coefficients for the additional
+ * terms,
+ * - \f$ \boldsymbol{y} \f$ is a vector of function values.
  */
 template <typename KernelValue, typename FunctionValue,
     kernel_matrix_type KernelMatrixType, bool UsesGlobalLengthParameter>
@@ -56,6 +82,32 @@ class general_spline_equation_solver;
  *
  * \tparam KernelValue Type of values of the kernel.
  * \tparam FunctionValue Type of the function values.
+ *
+ * This class solves the following linear equations:
+ *
+ * \f[
+ * \begin{pmatrix}
+ * K & P \\
+ * P^T & O
+ * \end{pmatrix}
+ * \begin{pmatrix}
+ * \boldsymbol{c} \\
+ * \boldsymbol{d}
+ * \end{pmatrix}
+ * =
+ * \begin{pmatrix}
+ * \boldsymbol{y} \\
+ * \boldsymbol{0}
+ * \end{pmatrix}
+ * \f]
+ *
+ * where
+ * - \f$ K \f$ is a kernel matrix,
+ * - \f$ P \f$ is a matrix of additional terms,
+ * - \f$ \boldsymbol{c} \f$ is a vector of coefficients for the kernel,
+ * - \f$ \boldsymbol{d} \f$ is a vector of coefficients for the additional
+ * terms,
+ * - \f$ \boldsymbol{y} \f$ is a vector of function values.
  */
 template <base::concepts::real_scalar KernelValue, typename FunctionValue>
 class general_spline_equation_solver<KernelValue, FunctionValue,
@@ -86,9 +138,9 @@ public:
     void compute(const kernel_matrix_type& kernel_matrix,
         const additional_matrix_type& additional_matrix,
         const vector_type& data) {
-        num_variables_ = kernel_matrix.rows();
-        NUM_COLLECT_PRECONDITION(kernel_matrix.cols() == num_variables_,
+        NUM_COLLECT_PRECONDITION(kernel_matrix.cols() == kernel_matrix.rows(),
             "Kernel matrix must be a square matrix.");
+        num_variables_ = kernel_matrix.rows();
         NUM_COLLECT_PRECONDITION(additional_matrix.rows() == num_variables_,
             "Matrix of additional terms must have the same number of rows as "
             "the kernel matrix.");
@@ -102,7 +154,7 @@ public:
         if (qr_decomposition_.rank() != additional_matrix.cols()) {
             NUM_COLLECT_LOG_AND_THROW(algorithm_failure,
                 "The matrix of additional terms must have full "
-                "column rank. (columns={}, rand={})",
+                "column rank. (columns={}, rank={})",
                 additional_matrix.cols(), qr_decomposition_.rank());
         }
         q_matrix_ = qr_decomposition_.householderQ();
@@ -160,6 +212,9 @@ public:
      */
     [[nodiscard]] auto calc_mle_objective(scalar_type reg_param) const
         -> scalar_type {
+        NUM_COLLECT_PRECONDITION(kernel_matrix_ != nullptr && data_ != nullptr,
+            "compute() must be called before solve().");
+
         reg_param = correct_reg_param_if_needed(reg_param);
 
         constexpr scalar_type limit = std::numeric_limits<scalar_type>::max() *

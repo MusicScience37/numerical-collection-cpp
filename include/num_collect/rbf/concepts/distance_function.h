@@ -29,6 +29,9 @@ namespace num_collect::rbf::concepts {
  * \brief Concept of distance functions.
  *
  * \tparam T Type.
+ *
+ * For types and functions, see
+ * \ref num_collect::rbf::distance_functions::euclidean_distance_function class.
  */
 template <typename T>
 concept distance_function = requires() {
