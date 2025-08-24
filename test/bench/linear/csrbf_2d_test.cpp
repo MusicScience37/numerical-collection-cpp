@@ -20,6 +20,8 @@
 #include <utility>
 
 #include <Eigen/IterativeLinearSolvers>
+#include <Eigen/LU>
+#include <Eigen/SparseLU>
 #include <stat_bench/benchmark_macros.h>
 #include <stat_bench/fixture_base.h>
 
@@ -42,11 +44,14 @@ template <num_collect::concepts::sparse_matrix_of<double> Matrix>
         num_collect::rbf::length_parameter_calculators::
             local_length_parameter_calculator<distance_function_type>;
 
+    constexpr double length_parameter_scale = 5.0;
+
     const auto nodes =
         num_collect::rbf::generate_halton_nodes<double, 2>(num_nodes);
     const distance_function_type distance_function;
     const rbf_type rbf;
     length_parameter_calculator_type length_parameter_calculator;
+    length_parameter_calculator.scale(length_parameter_scale);
     Matrix kernel_matrix;
     num_collect::rbf::compute_kernel_matrix(distance_function, rbf,
         length_parameter_calculator, nodes, kernel_matrix);
@@ -60,18 +65,8 @@ template <num_collect::concepts::sparse_matrix_of<double> Matrix>
     return {std::move(kernel_matrix), std::move(right)};
 }
 
-class csrbf_2d_fixture : public stat_bench::FixtureBase {
+class csrbf_2d_common_fixture : public stat_bench::FixtureBase {
 public:
-    csrbf_2d_fixture() {
-        add_param<num_collect::index_type>("size")
-            ->add(100)  // NOLINT
-#ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
-            ->add(1000)   // NOLINT
-            ->add(10000)  // NOLINT
-#endif
-            ;
-    }
-
     void setup(stat_bench::InvocationContext& context) override {
         size_ = context.get_param<num_collect::index_type>("size");
     }
@@ -96,9 +91,54 @@ private:
     num_collect::index_type size_{};
 };
 
+class csrbf_2d_large_fixture : public csrbf_2d_common_fixture {
+public:
+    csrbf_2d_large_fixture() {
+        add_param<num_collect::index_type>("size")
+            ->add(100)  // NOLINT
+#ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
+            ->add(300)    // NOLINT
+            ->add(1000)   // NOLINT
+            ->add(3000)   // NOLINT
+            ->add(10000)  // NOLINT
+            ->add(30000)  // NOLINT
+#endif
+            ;
+    }
+};
+
+class csrbf_2d_middle_fixture : public csrbf_2d_common_fixture {
+public:
+    csrbf_2d_middle_fixture() {
+        add_param<num_collect::index_type>("size")
+            ->add(100)  // NOLINT
+#ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
+            ->add(300)    // NOLINT
+            ->add(1000)   // NOLINT
+            ->add(3000)   // NOLINT
+            ->add(10000)  // NOLINT
+#endif
+            ;
+    }
+};
+
+class csrbf_2d_small_fixture : public csrbf_2d_common_fixture {
+public:
+    csrbf_2d_small_fixture() {
+        add_param<num_collect::index_type>("size")
+            ->add(100)  // NOLINT
+#ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
+            ->add(300)   // NOLINT
+            ->add(1000)  // NOLINT
+            ->add(3000)  // NOLINT
+#endif
+            ;
+    }
+};
+
 constexpr double tolerance = 1e-6;
 
-STAT_BENCH_CASE_F(csrbf_2d_fixture, "csrbf_2d", "BiCGstab") {
+STAT_BENCH_CASE_F(csrbf_2d_large_fixture, "csrbf_2d", "BiCGstab") {
     using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 
     const auto [matrix, right] = generate_problem<mat_type>(size());
@@ -113,6 +153,41 @@ STAT_BENCH_CASE_F(csrbf_2d_fixture, "csrbf_2d", "BiCGstab") {
     };
 
     set_iterations(solver.iterations());
+    set_residual(matrix, sol, right);
+}
+
+STAT_BENCH_CASE_F(csrbf_2d_small_fixture, "csrbf_2d", "PartialPivLU") {
+    using mat_type = Eigen::SparseMatrix<double, Eigen::ColMajor>;
+
+    const auto [sparse_matrix, right] = generate_problem<mat_type>(size());
+    const Eigen::MatrixXd matrix = sparse_matrix;
+    Eigen::PartialPivLU<Eigen::MatrixXd> solver;
+    Eigen::VectorXd sol;
+
+    STAT_BENCH_MEASURE() {
+        solver.compute(matrix);
+        sol = solver.solve(right);
+        stat_bench::memory_barrier();
+    };
+
+    set_iterations(1);
+    set_residual(matrix, sol, right);
+}
+
+STAT_BENCH_CASE_F(csrbf_2d_middle_fixture, "csrbf_2d", "SparseLU") {
+    using mat_type = Eigen::SparseMatrix<double, Eigen::ColMajor>;
+
+    const auto [matrix, right] = generate_problem<mat_type>(size());
+    Eigen::SparseLU<mat_type> solver;
+    Eigen::VectorXd sol;
+
+    STAT_BENCH_MEASURE() {
+        solver.compute(matrix);
+        sol = solver.solve(right);
+        stat_bench::memory_barrier();
+    };
+
+    set_iterations(1);
     set_residual(matrix, sol, right);
 }
 
