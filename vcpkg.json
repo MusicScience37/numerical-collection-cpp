@@ -14,6 +14,8 @@
     "pngpp",
     "libpng",
     "bfgroup-lyra",
-    "pkgconf"
+    "pkgconf",
+    "superlu",
+    "metis"
   ]
 }
