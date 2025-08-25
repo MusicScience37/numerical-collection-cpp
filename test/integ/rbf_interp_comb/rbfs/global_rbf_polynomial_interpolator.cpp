@@ -32,6 +32,7 @@
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
 #include "num_collect/rbf/rbfs/inverse_multi_quadric_rbf.h"
 #include "num_collect/rbf/rbfs/inverse_quadratic_rbf.h"
+#include "num_collect/rbf/rbfs/polyharmonic_spline_rbf.h"
 #include "num_collect/rbf/rbfs/sech_rbf.h"
 #include "num_collect/rbf/rbfs/wendland_csrbf.h"
 
@@ -41,7 +42,8 @@ TEMPLATE_TEST_CASE("global_rbf_polynomial_interpolator with different RBFs", "",
     num_collect::rbf::rbfs::inverse_multi_quadric_rbf<double>,
     num_collect::rbf::rbfs::inverse_quadratic_rbf<double>,
     num_collect::rbf::rbfs::sech_rbf<double>,
-    (num_collect::rbf::rbfs::wendland_csrbf<double, 3, 1>)) {
+    (num_collect::rbf::rbfs::wendland_csrbf<double, 3, 1>),
+    (num_collect::rbf::rbfs::polyharmonic_spline_rbf<double, 3>)) {
     using num_collect::rbf::global_rbf_polynomial_interpolator;
 
     using variable_type = double;

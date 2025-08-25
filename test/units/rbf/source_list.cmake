@@ -15,6 +15,7 @@ set(SOURCE_FILES
     rbfs/inverse_multi_quadric_rbf_test.cpp
     rbfs/inverse_quadratic_rbf_test.cpp
     rbfs/multi_quadric_rbf_test.cpp
+    rbfs/polyharmonic_spline_rbf_test.cpp
     rbfs/sech_rbf_test.cpp
     rbfs/wendland_csrbf_test.cpp
 )
