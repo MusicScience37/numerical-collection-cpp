@@ -82,6 +82,7 @@ inline void compute_kernel_matrix(const DistanceFunction& distance_function,
     kernel_matrix.resize(static_cast<index_type>(num_variables),
         static_cast<index_type>(num_variables));
 
+    // TODO parallelization for many points
     for (std::size_t i = 0; i < num_variables; ++i) {
         kernel_matrix(static_cast<index_type>(i), static_cast<index_type>(i)) =
             diagonal_coeff;
@@ -134,6 +135,7 @@ inline void compute_kernel_matrix(const DistanceFunction& distance_function,
     kernel_matrix.resize(static_cast<index_type>(num_variables),
         static_cast<index_type>(num_variables));
 
+    // TODO parallelization for many points
     for (std::size_t j = 0; j < num_variables; ++j) {
         const scalar_type length_parameter =
             length_parameter_calculator.length_parameter_at(
@@ -191,6 +193,7 @@ inline void compute_kernel_matrix(const DistanceFunction& distance_function,
     std::vector<
         Eigen::Triplet<scalar_type, typename KernelMatrix::StorageIndex>>
         triplets;
+    // TODO parallelization for many points
     for (int j = 0; j < num_variables; ++j) {
         const scalar_type length_parameter =
             length_parameter_calculator.length_parameter_at(j);

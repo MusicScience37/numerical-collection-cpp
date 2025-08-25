@@ -137,6 +137,7 @@ public:
      * \param[in] num_dimensions Dimensions of variables.
      */
     void prepare(index_type num_dimensions) {
+        // TODO support of more degrees.
         static_assert(
             PolynomialDegree < 2, "Currently, up to 1 degree is supported.");
         index_type num_patterns = 1;

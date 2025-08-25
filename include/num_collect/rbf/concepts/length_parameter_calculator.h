@@ -32,6 +32,11 @@ namespace num_collect::rbf::concepts {
  * \brief Concept of calculator of length parameters.
  *
  * \tparam T Type.
+ *
+ * For types and functions in this concept, see
+ * \ref
+ * num_collect::rbf::length_parameter_calculators::global_length_parameter_calculator
+ * class.
  */
 template <typename T>
 concept length_parameter_calculator = requires() {

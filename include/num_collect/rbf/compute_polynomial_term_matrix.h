@@ -65,6 +65,7 @@ template <index_type PolynomialDegree, base::concepts::dense_vector Variable,
     requires(PolynomialDegree >= 0)
 inline void compute_polynomial_term_matrix(
     const std::vector<Variable>& variables, Matrix& matrix) {
+    // TODO support of more degrees.
     static_assert(
         PolynomialDegree < 2, "Currently, up to 1 degree is supported.");
 

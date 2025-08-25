@@ -30,8 +30,8 @@ namespace num_collect::rbf::rbfs {
  *
  * \tparam Scalar Type of scalars.
  *
- * \warning This RBF is written in \cite Fornberg2015, but didn't work in RBF
- * interpolation.
+ * \warning This RBF is written in \cite Fornberg2015, but didn't work in this
+ * library.
  */
 template <base::concepts::real_scalar Scalar>
 class multi_quadric_rbf {

@@ -29,6 +29,13 @@ namespace num_collect::rbf::concepts {
  * \brief Concept of CSRBFs (compactly supported RBFs).
  *
  * \tparam T Type.
+ *
+ * An RBF with a finite support can implement `support_boundary` function to
+ * specify the support.
+ * Some functions in rbf module handles such RBFs differently for efficiency.
+ *
+ * For example, \ref num_collect::rbf::rbfs::wendland_csrbf class satisfies this
+ * concept.
  */
 template <typename T>
 concept csrbf = rbf<T> && requires() {
