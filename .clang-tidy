@@ -12,6 +12,7 @@ Checks: >
     -cppcoreguidelines-avoid-const-or-ref-data-members,
     -cppcoreguidelines-missing-std-forward,
     -cppcoreguidelines-avoid-do-while,
+    -cppcoreguidelines-c-copy-assignment-signature,
   google-*,
     -google-runtime-references,
     -google-readability-todo,
@@ -82,6 +83,7 @@ Checks: >
 # - bugprone-crtp-constructor-accessibility generates too many warnings in existing codes.
 # - modernize-use-ranges generates too many warnings in existing codes.
 # - hicpp-use-auto, modernize-use-auto should not be fixed in source codes using Eigen library.
+# - cppcoreguidelines-c-copy-assignment-signature generates false positives.
 
 CheckOptions:
   # Naming Conventions

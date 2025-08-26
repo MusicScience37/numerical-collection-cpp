@@ -34,7 +34,7 @@ TEST_CASE("num_collect::util::vector_view") {
     SECTION("default constructor") {
         vector_view<double> view;
         CHECK(view.data() == nullptr);
-        CHECK(view.size() == 0);
+        CHECK(view.size() == 0);  // NOLINT
     }
 
     SECTION("create from a pointer to data and its size") {
