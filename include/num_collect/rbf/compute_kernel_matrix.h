@@ -35,6 +35,7 @@
 #include "num_collect/rbf/concepts/rbf.h"
 #include "num_collect/util/assert.h"
 #include "num_collect/util/safe_cast.h"
+#include "num_collect/util/vector_view.h"
 
 namespace num_collect::rbf {
 
@@ -65,35 +66,30 @@ template <concepts::distance_function DistanceFunction, concepts::rbf RBF,
     LengthParameterCalculator::uses_global_length_parameter
 inline void compute_kernel_matrix(const DistanceFunction& distance_function,
     const RBF& rbf, LengthParameterCalculator& length_parameter_calculator,
-    const std::vector<typename DistanceFunction::variable_type>& variables,
+    util::vector_view<const typename DistanceFunction::variable_type> variables,
     KernelMatrix& kernel_matrix) {
     using scalar_type = typename KernelMatrix::Scalar;
 
     length_parameter_calculator.compute(variables, distance_function);
 
     const scalar_type length_parameter =
-        length_parameter_calculator.length_parameter_at(
-            static_cast<index_type>(0));
+        length_parameter_calculator.length_parameter_at(0);
     NUM_COLLECT_ASSERT(length_parameter > static_cast<scalar_type>(0));
 
     const scalar_type diagonal_coeff = rbf(constants::zero<scalar_type>);
 
-    const std::size_t num_variables = variables.size();
-    kernel_matrix.resize(static_cast<index_type>(num_variables),
-        static_cast<index_type>(num_variables));
+    const index_type num_variables = variables.size();
+    kernel_matrix.resize(num_variables, num_variables);
 
     // TODO parallelization for many points
-    for (std::size_t i = 0; i < num_variables; ++i) {
-        kernel_matrix(static_cast<index_type>(i), static_cast<index_type>(i)) =
-            diagonal_coeff;
-        for (std::size_t j = i + 1; j < num_variables; ++j) {
+    for (index_type i = 0; i < num_variables; ++i) {
+        kernel_matrix(i, i) = diagonal_coeff;
+        for (index_type j = i + 1; j < num_variables; ++j) {
             const scalar_type value =
                 rbf(distance_function(variables[i], variables[j]) /
                     length_parameter);
-            kernel_matrix(
-                static_cast<index_type>(i), static_cast<index_type>(j)) = value;
-            kernel_matrix(
-                static_cast<index_type>(j), static_cast<index_type>(i)) = value;
+            kernel_matrix(i, j) = value;
+            kernel_matrix(j, i) = value;
         }
     }
 }
@@ -125,29 +121,26 @@ template <concepts::distance_function DistanceFunction, concepts::rbf RBF,
     (!LengthParameterCalculator::uses_global_length_parameter)
 inline void compute_kernel_matrix(const DistanceFunction& distance_function,
     const RBF& rbf, LengthParameterCalculator& length_parameter_calculator,
-    const std::vector<typename DistanceFunction::variable_type>& variables,
+    util::vector_view<const typename DistanceFunction::variable_type> variables,
     KernelMatrix& kernel_matrix) {
     using scalar_type = typename KernelMatrix::Scalar;
 
     length_parameter_calculator.compute(variables, distance_function);
 
-    const std::size_t num_variables = variables.size();
-    kernel_matrix.resize(static_cast<index_type>(num_variables),
-        static_cast<index_type>(num_variables));
+    const index_type num_variables = variables.size();
+    kernel_matrix.resize(num_variables, num_variables);
 
     // TODO parallelization for many points
-    for (std::size_t j = 0; j < num_variables; ++j) {
+    for (index_type j = 0; j < num_variables; ++j) {
         const scalar_type length_parameter =
-            length_parameter_calculator.length_parameter_at(
-                static_cast<index_type>(j));
+            length_parameter_calculator.length_parameter_at(j);
         NUM_COLLECT_ASSERT(length_parameter > static_cast<scalar_type>(0));
 
-        for (std::size_t i = 0; i < num_variables; ++i) {
+        for (index_type i = 0; i < num_variables; ++i) {
             const scalar_type value =
                 rbf(distance_function(variables[i], variables[j]) /
                     length_parameter);
-            kernel_matrix(
-                static_cast<index_type>(i), static_cast<index_type>(j)) = value;
+            kernel_matrix(i, j) = value;
         }
     }
 }
@@ -179,36 +172,35 @@ template <concepts::distance_function DistanceFunction, concepts::csrbf RBF,
         typename KernelMatrix::Scalar>
 inline void compute_kernel_matrix(const DistanceFunction& distance_function,
     const RBF& rbf, LengthParameterCalculator& length_parameter_calculator,
-    const std::vector<typename DistanceFunction::variable_type>& variables,
+    util::vector_view<const typename DistanceFunction::variable_type> variables,
     KernelMatrix& kernel_matrix) {
     using scalar_type = typename KernelMatrix::Scalar;
+    using storage_index_type = typename KernelMatrix::StorageIndex;
 
     length_parameter_calculator.compute(variables, distance_function);
 
-    const auto num_variables = util::safe_cast<int>(variables.size());
+    const index_type num_variables = variables.size();
     kernel_matrix.resize(num_variables, num_variables);
 
     const scalar_type support_boundary = RBF::support_boundary();
 
-    std::vector<
-        Eigen::Triplet<scalar_type, typename KernelMatrix::StorageIndex>>
-        triplets;
+    std::vector<Eigen::Triplet<scalar_type, storage_index_type>> triplets;
     // TODO parallelization for many points
-    for (int j = 0; j < num_variables; ++j) {
+    for (index_type j = 0; j < num_variables; ++j) {
         const scalar_type length_parameter =
             length_parameter_calculator.length_parameter_at(j);
         NUM_COLLECT_ASSERT(length_parameter > static_cast<scalar_type>(0));
 
-        for (int i = 0; i < num_variables; ++i) {
+        for (index_type i = 0; i < num_variables; ++i) {
             const scalar_type distance_rate =
-                distance_function(variables[static_cast<std::size_t>(i)],
-                    variables[static_cast<std::size_t>(j)]) /
+                distance_function(variables[i], variables[j]) /
                 length_parameter;
             if (distance_rate >= support_boundary) {
                 continue;
             }
             const scalar_type value = rbf(distance_rate);
-            triplets.emplace_back(i, j, value);
+            triplets.emplace_back(static_cast<storage_index_type>(i),
+                static_cast<storage_index_type>(j), value);
         }
     }
     kernel_matrix.setFromTriplets(triplets.begin(), triplets.end());
