@@ -21,7 +21,6 @@
 
 #include <cstddef>
 #include <limits>
-#include <vector>
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
@@ -29,6 +28,7 @@
 #include "num_collect/constants/zero.h"  // IWYU pragma: keep
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/rbf/concepts/distance_function.h"
+#include "num_collect/util/vector_view.h"
 
 namespace num_collect::rbf::length_parameter_calculators {
 
@@ -64,17 +64,17 @@ public:
      * \param[in] variables Variables.
      * \param[in] distance_function Distance function.
      */
-    void compute(const std::vector<variable_type>& variables,
+    void compute(util::vector_view<const variable_type> variables,
         const distance_function_type& distance_function) {
-        const std::size_t num_samples = variables.size();
+        const index_type num_samples = variables.size();
         NUM_COLLECT_PRECONDITION(
             num_samples > 0, "Sample points must be given.");
 
         auto max_min_distance = constants::zero<scalar_type>;
         // TODO parallelization for many points handling max_min_distance
-        for (std::size_t i = 0; i < num_samples; ++i) {
+        for (index_type i = 0; i < num_samples; ++i) {
             auto min_distance = std::numeric_limits<scalar_type>::max();
-            for (std::size_t j = 0; j < num_samples; ++j) {
+            for (index_type j = 0; j < num_samples; ++j) {
                 if (i != j) {
                     const auto distance =
                         distance_function(variables[i], variables[j]);
