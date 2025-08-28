@@ -20,7 +20,6 @@
 #pragma once
 
 #include <cstddef>
-#include <vector>
 
 #include <Eigen/Core>
 
@@ -47,6 +46,7 @@
 #include "num_collect/rbf/length_parameter_calculators/local_length_parameter_calculator.h"
 #include "num_collect/rbf/polynomial_calculator.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
+#include "num_collect/util/vector_view.h"
 
 namespace num_collect::rbf {
 
@@ -163,7 +163,7 @@ public:
      * \note Pointer to the variables are saved internally,
      * so do not destruct it.
      */
-    void compute(const std::vector<variable_type>& variables,
+    void compute(util::vector_view<const variable_type> variables,
         const function_value_vector_type& function_values) {
         const auto num_variables = static_cast<index_type>(variables.size());
         NUM_COLLECT_PRECONDITION(
@@ -178,7 +178,7 @@ public:
         equation_solver_.compute(
             kernel_matrix_, polynomial_matrix_, function_values);
         equation_solver_.solve(kernel_coeffs_, polynomial_coeffs_, reg_param);
-        variables_ = &variables;
+        variables_ = variables;
     }
 
     /*!
@@ -191,19 +191,16 @@ public:
         -> function_value_type {
         auto value = static_cast<function_value_type>(0);
 
-        for (std::size_t i = 0; i < variables_->size(); ++i) {
+        for (index_type i = 0; i < variables_.size(); ++i) {
             const kernel_value_type distance_rate =
-                distance_function_(variable, (*variables_)[i]) /
-                length_parameter_calculator_.length_parameter_at(
-                    static_cast<index_type>(i));
+                distance_function_(variable, variables_[i]) /
+                length_parameter_calculator_.length_parameter_at(i);
             if constexpr (concepts::csrbf<rbf_type>) {
                 if (distance_rate < rbf_type::support_boundary()) {
-                    value += kernel_coeffs_(static_cast<index_type>(i)) *
-                        rbf_(distance_rate);
+                    value += kernel_coeffs_(i) * rbf_(distance_rate);
                 }
             } else {
-                value += kernel_coeffs_(static_cast<index_type>(i)) *
-                    rbf_(distance_rate);
+                value += kernel_coeffs_(i) * rbf_(distance_rate);
             }
         }
 
@@ -235,7 +232,7 @@ public:
      * internal parameter.
      */
     void optimize_length_parameter_scale(
-        const std::vector<variable_type>& variables,
+        util::vector_view<const variable_type> variables,
         const function_value_vector_type& function_values,
         index_type max_mle_evaluations = default_max_mle_evaluations)
         requires uses_global_length_parameter
@@ -357,7 +354,7 @@ private:
     polynomial_matrix_type polynomial_matrix_{};
 
     //! Variables.
-    const std::vector<variable_type>* variables_{nullptr};
+    util::vector_view<const variable_type> variables_{};
 
     //! Solver of linear equations.
     equation_solver_type equation_solver_{};

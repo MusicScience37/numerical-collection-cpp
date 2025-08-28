@@ -52,13 +52,11 @@ TEMPLATE_TEST_CASE("gaussian_process_interpolator with different RBFs", "",
         return std::cos(num_collect::constants::pi<double> * x);
     };
 
-    const auto sample_variables = std::vector<double>{0.0, 0.5, 0.8, 1.0};
+    const auto sample_variables = Eigen::VectorXd{{0.0, 0.5, 0.8, 1.0}};
     Eigen::VectorXd sample_values{};
-    sample_values.resize(
-        static_cast<num_collect::index_type>(sample_variables.size()));
-    for (std::size_t i = 0; i < sample_variables.size(); ++i) {
-        sample_values(static_cast<num_collect::index_type>(i)) =
-            function(sample_variables[i]);
+    sample_values.resize(sample_variables.size());
+    for (num_collect::index_type i = 0; i < sample_variables.size(); ++i) {
+        sample_values(i) = function(sample_variables[i]);
     }
 
     interpolator.optimize_length_parameter_scale(

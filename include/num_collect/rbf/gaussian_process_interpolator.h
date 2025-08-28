@@ -22,7 +22,6 @@
 #include <algorithm>
 #include <cstddef>
 #include <utility>
-#include <vector>
 
 #include <Eigen/Core>
 
@@ -35,6 +34,7 @@
 #include "num_collect/rbf/kernel_matrix_type.h"
 #include "num_collect/rbf/rbf_interpolator.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
+#include "num_collect/util/vector_view.h"
 
 namespace num_collect::rbf {
 
@@ -86,7 +86,7 @@ public:
      * \note Pointer to the variables are saved internally,
      * so do not destruct it.
      */
-    void compute(const std::vector<variable_type>& variables,
+    void compute(util::vector_view<const variable_type> variables,
         const function_value_vector_type& function_values) {
         base_type::compute(variables, function_values);
         common_coeff_ = function_values.dot(coeffs()) /
@@ -104,7 +104,7 @@ public:
         -> std::pair<function_value_type, function_value_type> {
         Eigen::VectorXd kernel_vec;
         kernel_vec.resize(static_cast<index_type>(variables().size()));
-        for (std::size_t i = 0; i < variables().size(); ++i) {
+        for (index_type i = 0; i < variables().size(); ++i) {
             kernel_vec(static_cast<index_type>(i)) =
                 rbf()(distance_function()(variable, variables()[i]) /
                     length_parameter_calculator().length_parameter_at(
