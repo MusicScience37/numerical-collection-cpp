@@ -105,10 +105,9 @@ public:
         Eigen::VectorXd kernel_vec;
         kernel_vec.resize(static_cast<index_type>(variables().size()));
         for (index_type i = 0; i < variables().size(); ++i) {
-            kernel_vec(static_cast<index_type>(i)) =
+            kernel_vec(i) =
                 rbf()(distance_function()(variable, variables()[i]) /
-                    length_parameter_calculator().length_parameter_at(
-                        static_cast<index_type>(i)));
+                    length_parameter_calculator().length_parameter_at(i));
         }
 
         const function_value_type mean = kernel_vec.dot(coeffs());
