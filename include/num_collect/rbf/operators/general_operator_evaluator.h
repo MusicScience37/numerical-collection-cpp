@@ -22,6 +22,7 @@
 #include <Eigen/Core>
 
 #include "num_collect/base/concepts/dense_vector.h"
+#include "num_collect/base/index_type.h"
 #include "num_collect/rbf/concepts/length_parameter_calculator.h"
 #include "num_collect/rbf/concepts/rbf.h"
 #include "num_collect/util/vector_view.h"

@@ -21,6 +21,7 @@
 
 #include <utility>
 
+#include "num_collect/base/precondition.h"
 #include "num_collect/rbf/concepts/csrbf.h"
 #include "num_collect/rbf/concepts/rbf.h"
 #include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
@@ -103,6 +104,9 @@ struct operator_evaluator<function_value_operator<Variable>, RBF,
         const operator_type& target_operator,
         const variable_type& sample_variable, const FunctionValue& kernel_coeff)
         -> FunctionValue {
+        NUM_COLLECT_PRECONDITION(
+            length_parameter > static_cast<kernel_value_type>(0),
+            "Length parameter must be a positive value.");
         const kernel_value_type distance_rate =
             distance_function(target_operator.variable(), sample_variable) /
             length_parameter;
