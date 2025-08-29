@@ -27,11 +27,13 @@
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/constants/pi.h"
+#include "num_collect/rbf/generate_halton_nodes.h"
 #include "num_collect/rbf/operators/operator_evaluator.h"
 #include "num_collect/rbf/rbf_interpolator.h"
 
 TEST_CASE("num_collect::rbf::operators::function_value_operator") {
     using num_collect::index_type;
+    using num_collect::rbf::generate_halton_nodes;
     using num_collect::rbf::global_rbf_interpolator;
     using num_collect::rbf::operators::function_value_operator;
     using num_collect::rbf::operators::operator_evaluator;
@@ -58,16 +60,41 @@ TEST_CASE("num_collect::rbf::operators::function_value_operator") {
 
         constexpr double evaluated_variable = 0.55;
         const double evaluated_value =
-            operator_evaluator<function_value_operator<double>,
-                typename rbf_interpolator_type::rbf_type,
-                typename rbf_interpolator_type::distance_function_type>::
-                evaluate(interpolator.distance_function(), interpolator.rbf(),
-                    interpolator.length_parameter_calculator(),
-                    function_value_operator(evaluated_variable),
-                    sample_variables, interpolator.coeffs());
+            interpolator.evaluate(function_value_operator(evaluated_variable));
         const double expected_value = function(evaluated_variable);
 
         constexpr double tol = 1e-2;
+        CHECK_THAT(
+            evaluated_value, Catch::Matchers::WithinAbs(expected_value, tol));
+    }
+
+    SECTION("evaluate an operator for a two-dimensional variable") {
+        using rbf_interpolator_type =
+            global_rbf_interpolator<double(Eigen::Vector2d)>;
+
+        const auto function = [](const Eigen::Vector2d& variable) {
+            return variable.squaredNorm();
+        };
+
+        const auto sample_variables = generate_halton_nodes<double, 2>(100);
+        Eigen::VectorXd sample_values{};
+        sample_values.resize(static_cast<index_type>(sample_variables.size()));
+        for (std::size_t i = 0; i < sample_variables.size(); ++i) {
+            sample_values(static_cast<index_type>(i)) =
+                function(sample_variables[i]);
+        }
+
+        rbf_interpolator_type interpolator;
+        constexpr double length_parameter_scale = 2.0;
+        interpolator.fix_length_parameter_scale(length_parameter_scale);
+        interpolator.compute(sample_variables, sample_values);
+
+        const Eigen::Vector2d evaluated_variable(0.3, 0.4);
+        const double evaluated_value =
+            interpolator.evaluate(function_value_operator(evaluated_variable));
+        const double expected_value = function(evaluated_variable);
+
+        constexpr double tol = 1e-3;
         CHECK_THAT(
             evaluated_value, Catch::Matchers::WithinAbs(expected_value, tol));
     }

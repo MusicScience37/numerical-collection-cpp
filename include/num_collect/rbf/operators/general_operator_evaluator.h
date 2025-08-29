@@ -36,8 +36,6 @@ namespace num_collect::rbf::operators {
  * \tparam Operator Type of the operator.
  * \tparam RBF Type of the RBF.
  * \tparam DistanceFunction Type of the distance function.
- *
- *
  */
 template <typename Derived, typename Operator, concepts::rbf RBF,
     concepts::distance_function DistanceFunction>
