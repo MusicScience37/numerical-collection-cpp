@@ -23,3 +23,4 @@
 #include "safe_cast_test.cpp"         // NOLINT(bugprone-suspicious-include)
 #include "source_info_view_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "static_stack_test.cpp"      // NOLINT(bugprone-suspicious-include)
+#include "vector_view_test.cpp"       // NOLINT(bugprone-suspicious-include)

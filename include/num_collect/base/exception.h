@@ -86,6 +86,14 @@ public:
 };
 
 /*!
+ * \brief Class of exceptions thrown when an index is out of range.
+ */
+class out_of_range : public invalid_argument {
+public:
+    using invalid_argument::invalid_argument;
+};
+
+/*!
  * \brief Class of exceptions thrown when an algorithm fails to solve a problem.
  *
  * \note \ref num_collect::base::precondition_not_satisfied or

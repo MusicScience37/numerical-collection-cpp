@@ -21,7 +21,6 @@
 
 #include <cstddef>
 #include <type_traits>  // IWYU pragma: keep
-#include <vector>
 
 #include <Eigen/Core>
 
@@ -45,6 +44,7 @@
 #include "num_collect/rbf/length_parameter_calculators/local_length_parameter_calculator.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
 #include "num_collect/rbf/rbfs/wendland_csrbf.h"
+#include "num_collect/util/vector_view.h"
 
 namespace num_collect::rbf {
 
@@ -159,13 +159,13 @@ public:
      * \note Pointer to the variables are saved internally,
      * so do not destruct it.
      */
-    void compute(const std::vector<variable_type>& variables,
+    void compute(util::vector_view<const variable_type> variables,
         const function_value_vector_type& function_values) {
         compute_kernel_matrix(distance_function_, rbf_,
             length_parameter_calculator_, variables, kernel_matrix_);
         kernel_matrix_solver_.compute(kernel_matrix_, function_values);
         kernel_matrix_solver_.solve(coeffs_, reg_param, function_values);
-        variables_ = &variables;
+        variables_ = variables;
     }
 
     /*!
@@ -177,19 +177,16 @@ public:
     [[nodiscard]] auto interpolate(const variable_type& variable) const
         -> function_value_type {
         auto value = static_cast<function_value_type>(0);
-        for (std::size_t i = 0; i < variables_->size(); ++i) {
+        for (index_type i = 0; i < variables_.size(); ++i) {
             const kernel_value_type distance_rate =
-                distance_function_(variable, (*variables_)[i]) /
-                length_parameter_calculator_.length_parameter_at(
-                    static_cast<index_type>(i));
+                distance_function_(variable, variables_[i]) /
+                length_parameter_calculator_.length_parameter_at(i);
             if constexpr (concepts::csrbf<rbf_type>) {
                 if (distance_rate < rbf_type::support_boundary()) {
-                    value += coeffs_(static_cast<index_type>(i)) *
-                        rbf_(distance_rate);
+                    value += coeffs_(i) * rbf_(distance_rate);
                 }
             } else {
-                value +=
-                    coeffs_(static_cast<index_type>(i)) * rbf_(distance_rate);
+                value += coeffs_(i) * rbf_(distance_rate);
             }
         }
         return value;
@@ -217,7 +214,7 @@ public:
      * internal parameter.
      */
     void optimize_length_parameter_scale(
-        const std::vector<variable_type>& variables,
+        util::vector_view<const variable_type> variables,
         const function_value_vector_type& function_values,
         index_type max_mle_evaluations = default_max_mle_evaluations)
         requires uses_global_length_parameter
@@ -305,8 +302,8 @@ protected:
      * \return Variables.
      */
     [[nodiscard]] auto variables() const noexcept
-        -> const std::vector<variable_type>& {
-        return *variables_;
+        -> const util::vector_view<const variable_type>& {
+        return variables_;
     }
 
     /*!
@@ -338,7 +335,7 @@ private:
     kernel_matrix_type kernel_matrix_{};
 
     //! Variables.
-    const std::vector<variable_type>* variables_{nullptr};
+    util::vector_view<const variable_type> variables_{};
 
     //! Solver of the linear equation of kernel matrix.
     kernel_matrix_solver_type kernel_matrix_solver_{};

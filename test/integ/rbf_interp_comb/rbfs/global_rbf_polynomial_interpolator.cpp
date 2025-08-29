@@ -19,7 +19,6 @@
  */
 #include <cmath>
 #include <cstddef>
-#include <vector>
 
 #include <Eigen/Core>
 #include <catch2/catch_template_test_macros.hpp>
@@ -35,6 +34,7 @@
 #include "num_collect/rbf/rbfs/polyharmonic_spline_rbf.h"
 #include "num_collect/rbf/rbfs/sech_rbf.h"
 #include "num_collect/rbf/rbfs/wendland_csrbf.h"
+#include "num_collect/util/vector.h"
 
 TEMPLATE_TEST_CASE("global_rbf_polynomial_interpolator with different RBFs", "",
     num_collect::rbf::rbfs::gaussian_rbf<double>,
@@ -58,13 +58,12 @@ TEMPLATE_TEST_CASE("global_rbf_polynomial_interpolator with different RBFs", "",
         return std::cos(num_collect::constants::pi<double> * x);
     };
 
-    const auto sample_variables = std::vector<double>{0.0, 0.5, 0.8, 1.0};
+    const auto sample_variables =
+        num_collect::util::vector<double>{0.0, 0.5, 0.8, 1.0};
     Eigen::VectorXd sample_values{};
-    sample_values.resize(
-        static_cast<num_collect::index_type>(sample_variables.size()));
-    for (std::size_t i = 0; i < sample_variables.size(); ++i) {
-        sample_values(static_cast<num_collect::index_type>(i)) =
-            function(sample_variables[i]);
+    sample_values.resize(sample_variables.size());
+    for (num_collect::index_type i = 0; i < sample_variables.size(); ++i) {
+        sample_values(i) = function(sample_variables[i]);
     }
 
     constexpr double length_parameter_scale = 2.0;

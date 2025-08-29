@@ -21,7 +21,6 @@
 
 #include <cmath>
 #include <cstddef>
-#include <vector>
 
 #include <Eigen/Core>
 
@@ -32,6 +31,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/logging/logging_macros.h"
+#include "num_collect/util/vector_view.h"
 
 namespace num_collect::rbf {
 
@@ -73,8 +73,8 @@ public:
      */
     template <base::concepts::dense_matrix_of<Variable> Matrix>
     void compute_polynomial_term_matrix(
-        const std::vector<Variable>& variables, Matrix& matrix) const {
-        const auto num_variables = static_cast<index_type>(variables.size());
+        util::vector_view<const Variable> variables, Matrix& matrix) const {
+        const index_type num_variables = variables.size();
         NUM_COLLECT_PRECONDITION(num_variables >= PolynomialDegree + 2,
             "At least (PolynomialDegree + 2) variables must be given.");
 
@@ -87,8 +87,8 @@ public:
         for (index_type degree = 1; degree <= PolynomialDegree; ++degree) {
             for (index_type i = 0; i < num_variables; ++i) {
                 using std::pow;
-                matrix(i, degree) = static_cast<Variable>(
-                    pow(variables[static_cast<std::size_t>(i)], degree));
+                matrix(i, degree) =
+                    static_cast<Variable>(pow(variables[i], degree));
             }
         }
     }
@@ -169,15 +169,15 @@ public:
      */
     template <base::concepts::dense_matrix_of<scalar_type> Matrix>
     void compute_polynomial_term_matrix(
-        const std::vector<Variable>& variables, Matrix& matrix) const {
-        const auto num_variables = static_cast<index_type>(variables.size());
+        util::vector_view<const Variable> variables, Matrix& matrix) const {
+        const index_type num_variables = variables.size();
         NUM_COLLECT_PRECONDITION(num_variables > 0, "Variables must be given.");
         const index_type num_dimensions = variables.front().size();
 
         const index_type num_patterns = degrees_.rows();
         matrix.resize(num_variables, num_patterns);
         for (index_type i = 0; i < num_variables; ++i) {
-            const auto& variable = variables[static_cast<std::size_t>(i)];
+            const auto& variable = variables[i];
             for (index_type p = 0; p < num_patterns; ++p) {
                 auto value = static_cast<scalar_type>(1);
                 for (index_type d = 0; d < num_dimensions; ++d) {

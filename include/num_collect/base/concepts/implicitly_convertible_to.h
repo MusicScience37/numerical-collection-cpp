@@ -31,7 +31,7 @@ namespace concepts {
  */
 template <typename From, typename To>
 concept implicitly_convertible_to =
-    requires(const From& from, To& to) { to = from; };
+    requires(void (*function)(To), From& from) { function(from); };
 
 }  // namespace concepts
 }  // namespace base
