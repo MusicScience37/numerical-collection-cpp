@@ -202,8 +202,7 @@ public:
     template <concepts::operator_with<rbf_type, distance_function_type,
         length_parameter_calculator_type, function_value_vector_type>
             Operator>
-    [[nodiscard]] auto evaluate(const Operator& target_operator) const
-        -> function_value_type {
+    [[nodiscard]] auto evaluate(const Operator& target_operator) const {
         using operator_type = std::decay_t<Operator>;
         return operators::operator_evaluator<operator_type, rbf_type,
             distance_function_type>::evaluate(distance_function_, rbf_,

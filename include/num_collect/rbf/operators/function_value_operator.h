@@ -86,6 +86,18 @@ struct operator_evaluator<function_value_operator<Variable>, RBF,
     using typename base_type::variable_type;
 
     /*!
+     * \brief Get the initial value for accumulation of values evaluated for
+     * samples points.
+     *
+     * \tparam KernelCoeff Type of the coefficients of kernels.
+     * \return Initial value.
+     */
+    template <typename KernelCoeff>
+    [[nodiscard]] static auto initial_value() -> KernelCoeff {
+        return static_cast<KernelCoeff>(0);
+    }
+
+    /*!
      * \brief Evaluate an operator for one sample point.
      *
      * \tparam FunctionValue Type of function values.
@@ -98,7 +110,7 @@ struct operator_evaluator<function_value_operator<Variable>, RBF,
      * \return Evaluated function value.
      */
     template <typename FunctionValue>
-    static auto evaluate_for_one_sample(
+    [[nodiscard]] static auto evaluate_for_one_sample(
         const distance_function_type& distance_function, const rbf_type& rbf,
         const kernel_value_type& length_parameter,
         const operator_type& target_operator,

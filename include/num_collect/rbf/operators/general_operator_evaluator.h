@@ -71,14 +71,14 @@ struct general_operator_evaluator {
      */
     template <concepts::length_parameter_calculator LengthParameterCalculator,
         base::concepts::dense_vector KernelCoeffVector>
-    static auto evaluate(const distance_function_type& distance_function,
-        const rbf_type& rbf,
+    [[nodiscard]] static auto evaluate(
+        const distance_function_type& distance_function, const rbf_type& rbf,
         const LengthParameterCalculator& length_parameter_calculator,
         const operator_type& target_operator,
         util::vector_view<const variable_type> sample_variables,
-        const KernelCoeffVector& kernel_coefficients) ->
-        typename KernelCoeffVector::Scalar {
-        auto value = static_cast<typename KernelCoeffVector::Scalar>(0);
+        const KernelCoeffVector& kernel_coefficients) {
+        auto value = Derived::template initial_value<
+            typename KernelCoeffVector::Scalar>();
         for (index_type i = 0; i < sample_variables.size(); ++i) {
             value += Derived::evaluate_for_one_sample(distance_function, rbf,
                 length_parameter_calculator.length_parameter_at(i),
