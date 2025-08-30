@@ -15,14 +15,13 @@
  */
 /*!
  * \file
- * \brief Definition of laplacian_operator class.
+ * \brief Definition of third_order_derivative_operator class.
  */
 #pragma once
 
 #include <utility>
 
 #include "num_collect/base/concepts/real_scalar.h"
-#include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/get_size.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
@@ -36,25 +35,25 @@
 namespace num_collect::rbf::operators {
 
 /*!
- * \brief Class of operators to evaluate Laplacian.
+ * \brief Class of operators to evaluate third-order derivatives.
  *
  * \tparam Variable Type of variables.
+ *
+ * \note This operator is defined only for scalar variables.
  */
-template <typename Variable>
-    requires base::concepts::real_scalar<Variable> ||
-    base::concepts::real_scalar_dense_vector<Variable>
-class laplacian_operator {
+template <base::concepts::real_scalar Variable>
+class third_order_derivative_operator {
 public:
     /*!
      * \brief Constructor.
      *
-     * \param[in] variable Variable to evaluate the Laplacian at.
+     * \param[in] variable Variable to evaluate the third-order derivative at.
      */
-    explicit laplacian_operator(Variable variable)
+    explicit third_order_derivative_operator(Variable variable)
         : variable_(std::move(variable)) {}
 
     /*!
-     * \brief Get the variable to evaluate the Laplacian at.
+     * \brief Get the variable to evaluate the third-order derivative at.
      *
      * \return Variable.
      */
@@ -63,27 +62,27 @@ public:
     }
 
 private:
-    //! Variable to evaluate the Laplacian at.
+    //! Variable to evaluate the third-order derivative at.
     Variable variable_;
 };
 
 /*!
  * \brief Specialization of num_collect::rbf::operators::operator_evaluator for
- * num_collect::rbf::operators::laplacian_operator.
+ * num_collect::rbf::operators::third_order_derivative_operator.
  */
-template <typename Variable, concepts::rbf RBF>
-struct operator_evaluator<laplacian_operator<Variable>, RBF,
+template <base::concepts::real_scalar Variable, concepts::rbf RBF>
+struct operator_evaluator<third_order_derivative_operator<Variable>, RBF,
     distance_functions::euclidean_distance_function<Variable>>
     : general_operator_evaluator<
-          operator_evaluator<laplacian_operator<Variable>, RBF,
+          operator_evaluator<third_order_derivative_operator<Variable>, RBF,
               distance_functions::euclidean_distance_function<Variable>>,
-          laplacian_operator<Variable>, RBF,
+          third_order_derivative_operator<Variable>, RBF,
           distance_functions::euclidean_distance_function<Variable>> {
     //! Type of the base.
     using base_type = general_operator_evaluator<
-        operator_evaluator<laplacian_operator<Variable>, RBF,
+        operator_evaluator<third_order_derivative_operator<Variable>, RBF,
             distance_functions::euclidean_distance_function<Variable>>,
-        laplacian_operator<Variable>, RBF,
+        third_order_derivative_operator<Variable>, RBF,
         distance_functions::euclidean_distance_function<Variable>>;
 
     using typename base_type::distance_function_type;
@@ -133,28 +132,37 @@ struct operator_evaluator<laplacian_operator<Variable>, RBF,
             distance_function(target_operator.variable(), sample_variable) /
             length_parameter;
 
-        const rbfs::differentiated_t<rbf_type> differentiated_rbf;
         const rbfs::differentiated_t<rbfs::differentiated_t<rbf_type>>
-            twice_differentiated_rbf;
+            second_differentiated_rbf;
+        const rbfs::differentiated_t<
+            rbfs::differentiated_t<rbfs::differentiated_t<rbf_type>>>
+            third_differentiated_rbf;
 
         const index_type dimension = get_size(target_operator.variable());
-        const auto dimension_scalar = static_cast<FunctionValue>(dimension);
 
         if constexpr (concepts::csrbf<rbf_type>) {
             if (distance_rate < rbf_type::support_boundary()) {
+                const FunctionValue squared_length_parameter =
+                    length_parameter * length_parameter;
                 return kernel_coeff *
-                    (twice_differentiated_rbf(distance_rate) * distance_rate *
-                            distance_rate -
-                        dimension_scalar * differentiated_rbf(distance_rate)) /
-                    (length_parameter * length_parameter);
+                    (-third_differentiated_rbf(distance_rate) * distance_rate *
+                            distance_rate +
+                        second_differentiated_rbf(distance_rate) *
+                            static_cast<FunctionValue>(dimension + 2)) /
+                    (squared_length_parameter * squared_length_parameter) *
+                    (target_operator.variable() - sample_variable);
             }
             return static_cast<FunctionValue>(0);
         } else {
+            const FunctionValue squared_length_parameter =
+                length_parameter * length_parameter;
             return kernel_coeff *
-                (twice_differentiated_rbf(distance_rate) * distance_rate *
-                        distance_rate -
-                    dimension_scalar * differentiated_rbf(distance_rate)) /
-                (length_parameter * length_parameter);
+                (-third_differentiated_rbf(distance_rate) * distance_rate *
+                        distance_rate +
+                    second_differentiated_rbf(distance_rate) *
+                        static_cast<FunctionValue>(dimension + 2)) /
+                (squared_length_parameter * squared_length_parameter) *
+                (target_operator.variable() - sample_variable);
         }
     }
 };
