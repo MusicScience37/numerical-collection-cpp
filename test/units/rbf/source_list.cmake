@@ -8,6 +8,11 @@ set(SOURCE_FILES
     impl/kernel_matrix_solver_test.cpp
     length_parameter_calculators/global_length_parameter_calculator_test.cpp
     length_parameter_calculators/local_length_parameter_calculator_test.cpp
+    operators/function_value_operator_test.cpp
+    operators/hessian_operator_test.cpp
+    operators/laplacian_operator_test.cpp
+    operators/partial_derivative_operator_test.cpp
+    operators/slope_operator_test.cpp
     polynomial_calculator_test.cpp
     rbf_interpolator_test.cpp
     rbf_polynomial_interpolator_test.cpp

@@ -24,9 +24,11 @@
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "num_collect/rbf/concepts/rbf.h"
+#include "num_collect/rbf/rbfs/differentiated.h"
 
 TEST_CASE("num_collect::rbf::rbfs::sech_rbf") {
     using num_collect::rbf::concepts::rbf;
+    using num_collect::rbf::rbfs::differentiated_t;
     using num_collect::rbf::rbfs::sech_rbf;
 
     SECTION("check of concepts") {
@@ -38,6 +40,30 @@ TEST_CASE("num_collect::rbf::rbfs::sech_rbf") {
         constexpr double distance_rate = 1.2;
         constexpr double expected_value = 0.55228615427820;
         const sech_rbf<double> rbf;
+
+        const double value = rbf(distance_rate);
+
+        constexpr double tol_error = 1e-4;
+        CHECK_THAT(
+            value, Catch::Matchers::WithinRel(expected_value, tol_error));
+    }
+
+    SECTION("calculate a derivative") {
+        constexpr double distance_rate = 1.2;
+        constexpr double expected_value = 0.3836799141;
+        const differentiated_t<sech_rbf<double>> rbf;
+
+        const double value = rbf(distance_rate);
+
+        constexpr double tol_error = 1e-4;
+        CHECK_THAT(
+            value, Catch::Matchers::WithinRel(expected_value, tol_error));
+    }
+
+    SECTION("calculate a derivative for too small distance rate") {
+        constexpr double distance_rate = 1e-30;
+        constexpr double expected_value = 1.0;
+        const differentiated_t<sech_rbf<double>> rbf;
 
         const double value = rbf(distance_rate);
 

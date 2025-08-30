@@ -22,6 +22,7 @@
 #include <cmath>
 
 #include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/rbf/rbfs/differentiated.h"
 
 namespace num_collect::rbf::rbfs {
 
@@ -48,6 +49,44 @@ public:
         return static_cast<scalar_type>(1) /
             sqrt(static_cast<scalar_type>(1) + distance_rate * distance_rate);
     }
+};
+
+/*!
+ * \brief Class of differentiated inverse multi-quadric RBF.
+ *
+ * \tparam Scalar Type of scalars.
+ */
+template <base::concepts::real_scalar Scalar>
+class differentiated_inverse_multi_quadric_rbf {
+public:
+    //! Type of scalars.
+    using scalar_type = Scalar;
+
+    /*!
+     * \brief Calculate a function value of RBF.
+     *
+     * \param[in] distance_rate Rate of distance.
+     * \return Value of this RBF.
+     */
+    [[nodiscard]] auto operator()(
+        const scalar_type& distance_rate) const noexcept -> scalar_type {
+        using std::pow;
+        return pow(static_cast<scalar_type>(1) + distance_rate * distance_rate,
+            // NOLINTNEXTLINE(*-magic-numbers)
+            static_cast<scalar_type>(-1.5));
+    }
+};
+
+/*!
+ * \brief Specialization of num_collect::rbf::rbfs::differentiated for
+ * num_collect::rbf::rbfs::inverse_multi_quadric_rbf.
+ *
+ * \tparam Scalar Type of scalars.
+ */
+template <base::concepts::real_scalar Scalar>
+struct differentiated<inverse_multi_quadric_rbf<Scalar>> {
+    //! Type of the differentiated RBF.
+    using type = differentiated_inverse_multi_quadric_rbf<Scalar>;
 };
 
 }  // namespace num_collect::rbf::rbfs

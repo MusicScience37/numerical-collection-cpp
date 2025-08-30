@@ -23,15 +23,20 @@
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+#include "num_collect/rbf/concepts/differentiable_rbf.h"
 #include "num_collect/rbf/concepts/rbf.h"
+#include "num_collect/rbf/rbfs/differentiated.h"
 
 TEST_CASE("num_collect::rbf::rbfs::gaussian_rbf") {
+    using num_collect::rbf::concepts::differentiable_rbf;
     using num_collect::rbf::concepts::rbf;
+    using num_collect::rbf::rbfs::differentiated_t;
     using num_collect::rbf::rbfs::gaussian_rbf;
 
     SECTION("check of concepts") {
         STATIC_REQUIRE(rbf<gaussian_rbf<double>>);
         STATIC_REQUIRE(rbf<gaussian_rbf<float>>);
+        STATIC_REQUIRE(differentiable_rbf<gaussian_rbf<double>>);
     }
 
     SECTION("calculate a value") {
@@ -40,6 +45,31 @@ TEST_CASE("num_collect::rbf::rbfs::gaussian_rbf") {
         const gaussian_rbf<double> rbf;
 
         const double value = rbf(distance_rate);
+
+        constexpr double tol_error = 1e-4;
+        CHECK_THAT(
+            value, Catch::Matchers::WithinRel(expected_value, tol_error));
+    }
+
+    SECTION("calculate a derivative") {
+        constexpr double distance_rate = 1.2;
+        constexpr double expected_value = 0.4738555174;
+        const differentiated_t<gaussian_rbf<double>> differentiated_rbf;
+
+        const double value = differentiated_rbf(distance_rate);
+
+        constexpr double tol_error = 1e-4;
+        CHECK_THAT(
+            value, Catch::Matchers::WithinRel(expected_value, tol_error));
+    }
+
+    SECTION("calculate a second derivative") {
+        constexpr double distance_rate = 1.2;
+        constexpr double expected_value = 0.9477110347;
+        const differentiated_t<differentiated_t<gaussian_rbf<double>>>
+            differentiated_rbf;
+
+        const double value = differentiated_rbf(distance_rate);
 
         constexpr double tol_error = 1e-4;
         CHECK_THAT(

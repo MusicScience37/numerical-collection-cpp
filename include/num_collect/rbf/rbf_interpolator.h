@@ -34,6 +34,7 @@
 #include "num_collect/rbf/concepts/csrbf.h"
 #include "num_collect/rbf/concepts/distance_function.h"
 #include "num_collect/rbf/concepts/length_parameter_calculator.h"
+#include "num_collect/rbf/concepts/operator_with.h"
 #include "num_collect/rbf/concepts/rbf.h"
 #include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
 #include "num_collect/rbf/impl/get_default_scalar_type.h"
@@ -190,6 +191,22 @@ public:
             }
         }
         return value;
+    }
+
+    /*!
+     * \brief Evaluate an operator.
+     *
+     * \param[in] target_operator Operator to evaluate.
+     * \return Result of evaluation.
+     */
+    template <concepts::operator_with<rbf_type, distance_function_type,
+        length_parameter_calculator_type, function_value_vector_type>
+            Operator>
+    [[nodiscard]] auto evaluate(const Operator& target_operator) const {
+        using operator_type = std::decay_t<Operator>;
+        return operators::operator_evaluator<operator_type, rbf_type,
+            distance_function_type>::evaluate(distance_function_, rbf_,
+            length_parameter_calculator_, target_operator, variables_, coeffs_);
     }
 
     /*!
