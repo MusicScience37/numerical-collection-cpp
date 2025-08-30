@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Test of different RBFs in evaluation of second-order derivatives of
+ * \brief Test of different RBFs in evaluation of fourth-order derivatives of
  * RBF interpolation.
  */
 #include <cmath>
@@ -29,18 +29,17 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/constants/pi.h"
 #include "num_collect/rbf/generate_halton_nodes.h"
-#include "num_collect/rbf/operators/laplacian_operator.h"
+#include "num_collect/rbf/operators/biharmonic_operator.h"
 #include "num_collect/rbf/rbf_interpolator.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
 #include "num_collect/rbf/rbfs/wendland_csrbf.h"
 
 TEMPLATE_TEST_CASE(
-    "second-order derivative of local_rbf_interpolator with different RBFs", "",
-    num_collect::rbf::rbfs::gaussian_rbf<double>,
-    (num_collect::rbf::rbfs::wendland_csrbf<double, 3, 1>)) {
+    "fourth-order derivative of local_rbf_interpolator with different RBFs", "",
+    num_collect::rbf::rbfs::gaussian_rbf<double>) {
     using num_collect::rbf::generate_1d_halton_nodes;
     using num_collect::rbf::local_rbf_interpolator;
-    using num_collect::rbf::operators::laplacian_operator;
+    using num_collect::rbf::operators::biharmonic_operator;
 
     using variable_type = double;
     using rbf_type = TestType;
@@ -52,8 +51,10 @@ TEMPLATE_TEST_CASE(
     const auto function = [](double x) {
         return std::cos(num_collect::constants::pi<double> * x);
     };
-    const auto second_derivative_function = [](double x) {
-        return -num_collect::constants::pi<double> *
+    const auto fourth_derivative_function = [](double x) {
+        return num_collect::constants::pi<double> *
+            num_collect::constants::pi<double> *
+            num_collect::constants::pi<double> *
             num_collect::constants::pi<double> *
             std::cos(num_collect::constants::pi<double> * x);
     };
@@ -78,9 +79,9 @@ TEMPLATE_TEST_CASE(
     for (num_collect::index_type i = 0; i < interpolated_variables.size();
         ++i) {
         interpolated_values(i) = interpolator.evaluate(
-            laplacian_operator(interpolated_variables(i)));
+            biharmonic_operator(interpolated_variables(i)));
         actual_values(i) =
-            second_derivative_function(interpolated_variables(i));
+            fourth_derivative_function(interpolated_variables(i));
     }
     comparison_approvals::verify_with_reference(
         interpolated_values, actual_values, 2);

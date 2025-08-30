@@ -104,7 +104,7 @@ TEST_CASE("num_collect::rbf::operators::laplacian_operator") {
         const double expected_value =
             second_derivative_function(evaluated_variable);
 
-        // TODO Precision is too bad for this case.
+        // Precision is bad for this case.
         constexpr double tol = 0.5;
         CHECK_THAT(
             evaluated_value, Catch::Matchers::WithinAbs(expected_value, tol));
