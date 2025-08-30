@@ -20,8 +20,10 @@
 #pragma once
 
 #include <cmath>
+#include <limits>
 
 #include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/rbf/rbfs/differentiated.h"
 
 namespace num_collect::rbf::rbfs {
 
@@ -47,6 +49,47 @@ public:
         using std::cosh;
         return static_cast<scalar_type>(1) / cosh(distance_rate);
     }
+};
+
+/*!
+ * \brief Class of differentiated sech RBF.
+ *
+ * \tparam Scalar Type of scalars.
+ */
+template <base::concepts::real_scalar Scalar>
+class differentiated_sech_rbf {
+public:
+    //! Type of scalars.
+    using scalar_type = Scalar;
+
+    /*!
+     * \brief Calculate a function value of RBF.
+     *
+     * \param[in] distance_rate Rate of distance.
+     * \return Value of this RBF.
+     */
+    [[nodiscard]] auto operator()(
+        const scalar_type& distance_rate) const noexcept -> scalar_type {
+        using std::cosh;
+        using std::sinh;
+        if (distance_rate < std::numeric_limits<scalar_type>::epsilon()) {
+            return static_cast<scalar_type>(1);
+        }
+        return sinh(distance_rate) /
+            (distance_rate * cosh(distance_rate) * cosh(distance_rate));
+    }
+};
+
+/*!
+ * \brief Specialization of num_collect::rbf::rbfs::differentiated for
+ * num_collect::rbf::rbfs::sech_rbf.
+ *
+ * \tparam Scalar Type of scalars.
+ */
+template <base::concepts::real_scalar Scalar>
+struct differentiated<sech_rbf<Scalar>> {
+    //! Type of the differentiated RBF.
+    using type = differentiated_sech_rbf<Scalar>;
 };
 
 }  // namespace num_collect::rbf::rbfs

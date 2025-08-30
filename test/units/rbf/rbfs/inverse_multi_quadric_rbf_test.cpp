@@ -24,9 +24,11 @@
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "num_collect/rbf/concepts/rbf.h"
+#include "num_collect/rbf/rbfs/differentiated.h"
 
 TEST_CASE("num_collect::rbf::rbfs::inverse_multi_quadric_rbf") {
     using num_collect::rbf::concepts::rbf;
+    using num_collect::rbf::rbfs::differentiated_t;
     using num_collect::rbf::rbfs::inverse_multi_quadric_rbf;
 
     SECTION("check of concepts") {
@@ -38,6 +40,18 @@ TEST_CASE("num_collect::rbf::rbfs::inverse_multi_quadric_rbf") {
         constexpr double distance_rate = 1.2;
         constexpr double expected_value = 0.640184399664479;
         const inverse_multi_quadric_rbf<double> rbf;
+
+        const double value = rbf(distance_rate);
+
+        constexpr double tol_error = 1e-4;
+        CHECK_THAT(
+            value, Catch::Matchers::WithinRel(expected_value, tol_error));
+    }
+
+    SECTION("calculate a derivative") {
+        constexpr double distance_rate = 1.2;
+        constexpr double expected_value = 0.2623706556;
+        const differentiated_t<inverse_multi_quadric_rbf<double>> rbf;
 
         const double value = rbf(distance_rate);
 

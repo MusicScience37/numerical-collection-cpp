@@ -32,10 +32,16 @@
 #include "num_collect/rbf/operators/slope_operator.h"
 #include "num_collect/rbf/rbf_interpolator.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
+#include "num_collect/rbf/rbfs/inverse_multi_quadric_rbf.h"
+#include "num_collect/rbf/rbfs/inverse_quadratic_rbf.h"
+#include "num_collect/rbf/rbfs/sech_rbf.h"
 #include "num_collect/rbf/rbfs/wendland_csrbf.h"
 
 TEMPLATE_TEST_CASE("derivative of local_rbf_interpolator with different RBFs",
     "", num_collect::rbf::rbfs::gaussian_rbf<double>,
+    num_collect::rbf::rbfs::inverse_multi_quadric_rbf<double>,
+    num_collect::rbf::rbfs::inverse_quadratic_rbf<double>,
+    num_collect::rbf::rbfs::sech_rbf<double>,
     (num_collect::rbf::rbfs::wendland_csrbf<double, 3, 1>)) {
     using num_collect::rbf::generate_1d_halton_nodes;
     using num_collect::rbf::local_rbf_interpolator;
