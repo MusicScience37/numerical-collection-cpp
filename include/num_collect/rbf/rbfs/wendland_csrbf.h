@@ -23,6 +23,7 @@
 
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/rbf/rbfs/differentiated.h"
 
 namespace num_collect::rbf::rbfs {
 
@@ -191,6 +192,19 @@ public:
             (second_order_term_coeff * distance_rate * distance_rate +
                 first_order_term_coeff * distance_rate + constant_term);
     }
+};
+
+/*!
+ * \brief Specialization of num_collect::rbf::rbfs::differentiated for
+ * num_collect::rbf::rbfs::wendland_csrbf.
+ *
+ * \tparam Scalar Type of scalars.
+ */
+template <base::concepts::real_scalar Scalar, index_type L, index_type K>
+    requires(K >= 1)
+struct differentiated<wendland_csrbf<Scalar, L, K>> {
+    //! Type of the differentiated RBF.
+    using type = wendland_csrbf<Scalar, L, K - 1>;
 };
 
 }  // namespace num_collect::rbf::rbfs
