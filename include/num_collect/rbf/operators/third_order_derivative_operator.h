@@ -19,18 +19,8 @@
  */
 #pragma once
 
-#include <utility>
-
 #include "num_collect/base/concepts/real_scalar.h"
-#include "num_collect/base/get_size.h"
-#include "num_collect/base/index_type.h"
-#include "num_collect/base/precondition.h"
-#include "num_collect/rbf/concepts/csrbf.h"
-#include "num_collect/rbf/concepts/rbf.h"
-#include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
-#include "num_collect/rbf/operators/general_operator_evaluator.h"
-#include "num_collect/rbf/operators/operator_evaluator.h"
-#include "num_collect/rbf/rbfs/differentiated.h"
+#include "num_collect/rbf/operators/laplacian_gradient_operator.h"
 
 namespace num_collect::rbf::operators {
 
@@ -39,132 +29,9 @@ namespace num_collect::rbf::operators {
  *
  * \tparam Variable Type of variables.
  *
- * \note This operator is defined only for scalar variables.
+ * \note This type is defined only for scalar variables.
  */
 template <base::concepts::real_scalar Variable>
-class third_order_derivative_operator {
-public:
-    /*!
-     * \brief Constructor.
-     *
-     * \param[in] variable Variable to evaluate the third-order derivative at.
-     */
-    explicit third_order_derivative_operator(Variable variable)
-        : variable_(std::move(variable)) {}
-
-    /*!
-     * \brief Get the variable to evaluate the third-order derivative at.
-     *
-     * \return Variable.
-     */
-    [[nodiscard]] auto variable() const noexcept -> const Variable& {
-        return variable_;
-    }
-
-private:
-    //! Variable to evaluate the third-order derivative at.
-    Variable variable_;
-};
-
-/*!
- * \brief Specialization of num_collect::rbf::operators::operator_evaluator for
- * num_collect::rbf::operators::third_order_derivative_operator.
- */
-template <base::concepts::real_scalar Variable, concepts::rbf RBF>
-struct operator_evaluator<third_order_derivative_operator<Variable>, RBF,
-    distance_functions::euclidean_distance_function<Variable>>
-    : general_operator_evaluator<
-          operator_evaluator<third_order_derivative_operator<Variable>, RBF,
-              distance_functions::euclidean_distance_function<Variable>>,
-          third_order_derivative_operator<Variable>, RBF,
-          distance_functions::euclidean_distance_function<Variable>> {
-    //! Type of the base.
-    using base_type = general_operator_evaluator<
-        operator_evaluator<third_order_derivative_operator<Variable>, RBF,
-            distance_functions::euclidean_distance_function<Variable>>,
-        third_order_derivative_operator<Variable>, RBF,
-        distance_functions::euclidean_distance_function<Variable>>;
-
-    using typename base_type::distance_function_type;
-    using typename base_type::kernel_value_type;
-    using typename base_type::operator_type;
-    using typename base_type::rbf_type;
-    using typename base_type::variable_type;
-
-    /*!
-     * \brief Get the initial value for accumulation of values evaluated for
-     * samples points.
-     *
-     * \tparam KernelCoeff Type of the coefficients of kernels.
-     * \return Initial value.
-     */
-    template <typename KernelCoeff>
-    [[nodiscard]] static auto initial_value() -> KernelCoeff {
-        return static_cast<KernelCoeff>(0);
-    }
-
-    /*!
-     * \brief Evaluate an operator for one sample point.
-     *
-     * \tparam FunctionValue Type of function values.
-     * \param[in] distance_function Distance function.
-     * \param[in] rbf RBF.
-     * \param[in] length_parameter Length parameter.
-     * \param[in] target_operator Operator to evaluate.
-     * \param[in] sample_variable Variable of the sample.
-     * \param[in] kernel_coeff Coefficient of the kernel for the sample.
-     * \return Evaluated function value.
-     */
-    template <typename FunctionValue>
-    [[nodiscard]] static auto evaluate_for_one_sample(
-        const distance_function_type& distance_function, const rbf_type& rbf,
-        const kernel_value_type& length_parameter,
-        const operator_type& target_operator,
-        const variable_type& sample_variable, const FunctionValue& kernel_coeff)
-        -> FunctionValue {
-        // Not used for this operator.
-        (void)rbf;
-
-        NUM_COLLECT_PRECONDITION(
-            length_parameter > static_cast<kernel_value_type>(0),
-            "Length parameter must be a positive value.");
-        const kernel_value_type distance_rate =
-            distance_function(target_operator.variable(), sample_variable) /
-            length_parameter;
-
-        const rbfs::differentiated_t<rbfs::differentiated_t<rbf_type>>
-            second_differentiated_rbf;
-        const rbfs::differentiated_t<
-            rbfs::differentiated_t<rbfs::differentiated_t<rbf_type>>>
-            third_differentiated_rbf;
-
-        const index_type dimension = get_size(target_operator.variable());
-
-        if constexpr (concepts::csrbf<rbf_type>) {
-            if (distance_rate < rbf_type::support_boundary()) {
-                const FunctionValue squared_length_parameter =
-                    length_parameter * length_parameter;
-                return kernel_coeff *
-                    (-third_differentiated_rbf(distance_rate) * distance_rate *
-                            distance_rate +
-                        second_differentiated_rbf(distance_rate) *
-                            static_cast<FunctionValue>(dimension + 2)) /
-                    (squared_length_parameter * squared_length_parameter) *
-                    (target_operator.variable() - sample_variable);
-            }
-            return static_cast<FunctionValue>(0);
-        } else {
-            const FunctionValue squared_length_parameter =
-                length_parameter * length_parameter;
-            return kernel_coeff *
-                (-third_differentiated_rbf(distance_rate) * distance_rate *
-                        distance_rate +
-                    second_differentiated_rbf(distance_rate) *
-                        static_cast<FunctionValue>(dimension + 2)) /
-                (squared_length_parameter * squared_length_parameter) *
-                (target_operator.variable() - sample_variable);
-        }
-    }
-};
+using third_order_derivative_operator = laplacian_gradient_operator<Variable>;
 
 }  // namespace num_collect::rbf::operators

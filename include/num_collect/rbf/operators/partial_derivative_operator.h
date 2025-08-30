@@ -40,7 +40,7 @@ namespace num_collect::rbf::operators {
  * \tparam Variable Type of variables.
  *
  * For all dimensions of partial derivatives, use
- * \ref num_collect::rbf::operators::slope_operator.
+ * \ref num_collect::rbf::operators::gradient_operator.
  */
 template <base::concepts::real_scalar_dense_vector Variable>
 class partial_derivative_operator {

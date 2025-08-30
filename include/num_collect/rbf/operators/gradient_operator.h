@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of slope_operator class.
+ * \brief Definition of gradient_operator class.
  */
 #pragma once
 
@@ -35,11 +35,11 @@
 namespace num_collect::rbf::operators {
 
 /*!
- * \brief Class of operators to evaluate slopes.
+ * \brief Class of operators to evaluate gradients.
  *
  * \tparam Variable Type of variables.
  *
- * This operator expresses the calculation of the slope of RBF interpolation.
+ * This operator expresses the calculation of the gradient of RBF interpolation.
  *
  * For partial differentiation of specific dimension, use
  * \ref num_collect::rbf::operators::partial_derivative_operator.
@@ -47,18 +47,18 @@ namespace num_collect::rbf::operators {
 template <typename Variable>
     requires base::concepts::real_scalar<Variable> ||
     base::concepts::real_scalar_dense_vector<Variable>
-class slope_operator {
+class gradient_operator {
 public:
     /*!
      * \brief Constructor.
      *
-     * \param[in] variable Variable to evaluate the slope at.
+     * \param[in] variable Variable to evaluate the gradient at.
      */
-    explicit slope_operator(Variable variable)
+    explicit gradient_operator(Variable variable)
         : variable_(std::move(variable)) {}
 
     /*!
-     * \brief Get the variable to evaluate the slope at.
+     * \brief Get the variable to evaluate the gradient at.
      *
      * \return Variable.
      */
@@ -67,27 +67,27 @@ public:
     }
 
 private:
-    //! Variable to evaluate the slope at.
+    //! Variable to evaluate the gradient at.
     Variable variable_;
 };
 
 /*!
  * \brief Specialization of num_collect::rbf::operators::operator_evaluator for
- * num_collect::rbf::operators::slope_operator for scalar variables.
+ * num_collect::rbf::operators::gradient_operator for scalar variables.
  */
 template <base::concepts::real_scalar Variable, concepts::rbf RBF>
-struct operator_evaluator<slope_operator<Variable>, RBF,
+struct operator_evaluator<gradient_operator<Variable>, RBF,
     distance_functions::euclidean_distance_function<Variable>>
     : general_operator_evaluator<
-          operator_evaluator<slope_operator<Variable>, RBF,
+          operator_evaluator<gradient_operator<Variable>, RBF,
               distance_functions::euclidean_distance_function<Variable>>,
-          slope_operator<Variable>, RBF,
+          gradient_operator<Variable>, RBF,
           distance_functions::euclidean_distance_function<Variable>> {
     //! Type of the base.
     using base_type = general_operator_evaluator<
-        operator_evaluator<slope_operator<Variable>, RBF,
+        operator_evaluator<gradient_operator<Variable>, RBF,
             distance_functions::euclidean_distance_function<Variable>>,
-        slope_operator<Variable>, RBF,
+        gradient_operator<Variable>, RBF,
         distance_functions::euclidean_distance_function<Variable>>;
 
     using typename base_type::distance_function_type;
@@ -156,23 +156,23 @@ struct operator_evaluator<slope_operator<Variable>, RBF,
 
 /*!
  * \brief Specialization of num_collect::rbf::operators::operator_evaluator for
- * num_collect::rbf::operators::slope_operator for scalar variables.
+ * num_collect::rbf::operators::gradient_operator for vector variables.
  */
 template <base::concepts::real_scalar_dense_vector Variable, concepts::rbf RBF>
 // Prohibit dynamic vector.
     requires(Variable::RowsAtCompileTime > 0)
-struct operator_evaluator<slope_operator<Variable>, RBF,
+struct operator_evaluator<gradient_operator<Variable>, RBF,
     distance_functions::euclidean_distance_function<Variable>>
     : general_operator_evaluator<
-          operator_evaluator<slope_operator<Variable>, RBF,
+          operator_evaluator<gradient_operator<Variable>, RBF,
               distance_functions::euclidean_distance_function<Variable>>,
-          slope_operator<Variable>, RBF,
+          gradient_operator<Variable>, RBF,
           distance_functions::euclidean_distance_function<Variable>> {
     //! Type of the base.
     using base_type = general_operator_evaluator<
-        operator_evaluator<slope_operator<Variable>, RBF,
+        operator_evaluator<gradient_operator<Variable>, RBF,
             distance_functions::euclidean_distance_function<Variable>>,
-        slope_operator<Variable>, RBF,
+        gradient_operator<Variable>, RBF,
         distance_functions::euclidean_distance_function<Variable>>;
 
     using typename base_type::distance_function_type;

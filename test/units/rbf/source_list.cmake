@@ -10,10 +10,11 @@ set(SOURCE_FILES
     length_parameter_calculators/local_length_parameter_calculator_test.cpp
     operators/biharmonic_operator_test.cpp
     operators/function_value_operator_test.cpp
+    operators/gradient_operator_test.cpp
     operators/hessian_operator_test.cpp
+    operators/laplacian_gradient_operator_test.cpp
     operators/laplacian_operator_test.cpp
     operators/partial_derivative_operator_test.cpp
-    operators/slope_operator_test.cpp
     operators/third_order_derivative_operator_test.cpp
     polynomial_calculator_test.cpp
     rbf_interpolator_test.cpp

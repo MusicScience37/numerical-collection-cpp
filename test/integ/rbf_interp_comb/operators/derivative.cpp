@@ -29,7 +29,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/constants/pi.h"
 #include "num_collect/rbf/generate_halton_nodes.h"
-#include "num_collect/rbf/operators/slope_operator.h"
+#include "num_collect/rbf/operators/gradient_operator.h"
 #include "num_collect/rbf/rbf_interpolator.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
 #include "num_collect/rbf/rbfs/inverse_multi_quadric_rbf.h"
@@ -45,7 +45,7 @@ TEMPLATE_TEST_CASE("derivative of local_rbf_interpolator with different RBFs",
     (num_collect::rbf::rbfs::wendland_csrbf<double, 3, 1>)) {
     using num_collect::rbf::generate_1d_halton_nodes;
     using num_collect::rbf::local_rbf_interpolator;
-    using num_collect::rbf::operators::slope_operator;
+    using num_collect::rbf::operators::gradient_operator;
 
     using variable_type = double;
     using rbf_type = TestType;
@@ -82,7 +82,7 @@ TEMPLATE_TEST_CASE("derivative of local_rbf_interpolator with different RBFs",
     for (num_collect::index_type i = 0; i < interpolated_variables.size();
         ++i) {
         interpolated_values(i) =
-            interpolator.evaluate(slope_operator(interpolated_variables(i)));
+            interpolator.evaluate(gradient_operator(interpolated_variables(i)));
         actual_values(i) = derivative_function(interpolated_variables(i));
     }
     comparison_approvals::verify_with_reference(
