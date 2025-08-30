@@ -7,6 +7,7 @@
 #include "impl/kernel_matrix_solver_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "length_parameter_calculators/global_length_parameter_calculator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "length_parameter_calculators/local_length_parameter_calculator_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "operators/biharmonic_operator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "operators/function_value_operator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "operators/hessian_operator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "operators/laplacian_operator_test.cpp"  // NOLINT(bugprone-suspicious-include)
