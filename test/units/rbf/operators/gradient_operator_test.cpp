@@ -15,9 +15,9 @@
  */
 /*!
  * \file
- * \brief Test of slope_operator class.
+ * \brief Test of gradient_operator class.
  */
-#include "num_collect/rbf/operators/slope_operator.h"
+#include "num_collect/rbf/operators/gradient_operator.h"
 
 #include <Eigen/Core>
 #include <catch2/catch_test_macros.hpp>
@@ -30,13 +30,13 @@
 #include "num_collect/rbf/operators/operator_evaluator.h"
 #include "num_collect/rbf/rbf_interpolator.h"
 
-TEST_CASE("num_collect::rbf::operators::slope_operator") {
+TEST_CASE("num_collect::rbf::operators::gradient_operator") {
     using num_collect::index_type;
     using num_collect::rbf::generate_halton_nodes;
     using num_collect::rbf::global_rbf_interpolator;
     using num_collect::rbf::local_csrbf_interpolator;
+    using num_collect::rbf::operators::gradient_operator;
     using num_collect::rbf::operators::operator_evaluator;
-    using num_collect::rbf::operators::slope_operator;
 
     SECTION("evaluate an operator for a one-dimensional variable") {
         using rbf_interpolator_type = global_rbf_interpolator<double(double)>;
@@ -64,7 +64,7 @@ TEST_CASE("num_collect::rbf::operators::slope_operator") {
 
         constexpr double evaluated_variable = 0.55;
         const double evaluated_value =
-            interpolator.evaluate(slope_operator(evaluated_variable));
+            interpolator.evaluate(gradient_operator(evaluated_variable));
         const double expected_value = derivative_function(evaluated_variable);
 
         constexpr double tol = 1e-2;
@@ -98,7 +98,7 @@ TEST_CASE("num_collect::rbf::operators::slope_operator") {
 
         constexpr double evaluated_variable = 0.55;
         const double evaluated_value =
-            interpolator.evaluate(slope_operator(evaluated_variable));
+            interpolator.evaluate(gradient_operator(evaluated_variable));
         const double expected_value = derivative_function(evaluated_variable);
 
         constexpr double tol = 1e-2;
@@ -133,7 +133,7 @@ TEST_CASE("num_collect::rbf::operators::slope_operator") {
 
         const Eigen::Vector2d evaluated_variable(0.3, 0.4);
         const Eigen::Vector2d evaluated_value =
-            interpolator.evaluate(slope_operator(evaluated_variable));
+            interpolator.evaluate(gradient_operator(evaluated_variable));
         const Eigen::Vector2d expected_value =
             derivative_function(evaluated_variable);
 
@@ -168,7 +168,7 @@ TEST_CASE("num_collect::rbf::operators::slope_operator") {
 
         const Eigen::Vector2d evaluated_variable(0.3, 0.4);
         const Eigen::Vector2d evaluated_value =
-            interpolator.evaluate(slope_operator(evaluated_variable));
+            interpolator.evaluate(gradient_operator(evaluated_variable));
         const Eigen::Vector2d expected_value =
             derivative_function(evaluated_variable);
 
