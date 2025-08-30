@@ -11,6 +11,7 @@
 #include "operators/function_value_operator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "operators/gradient_operator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "operators/hessian_operator_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "operators/laplacian_gradient_operator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "operators/laplacian_operator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "operators/partial_derivative_operator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "operators/third_order_derivative_operator_test.cpp"  // NOLINT(bugprone-suspicious-include)

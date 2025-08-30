@@ -12,6 +12,7 @@ set(SOURCE_FILES
     operators/function_value_operator_test.cpp
     operators/gradient_operator_test.cpp
     operators/hessian_operator_test.cpp
+    operators/laplacian_gradient_operator_test.cpp
     operators/laplacian_operator_test.cpp
     operators/partial_derivative_operator_test.cpp
     operators/third_order_derivative_operator_test.cpp
