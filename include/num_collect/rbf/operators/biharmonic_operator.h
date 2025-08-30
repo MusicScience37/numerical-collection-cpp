@@ -146,7 +146,7 @@ struct operator_evaluator<biharmonic_operator<Variable>, RBF,
         const index_type dimension = get_size(target_operator.variable());
 
         if constexpr (concepts::csrbf<rbf_type>) {
-            // TODO Case of CSRBF cannot be tested currently because third-order
+            // TODO Case of CSRBF cannot be tested currently because fourth-order
             // differentiable CSRBF is not implemented in this library.
             if (distance_rate < rbf_type::support_boundary()) {
                 const FunctionValue squared_length_parameter =
