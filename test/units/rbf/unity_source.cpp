@@ -8,6 +8,7 @@
 #include "length_parameter_calculators/global_length_parameter_calculator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "length_parameter_calculators/local_length_parameter_calculator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "operators/function_value_operator_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "operators/slope_operator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "polynomial_calculator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rbf_interpolator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rbf_polynomial_interpolator_test.cpp"  // NOLINT(bugprone-suspicious-include)
