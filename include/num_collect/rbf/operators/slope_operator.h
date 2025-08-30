@@ -40,6 +40,9 @@ namespace num_collect::rbf::operators {
  * \tparam Variable Type of variables.
  *
  * This operator expresses the calculation of the slope of RBF interpolation.
+ *
+ * For partial differentiation of specific dimension, use
+ * \ref num_collect::rbf::operators::partial_derivative_operator.
  */
 template <typename Variable>
     requires base::concepts::real_scalar<Variable> ||
