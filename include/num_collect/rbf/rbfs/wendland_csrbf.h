@@ -20,6 +20,7 @@
 #pragma once
 
 #include <cmath>
+#include <limits>
 
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/index_type.h"
@@ -205,6 +206,66 @@ template <base::concepts::real_scalar Scalar, index_type L, index_type K>
 struct differentiated<wendland_csrbf<Scalar, L, K>> {
     //! Type of the differentiated RBF.
     using type = wendland_csrbf<Scalar, L, K - 1>;
+};
+
+/*!
+ * \brief Class of differentiated Wendland's Compactly Supported RBF with
+ * order k=0.
+ *
+ * \tparam Scalar Type of scalars.
+ * \tparam L Degree of the truncated power function before differentiation.
+ */
+template <base::concepts::real_scalar Scalar, index_type L>
+class differentiated_wendland_csrbf_k0 {
+public:
+    //! Type of scalars.
+    using scalar_type = Scalar;
+
+    /*!
+     * \brief Get the boundary of the support of this CSRBF.
+     *
+     * \return Boundary.
+     */
+    [[nodiscard]] static constexpr auto support_boundary() noexcept
+        -> scalar_type {
+        return static_cast<scalar_type>(1);
+    }
+
+    /*!
+     * \brief Calculate a function value of RBF.
+     *
+     * \param[in] distance_rate Rate of distance.
+     * \return Value of this RBF.
+     */
+    [[nodiscard]] auto operator()(
+        const scalar_type& distance_rate) const noexcept -> scalar_type {
+        using std::pow;
+        if (distance_rate > static_cast<scalar_type>(1)) {
+            return static_cast<scalar_type>(0);
+        }
+        if (distance_rate < std::numeric_limits<scalar_type>::epsilon()) {
+            return static_cast<scalar_type>(0);
+        }
+        constexpr auto coeff = static_cast<scalar_type>(L);
+        return coeff *
+            // pow function wrongly returns double even when scalar_type is
+            // float.
+            static_cast<scalar_type>(
+                pow(static_cast<scalar_type>(1) - distance_rate, L - 1)) /
+            distance_rate;
+    }
+};
+
+/*!
+ * \brief Specialization of num_collect::rbf::rbfs::differentiated for
+ * num_collect::rbf::rbfs::wendland_csrbf.
+ *
+ * \tparam Scalar Type of scalars.
+ */
+template <base::concepts::real_scalar Scalar, index_type L>
+struct differentiated<wendland_csrbf<Scalar, L, 0>> {
+    //! Type of the differentiated RBF.
+    using type = differentiated_wendland_csrbf_k0<Scalar, L>;
 };
 
 }  // namespace num_collect::rbf::rbfs
