@@ -25,7 +25,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/rbf/concepts/csrbf.h"
-#include "num_collect/rbf/concepts/rbf.h"
+#include "num_collect/rbf/concepts/differentiable_rbf.h"
 #include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
 #include "num_collect/rbf/operators/general_operator_evaluator.h"
 #include "num_collect/rbf/operators/operator_evaluator.h"
@@ -89,7 +89,8 @@ private:
  * num_collect::rbf::operators::partial_derivative_operator for scalar
  * variables.
  */
-template <base::concepts::real_scalar_dense_vector Variable, concepts::rbf RBF>
+template <base::concepts::real_scalar_dense_vector Variable,
+    concepts::differentiable_rbf RBF>
 struct operator_evaluator<partial_derivative_operator<Variable>, RBF,
     distance_functions::euclidean_distance_function<Variable>>
     : general_operator_evaluator<
