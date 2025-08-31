@@ -17,7 +17,6 @@
  * \file
  * \brief Test of different degrees of polynomials in RBF interpolation.
  */
-#include <cmath>
 #include <cstddef>
 
 #include <Eigen/Core>
@@ -26,49 +25,51 @@
 
 #include "comparison_approvals.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/constants/pi.h"
+#include "num_collect/rbf/generate_halton_nodes.h"
 #include "num_collect/rbf/rbf_polynomial_interpolator.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
-#include "num_collect/util/vector.h"
 
 TEMPLATE_TEST_CASE_SIG(
     "global_rbf_polynomial_interpolator with different degrees", "",
-    ((int Degree), Degree), (0), (1), (2)) {
-    using variable_type = double;
-    using rbf_type = num_collect::rbf::rbfs::gaussian_rbf<variable_type>;
+    ((int Degree), Degree), (0), (1), (2), (3)) {
+    using num_collect::rbf::generate_halton_nodes;
+
+    using variable_type = Eigen::Vector2d;
+    using rbf_type = num_collect::rbf::rbfs::gaussian_rbf<double>;
     using rbf_interpolator_type =
         num_collect::rbf::global_rbf_polynomial_interpolator<
-            variable_type(variable_type), rbf_type, Degree>;
+            double(variable_type), rbf_type, Degree>;
 
     rbf_interpolator_type interpolator;
 
-    const auto function = [](double x) {
-        return std::cos(num_collect::constants::pi<double> * x);
+    const auto function = [](const variable_type& var) {
+        return var.array().sin().prod();
     };
 
-    const auto sample_variables =
-        num_collect::util::vector<double>{0.0, 0.5, 0.8, 1.0};
+    const auto sample_variables = generate_halton_nodes<double, 2>(50);
     Eigen::VectorXd sample_values{};
-    sample_values.resize(sample_variables.size());
-    for (num_collect::index_type i = 0; i < sample_variables.size(); ++i) {
-        sample_values(i) = function(sample_variables[i]);
+    sample_values.resize(
+        static_cast<num_collect::index_type>(sample_variables.size()));
+    for (std::size_t i = 0; i < sample_variables.size(); ++i) {
+        sample_values(static_cast<num_collect::index_type>(i)) =
+            function(sample_variables[i]);
     }
 
-    constexpr double length_parameter_scale = 2.0;
-    interpolator.fix_length_parameter_scale(length_parameter_scale);
     interpolator.compute(sample_variables, sample_values);
 
-    const Eigen::VectorXd interpolated_variables =
+    const Eigen::VectorXd interpolated_variable_elements =
         Eigen::VectorXd::LinSpaced(11, 0.0, 1.0);
     Eigen::VectorXd interpolated_values;
-    interpolated_values.resize(interpolated_variables.size());
+    interpolated_values.resize(interpolated_variable_elements.size());
     Eigen::VectorXd actual_values;
-    actual_values.resize(interpolated_variables.size());
-    for (num_collect::index_type i = 0; i < interpolated_variables.size();
-        ++i) {
+    actual_values.resize(interpolated_variable_elements.size());
+    for (num_collect::index_type i = 0;
+        i < interpolated_variable_elements.size(); ++i) {
+        const variable_type interpolated_variable =
+            variable_type::Constant(interpolated_variable_elements(i));
         interpolated_values(i) =
-            interpolator.interpolate(interpolated_variables(i));
-        actual_values(i) = function(interpolated_variables(i));
+            interpolator.interpolate(interpolated_variable);
+        actual_values(i) = function(interpolated_variable);
     }
     comparison_approvals::verify_with_reference(
         interpolated_values, actual_values, 2);
