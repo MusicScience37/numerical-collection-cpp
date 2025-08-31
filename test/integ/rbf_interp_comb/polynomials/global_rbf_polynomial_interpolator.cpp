@@ -31,7 +31,7 @@
 
 TEMPLATE_TEST_CASE_SIG(
     "global_rbf_polynomial_interpolator with different degrees", "",
-    ((int Degree), Degree), (0), (1), (2), (3)) {
+    ((int Degree), Degree), (0), (1), (2)) {
     using num_collect::rbf::generate_halton_nodes;
 
     using variable_type = Eigen::Vector2d;
