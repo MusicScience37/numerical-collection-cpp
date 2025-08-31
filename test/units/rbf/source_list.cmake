@@ -20,7 +20,8 @@ set(SOURCE_FILES
     operators/laplacian_operator_test.cpp
     operators/partial_derivative_operator_test.cpp
     operators/third_order_derivative_operator_test.cpp
-    polynomial_calculator_test.cpp
+    polynomial_term_generator_test.cpp
+    polynomial_term_test.cpp
     rbf_interpolator_test.cpp
     rbf_polynomial_interpolator_test.cpp
     rbfs/gaussian_rbf_test.cpp

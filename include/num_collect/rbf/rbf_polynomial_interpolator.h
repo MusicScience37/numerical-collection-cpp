@@ -23,8 +23,7 @@
 
 #include <Eigen/Core>
 
-#include "num_collect/base/exception.h"
-#include "num_collect/base/get_size.h"
+#include "num_collect/base/get_compile_time_size.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/logging/log_tag_view.h"
@@ -33,6 +32,7 @@
 #include "num_collect/opt/dividing_rectangles.h"
 #include "num_collect/opt/function_object_wrapper.h"
 #include "num_collect/rbf/compute_kernel_matrix.h"
+#include "num_collect/rbf/compute_polynomial_term_matrix.h"
 #include "num_collect/rbf/concepts/csrbf.h"
 #include "num_collect/rbf/concepts/distance_function.h"
 #include "num_collect/rbf/concepts/length_parameter_calculator.h"
@@ -44,7 +44,7 @@
 #include "num_collect/rbf/kernel_matrix_type.h"
 #include "num_collect/rbf/length_parameter_calculators/global_length_parameter_calculator.h"
 #include "num_collect/rbf/length_parameter_calculators/local_length_parameter_calculator.h"
-#include "num_collect/rbf/polynomial_calculator.h"
+#include "num_collect/rbf/polynomial_term_generator.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
 #include "num_collect/util/vector_view.h"
 
@@ -69,7 +69,7 @@ constexpr auto rbf_polynomial_interpolator_tag =
 template <typename FunctionSignature,
     concepts::rbf RBF =
         rbfs::gaussian_rbf<impl::get_default_scalar_type<FunctionSignature>>,
-    index_type PolynomialDegree = 1,
+    int PolynomialDegree = 1,
     kernel_matrix_type KernelMatrixType = kernel_matrix_type::dense,
     concepts::distance_function DistanceFunction =
         distance_functions::euclidean_distance_function<
@@ -92,7 +92,7 @@ class rbf_polynomial_interpolator;
  * parameters.
  */
 template <typename Variable, typename FunctionValue, concepts::rbf RBF,
-    index_type PolynomialDegree, kernel_matrix_type KernelMatrixType,
+    int PolynomialDegree, kernel_matrix_type KernelMatrixType,
     concepts::distance_function DistanceFunction,
     concepts::length_parameter_calculator LengthParameterCalculator>
 class rbf_polynomial_interpolator<FunctionValue(Variable), RBF,
@@ -168,13 +168,11 @@ public:
         const auto num_variables = static_cast<index_type>(variables.size());
         NUM_COLLECT_PRECONDITION(
             num_variables > 0, this->logger(), "Variables must be given.");
-        const index_type num_dimensions = base::get_size(variables.front());
-        polynomial_calculator_.prepare(num_dimensions);
 
         compute_kernel_matrix(distance_function_, rbf_,
             length_parameter_calculator_, variables, kernel_matrix_);
-        polynomial_calculator_.compute_polynomial_term_matrix(
-            variables, polynomial_matrix_);
+        compute_polynomial_term_matrix(
+            variables, polynomial_matrix_, polynomial_generator_);
         equation_solver_.compute(
             kernel_matrix_, polynomial_matrix_, function_values);
         equation_solver_.solve(kernel_coeffs_, polynomial_coeffs_, reg_param);
@@ -204,8 +202,10 @@ public:
             }
         }
 
-        value += polynomial_calculator_.evaluate_polynomial_for_variable(
-            variable, polynomial_coeffs_);
+        for (index_type i = 0; i < polynomial_generator_.terms().size(); ++i) {
+            value += polynomial_generator_.terms()[i](variable) *
+                polynomial_coeffs_(i);
+        }
 
         return value;
     }
@@ -240,8 +240,6 @@ public:
         const auto num_variables = static_cast<index_type>(variables.size());
         NUM_COLLECT_PRECONDITION(
             num_variables > 0, this->logger(), "Variables must be given.");
-        const index_type num_dimensions = base::get_size(variables.front());
-        polynomial_calculator_.prepare(num_dimensions);
 
         static constexpr auto base = static_cast<kernel_value_type>(10);
         auto objective_function =
@@ -251,8 +249,8 @@ public:
             length_parameter_calculator_.scale(scale);
             compute_kernel_matrix(distance_function_, rbf_,
                 length_parameter_calculator_, variables, kernel_matrix_);
-            polynomial_calculator_.compute_polynomial_term_matrix(
-                variables, polynomial_matrix_);
+            compute_polynomial_term_matrix(
+                variables, polynomial_matrix_, polynomial_generator_);
             equation_solver_.compute(
                 kernel_matrix_, polynomial_matrix_, function_values);
             return std::log10(equation_solver_.calc_mle_objective(reg_param));
@@ -344,8 +342,8 @@ private:
     length_parameter_calculator_type length_parameter_calculator_{};
 
     //! Calculator of polynomials.
-    polynomial_calculator<variable_type, PolynomialDegree>
-        polynomial_calculator_{};
+    polynomial_term_generator<get_compile_time_size<variable_type>()>
+        polynomial_generator_{PolynomialDegree};
 
     //! Kernel matrix.
     kernel_matrix_type kernel_matrix_{};
@@ -380,7 +378,7 @@ private:
 template <typename FunctionSignature,
     concepts::rbf RBF =
         rbfs::gaussian_rbf<impl::get_default_scalar_type<FunctionSignature>>,
-    index_type PolynomialDegree = 1,
+    int PolynomialDegree = 1,
     kernel_matrix_type KernelMatrixType = kernel_matrix_type::dense,
     concepts::distance_function DistanceFunction =
         distance_functions::euclidean_distance_function<

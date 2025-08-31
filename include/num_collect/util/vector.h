@@ -21,6 +21,7 @@
 
 #include <cstddef>
 #include <initializer_list>
+#include <utility>
 #include <vector>
 
 #include "num_collect/base/index_type.h"
@@ -263,6 +264,18 @@ public:
      * \param[in] value Value of the element.
      */
     void push_back(value_type&& value) { vector_.push_back(std::move(value)); }
+
+    /*!
+     * \brief Add an element.
+     *
+     * \tparam Args Type of the arguments of the constructor.
+     * \param[in] args Arguments of the constructor.
+     * \return Reference to the added element.
+     */
+    template <typename... Args>
+    auto emplace_back(Args&&... args) -> reference {
+        return vector_.emplace_back(std::forward<Args>(args)...);
+    }
 
 private:
     //! Actual vector.

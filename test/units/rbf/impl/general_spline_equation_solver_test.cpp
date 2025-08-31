@@ -31,6 +31,7 @@
 #include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
 #include "num_collect/rbf/kernel_matrix_type.h"
 #include "num_collect/rbf/length_parameter_calculators/global_length_parameter_calculator.h"
+#include "num_collect/rbf/polynomial_term_generator.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
 
 TEST_CASE(
@@ -39,6 +40,7 @@ TEST_CASE(
     using num_collect::rbf::compute_kernel_matrix;
     using num_collect::rbf::compute_polynomial_term_matrix;
     using num_collect::rbf::kernel_matrix_type;
+    using num_collect::rbf::polynomial_term_generator;
     using num_collect::rbf::distance_functions::euclidean_distance_function;
     using num_collect::rbf::impl::general_spline_equation_solver;
     using num_collect::rbf::length_parameter_calculators::
@@ -77,7 +79,9 @@ TEST_CASE(
         compute_kernel_matrix(distance_function, rbf,
             length_parameter_calculator, sample_variables, kernel_matrix);
         Eigen::MatrixXd additional_matrix;
-        compute_polynomial_term_matrix<1>(sample_variables, additional_matrix);
+        const polynomial_term_generator<1> generator(1);
+        compute_polynomial_term_matrix(
+            sample_variables, additional_matrix, generator);
 
         REQUIRE_NOTHROW(
             solver.compute(kernel_matrix, additional_matrix, sample_values));
