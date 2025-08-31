@@ -27,7 +27,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/rbf/concepts/csrbf.h"
-#include "num_collect/rbf/concepts/differentiable_rbf.h"
+#include "num_collect/rbf/concepts/second_order_differentiable_rbf.h"
 #include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
 #include "num_collect/rbf/operators/general_operator_evaluator.h"
 #include "num_collect/rbf/operators/operator_evaluator.h"
@@ -71,7 +71,7 @@ private:
  * \brief Specialization of num_collect::rbf::operators::operator_evaluator for
  * num_collect::rbf::operators::laplacian_operator.
  */
-template <typename Variable, concepts::differentiable_rbf RBF>
+template <typename Variable, concepts::second_order_differentiable_rbf RBF>
 struct operator_evaluator<laplacian_operator<Variable>, RBF,
     distance_functions::euclidean_distance_function<Variable>>
     : general_operator_evaluator<

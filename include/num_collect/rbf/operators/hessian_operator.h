@@ -27,7 +27,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/rbf/concepts/csrbf.h"
-#include "num_collect/rbf/concepts/differentiable_rbf.h"
+#include "num_collect/rbf/concepts/second_order_differentiable_rbf.h"
 #include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
 #include "num_collect/rbf/operators/general_operator_evaluator.h"
 #include "num_collect/rbf/operators/operator_evaluator.h"
@@ -76,7 +76,7 @@ private:
  * variables.
  */
 template <base::concepts::real_scalar_dense_vector Variable,
-    concepts::differentiable_rbf RBF>
+    concepts::second_order_differentiable_rbf RBF>
     requires(Variable::RowsAtCompileTime > 0)  // Prohibit dynamic vector.
 struct operator_evaluator<hessian_operator<Variable>, RBF,
     distance_functions::euclidean_distance_function<Variable>>
