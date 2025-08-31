@@ -24,16 +24,19 @@
 #include <catch2/matchers/catch_matchers.hpp>
 
 #include "eigen_approx.h"
+#include "num_collect/rbf/polynomial_term_generator.h"
 
 TEST_CASE("num_collect::rbf::compute_polynomial_term_matrix") {
     using num_collect::rbf::compute_polynomial_term_matrix;
+    using num_collect::rbf::polynomial_term_generator;
 
     SECTION("for 1 dimension") {
         SECTION("calculate constant matrix") {
             const auto variables = std::vector<double>{0.0, 0.1, 0.2, 0.3};
 
+            const polynomial_term_generator<1> generator(0);
             Eigen::MatrixXd matrix;
-            compute_polynomial_term_matrix<0>(variables, matrix);
+            compute_polynomial_term_matrix(variables, matrix, generator);
 
             const Eigen::MatrixXd expected_matrix{{1.0}, {1.0}, {1.0}, {1.0}};
             CHECK_THAT(matrix, eigen_approx(expected_matrix));
@@ -42,8 +45,9 @@ TEST_CASE("num_collect::rbf::compute_polynomial_term_matrix") {
         SECTION("calculate polynomial term with 1 degree") {
             const auto variables = std::vector<double>{0.0, 0.1, 0.2, 0.3};
 
+            const polynomial_term_generator<1> generator(1);
             Eigen::MatrixXd matrix;
-            compute_polynomial_term_matrix<1>(variables, matrix);
+            compute_polynomial_term_matrix(variables, matrix, generator);
 
             const Eigen::MatrixXd expected_matrix{
                 {1.0, 0.0}, {1.0, 0.1}, {1.0, 0.2}, {1.0, 0.3}};
@@ -53,8 +57,9 @@ TEST_CASE("num_collect::rbf::compute_polynomial_term_matrix") {
         SECTION("calculate polynomial term with 2 degree") {
             const auto variables = std::vector<double>{0.0, 0.1, 0.2, 0.3};
 
+            const polynomial_term_generator<1> generator(2);
             Eigen::MatrixXd matrix;
-            compute_polynomial_term_matrix<2>(variables, matrix);
+            compute_polynomial_term_matrix(variables, matrix, generator);
 
             const Eigen::MatrixXd expected_matrix{{1.0, 0.0, 0.0},
                 {1.0, 0.1, 0.01}, {1.0, 0.2, 0.04}, {1.0, 0.3, 0.09}};
@@ -67,26 +72,36 @@ TEST_CASE("num_collect::rbf::compute_polynomial_term_matrix") {
             Eigen::Vector2d{0.0, 0.1},
             Eigen::Vector2d{0.2, 0.3},
             Eigen::Vector2d{0.4, 0.5},
-            Eigen::Vector2d{0.6, 0.7},
-            Eigen::Vector2d{0.8, 0.9},
         };
 
         SECTION("calculate constant matrix") {
+            const polynomial_term_generator<2> generator(0);
             Eigen::MatrixXd matrix;
-            compute_polynomial_term_matrix<0>(variables, matrix);
+            compute_polynomial_term_matrix(variables, matrix, generator);
 
-            const Eigen::MatrixXd expected_matrix{
-                {1.0}, {1.0}, {1.0}, {1.0}, {1.0}};
+            const Eigen::MatrixXd expected_matrix{{1.0}, {1.0}, {1.0}};
             CHECK_THAT(matrix, eigen_approx(expected_matrix));
         }
 
         SECTION("calculate polynomial term with 1 degree") {
+            const polynomial_term_generator<2> generator(1);
             Eigen::MatrixXd matrix;
-            compute_polynomial_term_matrix<1>(variables, matrix);
+            compute_polynomial_term_matrix(variables, matrix, generator);
 
-            const Eigen::MatrixXd expected_matrix{{1.0, 0.0, 0.1},
-                {1.0, 0.2, 0.3}, {1.0, 0.4, 0.5}, {1.0, 0.6, 0.7},
-                {1.0, 0.8, 0.9}};
+            const Eigen::MatrixXd expected_matrix{
+                {1.0, 0.1, 0.0}, {1.0, 0.3, 0.2}, {1.0, 0.5, 0.4}};
+            CHECK_THAT(matrix, eigen_approx(expected_matrix));
+        }
+
+        SECTION("calculate polynomial term with 2 degree") {
+            const polynomial_term_generator<2> generator(2);
+            Eigen::MatrixXd matrix;
+            compute_polynomial_term_matrix(variables, matrix, generator);
+
+            const Eigen::MatrixXd expected_matrix{
+                {1.0, 0.1, 0.01, 0.0, 0.0, 0.0},
+                {1.0, 0.3, 0.09, 0.2, 0.06, 0.04},
+                {1.0, 0.5, 0.25, 0.4, 0.20, 0.16}};
             CHECK_THAT(matrix, eigen_approx(expected_matrix));
         }
     }

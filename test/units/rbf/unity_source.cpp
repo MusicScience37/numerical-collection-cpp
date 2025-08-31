@@ -19,7 +19,6 @@
 #include "operators/laplacian_operator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "operators/partial_derivative_operator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "operators/third_order_derivative_operator_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "polynomial_calculator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "polynomial_term_generator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "polynomial_term_test.cpp"   // NOLINT(bugprone-suspicious-include)
 #include "rbf_interpolator_test.cpp"  // NOLINT(bugprone-suspicious-include)

@@ -23,11 +23,8 @@
 #include "num_collect/base/concepts/dense_vector.h"
 #include "num_collect/base/concepts/implicitly_convertible_to.h"
 #include "num_collect/base/concepts/real_scalar.h"
-#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/base/precondition.h"
-#include "num_collect/logging/logging_macros.h"
-#include "num_collect/rbf/polynomial_calculator.h"
+#include "num_collect/rbf/polynomial_term_generator.h"
 #include "num_collect/util/vector_view.h"
 
 namespace num_collect::rbf {
@@ -35,69 +32,66 @@ namespace num_collect::rbf {
 /*!
  * \brief Compute a matrix of polynomial terms in RBF interpolation.
  *
- * \tparam PolynomialDegree Degree of polynomials.
  * \tparam Variable Type of variables.
  * \tparam Matrix Type of the matrix.
  * \param[in] variables Variables.
  * \param[out] matrix Matrix.
+ * \param[in] generator Generator for polynomial terms.
  */
-template <index_type PolynomialDegree, base::concepts::real_scalar Variable,
+template <base::concepts::real_scalar Variable,
     base::concepts::dense_matrix_of<Variable> Matrix>
-    requires(PolynomialDegree >= 0)
 inline void compute_polynomial_term_matrix(
-    util::vector_view<const Variable> variables, Matrix& matrix) {
-    polynomial_calculator<Variable, PolynomialDegree> calculator;
-    calculator.prepare(1);
-    calculator.compute_polynomial_term_matrix(variables, matrix);
+    util::vector_view<const Variable> variables, Matrix& matrix,
+    const polynomial_term_generator<1>& generator) {
+    matrix.resize(variables.size(), generator.terms().size());
+    for (index_type i = 0; i < variables.size(); ++i) {
+        for (index_type j = 0; j < generator.terms().size(); ++j) {
+            matrix(i, j) = generator.terms()[j](variables[i]);
+        }
+    }
 }
 
 /*!
  * \brief Compute a matrix of polynomial terms in RBF interpolation.
  *
- * \tparam PolynomialDegree Degree of polynomials.
  * \tparam Variable Type of variables.
  * \tparam Matrix Type of the matrix.
  * \param[in] variables Variables.
  * \param[out] matrix Matrix.
+ * \param[in] generator Generator for polynomial terms.
  */
-template <index_type PolynomialDegree, base::concepts::dense_vector Variable,
+template <base::concepts::dense_vector Variable,
     base::concepts::dense_matrix_of<typename Variable::Scalar> Matrix>
-    requires(PolynomialDegree >= 0)
+    requires(Variable::RowsAtCompileTime > 0)
 inline void compute_polynomial_term_matrix(
-    util::vector_view<const Variable> variables, Matrix& matrix) {
-    // TODO support of more degrees.
-    static_assert(
-        PolynomialDegree < 2, "Currently, up to 1 degree is supported.");
-
-    using scalar_type = typename Matrix::Scalar;
-
-    const index_type num_variables = variables.size();
-    NUM_COLLECT_PRECONDITION(num_variables > 0, "Variables must be given.");
-    const index_type num_dimensions = variables.front().size();
-
-    polynomial_calculator<Variable, PolynomialDegree> calculator;
-    calculator.prepare(num_dimensions);
-    calculator.compute_polynomial_term_matrix(variables, matrix);
+    util::vector_view<const Variable> variables, Matrix& matrix,
+    const polynomial_term_generator<Variable::RowsAtCompileTime>& generator) {
+    matrix.resize(variables.size(), generator.terms().size());
+    for (index_type i = 0; i < variables.size(); ++i) {
+        for (index_type j = 0; j < generator.terms().size(); ++j) {
+            matrix(i, j) = generator.terms()[j](variables[i]);
+        }
+    }
 }
 
 /*!
  * \brief Compute a matrix of polynomial terms in RBF interpolation.
  *
- * \tparam PolynomialDegree Degree of polynomials.
- * \tparam VariableVector Type of the vector of variables.
+ * \tparam Variable Type of variables.
  * \tparam Matrix Type of the matrix.
  * \param[in] variables Variables.
  * \param[out] matrix Matrix.
+ * \param[in] generator Generator for polynomial terms.
  */
-template <index_type PolynomialDegree, typename VariableVector, typename Matrix>
+template <typename VariableVector, typename Matrix,
+    typename PolynomialTermGenerator>
     requires base::concepts::implicitly_convertible_to<VariableVector,
         util::vector_view<
             const std::decay_t<decltype(*VariableVector{}.data())>>>
-inline void compute_polynomial_term_matrix(
-    VariableVector&& variables, Matrix& matrix) {
+inline void compute_polynomial_term_matrix(VariableVector&& variables,
+    Matrix& matrix, const PolynomialTermGenerator& generator) {
     using variable_type = std::decay_t<decltype(*variables.data())>;
-    compute_polynomial_term_matrix<PolynomialDegree, variable_type>(
-        variables, matrix);
+    compute_polynomial_term_matrix<variable_type>(variables, matrix, generator);
 }
 
 }  // namespace num_collect::rbf

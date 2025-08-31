@@ -142,7 +142,7 @@ public:
      * \return Value of the polynomial.
      */
     template <typename Scalar>
-        requires(!concepts::dense_vector<Scalar>)
+        requires(!base::concepts::dense_vector<Scalar>)
     [[nodiscard]] auto operator()(const Scalar& variable) const noexcept
         -> Scalar {
         using std::pow;
