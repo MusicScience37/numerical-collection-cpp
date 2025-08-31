@@ -44,3 +44,41 @@ TEST_CASE("num_collect::rbf::polynomial_term") {
         CHECK_THAT(value, Catch::Matchers::WithinRel(expected_value));
     }
 }
+
+TEST_CASE("num_collect::rbf::polynomial_term<1>") {
+    using num_collect::rbf::polynomial_term;
+
+    SECTION("create a polynomial term from a scalar") {
+        const polynomial_term<1> term(2);
+
+        CHECK(term.degree() == 2);
+        CHECK(term.degrees() == Eigen::Vector<int, 1>{{2}});
+    }
+
+    SECTION("create a polynomial term from a vector") {
+        const polynomial_term term(Eigen::Vector<int, 1>{{2}});
+
+        CHECK(term.degree() == 2);
+        CHECK(term.degrees() == Eigen::Vector<int, 1>{{2}});
+    }
+
+    SECTION("evaluate a polynomial for a scalar") {
+        const polynomial_term<1> term(2);
+
+        const double variable = 1.2;
+        const double value = term(variable);
+
+        const double expected_value = 1.44;
+        CHECK_THAT(value, Catch::Matchers::WithinRel(expected_value));
+    }
+
+    SECTION("evaluate a polynomial for a vector") {
+        const polynomial_term<1> term(2);
+
+        const Eigen::Vector<double, 1> variable{{1.2}};
+        const double value = term(variable);
+
+        const double expected_value = 1.44;
+        CHECK_THAT(value, Catch::Matchers::WithinRel(expected_value));
+    }
+}
