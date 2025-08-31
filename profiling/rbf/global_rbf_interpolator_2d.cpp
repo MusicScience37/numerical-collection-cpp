@@ -31,8 +31,8 @@
 constexpr num_collect::index_type num_sample_points = 100;  // For debugging.
 constexpr std::size_t repetition = 1;
 #else
-constexpr num_collect::index_type num_sample_points = 10000;  // For profiling.
-constexpr std::size_t repetition = 10;
+constexpr num_collect::index_type num_sample_points = 100;  // For profiling.
+constexpr std::size_t repetition = 100;
 #endif
 constexpr num_collect::index_type num_evaluation_points = 100;
 
@@ -44,8 +44,10 @@ static void test(const std::vector<Eigen::Vector2d>& sample_variables,
     const Eigen::VectorXd& sample_values,
     const std::vector<Eigen::Vector2d>& evaluation_variables,
     Eigen::VectorXd& evaluation_interpolated_values) {
-    num_collect::rbf::local_csrbf_interpolator<double(Eigen::Vector2d)>
+    num_collect::rbf::global_rbf_interpolator<double(Eigen::Vector2d)>
         interpolator;
+    interpolator.optimize_length_parameter_scale(
+        sample_variables, sample_values);
     interpolator.compute(sample_variables, sample_values);
     for (num_collect::index_type i = 0; i < num_evaluation_points; ++i) {
         const auto& variable =
@@ -88,7 +90,7 @@ auto main() -> int {
         evaluation_interpolated_values[i] = 0.0;
     }
 
-    ProfilerStart("profile_rbf_local_csrbf_interpolator_2d.prof");
+    ProfilerStart("profile_rbf_global_rbf_interpolator_2d.prof");
     for (std::size_t i = 0; i < repetition; ++i) {
         test(sample_variables, sample_values, evaluation_variables,
             evaluation_interpolated_values);
