@@ -44,8 +44,8 @@ inline void compute_polynomial_term_matrix(
     util::vector_view<const Variable> variables, Matrix& matrix,
     const polynomial_term_generator<1>& generator) {
     matrix.resize(variables.size(), generator.terms().size());
-    for (index_type i = 0; i < variables.size(); ++i) {
-        for (index_type j = 0; j < generator.terms().size(); ++j) {
+    for (index_type j = 0; j < generator.terms().size(); ++j) {
+        for (index_type i = 0; i < variables.size(); ++i) {
             matrix(i, j) = generator.terms()[j](variables[i]);
         }
     }
@@ -67,8 +67,8 @@ inline void compute_polynomial_term_matrix(
     util::vector_view<const Variable> variables, Matrix& matrix,
     const polynomial_term_generator<Variable::RowsAtCompileTime>& generator) {
     matrix.resize(variables.size(), generator.terms().size());
-    for (index_type i = 0; i < variables.size(); ++i) {
-        for (index_type j = 0; j < generator.terms().size(); ++j) {
+    for (index_type j = 0; j < generator.terms().size(); ++j) {
+        for (index_type i = 0; i < variables.size(); ++i) {
             matrix(i, j) = generator.terms()[j](variables[i]);
         }
     }

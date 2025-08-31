@@ -75,6 +75,9 @@ public:
         -> Scalar {
         auto result = static_cast<Scalar>(1);
         for (index_type i = 0; i < NumDimensions; ++i) {
+            if (degrees_(i) == 0) {
+                continue;
+            }
             using std::pow;
             result *= static_cast<Scalar>(pow(variable(i), degrees_(i)));
         }
@@ -145,6 +148,9 @@ public:
         requires(!base::concepts::dense_vector<Scalar>)
     [[nodiscard]] auto operator()(const Scalar& variable) const noexcept
         -> Scalar {
+        if (degree_ == 0) {
+            return static_cast<Scalar>(1);
+        }
         using std::pow;
         return static_cast<Scalar>(pow(variable, degree_));
     }
