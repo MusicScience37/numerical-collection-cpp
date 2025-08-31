@@ -7,6 +7,7 @@ set(SOURCE_FILES
     operators/fourth_derivative.cpp
     operators/second_derivative.cpp
     operators/third_derivative.cpp
+    polynomials/global_rbf_polynomial_interpolator.cpp
     rbfs/gaussian_process_interpolator.cpp
     rbfs/global_rbf_polynomial_interpolator.cpp
     rbfs/local_csrbf_interpolator.cpp

@@ -6,6 +6,7 @@
 #include "operators/fourth_derivative.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "operators/second_derivative.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "operators/third_derivative.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "polynomials/global_rbf_polynomial_interpolator.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rbfs/gaussian_process_interpolator.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rbfs/global_rbf_polynomial_interpolator.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rbfs/local_csrbf_interpolator.cpp"  // NOLINT(bugprone-suspicious-include)
