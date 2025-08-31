@@ -1,5 +1,6 @@
 set(SOURCE_FILES
     bidirectional_vector_test.cpp
+    combination_test.cpp
     comparators_test.cpp
     concepts/comparable_test.cpp
     concepts/comparator_test.cpp
