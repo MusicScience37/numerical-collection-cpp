@@ -92,7 +92,7 @@ class rbf_polynomial_interpolator;
  * parameters.
  */
 template <typename Variable, typename FunctionValue, concepts::rbf RBF,
-    index_type PolynomialDegree, kernel_matrix_type KernelMatrixType,
+    int PolynomialDegree, kernel_matrix_type KernelMatrixType,
     concepts::distance_function DistanceFunction,
     concepts::length_parameter_calculator LengthParameterCalculator>
 class rbf_polynomial_interpolator<FunctionValue(Variable), RBF,
