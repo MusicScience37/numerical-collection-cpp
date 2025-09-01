@@ -20,6 +20,7 @@
 #pragma once
 
 #include <cstddef>
+#include <type_traits>
 
 #include <Eigen/Core>
 
@@ -36,6 +37,7 @@
 #include "num_collect/rbf/concepts/csrbf.h"
 #include "num_collect/rbf/concepts/distance_function.h"
 #include "num_collect/rbf/concepts/length_parameter_calculator.h"
+#include "num_collect/rbf/concepts/operator_with.h"
 #include "num_collect/rbf/concepts/rbf.h"
 #include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
 #include "num_collect/rbf/impl/general_spline_equation_solver.h"
@@ -44,6 +46,7 @@
 #include "num_collect/rbf/kernel_matrix_type.h"
 #include "num_collect/rbf/length_parameter_calculators/global_length_parameter_calculator.h"
 #include "num_collect/rbf/length_parameter_calculators/local_length_parameter_calculator.h"
+#include "num_collect/rbf/operators/operator_evaluator.h"
 #include "num_collect/rbf/polynomial_term_generator.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
 #include "num_collect/util/vector_view.h"
@@ -208,6 +211,26 @@ public:
         }
 
         return value;
+    }
+
+    /*!
+     * \brief Evaluate an operator.
+     *
+     * \param[in] target_operator Operator to evaluate.
+     * \return Result of evaluation.
+     */
+    template <concepts::operator_with<rbf_type, distance_function_type,
+        length_parameter_calculator_type, function_value_vector_type>
+            Operator>
+    [[nodiscard]] auto evaluate(const Operator& target_operator) const {
+        using operator_type = std::decay_t<Operator>;
+        return operators::operator_evaluator<operator_type, rbf_type,
+                   distance_function_type>::evaluate(distance_function_, rbf_,
+                   length_parameter_calculator_, target_operator, variables_,
+                   kernel_coeffs_) +
+            operators::operator_evaluator<operator_type, rbf_type,
+                distance_function_type>::evaluate_polynomial(target_operator,
+                polynomial_generator_, polynomial_coeffs_);
     }
 
     /*!
