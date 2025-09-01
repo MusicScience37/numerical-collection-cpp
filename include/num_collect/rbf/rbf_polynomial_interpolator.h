@@ -224,13 +224,14 @@ public:
             Operator>
     [[nodiscard]] auto evaluate(const Operator& target_operator) const {
         using operator_type = std::decay_t<Operator>;
-        return operators::operator_evaluator<operator_type, rbf_type,
-                   distance_function_type>::evaluate(distance_function_, rbf_,
-                   length_parameter_calculator_, target_operator, variables_,
-                   kernel_coeffs_) +
-            operators::operator_evaluator<operator_type, rbf_type,
-                distance_function_type>::evaluate_polynomial(target_operator,
-                polynomial_generator_, polynomial_coeffs_);
+        auto result = operators::operator_evaluator<operator_type, rbf_type,
+            distance_function_type>::evaluate(distance_function_, rbf_,
+            length_parameter_calculator_, target_operator, variables_,
+            kernel_coeffs_);
+        result += operators::operator_evaluator<operator_type, rbf_type,
+            distance_function_type>::evaluate_polynomial(target_operator,
+            polynomial_generator_, polynomial_coeffs_);
+        return result;
     }
 
     /*!
