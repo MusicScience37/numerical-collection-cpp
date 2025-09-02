@@ -29,7 +29,7 @@
 #include "num_collect/rbf/concepts/csrbf.h"
 #include "num_collect/rbf/concepts/fourth_order_differentiable_rbf.h"
 #include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
-#include "num_collect/rbf/operators/general_operator_evaluator.h"
+#include "num_collect/rbf/operators/general_differential_operator_evaluator.h"
 #include "num_collect/rbf/operators/operator_evaluator.h"
 #include "num_collect/rbf/rbfs/differentiated.h"
 
@@ -75,18 +75,19 @@ private:
 template <typename Variable, concepts::fourth_order_differentiable_rbf RBF>
 struct operator_evaluator<biharmonic_operator<Variable>, RBF,
     distance_functions::euclidean_distance_function<Variable>>
-    : general_operator_evaluator<
+    : general_differential_operator_evaluator<
           operator_evaluator<biharmonic_operator<Variable>, RBF,
               distance_functions::euclidean_distance_function<Variable>>,
           biharmonic_operator<Variable>, RBF,
           distance_functions::euclidean_distance_function<Variable>> {
     //! Type of the base.
-    using base_type = general_operator_evaluator<
+    using base_type = general_differential_operator_evaluator<
         operator_evaluator<biharmonic_operator<Variable>, RBF,
             distance_functions::euclidean_distance_function<Variable>>,
         biharmonic_operator<Variable>, RBF,
         distance_functions::euclidean_distance_function<Variable>>;
 
+    using base_type::variable_dimensions;
     using typename base_type::distance_function_type;
     using typename base_type::kernel_value_type;
     using typename base_type::operator_type;
@@ -94,15 +95,29 @@ struct operator_evaluator<biharmonic_operator<Variable>, RBF,
     using typename base_type::variable_type;
 
     /*!
-     * \brief Get the initial value for accumulation of values evaluated for
-     * samples points.
+     * \brief Get the orders of differentiations.
      *
-     * \tparam KernelCoeff Type of the coefficients of kernels.
-     * \return Initial value.
+     * \return Orders of differentiations.
      */
-    template <typename KernelCoeff>
-    [[nodiscard]] static auto initial_value() -> KernelCoeff {
-        return static_cast<KernelCoeff>(0);
+    [[nodiscard]] static auto differentiations()
+        -> std::array<Eigen::Vector<int, variable_dimensions>,
+            variable_dimensions * variable_dimensions> {
+        std::array<Eigen::Vector<int, variable_dimensions>,
+            variable_dimensions * variable_dimensions>
+            orders_list;
+        Eigen::Vector<int, variable_dimensions> orders =
+            Eigen::Vector<int, variable_dimensions>::Zero();
+        for (int i = 0; i < variable_dimensions; ++i) {
+            for (int j = 0; j < variable_dimensions; ++j) {
+                Eigen::Vector<int, variable_dimensions> orders =
+                    Eigen::Vector<int, variable_dimensions>::Zero();
+                orders(i) += 2;
+                orders(j) += 2;
+                orders_list[static_cast<std::size_t>(
+                    i * variable_dimensions + j)] = orders;
+            }
+        }
+        return orders_list;
     }
 
     /*!

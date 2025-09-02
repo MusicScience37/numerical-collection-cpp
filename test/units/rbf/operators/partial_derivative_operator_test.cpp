@@ -27,11 +27,13 @@
 #include "num_collect/rbf/generate_halton_nodes.h"
 #include "num_collect/rbf/operators/operator_evaluator.h"
 #include "num_collect/rbf/rbf_interpolator.h"
+#include "num_collect/rbf/rbf_polynomial_interpolator.h"
 
 TEST_CASE("num_collect::rbf::operators::partial_derivative_operator") {
     using num_collect::index_type;
     using num_collect::rbf::generate_halton_nodes;
     using num_collect::rbf::global_rbf_interpolator;
+    using num_collect::rbf::global_rbf_polynomial_interpolator;
     using num_collect::rbf::local_csrbf_interpolator;
     using num_collect::rbf::operators::operator_evaluator;
     using num_collect::rbf::operators::partial_derivative_operator;
@@ -98,6 +100,48 @@ TEST_CASE("num_collect::rbf::operators::partial_derivative_operator") {
 
         rbf_interpolator_type interpolator;
         constexpr double length_parameter_scale = 10.0;
+        interpolator.fix_length_parameter_scale(length_parameter_scale);
+        interpolator.compute(sample_variables, sample_values);
+
+        const Eigen::Vector2d evaluated_variable(0.3, 0.4);
+        const double evaluated_value_0 = interpolator.evaluate(
+            partial_derivative_operator(evaluated_variable, 0));
+        const double evaluated_value_1 = interpolator.evaluate(
+            partial_derivative_operator(evaluated_variable, 1));
+        const Eigen::Vector2d expected_value =
+            derivative_function(evaluated_variable);
+
+        constexpr double tol = 1e-2;
+        CHECK_THAT(evaluated_value_0,
+            Catch::Matchers::WithinAbs(expected_value(0), tol));
+        CHECK_THAT(evaluated_value_1,
+            Catch::Matchers::WithinAbs(expected_value(1), tol));
+    }
+
+    SECTION(
+        "evaluate an operator for a two-dimensional variable with polynomial "
+        "terms") {
+        using rbf_interpolator_type =
+            global_rbf_polynomial_interpolator<double(Eigen::Vector2d)>;
+
+        const auto function = [](const Eigen::Vector2d& variable) {
+            return variable.squaredNorm();
+        };
+        const auto derivative_function = [](const Eigen::Vector2d& variable) {
+            // NOLINTNEXTLINE(*-magic-numbers)
+            return 2.0 * variable;
+        };
+
+        const auto sample_variables = generate_halton_nodes<double, 2>(100);
+        Eigen::VectorXd sample_values{};
+        sample_values.resize(static_cast<index_type>(sample_variables.size()));
+        for (std::size_t i = 0; i < sample_variables.size(); ++i) {
+            sample_values(static_cast<index_type>(i)) =
+                function(sample_variables[i]);
+        }
+
+        rbf_interpolator_type interpolator;
+        constexpr double length_parameter_scale = 2.0;
         interpolator.fix_length_parameter_scale(length_parameter_scale);
         interpolator.compute(sample_variables, sample_values);
 

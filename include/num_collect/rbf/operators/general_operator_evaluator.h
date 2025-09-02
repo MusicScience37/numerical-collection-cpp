@@ -22,6 +22,7 @@
 #include <Eigen/Core>
 
 #include "num_collect/base/concepts/dense_vector.h"
+#include "num_collect/base/get_compile_time_size.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/rbf/concepts/length_parameter_calculator.h"
 #include "num_collect/rbf/concepts/rbf.h"
@@ -54,6 +55,10 @@ struct general_operator_evaluator {
 
     //! Type of the operator.
     using operator_type = Operator;
+
+    //! Dimensions of the variables.
+    static constexpr index_type variable_dimensions =
+        get_compile_time_size<variable_type>();
 
     /*!
      * \brief Evaluate an operator.

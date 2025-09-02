@@ -21,12 +21,15 @@
 
 #include <utility>
 
+#include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/rbf/concepts/csrbf.h"
 #include "num_collect/rbf/concepts/rbf.h"
 #include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
 #include "num_collect/rbf/operators/general_operator_evaluator.h"
 #include "num_collect/rbf/operators/operator_evaluator.h"
+#include "num_collect/rbf/polynomial_term_generator.h"
+#include "num_collect/util/assert.h"
 
 namespace num_collect::rbf::operators {
 
@@ -79,6 +82,7 @@ struct operator_evaluator<function_value_operator<Variable>, RBF,
         function_value_operator<Variable>, RBF,
         distance_functions::euclidean_distance_function<Variable>>;
 
+    using base_type::variable_dimensions;
     using typename base_type::distance_function_type;
     using typename base_type::kernel_value_type;
     using typename base_type::operator_type;
@@ -130,6 +134,33 @@ struct operator_evaluator<function_value_operator<Variable>, RBF,
         } else {
             return kernel_coeff * rbf(distance_rate);
         }
+    }
+
+    /*!
+     * \brief Evaluate a polynomial.
+     *
+     * \tparam CoeffVector Type of the vector of coefficients of the polynomial.
+     * \param[in] target_operator Operator to evaluate.
+     * \param[in] term_generator Generator of polynomial terms.
+     * \param[in] polynomial_coefficients Coefficients of the polynomial.
+     * \return Evaluated polynomial value.
+     */
+    template <base::concepts::dense_vector CoeffVector>
+    [[nodiscard]] static auto evaluate_polynomial(
+        const operator_type& target_operator,
+        const polynomial_term_generator<variable_dimensions>& term_generator,
+        const CoeffVector& polynomial_coefficients) {
+        using coeff_type = typename CoeffVector::Scalar;
+
+        NUM_COLLECT_DEBUG_ASSERT(
+            term_generator.terms().size() == polynomial_coefficients.size());
+
+        auto value = initial_value<coeff_type>();
+        for (index_type i = 0; i < term_generator.terms().size(); ++i) {
+            value += term_generator.terms()[i](target_operator.variable()) *
+                polynomial_coefficients(i);
+        }
+        return value;
     }
 };
 
