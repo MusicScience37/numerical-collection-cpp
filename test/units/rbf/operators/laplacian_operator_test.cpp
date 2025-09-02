@@ -28,11 +28,13 @@
 #include "num_collect/rbf/generate_halton_nodes.h"
 #include "num_collect/rbf/operators/operator_evaluator.h"
 #include "num_collect/rbf/rbf_interpolator.h"
+#include "num_collect/rbf/rbf_polynomial_interpolator.h"
 
 TEST_CASE("num_collect::rbf::operators::laplacian_operator") {
     using num_collect::index_type;
     using num_collect::rbf::generate_halton_nodes;
     using num_collect::rbf::global_rbf_interpolator;
+    using num_collect::rbf::global_rbf_polynomial_interpolator;
     using num_collect::rbf::local_csrbf_interpolator;
     using num_collect::rbf::operators::laplacian_operator;
     using num_collect::rbf::operators::operator_evaluator;
@@ -110,6 +112,45 @@ TEST_CASE("num_collect::rbf::operators::laplacian_operator") {
             evaluated_value, Catch::Matchers::WithinAbs(expected_value, tol));
     }
 
+    SECTION(
+        "evaluate an operator for a one-dimensional variable with polynomial "
+        "terms") {
+        using rbf_interpolator_type =
+            global_rbf_polynomial_interpolator<double(double)>;
+
+        const auto function = [](double x) {
+            return std::cos(num_collect::constants::pi<double> * x);
+        };
+        const auto second_derivative_function = [](double x) {
+            return -num_collect::constants::pi<double> *
+                num_collect::constants::pi<double> *
+                std::cos(num_collect::constants::pi<double> * x);
+        };
+
+        const Eigen::VectorXd sample_variables =
+            Eigen::VectorXd::LinSpaced(101, 0.0, 1.0);
+        Eigen::VectorXd sample_values{};
+        sample_values.resize(sample_variables.size());
+        for (index_type i = 0; i < sample_variables.size(); ++i) {
+            sample_values(i) = function(sample_variables(i));
+        }
+
+        rbf_interpolator_type interpolator;
+        constexpr double length_parameter_scale = 2.0;
+        interpolator.fix_length_parameter_scale(length_parameter_scale);
+        interpolator.compute(sample_variables, sample_values);
+
+        constexpr double evaluated_variable = 0.55;
+        const double evaluated_value =
+            interpolator.evaluate(laplacian_operator(evaluated_variable));
+        const double expected_value =
+            second_derivative_function(evaluated_variable);
+
+        constexpr double tol = 1e-2;
+        CHECK_THAT(
+            evaluated_value, Catch::Matchers::WithinAbs(expected_value, tol));
+    }
+
     SECTION("evaluate an operator for a two-dimensional variable") {
         using rbf_interpolator_type =
             global_rbf_interpolator<double(Eigen::Vector2d)>;
@@ -180,6 +221,45 @@ TEST_CASE("num_collect::rbf::operators::laplacian_operator") {
             second_derivative_function(evaluated_variable);
 
         constexpr double tol = 0.1;
+        CHECK_THAT(
+            evaluated_value, Catch::Matchers::WithinAbs(expected_value, tol));
+    }
+
+    SECTION(
+        "evaluate an operator for a two-dimensional variable with polynomial "
+        "terms") {
+        using rbf_interpolator_type =
+            global_rbf_polynomial_interpolator<double(Eigen::Vector2d)>;
+
+        const auto function = [](const Eigen::Vector2d& variable) {
+            return variable.squaredNorm();
+        };
+        const auto second_derivative_function =
+            [](const Eigen::Vector2d& /*variable*/) {
+                // NOLINTNEXTLINE(*-magic-numbers)
+                return 4.0;
+            };
+
+        const auto sample_variables = generate_halton_nodes<double, 2>(100);
+        Eigen::VectorXd sample_values{};
+        sample_values.resize(static_cast<index_type>(sample_variables.size()));
+        for (std::size_t i = 0; i < sample_variables.size(); ++i) {
+            sample_values(static_cast<index_type>(i)) =
+                function(sample_variables[i]);
+        }
+
+        rbf_interpolator_type interpolator;
+        constexpr double length_parameter_scale = 2.0;
+        interpolator.fix_length_parameter_scale(length_parameter_scale);
+        interpolator.compute(sample_variables, sample_values);
+
+        const Eigen::Vector2d evaluated_variable(0.3, 0.4);
+        const double evaluated_value =
+            interpolator.evaluate(laplacian_operator(evaluated_variable));
+        const double expected_value =
+            second_derivative_function(evaluated_variable);
+
+        constexpr double tol = 1e-2;
         CHECK_THAT(
             evaluated_value, Catch::Matchers::WithinAbs(expected_value, tol));
     }

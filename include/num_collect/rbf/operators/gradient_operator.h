@@ -29,6 +29,7 @@
 #include "num_collect/rbf/concepts/differentiable_rbf.h"
 #include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
 #include "num_collect/rbf/impl/differentiate_polynomial_term.h"
+#include "num_collect/rbf/operators/general_differential_operator_evaluator.h"
 #include "num_collect/rbf/operators/general_operator_evaluator.h"
 #include "num_collect/rbf/operators/operator_evaluator.h"
 #include "num_collect/rbf/polynomial_term_generator.h"
@@ -81,13 +82,13 @@ template <base::concepts::real_scalar Variable,
     concepts::differentiable_rbf RBF>
 struct operator_evaluator<gradient_operator<Variable>, RBF,
     distance_functions::euclidean_distance_function<Variable>>
-    : general_operator_evaluator<
+    : general_differential_operator_evaluator<
           operator_evaluator<gradient_operator<Variable>, RBF,
               distance_functions::euclidean_distance_function<Variable>>,
           gradient_operator<Variable>, RBF,
           distance_functions::euclidean_distance_function<Variable>> {
     //! Type of the base.
-    using base_type = general_operator_evaluator<
+    using base_type = general_differential_operator_evaluator<
         operator_evaluator<gradient_operator<Variable>, RBF,
             distance_functions::euclidean_distance_function<Variable>>,
         gradient_operator<Variable>, RBF,
@@ -99,18 +100,6 @@ struct operator_evaluator<gradient_operator<Variable>, RBF,
     using typename base_type::operator_type;
     using typename base_type::rbf_type;
     using typename base_type::variable_type;
-
-    /*!
-     * \brief Get the initial value for accumulation of values evaluated for
-     * samples points.
-     *
-     * \tparam KernelCoeff Type of the coefficients of kernels.
-     * \return Initial value.
-     */
-    template <typename KernelCoeff>
-    [[nodiscard]] static auto initial_value() -> KernelCoeff {
-        return static_cast<KernelCoeff>(0);
-    }
 
     /*!
      * \brief Get the orders of differentiations.
@@ -176,44 +165,6 @@ struct operator_evaluator<gradient_operator<Variable>, RBF,
                 (target_operator.variable() - sample_variable) /
                 (length_parameter * length_parameter);
         }
-    }
-
-    /*!
-     * \brief Evaluate a polynomial.
-     *
-     * \tparam CoeffVector Type of the vector of coefficients of the polynomial.
-     * \param[in] target_operator Operator to evaluate.
-     * \param[in] term_generator Generator of polynomial terms.
-     * \param[in] polynomial_coefficients Coefficients of the polynomial.
-     * \return Evaluated polynomial value.
-     */
-    template <base::concepts::dense_vector CoeffVector>
-    [[nodiscard]] static auto evaluate_polynomial(
-        const operator_type& target_operator,
-        const polynomial_term_generator<variable_dimensions>& term_generator,
-        const CoeffVector& polynomial_coefficients) {
-        using coeff_type = typename CoeffVector::Scalar;
-
-        NUM_COLLECT_DEBUG_ASSERT(
-            term_generator.terms().size() == polynomial_coefficients.size());
-
-        static const auto orders_list = differentiations();
-
-        auto value = initial_value<coeff_type>();
-        for (index_type i = 0; i < term_generator.terms().size(); ++i) {
-            for (const auto& orders : orders_list) {
-                const auto differentiation_result =
-                    impl::differentiate_polynomial_term<coeff_type>(
-                        term_generator.terms()[i], orders);
-                if (differentiation_result) {
-                    value += differentiation_result->first(
-                                 target_operator.variable()) *
-                        differentiation_result->second *
-                        polynomial_coefficients(i);
-                }
-            }
-        }
-        return value;
     }
 };
 
