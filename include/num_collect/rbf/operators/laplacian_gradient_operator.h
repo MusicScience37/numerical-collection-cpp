@@ -19,17 +19,22 @@
  */
 #pragma once
 
+#include <array>
 #include <utility>
 
 #include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/get_size.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/rbf/concepts/csrbf.h"
 #include "num_collect/rbf/concepts/third_order_differentiable_rbf.h"
 #include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
+#include "num_collect/rbf/impl/differentiate_polynomial_term.h"
+#include "num_collect/rbf/operators/general_differential_operator_evaluator.h"
 #include "num_collect/rbf/operators/general_operator_evaluator.h"
 #include "num_collect/rbf/operators/operator_evaluator.h"
+#include "num_collect/rbf/polynomial_term_generator.h"
 #include "num_collect/rbf/rbfs/differentiated.h"
 
 namespace num_collect::rbf::operators {
@@ -77,13 +82,13 @@ template <base::concepts::real_scalar Variable,
     concepts::third_order_differentiable_rbf RBF>
 struct operator_evaluator<laplacian_gradient_operator<Variable>, RBF,
     distance_functions::euclidean_distance_function<Variable>>
-    : general_operator_evaluator<
+    : general_differential_operator_evaluator<
           operator_evaluator<laplacian_gradient_operator<Variable>, RBF,
               distance_functions::euclidean_distance_function<Variable>>,
           laplacian_gradient_operator<Variable>, RBF,
           distance_functions::euclidean_distance_function<Variable>> {
     //! Type of the base.
-    using base_type = general_operator_evaluator<
+    using base_type = general_differential_operator_evaluator<
         operator_evaluator<laplacian_gradient_operator<Variable>, RBF,
             distance_functions::euclidean_distance_function<Variable>>,
         laplacian_gradient_operator<Variable>, RBF,
@@ -96,15 +101,15 @@ struct operator_evaluator<laplacian_gradient_operator<Variable>, RBF,
     using typename base_type::variable_type;
 
     /*!
-     * \brief Get the initial value for accumulation of values evaluated for
-     * samples points.
+     * \brief Get the orders of differentiations.
      *
-     * \tparam KernelCoeff Type of the coefficients of kernels.
-     * \return Initial value.
+     * \return Orders of differentiations.
      */
-    template <typename KernelCoeff>
-    [[nodiscard]] static auto initial_value() -> KernelCoeff {
-        return static_cast<KernelCoeff>(0);
+    [[nodiscard]] static auto differentiations()
+        -> std::array<Eigen::Vector<int, 1>, 1> {
+        std::array<Eigen::Vector<int, 1>, 1> orders_list;
+        orders_list[0](0) = 3;
+        return orders_list;
     }
 
     /*!
@@ -194,14 +199,12 @@ struct operator_evaluator<laplacian_gradient_operator<Variable>, RBF,
         laplacian_gradient_operator<Variable>, RBF,
         distance_functions::euclidean_distance_function<Variable>>;
 
+    using base_type::variable_dimensions;
     using typename base_type::distance_function_type;
     using typename base_type::kernel_value_type;
     using typename base_type::operator_type;
     using typename base_type::rbf_type;
     using typename base_type::variable_type;
-
-    //! Size of the vectors.
-    static constexpr index_type vector_size = Variable::RowsAtCompileTime;
 
     /*!
      * \brief Get the initial value for accumulation of values evaluated for
@@ -212,8 +215,8 @@ struct operator_evaluator<laplacian_gradient_operator<Variable>, RBF,
      */
     template <typename KernelCoeff>
     [[nodiscard]] static auto initial_value()
-        -> Eigen::Vector<KernelCoeff, vector_size> {
-        return Eigen::Vector<KernelCoeff, vector_size>::Zero();
+        -> Eigen::Vector<KernelCoeff, variable_dimensions> {
+        return Eigen::Vector<KernelCoeff, variable_dimensions>::Zero();
     }
 
     /*!
@@ -234,7 +237,7 @@ struct operator_evaluator<laplacian_gradient_operator<Variable>, RBF,
         const kernel_value_type& length_parameter,
         const operator_type& target_operator,
         const variable_type& sample_variable, const FunctionValue& kernel_coeff)
-        -> Eigen::Vector<FunctionValue, vector_size> {
+        -> Eigen::Vector<FunctionValue, variable_dimensions> {
         // Not used for this operator.
         (void)rbf;
 
@@ -265,7 +268,7 @@ struct operator_evaluator<laplacian_gradient_operator<Variable>, RBF,
                     (squared_length_parameter * squared_length_parameter) *
                     (target_operator.variable() - sample_variable);
             }
-            return Eigen::Vector<FunctionValue, vector_size>::Zero();
+            return Eigen::Vector<FunctionValue, variable_dimensions>::Zero();
         } else {
             const FunctionValue squared_length_parameter =
                 length_parameter * length_parameter;
@@ -277,6 +280,48 @@ struct operator_evaluator<laplacian_gradient_operator<Variable>, RBF,
                 (squared_length_parameter * squared_length_parameter) *
                 (target_operator.variable() - sample_variable);
         }
+    }
+
+    /*!
+     * \brief Evaluate a polynomial.
+     *
+     * \tparam CoeffVector Type of the vector of coefficients of the polynomial.
+     * \param[in] target_operator Operator to evaluate.
+     * \param[in] term_generator Generator of polynomial terms.
+     * \param[in] polynomial_coefficients Coefficients of the polynomial.
+     * \return Evaluated polynomial value.
+     */
+    template <base::concepts::dense_vector CoeffVector>
+    [[nodiscard]] static auto evaluate_polynomial(
+        const operator_type& target_operator,
+        const polynomial_term_generator<variable_dimensions>& term_generator,
+        const CoeffVector& polynomial_coefficients) {
+        using coeff_type = typename CoeffVector::Scalar;
+
+        NUM_COLLECT_DEBUG_ASSERT(
+            term_generator.terms().size() == polynomial_coefficients.size());
+
+        auto value = initial_value<coeff_type>();
+        for (index_type i = 0; i < term_generator.terms().size(); ++i) {
+            for (int j = 0; j < variable_dimensions; ++j) {
+                for (int k = 0; k < variable_dimensions; ++k) {
+                    Eigen::Vector<int, variable_dimensions> orders =
+                        Eigen::Vector<int, variable_dimensions>::Zero();
+                    orders(j) = 1;
+                    orders(k) += 2;
+                    const auto differentiation_result =
+                        impl::differentiate_polynomial_term<coeff_type>(
+                            term_generator.terms()[i], orders);
+                    if (differentiation_result) {
+                        value(j) += differentiation_result->first(
+                                        target_operator.variable()) *
+                            differentiation_result->second *
+                            polynomial_coefficients(i);
+                    }
+                }
+            }
+        }
+        return value;
     }
 };
 
