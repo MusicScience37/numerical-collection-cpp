@@ -277,6 +277,36 @@ public:
         return vector_.emplace_back(std::forward<Args>(args)...);
     }
 
+    /*!
+     * \brief Insert an element.
+     *
+     * \param[in] pos Position to insert.
+     * \param[in] value Inserted value.
+     * \return Iterator to the inserted element.
+     */
+    auto insert(const_iterator pos, const value_type& value) -> iterator {
+        return vector_.insert(pos, value);
+    }
+
+    /*!
+     * \brief Insert an element.
+     *
+     * \param[in] pos Position to insert.
+     * \param[in] value Inserted value.
+     * \return Iterator to the inserted element.
+     */
+    auto insert(const_iterator pos, value_type&& value) -> iterator {
+        return vector_.insert(pos, std::move(value));
+    }
+
+    /*!
+     * \brief Erase an element.
+     *
+     * \param[in] pos Position to erase.
+     * \return Iterator to the next element of the erased one.
+     */
+    auto erase(const_iterator pos) -> iterator { return vector_.erase(pos); }
+
 private:
     //! Actual vector.
     internal_vector_type vector_;
