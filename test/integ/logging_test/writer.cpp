@@ -128,15 +128,12 @@ static void write_parameters() {
 auto main(int argc, char** argv) -> int {
     try {
         if (argc != 2) {
-            std::cerr
-                << "Usage: "
-                << argv[0]  // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-                << " <configuration-file>" << std::endl;
+            std::cerr << "Usage: " << argv[0] << " <configuration-file>"
+                      << std::endl;
             return 1;
         }
 
-        const std::string_view config_filepath =
-            argv[1];  // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+        const std::string_view config_filepath = argv[1];
         num_collect::logging::load_logging_config_file(
             std::string{config_filepath});
 

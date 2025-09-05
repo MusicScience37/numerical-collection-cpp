@@ -53,7 +53,6 @@ public:
      */
     explicit producer_consumer_circular_queue(index_type size)
         : begin_(new storage_type[get_buffer_size(size)]),
-          // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
           end_(begin_ + (size + 1)),
           producer_pos_(begin_),
           consumer_pos_(begin_) {}
@@ -161,7 +160,6 @@ private:
      * \return Incremented pointer.
      */
     [[nodiscard]] auto increment(storage_type* ptr) noexcept -> storage_type* {
-        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         ++ptr;
         if (ptr == end_) {
             ptr = begin_;

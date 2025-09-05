@@ -21,12 +21,17 @@
 
 #include <cmath>
 
+#include "num_collect/logging/log_tag_view.h"
 #include "num_collect/opt/function_object_wrapper.h"
 #include "num_collect/opt/heuristic_global_optimizer.h"
 #include "num_collect/regularization/concepts/explicit_regularized_solver.h"
 #include "num_collect/regularization/explicit_param_searcher_base.h"
 
 namespace num_collect::regularization {
+
+//! Tag of explicit_gcv.
+constexpr auto explicit_gcv_tag =
+    logging::log_tag_view("num_collect::regularization::explicit_gcv");
 
 /*!
  * \brief Class of objective function in GCV.
@@ -102,7 +107,8 @@ public:
      * \param[in] solver Solver.
      */
     explicit explicit_gcv(const solver_type& solver)
-        : solver_(&solver),
+        : base_type(explicit_gcv_tag),
+          solver_(&solver),
           optimizer_(
               opt::make_function_object_wrapper<scalar_type(scalar_type)>(
                   explicit_gcv_objective_function<solver_type>(solver))) {}
@@ -118,6 +124,8 @@ public:
         optimizer_.solve();
         opt_param_ = pow(static_cast<scalar_type>(10),  // NOLINT
             optimizer_.opt_variable());
+        NUM_COLLECT_LOG_SUMMARY(
+            this->logger(), "Selected parameter: {}", opt_param_);
     }
 
     //! \copydoc explicit_param_searcher_base::opt_param

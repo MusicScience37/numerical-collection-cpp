@@ -191,12 +191,10 @@ filepath = "{0}/temp/num_collect_bench_logging_log_sinks.log"
 auto main(int argc, char** argv) -> int {
     try {
         if (argc != 2) {
-            // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
             fmt::print("Usage: {} <output_directory>", argv[0]);
             return 1;
         }
 
-        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         const std::string_view output_directory = argv[1];
 
         configure_logger(output_directory);
