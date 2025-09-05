@@ -36,10 +36,10 @@
 
 ### Selection of Regularization Parameters
 
-| Algorithm                          | Class                                                                                    |
-| :--------------------------------- | :--------------------------------------------------------------------------------------- |
-| Generalized cross validation (GCV) | `num_collect::regularization::explicit_gcv`, `num_collect::regularization::implicit_gcv` |
-| L-curve                            | `num_collect::regularization::explicit_l_curve`                                          |
+| Algorithm                          | Class                                                                                                                                         |
+| :--------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------- |
+| Generalized cross validation (GCV) | `num_collect::regularization::explicit_gcv`, `num_collect::regularization::implicit_gcv`                                                      |
+| L-curve                            | `num_collect::regularization::explicit_l_curve`, `num_collect::regularization::approx_l_curve`, `num_collect::regularization::spline_l_curve` |
 
 ## RBF Interpolation (`rbf` Module)
 
@@ -72,8 +72,22 @@
 | Inverse multi-quadric                                             | `num_collect::rbf::rbfs::inverse_multi_quadric_rbf` |
 | Inverse quadratic                                                 | `num_collect::rbf::rbfs::inverse_quadratic_rbf`     |
 | Multi-quadric                                                     | `num_collect::rbf::rbfs::multi_quadric_rbf`         |
+| Polyharmonic spline {cite:p}`Fornberg2015`                        | `num_collect::rbf::rbfs::polyharmonic_spline_rbf`   |
 | Sech                                                              | `num_collect::rbf::rbfs::sech_rbf`                  |
 | Wendland's Compactly Supported RBF (CSRBF) {cite:p}`Wendland1995` | `num_collect::rbf::rbfs::wendland_csrbf`            |
+
+### Operators
+
+| Operator                                                  | Class                                                          |
+| :-------------------------------------------------------- | :------------------------------------------------------------- |
+| Biharmonic operator $\triangle^2$                         | `num_collect::rbf::operators::biharmonic_operator`             |
+| Function value operator (identity)                        | `num_collect::rbf::operators::function_value_operator`         |
+| Gradient operator $\nabla$                                | `num_collect::rbf::operators::gradient_operator`               |
+| Gradient of Laplacian operator $\nabla \triangle$         | `num_collect::rbf::operators::laplacian_gradient_operator`     |
+| Hessian operator $\nabla^2$                               | `num_collect::rbf::operators::hessian_operator`                |
+| Laplacian operator $\triangle$                            | `num_collect::rbf::operators::laplacian_operator`              |
+| Partial derivative operator $\partial / \partial r_i$     | `num_collect::rbf::operators::partial_derivative_operator`     |
+| Third-order derivative operator $d^3 / dx^3$ (univariate) | `num_collect::rbf::operators::third_order_derivative_operator` |
 
 ## Root-Finding Algorithms (`roots` Module)
 
@@ -170,8 +184,18 @@
 | Cuthill-McKee (CM) ordering {cite:p}`Golub2013,Knabner2003`          | `num_collect::linear::cuthill_mckee_ordering`         |
 | Reverse Cuthill-McKee (RCM) ordering {cite:p}`Golub2013,Knabner2003` | `num_collect::linear::reverse_cuthill_mckee_ordering` |
 
+### Preconditioners
+
+| Algorithm                                                   | Class                                     |
+| :---------------------------------------------------------- | :---------------------------------------- |
+| Algebraic multigrid (AMG) preconditioner {cite:p}`Ruge1987` | `num_collect::linear::amg_preconditioner` |
+
 ## Common Algorithms (`util` Module)
 
-| Algorithm                           | Class                            |
-| :---------------------------------- | :------------------------------- |
-| Kahan summation {cite:p}`Kahan1965` | `num_collect::util::kahan_adder` |
+| Algorithm                           | Class                                                                              |
+| :---------------------------------- | :--------------------------------------------------------------------------------- |
+| Combination                         | `num_collect::util::combination`                                                   |
+| Kahan summation {cite:p}`Kahan1965` | `num_collect::util::kahan_adder`                                                   |
+| Gray code                           | `num_collect::util::binary_to_gray_code`, `num_collect::util::gray_code_to_binary` |
+| Greatest common divisor (GCD)       | `num_collect::util::greatest_common_divisor`                                       |
+| Least common multiple (LCM)         | `num_collect::util::least_common_multiple`                                         |
