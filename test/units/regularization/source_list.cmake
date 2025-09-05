@@ -5,6 +5,7 @@ set(SOURCE_FILES
     full_gen_tikhonov_test.cpp
     impl/apply_shrinkage_operator_test.cpp
     implicit_gcv_test.cpp
+    spline_l_curve_test.cpp
     tgv2_admm_test.cpp
     tikhonov_test.cpp
     tv_admm_test.cpp

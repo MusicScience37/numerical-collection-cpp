@@ -109,9 +109,7 @@ public:
     [[nodiscard]] auto connected_nodes_to(index_type node_index) const
         -> std::span<const storage_index_type> {
         return std::span<const storage_index_type>(
-            // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
             node_indices_.data() + begin_indices_[node_index],
-            // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
             node_indices_.data() + begin_indices_[node_index + 1]);
     }
 

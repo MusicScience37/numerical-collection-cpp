@@ -66,12 +66,10 @@ inline void bench_one(
 
 auto main(int argc, char** argv) -> int {
     if (argc != 2) {
-        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         fmt::print("Usage: {} <output_directory>", argv[0]);
         return 1;
     }
 
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     const std::string_view output_directory = argv[1];
 
     configure_logging();
