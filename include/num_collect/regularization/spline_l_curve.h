@@ -25,6 +25,7 @@
 
 #include <Eigen/Core>
 
+#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/logging/logging_macros.h"
@@ -111,7 +112,7 @@ public:
     }
 
     /*!
-     * \brief Solver with the optimal regularization parameter.
+     * \brief Solve with the optimal regularization parameter.
      *
      * \tparam Solution Type of the solution.
      * \param[out] solution Solution.
@@ -259,18 +260,19 @@ private:
             length_parameters_.size() >= 4, "Too few sample points.");
 
         // At first, search for peaks.
-        constexpr index_type num_search_points = 50;
         const scalar_type search_point_diff =
             (length_parameters_(length_parameters_.size() - 1) -
                 length_parameters_(0)) /
-            static_cast<scalar_type>(num_search_points - 1);
+            static_cast<scalar_type>(
+                num_points_for_searching_curvature_peaks_ - 1);
         scalar_type max_peak_curvature =
             std::numeric_limits<scalar_type>::lowest();
         index_type max_peak_index = 0;
         scalar_type prev_prev_curvature =
             evaluate_curvature(static_cast<scalar_type>(0));
         scalar_type prev_curvature = evaluate_curvature(search_point_diff);
-        for (index_type i = 2; i < num_search_points; ++i) {
+        for (index_type i = 2; i < num_points_for_searching_curvature_peaks_;
+            ++i) {
             const scalar_type curvature = evaluate_curvature(
                 static_cast<scalar_type>(i) * search_point_diff);
             if (prev_prev_curvature < prev_curvature &&
@@ -297,6 +299,16 @@ private:
             static_cast<scalar_type>(max_peak_index - 1) * search_point_diff,
             static_cast<scalar_type>(max_peak_index + 1) * search_point_diff);
         optimizer_.solve();
+
+        const scalar_type max_curvature =
+            -optimizer_.opt_value();  // Negate back.
+        NUM_COLLECT_LOG_TRACE(logger(), "Maximum curvature: {}", max_curvature);
+        if (max_curvature < min_curvature_for_optimal_point_) {
+            NUM_COLLECT_LOG_AND_THROW(algorithm_failure,
+                "Failed to find an optimal regularization parameter "
+                "due to small curvature: {}",
+                max_curvature);
+        }
 
         const scalar_type opt_length_param = optimizer_.opt_variable();
         NUM_COLLECT_LOG_TRACE(
@@ -493,11 +505,28 @@ private:
     index_type num_sample_points_{default_num_sample_points};
 
     //! Default minimum distance between sample points.
-    static constexpr scalar_type default_min_distance_between_points = 0.1;
+    static constexpr auto default_min_distance_between_points =
+        static_cast<scalar_type>(0.1);
 
     //! Minimum distance between sample points.
     scalar_type min_distance_between_points_{
         default_min_distance_between_points};
+
+    //! Default number of points for searching peaks of curvature.
+    static constexpr index_type
+        default_num_points_for_searching_curvature_peaks = 50;
+
+    //! Number of points for searching peaks of curvature.
+    index_type num_points_for_searching_curvature_peaks_{
+        default_num_points_for_searching_curvature_peaks};
+
+    //! Default minimum curvature to consider as an optimal point in L-curve.
+    static constexpr auto default_min_curvature_for_optimal_point =
+        static_cast<scalar_type>(0.1);
+
+    //! Minimum curvature to consider as an optimal point in L-curve.
+    scalar_type min_curvature_for_optimal_point_{
+        default_min_curvature_for_optimal_point};
 };
 
 }  // namespace num_collect::regularization

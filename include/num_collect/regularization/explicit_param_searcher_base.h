@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include "num_collect/logging/logging_mixin.h"
 #include "num_collect/regularization/concepts/explicit_regularized_solver.h"
 
 namespace num_collect::regularization {
@@ -31,7 +32,7 @@ namespace num_collect::regularization {
  * \tparam Solver Type of solvers.
  */
 template <typename Derived, concepts::explicit_regularized_solver Solver>
-class explicit_param_searcher_base {
+class explicit_param_searcher_base : public logging::logging_mixin {
 public:
     //! Type of solvers.
     using solver_type = Solver;
@@ -41,6 +42,8 @@ public:
 
     //! Type of data.
     using data_type = typename solver_type::data_type;
+
+    using logging::logging_mixin::logging_mixin;
 
     /*!
      * \brief Search the optimal regularization parameter.
@@ -57,7 +60,7 @@ public:
     }
 
     /*!
-     * \brief Solver with the optimal regularization parameter.
+     * \brief Solve with the optimal regularization parameter.
      *
      * \tparam Solution Type of the solution.
      * \param[out] solution Solution.
