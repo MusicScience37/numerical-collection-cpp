@@ -20,7 +20,3 @@ add_experiment(experiment_reg_calculate_tgv2_derivatives_of_2d_images
                calculate_tgv2_derivatives_of_2d_images.cpp)
 target_link_libraries(experiment_reg_calculate_tgv2_derivatives_of_2d_images
                       PRIVATE cpp_plotly_plotter::plotly_plotter bfg::lyra)
-
-add_experiment(experiment_reg_approx_l_curve approx_l_curve.cpp)
-target_link_libraries(experiment_reg_approx_l_curve
-                      PRIVATE cpp_plotly_plotter::plotly_plotter bfg::lyra)
