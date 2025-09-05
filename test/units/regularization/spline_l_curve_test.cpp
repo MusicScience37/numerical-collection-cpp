@@ -26,7 +26,7 @@
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "eigen_approx.h"
-#include "num_collect/regularization/full_gen_tikhonov.h"
+#include "num_collect/regularization/explicit_l_curve.h"
 #include "num_collect/regularization/tikhonov.h"
 #include "num_prob_collect/regularization/blur_sine.h"
 #include "num_prob_collect/regularization/dense_diff_matrix.h"
@@ -38,6 +38,8 @@ TEST_CASE("num_collect::regularization::spline_l_curve") {
         num_collect::regularization::tikhonov<coeff_type, data_type>;
     using param_searcher_type =
         num_collect::regularization::spline_l_curve<solver_type>;
+    using reference_param_searcher_type =
+        num_collect::regularization::explicit_l_curve<solver_type>;
 
     SECTION("solve") {
         constexpr num_collect::index_type solution_size = 60;
@@ -62,16 +64,41 @@ TEST_CASE("num_collect::regularization::spline_l_curve") {
         solver_type tikhonov;
         tikhonov.compute(prob.coeff(), data_with_error);
 
-        Eigen::VectorXd initial_solution = Eigen::VectorXd::Zero(solution_size);
+        const Eigen::VectorXd initial_solution =
+            Eigen::VectorXd::Zero(solution_size);
         param_searcher_type searcher{
             tikhonov, data_with_error, initial_solution};
         searcher.search();
         CHECK(std::log10(searcher.opt_param()) < 0.0);
+
+        reference_param_searcher_type reference_searcher{tikhonov};
+        reference_searcher.search();
+        // NOLINTNEXTLINE(*-magic-numbers)
+        CHECK(searcher.opt_param() > 0.1 * reference_searcher.opt_param());
+        // NOLINTNEXTLINE(*-magic-numbers)
+        CHECK(searcher.opt_param() < 10.0 * reference_searcher.opt_param());
 
         constexpr double tol_sol = 0.5;
 
         Eigen::VectorXd solution;
         searcher.solve(solution);
         CHECK_THAT(solution, eigen_approx(prob.solution(), tol_sol));
+    }
+
+    SECTION("failure in finding positive curvature") {
+        // L-curve tends to fail when the problem is too easy.
+        constexpr num_collect::index_type solution_size = 10;
+        constexpr num_collect::index_type data_size = solution_size;
+        const coeff_type coeff = coeff_type::Identity(data_size, solution_size);
+        const data_type solution = data_type::Ones(data_size);
+        const data_type data = coeff * solution;
+
+        solver_type tikhonov;
+        tikhonov.compute(coeff, data);
+
+        const Eigen::VectorXd initial_solution =
+            Eigen::VectorXd::Zero(solution_size);
+        param_searcher_type searcher{tikhonov, data, initial_solution};
+        CHECK_THROWS(searcher.search());
     }
 }

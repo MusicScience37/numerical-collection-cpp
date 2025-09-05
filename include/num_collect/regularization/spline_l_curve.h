@@ -522,7 +522,7 @@ private:
 
     //! Default minimum curvature to consider as an optimal point in L-curve.
     static constexpr auto default_min_curvature_for_optimal_point =
-        static_cast<scalar_type>(0.1);
+        static_cast<scalar_type>(0.5);
 
     //! Minimum curvature to consider as an optimal point in L-curve.
     scalar_type min_curvature_for_optimal_point_{
