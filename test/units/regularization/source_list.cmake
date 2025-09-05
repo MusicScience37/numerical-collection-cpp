@@ -1,4 +1,5 @@
 set(SOURCE_FILES
+    approx_l_curve_test.cpp
     explicit_gcv_test.cpp
     explicit_l_curve_test.cpp
     fista_test.cpp
