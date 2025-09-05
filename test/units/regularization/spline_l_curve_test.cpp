@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 MusicScience37 (Kenta Kabashima)
+ * Copyright 2025 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,23 +66,40 @@ TEST_CASE("num_collect::regularization::spline_l_curve") {
 
         const Eigen::VectorXd initial_solution =
             Eigen::VectorXd::Zero(solution_size);
-        param_searcher_type searcher{
-            tikhonov, data_with_error, initial_solution};
-        searcher.search();
-        CHECK(std::log10(searcher.opt_param()) < 0.0);
 
         reference_param_searcher_type reference_searcher{tikhonov};
         reference_searcher.search();
-        // NOLINTNEXTLINE(*-magic-numbers)
-        CHECK(searcher.opt_param() > 0.1 * reference_searcher.opt_param());
-        // NOLINTNEXTLINE(*-magic-numbers)
-        CHECK(searcher.opt_param() < 10.0 * reference_searcher.opt_param());
 
-        constexpr double tol_sol = 0.5;
+        SECTION("with default settings") {
+            param_searcher_type searcher{
+                tikhonov, data_with_error, initial_solution};
+            searcher.search();
 
-        Eigen::VectorXd solution;
-        searcher.solve(solution);
-        CHECK_THAT(solution, eigen_approx(prob.solution(), tol_sol));
+            // NOLINTNEXTLINE(*-magic-numbers)
+            CHECK(searcher.opt_param() > 0.1 * reference_searcher.opt_param());
+            // NOLINTNEXTLINE(*-magic-numbers)
+            CHECK(searcher.opt_param() < 10.0 * reference_searcher.opt_param());
+
+            constexpr double tol_sol = 0.5;
+
+            Eigen::VectorXd solution;
+            searcher.solve(solution);
+            CHECK_THAT(solution, eigen_approx(prob.solution(), tol_sol));
+        }
+
+        SECTION("with too close points in L-curve") {
+            param_searcher_type searcher{
+                tikhonov, data_with_error, initial_solution};
+            searcher.min_distance_between_points(
+                0.5);                        // NOLINT(*-magic-numbers)
+            searcher.num_sample_points(50);  // NOLINT(*-magic-numbers)
+            searcher.search();
+
+            // NOLINTNEXTLINE(*-magic-numbers)
+            CHECK(searcher.opt_param() > 0.1 * reference_searcher.opt_param());
+            // NOLINTNEXTLINE(*-magic-numbers)
+            CHECK(searcher.opt_param() < 10.0 * reference_searcher.opt_param());
+        }
     }
 
     SECTION("failure in finding positive curvature") {

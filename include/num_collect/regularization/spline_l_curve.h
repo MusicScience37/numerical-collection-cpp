@@ -123,6 +123,60 @@ public:
         solver_->solve(opt_param_, solution);
     }
 
+    /*!
+     * \brief Set the number of sample points.
+     *
+     * \param[in] value Value.
+     * \return This object.
+     */
+    auto num_sample_points(index_type value) -> spline_l_curve& {
+        NUM_COLLECT_PRECONDITION(
+            value >= 3, "Number of sample points must be 3 or more.");
+        num_sample_points_ = value;
+        return *this;
+    }
+
+    /*!
+     * \brief Set the minimum distance between sample points.
+     *
+     * \param[in] value Value.
+     * \return This object.
+     */
+    auto min_distance_between_points(scalar_type value) -> spline_l_curve& {
+        NUM_COLLECT_PRECONDITION(value > static_cast<scalar_type>(0),
+            "Minimum distance must be a positive value.");
+        min_distance_between_points_ = value;
+        return *this;
+    }
+
+    /*!
+     * \brief Set the number of points for searching peaks of curvature.
+     *
+     * \param[in] value Value.
+     * \return This object.
+     */
+    auto num_points_for_searching_curvature_peaks(index_type value)
+        -> spline_l_curve& {
+        NUM_COLLECT_PRECONDITION(
+            value > 0, "Number of points must be a positive integer.");
+        num_points_for_searching_curvature_peaks_ = value;
+        return *this;
+    }
+
+    /*!
+     * \brief Set the minimum curvature to consider as an optimal point in
+     * L-curve.
+     *
+     * \param[in] value Value.
+     * \return This object.
+     */
+    auto min_curvature_for_optimal_point(scalar_type value) -> spline_l_curve& {
+        NUM_COLLECT_PRECONDITION(value > static_cast<scalar_type>(0),
+            "Minimum curvature must be a positive value.");
+        min_curvature_for_optimal_point_ = value;
+        return *this;
+    }
+
 private:
     //! Struct of sample points.
     struct sample_point {
