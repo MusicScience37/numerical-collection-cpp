@@ -91,8 +91,8 @@ TEST_CASE("num_collect::regularization::spline_l_curve") {
             param_searcher_type searcher{
                 tikhonov, data_with_error, initial_solution};
             searcher.min_distance_between_points(
-                0.5);                        // NOLINT(*-magic-numbers)
-            searcher.num_sample_points(50);  // NOLINT(*-magic-numbers)
+                0.3);                         // NOLINT(*-magic-numbers)
+            searcher.num_sample_points(100);  // NOLINT(*-magic-numbers)
             searcher.search();
 
             // NOLINTNEXTLINE(*-magic-numbers)
