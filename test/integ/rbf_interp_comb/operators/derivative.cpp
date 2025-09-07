@@ -143,7 +143,7 @@ TEMPLATE_TEST_CASE_SIG(
 
 TEMPLATE_TEST_CASE_SIG(
     "derivative of thin_plate_spline_interpolator with different degrees", "",
-    ((int Degree), Degree), (1), (2)) {
+    ((int Degree), Degree), (2), (3)) {
     using num_collect::rbf::generate_1d_halton_nodes;
     using num_collect::rbf::thin_plate_spline_interpolator;
     using num_collect::rbf::operators::gradient_operator;

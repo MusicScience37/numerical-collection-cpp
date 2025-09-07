@@ -35,10 +35,18 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
     using num_collect::rbf::rbfs::thin_plate_spline_rbf;
 
     constexpr double rel_tol = 1e-5;
+    constexpr double second_diff_rel_tol =
+        0.2;  // Numeric second derivative is unstable.
     static constexpr double diff_width =
         num_collect::constants::sqrt(std::numeric_limits<double>::epsilon());
     const auto diff = [](const auto& rbf, const double distance) {
         return (rbf(distance + diff_width) - rbf(distance - diff_width)) /
+            // NOLINTNEXTLINE(*-magic-numbers)
+            (2.0 * diff_width) / (-distance);
+    };
+    const auto second_diff = [&diff](const auto& rbf, const double distance) {
+        return (diff(rbf, distance + diff_width) -
+                   diff(rbf, distance - diff_width)) /
             // NOLINTNEXTLINE(*-magic-numbers)
             (2.0 * diff_width) / (-distance);
     };
@@ -68,18 +76,7 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                     rbf(1.5), Catch::Matchers::WithinRel(coeff * 1.5, rel_tol));
             }
 
-            SECTION("calculate derivatives") {
-                differentiated_t<rbf_type> differentiated_rbf;
-                rbf_type rbf;
-
-                CHECK_THAT(differentiated_rbf(0.0), is_finite());
-                // NOLINTNEXTLINE(*-magic-numbers)
-                CHECK_THAT(differentiated_rbf(0.1),
-                    Catch::Matchers::WithinRel(diff(rbf, 0.1), rel_tol));
-                // NOLINTNEXTLINE(*-magic-numbers)
-                CHECK_THAT(differentiated_rbf(1.5),
-                    Catch::Matchers::WithinRel(diff(rbf, 1.5), rel_tol));
-            }
+            // In this case, the differentiated RBF is not defined.
         }
 
         SECTION("Degree = 2") {
@@ -118,6 +115,22 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                 CHECK_THAT(differentiated_rbf(1.5),
                     Catch::Matchers::WithinRel(diff(rbf, 1.5), rel_tol));
             }
+
+            SECTION("calculate second derivatives") {
+                differentiated_t<differentiated_t<rbf_type>>
+                    second_differentiated_rbf;
+                rbf_type rbf;
+
+                CHECK_THAT(second_differentiated_rbf(0.0), is_finite());
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(second_differentiated_rbf(0.1),
+                    Catch::Matchers::WithinRel(
+                        second_diff(rbf, 0.1), second_diff_rel_tol));
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(second_differentiated_rbf(1.5),
+                    Catch::Matchers::WithinRel(
+                        second_diff(rbf, 1.5), second_diff_rel_tol));
+            }
         }
 
         SECTION("Degree = 3") {
@@ -155,6 +168,22 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                 // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(differentiated_rbf(1.5),
                     Catch::Matchers::WithinRel(diff(rbf, 1.5), rel_tol));
+            }
+
+            SECTION("calculate second derivatives") {
+                differentiated_t<differentiated_t<rbf_type>>
+                    second_differentiated_rbf;
+                rbf_type rbf;
+
+                CHECK_THAT(second_differentiated_rbf(0.0), is_finite());
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(second_differentiated_rbf(0.1),
+                    Catch::Matchers::WithinRel(
+                        second_diff(rbf, 0.1), second_diff_rel_tol));
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(second_differentiated_rbf(1.5),
+                    Catch::Matchers::WithinRel(
+                        second_diff(rbf, 1.5), second_diff_rel_tol));
             }
         }
     }
@@ -198,6 +227,8 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                 CHECK_THAT(differentiated_rbf(1.5),
                     Catch::Matchers::WithinRel(diff(rbf, 1.5), rel_tol));
             }
+
+            // In this case, the twice-differentiated RBF is not defined.
         }
 
         SECTION("Degree = 3") {
@@ -238,6 +269,22 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                 CHECK_THAT(differentiated_rbf(1.5),
                     Catch::Matchers::WithinRel(diff(rbf, 1.5), rel_tol));
             }
+
+            SECTION("calculate second derivatives") {
+                differentiated_t<differentiated_t<rbf_type>>
+                    second_differentiated_rbf;
+                rbf_type rbf;
+
+                CHECK_THAT(second_differentiated_rbf(0.0), is_finite());
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(second_differentiated_rbf(0.1),
+                    Catch::Matchers::WithinRel(
+                        second_diff(rbf, 0.1), second_diff_rel_tol));
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(second_differentiated_rbf(1.5),
+                    Catch::Matchers::WithinRel(
+                        second_diff(rbf, 1.5), second_diff_rel_tol));
+            }
         }
     }
 
@@ -267,18 +314,7 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                     rbf(1.5), Catch::Matchers::WithinRel(coeff * 1.5, rel_tol));
             }
 
-            SECTION("calculate derivatives") {
-                differentiated_t<rbf_type> differentiated_rbf;
-                rbf_type rbf;
-
-                CHECK_THAT(differentiated_rbf(0.0), is_finite());
-                // NOLINTNEXTLINE(*-magic-numbers)
-                CHECK_THAT(differentiated_rbf(0.1),
-                    Catch::Matchers::WithinRel(diff(rbf, 0.1), rel_tol));
-                // NOLINTNEXTLINE(*-magic-numbers)
-                CHECK_THAT(differentiated_rbf(1.5),
-                    Catch::Matchers::WithinRel(diff(rbf, 1.5), rel_tol));
-            }
+            // In this case, the differentiated RBF is not defined.
         }
 
         SECTION("Degree = 3") {
@@ -316,6 +352,22 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                 // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(differentiated_rbf(1.5),
                     Catch::Matchers::WithinRel(diff(rbf, 1.5), rel_tol));
+            }
+
+            SECTION("calculate second derivatives") {
+                differentiated_t<differentiated_t<rbf_type>>
+                    second_differentiated_rbf;
+                rbf_type rbf;
+
+                CHECK_THAT(second_differentiated_rbf(0.0), is_finite());
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(second_differentiated_rbf(0.1),
+                    Catch::Matchers::WithinRel(
+                        second_diff(rbf, 0.1), second_diff_rel_tol));
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(second_differentiated_rbf(1.5),
+                    Catch::Matchers::WithinRel(
+                        second_diff(rbf, 1.5), second_diff_rel_tol));
             }
         }
     }
