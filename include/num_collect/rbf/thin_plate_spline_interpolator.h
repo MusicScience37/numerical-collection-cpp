@@ -24,6 +24,7 @@
 #include "num_collect/base/get_compile_time_size.h"
 #include "num_collect/rbf/impl/get_default_scalar_type.h"
 #include "num_collect/rbf/impl/get_variable_type.h"
+#include "num_collect/rbf/length_parameter_calculators/identity_length_parameter_calculator.h"
 #include "num_collect/rbf/rbf_polynomial_interpolator.h"
 #include "num_collect/rbf/rbfs/thin_plate_spline_rbf.h"
 
@@ -73,7 +74,7 @@ using thin_plate_spline_interpolator =
         Degree - 1, kernel_matrix_type::dense,
         distance_functions::euclidean_distance_function<
             impl::get_variable_type_t<FunctionSignature>>,
-        length_parameter_calculators::global_length_parameter_calculator<
+        length_parameter_calculators::identity_length_parameter_calculator<
             distance_functions::euclidean_distance_function<
                 impl::get_variable_type_t<FunctionSignature>>>>;
 

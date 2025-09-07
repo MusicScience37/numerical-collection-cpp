@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 MusicScience37 (Kenta Kabashima)
+ * Copyright 2025 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,31 +15,23 @@
  */
 /*!
  * \file
- * \brief Definition of global_length_parameter_calculator class.
+ * \brief Definition of identity_length_parameter_calculator class.
  */
 #pragma once
 
-#include <cstddef>
-#include <limits>
-
-#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/base/precondition.h"
-#include "num_collect/constants/zero.h"  // IWYU pragma: keep
-#include "num_collect/logging/logging_macros.h"
 #include "num_collect/rbf/concepts/distance_function.h"
 #include "num_collect/util/vector_view.h"
 
 namespace num_collect::rbf::length_parameter_calculators {
 
 /*!
- * \brief Class to calculate length parameters for RBF using global fixed length
- * parameter.
+ * \brief Class of length parameter calculator returning one.
  *
  * \tparam DistanceFunction Type of the distance function.
  */
 template <concepts::distance_function DistanceFunction>
-class global_length_parameter_calculator {
+class identity_length_parameter_calculator {
 public:
     //! Type of the distance function.
     using distance_function_type = DistanceFunction;
@@ -56,39 +48,21 @@ public:
     /*!
      * \brief Constructor.
      */
-    global_length_parameter_calculator() = default;
+    identity_length_parameter_calculator() = default;
 
     /*!
      * \brief Compute the length parameters.
      *
      * \param[in] variables Variables.
      * \param[in] distance_function Distance function.
+     *
+     * This function does nothing in this class.
      */
     void compute(util::vector_view<const variable_type> variables,
         const distance_function_type& distance_function) {
-        const index_type num_samples = variables.size();
-        NUM_COLLECT_PRECONDITION(
-            num_samples > 0, "Sample points must be given.");
-
-        auto max_min_distance = constants::zero<scalar_type>;
-        // TODO parallelization for many points handling max_min_distance
-        for (index_type i = 0; i < num_samples; ++i) {
-            auto min_distance = std::numeric_limits<scalar_type>::max();
-            for (index_type j = 0; j < num_samples; ++j) {
-                if (i != j) {
-                    const auto distance =
-                        distance_function(variables[i], variables[j]);
-                    if (distance < min_distance) {
-                        min_distance = distance;
-                    }
-                }
-            }
-            if (min_distance > max_min_distance) {
-                max_min_distance = min_distance;
-            }
-        }
-
-        length_parameter_ = scale_ * max_min_distance;
+        // No operation.
+        (void)variables;
+        (void)distance_function;
     }
 
     /*!
@@ -96,39 +70,36 @@ public:
      *
      * \param[in] i Index of the point.
      * \return Length parameter.
+     *
+     * This function always returns one in this class.
      */
     [[nodiscard]] auto length_parameter_at(index_type i) const -> scalar_type {
         (void)i;
-        return length_parameter_;
+        return static_cast<scalar_type>(1);
     }
 
     /*!
      * \brief Get the current scale of length parameters.
      *
      * \return Scale of length parameters.
+     *
+     * This function always returns one in this class.
      */
-    [[nodiscard]] auto scale() const noexcept -> scalar_type { return scale_; }
+    [[nodiscard]] auto scale() const noexcept -> scalar_type {
+        return static_cast<scalar_type>(1);
+    }
 
     /*!
      * \brief Set the scale of length parameters.
      *
      * \param[in] value Value.
+     *
+     * This function does nothing in this class.
      */
     void scale(scalar_type value) {
-        NUM_COLLECT_PRECONDITION(value > constants::zero<scalar_type>,
-            "Scale of length parameters must be a positive number.");
-        scale_ = value;
+        // No operation.
+        (void)value;
     }
-
-private:
-    //! Default value of the scalar of length parameters.
-    static constexpr auto default_scale = static_cast<scalar_type>(10);
-
-    //! Scale of length parameters.
-    scalar_type scale_{default_scale};
-
-    //! Length parameter.
-    scalar_type length_parameter_{constants::zero<scalar_type>};
 };
 
 }  // namespace num_collect::rbf::length_parameter_calculators
