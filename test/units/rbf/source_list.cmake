@@ -31,5 +31,6 @@ set(SOURCE_FILES
     rbfs/multi_quadric_rbf_test.cpp
     rbfs/polyharmonic_spline_rbf_test.cpp
     rbfs/sech_rbf_test.cpp
+    rbfs/thin_plate_spline_rbf_test.cpp
     rbfs/wendland_csrbf_test.cpp
 )

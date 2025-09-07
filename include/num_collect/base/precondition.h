@@ -31,7 +31,9 @@
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/util/source_info_view.h"
 
-namespace num_collect::inline base::impl {
+namespace num_collect {
+inline namespace base {
+namespace impl {
 
 /*!
  * \brief Handle a failure of a precondition.
@@ -111,7 +113,9 @@ template <typename... Args>
         std::forward<Args>(description_args)...);
 }
 
-}  // namespace num_collect::inline base::impl
+}  // namespace impl
+}  // namespace base
+}  // namespace num_collect
 
 // clang-format off
 /*!

@@ -75,6 +75,7 @@
 | Polyharmonic spline {cite:p}`Fornberg2015`                        | `num_collect::rbf::rbfs::polyharmonic_spline_rbf`   |
 | Sech                                                              | `num_collect::rbf::rbfs::sech_rbf`                  |
 | Wendland's Compactly Supported RBF (CSRBF) {cite:p}`Wendland1995` | `num_collect::rbf::rbfs::wendland_csrbf`            |
+| RBF of thin plate spline {cite:p}`Ghosh2010`                      | `num_collect::rbf::rbfs::thin_plate_spline_rbf`     |
 
 ### Operators
 
@@ -88,6 +89,12 @@
 | Laplacian operator $\triangle$                            | `num_collect::rbf::operators::laplacian_operator`              |
 | Partial derivative operator $\partial / \partial r_i$     | `num_collect::rbf::operators::partial_derivative_operator`     |
 | Third-order derivative operator $d^3 / dx^3$ (univariate) | `num_collect::rbf::operators::third_order_derivative_operator` |
+
+### Splines using RBF Interpolation
+
+| Spline                                | Class                                              |
+| :------------------------------------ | :------------------------------------------------- |
+| Thin plate spline {cite:p}`Ghosh2010` | `num_collect::rbf::thin_plate_spline_interpolator` |
 
 ## Root-Finding Algorithms (`roots` Module)
 

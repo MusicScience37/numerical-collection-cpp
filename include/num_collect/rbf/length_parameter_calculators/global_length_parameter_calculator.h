@@ -105,7 +105,7 @@ public:
     /*!
      * \brief Get the current scale of length parameters.
      *
-     * \return Scala of length parameters.
+     * \return Scale of length parameters.
      */
     [[nodiscard]] auto scale() const noexcept -> scalar_type { return scale_; }
 

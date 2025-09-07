@@ -77,7 +77,7 @@ public:
     template <typename T>
         requires(
             std::is_same_v<T, Real> || std::is_same_v<T, std::complex<Real>>)
-    [[nodiscard]] static constexpr auto gamma(T x) -> T {
+    [[nodiscard]] static constexpr auto gamma(T x) noexcept -> T {
         const T offset_x = x + rational;
         T series_sum = constant;
         for (std::size_t i = 0; i < num_coeffs; ++i) {
@@ -96,7 +96,7 @@ public:
      * \param[in] x Argument.
      * \return Natural logarithm of the value of gamma function.
      */
-    [[nodiscard]] static constexpr auto log_gamma(Real x) -> Real {
+    [[nodiscard]] static constexpr auto log_gamma(Real x) noexcept -> Real {
         const Real offset_x = x + rational;
         Real series_sum = constant;
         for (std::size_t i = 0; i < num_coeffs; ++i) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 MusicScience37 (Kenta Kabashima)
+ * Copyright 2025 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,29 +15,26 @@
  */
 /*!
  * \file
- * \brief Test of different dimensions in RBF interpolation.
+ * \brief Test of thin_plate_spline_interpolator.
  */
-#include <cstddef>
+#include "num_collect/rbf/thin_plate_spline_interpolator.h"
 
-#include <Eigen/Core>
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
 
 #include "comparison_approvals.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
 #include "num_collect/rbf/generate_halton_nodes.h"
-#include "num_collect/rbf/impl/get_variable_type.h"
-#include "num_collect/rbf/rbf_interpolator.h"
 
-TEMPLATE_TEST_CASE_SIG("local_rbf_interpolator with dimensions", "",
+TEMPLATE_TEST_CASE_SIG("thin_plate_spline_interpolator with dimensions", "",
     ((num_collect::index_type Dimension), Dimension), (2), (3), (4), (5), (6)) {
     using num_collect::rbf::generate_halton_nodes;
-    using num_collect::rbf::local_rbf_interpolator;
+    using num_collect::rbf::thin_plate_spline_interpolator;
 
     constexpr num_collect::index_type dimensions = Dimension;
     using variable_type = Eigen::Vector<double, dimensions>;
-    using rbf_interpolator_type = local_rbf_interpolator<double(variable_type)>;
+    using rbf_interpolator_type =
+        thin_plate_spline_interpolator<double(variable_type)>;
 
     rbf_interpolator_type interpolator;
 

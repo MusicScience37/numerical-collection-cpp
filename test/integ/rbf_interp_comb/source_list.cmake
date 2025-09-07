@@ -3,6 +3,7 @@ set(SOURCE_FILES
     dimensions/global_rbf_polynomial_interpolator.cpp
     dimensions/local_csrbf_interpolator.cpp
     dimensions/local_rbf_interpolator.cpp
+    dimensions/thin_plate_spline_interpolator.cpp
     operators/derivative.cpp
     operators/fourth_derivative.cpp
     operators/second_derivative.cpp
