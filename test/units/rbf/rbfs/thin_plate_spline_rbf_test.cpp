@@ -36,7 +36,7 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
             STATIC_REQUIRE(num_collect::rbf::concepts::rbf<rbf_type>);
 
             SECTION("calculate coefficient") {
-                const double actual = rbf_type::coefficient();
+                constexpr double actual = rbf_type::coefficient();
                 constexpr double expected = -0.5;
                 CHECK_THAT(
                     actual, Catch::Matchers::WithinRel(expected, rel_tol));
@@ -44,13 +44,15 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
 
             SECTION("calculate values") {
                 rbf_type rbf;
+                constexpr double coeff = rbf_type::coefficient();
 
                 CHECK(rbf(0.0) == 0.0);
                 // NOLINTNEXTLINE(*-magic-numbers)
-                CHECK_THAT(
-                    rbf(1e-10), Catch::Matchers::WithinRel(1e-10, rel_tol));
+                CHECK_THAT(rbf(1e-10),
+                    Catch::Matchers::WithinRel(coeff * 1e-10, rel_tol));
                 // NOLINTNEXTLINE(*-magic-numbers)
-                CHECK_THAT(rbf(1.5), Catch::Matchers::WithinRel(1.5, rel_tol));
+                CHECK_THAT(
+                    rbf(1.5), Catch::Matchers::WithinRel(coeff * 1.5, rel_tol));
             }
         }
 
@@ -59,7 +61,7 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
             STATIC_REQUIRE(num_collect::rbf::concepts::rbf<rbf_type>);
 
             SECTION("calculate coefficient") {
-                const double actual = rbf_type::coefficient();
+                constexpr double actual = rbf_type::coefficient();
                 constexpr double expected = 1.0 / 12.0;
                 CHECK_THAT(
                     actual, Catch::Matchers::WithinRel(expected, rel_tol));
@@ -67,14 +69,15 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
 
             SECTION("calculate values") {
                 rbf_type rbf;
+                constexpr double coeff = rbf_type::coefficient();
 
                 CHECK(rbf(0.0) == 0.0);
                 // NOLINTNEXTLINE(*-magic-numbers)
-                CHECK_THAT(
-                    rbf(1e-10), Catch::Matchers::WithinRel(1e-30, rel_tol));
+                CHECK_THAT(rbf(1e-10),
+                    Catch::Matchers::WithinRel(coeff * 1e-30, rel_tol));
                 // NOLINTNEXTLINE(*-magic-numbers)
-                CHECK_THAT(
-                    rbf(1.5), Catch::Matchers::WithinRel(3.375, rel_tol));
+                CHECK_THAT(rbf(1.5),
+                    Catch::Matchers::WithinRel(coeff * 3.375, rel_tol));
             }
         }
     }
@@ -85,7 +88,7 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
             STATIC_REQUIRE(num_collect::rbf::concepts::rbf<rbf_type>);
 
             SECTION("calculate coefficient") {
-                const double actual = rbf_type::coefficient();
+                constexpr double actual = rbf_type::coefficient();
                 constexpr double expected =
                     1.0 / (8.0 * num_collect::constants::pi<double>);
                 CHECK_THAT(
@@ -94,14 +97,16 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
 
             SECTION("calculate values") {
                 rbf_type rbf;
+                constexpr double coeff = rbf_type::coefficient();
 
                 CHECK(rbf(0.0) == 0.0);
                 // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(rbf(1e-10),
-                    Catch::Matchers::WithinRel(-2.302585093e-19, rel_tol));
+                    Catch::Matchers::WithinRel(
+                        coeff * -2.302585093e-19, rel_tol));
                 // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(rbf(1.5),
-                    Catch::Matchers::WithinRel(0.9122964932, rel_tol));
+                    Catch::Matchers::WithinRel(coeff * 0.9122964932, rel_tol));
             }
         }
     }
@@ -112,7 +117,7 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
             STATIC_REQUIRE(num_collect::rbf::concepts::rbf<rbf_type>);
 
             SECTION("calculate coefficient") {
-                const double actual = rbf_type::coefficient();
+                constexpr double actual = rbf_type::coefficient();
                 constexpr double expected =
                     -1.0 / (8.0 * num_collect::constants::pi<double>);
                 CHECK_THAT(
@@ -121,13 +126,15 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
 
             SECTION("calculate values") {
                 rbf_type rbf;
+                constexpr double coeff = rbf_type::coefficient();
 
                 CHECK(rbf(0.0) == 0.0);
                 // NOLINTNEXTLINE(*-magic-numbers)
-                CHECK_THAT(
-                    rbf(1e-10), Catch::Matchers::WithinRel(1e-10, rel_tol));
+                CHECK_THAT(rbf(1e-10),
+                    Catch::Matchers::WithinRel(coeff * 1e-10, rel_tol));
                 // NOLINTNEXTLINE(*-magic-numbers)
-                CHECK_THAT(rbf(1.5), Catch::Matchers::WithinRel(1.5, rel_tol));
+                CHECK_THAT(
+                    rbf(1.5), Catch::Matchers::WithinRel(coeff * 1.5, rel_tol));
             }
         }
     }

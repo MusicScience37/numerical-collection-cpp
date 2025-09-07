@@ -1,10 +1,12 @@
 set(SOURCE_FILES
     cbrt_test.cpp
     ceil_test.cpp
+    double_factorial_test.cpp
     exp_test.cpp
     expm1_test.cpp
     factorial_test.cpp
     floor_test.cpp
+    gamma_half_test.cpp
     half_test.cpp
     impl/exp_maclaurin_test.cpp
     impl/expm1_maclaurin_test.cpp

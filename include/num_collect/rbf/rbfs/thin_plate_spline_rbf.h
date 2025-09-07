@@ -24,9 +24,9 @@
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/constants/factorial.h"
+#include "num_collect/constants/gamma_half.h"
 #include "num_collect/constants/pi.h"
 #include "num_collect/constants/pow.h"
-#include "num_collect/functions/gamma.h"
 #include "num_collect/util/assert.h"
 
 namespace num_collect::rbf::rbfs {
@@ -74,10 +74,7 @@ namespace num_collect::rbf::rbfs {
  * when \f$ \|\boldsymbol{r} - \boldsymbol{s}\|_2 \to 0 \f$.
  *
  * This class implements the reproducing kernel as a radial basis function
- * of the distance \f$ \|\boldsymbol{r} - \boldsymbol{s}\|_2 \f$,
- * but omit the coefficient part in `operator()` function
- * since coefficients of RBF have no effects in RBF interpolation.
- * If you need the coefficients, use coefficient() function.
+ * of the distance \f$ \|\boldsymbol{r} - \boldsymbol{s}\|_2 \f$.
  */
 template <base::concepts::real_scalar Scalar, index_type Dimension,
     index_type Degree>
@@ -92,7 +89,7 @@ public:
      *
      * \return Coefficient of this RBF.
      */
-    [[nodiscard]] static auto coefficient() noexcept -> scalar_type {
+    [[nodiscard]] static constexpr auto coefficient() noexcept -> scalar_type {
         if constexpr (Dimension % 2 == 0) {
             // 2n - d is even
             const scalar_type numerator = constants::pow(
@@ -106,9 +103,8 @@ public:
         } else {
             // 2n - d is odd
             const scalar_type numerator =
-                functions::gamma(static_cast<scalar_type>(Dimension) /
-                        static_cast<scalar_type>(2) -
-                    static_cast<scalar_type>(Degree));
+                constants::gamma_half_plus<scalar_type>(
+                    (Dimension - 1) / 2 - Degree);
             const scalar_type denominator =
                 constants::pow(static_cast<scalar_type>(2), 2 * Degree) *
                 constants::pow(constants::pi<scalar_type>,
@@ -133,15 +129,17 @@ public:
             return static_cast<scalar_type>(0);
         }
 
+        static constexpr auto coeff = coefficient();
         if constexpr (Dimension % 2 == 0) {
             // 2n - d is even
             using std::log;
             using std::pow;
-            return pow(distance, 2 * Degree - Dimension) * log(distance);
+            return coeff * pow(distance, 2 * Degree - Dimension) *
+                log(distance);
         } else {
             // 2n - d is odd
             using std::pow;
-            return pow(distance, 2 * Degree - Dimension);
+            return coeff * pow(distance, 2 * Degree - Dimension);
         }
     }
 };
