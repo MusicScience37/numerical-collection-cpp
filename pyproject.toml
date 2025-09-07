@@ -48,6 +48,7 @@ pylint = "^3.3.7"
 flake8 = "^7.3.0"
 mypy = "^1.17.1"
 pandas-stubs = "^2.2.3.250527"
+mpmath = "^1.3.0"
 
 [build-system]
 requires = ["poetry-core"]
