@@ -34,7 +34,8 @@ namespace num_collect::rbf::rbfs {
  * \tparam Scalar Type of scalars.
  *
  * This RBF makes RBF interpolation using polynomials stabler than
- * \ref num_collect::rbf::rbfs::gaussian_rbf.
+ * \ref num_collect::rbf::rbfs::gaussian_rbf
+ * by improving linear independence of RBF and polynomials.
  *
  * \warning This RBF should not be used without constant terms.
  */
