@@ -29,5 +29,6 @@
 #include "rbfs/inverse_quadratic_rbf_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rbfs/multi_quadric_rbf_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rbfs/polyharmonic_spline_rbf_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "rbfs/sech_rbf_test.cpp"        // NOLINT(bugprone-suspicious-include)
+#include "rbfs/sech_rbf_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "rbfs/thin_plate_spline_rbf_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rbfs/wendland_csrbf_test.cpp"  // NOLINT(bugprone-suspicious-include)
