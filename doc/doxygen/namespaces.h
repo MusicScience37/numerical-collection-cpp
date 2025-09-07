@@ -296,6 +296,14 @@ namespace num_collect {
         //! Namespace of RBFs.
         namespace rbfs {}
 
+        /*!
+         * \dir num_collect/rbf/operators
+         * \brief Directory of operators.
+         */
+
+        //! Namespace of operators.
+        namespace operators {}
+
     }  // namespace rbf
 
     /*!
@@ -375,6 +383,11 @@ namespace num_collect {
 
     //! Namespace of special functions.
     namespace functions {
+
+        /*!
+         * \dir num_collect/functions/impl
+         * \brief Directory of internal implementations.
+         */
 
         //! Namespace of internal implementations.
         namespace impl {}
