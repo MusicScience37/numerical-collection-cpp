@@ -25,19 +25,27 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/rbf/rbfs/differentiated.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
+#include "num_collect/util/assert.h"
 
 namespace num_collect::rbf::rbfs {
 
 /*!
- * \brief Class of RBF which calculates exponential fuction in Gaussian RBF from
- * the square term of Maclaurin expansion.
+ * \brief Class of RBF which calculates exponential function in Gaussian RBF
+ * from the square term of Maclaurin expansion.
  *
  * \tparam Scalar Type of scalars.
  *
- * This RBF makes RBF interpolation using polynomials stabler than
- * \ref num_collect::rbf::rbfs::gaussian_rbf.
+ * This RBF calculates the following function:
+ * \f[
+ * \phi(r) = e^{-r^2} - 1 + r^2
+ * = \sum_{k=2}^{\infty} \frac{\left(-r^2\right)^k}{k!}
+ * \f]
  *
- * \warning This RBF should not be used without polynomials up to quadratic
+ * This RBF makes RBF interpolation using polynomials stabler than
+ * \ref num_collect::rbf::rbfs::gaussian_rbf
+ * by improving linear independence of RBF and polynomials.
+ *
+ * \warning This RBF should be used with polynomials at least up to quadratic
  * terms.
  */
 template <base::concepts::real_scalar Scalar>
@@ -54,6 +62,8 @@ public:
      */
     [[nodiscard]] auto operator()(
         const scalar_type& distance_rate) const noexcept -> scalar_type {
+        NUM_COLLECT_DEBUG_ASSERT(distance_rate >= static_cast<scalar_type>(0));
+
         constexpr auto threshold = static_cast<scalar_type>(0.1);
         if (distance_rate > threshold) {
             using std::expm1;
@@ -72,6 +82,64 @@ public:
         }
         return result;
     }
+};
+
+/*!
+ * \brief Class of differentiated RBF which calculates exponential function in
+ * Gaussian RBF from the square term of Maclaurin expansion.
+ *
+ * \tparam Scalar Type of scalars.
+ *
+ * This class calculates the derivative of
+ * \ref num_collect::rbf::rbfs::gaussian_from_square_rbf
+ * as follows:
+ * \f[
+ * -\frac{1}{r} \phi'(r) = 2 e^{-r^2} - 2
+ * \f]
+ */
+template <base::concepts::real_scalar Scalar>
+class differentiated_gaussian_from_square_rbf {
+public:
+    //! Type of scalars.
+    using scalar_type = Scalar;
+
+    /*!
+     * \brief Calculate a function value of RBF.
+     *
+     * \param[in] distance_rate Rate of distance.
+     * \return Value of this RBF.
+     */
+    [[nodiscard]] auto operator()(
+        const scalar_type& distance_rate) const noexcept -> scalar_type {
+        NUM_COLLECT_DEBUG_ASSERT(distance_rate >= static_cast<scalar_type>(0));
+        using std::expm1;
+        return static_cast<scalar_type>(2) *
+            expm1(-distance_rate * distance_rate);
+    }
+};
+
+/*!
+ * \brief Specialization of num_collect::rbf::rbfs::differentiated for
+ * num_collect::rbf::rbfs::gaussian_from_square_rbf.
+ *
+ * \tparam Scalar Type of scalars.
+ */
+template <base::concepts::real_scalar Scalar>
+struct differentiated<gaussian_from_square_rbf<Scalar>> {
+    //! Type of the differentiated RBF.
+    using type = differentiated_gaussian_from_square_rbf<Scalar>;
+};
+
+/*!
+ * \brief Specialization of num_collect::rbf::rbfs::differentiated for
+ * num_collect::rbf::rbfs::differentiated_gaussian_from_square_rbf.
+ *
+ * \tparam Scalar Type of scalars.
+ */
+template <base::concepts::real_scalar Scalar>
+struct differentiated<differentiated_gaussian_from_square_rbf<Scalar>> {
+    //! Type of the differentiated RBF.
+    using type = differentiated_gaussian_rbf<Scalar, 2>;
 };
 
 }  // namespace num_collect::rbf::rbfs

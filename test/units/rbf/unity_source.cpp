@@ -24,6 +24,7 @@
 #include "polynomial_term_test.cpp"   // NOLINT(bugprone-suspicious-include)
 #include "rbf_interpolator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rbf_polynomial_interpolator_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "rbfs/gaussian_from_square_rbf_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rbfs/gaussian_m1_rbf_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "rbfs/gaussian_rbf_test.cpp"     // NOLINT(bugprone-suspicious-include)
 #include "rbfs/inverse_multi_quadric_rbf_test.cpp"  // NOLINT(bugprone-suspicious-include)
