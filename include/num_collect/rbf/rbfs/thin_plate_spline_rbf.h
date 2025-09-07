@@ -24,7 +24,7 @@
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/constants/factorial.h"
-#include "num_collect/constants/gamma_half.h"
+#include "num_collect/constants/gamma_half_plus.h"
 #include "num_collect/constants/pi.h"
 #include "num_collect/constants/pow.h"
 #include "num_collect/rbf/rbfs/differentiated.h"

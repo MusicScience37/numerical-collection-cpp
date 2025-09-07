@@ -48,7 +48,7 @@ public:
     /*!
      * \brief Constructor.
      */
-    identity_length_parameter_calculator() = default;
+    constexpr identity_length_parameter_calculator() = default;
 
     /*!
      * \brief Compute the length parameters.
@@ -58,8 +58,8 @@ public:
      *
      * This function does nothing in this class.
      */
-    void compute(util::vector_view<const variable_type> variables,
-        const distance_function_type& distance_function) {
+    constexpr void compute(util::vector_view<const variable_type> variables,
+        const distance_function_type& distance_function) noexcept {
         // No operation.
         (void)variables;
         (void)distance_function;
@@ -73,7 +73,8 @@ public:
      *
      * This function always returns one in this class.
      */
-    [[nodiscard]] auto length_parameter_at(index_type i) const -> scalar_type {
+    [[nodiscard]] constexpr auto length_parameter_at(
+        index_type i) const noexcept -> scalar_type {
         (void)i;
         return static_cast<scalar_type>(1);
     }
@@ -85,7 +86,7 @@ public:
      *
      * This function always returns one in this class.
      */
-    [[nodiscard]] auto scale() const noexcept -> scalar_type {
+    [[nodiscard]] constexpr auto scale() const noexcept -> scalar_type {
         return static_cast<scalar_type>(1);
     }
 
@@ -96,7 +97,7 @@ public:
      *
      * This function does nothing in this class.
      */
-    void scale(scalar_type value) {
+    constexpr void scale(scalar_type value) noexcept {
         // No operation.
         (void)value;
     }

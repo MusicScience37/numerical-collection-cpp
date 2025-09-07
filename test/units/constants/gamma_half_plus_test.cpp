@@ -17,7 +17,7 @@
  * \file
  * \brief Test of gamma_half_plus function.
  */
-#include "num_collect/constants/gamma_half.h"
+#include "num_collect/constants/gamma_half_plus.h"
 
 #include <concepts>
 

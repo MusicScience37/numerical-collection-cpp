@@ -6,7 +6,7 @@ set(SOURCE_FILES
     expm1_test.cpp
     factorial_test.cpp
     floor_test.cpp
-    gamma_half_test.cpp
+    gamma_half_plus_test.cpp
     half_test.cpp
     impl/exp_maclaurin_test.cpp
     impl/expm1_maclaurin_test.cpp
