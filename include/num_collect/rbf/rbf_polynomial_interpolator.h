@@ -48,7 +48,7 @@
 #include "num_collect/rbf/length_parameter_calculators/local_length_parameter_calculator.h"
 #include "num_collect/rbf/operators/operator_evaluator.h"
 #include "num_collect/rbf/polynomial_term_generator.h"
-#include "num_collect/rbf/rbfs/gaussian_rbf.h"
+#include "num_collect/rbf/rbfs/gaussian_m1_rbf.h"
 #include "num_collect/util/vector_view.h"
 
 namespace num_collect::rbf {
@@ -71,7 +71,7 @@ constexpr auto rbf_polynomial_interpolator_tag =
  */
 template <typename FunctionSignature,
     concepts::rbf RBF =
-        rbfs::gaussian_rbf<impl::get_default_scalar_type<FunctionSignature>>,
+        rbfs::gaussian_m1_rbf<impl::get_default_scalar_type<FunctionSignature>>,
     int PolynomialDegree = 1,
     kernel_matrix_type KernelMatrixType = kernel_matrix_type::dense,
     concepts::distance_function DistanceFunction =
@@ -401,7 +401,7 @@ private:
  */
 template <typename FunctionSignature,
     concepts::rbf RBF =
-        rbfs::gaussian_rbf<impl::get_default_scalar_type<FunctionSignature>>,
+        rbfs::gaussian_m1_rbf<impl::get_default_scalar_type<FunctionSignature>>,
     int PolynomialDegree = 1,
     kernel_matrix_type KernelMatrixType = kernel_matrix_type::dense,
     concepts::distance_function DistanceFunction =

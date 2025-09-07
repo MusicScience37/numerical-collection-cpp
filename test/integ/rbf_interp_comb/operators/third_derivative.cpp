@@ -96,7 +96,7 @@ TEMPLATE_TEST_CASE_SIG(
     using num_collect::rbf::operators::third_order_derivative_operator;
 
     using variable_type = double;
-    using rbf_type = num_collect::rbf::rbfs::gaussian_rbf<double>;
+    using rbf_type = num_collect::rbf::rbfs::gaussian_m1_rbf<double>;
     using rbf_interpolator_type =
         num_collect::rbf::global_rbf_polynomial_interpolator<
             double(variable_type), rbf_type, Degree>;

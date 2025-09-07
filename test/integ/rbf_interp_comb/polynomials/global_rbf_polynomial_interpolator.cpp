@@ -27,15 +27,29 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/rbf/generate_halton_nodes.h"
 #include "num_collect/rbf/rbf_polynomial_interpolator.h"
+#include "num_collect/rbf/rbfs/gaussian_from_square_rbf.h"
+#include "num_collect/rbf/rbfs/gaussian_m1_rbf.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
 
 TEMPLATE_TEST_CASE_SIG(
-    "global_rbf_polynomial_interpolator with different degrees", "",
-    ((int Degree), Degree), (0), (1), (2)) {
+    "global_rbf_polynomial_interpolator with different RFBs and degrees", "",
+    ((typename RBF, int Degree), RBF, Degree),
+    (num_collect::rbf::rbfs::gaussian_rbf<double>, 0),
+    (num_collect::rbf::rbfs::gaussian_rbf<double>, 1),
+    (num_collect::rbf::rbfs::gaussian_rbf<double>, 2),
+    // gaussian_rbf in degree 3 is unstable in GCC.
+    (num_collect::rbf::rbfs::gaussian_m1_rbf<double>, 0),
+    (num_collect::rbf::rbfs::gaussian_m1_rbf<double>, 1),
+    (num_collect::rbf::rbfs::gaussian_m1_rbf<double>, 2),
+    (num_collect::rbf::rbfs::gaussian_m1_rbf<double>, 3),
+    (num_collect::rbf::rbfs::gaussian_m1_rbf<double>, 4),
+    (num_collect::rbf::rbfs::gaussian_from_square_rbf<double>, 2),
+    (num_collect::rbf::rbfs::gaussian_from_square_rbf<double>, 3),
+    (num_collect::rbf::rbfs::gaussian_from_square_rbf<double>, 4)) {
     using num_collect::rbf::generate_halton_nodes;
 
     using variable_type = Eigen::Vector2d;
-    using rbf_type = num_collect::rbf::rbfs::gaussian_rbf<double>;
+    using rbf_type = RBF;
     using rbf_interpolator_type =
         num_collect::rbf::global_rbf_polynomial_interpolator<
             double(variable_type), rbf_type, Degree>;
