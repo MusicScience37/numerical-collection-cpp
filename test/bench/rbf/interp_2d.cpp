@@ -222,7 +222,7 @@ STAT_BENCH_CASE_F(interpolate_2d_fixture_medium, "interpolate_2d",
     STAT_BENCH_MEASURE() {
         num_collect::rbf::global_rbf_polynomial_interpolator<
             double(Eigen::Vector2d),
-            num_collect::rbf::rbfs::gaussian_rbf<double>, 0>
+            num_collect::rbf::rbfs::gaussian_m1_rbf<double>, 0>
             interpolator;
         perform(interpolator);
     };
@@ -233,7 +233,7 @@ STAT_BENCH_CASE_F(interpolate_2d_fixture_medium, "interpolate_2d",
     STAT_BENCH_MEASURE() {
         num_collect::rbf::global_rbf_polynomial_interpolator<
             double(Eigen::Vector2d),
-            num_collect::rbf::rbfs::gaussian_rbf<double>, 1>
+            num_collect::rbf::rbfs::gaussian_m1_rbf<double>, 1>
             interpolator;
         perform(interpolator);
     };

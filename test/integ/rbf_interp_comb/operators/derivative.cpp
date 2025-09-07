@@ -32,6 +32,7 @@
 #include "num_collect/rbf/operators/gradient_operator.h"
 #include "num_collect/rbf/rbf_interpolator.h"
 #include "num_collect/rbf/rbf_polynomial_interpolator.h"
+#include "num_collect/rbf/rbfs/gaussian_m1_rbf.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
 #include "num_collect/rbf/rbfs/inverse_multi_quadric_rbf.h"
 #include "num_collect/rbf/rbfs/inverse_quadratic_rbf.h"
@@ -99,7 +100,7 @@ TEMPLATE_TEST_CASE_SIG(
     using num_collect::rbf::operators::gradient_operator;
 
     using variable_type = double;
-    using rbf_type = num_collect::rbf::rbfs::gaussian_rbf<double>;
+    using rbf_type = num_collect::rbf::rbfs::gaussian_m1_rbf<double>;
     using rbf_interpolator_type =
         num_collect::rbf::global_rbf_polynomial_interpolator<
             double(variable_type), rbf_type, Degree>;

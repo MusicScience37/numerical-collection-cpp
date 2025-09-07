@@ -90,13 +90,13 @@ TEMPLATE_TEST_CASE(
 TEMPLATE_TEST_CASE_SIG(
     "third-order derivative of global_rbf_polynomial_interpolator with "
     "different degrees",
-    "", ((int Degree), Degree), (0), (1)) {
+    "", ((int Degree), Degree), (0), (1), (2)) {
     using num_collect::rbf::generate_1d_halton_nodes;
     using num_collect::rbf::local_rbf_interpolator;
     using num_collect::rbf::operators::third_order_derivative_operator;
 
     using variable_type = double;
-    using rbf_type = num_collect::rbf::rbfs::gaussian_rbf<double>;
+    using rbf_type = num_collect::rbf::rbfs::gaussian_m1_rbf<double>;
     using rbf_interpolator_type =
         num_collect::rbf::global_rbf_polynomial_interpolator<
             double(variable_type), rbf_type, Degree>;
