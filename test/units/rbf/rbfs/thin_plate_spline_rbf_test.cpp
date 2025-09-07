@@ -19,16 +19,29 @@
  */
 #include "num_collect/rbf/rbfs/thin_plate_spline_rbf.h"
 
+#include <limits>
+
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+#include "is_finite.h"
 #include "num_collect/constants/pi.h"
+#include "num_collect/constants/sqrt.h"
 #include "num_collect/rbf/concepts/rbf.h"
+#include "num_collect/rbf/rbfs/differentiated.h"
 
 TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
+    using num_collect::rbf::rbfs::differentiated_t;
     using num_collect::rbf::rbfs::thin_plate_spline_rbf;
 
     constexpr double rel_tol = 1e-5;
+    static constexpr double diff_width =
+        num_collect::constants::sqrt(std::numeric_limits<double>::epsilon());
+    const auto diff = [](const auto& rbf, const double distance) {
+        return (rbf(distance + diff_width) - rbf(distance - diff_width)) /
+            // NOLINTNEXTLINE(*-magic-numbers)
+            (2.0 * diff_width) / (-distance);
+    };
 
     SECTION("Dimension = 1") {
         SECTION("Degree = 1") {
@@ -54,6 +67,19 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                 CHECK_THAT(
                     rbf(1.5), Catch::Matchers::WithinRel(coeff * 1.5, rel_tol));
             }
+
+            SECTION("calculate derivatives") {
+                differentiated_t<rbf_type> differentiated_rbf;
+                rbf_type rbf;
+
+                CHECK_THAT(differentiated_rbf(0.0), is_finite());
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(differentiated_rbf(0.1),
+                    Catch::Matchers::WithinRel(diff(rbf, 0.1), rel_tol));
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(differentiated_rbf(1.5),
+                    Catch::Matchers::WithinRel(diff(rbf, 1.5), rel_tol));
+            }
         }
 
         SECTION("Degree = 2") {
@@ -78,6 +104,19 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                 // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(rbf(1.5),
                     Catch::Matchers::WithinRel(coeff * 3.375, rel_tol));
+            }
+
+            SECTION("calculate derivatives") {
+                differentiated_t<rbf_type> differentiated_rbf;
+                rbf_type rbf;
+
+                CHECK_THAT(differentiated_rbf(0.0), is_finite());
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(differentiated_rbf(0.1),
+                    Catch::Matchers::WithinRel(diff(rbf, 0.1), rel_tol));
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(differentiated_rbf(1.5),
+                    Catch::Matchers::WithinRel(diff(rbf, 1.5), rel_tol));
             }
         }
     }
@@ -108,6 +147,19 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                 CHECK_THAT(rbf(1.5),
                     Catch::Matchers::WithinRel(coeff * 0.9122964932, rel_tol));
             }
+
+            SECTION("calculate derivatives") {
+                differentiated_t<rbf_type> differentiated_rbf;
+                rbf_type rbf;
+
+                CHECK_THAT(differentiated_rbf(0.0), is_finite());
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(differentiated_rbf(0.1),
+                    Catch::Matchers::WithinRel(diff(rbf, 0.1), rel_tol));
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(differentiated_rbf(1.5),
+                    Catch::Matchers::WithinRel(diff(rbf, 1.5), rel_tol));
+            }
         }
     }
 
@@ -135,6 +187,19 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                 // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(
                     rbf(1.5), Catch::Matchers::WithinRel(coeff * 1.5, rel_tol));
+            }
+
+            SECTION("calculate derivatives") {
+                differentiated_t<rbf_type> differentiated_rbf;
+                rbf_type rbf;
+
+                CHECK_THAT(differentiated_rbf(0.0), is_finite());
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(differentiated_rbf(0.1),
+                    Catch::Matchers::WithinRel(diff(rbf, 0.1), rel_tol));
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(differentiated_rbf(1.5),
+                    Catch::Matchers::WithinRel(diff(rbf, 1.5), rel_tol));
             }
         }
     }

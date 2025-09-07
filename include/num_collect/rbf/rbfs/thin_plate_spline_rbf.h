@@ -27,6 +27,7 @@
 #include "num_collect/constants/gamma_half.h"
 #include "num_collect/constants/pi.h"
 #include "num_collect/constants/pow.h"
+#include "num_collect/rbf/rbfs/differentiated.h"
 #include "num_collect/util/assert.h"
 
 namespace num_collect::rbf::rbfs {
@@ -125,15 +126,14 @@ public:
         -> scalar_type {
         NUM_COLLECT_DEBUG_ASSERT(distance >= static_cast<scalar_type>(0));
 
-        if (distance == static_cast<scalar_type>(0)) {
-            return static_cast<scalar_type>(0);
-        }
-
         static constexpr auto coeff = coefficient();
         if constexpr (Dimension % 2 == 0) {
             // 2n - d is even
             using std::log;
             using std::pow;
+            if (distance == static_cast<scalar_type>(0)) {
+                return static_cast<scalar_type>(0);
+            }
             return coeff * pow(distance, 2 * Degree - Dimension) *
                 log(distance);
         } else {
@@ -142,6 +142,91 @@ public:
             return coeff * pow(distance, 2 * Degree - Dimension);
         }
     }
+};
+
+/*!
+ * \brief Class of differentiated RBF of thin plate splines \cite Ghosh2010.
+ *
+ * \tparam Scalar Type of scalars.
+ * \tparam Dimension Dimension of the space.
+ * \tparam Degree Number of differentiations.
+ */
+template <base::concepts::real_scalar Scalar, index_type Dimension,
+    index_type Degree>
+    requires(Dimension > 0 && Degree > 0 && Degree * 2 > Dimension)
+class differentiated_thin_plate_spline_rbf {
+public:
+    //! Type of scalars.
+    using scalar_type = Scalar;
+
+    /*!
+     * \brief Calculate a function value of RBF.
+     *
+     * \param[in] distance Distance.
+     * \return Value of this RBF.
+     */
+    [[nodiscard]] auto operator()(const scalar_type& distance) const noexcept
+        -> scalar_type {
+        NUM_COLLECT_DEBUG_ASSERT(distance >= static_cast<scalar_type>(0));
+
+        static constexpr auto coeff =
+            thin_plate_spline_rbf<Scalar, Dimension, Degree>::coefficient();
+        if constexpr (2 * Degree - Dimension == 1) {
+            // 2n - d = 1 (special case)
+            // In this case, preventing division by zero is needed.
+            constexpr auto small_number = static_cast<scalar_type>(1e-50);
+            if (distance < small_number) {
+                return -coeff / small_number;
+            }
+            return -coeff / distance;
+        } else if constexpr (2 * Degree - Dimension == 2) {
+            // 2n - d = 2 (special case)
+            // In this case, preventing pow(0, 0) is needed.
+            using std::log;
+            using std::pow;
+            const scalar_type no_log_part = -coeff;
+            if (distance == static_cast<scalar_type>(0)) {
+                return no_log_part;
+            }
+            const scalar_type log_part =
+                no_log_part * static_cast<scalar_type>(2) * log(distance);
+            return log_part + no_log_part;
+        } else if constexpr (Dimension % 2 == 0) {
+            // 2n - d is even
+            using std::log;
+            using std::pow;
+            const scalar_type no_log_part =
+                -coeff * pow(distance, 2 * Degree - Dimension - 2);
+            if (distance == static_cast<scalar_type>(0)) {
+                return no_log_part;
+            }
+            const scalar_type log_part = no_log_part *
+                static_cast<scalar_type>(2 * Degree - Dimension) *
+                log(distance);
+            return log_part + no_log_part;
+        } else {
+            // 2n - d is odd
+            using std::pow;
+            return -coeff * (2 * Degree - Dimension) *
+                pow(distance, 2 * Degree - Dimension - 2);
+        }
+    }
+};
+
+/*!
+ * \brief Specialization of num_collect::rbf::rbfs::differentiated for
+ * num_collect::rbf::rbfs::thin_plate_spline_rbf.
+ *
+ * \tparam Scalar Type of scalars.
+ * \tparam Dimension Dimension of the space.
+ * \tparam Degree Number of differentiations.
+ */
+template <base::concepts::real_scalar Scalar, index_type Dimension,
+    index_type Degree>
+struct differentiated<thin_plate_spline_rbf<Scalar, Dimension, Degree>> {
+    //! Type of the differentiated RBF.
+    using type =
+        differentiated_thin_plate_spline_rbf<Scalar, Dimension, Degree>;
 };
 
 }  // namespace num_collect::rbf::rbfs
