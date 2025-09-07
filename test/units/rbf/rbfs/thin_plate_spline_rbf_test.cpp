@@ -119,6 +119,44 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                     Catch::Matchers::WithinRel(diff(rbf, 1.5), rel_tol));
             }
         }
+
+        SECTION("Degree = 3") {
+            using rbf_type = thin_plate_spline_rbf<double, 1, 3>;
+            STATIC_REQUIRE(num_collect::rbf::concepts::rbf<rbf_type>);
+
+            SECTION("calculate coefficient") {
+                constexpr double actual = rbf_type::coefficient();
+                constexpr double expected = -0.004166666666666666;
+                CHECK_THAT(
+                    actual, Catch::Matchers::WithinRel(expected, rel_tol));
+            }
+
+            SECTION("calculate values") {
+                rbf_type rbf;
+                constexpr double coeff = rbf_type::coefficient();
+
+                CHECK(rbf(0.0) == 0.0);
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(rbf(1e-10),
+                    Catch::Matchers::WithinRel(coeff * 1e-50, rel_tol));
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(rbf(1.5),
+                    Catch::Matchers::WithinRel(coeff * 7.59375, rel_tol));
+            }
+
+            SECTION("calculate derivatives") {
+                differentiated_t<rbf_type> differentiated_rbf;
+                rbf_type rbf;
+
+                CHECK_THAT(differentiated_rbf(0.0), is_finite());
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(differentiated_rbf(0.1),
+                    Catch::Matchers::WithinRel(diff(rbf, 0.1), rel_tol));
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(differentiated_rbf(1.5),
+                    Catch::Matchers::WithinRel(diff(rbf, 1.5), rel_tol));
+            }
+        }
     }
 
     SECTION("Dimension = 2") {
@@ -161,6 +199,46 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                     Catch::Matchers::WithinRel(diff(rbf, 1.5), rel_tol));
             }
         }
+
+        SECTION("Degree = 3") {
+            using rbf_type = thin_plate_spline_rbf<double, 2, 3>;
+            STATIC_REQUIRE(num_collect::rbf::concepts::rbf<rbf_type>);
+
+            SECTION("calculate coefficient") {
+                constexpr double actual = rbf_type::coefficient();
+                constexpr double expected = -0.0024867959858108648;
+                CHECK_THAT(
+                    actual, Catch::Matchers::WithinRel(expected, rel_tol));
+            }
+
+            SECTION("calculate values") {
+                rbf_type rbf;
+                constexpr double coeff = rbf_type::coefficient();
+
+                CHECK(rbf(0.0) == 0.0);
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(rbf(1e-10),
+                    Catch::Matchers::WithinRel(
+                        coeff * -2.302585092994046e-39, rel_tol));
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(rbf(1.5),
+                    Catch::Matchers::WithinRel(
+                        coeff * 2.052667109797582, rel_tol));
+            }
+
+            SECTION("calculate derivatives") {
+                differentiated_t<rbf_type> differentiated_rbf;
+                rbf_type rbf;
+
+                CHECK_THAT(differentiated_rbf(0.0), is_finite());
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(differentiated_rbf(0.1),
+                    Catch::Matchers::WithinRel(diff(rbf, 0.1), rel_tol));
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(differentiated_rbf(1.5),
+                    Catch::Matchers::WithinRel(diff(rbf, 1.5), rel_tol));
+            }
+        }
     }
 
     SECTION("Dimension = 3") {
@@ -187,6 +265,44 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                 // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(
                     rbf(1.5), Catch::Matchers::WithinRel(coeff * 1.5, rel_tol));
+            }
+
+            SECTION("calculate derivatives") {
+                differentiated_t<rbf_type> differentiated_rbf;
+                rbf_type rbf;
+
+                CHECK_THAT(differentiated_rbf(0.0), is_finite());
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(differentiated_rbf(0.1),
+                    Catch::Matchers::WithinRel(diff(rbf, 0.1), rel_tol));
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(differentiated_rbf(1.5),
+                    Catch::Matchers::WithinRel(diff(rbf, 1.5), rel_tol));
+            }
+        }
+
+        SECTION("Degree = 3") {
+            using rbf_type = thin_plate_spline_rbf<double, 3, 3>;
+            STATIC_REQUIRE(num_collect::rbf::concepts::rbf<rbf_type>);
+
+            SECTION("calculate coefficient") {
+                constexpr double actual = rbf_type::coefficient();
+                constexpr double expected = 0.003315727981081152;
+                CHECK_THAT(
+                    actual, Catch::Matchers::WithinRel(expected, rel_tol));
+            }
+
+            SECTION("calculate values") {
+                rbf_type rbf;
+                constexpr double coeff = rbf_type::coefficient();
+
+                CHECK(rbf(0.0) == 0.0);
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(rbf(1e-10),
+                    Catch::Matchers::WithinRel(coeff * 1e-30, rel_tol));
+                // NOLINTNEXTLINE(*-magic-numbers)
+                CHECK_THAT(rbf(1.5),
+                    Catch::Matchers::WithinRel(coeff * 3.375, rel_tol));
             }
 
             SECTION("calculate derivatives") {
