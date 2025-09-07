@@ -2,6 +2,7 @@
 #include "dimensions/global_rbf_polynomial_interpolator.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "dimensions/local_csrbf_interpolator.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "dimensions/local_rbf_interpolator.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "dimensions/thin_plate_spline_interpolator.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "operators/derivative.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "operators/fourth_derivative.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "operators/second_derivative.cpp"  // NOLINT(bugprone-suspicious-include)
