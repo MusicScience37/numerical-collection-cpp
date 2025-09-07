@@ -33,6 +33,12 @@ namespace num_collect::rbf::rbfs {
  * the square term of Maclaurin expansion.
  *
  * \tparam Scalar Type of scalars.
+ *
+ * This RBF makes RBF interpolation using polynomials stabler than
+ * \ref num_collect::rbf::rbfs::gaussian_rbf.
+ *
+ * \warning This RBF should not be used without polynomials up to quadratic
+ * terms.
  */
 template <base::concepts::real_scalar Scalar>
 class gaussian_from_square_rbf {
