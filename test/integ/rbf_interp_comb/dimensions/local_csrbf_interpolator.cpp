@@ -43,7 +43,7 @@ TEMPLATE_TEST_CASE_SIG("local_csrbf_interpolator with dimensions", "",
     rbf_interpolator_type interpolator;
 
     const auto function = [](const variable_type& var) {
-        return var.squaredNorm();
+        return var.array().sin().prod();
     };
 
     const auto sample_variables =
