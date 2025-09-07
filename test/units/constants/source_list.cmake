@@ -3,6 +3,7 @@ set(SOURCE_FILES
     ceil_test.cpp
     exp_test.cpp
     expm1_test.cpp
+    factorial_test.cpp
     floor_test.cpp
     half_test.cpp
     impl/exp_maclaurin_test.cpp

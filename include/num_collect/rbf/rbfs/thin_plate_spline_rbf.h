@@ -23,6 +23,7 @@
 
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/constants/factorial.h"
 #include "num_collect/constants/pi.h"
 #include "num_collect/constants/pow.h"
 #include "num_collect/functions/gamma.h"
@@ -99,9 +100,8 @@ public:
             const scalar_type denominator =
                 constants::pow(static_cast<scalar_type>(2), 2 * Degree - 1) *
                 constants::pow(constants::pi<scalar_type>, Dimension / 2) *
-                functions::gamma(static_cast<scalar_type>(Degree)) *
-                functions::gamma(
-                    static_cast<scalar_type>(Degree - Dimension / 2 + 1));
+                constants::factorial<scalar_type>(Degree - 1) *
+                constants::factorial<scalar_type>(Degree - Dimension / 2);
             return numerator / denominator;
         } else {
             // 2n - d is odd
@@ -114,7 +114,7 @@ public:
                 constants::pow(constants::pi<scalar_type>,
                     static_cast<scalar_type>(Dimension) /
                         static_cast<scalar_type>(2)) *
-                functions::gamma(static_cast<scalar_type>(Degree));
+                constants::factorial<scalar_type>(Degree - 1);
             return numerator / denominator;
         }
     }

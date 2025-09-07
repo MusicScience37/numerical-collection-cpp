@@ -2,6 +2,7 @@
 #include "ceil_test.cpp"                  // NOLINT(bugprone-suspicious-include)
 #include "exp_test.cpp"                   // NOLINT(bugprone-suspicious-include)
 #include "expm1_test.cpp"                 // NOLINT(bugprone-suspicious-include)
+#include "factorial_test.cpp"             // NOLINT(bugprone-suspicious-include)
 #include "floor_test.cpp"                 // NOLINT(bugprone-suspicious-include)
 #include "half_test.cpp"                  // NOLINT(bugprone-suspicious-include)
 #include "impl/exp_maclaurin_test.cpp"    // NOLINT(bugprone-suspicious-include)
