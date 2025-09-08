@@ -38,8 +38,7 @@ class ConfigValidator:
         Args:
             filepath (str): Filepath.
         """
-        with open(filepath, mode="r", encoding=FILE_ENCODING) as file:
-            data = pytomlpp.load(filepath)
+        data = pytomlpp.load(filepath)
         self.validate_data(data)
 
     def validate_text(self, text: str) -> None:

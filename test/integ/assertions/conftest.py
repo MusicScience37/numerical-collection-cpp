@@ -26,4 +26,12 @@ def configure_approvaltests():
 
 @pytest.fixture
 def build_dir_path(request: pytest.FixtureRequest) -> pathlib.Path:
+    """Get the path to the build directory.
+
+    Args:
+        request (pytest.FixtureRequest): Fixture request object.
+
+    Returns:
+        pathlib.Path: Path to the build directory.
+    """
     return pathlib.Path(request.config.getoption("--build")).absolute()

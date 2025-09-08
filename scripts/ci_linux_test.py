@@ -75,6 +75,12 @@ TEST_TYPE_VARIABLES = {
 
 
 def execute_command(command: typing.List[str], cwd: str) -> None:
+    """Execute a command in a subprocess.
+
+    Args:
+        command (typing.List[str]): Command to execute.
+        cwd (str): Working directory for the command.
+    """
     click.echo(click.style(f">> {command}", bold=True, fg="green"))
     subprocess.run(command, check=True, cwd=cwd)
 
@@ -88,6 +94,13 @@ def check_tests_for_condition(
     test_type: str,
     build_dir: str,
 ) -> None:
+    """Check tests for a specific condition.
+
+    Args:
+        compiler_type (str): Type of the compiler.
+        test_type (str): Type of the test.
+        build_dir (str): Path to the build directory.
+    """
     os.makedirs(build_dir, exist_ok=True)
 
     # Configure
@@ -119,4 +132,4 @@ def check_tests_for_condition(
 
 
 if __name__ == "__main__":
-    check_tests_for_condition()
+    check_tests_for_condition()  # pylint: disable=no-value-for-parameter

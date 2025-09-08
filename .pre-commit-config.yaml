@@ -29,6 +29,7 @@ repos:
         language: system
         files: \.(h|cpp)$
         entry: poetry run python scripts/update_source_list.py
+        pass_filenames: false
       - id: check-encoding
         name: check-encoding
         description: Check encoding of files.
@@ -46,5 +47,26 @@ repos:
         language: system
         require_serial: true
         types_or: [python, pyi]
+      - id: pylint
+        name: pylint
+        entry: poetry run pylint
+        language: system
+        require_serial: true
+        types_or: [python]
+        exclude: \.cmake-format\.py
+      - id: flake8
+        name: flake8
+        entry: poetry run flake8
+        language: system
+        require_serial: true
+        types_or: [python]
+        exclude: \.cmake-format\.py
+      - id: mypy
+        name: mypy
+        entry: poetry run mypy
+        language: system
+        require_serial: true
+        types_or: [python]
+        exclude: \.cmake-format\.py|conftest\.py
 # Automatically generated files should not be checked.
 exclude: "\\.approved\\."

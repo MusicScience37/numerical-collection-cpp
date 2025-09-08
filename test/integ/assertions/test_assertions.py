@@ -1,3 +1,5 @@
+"""Test of assertions."""
+
 import pathlib
 import subprocess
 

@@ -83,7 +83,9 @@ def perform_profiling(
     pprof_command.append(str(PROF_RESULTS_DIR / f"{name}.prof"))
     process_result = subprocess.run(
         pprof_command,
-        stdout=open(str(PROF_RESULTS_DIR / f"{name}.pdf"), mode="wb"),
+        stdout=open(  # pylint: disable=consider-using-with
+            str(PROF_RESULTS_DIR / f"{name}.pdf"), mode="wb"
+        ),
         check=False,
     )
     click.echo(

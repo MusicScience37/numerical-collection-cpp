@@ -9,6 +9,7 @@ class TestLogTagConfigs:
     """Test of validating log tag configurations."""
 
     def test_all_params(self, validator: ConfigValidator):
+        """Test of configuration with all parameters."""
         config = """
         [[num_collect.logging.tag_configs]]
         tag = "example_tag"
@@ -21,6 +22,7 @@ class TestLogTagConfigs:
         validator.validate_text(config)
 
     def test_only_required_params(self, validator: ConfigValidator):
+        """Test of configuration with only required parameters."""
         config = """
         [[num_collect.logging.tag_configs]]
         tag = "example_tag"
@@ -28,6 +30,7 @@ class TestLogTagConfigs:
         validator.validate_text(config)
 
     def test_no_params(self, validator: ConfigValidator):
+        """Test of configuration without parameters."""
         config = """
         [[num_collect.logging.tag_configs]]
         """
@@ -35,6 +38,7 @@ class TestLogTagConfigs:
             validator.validate_text(config)
 
     def test_nonexisting_params(self, validator: ConfigValidator):
+        """Test of configuration with non-existing parameter."""
         config = """
         [[num_collect.logging.tag_configs]]
         tag = "example_tag"
@@ -55,6 +59,7 @@ class TestLogTagConfigs:
         ],
     )
     def test_valid_tags(self, validator: ConfigValidator, tag: str):
+        """Test of configuration with valid 'tag'."""
         config = f"""
         [[num_collect.logging.tag_configs]]
         tag = {tag}
@@ -78,6 +83,7 @@ class TestLogTagConfigs:
         ],
     )
     def test_invalid_tags(self, validator: ConfigValidator, tag: str):
+        """Test of configuration with invalid 'tag'."""
         config = f"""
         [[num_collect.logging.tag_configs]]
         tag = {tag}
@@ -86,6 +92,7 @@ class TestLogTagConfigs:
             validator.validate_text(config)
 
     def test_invalid_sink(self, validator: ConfigValidator):
+        """Test of configuration with invalid 'sink'."""
         config = """
         [[num_collect.logging.tag_configs]]
         tag = "example_tag"
@@ -109,6 +116,7 @@ class TestLogTagConfigs:
         ],
     )
     def test_valid_output_log_levels(self, validator: ConfigValidator, log_level: str):
+        """Test of configuration with valid 'output_log_level'."""
         config = f"""
         [[num_collect.logging.tag_configs]]
         tag = "example_tag"
@@ -127,6 +135,7 @@ class TestLogTagConfigs:
     def test_invalid_output_log_levels(
         self, validator: ConfigValidator, log_level: str
     ):
+        """Test of configuration with invalid 'output_log_level'."""
         config = f"""
         [[num_collect.logging.tag_configs]]
         tag = "example_tag"
@@ -152,6 +161,7 @@ class TestLogTagConfigs:
     def test_valid_output_log_level_in_child_iterations(
         self, validator: ConfigValidator, log_level: str
     ):
+        """Test of configuration with valid 'output_log_level_in_child_iterations'."""
         config = f"""
         [[num_collect.logging.tag_configs]]
         tag = "example_tag"
@@ -170,6 +180,7 @@ class TestLogTagConfigs:
     def test_invalid_output_log_level_in_child_iterations(
         self, validator: ConfigValidator, log_level: str
     ):
+        """Test of configuration with invalid 'output_log_level_in_child_iterations'."""
         config = f"""
         [[num_collect.logging.tag_configs]]
         tag = "example_tag"
@@ -182,6 +193,7 @@ class TestLogTagConfigs:
     def test_valid_iteration_output_period(
         self, validator: ConfigValidator, period: int
     ):
+        """Test of configuration with valid 'iteration_output_period'."""
         config = f"""
         [[num_collect.logging.tag_configs]]
         tag = "example_tag"
@@ -193,6 +205,7 @@ class TestLogTagConfigs:
     def test_invalid_iteration_output_period(
         self, validator: ConfigValidator, period: int
     ):
+        """Test of configuration with invalid 'iteration_output_period'."""
         config = f"""
         [[num_collect.logging.tag_configs]]
         tag = "example_tag"
@@ -205,6 +218,7 @@ class TestLogTagConfigs:
     def test_valid_iteration_label_period(
         self, validator: ConfigValidator, period: int
     ):
+        """Test of configuration with valid 'iteration_label_period'."""
         config = f"""
         [[num_collect.logging.tag_configs]]
         tag = "example_tag"
@@ -216,6 +230,7 @@ class TestLogTagConfigs:
     def test_invalid_iteration_label_period(
         self, validator: ConfigValidator, period: int
     ):
+        """Test of configuration with invalid 'iteration_label_period'."""
         config = f"""
         [[num_collect.logging.tag_configs]]
         tag = "example_tag"
