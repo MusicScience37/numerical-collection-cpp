@@ -17,10 +17,12 @@
  * \file
  * \brief Test to write logs.
  */
+#include <chrono>
 #include <exception>
 #include <iostream>
 #include <string>
 #include <string_view>
+#include <thread>
 #include <vector>
 
 #include <fmt/ranges.h>
@@ -142,6 +144,11 @@ auto main(int argc, char** argv) -> int {
         write_logs_with_macros();
         write_iterations();
         write_parameters();
+
+        // In MSVC, wait for a second to write logs.
+#ifdef _MSC_VER
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+#endif
 
         return 0;
     } catch (const std::exception& e) {

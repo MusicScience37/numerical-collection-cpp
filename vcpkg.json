@@ -5,6 +5,7 @@
     "eigen3",
     "cpp-hash-tables",
     "tomlplusplus",
+    "concurrentqueue",
     "catch2",
     "trompeloeil",
     "cpp-msgpack-light",

@@ -14,7 +14,7 @@ noise_rate = 0.05
 sample_image_index = 5
 
 # Configurations of numerical-collection-cpp library.
-"$schema" = "https://numcollect.musicscience37.com/config_schema/v2/config_schema.json"
+"$schema" = "https://numcollect.musicscience37.com/config_schema/v3/config_schema.json"
 
 [[num_collect.logging.tag_configs]]
 tag = ""

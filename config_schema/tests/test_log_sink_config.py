@@ -204,3 +204,27 @@ class TestCombinedLogSinkConfig:
         """
         with pytest.raises(fastjsonschema.JsonSchemaValueException):
             validator.validate_text(config)
+
+
+class TestAsyncLogSinkConfig:
+    """Test of validating configurations of async log sinks."""
+
+    def test_all_params(self, validator: ConfigValidator):
+        """Test of configuration with all parameters."""
+        config = """
+        [[num_collect.logging.sinks]]
+        name = "async sink"
+        type = "async"
+        inner_sink_name = "sink1"
+        """
+        validator.validate_text(config)
+
+    def test_no_inner_sink_name(self, validator: ConfigValidator):
+        """Test of configuration without 'inner_sink_name'."""
+        config = """
+        [[num_collect.logging.sinks]]
+        name = "async sink"
+        type = "async"
+        """
+        with pytest.raises(fastjsonschema.JsonSchemaValueException):
+            validator.validate_text(config)

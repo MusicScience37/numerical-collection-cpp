@@ -1,4 +1,4 @@
-# Example configuration to write to console and file.
+# Example configuration to write to a file asynchronously.
 
 # Schema.
 "$schema" = "https://numcollect.musicscience37.com/config_schema/v3/config_schema.json"
@@ -14,11 +14,11 @@ tag = ""
 # Log sink with this name must be configured in
 # num_collect.logging.sinks configuration (written below) in the same file,
 # or use "default" log sink in this library.
-sink = "console file sink"
+sink = "async file sink"
 
 # Minimum log level to output. (Optional.)
 # Choices: trace, debug, iteration, summary, info, warning, error, critical, off.
-output_log_level = "trace"
+output_log_level = "iteration"
 
 # Minimum log level to output in child iterations. (Optional.)
 # Choices are same as output_log_level.
@@ -30,36 +30,6 @@ iteration_output_period = 10
 # Period to write labels of iteration logs. (Optional.)
 iteration_label_period = 20
 
-# Combined log sink to write to console and file.
-[[num_collect.logging.sinks]]
-
-# Name of the log sink. (Required.)
-name = "console file sink"
-
-# Type of the log sink. (Required.)
-type = "combined"
-
-# Log sinks used to actual logging. (Required.)
-# Log sink with these names must be configured in the same file.
-inner_sink_names = ["file sink", "console sink"]
-
-# Minimum log levels to output. (Required.)
-# Number of elements must be same with inner_sink_names.
-output_log_levels = ["trace", "info"]
-
-# Log sink to write to console.
-[[num_collect.logging.sinks]]
-
-# Name of the log sink. (Required.)
-name = "console sink"
-
-# Type of the log sink. (Required.)
-type = "console"
-
-# Whether to use color. (Optional.)
-use_color = true
-
-# Log sink to write to a single file.
 [[num_collect.logging.sinks]]
 
 # Name of the log sink. (Required.)
@@ -70,3 +40,15 @@ type = "single_file"
 
 # Filepath. (Required.)
 filepath = "example_logging_write_logs.log"
+
+[[num_collect.logging.sinks]]
+
+# Name of the log sink. (Required.)
+name = "async file sink"
+
+# Type of the log sink. (Required.)
+type = "async"
+
+# Log sink used to actual logging. (Required.)
+# Log sink with this name must be configured in the same file.
+inner_sink_name = "file sink"

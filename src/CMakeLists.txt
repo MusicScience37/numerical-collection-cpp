@@ -7,8 +7,12 @@ target_include_directories(
            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_link_libraries(
     num_collect
-    PUBLIC Threads::Threads fmt::fmt Eigen3::Eigen cpp_hash_tables::hash_tables
+    PUBLIC Threads::Threads
+           fmt::fmt
+           Eigen3::Eigen
+           cpp_hash_tables::hash_tables
            tomlplusplus::tomlplusplus
+           concurrentqueue::concurrentqueue
            $<BUILD_INTERFACE:num_collect_cpp_warnings>)
 target_compile_features(num_collect PUBLIC cxx_std_20)
 target_add_ausan(num_collect)
@@ -36,8 +40,12 @@ target_include_directories(
            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_link_libraries(
     num_collect_unity
-    PUBLIC Threads::Threads fmt::fmt Eigen3::Eigen cpp_hash_tables::hash_tables
+    PUBLIC Threads::Threads
+           fmt::fmt
+           Eigen3::Eigen
+           cpp_hash_tables::hash_tables
            tomlplusplus::tomlplusplus
+           concurrentqueue::concurrentqueue
            $<BUILD_INTERFACE:num_collect_cpp_warnings>)
 target_compile_features(num_collect_unity PUBLIC cxx_std_20)
 

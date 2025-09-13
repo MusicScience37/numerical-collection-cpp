@@ -91,3 +91,20 @@ Configuration of a log sink to write to multiple log sinks
     # Minimum log levels to output. (Required.)
     # Number of elements must be same with inner_sink_names.
     output_log_levels = ["trace", "debug"]
+
+Configurations of a log sink to write logs asynchronously
+---------------------------------------------------------------
+
+.. code-block:: toml
+
+    [[num_collect.logging.sinks]]
+
+    # Name of the log sink. (Required.)
+    name = "async_file"
+
+    # Type of the log sink. (Required.)
+    type = "async"
+
+    # Log sink used to actual logging. (Required.)
+    # Log sink with this name must be configured in the same file.
+    inner_sink_name = "sink1"
