@@ -26,6 +26,7 @@
 
 #include "num_collect/logging/impl/log_tag_element.h"
 #include "num_collect/logging/impl/separate_top_log_tag_element.h"
+#include "num_collect/logging/reset_logging.h"
 #include "num_collect/util/assert.h"
 
 namespace num_collect::logging {
@@ -213,6 +214,13 @@ auto get_log_tag_config(log_tag_view log_tag) -> const log_tag_config {
 // NOLINTNEXTLINE(readability-const-return-type): false positive
 auto get_default_log_tag_config() -> const log_tag_config {
     return get_log_tag_config(log_tag_view{""});
+}
+
+void reset_logging() {
+    auto* node = impl::get_root_log_tag_config_node_impl();
+    std::unique_lock<std::mutex> lock(node->mutex);
+    node->children.clear();
+    node->config = log_tag_config{};
 }
 
 }  // namespace num_collect::logging

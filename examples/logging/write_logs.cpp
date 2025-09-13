@@ -30,6 +30,7 @@
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/logging/logging_macros.h"
+#include "num_collect/logging/reset_logging.h"
 
 constexpr auto my_tag = num_collect::logging::log_tag_view("example_tag");
 
@@ -128,6 +129,9 @@ auto main(int argc, char** argv) -> int {
         write_logs();
         write_to_default_tag();
         write_iterations();
+
+        // Required in MSVC to ensure logs are written.
+        num_collect::logging::reset_logging();
 
         return 0;
     } catch (const std::exception& e) {

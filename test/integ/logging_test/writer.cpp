@@ -17,12 +17,10 @@
  * \file
  * \brief Test to write logs.
  */
-#include <chrono>
 #include <exception>
 #include <iostream>
 #include <string>
 #include <string_view>
-#include <thread>
 #include <vector>
 
 #include <fmt/ranges.h>
@@ -32,6 +30,7 @@
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/logging/logging_macros.h"
+#include "num_collect/logging/reset_logging.h"
 
 constexpr auto my_tag = num_collect::logging::log_tag_view("example_tag");
 
@@ -145,10 +144,7 @@ auto main(int argc, char** argv) -> int {
         write_iterations();
         write_parameters();
 
-        // In MSVC, wait for a second to write logs.
-#ifdef _MSC_VER
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-#endif
+        num_collect::logging::reset_logging();
 
         return 0;
     } catch (const std::exception& e) {
