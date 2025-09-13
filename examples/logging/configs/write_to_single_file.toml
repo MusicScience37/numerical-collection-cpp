@@ -1,7 +1,7 @@
 # Example configuration to write to a file.
 
 # Schema.
-"$schema" = "https://numcollect.musicscience37.com/config_schema/v2/config_schema.json"
+"$schema" = "https://numcollect.musicscience37.com/config_schema/v3/config_schema.json"
 
 # Default configuration for log tags. (Optional.)
 [[num_collect.logging.tag_configs]]
