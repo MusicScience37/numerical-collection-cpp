@@ -145,11 +145,6 @@ auto main(int argc, char** argv) -> int {
         write_iterations();
         write_parameters();
 
-        // In MSVC, wait for a second to write logs.
-#ifdef _MSC_VER
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-#endif
-
         return 0;
     } catch (const std::exception& e) {
         std::cerr << "Exception thrown: " << e.what() << std::endl;
