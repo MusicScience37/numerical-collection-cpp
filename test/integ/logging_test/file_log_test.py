@@ -69,3 +69,18 @@ def test_combined_file_console_log(
         test_temp_dir_path=test_temp_dir_path,
         log_path=test_temp_dir_path / "test_integ_logging.log",
     )
+
+
+def test_async_file_console_log(
+    writer_path: pathlib.Path,
+    test_temp_dir_path: pathlib.Path,
+    config_dir_path: pathlib.Path,
+):
+    """Test of asynchronous file logs."""
+
+    _verify_command_result(
+        writer_path=writer_path,
+        config_file_path=config_dir_path / "async_file_log.toml",
+        test_temp_dir_path=test_temp_dir_path,
+        log_path=test_temp_dir_path / "test_integ_logging.log",
+    )
