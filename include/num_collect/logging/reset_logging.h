@@ -26,8 +26,10 @@ namespace num_collect::logging {
 /*!
  * \brief Reset logging.
  *
- * \note This function may be needed to write logs before the end of the
- * program.
+ * \note Call this function if you need to ensure logs of asynchronous log sinks
+ * are written before program exit. On an environment using MSVC, logs have been
+ * observed not to be written unless this function is invoked.
+ *
  * \note This function resets the logging configuration to the default one.
  */
 NUM_COLLECT_EXPORT void reset_logging();
