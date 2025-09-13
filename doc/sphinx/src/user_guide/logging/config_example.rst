@@ -28,3 +28,10 @@ Example configuration to write to console and file
 .. literalinclude:: ../../../../../examples/logging/configs/write_to_console_and_file.toml
     :caption: examples/logging/configs/write_to_console_and_file.toml
     :language: toml
+
+Example configuration to write to a file asynchronously
+--------------------------------------------------------------------------
+
+.. literalinclude:: ../../../../../examples/logging/configs/write_to_single_file_async.toml
+    :caption: examples/logging/configs/write_to_single_file_async.toml
+    :language: toml
