@@ -208,7 +208,7 @@ private:
         constexpr std::size_t buffer_size = 16;
         std::array<item_type, buffer_size> buffer{};
         bool is_enabled = true;
-        while (is_enabled) {
+        while (true) {
             std::size_t num_dequeued =
                 queue_.try_dequeue_bulk(buffer.data(), buffer.size());
             if (num_dequeued == 0) {
