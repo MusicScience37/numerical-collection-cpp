@@ -23,7 +23,6 @@
 #include <catch2/reporters/catch_reporter_registrars.hpp>
 // clang-format on
 
-#include <algorithm>
 #include <cstddef>
 #include <optional>
 #include <string>
@@ -35,13 +34,10 @@
 #include <catch2/reporters/catch_reporter_event_listener.hpp>
 #include <fmt/format.h>
 
-#include "num_collect/logging/log_tag_config_node.h"
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
 #include "num_collect/logging/log_level.h"
+#include "num_collect/logging/log_tag_config_node.h"
 #include "num_collect/logging/logger.h"
+#include "num_collect/logging/reset_logging.h"
 #include "num_collect/logging/sinks/file_log_sink.h"
 
 #define STRING1(STR) #STR
@@ -54,8 +50,8 @@ public:
         : EventListenerBase(std::forward<Args>(args)...) {}
 
     void testRunStarting(const Catch::TestRunInfo& /*testRunInfo*/) override {
-        const auto file_path = fmt::format("num_collect_test_units_{}.log",
-            STRING(NUM_COLLECT_TEST_MODULE_NAME));
+        const auto file_path = fmt::format(
+            "test_unit_{}.log", STRING(NUM_COLLECT_TEST_MODULE_NAME));
         const auto sink =
             num_collect::logging::sinks::create_single_file_sink(file_path);
         num_collect::logging::edit_default_log_tag_config()
@@ -66,17 +62,7 @@ public:
 
         logger_ = num_collect::logging::logger();
         logger_.value().info()(std::string(line_length, '='));
-        logger_.value().info()("Start test.");
-
-#ifdef _OPENMP
-        const int num_procs = omp_get_num_procs();
-        constexpr double threads_rate = 0.25;
-        const auto num_threads =
-            std::max(static_cast<int>(num_procs * threads_rate), 2);
-        omp_set_num_threads(num_threads);
-        logger_.value().info()(
-            "Use {} threads in {} processors.", num_threads, num_procs);
-#endif
+        logger_.value().info()("Start tests.");
     }
 
     void testCaseStarting(const Catch::TestCaseInfo& test_info) override {
@@ -98,10 +84,11 @@ public:
 
     void testRunEnded(const Catch::TestRunStats& test_run_stats) override {
         logger_.value().info()(std::string(line_length, '='));
-        logger_.value().info()("Finished send_data_test_units.");
+        logger_.value().info()("Finished tests.");
         logger_.value().info()("Passed {} tests, failed {} tests.",
             test_run_stats.totals.testCases.passed,
             test_run_stats.totals.testCases.failed);
+        num_collect::logging::reset_logging();
     }
 
 private:
