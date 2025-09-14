@@ -1,18 +1,10 @@
 exit code: 0
 stdout:
-[<time-stamp>] [warning] [example_tag] warning (writer.cpp:48, write_logs)
-[<time-stamp>] [error] [example_tag] error (writer.cpp:49, write_logs)
-[<time-stamp>] [critical] [example_tag] critical (writer.cpp:50, write_logs)
-[<time-stamp>] [warning] [] warning (writer.cpp:64, write_to_default_tag)
-[<time-stamp>] [error] [] error (writer.cpp:65, write_to_default_tag)
-[<time-stamp>] [critical] [] critical (writer.cpp:66, write_to_default_tag)
-[<time-stamp>] [warning] [example_tag] warning (writer.cpp:80, write_logs_with_macros)
-[<time-stamp>] [error] [example_tag] error (writer.cpp:81, write_logs_with_macros)
-[<time-stamp>] [critical] [example_tag] critical (writer.cpp:82, write_logs_with_macros)
 
 stderr:
 
 test_integ_logging.log:
+[<time-stamp>] [trace] [example_tag] trace (writer.cpp:42:<col>, <function-name>)
 [<time-stamp>] [debug] [example_tag] debug (writer.cpp:43:<col>, <function-name>)
 [<time-stamp>] [iteration] [example_tag] iteration (writer.cpp:44:<col>, <function-name>)
 [<time-stamp>] [iteration] [example_tag] iteration_label (writer.cpp:45:<col>, <function-name>)
@@ -21,6 +13,7 @@ test_integ_logging.log:
 [<time-stamp>] [warning] [example_tag] warning (writer.cpp:48:<col>, <function-name>)
 [<time-stamp>] [error] [example_tag] error (writer.cpp:49:<col>, <function-name>)
 [<time-stamp>] [critical] [example_tag] critical (writer.cpp:50:<col>, <function-name>)
+[<time-stamp>] [trace] [] trace (writer.cpp:58:<col>, <function-name>)
 [<time-stamp>] [debug] [] debug (writer.cpp:59:<col>, <function-name>)
 [<time-stamp>] [iteration] [] iteration (writer.cpp:60:<col>, <function-name>)
 [<time-stamp>] [iteration] [] iteration_label (writer.cpp:61:<col>, <function-name>)
@@ -29,6 +22,7 @@ test_integ_logging.log:
 [<time-stamp>] [warning] [] warning (writer.cpp:64:<col>, <function-name>)
 [<time-stamp>] [error] [] error (writer.cpp:65:<col>, <function-name>)
 [<time-stamp>] [critical] [] critical (writer.cpp:66:<col>, <function-name>)
+[<time-stamp>] [trace] [example_tag] trace (writer.cpp:74:<col>, <function-name>)
 [<time-stamp>] [debug] [example_tag] debug (writer.cpp:75:<col>, <function-name>)
 [<time-stamp>] [iteration] [example_tag] iteration (writer.cpp:76:<col>, <function-name>)
 [<time-stamp>] [iteration] [example_tag] iteration_label (writer.cpp:77:<col>, <function-name>)
