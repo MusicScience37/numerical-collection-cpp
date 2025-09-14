@@ -23,6 +23,7 @@
 #include <Eigen/SparseCore>
 
 #include "image_denoising_common.h"
+#include "image_denoising_write_png.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/regularization/implicit_gcv.h"
 #include "num_collect/regularization/tgv2_admm.h"
@@ -96,6 +97,7 @@ auto main(int argc, char** argv) -> int {
     // Visualize the result.
     visualize_result(
         origin, data, solution, "TGV2 Regularization", "tgv2_admm");
+    write_png(origin, data, solution, "tgv2_admm");
 
     return 0;
 }
