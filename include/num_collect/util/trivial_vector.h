@@ -33,6 +33,7 @@
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/util/assert.h"
+#include "num_collect/util/impl/pointer_iterator.h"
 
 namespace num_collect::util {
 
@@ -86,7 +87,17 @@ public:
     //! Type of const pointers.
     using const_pointer = const value_type*;
 
-    // TODO define iterators later.
+    //! Type of iterators.
+    using iterator = impl::pointer_iterator<pointer>;
+
+    //! Type of const iterators.
+    using const_iterator = impl::pointer_iterator<const_pointer>;
+
+    //! Type of reverse iterators.
+    using reverse_iterator = std::reverse_iterator<iterator>;
+
+    //! Type of const reverse iterators.
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
     // Currently, functions are ordered similar to
     // https://en.cppreference.com/w/cpp/container/vector.html
@@ -105,8 +116,7 @@ public:
      * \param[in] size Size.
      * \param[in] value Values to fill the vector.
      */
-    explicit trivial_vector(
-        size_type size, const value_type& value = value_type())
+    explicit trivial_vector(size_type size, const T& value = T())
         : trivial_vector(size, non_initialized_t()) {
         std::fill(data_, data_ + size_, value);
     }
@@ -144,7 +154,7 @@ public:
      *
      * \param[in] values Initializer list of values.
      */
-    trivial_vector(std::initializer_list<value_type> values)
+    trivial_vector(std::initializer_list<T> values)
         : trivial_vector(
               static_cast<index_type>(values.size()), non_initialized_t()) {
         std::copy(values.begin(), values.end(), data_);
@@ -341,7 +351,111 @@ public:
      */
     [[nodiscard]] auto data() const noexcept -> const_pointer { return data_; }
 
-    // TODO define iterators later.
+    /*!
+     * \brief Get the iterator to the first element.
+     *
+     * \return Iterator.
+     */
+    [[nodiscard]] auto begin() noexcept -> iterator { return iterator(data_); }
+
+    /*!
+     * \brief Get the iterator to the first element.
+     *
+     * \return Iterator.
+     */
+    [[nodiscard]] auto begin() const noexcept -> const_iterator {
+        return const_iterator(data_);
+    }
+
+    /*!
+     * \brief Get the iterator to the first element.
+     *
+     * \return Iterator.
+     */
+    [[nodiscard]] auto cbegin() const noexcept -> const_iterator {
+        return const_iterator(data_);
+    }
+
+    /*!
+     * \brief Get the iterator to the past-the-end element.
+     *
+     * \return Iterator.
+     */
+    [[nodiscard]] auto end() noexcept -> iterator {
+        return iterator(data_ + size_);
+    }
+
+    /*!
+     * \brief Get the iterator to the past-the-end element.
+     *
+     * \return Iterator.
+     */
+    [[nodiscard]] auto end() const noexcept -> const_iterator {
+        return const_iterator(data_ + size_);
+    }
+
+    /*!
+     * \brief Get the iterator to the past-the-end element.
+     *
+     * \return Iterator.
+     */
+    [[nodiscard]] auto cend() const noexcept -> const_iterator {
+        return const_iterator(data_ + size_);
+    }
+
+    /*!
+     * \brief Get the reverse iterator to the first element.
+     *
+     * \return Reverse iterator.
+     */
+    [[nodiscard]] auto rbegin() noexcept -> reverse_iterator {
+        return reverse_iterator(end());
+    }
+
+    /*!
+     * \brief Get the reverse iterator to the first element.
+     *
+     * \return Reverse iterator.
+     */
+    [[nodiscard]] auto rbegin() const noexcept -> const_reverse_iterator {
+        return const_reverse_iterator(end());
+    }
+
+    /*!
+     * \brief Get the reverse iterator to the first element.
+     *
+     * \return Reverse iterator.
+     */
+    [[nodiscard]] auto crbegin() const noexcept -> const_reverse_iterator {
+        return const_reverse_iterator(cend());
+    }
+
+    /*!
+     * \brief Get the reverse iterator to the past-the-end element.
+     *
+     * \return Reverse iterator.
+     */
+    [[nodiscard]] auto rend() noexcept -> reverse_iterator {
+        return reverse_iterator(begin());
+    }
+
+    /*!
+     * \brief Get the reverse iterator to the past-the-end element.
+     *
+     * \return Reverse iterator.
+     */
+    [[nodiscard]] auto rend() const noexcept -> const_reverse_iterator {
+        return const_reverse_iterator(begin());
+    }
+
+    /*!
+     * \brief Get the reverse iterator to the past-the-end element.
+     *
+     * \return Reverse iterator.
+     */
+    [[nodiscard]] auto crend() const noexcept -> const_reverse_iterator {
+        return const_reverse_iterator(cbegin());
+    }
 
     /*!
      * \brief Check whether this vector is empty.
@@ -414,20 +528,11 @@ public:
      * \param[in] value Value to fill new elements.
      */
     void resize(size_type new_size, const value_type& value = value_type()) {
-        if (new_size < 0) {
-            throw invalid_argument("Negative size was given to resize.");
+        const index_type old_size = size_;
+        resize(new_size, non_initialized_t());
+        if (new_size > old_size) {
+            std::fill(data_ + old_size, data_ + new_size, value);
         }
-        if (new_size > max_size()) {
-            throw invalid_argument("Too large size was given to resize.");
-        }
-        if (new_size > capacity_) {
-            data_ = reallocate(data_, new_size);
-            capacity_ = new_size;
-        }
-        if (new_size > size_) {
-            std::fill(data_ + size_, data_ + new_size, value);
-        }
-        size_ = new_size;
     }
 
 private:

@@ -88,8 +88,15 @@ TEST_CASE("num_collect::util::trivial_vector") {
         CHECK(vector.data() != nullptr);
     }
 
+    SECTION("constructor with invalid sizes") {
+        CHECK_THROWS((void)trivial_vector<int>(-1));  // NOLINT
+        CHECK_THROWS(
+            (void)trivial_vector<int>(trivial_vector<int>::max_size() + 1));
+    }
+
     SECTION("constructor with size and value") {
-        trivial_vector<int> vector(3, 2);
+        // Type should be deduced from the second argument.
+        const auto vector = trivial_vector(3, 2);
 
         CHECK(vector.size() == 3);
         CHECK_FALSE(vector.empty());
@@ -127,7 +134,8 @@ TEST_CASE("num_collect::util::trivial_vector") {
     }
 
     SECTION("constructor with initializer list") {
-        trivial_vector<int> vector{1, 2, 3};
+        // Type should be deduced from the initializer list.
+        const auto vector = trivial_vector{1, 2, 3};
 
         CHECK(vector.size() == 3);
         CHECK_FALSE(vector.empty());
@@ -333,6 +341,129 @@ TEST_CASE("num_collect::util::trivial_vector") {
             std::is_assignable_v<decltype(vector.data()[0]), const int&>);
     }
 
+    SECTION("get iterators for non-const object") {
+        trivial_vector<int> vector{1, 2, 3};
+
+        auto iterator = vector.begin();
+        CHECK(*iterator == 1);
+        ++iterator;
+        CHECK(*iterator == 2);
+        iterator++;
+        CHECK(*iterator == 3);
+        ++iterator;
+        CHECK(iterator == vector.end());
+
+        iterator = vector.begin();
+        *iterator = 4;  // NOLINT
+        CHECK(vector.at(0) == 4);
+    }
+
+    SECTION("get iterators for const object") {
+        const trivial_vector<int> vector{1, 2, 3};
+
+        auto iterator = vector.begin();
+        CHECK(*iterator == 1);
+        ++iterator;
+        CHECK(*iterator == 2);
+        iterator++;
+        CHECK(*iterator == 3);
+        ++iterator;
+        CHECK(iterator == vector.end());
+
+        STATIC_REQUIRE_FALSE(
+            std::is_assignable_v<decltype(*vector.begin()), const int&>);
+    }
+
+    SECTION("get iterators with cbegin, cend") {
+        const trivial_vector<int> vector{1, 2, 3};
+
+        auto iterator = vector.cbegin();
+        CHECK(*iterator == 1);
+        ++iterator;
+        CHECK(*iterator == 2);
+        iterator++;
+        CHECK(*iterator == 3);
+        ++iterator;
+        CHECK(iterator == vector.cend());
+
+        STATIC_REQUIRE_FALSE(
+            std::is_assignable_v<decltype(*vector.cbegin()), const int&>);
+    }
+
+    SECTION("get reverse iterators for non-const object") {
+        trivial_vector<int> vector{1, 2, 3};
+
+        auto iterator = vector.rbegin();
+        CHECK(*iterator == 3);
+        ++iterator;
+        CHECK(*iterator == 2);
+        iterator++;
+        CHECK(*iterator == 1);
+        ++iterator;
+        CHECK(iterator == vector.rend());
+
+        iterator = vector.rbegin();
+        *iterator = 4;  // NOLINT
+        CHECK(vector.at(2) == 4);
+    }
+
+    SECTION("get reverse iterators for const object") {
+        const trivial_vector<int> vector{1, 2, 3};
+
+        auto iterator = vector.rbegin();
+        CHECK(*iterator == 3);
+        ++iterator;
+        CHECK(*iterator == 2);
+        iterator++;
+        CHECK(*iterator == 1);
+        ++iterator;
+        CHECK(iterator == vector.rend());
+
+        STATIC_REQUIRE_FALSE(
+            std::is_assignable_v<decltype(*vector.rbegin()), const int&>);
+    }
+
+    SECTION("get reverse iterators with crbegin, crend") {
+        const trivial_vector<int> vector{1, 2, 3};
+
+        auto iterator = vector.crbegin();
+        CHECK(*iterator == 3);
+        ++iterator;
+        CHECK(*iterator == 2);
+        iterator++;
+        CHECK(*iterator == 1);
+        ++iterator;
+        CHECK(iterator == vector.crend());
+
+        STATIC_REQUIRE_FALSE(
+            std::is_assignable_v<decltype(*vector.crbegin()), const int&>);
+    }
+
+    SECTION("accept range-based for loops for non-const object") {
+        trivial_vector<int> vector{1, 2, 3};
+
+        int value = 1;
+        for (auto& element : vector) {  // NOLINT
+            CHECK(element == value);
+            element = value + 3;  // NOLINT
+            ++value;
+        }
+
+        CHECK(vector.at(0) == 4);
+        CHECK(vector.at(1) == 5);
+        CHECK(vector.at(2) == 6);
+    }
+
+    SECTION("accept range-based for loops for const object") {
+        const trivial_vector<int> vector{1, 2, 3};
+
+        int value = 1;
+        for (const auto& element : vector) {  // NOLINT
+            CHECK(element == value);
+            ++value;
+        }
+    }
+
     SECTION("check whether empty") {
         trivial_vector<int> vector;
 
@@ -437,6 +568,18 @@ TEST_CASE("num_collect::util::trivial_vector") {
         CHECK(vector.size() == 2);
         CHECK(vector.at(0) == 1);
         CHECK(vector.at(1) == 2);
+    }
+
+    SECTION("resize with large size") {
+        trivial_vector<int> vector;
+
+        constexpr index_type large_size = 10000;
+        vector.resize(large_size);
+
+        CHECK(vector.size() == large_size);
+        CHECK_FALSE(vector.empty());
+        CHECK(vector.capacity() >= large_size);
+        CHECK(vector.data() != nullptr);
     }
 
     SECTION("try to resize with invalid sizes") {
