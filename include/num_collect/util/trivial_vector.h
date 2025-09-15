@@ -552,6 +552,70 @@ public:
     }
 
     /*!
+     * \brief Insert an element using constructor arguments.
+     *
+     * \tparam Args Types of the arguments of the constructor.
+     * \param[in] position Position to insert.
+     * \param[in] args Arguments of the constructor.
+     * \return Iterator to the inserted element.
+     */
+    template <typename... Args>
+    auto emplace(const_iterator position, Args&&... args) -> iterator {
+        return insert(position, value_type(std::forward<Args>(args)...));
+    }
+
+    /*!
+     * \brief Remove an element.
+     *
+     * \param[in] position Position to remove.
+     * \return Iterator to the element following the removed element.
+     */
+    auto erase(const_iterator position) -> iterator {
+        const size_type index = position - cbegin();
+        if (index < size_ - 1) {
+            std::memmove(data_ + index, data_ + index + 1,
+                static_cast<std::size_t>(size_ - index - 1) *
+                    sizeof(value_type));
+        }
+        --size_;
+        return iterator(data_ + index);
+    }
+
+    /*!
+     * \brief Append an element.
+     *
+     * \param[in] value Value to append.
+     */
+    void push_back(const value_type& value) {
+        expand_to(size_ + 1);
+        data_[size_] = value;
+        ++size_;
+    }
+
+    /*!
+     * \brief Append an element using constructor arguments.
+     *
+     * \tparam Args Types of the arguments of the constructor.
+     * \param[in] args Arguments of the constructor.
+     * \return Reference to the appended element.
+     */
+    template <typename... Args>
+    auto emplace_back(Args&&... args) -> reference {
+        expand_to(size_ + 1);
+        data_[size_] = value_type(std::forward<Args>(args)...);
+        ++size_;
+        return back();
+    }
+
+    /*!
+     * \brief Remove the last element.
+     */
+    void pop_back() {
+        NUM_COLLECT_DEBUG_ASSERT(size_ > 0);
+        --size_;
+    }
+
+    /*!
      * \brief Change the size of this vector.
      *
      * \param[in] new_size New size.
@@ -563,6 +627,18 @@ public:
         if (new_size > old_size) {
             std::fill(data_ + old_size, data_ + new_size, value);
         }
+    }
+
+    /*!
+     * \brief Swap with another vector.
+     *
+     * \param[in,out] other Other vector.
+     */
+    void swap(trivial_vector& other) noexcept {
+        using std::swap;
+        swap(data_, other.data_);
+        swap(size_, other.size_);
+        swap(capacity_, other.capacity_);
     }
 
 private:
@@ -698,5 +774,17 @@ private:
     //! Capacity.
     size_type capacity_;
 };
+
+/*!
+ * \brief Swap two vectors.
+ *
+ * \tparam T Type of values.
+ * \param[in,out] lhs Left-hand side.
+ * \param[in,out] rhs Right-hand side.
+ */
+template <typename T>
+void swap(trivial_vector<T>& lhs, trivial_vector<T>& rhs) noexcept {
+    lhs.swap(rhs);
+}
 
 }  // namespace num_collect::util

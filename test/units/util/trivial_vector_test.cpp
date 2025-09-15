@@ -580,6 +580,75 @@ TEST_CASE("num_collect::util::trivial_vector") {
         CHECK(vector.at(3) == 4);
     }
 
+    SECTION("insert an element using emplace function") {
+        trivial_vector<int> vector{1, 2, 3};
+
+        auto iterator = vector.emplace(vector.begin() + 1, 4);  // NOLINT
+
+        CHECK(*iterator == 4);
+        CHECK(vector.size() == 4);
+        CHECK(vector.at(0) == 1);
+        CHECK(vector.at(1) == 4);
+        CHECK(vector.at(2) == 2);
+        CHECK(vector.at(3) == 3);
+    }
+
+    SECTION("remove an element") {
+        trivial_vector<int> vector{1, 2, 3};
+
+        auto iterator = vector.erase(vector.begin() + 1);  // NOLINT
+
+        CHECK(*iterator == 3);
+        CHECK(vector.size() == 2);
+        CHECK(vector.at(0) == 1);
+        CHECK(vector.at(1) == 3);
+    }
+
+    SECTION("remove an element at the end") {
+        trivial_vector<int> vector{1, 2, 3};
+
+        auto iterator = vector.erase(vector.end() - 1);  // NOLINT
+
+        CHECK(iterator == vector.end());
+        CHECK(vector.size() == 2);
+        CHECK(vector.at(0) == 1);
+        CHECK(vector.at(1) == 2);
+    }
+
+    SECTION("append an element") {
+        trivial_vector<int> vector{1, 2, 3};
+
+        vector.push_back(4);
+
+        CHECK(vector.size() == 4);
+        CHECK(vector.at(0) == 1);
+        CHECK(vector.at(1) == 2);
+        CHECK(vector.at(2) == 3);
+        CHECK(vector.at(3) == 4);
+    }
+
+    SECTION("append an element using emplace_back function") {
+        trivial_vector<int> vector{1, 2, 3};
+
+        vector.emplace_back(4);
+
+        CHECK(vector.size() == 4);
+        CHECK(vector.at(0) == 1);
+        CHECK(vector.at(1) == 2);
+        CHECK(vector.at(2) == 3);
+        CHECK(vector.at(3) == 4);
+    }
+
+    SECTION("remove the last element") {
+        trivial_vector<int> vector{1, 2, 3};
+
+        vector.pop_back();
+
+        CHECK(vector.size() == 2);
+        CHECK(vector.at(0) == 1);
+        CHECK(vector.at(1) == 2);
+    }
+
     SECTION("resize") {
         trivial_vector<int> vector{1, 2, 3};
 
@@ -636,5 +705,35 @@ TEST_CASE("num_collect::util::trivial_vector") {
         CHECK_THROWS(vector.resize(-1));  // NOLINT
         CHECK_THROWS(
             vector.resize(trivial_vector<int>::max_size() + 1));  // NOLINT
+    }
+
+    SECTION("swap with another vector") {
+        trivial_vector<int> vector1{1, 2, 3};
+        trivial_vector<int> vector2{4, 5};
+
+        vector1.swap(vector2);
+
+        CHECK(vector1.size() == 2);
+        CHECK(vector1.at(0) == 4);
+        CHECK(vector1.at(1) == 5);
+        CHECK(vector2.size() == 3);
+        CHECK(vector2.at(0) == 1);
+        CHECK(vector2.at(1) == 2);
+        CHECK(vector2.at(2) == 3);
+    }
+
+    SECTION("swap with another vector using a free function") {
+        trivial_vector<int> vector1{1, 2, 3};
+        trivial_vector<int> vector2{4, 5};
+
+        swap(vector1, vector2);
+
+        CHECK(vector1.size() == 2);
+        CHECK(vector1.at(0) == 4);
+        CHECK(vector1.at(1) == 5);
+        CHECK(vector2.size() == 3);
+        CHECK(vector2.at(0) == 1);
+        CHECK(vector2.at(1) == 2);
+        CHECK(vector2.at(2) == 3);
     }
 }
