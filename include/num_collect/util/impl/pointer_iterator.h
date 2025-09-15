@@ -55,10 +55,6 @@ public:
     //! Concept of iterators.
     using iterator_concept = std::contiguous_iterator_tag;
 
-    template <typename OtherPointer>
-        requires std::is_pointer_v<OtherPointer>
-    friend class pointer_iterator;
-
     /*!
      * \brief Constructor.
      */
@@ -83,7 +79,7 @@ public:
             !std::is_same_v<OtherPointer, Pointer>)
     pointer_iterator(  // NOLINT(*-explicit-*)
         const pointer_iterator<OtherPointer>& other) noexcept
-        : ptr_(other.ptr_) {}
+        : ptr_(&(*other)) {}
 
     /*!
      * \brief Access to the element.

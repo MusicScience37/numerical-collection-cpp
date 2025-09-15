@@ -538,7 +538,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
         vector.shrink_to_fit();
 
         CHECK(vector.capacity() == 1);
-        CHECK(vector.size() == 0);
+        CHECK(vector.size() == 0);  // NOLINT
         CHECK(vector.empty());
     }
 
