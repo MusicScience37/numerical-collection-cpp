@@ -570,7 +570,7 @@ public:
      * \param[in] position Position to remove.
      * \return Iterator to the element following the removed element.
      */
-    auto erase(const_iterator position) -> iterator {
+    auto erase(const_iterator position) noexcept -> iterator {
         const size_type index = position - cbegin();
         if (index < size_ - 1) {
             std::memmove(data_ + index, data_ + index + 1,
@@ -610,7 +610,7 @@ public:
     /*!
      * \brief Remove the last element.
      */
-    void pop_back() {
+    void pop_back() noexcept {
         NUM_COLLECT_DEBUG_ASSERT(size_ > 0);
         --size_;
     }
@@ -702,7 +702,7 @@ private:
         if (min_capacity > capacity_) {
             size_type new_capacity = capacity_;
             while (new_capacity < min_capacity) {
-                if (new_capacity > max_size() / 2) {
+                if (new_capacity >= max_size() / 2) {
                     new_capacity = max_size();
                     break;
                 }

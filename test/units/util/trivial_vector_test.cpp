@@ -709,7 +709,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
 
     SECTION("swap with another vector") {
         trivial_vector<int> vector1{1, 2, 3};
-        trivial_vector<int> vector2{4, 5};
+        trivial_vector<int> vector2{4, 5};  // NOLINT(*-magic-numbers)
 
         vector1.swap(vector2);
 
@@ -724,7 +724,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
 
     SECTION("swap with another vector using a free function") {
         trivial_vector<int> vector1{1, 2, 3};
-        trivial_vector<int> vector2{4, 5};
+        trivial_vector<int> vector2{4, 5};  // NOLINT(*-magic-numbers)
 
         swap(vector1, vector2);
 
