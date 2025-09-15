@@ -21,12 +21,12 @@
 
 #include <algorithm>
 #include <cmath>  // IWYU pragma: keep
-#include <vector>
 
 #include <Eigen/SparseCore>
 
 #include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/util/vector.h"
 
 namespace num_prob_collect::regularization {
 
@@ -44,7 +44,8 @@ inline void sparse_blur_matrix(
     using scalar_type = typename Matrix::value_type;
     using storage_index_type = typename Matrix::StorageIndex;
 
-    std::vector<Eigen::Triplet<scalar_type, storage_index_type>> triplets;
+    num_collect::util::vector<Eigen::Triplet<scalar_type, storage_index_type>>
+        triplets;
     for (num_collect::index_type j = 0; j < cols; ++j) {
         for (num_collect::index_type i = 0; i < rows; ++i) {
             static constexpr auto factor = static_cast<scalar_type>(100.0);

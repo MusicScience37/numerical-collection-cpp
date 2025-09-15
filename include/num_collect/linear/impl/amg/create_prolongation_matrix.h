@@ -19,8 +19,6 @@
  */
 #pragma once
 
-#include <vector>
-
 #include <Eigen/SparseCore>
 
 #include "num_collect/base/concepts/sparse_matrix.h"
@@ -62,7 +60,7 @@ void create_prolongation_matrix(Matrix& prolongation_matrix,
         }
     }
 
-    std::vector<Eigen::Triplet<scalar_type, storage_index_type>> triplets;
+    util::vector<Eigen::Triplet<scalar_type, storage_index_type>> triplets;
     for (storage_index_type row_index = 0; row_index < num_nodes; ++row_index) {
         if (node_classification[row_index] == node_layer::coarse) {
             const storage_index_type col_index = coarse_grid_indices[row_index];

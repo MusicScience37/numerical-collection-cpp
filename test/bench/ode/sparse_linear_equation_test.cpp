@@ -19,7 +19,6 @@
  */
 #include <cmath>
 #include <stdexcept>
-#include <vector>
 
 #include <Eigen/IterativeLinearSolvers>
 #include <Eigen/SparseCore>
@@ -31,6 +30,7 @@
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/impl/bicgstab.h"
 #include "num_collect/ode/impl/gmres.h"
+#include "num_collect/util/vector.h"
 
 STAT_BENCH_MAIN
 
@@ -52,7 +52,7 @@ public:
 
     void setup(stat_bench::InvocationContext& context) override {
         size_ = context.get_param<int>("dim");
-        std::vector<Eigen::Triplet<double>> triplets;
+        num_collect::util::vector<Eigen::Triplet<double>> triplets;
         triplets.emplace_back(0, 0, 1.0);
         triplets.emplace_back(size_ - 1, size_ - 1, 1.0);
         for (int i = 1; i < size_ - 1; ++i) {

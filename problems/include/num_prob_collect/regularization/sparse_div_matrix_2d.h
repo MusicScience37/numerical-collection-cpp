@@ -19,13 +19,12 @@
  */
 #pragma once
 
-#include <vector>
-
 #include <Eigen/SparseCore>
 
 #include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
+#include "num_collect/util/vector.h"
 
 namespace num_prob_collect::regularization {
 
@@ -55,7 +54,8 @@ template <num_collect::concepts::sparse_matrix Matrix>
     const num_collect::index_type cols =
         (outer_size - 1) * inner_size + outer_size * (inner_size - 1);
 
-    std::vector<Eigen::Triplet<scalar_type, storage_index_type>> triplets;
+    num_collect::util::vector<Eigen::Triplet<scalar_type, storage_index_type>>
+        triplets;
     const num_collect::index_type col_offset_for_inner_difference =
         (outer_size - 1) * inner_size;
     for (num_collect::index_type o = 0; o < outer_size - 2; ++o) {
@@ -113,14 +113,17 @@ template <num_collect::concepts::sparse_matrix Matrix>
         (outer_size - 1) * inner_size + outer_size * (inner_size - 1);
 
     // Difference for the outer index.
-    std::vector<Eigen::Triplet<scalar_type, storage_index_type>> triplets;
+    num_collect::util::vector<Eigen::Triplet<scalar_type, storage_index_type>>
+        triplets;
     for (num_collect::index_type o = 0; o < outer_size - 2; ++o) {
         for (num_collect::index_type i = 0; i < inner_size; ++i) {
             const num_collect::index_type row = (o + 1) * inner_size + i;
-            triplets.emplace_back(
-                row, o * inner_size + i, static_cast<scalar_type>(1));
-            triplets.emplace_back(
-                row, (o + 1) * inner_size + i, static_cast<scalar_type>(-1));
+            triplets.emplace_back(static_cast<storage_index_type>(row),
+                static_cast<storage_index_type>(o * inner_size + i),
+                static_cast<scalar_type>(1));
+            triplets.emplace_back(static_cast<storage_index_type>(row),
+                static_cast<storage_index_type>((o + 1) * inner_size + i),
+                static_cast<scalar_type>(-1));
         }
     }
 
@@ -130,11 +133,14 @@ template <num_collect::concepts::sparse_matrix Matrix>
     for (num_collect::index_type o = 0; o < outer_size; ++o) {
         for (num_collect::index_type i = 0; i < inner_size - 2; ++i) {
             const num_collect::index_type row = o * inner_size + (i + 1);
-            triplets.emplace_back(row,
-                col_offset_for_inner_difference + o * (inner_size - 1) + i,
+            triplets.emplace_back(static_cast<storage_index_type>(row),
+                static_cast<storage_index_type>(
+                    col_offset_for_inner_difference + o * (inner_size - 1) + i),
                 static_cast<scalar_type>(1));
-            triplets.emplace_back(row,
-                col_offset_for_inner_difference + o * (inner_size - 1) + i + 1,
+            triplets.emplace_back(static_cast<storage_index_type>(row),
+                static_cast<storage_index_type>(
+                    col_offset_for_inner_difference + o * (inner_size - 1) + i +
+                    1),
                 static_cast<scalar_type>(-1));
         }
     }

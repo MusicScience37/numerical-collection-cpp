@@ -28,6 +28,7 @@
 #include <catch2/matchers/catch_matchers_range_equals.hpp>
 
 #include "num_collect/linear/impl/amg/node_connection_list.h"
+#include "num_collect/util/vector.h"
 
 TEST_CASE("num_collect::linear::impl::amg::compute_strong_connection_list") {
     using num_collect::linear::impl::amg::compute_strong_connection_list;
@@ -36,7 +37,7 @@ TEST_CASE("num_collect::linear::impl::amg::compute_strong_connection_list") {
     SECTION("create a list") {
         constexpr double strong_coeff_rate_threshold = 0.5;
         Eigen::SparseMatrix<double, Eigen::RowMajor> matrix(3, 3);
-        std::vector<Eigen::Triplet<double>> coefficients;
+        num_collect::util::vector<Eigen::Triplet<double>> coefficients;
         coefficients.emplace_back(0, 0, 1.0);    // NOLINT
         coefficients.emplace_back(0, 1, -0.5);   // NOLINT
         coefficients.emplace_back(0, 2, -0.25);  // NOLINT
