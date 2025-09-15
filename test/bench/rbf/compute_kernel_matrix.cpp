@@ -150,6 +150,30 @@ STAT_BENCH_CASE_F(compute_kernel_matrix_fixture, "compute_kernel_matrix",
 }
 
 STAT_BENCH_CASE_F(compute_kernel_matrix_fixture, "compute_kernel_matrix",
+    "local_rbf_parallel") {
+    using variable_type = Eigen::Vector2d;
+    using distance_function_type =
+        num_collect::rbf::distance_functions::euclidean_distance_function<
+            variable_type>;
+    using rbf_type = num_collect::rbf::rbfs::gaussian_rbf<double>;
+    using length_parameter_calculator_type =
+        num_collect::rbf::length_parameter_calculators::
+            local_length_parameter_calculator<distance_function_type>;
+    using kernel_matrix_type = Eigen::MatrixXd;
+
+    distance_function_type distance_function;
+    rbf_type rbf;
+    length_parameter_calculator_type length_parameter_calculator;
+    kernel_matrix_type kernel_matrix;
+
+    STAT_BENCH_MEASURE() {
+        num_collect::rbf::impl::compute_kernel_matrix_parallel(
+            distance_function, rbf, length_parameter_calculator,
+            this->variables(), kernel_matrix);
+    };
+}
+
+STAT_BENCH_CASE_F(compute_kernel_matrix_fixture, "compute_kernel_matrix",
     "local_csrbf_serial") {
     using variable_type = Eigen::Vector2d;
     using distance_function_type =

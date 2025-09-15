@@ -68,28 +68,28 @@ TEST_CASE("num_collect::rbf::impl::compute_kernel_matrix_parallel") {
                 num_collect::util::dense_matrix_format_type::multi_line)));
     }
 
-    // SECTION("compute a matrix with local length parameters") {
-    //     using variable_type = double;
-    //     using scalar_type = double;
-    //     using distance_function_type =
-    //         euclidean_distance_function<variable_type>;
-    //     using rbf_type = gaussian_rbf<scalar_type>;
-    //     using length_parameter_calculator_type =
-    //         local_length_parameter_calculator<distance_function_type>;
+    SECTION("compute a matrix with local length parameters") {
+        using variable_type = double;
+        using scalar_type = double;
+        using distance_function_type =
+            euclidean_distance_function<variable_type>;
+        using rbf_type = gaussian_rbf<scalar_type>;
+        using length_parameter_calculator_type =
+            local_length_parameter_calculator<distance_function_type>;
 
-    //     const distance_function_type distance_function;
-    //     const rbf_type rbf;
-    //     length_parameter_calculator_type length_parameter_calculator;
-    //     const auto variables = std::vector<double>{0.0, 0.3, 0.5, 0.6};
-    //     Eigen::MatrixXd kernel_matrix;
+        const distance_function_type distance_function;
+        const rbf_type rbf;
+        length_parameter_calculator_type length_parameter_calculator;
+        const auto variables = std::vector<double>{0.0, 0.3, 0.5, 0.6};
+        Eigen::MatrixXd kernel_matrix;
 
-    //     compute_kernel_matrix_parallel(distance_function, rbf,
-    //         length_parameter_calculator, variables, kernel_matrix);
+        compute_kernel_matrix_parallel(distance_function, rbf,
+            length_parameter_calculator, variables, kernel_matrix);
 
-    //     ApprovalTests::Approvals::verify(fmt::format("{: 10.3e}",
-    //         num_collect::util::format_dense_matrix(kernel_matrix,
-    //             num_collect::util::dense_matrix_format_type::multi_line)));
-    // }
+        ApprovalTests::Approvals::verify(fmt::format("{: 10.3e}",
+            num_collect::util::format_dense_matrix(kernel_matrix,
+                num_collect::util::dense_matrix_format_type::multi_line)));
+    }
 
     // SECTION("compute a sparse matrix with local length parameter") {
     //     using variable_type = double;
