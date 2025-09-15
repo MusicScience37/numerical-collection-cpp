@@ -55,6 +55,10 @@ public:
     //! Concept of iterators.
     using iterator_concept = std::contiguous_iterator_tag;
 
+    template <typename OtherPointer>
+        requires std::is_pointer_v<OtherPointer>
+    friend class pointer_iterator;
+
     /*!
      * \brief Constructor.
      */
@@ -66,6 +70,20 @@ public:
      * \param[in] ptr Pointer.
      */
     explicit pointer_iterator(pointer ptr) noexcept : ptr_(ptr) {}
+
+    /*!
+     * \brief Implicitly convert from another iterator.
+     *
+     * \tparam OtherPointer Type of pointers of the other iterator.
+     * \param[in] other Other iterator.
+     */
+    template <typename OtherPointer>
+        requires(std::is_pointer_v<OtherPointer> &&
+            std::is_convertible_v<OtherPointer, Pointer> &&
+            !std::is_same_v<OtherPointer, Pointer>)
+    pointer_iterator(  // NOLINT(*-explicit-*)
+        const pointer_iterator<OtherPointer>& other) noexcept
+        : ptr_(other.ptr_) {}
 
     /*!
      * \brief Access to the element.

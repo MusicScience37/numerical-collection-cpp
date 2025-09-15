@@ -520,6 +520,28 @@ TEST_CASE("num_collect::util::trivial_vector") {
         CHECK(vector.capacity() > capacity);
     }
 
+    SECTION("shrink to fit") {
+        trivial_vector<int> vector{1, 2, 3};
+
+        vector.shrink_to_fit();
+
+        CHECK(vector.capacity() == 3);
+        CHECK(vector.size() == 3);
+        CHECK(vector.at(0) == 1);
+        CHECK(vector.at(1) == 2);
+        CHECK(vector.at(2) == 3);
+    }
+
+    SECTION("shrink to fit for empty vector") {
+        trivial_vector<int> vector;
+
+        vector.shrink_to_fit();
+
+        CHECK(vector.capacity() == 1);
+        CHECK(vector.size() == 0);
+        CHECK(vector.empty());
+    }
+
     SECTION("clear") {
         trivial_vector<int> vector{1, 2, 3};
 
@@ -530,6 +552,32 @@ TEST_CASE("num_collect::util::trivial_vector") {
         CHECK(vector.empty());
         CHECK(vector.size() == 0);  // NOLINT
         CHECK(vector.capacity() >= 3);
+    }
+
+    SECTION("insert an element") {
+        trivial_vector<int> vector{1, 2, 3};
+
+        auto iterator = vector.insert(vector.begin() + 1, 4);  // NOLINT
+
+        CHECK(*iterator == 4);
+        CHECK(vector.size() == 4);
+        CHECK(vector.at(0) == 1);
+        CHECK(vector.at(1) == 4);
+        CHECK(vector.at(2) == 2);
+        CHECK(vector.at(3) == 3);
+    }
+
+    SECTION("insert an element at the end") {
+        trivial_vector<int> vector{1, 2, 3};
+
+        auto iterator = vector.insert(vector.end(), 4);  // NOLINT
+
+        CHECK(*iterator == 4);
+        CHECK(vector.size() == 4);
+        CHECK(vector.at(0) == 1);
+        CHECK(vector.at(1) == 2);
+        CHECK(vector.at(2) == 3);
+        CHECK(vector.at(3) == 4);
     }
 
     SECTION("resize") {

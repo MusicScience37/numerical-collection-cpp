@@ -517,9 +517,39 @@ public:
     }
 
     /*!
+     * \brief Remove unused capacity.
+     */
+    void shrink_to_fit() {
+        if (size_ < capacity_) {
+            const size_type new_capacity = size_ == 0 ? 1 : size_;
+            data_ = reallocate(data_, new_capacity);
+            capacity_ = new_capacity;
+        }
+    }
+
+    /*!
      * \brief Clear all elements in this vector.
      */
     void clear() noexcept { size_ = 0; }
+
+    /*!
+     * \brief Insert an element.
+     *
+     * \param[in] position Position to insert.
+     * \param[in] value Value to insert.
+     * \return Iterator to the inserted element.
+     */
+    auto insert(const_iterator position, const value_type& value) -> iterator {
+        const size_type index = position - cbegin();
+        expand_to(size_ + 1);
+        if (index < size_) {
+            std::memmove(data_ + index + 1, data_ + index,
+                static_cast<std::size_t>(size_ - index) * sizeof(value_type));
+        }
+        data_[index] = value;
+        ++size_;
+        return iterator(data_ + index);
+    }
 
     /*!
      * \brief Change the size of this vector.
@@ -580,6 +610,31 @@ private:
             capacity_ = new_size;
         }
         size_ = new_size;
+    }
+
+    /*!
+     * \brief Expand this vector to have at least the specified capacity.
+     *
+     * \param[in] min_capacity Minimum capacity.
+     */
+    void expand_to(size_type min_capacity) {
+        NUM_COLLECT_ASSERT(min_capacity >= 0);
+        if (min_capacity > max_size()) {
+            throw precondition_not_satisfied(
+                "Tried to expand trivial_vector beyond the maximum size.");
+        }
+        if (min_capacity > capacity_) {
+            size_type new_capacity = capacity_;
+            while (new_capacity < min_capacity) {
+                if (new_capacity > max_size() / 2) {
+                    new_capacity = max_size();
+                    break;
+                }
+                new_capacity *= 2;
+            }
+            data_ = reallocate(data_, new_capacity);
+            capacity_ = new_capacity;
+        }
     }
 
     /*!
