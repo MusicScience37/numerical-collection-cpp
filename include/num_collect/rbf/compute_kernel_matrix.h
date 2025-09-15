@@ -28,7 +28,9 @@
 #include "num_collect/rbf/concepts/distance_function.h"
 #include "num_collect/rbf/concepts/length_parameter_calculator.h"
 #include "num_collect/rbf/concepts/rbf.h"
+#include "num_collect/rbf/impl/compute_kernel_matrix_parallel.h"
 #include "num_collect/rbf/impl/compute_kernel_matrix_serial.h"
+#include "num_collect/rbf/impl/parallelized_num_points.h"
 #include "num_collect/util/vector_view.h"
 
 namespace num_collect::rbf {
@@ -62,8 +64,13 @@ inline void compute_kernel_matrix(const DistanceFunction& distance_function,
     const RBF& rbf, LengthParameterCalculator& length_parameter_calculator,
     util::vector_view<const typename DistanceFunction::variable_type> variables,
     KernelMatrix& kernel_matrix) {
-    impl::compute_kernel_matrix_serial(distance_function, rbf,
-        length_parameter_calculator, variables, kernel_matrix);
+    if (variables.size() < impl::parallelized_num_points) {
+        impl::compute_kernel_matrix_serial(distance_function, rbf,
+            length_parameter_calculator, variables, kernel_matrix);
+    } else {
+        impl::compute_kernel_matrix_parallel(distance_function, rbf,
+            length_parameter_calculator, variables, kernel_matrix);
+    }
 }
 
 /*!
@@ -95,8 +102,13 @@ inline void compute_kernel_matrix(const DistanceFunction& distance_function,
     const RBF& rbf, LengthParameterCalculator& length_parameter_calculator,
     util::vector_view<const typename DistanceFunction::variable_type> variables,
     KernelMatrix& kernel_matrix) {
-    impl::compute_kernel_matrix_serial(distance_function, rbf,
-        length_parameter_calculator, variables, kernel_matrix);
+    if (variables.size() < impl::parallelized_num_points) {
+        impl::compute_kernel_matrix_serial(distance_function, rbf,
+            length_parameter_calculator, variables, kernel_matrix);
+    } else {
+        impl::compute_kernel_matrix_parallel(distance_function, rbf,
+            length_parameter_calculator, variables, kernel_matrix);
+    }
 }
 
 /*!
@@ -128,8 +140,13 @@ inline void compute_kernel_matrix(const DistanceFunction& distance_function,
     const RBF& rbf, LengthParameterCalculator& length_parameter_calculator,
     util::vector_view<const typename DistanceFunction::variable_type> variables,
     KernelMatrix& kernel_matrix) {
-    impl::compute_kernel_matrix_serial(distance_function, rbf,
-        length_parameter_calculator, variables, kernel_matrix);
+    if (variables.size() < impl::parallelized_num_points) {
+        impl::compute_kernel_matrix_serial(distance_function, rbf,
+            length_parameter_calculator, variables, kernel_matrix);
+    } else {
+        impl::compute_kernel_matrix_parallel(distance_function, rbf,
+            length_parameter_calculator, variables, kernel_matrix);
+    }
 }
 
 }  // namespace num_collect::rbf
