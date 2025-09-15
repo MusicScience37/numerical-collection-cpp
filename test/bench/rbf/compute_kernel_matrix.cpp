@@ -29,6 +29,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
 #include "num_collect/rbf/generate_halton_nodes.h"
+#include "num_collect/rbf/impl/compute_kernel_matrix_parallel.h"
 #include "num_collect/rbf/impl/compute_kernel_matrix_serial.h"
 #include "num_collect/rbf/length_parameter_calculators/global_length_parameter_calculator.h"
 #include "num_collect/rbf/length_parameter_calculators/local_length_parameter_calculator.h"
@@ -41,7 +42,11 @@ public:
         add_param<num_collect::index_type>("points")
             ->add(10)  // NOLINT
 #ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
+            ->add(20)    // NOLINT
+            ->add(50)    // NOLINT
             ->add(100)   // NOLINT
+            ->add(200)   // NOLINT
+            ->add(500)   // NOLINT
             ->add(1000)  // NOLINT
 #endif
             ;
@@ -94,6 +99,30 @@ STAT_BENCH_CASE_F(compute_kernel_matrix_fixture, "compute_kernel_matrix",
     STAT_BENCH_MEASURE() {
         num_collect::rbf::impl::compute_kernel_matrix_serial(distance_function,
             rbf, length_parameter_calculator, this->variables(), kernel_matrix);
+    };
+}
+
+STAT_BENCH_CASE_F(compute_kernel_matrix_fixture, "compute_kernel_matrix",
+    "global_rbf_parallel") {
+    using variable_type = Eigen::Vector2d;
+    using distance_function_type =
+        num_collect::rbf::distance_functions::euclidean_distance_function<
+            variable_type>;
+    using rbf_type = num_collect::rbf::rbfs::gaussian_rbf<double>;
+    using length_parameter_calculator_type =
+        num_collect::rbf::length_parameter_calculators::
+            global_length_parameter_calculator<distance_function_type>;
+    using kernel_matrix_type = Eigen::MatrixXd;
+
+    distance_function_type distance_function;
+    rbf_type rbf;
+    length_parameter_calculator_type length_parameter_calculator;
+    kernel_matrix_type kernel_matrix;
+
+    STAT_BENCH_MEASURE() {
+        num_collect::rbf::impl::compute_kernel_matrix_parallel(
+            distance_function, rbf, length_parameter_calculator,
+            this->variables(), kernel_matrix);
     };
 }
 

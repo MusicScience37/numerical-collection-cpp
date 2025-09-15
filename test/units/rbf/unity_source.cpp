@@ -7,6 +7,7 @@
 #include "distance_functions/euclidean_distance_function_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "gaussian_process_interpolator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "generate_halton_nodes_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "impl/compute_kernel_matrix_parallel_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/compute_kernel_matrix_serial_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/differentiate_polynomial_term_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/general_spline_equation_solver_test.cpp"  // NOLINT(bugprone-suspicious-include)
