@@ -28,6 +28,7 @@
 #include "num_collect/constants/zero.h"  // IWYU pragma: keep
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/rbf/concepts/distance_function.h"
+#include "num_collect/rbf/impl/parallelized_num_points.h"
 #include "num_collect/util/vector_view.h"
 
 namespace num_collect::rbf::length_parameter_calculators {
@@ -71,7 +72,7 @@ public:
             num_samples > 0, "Sample points must be given.");
 
         auto max_min_distance = constants::zero<scalar_type>;
-        // TODO parallelization for many points handling max_min_distance
+#pragma omp parallel for if (num_samples >= impl::parallelized_num_points)
         for (index_type i = 0; i < num_samples; ++i) {
             auto min_distance = std::numeric_limits<scalar_type>::max();
             for (index_type j = 0; j < num_samples; ++j) {
@@ -83,8 +84,11 @@ public:
                     }
                 }
             }
-            if (min_distance > max_min_distance) {
-                max_min_distance = min_distance;
+#pragma omp critical
+            {
+                if (min_distance > max_min_distance) {
+                    max_min_distance = min_distance;
+                }
             }
         }
 
