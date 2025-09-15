@@ -13,6 +13,7 @@
 #include "greatest_common_divisor_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "hash_string_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/compiler_builtins_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "impl/pointer_iterator_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "is_eigen_matrix_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "is_eigen_vector_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "iteration_period_checker_test.cpp"  // NOLINT(bugprone-suspicious-include)

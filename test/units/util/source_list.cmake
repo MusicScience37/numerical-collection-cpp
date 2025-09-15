@@ -14,6 +14,7 @@ set(SOURCE_FILES
     greatest_common_divisor_test.cpp
     hash_string_test.cpp
     impl/compiler_builtins_test.cpp
+    impl/pointer_iterator_test.cpp
     is_eigen_matrix_test.cpp
     is_eigen_vector_test.cpp
     iteration_period_checker_test.cpp
