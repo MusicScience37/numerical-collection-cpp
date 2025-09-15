@@ -21,13 +21,13 @@
 
 #include <algorithm>
 #include <cstddef>
-#include <vector>
 
 #include <Eigen/SparseCore>
 
 #include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/util/assert.h"
+#include "num_collect/util/vector.h"
 
 namespace num_prob_collect::linear {
 
@@ -146,9 +146,8 @@ private:
         // NOLINTNEXTLINE
         off_diag_coeff_ = -inv_area / static_cast<scalar_type>(3);
 
-        std::vector<Eigen::Triplet<scalar_type>> triplets;
-        const std::size_t approx_elements =
-            9U * static_cast<std::size_t>(mat_size_);
+        num_collect::util::vector<Eigen::Triplet<scalar_type>> triplets;
+        const num_collect::index_type approx_elements = 9 * mat_size_;
         triplets.reserve(approx_elements);
         for (num_collect::index_type xi = 0; xi < grid_cols_; ++xi) {
             for (num_collect::index_type yi = 0; yi < grid_rows_; ++yi) {

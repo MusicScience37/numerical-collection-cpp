@@ -21,7 +21,6 @@
 
 #include <cmath>
 #include <type_traits>
-#include <vector>
 
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
@@ -30,6 +29,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/constants/pi.h"
+#include "num_collect/util/vector.h"
 
 namespace num_prob_collect::regularization {
 
@@ -76,7 +76,8 @@ template <num_collect::concepts::sparse_matrix Matrix>
     constexpr double rays_angle = num_collect::constants::pi<double> / 6.0;
     const double delta_function_width = 1.0 / static_cast<double>(image_size);
 
-    std::vector<Eigen::Triplet<scalar_type, storage_index_type>> triplets;
+    num_collect::util::vector<Eigen::Triplet<scalar_type, storage_index_type>>
+        triplets;
     for (num_collect::index_type direction_index = 0;
         direction_index < num_directions; ++direction_index) {
         const double center_angle = 2.0 * num_collect::constants::pi<double> *
@@ -120,7 +121,10 @@ template <num_collect::concepts::sparse_matrix Matrix>
                         const double value =
                             (1.0 - distance_from_ray / delta_function_width) /
                             delta_function_width;
-                        triplets.emplace_back(row, col, value);
+                        triplets.emplace_back(
+                            static_cast<storage_index_type>(row),
+                            static_cast<storage_index_type>(col),
+                            static_cast<scalar_type>(value));
                     }
                 }
             }

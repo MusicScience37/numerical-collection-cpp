@@ -19,12 +19,11 @@
  */
 #pragma once
 
-#include <vector>
-
 #include <Eigen/SparseCore>
 
 #include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/util/vector.h"
 
 namespace num_prob_collect::regularization {
 
@@ -43,10 +42,14 @@ template <num_collect::concepts::sparse_matrix Matrix>
     const num_collect::index_type rows = size - 1;
     const num_collect::index_type cols = size;
 
-    std::vector<Eigen::Triplet<scalar_type, storage_index_type>> triplets;
+    num_collect::util::vector<Eigen::Triplet<scalar_type, storage_index_type>>
+        triplets;
     for (num_collect::index_type i = 0; i < rows; ++i) {
-        triplets.emplace_back(i, i, static_cast<scalar_type>(1));
-        triplets.emplace_back(i, i + 1, static_cast<scalar_type>(-1));
+        triplets.emplace_back(static_cast<storage_index_type>(i),
+            static_cast<storage_index_type>(i), static_cast<scalar_type>(1));
+        triplets.emplace_back(static_cast<storage_index_type>(i),
+            static_cast<storage_index_type>(i + 1),
+            static_cast<scalar_type>(-1));
     }
 
     Matrix matrix(rows, cols);

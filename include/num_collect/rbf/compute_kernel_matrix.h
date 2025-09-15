@@ -21,7 +21,6 @@
 
 #include <cstddef>
 #include <type_traits>  // IWYU pragma: keep
-#include <vector>
 
 #include <Eigen/SparseCore>
 
@@ -35,6 +34,7 @@
 #include "num_collect/rbf/concepts/rbf.h"
 #include "num_collect/util/assert.h"
 #include "num_collect/util/safe_cast.h"
+#include "num_collect/util/vector.h"
 #include "num_collect/util/vector_view.h"
 
 namespace num_collect::rbf {
@@ -184,7 +184,7 @@ inline void compute_kernel_matrix(const DistanceFunction& distance_function,
 
     const scalar_type support_boundary = RBF::support_boundary();
 
-    std::vector<Eigen::Triplet<scalar_type, storage_index_type>> triplets;
+    util::vector<Eigen::Triplet<scalar_type, storage_index_type>> triplets;
     // TODO parallelization for many points
     for (index_type j = 0; j < num_variables; ++j) {
         const scalar_type length_parameter =

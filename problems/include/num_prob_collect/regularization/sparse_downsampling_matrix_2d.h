@@ -20,13 +20,13 @@
 #pragma once
 
 #include <algorithm>
-#include <vector>
 
 #include <Eigen/SparseCore>
 
 #include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
+#include "num_collect/util/vector.h"
 
 namespace num_prob_collect::regularization {
 
@@ -64,7 +64,8 @@ template <num_collect::concepts::sparse_matrix Matrix>
     const num_collect::index_type cols =
         original_outer_size * original_inner_size;
 
-    std::vector<Eigen::Triplet<scalar_type, storage_index_type>> triplets;
+    num_collect::util::vector<Eigen::Triplet<scalar_type, storage_index_type>>
+        triplets;
     for (num_collect::index_type downsampled_outer_index = 0;
         downsampled_outer_index < downsampled_outer_size;
         ++downsampled_outer_index) {
@@ -99,7 +100,8 @@ template <num_collect::concepts::sparse_matrix Matrix>
                     const num_collect::index_type col =
                         original_outer_index * original_inner_size +
                         original_inner_index;
-                    triplets.emplace_back(row, col,
+                    triplets.emplace_back(static_cast<storage_index_type>(row),
+                        static_cast<storage_index_type>(col),
                         static_cast<scalar_type>(1) /
                             static_cast<scalar_type>(
                                 (original_outer_index_end -

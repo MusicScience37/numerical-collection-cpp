@@ -25,6 +25,7 @@
 #include <vector>
 
 #include "num_collect/base/index_type.h"
+#include "num_collect/util/trivial_vector.h"
 
 namespace num_collect::util {
 
@@ -310,6 +311,20 @@ public:
 private:
     //! Actual vector.
     internal_vector_type vector_;
+};
+
+/*!
+ * \brief Class of vectors wrapping std::vector class to use singed integers as
+ * indices.
+ *
+ * \tparam T Type of values.
+ *
+ * This specialization uses faster implementation for trivially copyable types.
+ */
+template <trivial_vector_compatible T>
+class vector<T> : public trivial_vector<T> {
+public:
+    using trivial_vector<T>::trivial_vector;
 };
 
 }  // namespace num_collect::util
