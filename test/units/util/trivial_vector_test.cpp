@@ -60,7 +60,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
     SECTION("default constructor") {
         trivial_vector<int> vector;
 
-        CHECK(vector.size() == 0);
+        CHECK(vector.size() == 0);  // NOLINT
         CHECK(vector.empty());
         CHECK(vector.capacity() > 0);
         CHECK(vector.data() != nullptr);
@@ -346,7 +346,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
     SECTION("get size") {
         trivial_vector<int> vector;
 
-        CHECK(vector.size() == 0);
+        CHECK(vector.size() == 0);  // NOLINT
 
         vector.resize(3);
 
