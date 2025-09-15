@@ -1,16 +1,16 @@
-[tool.poetry]
+[project]
 name = "numerical-collection-cpp"
 version = "0.0.0"
 description = ""
-authors = ["Kenta Kabashima <kenta_program37@hotmail.co.jp>"]
 readme = "README.md"
-packages = []
-package-mode = false
+requires-python = ">=3.12,<3.14"
+authors = [
+    { name = "Kenta Kabashima", email = "kenta_program37@hotmail.co.jp" },
+]
+dependencies = ["setuptools>=80.9.0"]
 
-[tool.poetry.dependencies]
-python = ">=3.12,<3.14"
-# Some packages requires setuptools.
-setuptools = "^80.9.0"
+[tool.poetry]
+package-mode = false
 
 [tool.poetry.group.test.dependencies]
 kaleido = "^1.1.0"
