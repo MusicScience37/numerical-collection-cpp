@@ -53,6 +53,7 @@ Checks: >
   -boost-*,
   openmp-*,
     -openmp-use-default-none,
+    -openmp-exception-escape,
 
 # Ignored checks:
 #
@@ -88,6 +89,7 @@ Checks: >
 # - cppcoreguidelines-c-copy-assignment-signature generates false positives.
 # - cppcoreguidelines-pro-bounds-pointer-arithmetic prevents implementation of containers and use of arguments of main functions.
 # - readability-simplify-boolean-expr generates unfixable warnings in assertion macros.
+# - openmp-exception-escape is generating warnings for rare cases that cannot be tested.
 
 CheckOptions:
   # Naming Conventions
