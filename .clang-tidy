@@ -36,7 +36,6 @@ Checks: >
     -modernize-use-std-numbers,
     -modernize-use-constraints,
     -modernize-use-auto,
-    -modernize-use-integer-sign-comparison,
   hicpp-*,
     -hicpp-use-auto,
   cert-*,

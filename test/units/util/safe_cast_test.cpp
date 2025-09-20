@@ -34,7 +34,7 @@ namespace {
         to_type casted;                                             \
         REQUIRE_NOTHROW(                                            \
             casted = num_collect::util::safe_cast<to_type>(value)); \
-        REQUIRE(static_cast<from_type>(casted) == value);           \
+        REQUIRE(casted == static_cast<to_type>(VALUE));             \
     }()
 
 // NOLINTNEXTLINE: I want to use line numbers in test cases.
@@ -64,6 +64,7 @@ TEST_CASE("num_collect::util::safe_cast (integers)") {
         TEST_UNSAFE(std::uint32_t, std::int32_t, 0x80000000);
 
         TEST_SAFE(std::uint32_t, std::int32_t, 0);
+        // NOLINTNEXTLINE(modernize-use-integer-sign-comparison)
         TEST_SAFE(std::uint32_t, std::int64_t, 0xFFFFFFFF);
     }
 
@@ -87,6 +88,7 @@ TEST_CASE("num_collect::util::safe_cast (integers)") {
         TEST_SAFE(std::int32_t, std::int16_t, 32767);
         TEST_UNSAFE(std::int32_t, std::int16_t, 32768);
 
+        // NOLINTNEXTLINE(modernize-use-integer-sign-comparison)
         TEST_SAFE(std::int32_t, std::int32_t, 0x80000000);
         TEST_SAFE(std::int32_t, std::int32_t, 0);
         TEST_SAFE(std::int32_t, std::int32_t, 0x7FFFFFFF);
