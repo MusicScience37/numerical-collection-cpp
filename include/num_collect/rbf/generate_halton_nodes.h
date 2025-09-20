@@ -22,12 +22,12 @@
 #include <algorithm>
 #include <array>
 #include <cstddef>
-#include <vector>
 
 #include <Eigen/Core>
 
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/util/vector.h"
 
 namespace num_collect::rbf {
 
@@ -88,9 +88,8 @@ void generate_halton_nodes_impl(Eigen::VectorX<Scalar>& buffer,
  */
 template <base::concepts::real_scalar Scalar, index_type Dimensions>
 [[nodiscard]] auto generate_halton_nodes(index_type num_nodes)
-    -> std::vector<Eigen::Vector<Scalar, Dimensions>> {
-    std::vector<Eigen::Vector<Scalar, Dimensions>> nodes(
-        static_cast<std::size_t>(num_nodes));
+    -> util::vector<Eigen::Vector<Scalar, Dimensions>> {
+    util::vector<Eigen::Vector<Scalar, Dimensions>> nodes(num_nodes);
 
     constexpr index_type supported_dimensions = 6;
     static_assert(Dimensions <= supported_dimensions);
@@ -104,7 +103,7 @@ template <base::concepts::real_scalar Scalar, index_type Dimensions>
         impl::generate_halton_nodes_impl(buffer, num_nodes,
             base_sequence_sizes[static_cast<std::size_t>(d)]);
         for (index_type i = 0; i < num_nodes; ++i) {
-            nodes[static_cast<std::size_t>(i)](d) = buffer(i + 1);
+            nodes[i](d) = buffer(i + 1);
         }
     }
 
@@ -120,13 +119,13 @@ template <base::concepts::real_scalar Scalar, index_type Dimensions>
  */
 template <base::concepts::real_scalar Scalar>
 [[nodiscard]] auto generate_1d_halton_nodes(index_type num_nodes)
-    -> std::vector<Scalar> {
+    -> util::vector<Scalar> {
     Eigen::VectorX<Scalar> buffer;
     constexpr index_type base_sequence_size = 2;
     impl::generate_halton_nodes_impl(buffer, num_nodes, base_sequence_size);
 
-    std::vector<Scalar> nodes;
-    nodes.reserve(static_cast<std::size_t>(num_nodes));
+    util::vector<Scalar> nodes;
+    nodes.reserve(num_nodes);
     for (index_type i = 1; i <= num_nodes; ++i) {
         nodes.push_back(buffer(i));
     }

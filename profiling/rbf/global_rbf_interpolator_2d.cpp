@@ -40,9 +40,10 @@ static auto function(const Eigen::Vector2d& variable) -> double {
     return variable.x() * variable.x() + std::sin(variable.y());
 }
 
-static void test(const std::vector<Eigen::Vector2d>& sample_variables,
+static void test(
+    const num_collect::util::vector<Eigen::Vector2d>& sample_variables,
     const Eigen::VectorXd& sample_values,
-    const std::vector<Eigen::Vector2d>& evaluation_variables,
+    const num_collect::util::vector<Eigen::Vector2d>& evaluation_variables,
     Eigen::VectorXd& evaluation_interpolated_values) {
     num_collect::rbf::global_rbf_interpolator<double(Eigen::Vector2d)>
         interpolator;
@@ -50,8 +51,7 @@ static void test(const std::vector<Eigen::Vector2d>& sample_variables,
         sample_variables, sample_values);
     interpolator.compute(sample_variables, sample_values);
     for (num_collect::index_type i = 0; i < num_evaluation_points; ++i) {
-        const auto& variable =
-            evaluation_variables[static_cast<std::size_t>(i)];
+        const auto& variable = evaluation_variables[i];
         evaluation_interpolated_values[i] = interpolator.interpolate(variable);
     }
 }
@@ -60,7 +60,7 @@ auto main() -> int {
     constexpr double max_variable = 3.0;
     constexpr double min_variable = -3.0;
 
-    std::vector<Eigen::Vector2d> sample_variables =
+    auto sample_variables =
         num_collect::rbf::generate_halton_nodes<double, 2>(num_sample_points);
     for (auto& variable : sample_variables) {
         variable = Eigen::Vector2d::Constant(min_variable) +
@@ -70,11 +70,10 @@ auto main() -> int {
     Eigen::VectorXd sample_values;
     sample_values.resize(num_sample_points);
     for (num_collect::index_type i = 0; i < num_sample_points; ++i) {
-        sample_values[i] =
-            function(sample_variables[static_cast<std::size_t>(i)]);
+        sample_values[i] = function(sample_variables[i]);
     }
 
-    std::vector<Eigen::Vector2d> evaluation_variables;
+    num_collect::util::vector<Eigen::Vector2d> evaluation_variables;
     evaluation_variables.resize(
         static_cast<std::size_t>(num_evaluation_points));
     Eigen::VectorXd evaluation_interpolated_values;
@@ -86,7 +85,7 @@ auto main() -> int {
             min_variable + (max_variable - min_variable) * rate;
         const Eigen::Vector2d variable =
             Eigen::Vector2d::Constant(variable_element);
-        evaluation_variables[static_cast<std::size_t>(i)] = variable;
+        evaluation_variables[i] = variable;
         evaluation_interpolated_values[i] = 0.0;
     }
 

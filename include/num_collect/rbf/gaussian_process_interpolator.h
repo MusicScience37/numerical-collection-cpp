@@ -103,7 +103,7 @@ public:
         const variable_type& variable) const
         -> std::pair<function_value_type, function_value_type> {
         Eigen::VectorXd kernel_vec;
-        kernel_vec.resize(static_cast<index_type>(variables().size()));
+        kernel_vec.resize(variables().size());
         for (index_type i = 0; i < variables().size(); ++i) {
             kernel_vec(i) =
                 rbf()(distance_function()(variable, variables()[i]) /

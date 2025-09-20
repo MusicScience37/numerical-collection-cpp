@@ -67,11 +67,9 @@ TEMPLATE_TEST_CASE("derivative of local_rbf_interpolator with different RBFs",
 
     const auto sample_variables = generate_1d_halton_nodes<double>(10);
     Eigen::VectorXd sample_values{};
-    sample_values.resize(
-        static_cast<num_collect::index_type>(sample_variables.size()));
-    for (std::size_t i = 0; i < sample_variables.size(); ++i) {
-        sample_values(static_cast<num_collect::index_type>(i)) =
-            function(sample_variables[i]);
+    sample_values.resize(sample_variables.size());
+    for (num_collect::index_type i = 0; i < sample_variables.size(); ++i) {
+        sample_values(i) = function(sample_variables[i]);
     }
 
     interpolator.compute(sample_variables, sample_values);
@@ -117,11 +115,9 @@ TEMPLATE_TEST_CASE_SIG(
 
     const auto sample_variables = generate_1d_halton_nodes<double>(10);
     Eigen::VectorXd sample_values{};
-    sample_values.resize(
-        static_cast<num_collect::index_type>(sample_variables.size()));
-    for (std::size_t i = 0; i < sample_variables.size(); ++i) {
-        sample_values(static_cast<num_collect::index_type>(i)) =
-            function(sample_variables[i]);
+    sample_values.resize(sample_variables.size());
+    for (num_collect::index_type i = 0; i < sample_variables.size(); ++i) {
+        sample_values(i) = function(sample_variables[i]);
     }
 
     interpolator.compute(sample_variables, sample_values);
@@ -165,11 +161,9 @@ TEMPLATE_TEST_CASE_SIG(
 
     const auto sample_variables = generate_1d_halton_nodes<double>(10);
     Eigen::VectorXd sample_values{};
-    sample_values.resize(
-        static_cast<num_collect::index_type>(sample_variables.size()));
-    for (std::size_t i = 0; i < sample_variables.size(); ++i) {
-        sample_values(static_cast<num_collect::index_type>(i)) =
-            function(sample_variables[i]);
+    sample_values.resize(sample_variables.size());
+    for (num_collect::index_type i = 0; i < sample_variables.size(); ++i) {
+        sample_values(i) = function(sample_variables[i]);
     }
 
     interpolator.compute(sample_variables, sample_values);

@@ -33,6 +33,7 @@
 #include "num_collect/rbf/concepts/length_parameter_calculator.h"
 #include "num_collect/rbf/concepts/rbf.h"
 #include "num_collect/util/assert.h"
+#include "num_collect/util/safe_cast.h"
 #include "num_collect/util/vector.h"
 #include "num_collect/util/vector_view.h"
 
@@ -179,18 +180,19 @@ inline void compute_kernel_matrix_serial(
 
     length_parameter_calculator.compute(variables, distance_function);
 
-    const index_type num_variables = variables.size();
+    const auto num_variables =
+        util::safe_cast<storage_index_type>(variables.size());
     kernel_matrix.resize(num_variables, num_variables);
 
     const scalar_type support_boundary = RBF::support_boundary();
 
     util::vector<Eigen::Triplet<scalar_type, storage_index_type>> triplets;
-    for (index_type j = 0; j < num_variables; ++j) {
+    for (storage_index_type j = 0; j < num_variables; ++j) {
         const scalar_type length_parameter =
             length_parameter_calculator.length_parameter_at(j);
         NUM_COLLECT_ASSERT(length_parameter > static_cast<scalar_type>(0));
 
-        for (index_type i = 0; i < num_variables; ++i) {
+        for (storage_index_type i = 0; i < num_variables; ++i) {
             const scalar_type distance_rate =
                 distance_function(variables[i], variables[j]) /
                 length_parameter;
@@ -198,8 +200,7 @@ inline void compute_kernel_matrix_serial(
                 continue;
             }
             const scalar_type value = rbf(distance_rate);
-            triplets.emplace_back(static_cast<storage_index_type>(i),
-                static_cast<storage_index_type>(j), value);
+            triplets.emplace_back(i, j, value);
         }
     }
     kernel_matrix.setFromTriplets(triplets.begin(), triplets.end());

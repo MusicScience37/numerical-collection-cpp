@@ -19,7 +19,6 @@
  */
 #include <cmath>
 #include <cstddef>
-#include <vector>
 
 #include <stat_bench/benchmark_macros.h>
 #include <stat_bench/fixture_base.h>
@@ -31,6 +30,7 @@
 #include "num_collect/rbf/rbf_interpolator.h"
 #include "num_collect/rbf/rbf_polynomial_interpolator.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
+#include "num_collect/util/vector.h"
 
 class interpolate_3d_fixture_base : public stat_bench::FixtureBase {
 public:
@@ -51,13 +51,11 @@ public:
         }
         sample_values_.resize(num_sample_points_);
         for (num_collect::index_type i = 0; i < num_sample_points_; ++i) {
-            sample_values_[i] =
-                function(sample_variables_[static_cast<std::size_t>(i)]);
+            sample_values_[i] = function(sample_variables_[i]);
         }
 
         num_evaluation_points_ = 100;  // NOLINT
-        evaluation_variables_.resize(
-            static_cast<std::size_t>(num_evaluation_points_));
+        evaluation_variables_.resize(num_evaluation_points_);
         evaluation_correct_values_.resize(num_evaluation_points_);
         evaluation_interpolated_values_.resize(num_evaluation_points_);
         for (num_collect::index_type i = 0; i < num_evaluation_points_; ++i) {
@@ -67,7 +65,7 @@ public:
                 min_variable + (max_variable - min_variable) * rate;
             const Eigen::Vector3d variable =
                 Eigen::Vector3d::Constant(variable_element);
-            evaluation_variables_[static_cast<std::size_t>(i)] = variable;
+            evaluation_variables_[i] = variable;
             evaluation_correct_values_[i] = function(variable);
             evaluation_interpolated_values_[i] = 0.0;
         }
@@ -77,8 +75,7 @@ public:
     void perform(Interpolator& interpolator) {
         interpolator.compute(sample_variables_, sample_values_);
         for (num_collect::index_type i = 0; i < num_evaluation_points_; ++i) {
-            const auto& variable =
-                evaluation_variables_[static_cast<std::size_t>(i)];
+            const auto& variable = evaluation_variables_[i];
             evaluation_interpolated_values_[i] =
                 interpolator.interpolate(variable);
         }
@@ -90,8 +87,7 @@ public:
             sample_variables_, sample_values_);
         interpolator.compute(sample_variables_, sample_values_);
         for (num_collect::index_type i = 0; i < num_evaluation_points_; ++i) {
-            const auto& variable =
-                evaluation_variables_[static_cast<std::size_t>(i)];
+            const auto& variable = evaluation_variables_[i];
             evaluation_interpolated_values_[i] =
                 interpolator.interpolate(variable);
         }
@@ -112,13 +108,13 @@ public:
 private:
     num_collect::index_type num_sample_points_{};
 
-    std::vector<Eigen::Vector3d> sample_variables_{};
+    num_collect::util::vector<Eigen::Vector3d> sample_variables_{};
 
     Eigen::VectorXd sample_values_{};
 
     num_collect::index_type num_evaluation_points_{};
 
-    std::vector<Eigen::Vector3d> evaluation_variables_{};
+    num_collect::util::vector<Eigen::Vector3d> evaluation_variables_{};
 
     Eigen::VectorXd evaluation_correct_values_{};
 

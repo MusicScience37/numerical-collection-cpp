@@ -17,8 +17,6 @@
  * \file
  * \brief Benchmark of computation of kernel matrices.
  */
-#include <vector>
-
 #include <Eigen/Core>
 #include <stat_bench/benchmark_macros.h>
 #include <stat_bench/fixture_base.h>
@@ -35,6 +33,7 @@
 #include "num_collect/rbf/length_parameter_calculators/local_length_parameter_calculator.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
 #include "num_collect/rbf/rbfs/wendland_csrbf.h"
+#include "num_collect/util/vector.h"
 
 class compute_kernel_matrix_fixture : public stat_bench::FixtureBase {
 public:
@@ -61,13 +60,13 @@ public:
     }
 
     [[nodiscard]] auto variables() const
-        -> const std::vector<Eigen::Vector2d>& {
+        -> const num_collect::util::vector<Eigen::Vector2d>& {
         return sample_variables_;
     }
 
 private:
     num_collect::index_type num_sample_points_{};
-    std::vector<Eigen::Vector2d> sample_variables_{};
+    num_collect::util::vector<Eigen::Vector2d> sample_variables_{};
 };
 
 STAT_BENCH_GROUP("compute_kernel_matrix")

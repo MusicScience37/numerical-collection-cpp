@@ -52,10 +52,9 @@ TEST_CASE("num_collect::rbf::operators::partial_derivative_operator") {
 
         const auto sample_variables = generate_halton_nodes<double, 2>(100);
         Eigen::VectorXd sample_values{};
-        sample_values.resize(static_cast<index_type>(sample_variables.size()));
-        for (std::size_t i = 0; i < sample_variables.size(); ++i) {
-            sample_values(static_cast<index_type>(i)) =
-                function(sample_variables[i]);
+        sample_values.resize(sample_variables.size());
+        for (index_type i = 0; i < sample_variables.size(); ++i) {
+            sample_values(i) = function(sample_variables[i]);
         }
 
         rbf_interpolator_type interpolator;
@@ -92,10 +91,9 @@ TEST_CASE("num_collect::rbf::operators::partial_derivative_operator") {
 
         const auto sample_variables = generate_halton_nodes<double, 2>(100);
         Eigen::VectorXd sample_values{};
-        sample_values.resize(static_cast<index_type>(sample_variables.size()));
-        for (std::size_t i = 0; i < sample_variables.size(); ++i) {
-            sample_values(static_cast<index_type>(i)) =
-                function(sample_variables[i]);
+        sample_values.resize(sample_variables.size());
+        for (index_type i = 0; i < sample_variables.size(); ++i) {
+            sample_values(i) = function(sample_variables[i]);
         }
 
         rbf_interpolator_type interpolator;
@@ -134,10 +132,9 @@ TEST_CASE("num_collect::rbf::operators::partial_derivative_operator") {
 
         const auto sample_variables = generate_halton_nodes<double, 2>(100);
         Eigen::VectorXd sample_values{};
-        sample_values.resize(static_cast<index_type>(sample_variables.size()));
-        for (std::size_t i = 0; i < sample_variables.size(); ++i) {
-            sample_values(static_cast<index_type>(i)) =
-                function(sample_variables[i]);
+        sample_values.resize(sample_variables.size());
+        for (index_type i = 0; i < sample_variables.size(); ++i) {
+            sample_values(i) = function(sample_variables[i]);
         }
 
         rbf_interpolator_type interpolator;
