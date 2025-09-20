@@ -661,8 +661,8 @@ FodyWeavers.xsd
 /*.pdf
 /profiling/results/
 
-# Ccache
-/.ccache/
+# Caches
+/.clang-tidy-cache/
 
 # Install directory of CMake
 /install/

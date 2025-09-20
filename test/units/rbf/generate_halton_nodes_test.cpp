@@ -49,7 +49,7 @@ TEST_CASE("num_collect::rbf::impl::generate_halton_nodes_impl") {
             CHECK(buffer(i) > 0.0);
             CHECK(buffer(i) < 1.0);
         }
-        std::sort(buffer.begin(), buffer.end());
+        std::ranges::sort(buffer);
         for (num_collect::index_type i = 1; i <= num_nodes; ++i) {
             INFO("i = " << i);
             CHECK(buffer(i) > buffer(i - 1));
