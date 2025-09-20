@@ -1,0 +1,1 @@
+add_experiment(experiment_pde_rbf_fd_weights_2d rbf_fd_weights_2d.cpp)
