@@ -303,8 +303,10 @@ private:
             dist_ = norm(lower_ - upper_) * half;
             value_ = value;
             is_divided_[static_cast<std::size_t>(dim)] = true;
+            // NOLINTNEXTLINE(*-use-ranges): std::vector<bool> is not supported.
             if (std::all_of(std::begin(is_divided_), std::end(is_divided_),
                     [](bool elem) { return elem; })) {
+                // NOLINTNEXTLINE(*-use-ranges): std::vector<bool> is not supported.
                 std::fill(
                     std::begin(is_divided_), std::end(is_divided_), false);
             }

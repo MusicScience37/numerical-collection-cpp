@@ -35,7 +35,6 @@ Checks: >
     -modernize-concat-nested-namespaces,
     -modernize-use-std-numbers,
     -modernize-use-constraints,
-    -modernize-use-ranges,
     -modernize-use-auto,
     -modernize-use-integer-sign-comparison,
   hicpp-*,
@@ -84,7 +83,6 @@ Checks: >
 # - cppcoreguidelines-avoid-do-while has a bug to ignore NOLINT.
 # - readability-math-missing-parentheses generates too many warnings in existing codes.
 # - bugprone-crtp-constructor-accessibility generates too many warnings in existing codes.
-# - modernize-use-ranges generates too many warnings in existing codes.
 # - hicpp-use-auto, modernize-use-auto should not be fixed in source codes using Eigen library.
 # - cppcoreguidelines-c-copy-assignment-signature generates false positives.
 # - cppcoreguidelines-pro-bounds-pointer-arithmetic prevents implementation of containers and use of arguments of main functions.

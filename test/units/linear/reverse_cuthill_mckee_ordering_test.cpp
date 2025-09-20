@@ -80,7 +80,7 @@ TEMPLATE_TEST_CASE("num_collect::linear::reverse_cuthill_mckee_ordering", "",
 
         auto indices = std::vector<int>(
             permutation.indices().begin(), permutation.indices().end());
-        std::sort(indices.begin(), indices.end());
+        std::ranges::sort(indices);
 
         std::vector<int> expected;
         expected.reserve(static_cast<std::size_t>(matrix.rows()));
