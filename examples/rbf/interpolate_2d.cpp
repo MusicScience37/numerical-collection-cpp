@@ -35,6 +35,7 @@
 #include "num_collect/rbf/generate_halton_nodes.h"
 #include "num_collect/rbf/rbf_polynomial_interpolator.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
+#include "num_collect/util/vector.h"
 
 static constexpr double x_min = 0.0;
 static constexpr double x_max = 2.0;
@@ -51,15 +52,15 @@ static constexpr num_collect::index_type num_sample_points = 200;
 }
 
 [[nodiscard]] static auto convert_to_plotly_data(
-    const std::vector<Eigen::Vector2d>& variables,
+    const num_collect::util::vector<Eigen::Vector2d>& variables,
     const Eigen::VectorXd& values) {
     plotly_plotter::data_table data;
     auto x = data.emplace<double>("x");
     auto y = data.emplace<double>("y");
     auto value = data.emplace<double>("value");
     for (num_collect::index_type i = 0; i < num_sample_points; ++i) {
-        x->push_back(variables[static_cast<std::size_t>(i)].x());
-        y->push_back(variables[static_cast<std::size_t>(i)].y());
+        x->push_back(variables[i].x());
+        y->push_back(variables[i].y());
         value->push_back(values(i));
     }
     return data;
@@ -70,7 +71,7 @@ static void save(const plotly_plotter::figure& fig, std::string_view name) {
 }
 
 auto main() -> int {
-    std::vector<Eigen::Vector2d> sample_variables =
+    auto sample_variables =
         num_collect::rbf::generate_halton_nodes<double, 2>(num_sample_points);
     for (auto& variable : sample_variables) {
         variable.x() = x_min + (x_max - x_min) * variable.x();
@@ -78,8 +79,7 @@ auto main() -> int {
     }
     Eigen::VectorXd sample_values = Eigen::VectorXd::Zero(num_sample_points);
     for (num_collect::index_type i = 0; i < num_sample_points; ++i) {
-        sample_values(i) =
-            target_function(sample_variables[static_cast<std::size_t>(i)]);
+        sample_values(i) = target_function(sample_variables[i]);
     }
 
     {

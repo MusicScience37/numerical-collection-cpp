@@ -168,7 +168,7 @@ public:
      */
     void compute(util::vector_view<const variable_type> variables,
         const function_value_vector_type& function_values) {
-        const auto num_variables = static_cast<index_type>(variables.size());
+        const index_type num_variables = variables.size();
         NUM_COLLECT_PRECONDITION(
             num_variables > 0, this->logger(), "Variables must be given.");
 
@@ -261,7 +261,7 @@ public:
         index_type max_mle_evaluations = default_max_mle_evaluations)
         requires uses_global_length_parameter
     {
-        const auto num_variables = static_cast<index_type>(variables.size());
+        const index_type num_variables = variables.size();
         NUM_COLLECT_PRECONDITION(
             num_variables > 0, this->logger(), "Variables must be given.");
 

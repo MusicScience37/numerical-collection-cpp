@@ -60,7 +60,7 @@ template <num_collect::concepts::sparse_matrix_of<double> Matrix>
     Eigen::VectorXd right;
     right.resize(num_nodes);
     for (num_collect::index_type i = 0; i < num_nodes; ++i) {
-        right[i] = nodes[static_cast<std::size_t>(i)].squaredNorm();
+        right[i] = nodes[i].squaredNorm();
     }
 
     return {std::move(kernel_matrix), std::move(right)};

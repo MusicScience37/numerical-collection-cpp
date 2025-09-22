@@ -45,11 +45,9 @@ TEMPLATE_TEST_CASE_SIG("thin_plate_spline_interpolator with dimensions", "",
     const auto sample_variables =
         generate_halton_nodes<double, dimensions>(100);
     Eigen::VectorXd sample_values{};
-    sample_values.resize(
-        static_cast<num_collect::index_type>(sample_variables.size()));
-    for (std::size_t i = 0; i < sample_variables.size(); ++i) {
-        sample_values(static_cast<num_collect::index_type>(i)) =
-            function(sample_variables[i]);
+    sample_values.resize(sample_variables.size());
+    for (num_collect::index_type i = 0; i < sample_variables.size(); ++i) {
+        sample_values(i) = function(sample_variables[i]);
     }
 
     interpolator.compute(sample_variables, sample_values);

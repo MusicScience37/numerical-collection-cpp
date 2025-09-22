@@ -88,7 +88,7 @@ public:
      * \param[in] size Size.
      * \param[in] value Values to fill the vector.
      */
-    explicit vector(index_type size, value_type value = value_type())
+    explicit vector(index_type size, const value_type& value = value_type())
         : vector_(static_cast<std::size_t>(size), value) {}
 
     /*!

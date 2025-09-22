@@ -30,6 +30,7 @@
 #include <catch2/generators/catch_generators_range.hpp>
 
 #include "num_collect/base/index_type.h"
+#include "num_collect/util/vector.h"
 
 TEST_CASE("num_collect::rbf::impl::generate_halton_nodes_impl") {
     using num_collect::rbf::impl::generate_halton_nodes_impl;
@@ -68,12 +69,12 @@ TEMPLATE_TEST_CASE(
         constexpr num_collect::index_type num_nodes = 127;
         using node_type = Eigen::Vector<scalar_type, dimensions>;
 
-        std::vector<node_type> nodes;
+        num_collect::util::vector<node_type> nodes;
         REQUIRE_NOTHROW(
             nodes = generate_halton_nodes<scalar_type, dimensions>(num_nodes));
 
         REQUIRE(nodes.size() == static_cast<std::size_t>(num_nodes));
-        for (std::size_t i = 0; i < nodes.size(); ++i) {
+        for (num_collect::index_type i = 0; i < nodes.size(); ++i) {
             INFO("i = " << i);
             for (num_collect::index_type d = 0; d < dimensions; ++d) {
                 INFO("d = " << d);
@@ -88,12 +89,12 @@ TEMPLATE_TEST_CASE(
         constexpr num_collect::index_type num_nodes = 127;
         using node_type = Eigen::Vector<scalar_type, dimensions>;
 
-        std::vector<node_type> nodes;
+        num_collect::util::vector<node_type> nodes;
         REQUIRE_NOTHROW(
             nodes = generate_halton_nodes<scalar_type, dimensions>(num_nodes));
 
         REQUIRE(nodes.size() == static_cast<std::size_t>(num_nodes));
-        for (std::size_t i = 0; i < nodes.size(); ++i) {
+        for (num_collect::index_type i = 0; i < nodes.size(); ++i) {
             INFO("i = " << i);
             for (num_collect::index_type d = 0; d < dimensions; ++d) {
                 INFO("d = " << d);
@@ -108,12 +109,12 @@ TEMPLATE_TEST_CASE(
         constexpr num_collect::index_type num_nodes = 127;
         using node_type = Eigen::Vector<scalar_type, dimensions>;
 
-        std::vector<node_type> nodes;
+        num_collect::util::vector<node_type> nodes;
         REQUIRE_NOTHROW(
             nodes = generate_halton_nodes<scalar_type, dimensions>(num_nodes));
 
         REQUIRE(nodes.size() == static_cast<std::size_t>(num_nodes));
-        for (std::size_t i = 0; i < nodes.size(); ++i) {
+        for (num_collect::index_type i = 0; i < nodes.size(); ++i) {
             INFO("i = " << i);
             for (num_collect::index_type d = 0; d < dimensions; ++d) {
                 INFO("d = " << d);
@@ -133,12 +134,12 @@ TEMPLATE_TEST_CASE("num_collect::rbf::generate_1d_halton_nodes", "", float,
     SECTION("generate 1D nodes") {
         constexpr num_collect::index_type num_nodes = 331;
 
-        std::vector<scalar_type> nodes;
+        num_collect::util::vector<scalar_type> nodes;
         REQUIRE_NOTHROW(
             nodes = generate_1d_halton_nodes<scalar_type>(num_nodes));
 
         REQUIRE(nodes.size() == static_cast<std::size_t>(num_nodes));
-        for (std::size_t i = 0; i < nodes.size(); ++i) {
+        for (num_collect::index_type i = 0; i < nodes.size(); ++i) {
             INFO("i = " << i);
             CHECK(nodes[i] > static_cast<scalar_type>(0));
             CHECK(nodes[i] < static_cast<scalar_type>(1));
