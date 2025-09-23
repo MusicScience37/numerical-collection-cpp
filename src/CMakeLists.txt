@@ -13,6 +13,7 @@ target_link_libraries(
            cpp_hash_tables::hash_tables
            tomlplusplus::tomlplusplus
            concurrentqueue::concurrentqueue
+           nanoflann::nanoflann
            $<BUILD_INTERFACE:num_collect_cpp_warnings>)
 target_compile_features(num_collect PUBLIC cxx_std_20)
 target_add_ausan(num_collect)
@@ -46,6 +47,7 @@ target_link_libraries(
            cpp_hash_tables::hash_tables
            tomlplusplus::tomlplusplus
            concurrentqueue::concurrentqueue
+           nanoflann::nanoflann
            $<BUILD_INTERFACE:num_collect_cpp_warnings>)
 target_compile_features(num_collect_unity PUBLIC cxx_std_20)
 
