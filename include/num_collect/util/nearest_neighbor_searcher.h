@@ -56,6 +56,117 @@ class nearest_neighbor_searcher_nanoflann_adaptor;
 /*!
  * \brief Class of adaptors in nanoflann library for
  * \ref num_collect::util::nearest_neighbor_searcher class.
+ * (1D points.)
+ *
+ * \tparam Point Type of points.
+ */
+template <concepts::real_scalar Point>
+class nearest_neighbor_searcher_nanoflann_adaptor<Point> {
+public:
+    //! This type.
+    using this_type = nearest_neighbor_searcher_nanoflann_adaptor<Point>;
+
+    //! Type of scalar values. (Elements in points and distances.)
+    using scalar_type = Point;
+
+    //! Dimension of points.
+    static constexpr int dimension = 1;
+
+    //! Type of distances.
+    using distance_type =
+        typename nanoflann::metric_L2_Simple::template traits<scalar_type,
+            this_type>::distance_t;
+
+    //! Type of index in nanoflann.
+    using nanoflann_index_type =
+        nanoflann::KDTreeSingleIndexAdaptor<distance_type, this_type, dimension,
+            index_type>;
+
+    /*!
+     * \brief Constructor.
+     *
+     * \param[in] points Points.
+     */
+    explicit nearest_neighbor_searcher_nanoflann_adaptor(
+        vector_view<const Point> points)
+        : points_(points) {
+        if (points_.empty()) {
+            throw invalid_argument("Points must not be empty.");
+        }
+
+        constexpr std::size_t leaf_max_size = 10;  // default value in nanoflann
+        const auto num_threads =
+            static_cast<unsigned int>(omp_get_max_threads());
+        NUM_COLLECT_LOG_DEBUG(
+            logging::logger(), "num_threads: {}", num_threads);
+
+        index_ = std::make_unique<nanoflann_index_type>(dimension, *this,
+            nanoflann::KDTreeSingleIndexAdaptorParams(leaf_max_size,
+                nanoflann::KDTreeSingleIndexAdaptorFlags::None, num_threads));
+    }
+
+    /*!
+     * \brief Get the index in nanoflann.
+     *
+     * \return Index in nanoflann.
+     */
+    [[nodiscard]] auto index() const -> const nanoflann_index_type& {
+        NUM_COLLECT_DEBUG_ASSERT(index_ != nullptr);
+        return *index_;
+    }
+
+    /*!
+     * \brief Get the number of points.
+     *
+     * \return Number of points.
+     *
+     * \note This function is required in nanoflann.
+     */
+    [[nodiscard]] auto kdtree_get_point_count() const -> index_type {
+        return points_.size();
+    }
+
+    /*!
+     * \brief Get the value of a specific dimension of a specific point.
+     *
+     * \param[in] idx Index of the point.
+     * \param[in] dim Dimension.
+     * \return Value of the dimension of the point.
+     *
+     * \note This function is required in nanoflann.
+     */
+    [[nodiscard]] auto kdtree_get_pt(index_type idx, index_type dim) const
+        -> scalar_type {
+        NUM_COLLECT_DEBUG_ASSERT(idx >= 0);
+        NUM_COLLECT_DEBUG_ASSERT(idx < points_.size());
+        NUM_COLLECT_DEBUG_ASSERT(dim == 0);
+        return points_[idx];
+    }
+
+    /*!
+     * \brief Get bounding box of points.
+     *
+     * \tparam BBOX Type of bounding box.
+     * \return False always in this implementation.
+     *
+     * \note This function is required in nanoflann.
+     */
+    template <typename BBOX>
+    [[nodiscard]] auto kdtree_get_bbox(BBOX& /*bb*/) const -> bool {
+        return false;
+    }
+
+private:
+    //! Points.
+    vector_view<const Point> points_;
+
+    //! Index in nanoflann.
+    std::unique_ptr<nanoflann_index_type> index_;
+};
+
+/*!
+ * \brief Class of adaptors in nanoflann library for
+ * \ref num_collect::util::nearest_neighbor_searcher class.
  *
  * \tparam Point Type of points.
  */
@@ -411,11 +522,15 @@ private:
  * This class wraps nanoflann library to implement nearest neighbor search
  * using Euclidean distance.
  */
-template <concepts::real_scalar_dense_vector Point>
+template <typename Point>
+    requires(concepts::real_scalar<Point> ||
+        concepts::real_scalar_dense_vector<Point>)
 class nearest_neighbor_searcher {
 public:
     //! Type of scalar values. (Elements in points and distances.)
-    using scalar_type = typename Point::Scalar;
+    using scalar_type =
+        typename impl::nearest_neighbor_searcher_nanoflann_adaptor<
+            Point>::scalar_type;
 
     /*!
      * \brief Constructor.
@@ -438,7 +553,8 @@ public:
         const {
         impl::nearest_neighbor_searcher_knn_result_set<scalar_type> result_set(
             indices_and_distances, num_neighbors);
-        adaptor_.index().findNeighbors(result_set, query_point.data());
+        adaptor_.index().findNeighbors(
+            result_set, to_data_pointer(query_point));
 
         // Convert squared distances to distances.
         for (auto& pair : indices_and_distances) {
@@ -460,7 +576,8 @@ public:
         const scalar_type squared_radius = radius * radius;
         impl::nearest_neighbor_searcher_radius_result_set<scalar_type>
             result_set(indices_and_distances, squared_radius);
-        adaptor_.index().findNeighbors(result_set, query_point.data());
+        adaptor_.index().findNeighbors(
+            result_set, to_data_pointer(query_point));
         result_set.sort();
 
         // Convert squared distances to distances.
@@ -470,6 +587,21 @@ public:
     }
 
 private:
+    /*!
+     * \brief Convert a query point to the pointer to the first element.
+     *
+     * \param[in] query_point Query point.
+     * \return Pointer to the first element of the query point.
+     */
+    static auto to_data_pointer(const Point& query_point) noexcept
+        -> const scalar_type* {
+        if constexpr (concepts::real_scalar<Point>) {
+            return &query_point;
+        } else {
+            return query_point.data();
+        }
+    }
+
     //! Adaptor in nanoflann library.
     impl::nearest_neighbor_searcher_nanoflann_adaptor<Point> adaptor_;
 };

@@ -33,6 +33,46 @@ TEST_CASE("num_collect::util::nearest_neighbor_searcher") {
     using num_collect::util::nearest_neighbor_searcher;
     using num_collect::util::vector;
 
+    SECTION("1D points") {
+        const auto points = vector{1.0, 2.0, 4.0, 5.0};
+
+        const nearest_neighbor_searcher<double> searcher(points);
+
+        SECTION("k nearest neighbors") {
+            const double query_point = 2.5;
+            constexpr index_type num_neighbors = 2;
+            vector<std::pair<index_type, double>> indices_and_distances;
+
+            searcher.find_k_nearest_neighbors(
+                num_neighbors, query_point, indices_and_distances);
+
+            REQUIRE(indices_and_distances.size() == 2);
+            CHECK(indices_and_distances[0].first == 1);
+            CHECK_THAT(indices_and_distances[0].second,
+                // NOLINTNEXTLINE(*-magic-numbers)
+                Catch::Matchers::WithinRel(0.5));
+            CHECK(indices_and_distances[1].first == 2);
+            CHECK_THAT(indices_and_distances[1].second,
+                // NOLINTNEXTLINE(*-magic-numbers)
+                Catch::Matchers::WithinRel(1.5));
+        }
+
+        SECTION("neighbors within radius") {
+            const double query_point = 2.5;
+            constexpr double radius = 0.6;
+            vector<std::pair<index_type, double>> indices_and_distances;
+
+            searcher.find_neighbors_within_radius(
+                radius, query_point, indices_and_distances);
+
+            REQUIRE(indices_and_distances.size() == 1);
+            CHECK(indices_and_distances[0].first == 1);
+            CHECK_THAT(indices_and_distances[0].second,
+                // NOLINTNEXTLINE(*-magic-numbers)
+                Catch::Matchers::WithinRel(0.5));
+        }
+    }
+
     SECTION("2D points") {
         const auto points =
             vector{Eigen::Vector2d(1.0, 2.0), Eigen::Vector2d(2.0, 6.0),
