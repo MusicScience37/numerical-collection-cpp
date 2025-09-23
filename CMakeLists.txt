@@ -59,6 +59,7 @@ find_package(fmt REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(cpp-hash-tables REQUIRED)
 find_package(concurrentqueue REQUIRED)
+find_package(nanoflann REQUIRED)
 
 # toml++
 find_package(PkgConfig REQUIRED)

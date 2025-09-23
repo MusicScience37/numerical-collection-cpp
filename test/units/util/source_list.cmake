@@ -21,6 +21,7 @@ set(SOURCE_FILES
     kahan_adder_test.cpp
     least_common_multiple_test.cpp
     multiply_safely_test.cpp
+    nearest_neighbor_searcher_test.cpp
     object_storage_test.cpp
     producer_consumer_circular_queue_test.cpp
     safe_cast_test.cpp

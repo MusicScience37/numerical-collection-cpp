@@ -279,6 +279,24 @@ public:
     }
 
     /*!
+     * \brief Remove the last element.
+     */
+    void pop_back() { vector_.pop_back(); }
+
+    /*!
+     * \brief Insert an element.
+     *
+     * \tparam Args Type of arguments of the constructor.
+     * \param[in] pos Position to insert.
+     * \param[in] args Arguments of the constructor.
+     * \return Iterator to the inserted element.
+     */
+    template <typename... Args>
+    auto emplace(const_iterator pos, Args&&... args) -> iterator {
+        return vector_.emplace(pos, std::forward<Args>(args)...);
+    }
+
+    /*!
      * \brief Insert an element.
      *
      * \param[in] pos Position to insert.

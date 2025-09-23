@@ -6,6 +6,7 @@
     "cpp-hash-tables",
     "tomlplusplus",
     "concurrentqueue",
+    "nanoflann",
     "catch2",
     "trompeloeil",
     "cpp-msgpack-light",
