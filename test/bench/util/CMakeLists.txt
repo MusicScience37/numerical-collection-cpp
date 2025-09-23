@@ -6,3 +6,7 @@ target_add_to_benchmark(bench_util_stack)
 
 add_executable(bench_util_push_back push_back_test.cpp)
 target_add_to_benchmark(bench_util_push_back)
+
+add_executable(bench_util_nearest_neighbors_search
+               nearest_neighbors_search_test.cpp)
+target_add_to_benchmark(bench_util_nearest_neighbors_search)
