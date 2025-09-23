@@ -49,8 +49,8 @@ namespace impl {
  * \tparam Point Type of points.
  */
 template <typename Point>
-    requires(concepts::real_scalar<Point> ||
-        concepts::real_scalar_dense_vector<Point>)
+    requires(base::concepts::real_scalar<Point> ||
+        base::concepts::real_scalar_dense_vector<Point>)
 class nearest_neighbor_searcher_nanoflann_adaptor;
 
 /*!
@@ -60,7 +60,7 @@ class nearest_neighbor_searcher_nanoflann_adaptor;
  *
  * \tparam Point Type of points.
  */
-template <concepts::real_scalar Point>
+template <base::concepts::real_scalar Point>
 class nearest_neighbor_searcher_nanoflann_adaptor<Point> {
 public:
     //! This type.
@@ -170,7 +170,7 @@ private:
  *
  * \tparam Point Type of points.
  */
-template <concepts::real_scalar_dense_vector Point>
+template <base::concepts::real_scalar_dense_vector Point>
 class nearest_neighbor_searcher_nanoflann_adaptor<Point> {
 public:
     static_assert(
@@ -284,7 +284,7 @@ private:
  *
  * \tparam Scalar Type of scalar values. (Elements in points and distances.)
  */
-template <concepts::real_scalar Scalar>
+template <base::concepts::real_scalar Scalar>
 class nearest_neighbor_searcher_knn_result_set {
 public:
     //! Type of scalar values. (Elements in points and distances.)
@@ -407,7 +407,7 @@ private:
  *
  * \tparam Scalar Type of scalar values. (Elements in points and distances.)
  */
-template <concepts::real_scalar Scalar>
+template <base::concepts::real_scalar Scalar>
 class nearest_neighbor_searcher_radius_result_set {
 public:
     //! Type of scalar values. (Elements in points and distances.)
@@ -523,8 +523,8 @@ private:
  * using Euclidean distance.
  */
 template <typename Point>
-    requires(concepts::real_scalar<Point> ||
-        concepts::real_scalar_dense_vector<Point>)
+    requires(base::concepts::real_scalar<Point> ||
+        base::concepts::real_scalar_dense_vector<Point>)
 class nearest_neighbor_searcher {
 public:
     //! Type of scalar values. (Elements in points and distances.)
@@ -595,7 +595,7 @@ private:
      */
     static auto to_data_pointer(const Point& query_point) noexcept
         -> const scalar_type* {
-        if constexpr (concepts::real_scalar<Point>) {
+        if constexpr (base::concepts::real_scalar<Point>) {
             return &query_point;
         } else {
             return query_point.data();
