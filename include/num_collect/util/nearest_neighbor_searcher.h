@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <algorithm>
 #include <cmath>
 #include <cstddef>
 #include <memory>
@@ -166,6 +167,240 @@ private:
     std::unique_ptr<nanoflann_index_type> index_;
 };
 
+/*!
+ * \brief Class to replace `nanoflann::KNNResultSet` in nanoflann library
+ * with types in num_collect library.
+ *
+ * \tparam Scalar Type of scalar values. (Elements in points and distances.)
+ */
+template <concepts::real_scalar Scalar>
+class nearest_neighbor_searcher_knn_result_set {
+public:
+    //! Type of scalar values. (Elements in points and distances.)
+    using scalar_type = Scalar;
+
+    //! Type of distances. (Type required in nanoflann.)
+    using DistanceType = scalar_type;  // NOLINT
+
+    //! Type of indices. (Type required in nanoflann.)
+    using IndexType = index_type;  // NOLINT
+
+    //! Type of sizes. (Type required in nanoflann.)
+    using CountType = index_type;  // NOLINT
+
+    /*!
+     * \brief Constructor.
+     *
+     * \param[out] indices_and_distances Buffer of indices and distances.
+     * \param[in] max_num_neighbors Maximum number of neighbors.
+     */
+    nearest_neighbor_searcher_knn_result_set(
+        vector<std::pair<index_type, scalar_type>>& indices_and_distances,
+        index_type max_num_neighbors)
+        : indices_and_distances_(indices_and_distances),
+          max_num_neighbors_(max_num_neighbors) {
+        NUM_COLLECT_DEBUG_ASSERT(max_num_neighbors_ > 0);
+        indices_and_distances_.clear();
+        indices_and_distances_.reserve(max_num_neighbors_ + 1);
+    }
+
+    /*!
+     * \brief Get the current number of neighbors.
+     *
+     * \return Current number of neighbors.
+     *
+     * \note This function is required in nanoflann.
+     */
+    [[nodiscard]] auto size() const -> CountType {
+        return indices_and_distances_.size();
+    }
+
+    /*!
+     * \brief Check whether this set is empty.
+     *
+     * \retval true This set is empty.
+     * \retval false This set is not empty.
+     *
+     * \note This function is required in nanoflann.
+     */
+    [[nodiscard]] auto empty() const -> bool {
+        return indices_and_distances_.empty();
+    }
+
+    /*!
+     * \brief Check whether this set is full.
+     *
+     * \retval true This set is full.
+     * \retval false This set is not full.
+     *
+     * \note This function is required in nanoflann.
+     */
+    [[nodiscard]] auto full() const -> bool {
+        return size() == max_num_neighbors_;
+    }
+
+    /*!
+     * \brief Add a point.
+     *
+     * \param[in] dist Distance.
+     * \param[in] index Index of the point.
+     * \retval true Continue adding points.
+     * \retval false Stop adding points.
+     *
+     * \note This function is required in nanoflann.
+     */
+    auto addPoint(  // NOLINT(*-identifier-naming)
+        DistanceType dist, IndexType index) -> bool {
+        auto iter = std::lower_bound(indices_and_distances_.begin(),
+            indices_and_distances_.end(), dist,
+            [](const auto& pair, scalar_type value) {
+                return pair.second < value;
+            });
+        indices_and_distances_.emplace(iter, index, dist);
+        if (indices_and_distances_.size() > max_num_neighbors_) {
+            indices_and_distances_.pop_back();
+        }
+        return true;
+    }
+
+    /*!
+     * \brief Get the maximum distance allowed to add a point.
+     *
+     * \return Maximum distance allowed to add a point.
+     */
+    auto worstDist() const -> DistanceType {  // NOLINT(*-identifier-naming)
+        if (!full()) {
+            return std::numeric_limits<DistanceType>::max();
+        }
+        return indices_and_distances_.back().second;
+    }
+
+    /*!
+     * \brief Sort the points.
+     */
+    void sort() {
+        // Already sorted in addPoint.
+    }
+
+private:
+    //! Buffer of indices and distances.
+    vector<std::pair<index_type, scalar_type>>& indices_and_distances_;
+
+    //! Maximum number of neighbors.
+    index_type max_num_neighbors_;
+};
+
+/*!
+ * \brief Class to replace `nanoflann::RadiusResultSet` in nanoflann library
+ * with types in num_collect library.
+ *
+ * \tparam Scalar Type of scalar values. (Elements in points and distances.)
+ */
+template <concepts::real_scalar Scalar>
+class nearest_neighbor_searcher_radius_result_set {
+public:
+    //! Type of scalar values. (Elements in points and distances.)
+    using scalar_type = Scalar;
+
+    //! Type of distances. (Type required in nanoflann.)
+    using DistanceType = scalar_type;  // NOLINT
+
+    //! Type of indices. (Type required in nanoflann.)
+    using IndexType = index_type;  // NOLINT
+
+    //! Type of sizes. (Type required in nanoflann.)
+    using CountType = index_type;  // NOLINT
+
+    /*!
+     * \brief Constructor.
+     *
+     * \param[out] indices_and_distances Buffer of indices and distances.
+     * \param[in] radius Radius.
+     */
+    explicit nearest_neighbor_searcher_radius_result_set(
+        vector<std::pair<index_type, scalar_type>>& indices_and_distances,
+        DistanceType radius)
+        : indices_and_distances_(indices_and_distances), radius_(radius) {
+        indices_and_distances_.clear();
+    }
+
+    /*!
+     * \brief Get the current number of neighbors.
+     *
+     * \return Current number of neighbors.
+     *
+     * \note This function is required in nanoflann.
+     */
+    [[nodiscard]] auto size() const -> CountType {
+        return indices_and_distances_.size();
+    }
+
+    /*!
+     * \brief Check whether this set is empty.
+     *
+     * \retval true This set is empty.
+     * \retval false This set is not empty.
+     *
+     * \note This function is required in nanoflann.
+     */
+    [[nodiscard]] auto empty() const -> bool {
+        return indices_and_distances_.empty();
+    }
+
+    /*!
+     * \brief Check whether this set is full.
+     *
+     * \return true always in this implementation.
+     *
+     * \note This function is required in nanoflann.
+     */
+    [[nodiscard]] auto full() const -> bool { return true; }
+
+    /*!
+     * \brief Add a point.
+     *
+     * \param[in] dist Distance.
+     * \param[in] index Index of the point.
+     * \retval true Continue adding points.
+     * \retval false Stop adding points.
+     *
+     * \note This function is required in nanoflann.
+     */
+    auto addPoint(  // NOLINT(*-identifier-naming)
+        DistanceType dist, IndexType index) -> bool {
+        if (dist < radius_) {
+            indices_and_distances_.emplace_back(index, dist);
+        }
+        return true;
+    }
+
+    /*!
+     * \brief Get the maximum distance allowed to add a point.
+     *
+     * \return Maximum distance allowed to add a point.
+     */
+    auto worstDist() const -> DistanceType {  // NOLINT(*-identifier-naming)
+        return radius_;
+    }
+
+    /*!
+     * \brief Sort the points.
+     */
+    void sort() {
+        std::ranges::sort(indices_and_distances_.begin(),
+            indices_and_distances_.end(), [](const auto& lhs, const auto& rhs) {
+                return lhs.second < rhs.second;
+            });
+    }
+
+private:
+    //! Buffer of indices and distances.
+    vector<std::pair<index_type, scalar_type>>& indices_and_distances_;
+
+    //! Radius.
+    DistanceType radius_;
+};
+
 }  // namespace impl
 
 /*!
@@ -201,18 +436,13 @@ public:
         const Point& query_point,
         vector<std::pair<index_type, scalar_type>>& indices_and_distances)
         const {
-        // TODO get rid of temporary vectors
-        vector<index_type> temp_indices(num_neighbors);
-        vector<scalar_type> temp_squared_distances(num_neighbors);
-        const auto num_found =
-            static_cast<index_type>(adaptor_.index().knnSearch(
-                query_point.data(), static_cast<std::size_t>(num_neighbors),
-                temp_indices.data(), temp_squared_distances.data()));
-        indices_and_distances.clear();
-        indices_and_distances.reserve(num_found);
-        for (index_type i = 0; i < num_found; ++i) {
-            indices_and_distances.emplace_back(
-                temp_indices[i], std::sqrt(temp_squared_distances[i]));
+        impl::nearest_neighbor_searcher_knn_result_set<scalar_type> result_set(
+            indices_and_distances, num_neighbors);
+        adaptor_.index().findNeighbors(result_set, query_point.data());
+
+        // Convert squared distances to distances.
+        for (auto& pair : indices_and_distances) {
+            pair.second = std::sqrt(pair.second);
         }
     }
 
@@ -228,17 +458,14 @@ public:
         vector<std::pair<index_type, scalar_type>>& indices_and_distances)
         const {
         const scalar_type squared_radius = radius * radius;
-        // TODO get rid of temporary vectors
-        std::vector<nanoflann::ResultItem<index_type, scalar_type>>
-            temp_indices_and_distances;
-        const std::size_t num_found = adaptor_.index().radiusSearch(
-            query_point.data(), squared_radius, temp_indices_and_distances);
-        indices_and_distances.clear();
-        indices_and_distances.reserve(static_cast<index_type>(num_found));
-        for (std::size_t i = 0; i < num_found; ++i) {
-            indices_and_distances.emplace_back(
-                temp_indices_and_distances[i].first,
-                std::sqrt(temp_indices_and_distances[i].second));
+        impl::nearest_neighbor_searcher_radius_result_set<scalar_type>
+            result_set(indices_and_distances, squared_radius);
+        adaptor_.index().findNeighbors(result_set, query_point.data());
+        result_set.sort();
+
+        // Convert squared distances to distances.
+        for (auto& pair : indices_and_distances) {
+            pair.second = std::sqrt(pair.second);
         }
     }
 
