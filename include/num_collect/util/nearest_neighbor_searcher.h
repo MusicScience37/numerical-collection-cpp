@@ -140,6 +140,7 @@ public:
         NUM_COLLECT_DEBUG_ASSERT(idx >= 0);
         NUM_COLLECT_DEBUG_ASSERT(idx < points_.size());
         NUM_COLLECT_DEBUG_ASSERT(dim == 0);
+        (void)dim;  // Prevent warning in Release build.
         return points_[idx];
     }
 
@@ -379,7 +380,8 @@ public:
      *
      * \return Maximum distance allowed to add a point.
      */
-    auto worstDist() const -> DistanceType {  // NOLINT(*-identifier-naming)
+    [[nodiscard]] auto worstDist() const  // NOLINT(*-identifier-naming)
+        -> DistanceType {
         if (!full()) {
             return std::numeric_limits<DistanceType>::max();
         }
@@ -490,7 +492,8 @@ public:
      *
      * \return Maximum distance allowed to add a point.
      */
-    auto worstDist() const -> DistanceType {  // NOLINT(*-identifier-naming)
+    [[nodiscard]] auto worstDist() const  // NOLINT(*-identifier-naming)
+        -> DistanceType {
         return radius_;
     }
 
