@@ -20,7 +20,6 @@
 #pragma once
 
 #include <Eigen/Core>
-#include <Eigen/src/Core/util/Memory.h>
 
 namespace num_collect::util {
 

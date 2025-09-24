@@ -46,9 +46,7 @@ public:
      */
     void iterate() noexcept {
         ++counter_;
-        if (counter_ >= period_) [[unlikely]] {
-            counter_ = 0;
-        }
+        counter_ %= period_;  // period_ is checked in constructor.
     }
 
     /*!

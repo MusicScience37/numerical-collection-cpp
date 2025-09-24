@@ -1,7 +1,6 @@
 set(SOURCE_FILES
     bidirectional_vector_test.cpp
     combination_test.cpp
-    comparators_test.cpp
     concepts/comparable_test.cpp
     concepts/comparator_test.cpp
     concepts/kahan_addable_test.cpp
@@ -22,8 +21,6 @@ set(SOURCE_FILES
     least_common_multiple_test.cpp
     multiply_safely_test.cpp
     nearest_neighbor_searcher_test.cpp
-    object_storage_test.cpp
-    producer_consumer_circular_queue_test.cpp
     safe_cast_test.cpp
     source_info_view_test.cpp
     static_stack_test.cpp

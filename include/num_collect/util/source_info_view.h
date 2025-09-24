@@ -29,8 +29,12 @@ namespace num_collect::util {
 /*!
  * \brief Class to hold information of source codes.
  *
+ * This class is similar to `std::source_location` in C++20,
+ * but different in a point that data can be specified in constructor
+ * for testing.
+ *
  * \note This class won't manage memory for strings.
- * \note This class is a wrapper of `std::source_location`.
+ * So, strings must be valid while an instance of this class is used.
  */
 class source_info_view {
 public:

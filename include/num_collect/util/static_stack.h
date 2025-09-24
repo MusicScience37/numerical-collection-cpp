@@ -25,6 +25,7 @@
 #include "num_collect/base/exception.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/logging/logging_macros.h"
+#include "num_collect/util/assert.h"
 
 namespace num_collect::util {
 
@@ -35,10 +36,15 @@ namespace num_collect::util {
  *
  * \tparam T Type of values in the stack.
  * \tparam StaticArraySize Size of the static array for the stack.
+ *
+ * \note This class can store only up to StaticArraySize values.
+ * Pushing more values causes exceptions.
  */
 template <typename T, std::size_t StaticArraySize>
 class static_stack {
 public:
+    static_assert(StaticArraySize > 0, "StaticArraySize must be positive.");
+
     /*!
      * \brief Constructor.
      */
@@ -66,6 +72,9 @@ public:
      * \brief Push a value.
      *
      * \param[in] value Value.
+     *
+     * \throw num_collect::base::precondition_not_satisfied if the stack is
+     * already full.
      */
     void push(const T& value) {
         NUM_COLLECT_PRECONDITION(end_ != storage_end_, "Stack is full.");
@@ -74,9 +83,26 @@ public:
     }
 
     /*!
+     * \brief Push a value.
+     *
+     * \param[in] value Value.
+     *
+     * \throw num_collect::base::precondition_not_satisfied if the stack is
+     * already full.
+     */
+    void push(T&& value) {
+        NUM_COLLECT_PRECONDITION(end_ != storage_end_, "Stack is full.");
+        new (end_) T(std::move(value));
+        ++end_;
+    }
+
+    /*!
      * \brief Pop a value.
+     *
+     * Popping from an empty stack causes undefined behavior.
      */
     void pop() noexcept {
+        NUM_COLLECT_DEBUG_ASSERT(!empty());
         --end_;
         end_->~T();
     }
@@ -86,14 +112,20 @@ public:
      *
      * \return Value.
      */
-    [[nodiscard]] auto top() const noexcept -> const T& { return *(end_ - 1); }
+    [[nodiscard]] auto top() const noexcept -> const T& {
+        NUM_COLLECT_DEBUG_ASSERT(!empty());
+        return *(end_ - 1);
+    }
 
     /*!
      * \brief Get the top value.
      *
      * \return Value.
      */
-    [[nodiscard]] auto top() noexcept -> T& { return *(end_ - 1); }
+    [[nodiscard]] auto top() noexcept -> T& {
+        NUM_COLLECT_DEBUG_ASSERT(!empty());
+        return *(end_ - 1);
+    }
 
     /*!
      * \brief Check whether this stack is empty.
@@ -114,7 +146,7 @@ public:
 
 private:
     //! Buffer for stack.
-    alignas(alignof(T)) char buffer_[sizeof(T[StaticArraySize])]{};
+    alignas(alignof(T)) char buffer_[sizeof(T) * StaticArraySize]{};
 
     //! Pointer to the first element in the buffer.
     T* begin_;

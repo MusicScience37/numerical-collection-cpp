@@ -33,15 +33,22 @@ namespace num_collect::util::impl {
 /*!
  * \brief Handle a failure of an assertion.
  *
- * \param[in] condition_str source code of the condition.
+ * \param[in] condition_str Source code of the condition.
  * \param[in] source Information of the source code.
+ *
+ * This function never returns or throws exceptions,
+ * and calls `std::abort()` after printing a message to standard error output.
  */
 [[noreturn]] inline void handle_assertion_failure(
     std::string_view condition_str,
-    source_info_view source = source_info_view()) {
-    fmt::print(stderr, "Assertion failed at {}:{} ({}): {}\n",
-        source.file_path(), source.line(), source.function_name(),
-        condition_str);
+    source_info_view source = source_info_view()) noexcept {
+    try {
+        fmt::print(stderr, "Assertion failed at {}:{} ({}): {}\n",
+            source.file_path(), source.line(), source.function_name(),
+            condition_str);
+    } catch (...) {  // NOLINT(*-empty-catch)
+        // Nothing can be done here.
+    }
     std::abort();
 }
 

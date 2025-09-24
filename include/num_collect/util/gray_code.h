@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <concepts>
 #include <cstdint>
 
 namespace num_collect::util {
@@ -26,34 +27,40 @@ namespace num_collect::util {
 /*!
  * \brief Convert an integer from binary to Gray code \cite Warren2013.
  *
+ * \tparam T Type of the integer.
  * \param[in] binary Binary.
  * \return Gray code.
  */
-[[nodiscard]] constexpr auto binary_to_gray_code(std::uint32_t binary)
-    -> std::uint32_t {
+template <typename T>
+    requires(std::unsigned_integral<T> && sizeof(T) == sizeof(std::uint32_t))
+[[nodiscard]] constexpr auto binary_to_gray_code(T binary) -> T {
     return binary ^ (binary >> 1U);
 }
 
 /*!
  * \brief Convert an integer from binary to Gray code \cite Warren2013.
  *
+ * \tparam T Type of the integer.
  * \param[in] binary Binary.
  * \return Gray code.
  */
-[[nodiscard]] constexpr auto binary_to_gray_code(std::uint64_t binary)
-    -> std::uint64_t {
+template <typename T>
+    requires(std::unsigned_integral<T> && sizeof(T) == sizeof(std::uint64_t))
+[[nodiscard]] constexpr auto binary_to_gray_code(T binary) -> T {
     return binary ^ (binary >> 1U);
 }
 
 /*!
  * \brief Convert an integer from Gray code to binary \cite Warren2013.
  *
+ * \tparam T Type of the integer.
  * \param[in] gray_code Gray code.
  * \return Binary.
  */
-[[nodiscard]] constexpr auto gray_code_to_binary(std::uint32_t gray_code)
-    -> std::uint32_t {
-    std::uint32_t binary = gray_code;
+template <typename T>
+    requires(std::unsigned_integral<T> && sizeof(T) == sizeof(std::uint32_t))
+[[nodiscard]] constexpr auto gray_code_to_binary(T gray_code) -> T {
+    T binary = gray_code;
     binary ^= binary >> 1U;
     binary ^= binary >> 2U;
     binary ^= binary >> 4U;
@@ -65,12 +72,14 @@ namespace num_collect::util {
 /*!
  * \brief Convert an integer from Gray code to binary \cite Warren2013.
  *
+ * \tparam T Type of the integer.
  * \param[in] gray_code Gray code.
  * \return Binary.
  */
-[[nodiscard]] constexpr auto gray_code_to_binary(std::uint64_t gray_code)
-    -> std::uint64_t {
-    std::uint64_t binary = gray_code;
+template <typename T>
+    requires(std::unsigned_integral<T> && sizeof(T) == sizeof(std::uint64_t))
+[[nodiscard]] constexpr auto gray_code_to_binary(T gray_code) -> T {
+    T binary = gray_code;
     binary ^= binary >> 1U;
     binary ^= binary >> 2U;
     binary ^= binary >> 4U;
