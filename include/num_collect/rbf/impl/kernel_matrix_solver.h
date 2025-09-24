@@ -27,7 +27,6 @@
 #include <Eigen/IterativeLinearSolvers>
 #include <Eigen/LU>
 #include <Eigen/SparseCore>
-#include <Eigen/src/Core/util/Constants.h>
 
 #include "num_collect/base/concepts/dense_vector.h"
 #include "num_collect/base/exception.h"

@@ -19,7 +19,6 @@
  */
 #include "num_collect/regularization/impl/apply_shrinkage_operator.h"
 
-#include <Eigen/src/Core/Matrix.h>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 
