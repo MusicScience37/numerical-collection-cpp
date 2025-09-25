@@ -571,17 +571,17 @@ public:
      * \param[in] radius Radius.
      * \param[in] query_point Query point.
      * \param[out] indices_and_distances Output vector of indices and distances.
+     * \param[in] sorted Whether to sort the output by distances.
      */
     void find_neighbors_within_radius(scalar_type radius,
         const Point& query_point,
-        vector<std::pair<index_type, scalar_type>>& indices_and_distances)
-        const {
+        vector<std::pair<index_type, scalar_type>>& indices_and_distances,
+        bool sorted = true) const {
         const scalar_type squared_radius = radius * radius;
         impl::nearest_neighbor_searcher_radius_result_set<scalar_type>
             result_set(indices_and_distances, squared_radius);
-        adaptor_.index().findNeighbors(
-            result_set, to_data_pointer(query_point));
-        result_set.sort();
+        adaptor_.index().findNeighbors(result_set, to_data_pointer(query_point),
+            nanoflann::SearchParameters(0.0F, sorted));
 
         // Convert squared distances to distances.
         for (auto& pair : indices_and_distances) {

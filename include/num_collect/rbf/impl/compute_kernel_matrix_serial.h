@@ -32,7 +32,9 @@
 #include "num_collect/rbf/concepts/distance_function.h"
 #include "num_collect/rbf/concepts/length_parameter_calculator.h"
 #include "num_collect/rbf/concepts/rbf.h"
+#include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
 #include "num_collect/util/assert.h"
+#include "num_collect/util/nearest_neighbor_searcher.h"
 #include "num_collect/util/safe_cast.h"
 #include "num_collect/util/vector.h"
 #include "num_collect/util/vector_view.h"
@@ -41,6 +43,7 @@ namespace num_collect::rbf::impl {
 
 /*!
  * \brief Compute a kernel matrix in serial.
+ * (Case of global RBF using global length parameters.)
  *
  * \tparam DistanceFunction Type of the distance function.
  * \tparam RBF Type of the RBF.
@@ -96,6 +99,7 @@ inline void compute_kernel_matrix_serial(
 
 /*!
  * \brief Compute a kernel matrix in serial.
+ * (Case of global RBF using local length parameters.)
  *
  * \tparam DistanceFunction Type of the distance function.
  * \tparam RBF Type of the RBF.
@@ -147,6 +151,7 @@ inline void compute_kernel_matrix_serial(
 
 /*!
  * \brief Compute a kernel matrix in serial.
+ * (Case of CSRBF using local length parameters and not euclidean distances.)
  *
  * \tparam DistanceFunction Type of the distance function.
  * \tparam RBF Type of the RBF.
@@ -163,9 +168,11 @@ template <concepts::distance_function DistanceFunction, concepts::csrbf RBF,
     concepts::length_parameter_calculator LengthParameterCalculator,
     base::concepts::sparse_matrix_of<typename DistanceFunction::value_type>
         KernelMatrix>
-    requires std::is_same_v<
-                 typename LengthParameterCalculator::distance_function_type,
-                 DistanceFunction> &&
+    requires(!std::is_same_v<DistanceFunction,
+                distance_functions::euclidean_distance_function<
+                    typename DistanceFunction::variable_type>>) &&
+    std::is_same_v<typename LengthParameterCalculator::distance_function_type,
+        DistanceFunction> &&
     std::is_same_v<typename DistanceFunction::value_type,
         typename RBF::scalar_type> &&
     std::is_same_v<typename DistanceFunction::value_type,
@@ -201,6 +208,75 @@ inline void compute_kernel_matrix_serial(
             }
             const scalar_type value = rbf(distance_rate);
             triplets.emplace_back(i, j, value);
+        }
+    }
+    kernel_matrix.setFromTriplets(triplets.begin(), triplets.end());
+}
+
+/*!
+ * \brief Compute a kernel matrix in serial.
+ * (Case of CSRBF using local length parameters and euclidean distances.)
+ *
+ * \tparam DistanceFunction Type of the distance function.
+ * \tparam RBF Type of the RBF.
+ * \tparam LengthParameterCalculator Type of the calculator of length
+ * parameters.
+ * \tparam KernelMatrix Type of the kernel matrix.
+ * \param[in] distance_function Distance function.
+ * \param[in] rbf RBF.
+ * \param[in,out] length_parameter_calculator Calculator of length parameters.
+ * \param[in] variables Variables.
+ * \param[out] kernel_matrix Kernel matrix.
+ */
+template <concepts::distance_function DistanceFunction, concepts::csrbf RBF,
+    concepts::length_parameter_calculator LengthParameterCalculator,
+    base::concepts::sparse_matrix_of<typename DistanceFunction::value_type>
+        KernelMatrix>
+    requires std::is_same_v<DistanceFunction,
+                 distance_functions::euclidean_distance_function<
+                     typename DistanceFunction::variable_type>> &&
+    std::is_same_v<typename LengthParameterCalculator::distance_function_type,
+        DistanceFunction> &&
+    std::is_same_v<typename DistanceFunction::value_type,
+        typename RBF::scalar_type> &&
+    std::is_same_v<typename DistanceFunction::value_type,
+        typename KernelMatrix::Scalar>
+inline void compute_kernel_matrix_serial(
+    const DistanceFunction& distance_function, const RBF& rbf,
+    LengthParameterCalculator& length_parameter_calculator,
+    util::vector_view<const typename DistanceFunction::variable_type> variables,
+    KernelMatrix& kernel_matrix) {
+    (void)distance_function;
+
+    using scalar_type = typename KernelMatrix::Scalar;
+    using storage_index_type = typename KernelMatrix::StorageIndex;
+    using variable_type = typename DistanceFunction::variable_type;
+
+    util::nearest_neighbor_searcher<variable_type> searcher(variables);
+    util::vector<std::pair<index_type, scalar_type>> indices_and_distances;
+
+    length_parameter_calculator.compute(variables, searcher);
+
+    const auto num_variables =
+        util::safe_cast<storage_index_type>(variables.size());
+    kernel_matrix.resize(num_variables, num_variables);
+
+    const scalar_type support_boundary = RBF::support_boundary();
+
+    util::vector<Eigen::Triplet<scalar_type, storage_index_type>> triplets;
+    for (storage_index_type j = 0; j < num_variables; ++j) {
+        const scalar_type length_parameter =
+            length_parameter_calculator.length_parameter_at(j);
+        NUM_COLLECT_ASSERT(length_parameter > static_cast<scalar_type>(0));
+        const scalar_type support_radius = support_boundary * length_parameter;
+        searcher.find_neighbors_within_radius(
+            support_radius, variables[j], indices_and_distances, false);
+
+        for (const auto& [i, distance] : indices_and_distances) {
+            const scalar_type distance_rate = distance / length_parameter;
+            const scalar_type value = rbf(distance_rate);
+            // Only i is in index_type, so conversion is needed.
+            triplets.emplace_back(static_cast<storage_index_type>(i), j, value);
         }
     }
     kernel_matrix.setFromTriplets(triplets.begin(), triplets.end());
