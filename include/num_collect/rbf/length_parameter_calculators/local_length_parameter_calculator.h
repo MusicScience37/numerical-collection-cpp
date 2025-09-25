@@ -32,6 +32,7 @@
 #include "num_collect/rbf/concepts/distance_function.h"
 #include "num_collect/rbf/impl/parallelized_num_points.h"
 #include "num_collect/util/assert.h"
+#include "num_collect/util/nearest_neighbor_searcher.h"
 #include "num_collect/util/vector_view.h"
 
 namespace num_collect::rbf::length_parameter_calculators {
@@ -75,7 +76,8 @@ public:
             num_samples > 0, "Sample points must be given.");
 
         length_parameters_.resize(num_samples);
-#pragma omp parallel for if (num_samples >= impl::parallelized_num_points)
+#pragma omp parallel for if (num_samples >= impl::parallelized_num_points) \
+    schedule(static)
         for (index_type i = 0; i < num_samples; ++i) {
             auto min_distance = std::numeric_limits<scalar_type>::max();
             for (index_type j = 0; j < num_samples; ++j) {
@@ -88,6 +90,43 @@ public:
                 }
             }
             length_parameters_(i) = scale_ * min_distance;
+        }
+    }
+
+    /*!
+     * \brief Compute the length parameters.
+     *
+     * \param[in] variables Variables.
+     * \param[in] searcher Nearest neighbor searcher.
+     *
+     * \note This overload assumes that the distance function is
+     * \ref num_collect::rbf::distance_functions::euclidean_distance_function.
+     */
+    void compute(util::vector_view<const variable_type> variables,
+        const util::nearest_neighbor_searcher<variable_type>& searcher) {
+        const index_type num_samples = variables.size();
+        NUM_COLLECT_PRECONDITION(
+            num_samples > 0, "Sample points must be given.");
+
+        length_parameters_.resize(num_samples);
+#pragma omp parallel if (num_samples >= impl::parallelized_num_points)
+        {
+            util::vector<std::pair<index_type, scalar_type>>
+                indices_and_distances;
+#pragma omp for schedule(static)
+            for (index_type i = 0; i < num_samples; ++i) {
+                searcher.find_k_nearest_neighbors(
+                    2, variables[i], indices_and_distances);
+                NUM_COLLECT_ASSERT(indices_and_distances.size() == 2);
+                // The first one is the point itself.
+                const auto& pair = indices_and_distances[1];
+                if (pair.first == i) {
+                    NUM_COLLECT_LOG_AND_THROW(algorithm_failure,
+                        "The nearest point must not be the point itself. "
+                        "This error may indicate that duplicate points exist.");
+                }
+                length_parameters_(i) = scale_ * pair.second;
+            }
         }
     }
 

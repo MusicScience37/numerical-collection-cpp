@@ -579,9 +579,8 @@ public:
         const scalar_type squared_radius = radius * radius;
         impl::nearest_neighbor_searcher_radius_result_set<scalar_type>
             result_set(indices_and_distances, squared_radius);
-        adaptor_.index().findNeighbors(
-            result_set, to_data_pointer(query_point));
-        result_set.sort();
+        adaptor_.index().findNeighbors(result_set, to_data_pointer(query_point),
+            nanoflann::SearchParameters(0.0F, true));
 
         // Convert squared distances to distances.
         for (auto& pair : indices_and_distances) {
