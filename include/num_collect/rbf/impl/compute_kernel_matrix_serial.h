@@ -270,7 +270,7 @@ inline void compute_kernel_matrix_serial(
         NUM_COLLECT_ASSERT(length_parameter > static_cast<scalar_type>(0));
         const scalar_type support_radius = support_boundary * length_parameter;
         searcher.find_neighbors_within_radius(
-            support_radius, variables[j], indices_and_distances);
+            support_radius, variables[j], indices_and_distances, false);
 
         for (const auto& [i, distance] : indices_and_distances) {
             const scalar_type distance_rate = distance / length_parameter;
