@@ -165,6 +165,10 @@ inline void visualize_result(const Eigen::MatrixXd& origin,
     const std::string& algorithm_name_for_file_name) {
     num_collect::logging::logger logger;
 
+    const Eigen::MatrixXd error = (solution - origin).cwiseAbs();
+    const double error_rate = error.squaredNorm() / origin.squaredNorm();
+    NUM_COLLECT_LOG_INFO(logger, "Error rate: {}", error_rate);
+
     plotly_plotter::figure figure;
 
     figure.layout().grid().rows(1);
