@@ -26,6 +26,7 @@
 
 #include "comparison_approvals.h"
 #include "num_collect/regularization/concepts/regularized_solver.h"
+#include "num_collect/util/scoped_eigen_no_malloc.h"
 #include "num_prob_collect/regularization/sparse_blur_matrix.h"
 #include "num_prob_collect/regularization/sparse_diff_matrix.h"
 
@@ -83,6 +84,16 @@ TEST_CASE("num_collect::regularization::tgv2_admm") {
             constexpr num_collect::index_type precision = 4;
             comparison_approvals::verify_with_reference(
                 solution, true_solution, precision);
+        }
+
+        SECTION("check memory usage") {
+            REQUIRE_NOTHROW(solver.init(param, solution));
+
+            REQUIRE_NOTHROW(solver.iterate(param, solution));
+            {
+                num_collect::util::scoped_eigen_no_malloc no_malloc;
+                REQUIRE_NOTHROW(solver.iterate(param, solution));
+            }
         }
     }
 }
