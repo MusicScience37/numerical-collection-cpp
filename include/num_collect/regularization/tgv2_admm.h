@@ -246,9 +246,10 @@ public:
             "match the number of rows in the first order derivative matrix.");
 
         coeff_transpose_ = coeff_->transpose();
+        first_derivative_matrix_transpose_ =
+            first_derivative_matrix_->transpose();
 
-        dtd_ = (*first_derivative_matrix_).transpose() *
-            (*first_derivative_matrix_);
+        dtd_ = first_derivative_matrix_transpose_ * (*first_derivative_matrix_);
 
         z_coeff_.resize(second_derivative_matrix_->cols(),
             second_derivative_matrix_->cols());
@@ -499,7 +500,7 @@ private:
         temp_solution_.noalias() =
             static_cast<scalar_type>(2) * (*coeff_).transpose() * (*data_);
         temp_solution_.noalias() +=
-            (*first_derivative_matrix_).transpose() * temp_z_;
+            first_derivative_matrix_transpose_ * temp_z_;
         previous_solution_ = solution;
         conjugate_gradient_solution_.solve(
             [this](const data_type& target, data_type& result) {
@@ -616,8 +617,7 @@ private:
     void update_constraint_coeff() {
         const scalar_type primal_residual = p_update_.norm() + u_update_.norm();
         temp_z_ = s_ - previous_s_;
-        temp_solution_.noalias() =
-            (*first_derivative_matrix_).transpose() * temp_z_;
+        temp_solution_.noalias() = first_derivative_matrix_transpose_ * temp_z_;
         temp_t_ = t_ - previous_t_;
         temp_z_.noalias() -= (*second_derivative_matrix_).transpose() * temp_t_;
         const scalar_type dual_residual =
@@ -668,6 +668,9 @@ private:
 
     //! Transposed coefficient matrix.
     coeff_type coeff_transpose_{};
+
+    //! Transposed first order derivative matrix.
+    derivative_matrix_type first_derivative_matrix_transpose_{};
 
     //! Matrix \f$D^\top D\f$.
     derivative_matrix_type dtd_{};
