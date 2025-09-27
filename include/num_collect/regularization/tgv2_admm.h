@@ -205,9 +205,6 @@ public:
      */
     tgv2_admm() : base_type(tgv2_admm_tag) {
         this->configure_child_algorithm_logger_if_exists(
-            conjugate_gradient_solution_);
-        this->configure_child_algorithm_logger_if_exists(conjugate_gradient_z_);
-        this->configure_child_algorithm_logger_if_exists(
             conjugate_gradient_solution_and_z_);
     }
 
@@ -328,11 +325,6 @@ public:
 
         const scalar_type conjugate_gradient_tolerance_rate =
             rate_of_cg_tol_rate_to_tol_update_rate_ * tol_update_rate_;
-        conjugate_gradient_solution_.tolerance_rate(
-            conjugate_gradient_tolerance_rate);
-        conjugate_gradient_solution_.max_iterations(solution.rows());
-        conjugate_gradient_z_.tolerance_rate(conjugate_gradient_tolerance_rate);
-        conjugate_gradient_z_.max_iterations(z_.rows());
         conjugate_gradient_solution_and_z_.tolerance_rate(
             conjugate_gradient_tolerance_rate);
         conjugate_gradient_solution_and_z_.max_iterations(
@@ -343,8 +335,6 @@ public:
     void iterate(const scalar_type& param, data_type& solution) {
         update_rate_ = static_cast<scalar_type>(0);
 
-        // update_solution(param, solution);
-        // update_z(param, solution);
         update_solution_and_z(param, solution);
         update_s(param, solution);
         update_t(param, solution);
@@ -509,62 +499,6 @@ public:
 
 private:
     /*!
-     * \brief Update the solution.
-     *
-     * \param[in] param Regularization parameter.
-     * \param[in,out] solution Solution vector.
-     */
-    void update_solution(const scalar_type& param, data_type& solution) {
-        (void)param;  // Not used for update of solution.
-
-        temp_z_ = -p_ + constraint_coeff_ * z_ + constraint_coeff_ * s_;
-        temp_solution_.noalias() =
-            static_cast<scalar_type>(2) * (*coeff_).transpose() * (*data_);
-        temp_solution_.noalias() +=
-            first_derivative_matrix_transpose_ * temp_z_;
-        previous_solution_ = solution;
-        conjugate_gradient_solution_.solve(
-            [this](const data_type& target, data_type& result) {
-                result.noalias() = constraint_coeff_ * dtd_ * target;
-                temp_data_.noalias() = (*coeff_) * target;
-                result.noalias() +=
-                    static_cast<scalar_type>(2) * coeff_transpose_ * temp_data_;
-            },
-            temp_solution_, solution);
-        update_rate_ += (solution - previous_solution_).norm() /
-            (solution.norm() + std::numeric_limits<scalar_type>::epsilon());
-        residual_.noalias() = (*coeff_) * solution;
-        residual_ -= (*data_);
-    }
-
-    /*!
-     * \brief Update z_.
-     *
-     * \param[in] param Regularization parameter.
-     * \param[in] solution Solution vector.
-     */
-    void update_z(const scalar_type& param, const data_type& solution) {
-        (void)param;  // Not used for update of z_.
-
-        const scalar_type inverse_constraint_coeff =
-            static_cast<scalar_type>(1) / constraint_coeff_;
-        temp_z_ = p_;
-        temp_z_.noalias() -= (*second_derivative_matrix_).transpose() * u_;
-        temp_z_ *= inverse_constraint_coeff;
-        temp_z_.noalias() += (*first_derivative_matrix_) * solution;
-        temp_z_.noalias() -= s_;
-        temp_z_.noalias() += (*second_derivative_matrix_).transpose() * t_;
-        previous_z_ = z_;
-        conjugate_gradient_z_.solve(
-            [this](const data_type& target, data_type& result) {
-                result.noalias() = z_coeff_ * target;
-            },
-            temp_z_, z_);
-        update_rate_ += (z_ - previous_z_).norm() /
-            (z_.norm() + std::numeric_limits<scalar_type>::epsilon());
-    }
-
-    /*!
      * \brief Update the solution and z_.
      *
      * \param[in] param Regularization parameter.
@@ -625,8 +559,6 @@ private:
 
         update_rate_ += (z_ - previous_z_).norm() /
             (z_.norm() + std::numeric_limits<scalar_type>::epsilon());
-
-        NUM_COLLECT_LOG_TRACE(this->logger(), "update_rate={}", update_rate_);
     }
 
     /*!
@@ -834,14 +766,6 @@ private:
 
     //! Rate of norm of the update of the variables in the last iteration.
     scalar_type update_rate_{};
-
-    //! Conjugate gradient solver for update of the solution.
-    linear::impl::operator_conjugate_gradient<data_type>
-        conjugate_gradient_solution_{};
-
-    //! Conjugate gradient solver for update of the 1st order derivative.
-    linear::impl::operator_conjugate_gradient<data_type>
-        conjugate_gradient_z_{};
 
     //! Conjugate gradient solver for update of the concatenated vector of the solution and z_.
     linear::impl::operator_conjugate_gradient<data_type>
