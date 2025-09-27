@@ -278,7 +278,7 @@ public:
 
         coeff_transpose_ = coeff_->transpose();
 
-        dtd_ = constraint_coeff_ * (*first_derivative_matrix_).transpose() *
+        dtd_ = (*first_derivative_matrix_).transpose() *
             (*first_derivative_matrix_);
 
         z_coeff_.resize(second_derivative_matrix_->cols(),
@@ -331,6 +331,7 @@ public:
         update_t(param, solution);
         update_p(param, solution);
         update_u(param, solution);
+        update_constraint_coeff();
 
         ++iterations_;
     }
@@ -497,7 +498,7 @@ private:
         previous_solution_ = solution;
         conjugate_gradient_solution_.solve(
             [this](const data_type& target, data_type& result) {
-                result.noalias() = dtd_ * target;
+                result.noalias() = constraint_coeff_ * dtd_ * target;
                 temp_data_.noalias() = (*coeff_) * target;
                 result.noalias() +=
                     static_cast<scalar_type>(2) * coeff_transpose_ * temp_data_;
@@ -604,6 +605,32 @@ private:
             (u_.norm() + std::numeric_limits<scalar_type>::epsilon());
     }
 
+    /*!
+     * \brief Update the constraint coefficient.
+     */
+    void update_constraint_coeff() {
+        const scalar_type primal_residual = p_update_.norm() + u_update_.norm();
+        temp_z_ = s_ - previous_s_;
+        temp_solution_.noalias() =
+            (*first_derivative_matrix_).transpose() * temp_z_;
+        temp_t_ = t_ - previous_t_;
+        temp_z_.noalias() -= (*second_derivative_matrix_).transpose() * temp_t_;
+        const scalar_type dual_residual =
+            constraint_coeff_ * (temp_solution_.norm() + temp_z_.norm());
+
+        if (primal_residual >
+            tol_primal_dual_residuals_ratio_ * dual_residual) {
+            constraint_coeff_ *= constraint_coeff_change_ratio_;
+            NUM_COLLECT_LOG_TRACE(this->logger(),
+                "Increased constraint_coeff: {}", constraint_coeff_);
+        } else if (dual_residual >
+            tol_primal_dual_residuals_ratio_ * primal_residual) {
+            constraint_coeff_ /= constraint_coeff_change_ratio_;
+            NUM_COLLECT_LOG_TRACE(this->logger(),
+                "Decreased constraint_coeff: {}", constraint_coeff_);
+        }
+    }
+
     //! Coefficient matrix to compute data vector.
     const coeff_type* coeff_{nullptr};
 
@@ -706,6 +733,22 @@ private:
 
     //! Coefficient of the constraint.
     scalar_type constraint_coeff_{};
+
+    //! Default tolerance of ratio of primal and dual residuals.
+    static constexpr auto default_tol_primal_dual_residuals_ratio =
+        static_cast<scalar_type>(10);
+
+    //! Tolerance of ratio of primal and dual residuals.
+    scalar_type tol_primal_dual_residuals_ratio_{
+        default_tol_primal_dual_residuals_ratio};
+
+    //! Default ratio to change the constraint coefficient.
+    static constexpr auto default_constraint_coeff_change_ratio =
+        static_cast<scalar_type>(2);
+
+    //! Ratio to change the constraint coefficient.
+    scalar_type constraint_coeff_change_ratio_{
+        default_constraint_coeff_change_ratio};
 
     //! Default maximum number of iterations.
     static constexpr index_type default_max_iterations = 10000;
