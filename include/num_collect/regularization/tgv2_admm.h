@@ -132,9 +132,9 @@ constexpr auto tgv2_admm_tag =
  *     \right)
  *     \\
  *     \boldsymbol{z}_{k+1}
- *      & = (\rho I + \rho E^\top E)^{-1} \left(
- *     \boldsymbol{p}_k - E^\top \boldsymbol{u}_k + \rho D \boldsymbol{x}_{k+1}
- * - \rho \boldsymbol{s}_k + \rho E^\top \boldsymbol{t}_k
+ *      & = (I + E^\top E)^{-1} \left(
+ *     \frac{\boldsymbol{p}_k}{\rho} - \frac{E^\top \boldsymbol{u}_k}{\rho} + D
+ * \boldsymbol{x}_{k+1} - \boldsymbol{s}_k + E^\top \boldsymbol{t}_k
  *     \right)
  *     \\
  *     \boldsymbol{s}_{k+1}
@@ -289,7 +289,6 @@ public:
             (*second_derivative_matrix_).transpose() *
             (*second_derivative_matrix_);
         z_coeff_ += ete;
-        z_coeff_ *= constraint_coeff_;
 
         // Set variables to one of feasible solutions.
         z_ = data_type::Zero(first_derivative_matrix_->rows());
@@ -519,13 +518,14 @@ private:
     void update_z(const scalar_type& param, const data_type& solution) {
         (void)param;  // Not used for update of z_.
 
+        const scalar_type inverse_constraint_coeff =
+            static_cast<scalar_type>(1) / constraint_coeff_;
         temp_z_ = p_;
         temp_z_.noalias() -= (*second_derivative_matrix_).transpose() * u_;
-        temp_z_.noalias() +=
-            constraint_coeff_ * (*first_derivative_matrix_) * solution;
-        temp_z_.noalias() -= constraint_coeff_ * s_;
-        temp_z_.noalias() +=
-            constraint_coeff_ * (*second_derivative_matrix_).transpose() * t_;
+        temp_z_ *= inverse_constraint_coeff;
+        temp_z_.noalias() += (*first_derivative_matrix_) * solution;
+        temp_z_.noalias() -= s_;
+        temp_z_.noalias() += (*second_derivative_matrix_).transpose() * t_;
         previous_z_ = z_;
         conjugate_gradient_z_.solve(
             [this](const data_type& target, data_type& result) {
