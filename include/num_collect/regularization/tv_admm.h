@@ -115,17 +115,24 @@ public:
         coeff_ = &coeff;
         derivative_matrix_ = &derivative_matrix;
         data_ = &data;
-        // Sizes will be checked in init.
+
+        NUM_COLLECT_PRECONDITION(coeff_->rows() == data_->rows(),
+            this->logger(),
+            "Coefficient matrix and data vector must have the same number of "
+            "rows.");
+        NUM_COLLECT_PRECONDITION(derivative_matrix_->cols() == coeff_->cols(),
+            this->logger(),
+            "The number of columns in the derivative matrix must match the "
+            "number of columns in the coefficient matrix.");
+
+        coeff_transpose_ = coeff_->transpose();
+        dtd_ = (*derivative_matrix_).transpose() * (*derivative_matrix_);
     }
 
     //! \copydoc num_collect::regularization::iterative_regularized_solver_base::init
     void init(const scalar_type& param, data_type& solution) {
         (void)param;
 
-        NUM_COLLECT_PRECONDITION(coeff_->rows() == data_->rows(),
-            this->logger(),
-            "Coefficient matrix and data vector must have the same number of "
-            "rows.");
         NUM_COLLECT_PRECONDITION(coeff_->cols() == solution.rows(),
             this->logger(),
             "The number of columns in the coefficient matrix must match the "
@@ -133,10 +140,6 @@ public:
         NUM_COLLECT_PRECONDITION(data_->cols() == solution.cols(),
             this->logger(),
             "Data and solution must have the same number of columns.");
-        NUM_COLLECT_PRECONDITION(derivative_matrix_->cols() == solution.rows(),
-            this->logger(),
-            "The number of columns in the derivative matrix must match the "
-            "number of rows in solution vector.");
 
         // Experimentally selected value.
         constexpr auto minimum_constrain_coeff = static_cast<scalar_type>(1);
@@ -146,8 +149,6 @@ public:
             param, constraint_coeff_);
 
         iterations_ = 0;
-        coeff_transpose_ = coeff_->transpose();
-        dtd_ = (*derivative_matrix_).transpose() * (*derivative_matrix_);
         derivative_ = (*derivative_matrix_) * solution;
         lagrange_multiplier_ = data_type::Zero(derivative_matrix_->rows());
         temp_solution_ = solution;
