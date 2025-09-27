@@ -132,9 +132,9 @@ constexpr auto tgv2_admm_tag =
  *     \right)
  *     \\
  *     \boldsymbol{z}_{k+1}
- *      & = (\rho I + \rho E^\top E)^{-1} \left(
- *     \boldsymbol{p}_k - E^\top \boldsymbol{u}_k + \rho D \boldsymbol{x}_{k+1}
- * - \rho \boldsymbol{s}_k + \rho E^\top \boldsymbol{t}_k
+ *      & = (I + E^\top E)^{-1} \left(
+ *     \frac{\boldsymbol{p}_k}{\rho} - \frac{E^\top \boldsymbol{u}_k}{\rho} + D
+ * \boldsymbol{x}_{k+1} - \boldsymbol{s}_k + E^\top \boldsymbol{t}_k
  *     \right)
  *     \\
  *     \boldsymbol{s}_{k+1}
@@ -230,7 +230,40 @@ public:
         first_derivative_matrix_ = &first_derivative_matrix;
         second_derivative_matrix_ = &second_derivative_matrix;
         data_ = &data;
-        // Sizes will be checked in init.
+
+        NUM_COLLECT_PRECONDITION(coeff_->rows() == data_->rows(),
+            this->logger(),
+            "Coefficient matrix and data vector must have the same number of "
+            "rows.");
+        NUM_COLLECT_PRECONDITION(
+            first_derivative_matrix_->cols() == coeff_->cols(), this->logger(),
+            "The number of columns in the first order derivative matrix must "
+            "match the number of columns in the coefficient matrix.");
+        NUM_COLLECT_PRECONDITION(second_derivative_matrix_->cols() ==
+                first_derivative_matrix_->rows(),
+            this->logger(),
+            "The number of columns in the second order derivative matrix must "
+            "match the number of rows in the first order derivative matrix.");
+
+        coeff_transpose_ = coeff_->transpose();
+
+        dtd_ = (*first_derivative_matrix_).transpose() *
+            (*first_derivative_matrix_);
+
+        z_coeff_.resize(second_derivative_matrix_->cols(),
+            second_derivative_matrix_->cols());
+        z_coeff_.setIdentity();
+        // Matrix E^\top E. Without this temporary matrix, compilation fails.
+        const derivative_matrix_type ete =
+            (*second_derivative_matrix_).transpose() *
+            (*second_derivative_matrix_);
+        z_coeff_ += ete;
+
+        medium_constraint_coeff_ = impl::approximate_max_eigen_aat(*coeff_) /
+            (impl::approximate_max_eigen_aat(*first_derivative_matrix_) +
+                std::numeric_limits<scalar_type>::epsilon());
+        NUM_COLLECT_LOG_TRACE(this->logger(), "medium_constraint_coeff={}",
+            medium_constraint_coeff_);
     }
 
     //! \copydoc num_collect::regularization::iterative_regularized_solver_base::init
@@ -246,10 +279,6 @@ public:
         NUM_COLLECT_PRECONDITION(
             data_ != nullptr, this->logger(), "Data vector is not set.");
 
-        NUM_COLLECT_PRECONDITION(coeff_->rows() == data_->rows(),
-            this->logger(),
-            "Coefficient matrix and data vector must have the same number of "
-            "rows.");
         NUM_COLLECT_PRECONDITION(coeff_->cols() == solution.rows(),
             this->logger(),
             "The number of columns in the coefficient matrix must match the "
@@ -257,39 +286,14 @@ public:
         NUM_COLLECT_PRECONDITION(data_->cols() == solution.cols(),
             this->logger(),
             "Data and solution must have the same number of columns.");
-        NUM_COLLECT_PRECONDITION(
-            first_derivative_matrix_->cols() == solution.rows(), this->logger(),
-            "The number of columns in the first order derivative matrix must "
-            "match the number of rows in solution vector.");
-        NUM_COLLECT_PRECONDITION(second_derivative_matrix_->cols() ==
-                first_derivative_matrix_->rows(),
-            this->logger(),
-            "The number of columns in the second order derivative matrix must "
-            "match the number of rows in the first order derivative matrix.");
 
-        // Experimentally selected value.
-        constexpr auto minimum_constrain_coeff = static_cast<scalar_type>(1);
         constraint_coeff_ = std::max(
-            param_to_constraint_coeff_ * param, minimum_constrain_coeff);
+            param_to_constraint_coeff_ * param, medium_constraint_coeff_);
+        limit_constraint_coeff();
         NUM_COLLECT_LOG_TRACE(this->logger(), "param={}, constraint_coeff={}",
             param, constraint_coeff_);
 
         iterations_ = 0;
-
-        coeff_transpose_ = coeff_->transpose();
-
-        dtd_ = constraint_coeff_ * (*first_derivative_matrix_).transpose() *
-            (*first_derivative_matrix_);
-
-        z_coeff_.resize(second_derivative_matrix_->cols(),
-            second_derivative_matrix_->cols());
-        z_coeff_.setIdentity();
-        // Matrix E^\top E. Without this temporary matrix, compilation fails.
-        const derivative_matrix_type ete =
-            (*second_derivative_matrix_).transpose() *
-            (*second_derivative_matrix_);
-        z_coeff_ += ete;
-        z_coeff_ *= constraint_coeff_;
 
         // Set variables to one of feasible solutions.
         z_ = data_type::Zero(first_derivative_matrix_->rows());
@@ -332,6 +336,7 @@ public:
         update_t(param, solution);
         update_p(param, solution);
         update_u(param, solution);
+        update_constraint_coeff();
 
         ++iterations_;
     }
@@ -498,7 +503,7 @@ private:
         previous_solution_ = solution;
         conjugate_gradient_solution_.solve(
             [this](const data_type& target, data_type& result) {
-                result.noalias() = dtd_ * target;
+                result.noalias() = constraint_coeff_ * dtd_ * target;
                 temp_data_.noalias() = (*coeff_) * target;
                 result.noalias() +=
                     static_cast<scalar_type>(2) * coeff_transpose_ * temp_data_;
@@ -519,13 +524,14 @@ private:
     void update_z(const scalar_type& param, const data_type& solution) {
         (void)param;  // Not used for update of z_.
 
+        const scalar_type inverse_constraint_coeff =
+            static_cast<scalar_type>(1) / constraint_coeff_;
         temp_z_ = p_;
         temp_z_.noalias() -= (*second_derivative_matrix_).transpose() * u_;
-        temp_z_.noalias() +=
-            constraint_coeff_ * (*first_derivative_matrix_) * solution;
-        temp_z_.noalias() -= constraint_coeff_ * s_;
-        temp_z_.noalias() +=
-            constraint_coeff_ * (*second_derivative_matrix_).transpose() * t_;
+        temp_z_ *= inverse_constraint_coeff;
+        temp_z_.noalias() += (*first_derivative_matrix_) * solution;
+        temp_z_.noalias() -= s_;
+        temp_z_.noalias() += (*second_derivative_matrix_).transpose() * t_;
         previous_z_ = z_;
         conjugate_gradient_z_.solve(
             [this](const data_type& target, data_type& result) {
@@ -602,6 +608,47 @@ private:
         u_ += u_update_;
         update_rate_ += u_update_.norm() /
             (u_.norm() + std::numeric_limits<scalar_type>::epsilon());
+    }
+
+    /*!
+     * \brief Update the constraint coefficient.
+     */
+    void update_constraint_coeff() {
+        const scalar_type primal_residual = p_update_.norm() + u_update_.norm();
+        temp_z_ = s_ - previous_s_;
+        temp_solution_.noalias() =
+            (*first_derivative_matrix_).transpose() * temp_z_;
+        temp_t_ = t_ - previous_t_;
+        temp_z_.noalias() -= (*second_derivative_matrix_).transpose() * temp_t_;
+        const scalar_type dual_residual =
+            constraint_coeff_ * (temp_solution_.norm() + temp_z_.norm());
+
+        if (primal_residual >
+            tol_primal_dual_residuals_ratio_ * dual_residual) {
+            constraint_coeff_ *= constraint_coeff_change_ratio_;
+            limit_constraint_coeff();
+            NUM_COLLECT_LOG_TRACE(this->logger(),
+                "Increased constraint_coeff: {}", constraint_coeff_);
+        } else if (dual_residual >
+            tol_primal_dual_residuals_ratio_ * primal_residual) {
+            constraint_coeff_ /= constraint_coeff_change_ratio_;
+            limit_constraint_coeff();
+            NUM_COLLECT_LOG_TRACE(this->logger(),
+                "Decreased constraint_coeff: {}", constraint_coeff_);
+        }
+    }
+
+    /*!
+     * \brief Limit the coefficient of the constraint to a reasonable range.
+     */
+    void limit_constraint_coeff() {
+        constexpr auto scale = static_cast<scalar_type>(1e+4);
+        const scalar_type max_constraint_coeff =
+            medium_constraint_coeff_ * scale;
+        const scalar_type min_constraint_coeff =
+            medium_constraint_coeff_ / scale;
+        constraint_coeff_ = std::min(constraint_coeff_, max_constraint_coeff);
+        constraint_coeff_ = std::max(constraint_coeff_, min_constraint_coeff);
     }
 
     //! Coefficient matrix to compute data vector.
@@ -704,8 +751,27 @@ private:
     //! Coefficient of the constraint to regularization parameter.
     scalar_type param_to_constraint_coeff_{default_param_to_constraint_coeff};
 
+    //! Medium value of the coefficient of the constraint.
+    scalar_type medium_constraint_coeff_{};
+
     //! Coefficient of the constraint.
     scalar_type constraint_coeff_{};
+
+    //! Default tolerance of ratio of primal and dual residuals.
+    static constexpr auto default_tol_primal_dual_residuals_ratio =
+        static_cast<scalar_type>(10);
+
+    //! Tolerance of ratio of primal and dual residuals.
+    scalar_type tol_primal_dual_residuals_ratio_{
+        default_tol_primal_dual_residuals_ratio};
+
+    //! Default ratio to change the constraint coefficient.
+    static constexpr auto default_constraint_coeff_change_ratio =
+        static_cast<scalar_type>(2);
+
+    //! Ratio to change the constraint coefficient.
+    scalar_type constraint_coeff_change_ratio_{
+        default_constraint_coeff_change_ratio};
 
     //! Default maximum number of iterations.
     static constexpr index_type default_max_iterations = 10000;
