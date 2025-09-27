@@ -230,7 +230,34 @@ public:
         first_derivative_matrix_ = &first_derivative_matrix;
         second_derivative_matrix_ = &second_derivative_matrix;
         data_ = &data;
-        // Sizes will be checked in init.
+
+        NUM_COLLECT_PRECONDITION(coeff_->rows() == data_->rows(),
+            this->logger(),
+            "Coefficient matrix and data vector must have the same number of "
+            "rows.");
+        NUM_COLLECT_PRECONDITION(
+            first_derivative_matrix_->cols() == coeff_->cols(), this->logger(),
+            "The number of columns in the first order derivative matrix must "
+            "match the number of columns in the coefficient matrix.");
+        NUM_COLLECT_PRECONDITION(second_derivative_matrix_->cols() ==
+                first_derivative_matrix_->rows(),
+            this->logger(),
+            "The number of columns in the second order derivative matrix must "
+            "match the number of rows in the first order derivative matrix.");
+
+        coeff_transpose_ = coeff_->transpose();
+
+        dtd_ = (*first_derivative_matrix_).transpose() *
+            (*first_derivative_matrix_);
+
+        z_coeff_.resize(second_derivative_matrix_->cols(),
+            second_derivative_matrix_->cols());
+        z_coeff_.setIdentity();
+        // Matrix E^\top E. Without this temporary matrix, compilation fails.
+        const derivative_matrix_type ete =
+            (*second_derivative_matrix_).transpose() *
+            (*second_derivative_matrix_);
+        z_coeff_ += ete;
     }
 
     //! \copydoc num_collect::regularization::iterative_regularized_solver_base::init
@@ -246,10 +273,6 @@ public:
         NUM_COLLECT_PRECONDITION(
             data_ != nullptr, this->logger(), "Data vector is not set.");
 
-        NUM_COLLECT_PRECONDITION(coeff_->rows() == data_->rows(),
-            this->logger(),
-            "Coefficient matrix and data vector must have the same number of "
-            "rows.");
         NUM_COLLECT_PRECONDITION(coeff_->cols() == solution.rows(),
             this->logger(),
             "The number of columns in the coefficient matrix must match the "
@@ -257,15 +280,6 @@ public:
         NUM_COLLECT_PRECONDITION(data_->cols() == solution.cols(),
             this->logger(),
             "Data and solution must have the same number of columns.");
-        NUM_COLLECT_PRECONDITION(
-            first_derivative_matrix_->cols() == solution.rows(), this->logger(),
-            "The number of columns in the first order derivative matrix must "
-            "match the number of rows in solution vector.");
-        NUM_COLLECT_PRECONDITION(second_derivative_matrix_->cols() ==
-                first_derivative_matrix_->rows(),
-            this->logger(),
-            "The number of columns in the second order derivative matrix must "
-            "match the number of rows in the first order derivative matrix.");
 
         // Experimentally selected value.
         constexpr auto minimum_constrain_coeff = static_cast<scalar_type>(1);
@@ -275,20 +289,6 @@ public:
             param, constraint_coeff_);
 
         iterations_ = 0;
-
-        coeff_transpose_ = coeff_->transpose();
-
-        dtd_ = (*first_derivative_matrix_).transpose() *
-            (*first_derivative_matrix_);
-
-        z_coeff_.resize(second_derivative_matrix_->cols(),
-            second_derivative_matrix_->cols());
-        z_coeff_.setIdentity();
-        // Matrix E^\top E. Without this temporary matrix, compilation fails.
-        const derivative_matrix_type ete =
-            (*second_derivative_matrix_).transpose() *
-            (*second_derivative_matrix_);
-        z_coeff_ += ete;
 
         // Set variables to one of feasible solutions.
         z_ = data_type::Zero(first_derivative_matrix_->rows());
