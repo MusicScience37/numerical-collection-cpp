@@ -207,6 +207,8 @@ public:
         this->configure_child_algorithm_logger_if_exists(
             conjugate_gradient_solution_);
         this->configure_child_algorithm_logger_if_exists(conjugate_gradient_z_);
+        this->configure_child_algorithm_logger_if_exists(
+            conjugate_gradient_solution_and_z_);
     }
 
     /*!
@@ -314,9 +316,15 @@ public:
         previous_t_ = data_type::Zero(t_.rows());
         p_update_ = data_type::Zero(p_.rows());
         u_update_ = data_type::Zero(u_.rows());
+        solution_and_z_ = data_type::Zero(solution.rows() + z_.rows());
+        temp_solution_and_z_ = data_type::Zero(solution.rows() + z_.rows());
 
         residual_ = (*coeff_) * solution - (*data_);
         update_rate_ = std::numeric_limits<scalar_type>::infinity();
+        primal_residual_ = std::numeric_limits<scalar_type>::infinity();
+        dual_residual_ = std::numeric_limits<scalar_type>::infinity();
+        primal_residual_rate_ = std::numeric_limits<scalar_type>::infinity();
+        dual_residual_rate_ = std::numeric_limits<scalar_type>::infinity();
 
         const scalar_type conjugate_gradient_tolerance_rate =
             rate_of_cg_tol_rate_to_tol_update_rate_ * tol_update_rate_;
@@ -325,14 +333,19 @@ public:
         conjugate_gradient_solution_.max_iterations(solution.rows());
         conjugate_gradient_z_.tolerance_rate(conjugate_gradient_tolerance_rate);
         conjugate_gradient_z_.max_iterations(z_.rows());
+        conjugate_gradient_solution_and_z_.tolerance_rate(
+            conjugate_gradient_tolerance_rate);
+        conjugate_gradient_solution_and_z_.max_iterations(
+            solution_and_z_.rows());
     }
 
     //! \copydoc num_collect::regularization::iterative_regularized_solver_base::iterate
     void iterate(const scalar_type& param, data_type& solution) {
         update_rate_ = static_cast<scalar_type>(0);
 
-        update_solution(param, solution);
-        update_z(param, solution);
+        // update_solution(param, solution);
+        // update_z(param, solution);
+        update_solution_and_z(param, solution);
         update_s(param, solution);
         update_t(param, solution);
         update_p(param, solution);
@@ -347,6 +360,10 @@ public:
         const data_type& solution) const -> bool {
         (void)solution;
         return (iterations() > max_iterations()) ||
+            ((primal_residual_ < absolute_tol_ ||
+                 primal_residual_rate_ < relative_tol_) &&
+                (dual_residual_ < absolute_tol_ ||
+                    dual_residual_rate_ < relative_tol_)) ||
             (update_rate() < tol_update_rate());
     }
 
@@ -360,6 +377,10 @@ public:
             "UpdateRate", &this_type::update_rate);
         iteration_logger.template append<scalar_type>(
             "Res.Rate", &this_type::residual_norm_rate);
+        iteration_logger.template append<scalar_type>(
+            "Pri.Res.", &this_type::primal_residual_rate_);
+        iteration_logger.template append<scalar_type>(
+            "Dual.Res.", &this_type::dual_residual_rate_);
     }
 
     //! \copydoc num_collect::regularization::regularized_solver_base::residual_norm
@@ -544,6 +565,71 @@ private:
     }
 
     /*!
+     * \brief Update the solution and z_.
+     *
+     * \param[in] param Regularization parameter.
+     * \param[in] solution Solution vector.
+     */
+    void update_solution_and_z(const scalar_type& param, data_type& solution) {
+        (void)param;  // Not used for update of solution.
+
+        const index_type solution_size = solution.rows();
+        const index_type z_size = z_.rows();
+
+        temp_z_ = -p_ + constraint_coeff_ * s_;
+        temp_solution_.noalias() =
+            static_cast<scalar_type>(2) * (*coeff_).transpose() * (*data_);
+        temp_solution_.noalias() +=
+            first_derivative_matrix_transpose_ * temp_z_;
+        temp_solution_and_z_.head(solution_size) = temp_solution_;
+
+        temp_z_ = p_;
+        temp_z_.noalias() -= (*second_derivative_matrix_).transpose() * u_;
+        temp_z_.noalias() -= constraint_coeff_ * s_;
+        temp_z_.noalias() +=
+            constraint_coeff_ * (*second_derivative_matrix_).transpose() * t_;
+        temp_solution_and_z_.tail(z_size) = temp_z_;
+
+        previous_solution_ = solution;
+        previous_z_ = z_;
+        solution_and_z_.head(solution_size) = solution;
+        solution_and_z_.tail(z_size) = z_;
+
+        conjugate_gradient_solution_and_z_.solve(
+            [this, solution_size, z_size](
+                const data_type& target, data_type& result) {
+                result.resize(target.size());
+                result.head(solution_size).noalias() =
+                    constraint_coeff_ * dtd_ * target.head(solution_size);
+                temp_data_.noalias() = (*coeff_) * target.head(solution_size);
+                result.head(solution_size).noalias() +=
+                    static_cast<scalar_type>(2) * coeff_transpose_ * temp_data_;
+
+                result.head(solution_size).noalias() -= constraint_coeff_ *
+                    first_derivative_matrix_transpose_ * target.tail(z_size);
+
+                result.tail(z_size).noalias() =
+                    constraint_coeff_ * z_coeff_ * target.tail(z_size);
+
+                result.tail(z_size).noalias() -= constraint_coeff_ *
+                    (*first_derivative_matrix_) * target.head(solution_size);
+            },
+            temp_solution_and_z_, solution_and_z_);
+        solution = solution_and_z_.head(solution_size);
+        z_ = solution_and_z_.tail(z_size);
+
+        update_rate_ += (solution - previous_solution_).norm() /
+            (solution.norm() + std::numeric_limits<scalar_type>::epsilon());
+        residual_.noalias() = (*coeff_) * solution;
+        residual_ -= (*data_);
+
+        update_rate_ += (z_ - previous_z_).norm() /
+            (z_.norm() + std::numeric_limits<scalar_type>::epsilon());
+
+        NUM_COLLECT_LOG_TRACE(this->logger(), "update_rate={}", update_rate_);
+    }
+
+    /*!
      * \brief Update s_.
      *
      * \param[in] param Regularization parameter.
@@ -615,27 +701,41 @@ private:
      * \brief Update the constraint coefficient.
      */
     void update_constraint_coeff() {
-        const scalar_type primal_residual = p_update_.norm() + u_update_.norm();
+        using std::sqrt;
+
+        primal_residual_ =
+            sqrt(p_update_.squaredNorm() + u_update_.squaredNorm()) /
+            constraint_coeff_;
         temp_z_ = s_ - previous_s_;
         temp_solution_.noalias() = first_derivative_matrix_transpose_ * temp_z_;
         temp_t_ = t_ - previous_t_;
         temp_z_.noalias() -= (*second_derivative_matrix_).transpose() * temp_t_;
-        const scalar_type dual_residual =
-            constraint_coeff_ * (temp_solution_.norm() + temp_z_.norm());
+        dual_residual_ = constraint_coeff_ *
+            sqrt(temp_solution_.squaredNorm() + temp_z_.squaredNorm());
 
-        if (primal_residual >
-            tol_primal_dual_residuals_ratio_ * dual_residual) {
+        if (primal_residual_ >
+            tol_primal_dual_residuals_ratio_ * dual_residual_) {
             constraint_coeff_ *= constraint_coeff_change_ratio_;
             limit_constraint_coeff();
             NUM_COLLECT_LOG_TRACE(this->logger(),
                 "Increased constraint_coeff: {}", constraint_coeff_);
-        } else if (dual_residual >
-            tol_primal_dual_residuals_ratio_ * primal_residual) {
+        } else if (dual_residual_ >
+            tol_primal_dual_residuals_ratio_ * primal_residual_) {
             constraint_coeff_ /= constraint_coeff_change_ratio_;
             limit_constraint_coeff();
             NUM_COLLECT_LOG_TRACE(this->logger(),
                 "Decreased constraint_coeff: {}", constraint_coeff_);
         }
+
+        primal_residual_rate_ = primal_residual_ /
+            (sqrt(s_.squaredNorm() + t_.squaredNorm()) +
+                std::numeric_limits<scalar_type>::epsilon());
+        temp_solution_.noalias() = first_derivative_matrix_transpose_ * p_;
+        temp_z_.noalias() = p_;
+        temp_z_.noalias() -= (*second_derivative_matrix_).transpose() * u_;
+        dual_residual_rate_ = dual_residual_ /
+            (sqrt(temp_solution_.squaredNorm() + temp_z_.squaredNorm()) +
+                std::numeric_limits<scalar_type>::epsilon());
     }
 
     /*!
@@ -681,6 +781,9 @@ private:
     //! Component of the 1st order derivative.
     data_type z_{};
 
+    //! Concatenated vector of the solution and z_.
+    data_type solution_and_z_{};
+
     //! Component of the 1st order derivative for regularization.
     data_type s_{};
 
@@ -701,6 +804,9 @@ private:
 
     //! Temporary vector for the update of the 1st order derivative.
     data_type temp_z_{};
+
+    //! Temporary vector for solution_and_z_.
+    data_type temp_solution_and_z_{};
 
     //! Temporary vector for the update of the 2nd order derivative.
     data_type temp_t_{};
@@ -737,6 +843,10 @@ private:
     linear::impl::operator_conjugate_gradient<data_type>
         conjugate_gradient_z_{};
 
+    //! Conjugate gradient solver for update of the concatenated vector of the solution and z_.
+    linear::impl::operator_conjugate_gradient<data_type>
+        conjugate_gradient_solution_and_z_{};
+
     //! Default ratio of regularization term for the 2nd order derivative.
     static constexpr auto default_second_derivative_ratio =
         static_cast<scalar_type>(1);
@@ -759,6 +869,18 @@ private:
 
     //! Coefficient of the constraint.
     scalar_type constraint_coeff_{};
+
+    //! Primal residual.
+    scalar_type primal_residual_{};
+
+    //! Rate of the primal residual.
+    scalar_type primal_residual_rate_{};
+
+    //! Dual residual.
+    scalar_type dual_residual_{};
+
+    //! Rate of the dual residual.
+    scalar_type dual_residual_rate_{};
 
     //! Default tolerance of ratio of primal and dual residuals.
     static constexpr auto default_tol_primal_dual_residuals_ratio =
@@ -788,6 +910,19 @@ private:
 
     //! Tolerance of update rate of the solution.
     scalar_type tol_update_rate_{default_tol_update_rate};
+
+    //! Default absolute tolerance.
+    static constexpr auto default_absolute_tol =
+        static_cast<scalar_type>(1e-10);
+
+    //! Absolute tolerance.
+    scalar_type absolute_tol_{default_absolute_tol};
+
+    //! Default relative tolerance.
+    static constexpr auto default_relative_tol = static_cast<scalar_type>(1e-4);
+
+    //! Relative tolerance.
+    scalar_type relative_tol_{default_relative_tol};
 
     //! Default value of the ratio of the rate of tolerance in CG method to the tolerance of update rate of the solution.
     static constexpr auto default_rate_of_cg_tol_rate_to_tol_update_rate =
