@@ -127,6 +127,11 @@ public:
 
         coeff_transpose_ = coeff_->transpose();
         dtd_ = (*derivative_matrix_).transpose() * (*derivative_matrix_);
+        medium_constraint_coeff_ = impl::approximate_max_eigen_aat(*coeff_) /
+            (impl::approximate_max_eigen_aat(*derivative_matrix_) +
+                std::numeric_limits<scalar_type>::epsilon());
+        NUM_COLLECT_LOG_TRACE(this->logger(), "medium_constraint_coeff={}",
+            medium_constraint_coeff_);
     }
 
     //! \copydoc num_collect::regularization::iterative_regularized_solver_base::init
@@ -141,10 +146,9 @@ public:
             this->logger(),
             "Data and solution must have the same number of columns.");
 
-        // Experimentally selected value.
-        constexpr auto minimum_constrain_coeff = static_cast<scalar_type>(1);
         constraint_coeff_ = std::max(
-            param_to_constraint_coeff_ * param, minimum_constrain_coeff);
+            param_to_constraint_coeff_ * param, medium_constraint_coeff_);
+        limit_constraint_coeff();
         NUM_COLLECT_LOG_TRACE(this->logger(), "param={}, constraint_coeff={}",
             param, constraint_coeff_);
 
@@ -218,11 +222,13 @@ public:
         if (primal_residual_ >
             tol_primal_dual_residuals_ratio_ * dual_residual_) {
             constraint_coeff_ *= constraint_coeff_change_ratio_;
+            limit_constraint_coeff();
             NUM_COLLECT_LOG_TRACE(this->logger(),
                 "Increased constraint_coeff: {}", constraint_coeff_);
         } else if (dual_residual_ >
             tol_primal_dual_residuals_ratio_ * primal_residual_) {
             constraint_coeff_ /= constraint_coeff_change_ratio_;
+            limit_constraint_coeff();
             NUM_COLLECT_LOG_TRACE(this->logger(),
                 "Decreased constraint_coeff: {}", constraint_coeff_);
         }
@@ -420,6 +426,19 @@ public:
     }
 
 private:
+    /*!
+     * \brief Limit the coefficient of the constraint to a reasonable range.
+     */
+    void limit_constraint_coeff() {
+        constexpr auto scale = static_cast<scalar_type>(1e+4);
+        const scalar_type max_constraint_coeff =
+            medium_constraint_coeff_ * scale;
+        const scalar_type min_constraint_coeff =
+            medium_constraint_coeff_ / scale;
+        constraint_coeff_ = std::min(constraint_coeff_, max_constraint_coeff);
+        constraint_coeff_ = std::max(constraint_coeff_, min_constraint_coeff);
+    }
+
     //! Coefficient matrix to compute data vector.
     const coeff_type* coeff_{nullptr};
 
@@ -480,6 +499,9 @@ private:
 
     //! Coefficient of the constraint to regularization parameter.
     scalar_type param_to_constraint_coeff_{default_param_to_constraint_coeff};
+
+    //! Medium value of the coefficient of the constraint.
+    scalar_type medium_constraint_coeff_{};
 
     //! Coefficient of the constraint.
     scalar_type constraint_coeff_{};
