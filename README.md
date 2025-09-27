@@ -34,6 +34,15 @@ Documentation built in CI:
 | main branch | [Documentation](https://numcollect.musicscience37.com/)         | [API Reference](https://numcollect.musicscience37.com/api/)         |
 | v0.11.0     | [Documentation](https://numcollect.musicscience37.com/v0.11.0/) | [API Reference](https://numcollect.musicscience37.com/v0.11.0/api/) |
 
+## Dependencies (for users)
+
+- [fmt](https://github.com/fmtlib/fmt)
+- [Eigen](https://gitlab.com/libeigen/eigen)
+- [cpp-hash-tables](https://gitlab.com/MusicScience37Projects/utility-libraries/cpp-hash-tables)
+- [toml++](https://github.com/marzer/tomlplusplus)
+- [concurrentqueue](https://github.com/cameron314/concurrentqueue)
+- [nanoflann](https://github.com/jlblancoc/nanoflann)
+
 ## Repositories
 
 - Main in GitLab: [https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp](https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp)
