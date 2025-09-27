@@ -300,6 +300,8 @@ public:
             calculator_.solver());
         constexpr index_type max_evaluations = 10;
         optimizer_.max_evaluations(max_evaluations);
+        constexpr double distance_threshold_coeff = 0.1;
+        optimizer_.distance_threshold_coeff(distance_threshold_coeff);
     }
 
     //! \copydoc explicit_param_searcher_base::search

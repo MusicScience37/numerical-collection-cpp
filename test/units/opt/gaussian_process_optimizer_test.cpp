@@ -26,11 +26,14 @@
 #include "eigen_approx.h"
 #include "num_collect/opt/concepts/box_constrained_optimizer.h"
 #include "num_collect/opt/concepts/optimizer.h"
+#include "num_prob_collect/opt/identity_function.h"
 #include "num_prob_collect/opt/multi_quadratic_function.h"
+#include "num_prob_collect/opt/sum_function.h"
 #include "num_prob_collect/opt/vibrated_quadratic_function.h"
 
 TEST_CASE("num_collect::opt::gaussian_process_optimizer (one variable)") {
     using num_collect::opt::gaussian_process_optimizer;
+    using num_prob_collect::opt::identity_function;
     using num_prob_collect::opt::vibrated_quadratic_function;
 
     SECTION("concepts") {
@@ -66,16 +69,33 @@ TEST_CASE("num_collect::opt::gaussian_process_optimizer (one variable)") {
         constexpr double sol_tol = 1e-2;
         opt.max_evaluations(10);               // NOLINT
         opt.max_lower_bound_evaluations(100);  // NOLINT
+        opt.distance_threshold_coeff(1e-3);    // NOLINT
         opt.solve();
         CHECK_THAT(opt.opt_variable(),
             Catch::Matchers::WithinAbs(0.0, sol_tol));  // NOLINT
         CHECK_THAT(opt.opt_value(), Catch::Matchers::WithinAbs(-1.0, sol_tol));
+    }
+
+    SECTION("solve when the solution is on the boundary") {
+        auto opt = gaussian_process_optimizer<identity_function>();
+        opt.init(-1.0, 1.0);
+        opt.max_evaluations(20);               // NOLINT
+        opt.max_lower_bound_evaluations(100);  // NOLINT
+        opt.solve();
+        constexpr double sol_tol = 1e-4;
+        constexpr double true_solution = -1.0;
+        constexpr double true_value = -1.0;
+        CHECK_THAT(opt.opt_variable(),
+            Catch::Matchers::WithinAbs(true_solution, sol_tol));
+        CHECK_THAT(
+            opt.opt_value(), Catch::Matchers::WithinAbs(true_value, sol_tol));
     }
 }
 
 TEST_CASE("num_collect::opt::gaussian_process_optimizer (multi variables)") {
     using num_collect::opt::gaussian_process_optimizer;
     using num_prob_collect::opt::multi_quadratic_function;
+    using num_prob_collect::opt::sum_function;
 
     SECTION("concepts") {
         STATIC_REQUIRE(num_collect::opt::concepts::optimizer<
@@ -117,5 +137,20 @@ TEST_CASE("num_collect::opt::gaussian_process_optimizer (multi variables)") {
         CHECK_THAT(opt.opt_variable(),
             eigen_approx(Eigen::VectorXd::Zero(3), sol_tol));
         CHECK_THAT(opt.opt_value(), Catch::Matchers::WithinAbs(0.0, sol_tol));
+    }
+
+    SECTION("solve when the solution is on the boundary") {
+        auto opt = gaussian_process_optimizer<sum_function<Eigen::Vector2d>>();
+        opt.init(
+            Eigen::Vector2d::Constant(-1.0), Eigen::Vector2d::Constant(1.0));
+        opt.max_evaluations(20);               // NOLINT
+        opt.max_lower_bound_evaluations(100);  // NOLINT
+        opt.solve();
+        constexpr double sol_tol = 1e-4;
+        const Eigen::Vector2d true_solution = Eigen::Vector2d::Constant(-1.0);
+        constexpr double true_value = -2.0;
+        CHECK_THAT(opt.opt_variable(), eigen_approx(true_solution, sol_tol));
+        CHECK_THAT(
+            opt.opt_value(), Catch::Matchers::WithinAbs(true_value, sol_tol));
     }
 }

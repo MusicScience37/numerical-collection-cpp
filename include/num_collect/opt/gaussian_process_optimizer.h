@@ -23,14 +23,18 @@
 #include <cmath>
 #include <cstdlib>
 #include <limits>
+#include <random>
+#include <type_traits>
 #include <vector>
 
 #include <Eigen/Core>
 
+#include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/get_size.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/isfinite.h"
+#include "num_collect/base/norm.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/constants/pi.h"  // IWYU pragma: keep
 #include "num_collect/logging/iterations/iteration_logger.h"
@@ -141,7 +145,7 @@ public:
         interpolator_.optimize_length_parameter_scale(variables_, values_);
         interpolator_.compute(variables_, values_);
 
-        (void)try_find_and_evaluate_using_lower_bound();
+        try_find_and_evaluate_using_lower_bound();
 
         ++iterations_;
     }
@@ -224,6 +228,21 @@ public:
         return *this;
     }
 
+    /*!
+     * \brief Set the coefficient of the threshold of distances between sample
+     * points.
+     *
+     * \param[in] value Value.
+     * \return This object.
+     */
+    auto distance_threshold_coeff(double value) -> gaussian_process_optimizer& {
+        NUM_COLLECT_PRECONDITION(value > 0.0, this->logger(),
+            "Coefficient of the threshold of distances between sample points "
+            "must be positive.");
+        distance_threshold_coeff_ = value;
+        return *this;
+    }
+
 private:
     /*!
      * \brief Type of interpolator.
@@ -268,10 +287,8 @@ private:
     /*!
      * \brief Try to find a sample point using lower bounds and evaluate a
      * function value for the sample point.
-     *
-     * \return Whether evaluation was performed.
      */
-    [[nodiscard]] auto try_find_and_evaluate_using_lower_bound() -> bool {
+    void try_find_and_evaluate_using_lower_bound() {
         const auto lower_bound_function =
             [this](const variable_type& variable) -> value_type {
             using std::log;
@@ -297,9 +314,43 @@ private:
         lower_bound_optimizer_.init(lower_, upper_);
         lower_bound_optimizer_.solve();
 
-        evaluate_on(lower_bound_optimizer_.opt_variable());
+        using distance_type = std::decay_t<decltype(norm(
+            lower_bound_optimizer_.opt_variable() - variables_.front()))>;
+        distance_type min_distance = std::numeric_limits<distance_type>::max();
+        for (const auto& variable : variables_) {
+            min_distance = std::min(min_distance,
+                norm(lower_bound_optimizer_.opt_variable() - variable));
+        }
+        const distance_type distance_threshold =
+            static_cast<distance_type>(distance_threshold_coeff_) *
+            norm(upper_ - lower_) /
+            static_cast<distance_type>(max_evaluations_);
+        if (min_distance >= distance_threshold) {
+            evaluate_on(lower_bound_optimizer_.opt_variable());
+            return;
+        }
 
-        return true;
+        // Select another point randomly.
+        std::uniform_real_distribution<>
+            distribution;  // distribution of [0, 1)
+        if constexpr (base::concepts::real_scalar_dense_vector<variable_type>) {
+            using scalar_type = typename variable_type::Scalar;
+            variable_type random_variable(dim_);
+            for (index_type i = 0; i < dim_; ++i) {
+                random_variable(i) = lower_(i) +
+                    (upper_(i) - lower_(i)) *
+                        static_cast<scalar_type>(
+                            distribution(random_number_generator_));
+            }
+            evaluate_on(random_variable);
+        } else {
+            // Ordinary scalar case.
+            const variable_type random_variable = lower_ +
+                (upper_ - lower_) *
+                    static_cast<value_type>(
+                        distribution(random_number_generator_));
+            evaluate_on(random_variable);
+        }
     }
 
     //! Optimizer of lower bounds.
@@ -347,6 +398,15 @@ private:
 
     //! Default value of the maximum number of evaluations of lower bounds.
     static constexpr index_type default_max_lower_bound_evaluations = 100;
+
+    //! Default coefficient of the threshold of distances between sample points.
+    static constexpr double default_distance_threshold_coeff = 0.01;
+
+    //! Coefficient of the threshold of distances between sample points.
+    double distance_threshold_coeff_{default_distance_threshold_coeff};
+
+    //! Random number generator.
+    std::mt19937 random_number_generator_{};  // NOLINT: for reproducibility
 };
 
 }  // namespace num_collect::opt
