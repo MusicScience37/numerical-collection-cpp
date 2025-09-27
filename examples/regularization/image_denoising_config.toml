@@ -1,8 +1,8 @@
 [image_denoising]
 # Number of rows.
-rows = 40
+rows = 50
 # Number of columns.
-cols = 40
+cols = 50
 # Noise rate.
 noise_rate = 0.05
 # Index of the sample image to be generated.
