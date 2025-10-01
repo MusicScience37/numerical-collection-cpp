@@ -29,6 +29,7 @@
 #include <utility>
 #include <vector>
 
+#include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/get_size.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/isfinite.h"
@@ -39,7 +40,6 @@
 #include "num_collect/opt/concepts/objective_function.h"
 #include "num_collect/opt/optimizer_base.h"
 #include "num_collect/util/assert.h"
-#include "num_collect/util/is_eigen_vector.h"  // IWYU pragma: keep
 #include "num_collect/util/safe_cast.h"
 
 namespace num_collect::opt {
@@ -97,7 +97,7 @@ public:
      * \param[in] upper Upper limit.
      */
     void init(const variable_type& lower, const variable_type& upper) {
-        if constexpr (is_eigen_vector_v<variable_type>) {
+        if constexpr (base::concepts::real_scalar_dense_vector<variable_type>) {
             NUM_COLLECT_PRECONDITION(lower.size() == upper.size(),
                 this->logger(),
                 "Lower and upper limits must have the same size.");
@@ -118,7 +118,7 @@ public:
 
         rects_.clear();
         rects_.emplace_back();
-        if constexpr (is_eigen_vector_v<variable_type>) {
+        if constexpr (base::concepts::real_scalar_dense_vector<variable_type>) {
             rects_[0].push(rectangle(variable_type::Zero(dim_),
                 variable_type::Ones(dim_), opt_value_));
         } else {
@@ -293,7 +293,8 @@ private:
             NUM_COLLECT_DEBUG_ASSERT(lower < upper);
             NUM_COLLECT_DEBUG_ASSERT(
                 !is_divided_[static_cast<std::size_t>(dim)]);
-            if constexpr (is_eigen_vector_v<variable_type>) {
+            if constexpr (base::concepts::real_scalar_dense_vector<
+                              variable_type>) {
                 lower_(dim) = lower;
                 upper_(dim) = upper;
             } else {
@@ -378,7 +379,7 @@ private:
     [[nodiscard]] auto evaluate_on(const variable_type& variable)
         -> value_type {
         variable_type actual_var;
-        if constexpr (is_eigen_vector_v<variable_type>) {
+        if constexpr (base::concepts::real_scalar_dense_vector<variable_type>) {
             actual_var = variable.cwiseProduct(width_) + lower_;
         } else {
             actual_var = variable * width_ + lower_;
@@ -470,7 +471,7 @@ private:
             determine_divided_dimension(origin);
         value_type divided_lowest;
         value_type divided_highest;
-        if constexpr (is_eigen_vector_v<variable_type>) {
+        if constexpr (base::concepts::real_scalar_dense_vector<variable_type>) {
             divided_lowest = origin.lower()(divided_dim);
             divided_highest = origin.upper()(divided_dim);
         } else {
@@ -508,7 +509,8 @@ private:
             }
 
             value_type width;
-            if constexpr (is_eigen_vector_v<variable_type>) {
+            if constexpr (base::concepts::real_scalar_dense_vector<
+                              variable_type>) {
                 width = rect.upper()[i] - rect.lower()[i];
             } else {
                 width = rect.upper() - rect.lower();
@@ -519,7 +521,8 @@ private:
             static const auto half = static_cast<value_type>(0.5);
             variable_type center = (rect.lower() + rect.upper()) * half;
             value_type origin_center;
-            if constexpr (is_eigen_vector_v<variable_type>) {
+            if constexpr (base::concepts::real_scalar_dense_vector<
+                              variable_type>) {
                 origin_center = center[i];
             } else {
                 origin_center = center;
@@ -527,7 +530,8 @@ private:
 
             value_type lower_value;
             value_type upper_value;
-            if constexpr (is_eigen_vector_v<variable_type>) {
+            if constexpr (base::concepts::real_scalar_dense_vector<
+                              variable_type>) {
                 center[i] = origin_center - diff;
                 lower_value = evaluate_on(center);
                 center[i] = origin_center + diff;

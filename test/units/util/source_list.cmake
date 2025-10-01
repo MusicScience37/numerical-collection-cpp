@@ -14,8 +14,6 @@ set(SOURCE_FILES
     hash_string_test.cpp
     impl/compiler_builtins_test.cpp
     impl/pointer_iterator_test.cpp
-    is_eigen_matrix_test.cpp
-    is_eigen_vector_test.cpp
     iteration_period_checker_test.cpp
     kahan_adder_test.cpp
     least_common_multiple_test.cpp

@@ -24,6 +24,7 @@
 #include <optional>
 #include <type_traits>  // IWYU pragma: keep
 
+#include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
@@ -37,7 +38,6 @@
 #include "num_collect/ode/initial_step_size_calculator.h"
 #include "num_collect/ode/pi_step_size_controller.h"
 #include "num_collect/ode/solver_base.h"
-#include "num_collect/util/is_eigen_vector.h"  // IWYU pragma: keep
 
 namespace num_collect::ode {
 
@@ -230,7 +230,7 @@ private:
      * \return Norm.
      */
     [[nodiscard]] static auto norm(const variable_type& var) -> scalar_type {
-        if constexpr (is_eigen_vector_v<variable_type>) {
+        if constexpr (base::concepts::real_scalar_dense_vector<variable_type>) {
             return var.norm();
         } else {
             using std::abs;
