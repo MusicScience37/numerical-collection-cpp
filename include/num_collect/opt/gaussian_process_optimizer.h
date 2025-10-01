@@ -46,7 +46,6 @@
 #include "num_collect/opt/optimizer_base.h"
 #include "num_collect/rbf/gaussian_process_interpolator.h"
 #include "num_collect/util/assert.h"
-#include "num_collect/util/is_eigen_vector.h"  // IWYU pragma: keep
 
 namespace num_collect::opt {
 
@@ -109,7 +108,7 @@ public:
      * \param[in] upper Upper limit.
      */
     void init(const variable_type& lower, const variable_type& upper) {
-        if constexpr (is_eigen_vector_v<variable_type>) {
+        if constexpr (base::concepts::real_scalar_dense_vector<variable_type>) {
             NUM_COLLECT_PRECONDITION(lower.size() == upper.size(),
                 this->logger(),
                 "Lower and upper limits must have the same size.");
