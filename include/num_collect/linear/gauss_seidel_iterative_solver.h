@@ -59,6 +59,9 @@ struct iterative_solver_traits<gauss_seidel_iterative_solver<Matrix>> {
  * \cite Golub2013.
  *
  * \tparam Matrix Type of the matrix.
+ *
+ * This class assumes that the coefficient matrix is symmetric positive
+ * definite.
  */
 template <base::concepts::sparse_matrix Matrix>
 class gauss_seidel_iterative_solver

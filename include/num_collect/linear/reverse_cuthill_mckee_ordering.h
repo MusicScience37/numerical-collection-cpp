@@ -30,6 +30,10 @@ namespace num_collect::linear {
 /*!
  * \brief Class to perform reverse Cuthill-McKee ordering method
  * \cite Golub2013, \cite Knabner2003.
+ *
+ * \tparam StorageIndex Type of indices in storages of indices.
+ *
+ * This class assumes that the coefficient matrix is symmetric.
  */
 template <typename StorageIndex>
 class reverse_cuthill_mckee_ordering {
