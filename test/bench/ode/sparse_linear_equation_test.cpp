@@ -24,6 +24,7 @@
 #include <Eigen/SparseCore>
 #include <stat_bench/benchmark_macros.h>
 #include <stat_bench/invocation_context.h>
+#include <stat_bench/plot_options.h>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/constants/pi.h"
@@ -86,7 +87,7 @@ protected:
     int size_{};  // NOLINT(cppcoreguidelines-non-private-member-variables-in-classes)
 
     //! Coefficient matrix.
-    Eigen::SparseMatrix<double>
+    Eigen::SparseMatrix<double, Eigen::RowMajor>
         coeff_{};  // NOLINT(cppcoreguidelines-non-private-member-variables-in-classes)
 
     //! True solution.
@@ -183,3 +184,7 @@ STAT_BENCH_CASE_F(sparse_linear_equation_test_fixture, "sparse_linear_equation",
         iterations_ = static_cast<int>(solver.iterations());
     };
 }
+
+STAT_BENCH_GROUP("sparse_linear_equation")
+    .add_parameter_to_time_line_plot(
+        "dim", stat_bench::PlotOptions().log_parameter(true));
