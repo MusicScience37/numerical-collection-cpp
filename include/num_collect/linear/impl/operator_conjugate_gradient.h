@@ -41,6 +41,9 @@ constexpr auto operator_conjugate_gradient_tag = logging::log_tag_view(
  * linear operators.
  *
  * \tparam Vector Type of vectors.
+ *
+ * This class assumes that the coefficient matrix is symmetric positive
+ * definite.
  */
 template <base::concepts::dense_vector Vector>
 class operator_conjugate_gradient : public logging::logging_mixin {

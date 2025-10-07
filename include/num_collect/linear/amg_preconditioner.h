@@ -33,6 +33,9 @@ namespace num_collect::linear {
  * \tparam Matrix Type of the matrix.
  *
  * \note APIs are compatible with Eigen's preconditioners.
+ *
+ * This class assumes that the coefficient matrix is symmetric positive
+ * definite.
  */
 template <base::concepts::sparse_matrix Matrix>
 class amg_preconditioner {

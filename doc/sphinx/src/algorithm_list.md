@@ -178,24 +178,24 @@
 
 ### Solvers of Linear Equations
 
-| Algorithm                                                | Class                                                                                                                             |
-| :------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
-| Algebraic multigrid (AMG) method {cite:p}`Ruge1987`      | `num_collect::linear::algebraic_multigrid_solver`                                                                                 |
-| Gauss-Seidel iteration {cite:p}`Golub2013`               | `num_collect::linear::gauss_seidel_iterative_solver`                                                                              |
-| Symmetric successive over-relaxation {cite:p}`Golub2013` | `num_collect::linear::symmetric_successive_over_relaxation`, `num_collect::linear::parallel_symmetric_successive_over_relaxation` |
+| Algorithm                                                | Class                                                                                                                             | Matrix Type                        |
+| :------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------- |
+| Algebraic multigrid (AMG) method {cite:p}`Ruge1987`      | `num_collect::linear::algebraic_multigrid_solver`                                                                                 | Sparse symmetric positive definite |
+| Gauss-Seidel iteration {cite:p}`Golub2013`               | `num_collect::linear::gauss_seidel_iterative_solver`                                                                              | Symmetric positive definite        |
+| Symmetric successive over-relaxation {cite:p}`Golub2013` | `num_collect::linear::symmetric_successive_over_relaxation`, `num_collect::linear::parallel_symmetric_successive_over_relaxation` | Symmetric positive definite        |
 
 ### Ordering Algorithms
 
-| Algorithm                                                            | Class                                                 |
-| :------------------------------------------------------------------- | :---------------------------------------------------- |
-| Cuthill-McKee (CM) ordering {cite:p}`Golub2013,Knabner2003`          | `num_collect::linear::cuthill_mckee_ordering`         |
-| Reverse Cuthill-McKee (RCM) ordering {cite:p}`Golub2013,Knabner2003` | `num_collect::linear::reverse_cuthill_mckee_ordering` |
+| Algorithm                                                            | Class                                                 | Matrix Type |
+| :------------------------------------------------------------------- | :---------------------------------------------------- | :---------- |
+| Cuthill-McKee (CM) ordering {cite:p}`Golub2013,Knabner2003`          | `num_collect::linear::cuthill_mckee_ordering`         | Symmetric   |
+| Reverse Cuthill-McKee (RCM) ordering {cite:p}`Golub2013,Knabner2003` | `num_collect::linear::reverse_cuthill_mckee_ordering` | Symmetric   |
 
 ### Preconditioners
 
-| Algorithm                                                   | Class                                     |
-| :---------------------------------------------------------- | :---------------------------------------- |
-| Algebraic multigrid (AMG) preconditioner {cite:p}`Ruge1987` | `num_collect::linear::amg_preconditioner` |
+| Algorithm                                                   | Class                                     | Matrix Type                        |
+| :---------------------------------------------------------- | :---------------------------------------- | :--------------------------------- |
+| Algebraic multigrid (AMG) preconditioner {cite:p}`Ruge1987` | `num_collect::linear::amg_preconditioner` | Sparse symmetric positive definite |
 
 ## Common Algorithms (`util` Module)
 

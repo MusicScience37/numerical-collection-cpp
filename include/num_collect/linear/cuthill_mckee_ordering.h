@@ -42,6 +42,8 @@ namespace impl {
  * \cite Golub2013, \cite Knabner2003.
  *
  * \tparam StorageIndex Type of indices in storages of indices.
+ *
+ * This class assumes that the coefficient matrix is symmetric.
  */
 template <typename StorageIndex>
 class cuthill_mckee_ordering_impl {

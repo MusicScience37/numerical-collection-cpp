@@ -43,6 +43,9 @@ namespace impl {
  * \brief Traits of symmetric_successive_over_relaxation class.
  *
  * \tparam Matrix Type of the matrix.
+ *
+ * This class assumes that the coefficient matrix is symmetric positive
+ * definite.
  */
 template <base::concepts::sparse_matrix Matrix>
 struct iterative_solver_traits<symmetric_successive_over_relaxation<Matrix>> {

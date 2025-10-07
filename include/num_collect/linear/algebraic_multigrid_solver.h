@@ -74,6 +74,9 @@ struct iterative_solver_traits<algebraic_multigrid_solver<Matrix>> {
  * \cite Ruge1987.
  *
  * \tparam Matrix Type of the matrix.
+ *
+ * This class assumes that the coefficient matrix is sparse symmetric positive
+ * definite.
  */
 template <base::concepts::sparse_matrix Matrix>
 class algebraic_multigrid_solver
