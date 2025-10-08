@@ -191,6 +191,28 @@ TEST_CASE("num_collect::multi_double::impl::two_prod_no_fma") {
         REQUIRE_THAT(p, Catch::Matchers::WithinULP(p_true, 0));
         REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
     }
+
+    SECTION("random problems") {
+        double a{};
+        double b{};
+        double s_true{};
+        double e_true{};
+        std::tie(a, b, s_true, e_true) =
+            GENERATE(Catch::Generators::table<double, double, double, double>({
+                // clang-format off
+                // NOLINTBEGIN
+                // cspell: disable
+                std::make_tuple(0x1.0eda2a085a8b0p+16, 0x1.35e2911f3e380p-10, 0x1.47dd0adfd0b7ap+6, -0x1.0b8b34c3cc000p-49),
+                std::make_tuple(-0x1.1e20cf1e86a2cp-15, 0x1.9302680dbea10p+9, -0x1.c270569b5d0e8p-6, 0x1.b828673249500p-60),
+                std::make_tuple(0x1.6ebd2ea984d78p+8, -0x1.83fea770287bcp-21, -0x1.15ea668e531bbp-12, -0x1.6c2fbf7465840p-66),
+                // cspell: enable
+                // NOLINTEND
+                // clang-format on
+            }));
+        const auto [s, e] = two_prod_no_fma(a, b);
+        REQUIRE_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
+        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+    }
 }
 
 #ifdef __AVX2__
@@ -227,6 +249,28 @@ TEST_CASE("num_collect::multi_double::impl::two_prod_fma") {
         REQUIRE_THAT(p, Catch::Matchers::WithinULP(p_true, 0));
         REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
     }
+
+    SECTION("random problems") {
+        double a{};
+        double b{};
+        double s_true{};
+        double e_true{};
+        std::tie(a, b, s_true, e_true) =
+            GENERATE(Catch::Generators::table<double, double, double, double>({
+                // clang-format off
+                // NOLINTBEGIN
+                // cspell: disable
+                std::make_tuple(0x1.0eda2a085a8b0p+16, 0x1.35e2911f3e380p-10, 0x1.47dd0adfd0b7ap+6, -0x1.0b8b34c3cc000p-49),
+                std::make_tuple(-0x1.1e20cf1e86a2cp-15, 0x1.9302680dbea10p+9, -0x1.c270569b5d0e8p-6, 0x1.b828673249500p-60),
+                std::make_tuple(0x1.6ebd2ea984d78p+8, -0x1.83fea770287bcp-21, -0x1.15ea668e531bbp-12, -0x1.6c2fbf7465840p-66),
+                // cspell: enable
+                // NOLINTEND
+                // clang-format on
+            }));
+        const auto [s, e] = two_prod_fma(a, b);
+        REQUIRE_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
+        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+    }
 }
 
 #endif
@@ -261,6 +305,28 @@ TEST_CASE("num_collect::multi_double::impl::two_prod") {
         constexpr double e_true = 0x1.0p-105;
         const auto [p, e] = two_prod(a, b);
         REQUIRE_THAT(p, Catch::Matchers::WithinULP(p_true, 0));
+        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+    }
+
+    SECTION("random problems") {
+        double a{};
+        double b{};
+        double s_true{};
+        double e_true{};
+        std::tie(a, b, s_true, e_true) =
+            GENERATE(Catch::Generators::table<double, double, double, double>({
+                // clang-format off
+                // NOLINTBEGIN
+                // cspell: disable
+                std::make_tuple(0x1.0eda2a085a8b0p+16, 0x1.35e2911f3e380p-10, 0x1.47dd0adfd0b7ap+6, -0x1.0b8b34c3cc000p-49),
+                std::make_tuple(-0x1.1e20cf1e86a2cp-15, 0x1.9302680dbea10p+9, -0x1.c270569b5d0e8p-6, 0x1.b828673249500p-60),
+                std::make_tuple(0x1.6ebd2ea984d78p+8, -0x1.83fea770287bcp-21, -0x1.15ea668e531bbp-12, -0x1.6c2fbf7465840p-66),
+                // cspell: enable
+                // NOLINTEND
+                // clang-format on
+            }));
+        const auto [s, e] = two_prod(a, b);
+        REQUIRE_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
         REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
     }
 }
