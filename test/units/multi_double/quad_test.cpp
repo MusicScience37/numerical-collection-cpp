@@ -22,6 +22,7 @@
 #include <cstddef>
 
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/generators/catch_generators.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
@@ -119,6 +120,38 @@ TEST_CASE("num_collect::multi_double::quad") {
             sum.low(), Catch::Matchers::WithinULP(sum_true.low(), ulp_limit));
     }
 
+    SECTION("add a quad number with operator+ (random)") {
+        quad a;
+        quad b;
+        quad sum_true;
+        std::tie(a, b,
+            sum_true) = GENERATE(Catch::Generators::table<quad, quad, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(0x1.52b527b6c46a6p-17, 0x1.fb1f8716820c8p-71),
+                quad(0x1.3735a527aa3a0p-8, 0x1.a73277b5f0aa0p-65),
+                quad(0x1.37deffbb859c3p-8, 0x1.81e3deba49564p-62)),
+            std::make_tuple(quad(0x1.15c15c22faf99p+7, 0x1.eaf4b47590204p-47),
+                quad(-0x1.ae523e28a9262p-24, 0x1.2b1017f83acb8p-79),
+                quad(0x1.15c15c1f9e552p+7, -0x1.295fde9944cfcp-47)),
+            std::make_tuple(
+                quad(-0x1.1246ca6607d7ep-47, -0x1.42dce60279808p-102),
+                quad(0x1.323833e7757d9p+30, 0x1.5b3f99313c7a0p-26),
+                quad(0x1.323833e7757d9p+30, 0x1.5b3f909f06270p-26)),
+            std::make_tuple(quad(-0x1.cdfd31e1eeaafp+14, 0x1.6fa0de42b0780p-43),
+                quad(-0x1.582805a6a9cfcp+5, 0x1.1c37331fcfdacp-49),
+                quad(-0x1.cea945e4c1ffdp+14, -0x1.c97dc89e1a090p-40)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+
+        const auto sum = a + b;
+        REQUIRE_THAT(
+            sum.high(), Catch::Matchers::WithinULP(sum_true.high(), 0));
+        REQUIRE_THAT(
+            sum.low(), Catch::Matchers::WithinULP(sum_true.low(), ulp_limit));
+    }
+
     SECTION("subtract a quad number with operator-= (1)") {
         constexpr auto a = quad(0x1.0000000000001p+0, 0x0.7000000000001p-52);
         constexpr auto b = quad(-0x1.0000000000007p+0, -0x0.8000000000002p-52);
@@ -161,6 +194,38 @@ TEST_CASE("num_collect::multi_double::quad") {
             dif.high(), Catch::Matchers::WithinULP(dif_true.high(), 0));
         REQUIRE_THAT(
             dif.low(), Catch::Matchers::WithinULP(dif_true.low(), ulp_limit));
+    }
+
+    SECTION("subtract a quad number with operator- (random)") {
+        quad a;
+        quad b;
+        quad sum_true;
+        std::tie(a, b,
+            sum_true) = GENERATE(Catch::Generators::table<quad, quad, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(0x1.52b527b6c46a6p-17, 0x1.fb1f8716820c8p-71),
+                quad(0x1.3735a527aa3a0p-8, 0x1.a73277b5f0aa0p-65),
+                quad(-0x1.368c4a93ced7dp-8, 0x1.181740cccd2bcp-62)),
+            std::make_tuple(quad(0x1.15c15c22faf99p+7, 0x1.eaf4b47590204p-47),
+                quad(-0x1.ae523e28a9262p-24, 0x1.2b1017f83acb8p-79),
+                quad(0x1.15c15c26579e1p+7, 0x1.fe928f08ca208p-48)),
+            std::make_tuple(
+                quad(-0x1.1246ca6607d7ep-47, -0x1.42dce60279808p-102),
+                quad(0x1.323833e7757d9p+30, 0x1.5b3f99313c7a0p-26),
+                quad(-0x1.323833e7757d9p+30, -0x1.5b3fa1c372cd0p-26)),
+            std::make_tuple(quad(-0x1.cdfd31e1eeaafp+14, 0x1.6fa0de42b0780p-43),
+                quad(-0x1.582805a6a9cfcp+5, 0x1.1c37331fcfdacp-49),
+                quad(-0x1.cd511ddf1b560p+14, -0x1.da99ffd139d90p-40)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+
+        const auto sum = a - b;
+        REQUIRE_THAT(
+            sum.high(), Catch::Matchers::WithinULP(sum_true.high(), 0));
+        REQUIRE_THAT(
+            sum.low(), Catch::Matchers::WithinULP(sum_true.low(), ulp_limit));
     }
 
     SECTION("multiply quad numbers with operator*= (1)") {
