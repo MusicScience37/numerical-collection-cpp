@@ -112,6 +112,29 @@ TEST_CASE("num_collect::multi_double::impl::two_sum") {
         REQUIRE_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
         REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
     }
+
+    SECTION("random problems") {
+        double a{};
+        double b{};
+        double s_true{};
+        double e_true{};
+        std::tie(a, b, s_true, e_true) =
+            GENERATE(Catch::Generators::table<double, double, double, double>({
+                // clang-format off
+                // NOLINTBEGIN
+                // cspell: disable
+                std::make_tuple(0x1.752ce6b30fa8ap-2, 0x1.63ca1efb198f9p-37, 0x1.752ce6b33c21ep-2, 0x1.efb198f900000p-57),
+                std::make_tuple(-0x1.361e3ab0234bap-26, 0x1.a65c4b218a9eep+11, 0x1.a65c4b2180edfp+11, -0x1.d5811a5d00000p-45),
+                std::make_tuple(0x1.fbfe071bdbba7p-8, -0x1.109e2f692e0f6p+9, -0x1.109d316a2a817p+9, -0x1.1164000000000p-46),
+                std::make_tuple(-0x1.f20991f2ea560p-17, 0x1.84cadb1bf3b14p-34, -0x1.f208cf8d7cc80p-17, -0x1.89d8000000000p-71),
+                // cspell: enable
+                // NOLINTEND
+                // clang-format on
+            }));
+        const auto [s, e] = two_sum(a, b);
+        REQUIRE_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
+        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+    }
 }
 
 TEST_CASE("num_collect::multi_double::impl::split") {

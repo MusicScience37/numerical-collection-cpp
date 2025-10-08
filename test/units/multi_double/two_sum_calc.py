@@ -1,12 +1,13 @@
-"""Calculate true values for tests of quick_two_sum function."""
+"""Calculate true values for tests of two_sum function."""
 
 import mpmath
 from quad_test_utils import split
 
 SAMPLES = [
-    (0.6538735159764687, 0.5270818662876512e-6),
-    (0.8265268781569042e5, -0.3078919110114601e-7),
-    (-0.15789370800852565e-3, 0.8102649309423045e-16),
+    (0.36442909686949376, 0.10112146788696608e-10),
+    (-0.1805124821888754e-7, 0.33788841712672646e4),
+    (0.7751347289611943e-2, -0.5452358218645957e3),
+    (-0.14842670656838974e-4, 0.8840115830045514e-10),
 ]
 
 mpmath.mp.prec = 52 * 2 + 1  # Quad precision
@@ -19,7 +20,6 @@ def calculate_one(a: float, b: float) -> None:
         a (float): The first input value.
         b (float): The second input value.
     """
-    assert abs(a) > abs(b)
     summed = mpmath.mpf(a) + mpmath.mpf(b)
     upper, lower = split(summed)
     print(
