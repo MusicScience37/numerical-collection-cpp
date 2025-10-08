@@ -20,6 +20,7 @@
 #include "num_collect/multi_double/impl/basic_operations.h"
 
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/generators/catch_generators.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
@@ -41,6 +42,28 @@ TEST_CASE("num_collect::multi_double::impl::quick_two_sum") {
         constexpr double b = 0x1.8p-52;
         constexpr double s_true = 0x1.0000000000002p+0;
         constexpr double e_true = -0x1.0p-53;
+        const auto [s, e] = quick_two_sum(a, b);
+        REQUIRE_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
+        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+    }
+
+    SECTION("random problems") {
+        double a{};
+        double b{};
+        double s_true{};
+        double e_true{};
+        std::tie(a, b, s_true, e_true) =
+            GENERATE(Catch::Generators::table<double, double, double, double>({
+                // clang-format off
+                // NOLINTBEGIN
+                // cspell: disable
+                std::make_tuple(0x1.4ec8826dadce9p-1, 0x1.1af9948136b00p-21, 0x1.4ec8941d4716ap-1, 0x1.b580000000000p-56),
+                std::make_tuple(0x1.42dcb014b0680p+16, -0x1.087a25b23ec08p-25, 0x1.42dcb014afe3cp+16, 0x1.7693704fe0000p-39),
+                std::make_tuple(-0x1.4b2089fd0eaf2p-13, 0x1.75ab32e4c3a6ep-54, -0x1.4b2089fd0df45p-13, 0x1.665c9874dc000p-67)
+                // cspell: enable
+                // NOLINTEND
+                // clang-format on
+            }));
         const auto [s, e] = quick_two_sum(a, b);
         REQUIRE_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
         REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
