@@ -144,6 +144,7 @@
     "Halton",
     "Hessenberg",
     "hicpp",
+    "Hida",
     "Holger",
     "Hollingsworth",
     "Hsin",
@@ -351,10 +352,13 @@
     "Wself",
     "xaxis",
     "xexp",
+    "Xiaoye",
     "Xiwyu",
+    "Yamanaka",
     "Yaroslav",
     "yaxis",
     "Ying",
+    "Yozo",
     "Zeugmann"
   ],
   // flagWords - list of words to be always considered incorrect
