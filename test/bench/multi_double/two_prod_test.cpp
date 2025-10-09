@@ -38,7 +38,7 @@ STAT_BENCH_CASE("multi_double_two_prod", "two_prod_no_fma") {
     };
 }
 
-#ifdef __AVX2__
+#ifdef NUM_COLLECT_MULTI_DOUBLE_HAS_AVX2_FMA
 // NOLINTNEXTLINE
 STAT_BENCH_CASE("multi_double_two_prod", "two_prod_fma") {
     using num_collect::multi_double::impl::two_prod_fma;

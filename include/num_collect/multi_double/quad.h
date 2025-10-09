@@ -27,28 +27,42 @@
 namespace num_collect::multi_double {
 
 /*!
- * \brief class of quadruple precision floating-point numbers
+ * \brief Class of quadruple-precision floating-point numbers
+ * using two double-precision floating-point numbers
+ * \cite Yamanaka2012, \cite Hida2000, \cite Yamanaka2012d.
  */
 class quad {
 public:
     /*!
-     * \brief construct zero
+     * \brief Constructor.
+     *
+     * This initializes the number to zero.
      */
     constexpr quad() noexcept = default;
 
     /*!
-     * \brief construct
+     * \brief Constructor.
      *
-     * \param[in] high higher digits
-     * \param[in] low lower digits
+     * \param[in] high Higher digits.
+     * \param[in] low Lower digits.
+     *
+     * This constructor assumes that two arguments satisfy
+     * \f$ |low| \leq 1/2 \mathrm{ulp}(high) \f$.
+     * If such condition is not satisfied,
+     * the results of any operations are not accurate.
+     * If you want to create number with two arbitrary numbers,
+     * use `quad(a) + quad(b)`.
      */
     constexpr quad(double high, double low) noexcept : high_(high), low_(low) {}
 
     /*!
-     * \brief convert implicitly
+     * \brief Constructor.
      *
-     * \tparam Scalar type of scalar value
-     * \param[in] value value
+     * \tparam Scalar Type of scalar value.
+     * \param[in] value Value.
+     *
+     * This constructor implicitly converts integers and floating-point
+     * numbers to quad numbers.
      */
     template <typename Scalar,
         std::enable_if_t<(std::is_integral_v<Scalar> ||
@@ -59,31 +73,31 @@ public:
         : high_(static_cast<double>(value)) {}
 
     /*!
-     * \brief get higher digits
+     * \brief Get higher digits.
      *
-     * \return higher digits
+     * \return Higher digits.
      */
     [[nodiscard]] auto high() const noexcept -> double { return high_; }
 
     /*!
-     * \brief get lower digits
+     * \brief Get lower digits.
      *
-     * \return lower digits
+     * \return Lower digits.
      */
     [[nodiscard]] auto low() const noexcept -> double { return low_; }
 
     /*!
-     * \brief negate this number
+     * \brief Negate this number.
      *
-     * \return negated number
+     * \return Negated number.
      */
     auto operator-() const noexcept -> quad { return quad(-high_, -low_); }
 
     /*!
-     * \brief add another number
+     * \brief Add a number.
      *
-     * \param[in] right another number
-     * \return this
+     * \param[in] right Right-hand-side number.
+     * \return This number after calculation.
      */
     auto operator+=(const quad& right) noexcept -> quad& {
         auto [x_h, x_l] = impl::two_sum(high_, right.high_);
@@ -94,20 +108,20 @@ public:
     }
 
     /*!
-     * \brief subtract another number
+     * \brief Subtract a number.
      *
-     * \param[in] right another number
-     * \return this
+     * \param[in] right Right-hand-side number.
+     * \return This number after calculation.
      */
     auto operator-=(const quad& right) noexcept -> quad& {
         return operator+=(-right);
     }
 
     /*!
-     * \brief multiply with another number
+     * \brief Multiply with another number.
      *
-     * \param[in] right another number
-     * \return this
+     * \param[in] right Right-hand-side number.
+     * \return This number after calculation.
      */
     auto operator*=(const quad& right) noexcept -> quad& {
         auto [x_h, x_l] = impl::two_prod(high_, right.high_);
@@ -120,10 +134,13 @@ public:
     }
 
     /*!
-     * \brief divide by another number
+     * \brief Divide by another number.
      *
-     * \param[in] right another number
-     * \return this
+     * \param[in] right Right-hand-side number.
+     * \return This number after calculation.
+     *
+     * This function does not check whether the right-hand-side number is zero.
+     * If it is zero, the result can be infinity or NaN.
      */
     auto operator/=(const quad& right) noexcept -> quad& {
         const double inv_right_h = 1.0 / right.high_;
@@ -137,52 +154,55 @@ public:
     }
 
 private:
-    //! higher digits
+    //! Higher digits.
     double high_{0.0};
 
-    //! lower digits
+    //! Lower digits.
     double low_{0.0};
 };
 
 /*!
- * \brief add two number
+ * \brief Add two numbers.
  *
- * \param[in] left left-hand-side number
- * \param[in] right right-hand-side number
- * \return result
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
  */
 inline auto operator+(const quad& left, const quad& right) -> quad {
     return quad(left) += right;
 }
 
 /*!
- * \brief subtract a number from a number
+ * \brief Subtract a number from a number.
  *
- * \param[in] left left-hand-side number
- * \param[in] right right-hand-side number
- * \return result
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
  */
 inline auto operator-(const quad& left, const quad& right) -> quad {
     return quad(left) -= right;
 }
 
 /*!
- * \brief multiply a number by a number
+ * \brief Multiply a number by a number.
  *
- * \param[in] left left-hand-side number
- * \param[in] right right-hand-side number
- * \return result
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
  */
 inline auto operator*(const quad& left, const quad& right) -> quad {
     return quad(left) *= right;
 }
 
 /*!
- * \brief divide a number by a number
+ * \brief Divide a number by a number.
  *
- * \param[in] left left-hand-side number
- * \param[in] right right-hand-side number
- * \return result
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
+ *
+ * This function does not check whether the right-hand-side number is zero.
+ * If it is zero, the result can be infinity or NaN.
  */
 inline auto operator/(const quad& left, const quad& right) -> quad {
     return quad(left) /= right;

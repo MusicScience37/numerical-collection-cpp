@@ -22,7 +22,11 @@
 
 #include <tuple>
 
-#ifdef __AVX2__
+#if defined(__AVX2__) && defined(__FMA__)
+#define NUM_COLLECT_MULTI_DOUBLE_HAS_AVX2_FMA
+#endif
+
+#ifdef NUM_COLLECT_MULTI_DOUBLE_HAS_AVX2_FMA
 #include <emmintrin.h>
 #include <immintrin.h>
 #endif
@@ -34,12 +38,13 @@
 namespace num_collect::multi_double::impl {
 
 /*!
- * \brief calculate sum of a and b, and error of the sum
- *        on the condition that absolute value of a is larger than one of b
+ * \brief Calculate sum of a and b, and error of the sum
+ * on the condition that absolute value of a is larger than one of b
+ * \cite Yamanaka2012, \cite Hida2000.
  *
- * \param[in] a a number
- * \param[in] b a number
- * \return sum of a and b, and error of sum
+ * \param[in] a A number.
+ * \param[in] b A number.
+ * \return Sum of a and b, and error of the sum.
  */
 inline auto quick_two_sum(double a, double b) -> std::tuple<double, double> {
     const double s = a + b;
@@ -48,11 +53,13 @@ inline auto quick_two_sum(double a, double b) -> std::tuple<double, double> {
 }
 
 /*!
- * \brief calculate sum of a and b, and error of the sum
+ * \brief Calculate sum of a and b, and error of the sum.
+ * without the assumption on the absolute values of a and b
+ * \cite Yamanaka2012, \cite Hida2000.
  *
- * \param[in] a a number
- * \param[in] b a number
- * \return sum of a and b, and error of sum
+ * \param[in] a A number.
+ * \param[in] b A number.
+ * \return Sum of a and b, and error of the sum.
  */
 inline auto two_sum(double a, double b) -> std::tuple<double, double> {
     const double s = a + b;
@@ -62,10 +69,11 @@ inline auto two_sum(double a, double b) -> std::tuple<double, double> {
 }
 
 /*!
- * \brief split a number to higher bits and lower bits
+ * \brief Split a number to higher bits and lower bits
+ * \cite Yamanaka2012, \cite Hida2000.
  *
- * \param[in] a a number
- * \return higher bits and lower bits
+ * \param[in] a A number.
+ * \return Higher bits and lower bits.
  */
 inline auto split(double a) -> std::tuple<double, double> {
     constexpr double coeff = 0x1.0p+27 + 1.0;
@@ -76,12 +84,13 @@ inline auto split(double a) -> std::tuple<double, double> {
 }
 
 /*!
- * \brief calculate product of a and b, and error of the product without FMA
+ * \brief Calculate product of a and b, and error of the product without FMA
  * instructions
+ * \cite Yamanaka2012, \cite Hida2000.
  *
- * \param[in] a a number
- * \param[in] b a number
- * \return product of a and b, and error of product
+ * \param[in] a A number.
+ * \param[in] b A number.
+ * \return Product of a and b, and error of the product.
  */
 inline auto two_prod_no_fma(double a, double b) -> std::tuple<double, double> {
     const double p = a * b;
@@ -91,15 +100,16 @@ inline auto two_prod_no_fma(double a, double b) -> std::tuple<double, double> {
     return {p, e};
 }
 
-#ifdef __AVX2__
+#ifdef NUM_COLLECT_MULTI_DOUBLE_HAS_AVX2_FMA
 
 /*!
- * \brief calculate product of a and b, and error of the product with FMA
+ * \brief Calculate product of a and b, and error of the product with FMA
  * instructions
+ * \cite Hida2000.
  *
- * \param[in] a a number
- * \param[in] b a number
- * \return product of a and b, and error of product
+ * \param[in] a A number.
+ * \param[in] b A number.
+ * \return Product of a and b, and error of the product.
  */
 inline auto two_prod_fma(double a, double b) -> std::tuple<double, double> {
     const double p = a * b;
@@ -115,14 +125,18 @@ inline auto two_prod_fma(double a, double b) -> std::tuple<double, double> {
 #endif
 
 /*!
- * \brief calculate product of a and b, and error of the product
+ * \brief Calculate product of a and b, and error of the product
+ * \cite Yamanaka2012, \cite Hida2000.
  *
- * \param[in] a a number
- * \param[in] b a number
- * \return product of a and b, and error of product
+ * \param[in] a A number.
+ * \param[in] b A number.
+ * \return Product of a and b, and error of the product.
+ *
+ * This function selects the faster implementation depending on
+ * the availability of FMA instructions.
  */
 inline auto two_prod(double a, double b) -> std::tuple<double, double> {
-#ifdef __AVX2__
+#ifdef NUM_COLLECT_MULTI_DOUBLE_HAS_AVX2_FMA
     return two_prod_fma(a, b);
 #else
     return two_prod_no_fma(a, b);
