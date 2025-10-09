@@ -22,6 +22,7 @@
 #include <cstddef>
 
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/generators/catch_generators.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
@@ -119,6 +120,38 @@ TEST_CASE("num_collect::multi_double::quad") {
             sum.low(), Catch::Matchers::WithinULP(sum_true.low(), ulp_limit));
     }
 
+    SECTION("add a quad number with operator+ (random)") {
+        quad a;
+        quad b;
+        quad sum_true;
+        std::tie(a, b,
+            sum_true) = GENERATE(Catch::Generators::table<quad, quad, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(0x1.52b527b6c46a6p-17, 0x1.fb1f8716820c8p-71),
+                quad(0x1.3735a527aa3a0p-8, 0x1.a73277b5f0aa0p-65),
+                quad(0x1.37deffbb859c3p-8, 0x1.81e3deba49564p-62)),
+            std::make_tuple(quad(0x1.15c15c22faf99p+7, 0x1.eaf4b47590204p-47),
+                quad(-0x1.ae523e28a9262p-24, 0x1.2b1017f83acb8p-79),
+                quad(0x1.15c15c1f9e552p+7, -0x1.295fde9944cfcp-47)),
+            std::make_tuple(
+                quad(-0x1.1246ca6607d7ep-47, -0x1.42dce60279808p-102),
+                quad(0x1.323833e7757d9p+30, 0x1.5b3f99313c7a0p-26),
+                quad(0x1.323833e7757d9p+30, 0x1.5b3f909f06270p-26)),
+            std::make_tuple(quad(-0x1.cdfd31e1eeaafp+14, 0x1.6fa0de42b0780p-43),
+                quad(-0x1.582805a6a9cfcp+5, 0x1.1c37331fcfdacp-49),
+                quad(-0x1.cea945e4c1ffdp+14, -0x1.c97dc89e1a090p-40)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+
+        const auto sum = a + b;
+        REQUIRE_THAT(
+            sum.high(), Catch::Matchers::WithinULP(sum_true.high(), 0));
+        REQUIRE_THAT(
+            sum.low(), Catch::Matchers::WithinULP(sum_true.low(), ulp_limit));
+    }
+
     SECTION("subtract a quad number with operator-= (1)") {
         constexpr auto a = quad(0x1.0000000000001p+0, 0x0.7000000000001p-52);
         constexpr auto b = quad(-0x1.0000000000007p+0, -0x0.8000000000002p-52);
@@ -156,6 +189,38 @@ TEST_CASE("num_collect::multi_double::quad") {
         // 0xd.8a26e30153e2c6d263e6a9a7dp-4
         constexpr auto dif_true =
             quad(0xD.8A26E30153E30p-4, 0xC.6D263E6A9A7dp-56 - 0x10.0p-56);
+        const auto dif = a - b;
+        REQUIRE_THAT(
+            dif.high(), Catch::Matchers::WithinULP(dif_true.high(), 0));
+        REQUIRE_THAT(
+            dif.low(), Catch::Matchers::WithinULP(dif_true.low(), ulp_limit));
+    }
+
+    SECTION("subtract a quad number with operator- (random)") {
+        quad a;
+        quad b;
+        quad dif_true;
+        std::tie(a, b,
+            dif_true) = GENERATE(Catch::Generators::table<quad, quad, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(0x1.52b527b6c46a6p-17, 0x1.fb1f8716820c8p-71),
+                quad(0x1.3735a527aa3a0p-8, 0x1.a73277b5f0aa0p-65),
+                quad(-0x1.368c4a93ced7dp-8, 0x1.181740cccd2bcp-62)),
+            std::make_tuple(quad(0x1.15c15c22faf99p+7, 0x1.eaf4b47590204p-47),
+                quad(-0x1.ae523e28a9262p-24, 0x1.2b1017f83acb8p-79),
+                quad(0x1.15c15c26579e1p+7, 0x1.fe928f08ca208p-48)),
+            std::make_tuple(
+                quad(-0x1.1246ca6607d7ep-47, -0x1.42dce60279808p-102),
+                quad(0x1.323833e7757d9p+30, 0x1.5b3f99313c7a0p-26),
+                quad(-0x1.323833e7757d9p+30, -0x1.5b3fa1c372cd0p-26)),
+            std::make_tuple(quad(-0x1.cdfd31e1eeaafp+14, 0x1.6fa0de42b0780p-43),
+                quad(-0x1.582805a6a9cfcp+5, 0x1.1c37331fcfdacp-49),
+                quad(-0x1.cd511ddf1b560p+14, -0x1.da99ffd139d90p-40)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+
         const auto dif = a - b;
         REQUIRE_THAT(
             dif.high(), Catch::Matchers::WithinULP(dif_true.high(), 0));
@@ -218,6 +283,38 @@ TEST_CASE("num_collect::multi_double::quad") {
             prod.low(), Catch::Matchers::WithinULP(prod_true.low(), ulp_limit));
     }
 
+    SECTION("multiply quad numbers with operator* (random)") {
+        quad a;
+        quad b;
+        quad prod_true;
+        std::tie(a, b,
+            prod_true) = GENERATE(Catch::Generators::table<quad, quad, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(0x1.52b527b6c46a6p-17, 0x1.fb1f8716820c8p-71),
+                quad(0x1.3735a527aa3a0p-8, 0x1.a73277b5f0aa0p-65),
+                quad(0x1.9bc10d437ededp-25, 0x1.1d53201541e30p-80)),
+            std::make_tuple(quad(0x1.15c15c22faf99p+7, 0x1.eaf4b47590204p-47),
+                quad(-0x1.ae523e28a9262p-24, 0x1.2b1017f83acb8p-79),
+                quad(-0x1.d2e4042336d08p-17, 0x1.54a54ed852200p-75)),
+            std::make_tuple(
+                quad(-0x1.1246ca6607d7ep-47, -0x1.42dce60279808p-102),
+                quad(0x1.323833e7757d9p+30, 0x1.5b3f99313c7a0p-26),
+                quad(-0x1.4814d50651c5ap-17, 0x1.ca19b15520790p-72)),
+            std::make_tuple(quad(-0x1.cdfd31e1eeaafp+14, 0x1.6fa0de42b0780p-43),
+                quad(-0x1.582805a6a9cfcp+5, 0x1.1c37331fcfdacp-49),
+                quad(0x1.368a3a650d4eep+20, 0x1.a30f167d79cb8p-35)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+
+        const auto prod = a * b;
+        CHECK_THAT(
+            prod.high(), Catch::Matchers::WithinULP(prod_true.high(), 0));
+        CHECK_THAT(
+            prod.low(), Catch::Matchers::WithinULP(prod_true.low(), ulp_limit));
+    }
+
     SECTION(
         "divide a quad number with another quad number with operator/= (1)") {
         constexpr auto a = quad(0x1.0p+3, 0x0.3p-49);
@@ -260,6 +357,40 @@ TEST_CASE("num_collect::multi_double::quad") {
         REQUIRE_THAT(quotient.high(),
             Catch::Matchers::WithinULP(quotient_true.high(), 0));
         REQUIRE_THAT(quotient.low(),
+            Catch::Matchers::WithinULP(quotient_true.low(), ulp_limit));
+    }
+
+    SECTION(
+        "divide a quad number with another quad number with operator/ "
+        "(random)") {
+        quad a;
+        quad b;
+        quad quotient_true;
+        std::tie(a, b, quotient_true) = GENERATE(Catch::Generators::table<quad,
+            quad, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(0x1.52b527b6c46a6p-17, 0x1.fb1f8716820c8p-71),
+                quad(0x1.3735a527aa3a0p-8, 0x1.a73277b5f0aa0p-65),
+                quad(0x1.169eadc77cd88p-9, -0x1.3d48104d8bd30p-65)),
+            std::make_tuple(quad(0x1.15c15c22faf99p+7, 0x1.eaf4b47590204p-47),
+                quad(-0x1.ae523e28a9262p-24, 0x1.2b1017f83acb8p-79),
+                quad(-0x1.4a79c774bdd5fp+30, 0x1.ddab28f63a8a0p-27)),
+            std::make_tuple(
+                quad(-0x1.1246ca6607d7ep-47, -0x1.42dce60279808p-102),
+                quad(0x1.323833e7757d9p+30, 0x1.5b3f99313c7a0p-26),
+                quad(-0x1.ca97579a08ca7p-78, -0x1.a27d2f1891becp-132)),
+            std::make_tuple(quad(-0x1.cdfd31e1eeaafp+14, 0x1.6fa0de42b0780p-43),
+                quad(-0x1.582805a6a9cfcp+5, 0x1.1c37331fcfdacp-49),
+                quad(0x1.57a64da09df73p+9, -0x1.092e7b3636600p-45)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+
+        const auto quotient = a / b;
+        CHECK_THAT(quotient.high(),
+            Catch::Matchers::WithinULP(quotient_true.high(), 0));
+        CHECK_THAT(quotient.low(),
             Catch::Matchers::WithinULP(quotient_true.low(), ulp_limit));
     }
 }
