@@ -111,8 +111,10 @@ public:
      */
     auto operator*=(const quad& right) noexcept -> quad& {
         auto [x_h, x_l] = impl::two_prod(high_, right.high_);
-        x_l += high_ * right.low_;
-        x_l += low_ * right.high_;
+        // Calculate the sum of the cross terms first,
+        // then add the sum to the lower digits.
+        // This solved accuracy issues in some cases.
+        x_l += high_ * right.low_ + low_ * right.high_;
         std::tie(high_, low_) = impl::quick_two_sum(x_h, x_l);
         return *this;
     }
