@@ -20,8 +20,8 @@
 #pragma once
 
 #include <tuple>
-#include <type_traits>
 
+#include "num_collect/base/concepts/implicitly_convertible_to.h"
 #include "num_collect/multi_double/impl/basic_operations.h"
 
 namespace num_collect::multi_double {
@@ -64,11 +64,7 @@ public:
      * This constructor implicitly converts integers and floating-point
      * numbers to quad numbers.
      */
-    template <typename Scalar,
-        std::enable_if_t<(std::is_integral_v<Scalar> ||
-                             std::is_floating_point_v<Scalar>) &&
-            (!std::is_same_v<Scalar,
-                quad>)>* = nullptr>
+    template <concepts::implicitly_convertible_to<double> Scalar>
     constexpr quad(Scalar value) noexcept  // NOLINT
         : high_(static_cast<double>(value)) {}
 
@@ -108,12 +104,39 @@ public:
     }
 
     /*!
+     * \brief Add a number.
+     *
+     * \tparam Scalar Type of the right-hand-side number.
+     * \param[in] right Right-hand-side number.
+     * \return This number after calculation.
+     */
+    template <concepts::implicitly_convertible_to<double> Scalar>
+    auto operator+=(Scalar right) noexcept -> quad& {
+        auto [x_h, x_l] = impl::two_sum(high_, static_cast<double>(right));
+        x_l += low_;
+        std::tie(high_, low_) = impl::quick_two_sum(x_h, x_l);
+        return *this;
+    }
+
+    /*!
      * \brief Subtract a number.
      *
      * \param[in] right Right-hand-side number.
      * \return This number after calculation.
      */
     auto operator-=(const quad& right) noexcept -> quad& {
+        return operator+=(-right);
+    }
+
+    /*!
+     * \brief Subtract a number.
+     *
+     * \tparam Scalar Type of the right-hand-side number.
+     * \param[in] right Right-hand-side number.
+     * \return This number after calculation.
+     */
+    template <concepts::implicitly_convertible_to<double> Scalar>
+    auto operator-=(Scalar right) noexcept -> quad& {
         return operator+=(-right);
     }
 
@@ -129,6 +152,22 @@ public:
         // then add the sum to the lower digits.
         // This solved accuracy issues in some cases.
         x_l += high_ * right.low_ + low_ * right.high_;
+        std::tie(high_, low_) = impl::quick_two_sum(x_h, x_l);
+        return *this;
+    }
+
+    /*!
+     * \brief Multiply with another number.
+     *
+     * \tparam Scalar Type of the right-hand-side number.
+     * \param[in] right Right-hand-side number.
+     * \return This number after calculation.
+     */
+    template <concepts::implicitly_convertible_to<double> Scalar>
+    auto operator*=(Scalar right) noexcept -> quad& {
+        const double right_as_double = static_cast<double>(right);
+        auto [x_h, x_l] = impl::two_prod(high_, right_as_double);
+        x_l += low_ * right_as_double;
         std::tie(high_, low_) = impl::quick_two_sum(x_h, x_l);
         return *this;
     }
@@ -153,6 +192,28 @@ public:
         return *this;
     }
 
+    /*!
+     * \brief Divide by another number.
+     *
+     * \tparam Scalar Type of the right-hand-side number.
+     * \param[in] right Right-hand-side number.
+     * \return This number after calculation.
+     *
+     * This function does not check whether the right-hand-side number is zero.
+     * If it is zero, the result can be infinity or NaN.
+     */
+    template <concepts::implicitly_convertible_to<double> Scalar>
+    auto operator/=(Scalar right) noexcept -> quad& {
+        const double right_as_double = static_cast<double>(right);
+        const double inv_right_h = 1.0 / right_as_double;
+        const double x_h = high_ * inv_right_h;
+        const auto [r_1, r_2] = impl::two_prod(x_h, right_as_double);
+        double x_l = ((high_ - r_1) - r_2) * inv_right_h;
+        x_l += x_h * (low_ / high_);
+        std::tie(high_, low_) = impl::quick_two_sum(x_h, x_l);
+        return *this;
+    }
+
 private:
     //! Higher digits.
     double high_{0.0};
@@ -173,6 +234,32 @@ inline auto operator+(const quad& left, const quad& right) -> quad {
 }
 
 /*!
+ * \brief Add two numbers.
+ *
+ * \tparam Scalar Type of the right-hand-side number.
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
+ */
+template <concepts::implicitly_convertible_to<double> Scalar>
+inline auto operator+(const quad& left, Scalar right) -> quad {
+    return quad(left) += right;
+}
+
+/*!
+ * \brief Add two numbers.
+ *
+ * \tparam Scalar Type of the left-hand-side number.
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
+ */
+template <concepts::implicitly_convertible_to<double> Scalar>
+inline auto operator+(Scalar left, const quad& right) -> quad {
+    return quad(right) += left;
+}
+
+/*!
  * \brief Subtract a number from a number.
  *
  * \param[in] left Left-hand-side number.
@@ -181,6 +268,32 @@ inline auto operator+(const quad& left, const quad& right) -> quad {
  */
 inline auto operator-(const quad& left, const quad& right) -> quad {
     return quad(left) -= right;
+}
+
+/*!
+ * \brief Subtract a number from a number.
+ *
+ * \tparam Scalar Type of the right-hand-side number.
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
+ */
+template <concepts::implicitly_convertible_to<double> Scalar>
+inline auto operator-(const quad& left, Scalar right) -> quad {
+    return quad(left) -= right;
+}
+
+/*!
+ * \brief Subtract a number from a number.
+ *
+ * \tparam Scalar Type of the left-hand-side number.
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
+ */
+template <concepts::implicitly_convertible_to<double> Scalar>
+inline auto operator-(Scalar left, const quad& right) -> quad {
+    return -quad(right) += left;
 }
 
 /*!
@@ -195,6 +308,32 @@ inline auto operator*(const quad& left, const quad& right) -> quad {
 }
 
 /*!
+ * \brief Multiply a number by a number.
+ *
+ * \tparam Scalar Type of the right-hand-side number.
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
+ */
+template <concepts::implicitly_convertible_to<double> Scalar>
+inline auto operator*(const quad& left, Scalar right) -> quad {
+    return quad(left) *= right;
+}
+
+/*!
+ * \brief Multiply a number by a number.
+ *
+ * \tparam Scalar Type of the left-hand-side number.
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
+ */
+template <concepts::implicitly_convertible_to<double> Scalar>
+inline auto operator*(Scalar left, const quad& right) -> quad {
+    return quad(right) *= left;
+}
+
+/*!
  * \brief Divide a number by a number.
  *
  * \param[in] left Left-hand-side number.
@@ -205,6 +344,38 @@ inline auto operator*(const quad& left, const quad& right) -> quad {
  * If it is zero, the result can be infinity or NaN.
  */
 inline auto operator/(const quad& left, const quad& right) -> quad {
+    return quad(left) /= right;
+}
+
+/*!
+ * \brief Divide a number by a number.
+ *
+ * \tparam Scalar Type of the right-hand-side number.
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
+ *
+ * This function does not check whether the right-hand-side number is zero.
+ * If it is zero, the result can be infinity or NaN.
+ */
+template <concepts::implicitly_convertible_to<double> Scalar>
+inline auto operator/(const quad& left, Scalar right) -> quad {
+    return quad(left) /= right;
+}
+
+/*!
+ * \brief Divide a number by a number.
+ *
+ * \tparam Scalar Type of the left-hand-side number.
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
+ *
+ * This function does not check whether the right-hand-side number is zero.
+ * If it is zero, the result can be infinity or NaN.
+ */
+template <concepts::implicitly_convertible_to<double> Scalar>
+inline auto operator/(Scalar left, const quad& right) -> quad {
     return quad(left) /= right;
 }
 
