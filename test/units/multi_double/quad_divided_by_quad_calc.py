@@ -1,8 +1,8 @@
 """Calculate true values for tests of quad / quad operation."""
 
 import mpmath
+from num_collect_test_utils.multi_double.split_quad import split_quad
 from quad_plus_quad_calc import SAMPLES
-from quad_test_utils import split
 
 mpmath.mp.prec = 52 * 2 + 1  # Quad precision
 
@@ -17,7 +17,7 @@ def calculate_one(a: tuple[float, float], b: tuple[float, float]) -> None:
     a_mpf = mpmath.mpf(a[0]) + mpmath.mpf(a[1])
     b_mpf = mpmath.mpf(b[0]) + mpmath.mpf(b[1])
     summed = a_mpf / b_mpf
-    upper, lower = split(summed)
+    upper, lower = split_quad(summed)
     print(
         f"a=({a[0].hex()}, {a[1].hex()})\n"
         f"b=({b[0].hex()}, {b[1].hex()})\n"

@@ -1,12 +1,12 @@
-"""Utility functions for scripts in this directory."""
+"""Utility functions for tests of quad class."""
 
 import math
 
 import mpmath
 
 
-def split(target) -> tuple[float, float]:
-    """Split a mpmath.mpf number into two float numbers.
+def split_quad(target) -> tuple[float, float]:
+    """Split a mpmath.mpf number representing a quad number into two float numbers.
 
     Args:
         target: Target mpmath.mpf number.

@@ -1,7 +1,7 @@
 """Calculate true values for tests of two_sum function."""
 
 import mpmath
-from quad_test_utils import split
+from num_collect_test_utils.multi_double.split_quad import split_quad
 
 SAMPLES = [
     (0.36442909686949376, 0.10112146788696608e-10),
@@ -21,7 +21,7 @@ def calculate_one(a: float, b: float) -> None:
         b (float): The second input value.
     """
     summed = mpmath.mpf(a) + mpmath.mpf(b)
-    upper, lower = split(summed)
+    upper, lower = split_quad(summed)
     print(
         f"a={a.hex()}\n"
         f"b={b.hex()}\n"
