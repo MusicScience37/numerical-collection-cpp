@@ -157,6 +157,22 @@ public:
     }
 
     /*!
+     * \brief Multiply with another number.
+     *
+     * \tparam Scalar Type of the right-hand-side number.
+     * \param[in] right Right-hand-side number.
+     * \return This number after calculation.
+     */
+    template <concepts::implicitly_convertible_to<double> Scalar>
+    auto operator*=(Scalar right) noexcept -> quad& {
+        const double right_as_double = static_cast<double>(right);
+        auto [x_h, x_l] = impl::two_prod(high_, right_as_double);
+        x_l += low_ * right_as_double;
+        std::tie(high_, low_) = impl::quick_two_sum(x_h, x_l);
+        return *this;
+    }
+
+    /*!
      * \brief Divide by another number.
      *
      * \param[in] right Right-hand-side number.
@@ -172,6 +188,28 @@ public:
         const auto [r_1, r_2] = impl::two_prod(x_h, right.high_);
         double x_l = ((high_ - r_1) - r_2) * inv_right_h;
         x_l += x_h * ((low_ / high_) - rate_right);
+        std::tie(high_, low_) = impl::quick_two_sum(x_h, x_l);
+        return *this;
+    }
+
+    /*!
+     * \brief Divide by another number.
+     *
+     * \tparam Scalar Type of the right-hand-side number.
+     * \param[in] right Right-hand-side number.
+     * \return This number after calculation.
+     *
+     * This function does not check whether the right-hand-side number is zero.
+     * If it is zero, the result can be infinity or NaN.
+     */
+    template <concepts::implicitly_convertible_to<double> Scalar>
+    auto operator/=(Scalar right) noexcept -> quad& {
+        const double right_as_double = static_cast<double>(right);
+        const double inv_right_h = 1.0 / right_as_double;
+        const double x_h = high_ * inv_right_h;
+        const auto [r_1, r_2] = impl::two_prod(x_h, right_as_double);
+        double x_l = ((high_ - r_1) - r_2) * inv_right_h;
+        x_l += x_h * (low_ / high_);
         std::tie(high_, low_) = impl::quick_two_sum(x_h, x_l);
         return *this;
     }
@@ -270,6 +308,32 @@ inline auto operator*(const quad& left, const quad& right) -> quad {
 }
 
 /*!
+ * \brief Multiply a number by a number.
+ *
+ * \tparam Scalar Type of the right-hand-side number.
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
+ */
+template <concepts::implicitly_convertible_to<double> Scalar>
+inline auto operator*(const quad& left, Scalar right) -> quad {
+    return quad(left) *= right;
+}
+
+/*!
+ * \brief Multiply a number by a number.
+ *
+ * \tparam Scalar Type of the left-hand-side number.
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
+ */
+template <concepts::implicitly_convertible_to<double> Scalar>
+inline auto operator*(Scalar left, const quad& right) -> quad {
+    return quad(right) *= left;
+}
+
+/*!
  * \brief Divide a number by a number.
  *
  * \param[in] left Left-hand-side number.
@@ -280,6 +344,38 @@ inline auto operator*(const quad& left, const quad& right) -> quad {
  * If it is zero, the result can be infinity or NaN.
  */
 inline auto operator/(const quad& left, const quad& right) -> quad {
+    return quad(left) /= right;
+}
+
+/*!
+ * \brief Divide a number by a number.
+ *
+ * \tparam Scalar Type of the right-hand-side number.
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
+ *
+ * This function does not check whether the right-hand-side number is zero.
+ * If it is zero, the result can be infinity or NaN.
+ */
+template <concepts::implicitly_convertible_to<double> Scalar>
+inline auto operator/(const quad& left, Scalar right) -> quad {
+    return quad(left) /= right;
+}
+
+/*!
+ * \brief Divide a number by a number.
+ *
+ * \tparam Scalar Type of the left-hand-side number.
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
+ *
+ * This function does not check whether the right-hand-side number is zero.
+ * If it is zero, the result can be infinity or NaN.
+ */
+template <concepts::implicitly_convertible_to<double> Scalar>
+inline auto operator/(Scalar left, const quad& right) -> quad {
     return quad(left) /= right;
 }
 
