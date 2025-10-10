@@ -1,4 +1,4 @@
 set(SOURCE_FILES
-    basic_operations_test.cpp
+    impl/basic_operations_test.cpp
     quad_test.cpp
 )
