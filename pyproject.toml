@@ -10,7 +10,7 @@ authors = [
 dependencies = ["setuptools>=80.9.0"]
 
 [tool.poetry]
-package-mode = false
+packages = [{ include = "num_collect_test_utils", from = "scripts" }]
 
 [tool.poetry.group.test.dependencies]
 kaleido = "^1.1.0"
