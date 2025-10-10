@@ -152,6 +152,47 @@ TEST_CASE("num_collect::multi_double::quad") {
             sum.low(), Catch::Matchers::WithinULP(sum_true.low(), ulp_limit));
     }
 
+    SECTION("add a double number with operator+ (random)") {
+        quad a;
+        double b{};
+        quad sum_true;
+        std::tie(a, b,
+            sum_true) = GENERATE(Catch::Generators::table<quad, double, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(0x1.58645c21bbf0ep-16, -0x1.647a8b7ec08c8p-71),
+                0x1.c17cdbf807483p+16,
+                quad(0x1.c17cdbf95fac9p+16, -0x1.ef220791647a8p-39)),
+            std::make_tuple(quad(-0x1.7986766143f6ap+0, 0x1.19615589dc270p-56),
+                0x1.4e79b4fedfba5p-31,
+                quad(-0x1.7986765ea7033p+0, -0x1.3a37cd7588f64p-54)),
+            std::make_tuple(quad(0x1.fd5d247a03357p-30, -0x1.09e10a59a3ca8p-85),
+                -0x1.5a195eb27320ap+24,
+                quad(-0x1.5a195eb27320ap+24, 0x1.fd5d247a03358p-30)),
+            std::make_tuple(quad(0x1.57b12ae1c238dp-25, -0x1.d8caf920c9978p-80),
+                0x1.1a52be8fe7d1ap+24,
+                quad(0x1.1a52be8fe7d25p+24, -0x1.09daa3c7b8e68p-30)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+
+        SECTION("quad + double") {
+            const quad sum = a + b;
+            REQUIRE_THAT(
+                sum.high(), Catch::Matchers::WithinULP(sum_true.high(), 0));
+            REQUIRE_THAT(sum.low(),
+                Catch::Matchers::WithinULP(sum_true.low(), ulp_limit));
+        }
+
+        SECTION("double + quad") {
+            const quad sum = b + a;
+            REQUIRE_THAT(
+                sum.high(), Catch::Matchers::WithinULP(sum_true.high(), 0));
+            REQUIRE_THAT(sum.low(),
+                Catch::Matchers::WithinULP(sum_true.low(), ulp_limit));
+        }
+    }
+
     SECTION("subtract a quad number with operator-= (1)") {
         constexpr auto a = quad(0x1.0000000000001p+0, 0x0.7000000000001p-52);
         constexpr auto b = quad(-0x1.0000000000007p+0, -0x0.8000000000002p-52);
@@ -226,6 +267,47 @@ TEST_CASE("num_collect::multi_double::quad") {
             dif.high(), Catch::Matchers::WithinULP(dif_true.high(), 0));
         REQUIRE_THAT(
             dif.low(), Catch::Matchers::WithinULP(dif_true.low(), ulp_limit));
+    }
+
+    SECTION("subtract a double number with operator- (random)") {
+        quad a;
+        double b{};
+        quad dif_true;
+        std::tie(a, b,
+            dif_true) = GENERATE(Catch::Generators::table<quad, double, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(0x1.58645c21bbf0ep-16, -0x1.647a8b7ec08c8p-71),
+                0x1.c17cdbf807483p+16,
+                quad(-0x1.c17cdbf6aee3dp+16, -0x1.ef220791647a8p-39)),
+            std::make_tuple(quad(-0x1.7986766143f6ap+0, 0x1.19615589dc270p-56),
+                0x1.4e79b4fedfba5p-31,
+                quad(-0x1.79867663e0ea1p+0, 0x1.c6e8783a7709cp-54)),
+            std::make_tuple(quad(0x1.fd5d247a03357p-30, -0x1.09e10a59a3ca8p-85),
+                -0x1.5a195eb27320ap+24,
+                quad(0x1.5a195eb27320ap+24, 0x1.fd5d247a03358p-30)),
+            std::make_tuple(quad(0x1.57b12ae1c238dp-25, -0x1.d8caf920c9978p-80),
+                0x1.1a52be8fe7d1ap+24,
+                quad(-0x1.1a52be8fe7d0fp+24, -0x1.09daa3c7b8e68p-30)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+
+        SECTION("quad - double") {
+            const quad dif = a - b;
+            REQUIRE_THAT(
+                dif.high(), Catch::Matchers::WithinULP(dif_true.high(), 0));
+            REQUIRE_THAT(dif.low(),
+                Catch::Matchers::WithinULP(dif_true.low(), ulp_limit));
+        }
+
+        SECTION("double - quad") {
+            const quad dif = -(b - a);
+            REQUIRE_THAT(
+                dif.high(), Catch::Matchers::WithinULP(dif_true.high(), 0));
+            REQUIRE_THAT(dif.low(),
+                Catch::Matchers::WithinULP(dif_true.low(), ulp_limit));
+        }
     }
 
     SECTION("multiply quad numbers with operator*= (1)") {
