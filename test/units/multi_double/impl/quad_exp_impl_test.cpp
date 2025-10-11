@@ -56,8 +56,7 @@ TEST_CASE("num_collect::multi_double::impl::expm1_maclaurin_series") {
 
         const quad actual = expm1_maclaurin_series(input);
         constexpr quad relative_tolerance(0x1.0p-102);
-        CHECK_THAT(
-            actual, make_quad_within_rel_matcher(expected, relative_tolerance));
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
     }
 
     SECTION("calculate for zero") {
@@ -100,8 +99,7 @@ TEST_CASE("num_collect::multi_double::impl::exp_maclaurin_series") {
 
         const quad actual = exp_maclaurin_series(input);
         constexpr quad relative_tolerance(0x1.0p-102);
-        CHECK_THAT(
-            actual, make_quad_within_rel_matcher(expected, relative_tolerance));
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
     }
 
     SECTION("calculate for zero") {

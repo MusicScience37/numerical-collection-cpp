@@ -83,8 +83,7 @@ private:
  * \param[in] tolerance Tolerance of relative error.
  * \return Matcher.
  */
-inline auto make_quad_within_rel_matcher(
-    num_collect::multi_double::quad expected,
+inline auto quad_within_rel(num_collect::multi_double::quad expected,
     num_collect::multi_double::quad tolerance) {
     return quad_within_rel_matcher{expected, tolerance};
 }

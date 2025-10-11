@@ -22,6 +22,7 @@
 #include <cmath>
 
 #include "num_collect/multi_double/impl/basic_operations.h"
+#include "num_collect/multi_double/impl/quad_exp_impl.h"
 #include "num_collect/multi_double/quad.h"
 
 namespace num_collect::multi_double {
@@ -60,6 +61,24 @@ inline auto sqrt(const quad& value) noexcept -> quad {
     const auto [result_high, result_low] =
         impl::quick_two_sum(approx, correction);
     return quad(result_high, result_low);
+}
+
+/*!
+ * \brief Calculate exponential \f$ e^x \f$.
+ *
+ * \param[in] x Input value.
+ * \return Result.
+ */
+inline auto exp(const quad& x) noexcept -> quad { return impl::exp_impl(x); }
+
+/*!
+ * \brief Calculate exponential minus one \f$ e^x - 1 \f$.
+ *
+ * \param[in] x Input value.
+ * \return Result.
+ */
+inline auto expm1(const quad& x) noexcept -> quad {
+    return impl::expm1_impl(x);
 }
 
 }  // namespace num_collect::multi_double
