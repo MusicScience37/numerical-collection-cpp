@@ -19,6 +19,9 @@
  */
 #pragma once
 
+#include <cmath>
+
+#include "num_collect/multi_double/impl/basic_operations.h"
 #include "num_collect/multi_double/quad.h"
 
 namespace num_collect::multi_double {
@@ -34,6 +37,29 @@ inline auto abs(const quad& value) noexcept -> quad {
         return -value;
     }
     return value;
+}
+
+/*!
+ * \brief Calculate the square root of a number.
+ *
+ * \param[in] value Input number.
+ * \return Square root of the input number.
+ *
+ * If the input number is negative, the result is unspecified.
+ */
+inline auto sqrt(const quad& value) noexcept -> quad {
+    if (value == quad(0.0)) {
+        return quad(0.0);
+    }
+    const double approx = std::sqrt(value.high());
+    const auto [approx_square_high, approx_square_low] =
+        impl::two_prod(approx, approx);
+    const auto remaining =
+        ((value.high() - approx_square_high) - approx_square_low) + value.low();
+    const double correction = 0.5 * remaining / approx;
+    const auto [result_high, result_low] =
+        impl::quick_two_sum(approx, correction);
+    return quad(result_high, result_low);
 }
 
 }  // namespace num_collect::multi_double

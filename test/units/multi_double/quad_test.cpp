@@ -26,6 +26,8 @@
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+#include "format_quad_for_test.h"  // IWYU pragma: keep
+
 TEST_CASE("num_collect::multi_double::quad") {
     using num_collect::multi_double::quad;
 
