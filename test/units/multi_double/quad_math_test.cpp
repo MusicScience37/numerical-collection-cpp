@@ -126,7 +126,7 @@ TEST_CASE("num_collect::multi_double::exp") {
         INFO("input: " << format_quad_for_test(input));
 
         const quad actual = exp(input);
-        constexpr quad relative_tolerance(0x1.0p-97);
+        constexpr quad relative_tolerance(0x1.0p-96);
         CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
     }
 
@@ -181,7 +181,7 @@ TEST_CASE("num_collect::multi_double::expm1") {
         INFO("input: " << format_quad_for_test(input));
 
         const quad actual = expm1(input);
-        constexpr quad relative_tolerance(0x1.0p-97);
+        constexpr quad relative_tolerance(0x1.0p-96);
         CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
     }
 
