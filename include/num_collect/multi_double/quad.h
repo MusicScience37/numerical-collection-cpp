@@ -98,8 +98,7 @@ public:
      */
     auto operator+=(const quad& right) noexcept -> quad& {
         auto [x_h, x_l] = impl::two_sum(high_, right.high_);
-        x_l += low_;
-        x_l += right.low_;
+        x_l += low_ + right.low_;
         std::tie(high_, low_) = impl::quick_two_sum(x_h, x_l);
         return *this;
     }
