@@ -631,4 +631,23 @@ TEST_CASE("num_collect::multi_double::quad") {
         CHECK(b == a);
         CHECK_FALSE(b != a);
     }
+
+    SECTION("compare a quad number with a double number") {
+        const auto a = quad(0x1.0000000000000p+0, 0x1.0p-53);
+        const auto b = 0x1.0000000000001p+0;
+
+        CHECK(a < b);
+        CHECK(a <= b);
+        CHECK_FALSE(a > b);
+        CHECK_FALSE(a >= b);
+        CHECK_FALSE(a == b);
+        CHECK(a != b);
+
+        CHECK_FALSE(b < a);
+        CHECK_FALSE(b <= a);
+        CHECK(b > a);
+        CHECK(b >= a);
+        CHECK_FALSE(b == a);
+        CHECK(b != a);
+    }
 }
