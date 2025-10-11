@@ -134,6 +134,25 @@ TEST_CASE("num_collect::multi_double::exp") {
 
         CHECK(actual == expected);
     }
+
+    SECTION("calculate for too large value") {
+        const auto input = quad(710.0);
+
+        const auto actual = exp(input);
+
+        INFO("actual: " << format_quad_for_test(actual));
+        CHECK(std::isinf(actual.high()));
+        CHECK(actual.high() > 0.0);
+    }
+
+    SECTION("calculate for too small value") {
+        const auto input = quad(-708.0);
+        const quad expected(0.0);
+
+        const auto actual = exp(input);
+
+        CHECK(actual == expected);
+    }
 }
 
 TEST_CASE("num_collect::multi_double::expm1") {
