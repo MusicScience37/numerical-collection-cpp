@@ -190,6 +190,7 @@
     "Lanczos",
     "Laren",
     "lcov",
+    "ldexp",
     "LDLT",
     "libc",
     "libc++",
