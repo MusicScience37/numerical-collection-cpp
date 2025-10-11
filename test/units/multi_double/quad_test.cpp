@@ -342,6 +342,18 @@ TEST_CASE("num_collect::multi_double::quad") {
             prod.low(), Catch::Matchers::WithinULP(prod_true.low(), ulp_limit));
     }
 
+    SECTION("multiply quad numbers with operator*= (4)") {
+        constexpr auto a = quad(0.0);
+        constexpr auto b = quad(0.0);
+        constexpr auto prod_true = quad(0.0);
+        auto prod = a;
+        prod *= b;
+        CHECK_THAT(
+            prod.high(), Catch::Matchers::WithinULP(prod_true.high(), 0));
+        CHECK_THAT(
+            prod.low(), Catch::Matchers::WithinULP(prod_true.low(), ulp_limit));
+    }
+
     SECTION("multiply quad numbers with operator*") {
         // 0x1.fb15fa86d92b228b6596fdb93fp+0
         constexpr auto a = quad(0x1.FB15FA86D92B2p+0, 0x0.28B6596FDB93Fp-52);
@@ -452,6 +464,19 @@ TEST_CASE("num_collect::multi_double::quad") {
         // 0x1.bef0545a14fda729d96fa6624b59p+0
         constexpr auto quotient_true =
             quad(0x1.BEF0545A14FDAp+0, 0x0.729D96FA6624Bp-52);
+        auto quotient = a;
+        quotient /= b;
+        CHECK_THAT(quotient.high(),
+            Catch::Matchers::WithinULP(quotient_true.high(), 0));
+        CHECK_THAT(quotient.low(),
+            Catch::Matchers::WithinULP(quotient_true.low(), ulp_limit));
+    }
+
+    SECTION(
+        "divide a quad number with another quad number with operator/= (3)") {
+        constexpr auto a = quad(0.0);
+        constexpr auto b = quad(1.0);
+        constexpr auto quotient_true = quad(0.0);
         auto quotient = a;
         quotient /= b;
         CHECK_THAT(quotient.high(),

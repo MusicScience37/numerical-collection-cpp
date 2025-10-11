@@ -68,6 +68,7 @@ TEST_CASE("num_collect::multi_double::sqrt") {
             // cspell: enable
             // NOLINTEND
         }));
+        INFO("input: " << format_quad_for_test(input));
 
         const quad actual = sqrt(input);
         constexpr quad relative_tolerance(0x1.0p-102);

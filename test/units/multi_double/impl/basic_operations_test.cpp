@@ -68,6 +68,16 @@ TEST_CASE("num_collect::multi_double::impl::quick_two_sum") {
         CHECK_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
         CHECK_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
     }
+
+    SECTION("calculate with zeros") {
+        constexpr double a = 0.0;
+        constexpr double b = 0.0;
+        constexpr double s_true = 0.0;
+        constexpr double e_true = 0.0;
+        const auto [s, e] = quick_two_sum(a, b);
+        CHECK(s == s_true);  // NOLINT
+        CHECK(e == e_true);  // NOLINT
+    }
 }
 
 TEST_CASE("num_collect::multi_double::impl::two_sum") {
@@ -134,6 +144,16 @@ TEST_CASE("num_collect::multi_double::impl::two_sum") {
         const auto [s, e] = two_sum(a, b);
         CHECK_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
         CHECK_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+    }
+
+    SECTION("calculate with zeros") {
+        constexpr double a = 0.0;
+        constexpr double b = 0.0;
+        constexpr double s_true = 0.0;
+        constexpr double e_true = 0.0;
+        const auto [s, e] = two_sum(a, b);
+        CHECK(s == s_true);  // NOLINT
+        CHECK(e == e_true);  // NOLINT
     }
 }
 
@@ -213,6 +233,16 @@ TEST_CASE("num_collect::multi_double::impl::two_prod_no_fma") {
         CHECK_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
         CHECK_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
     }
+
+    SECTION("calculate with zeros") {
+        constexpr double a = 0.0;
+        constexpr double b = 0.0;
+        constexpr double s_true = 0.0;
+        constexpr double e_true = 0.0;
+        const auto [s, e] = two_prod_no_fma(a, b);
+        CHECK(s == s_true);  // NOLINT
+        CHECK(e == e_true);  // NOLINT
+    }
 }
 
 #ifdef NUM_COLLECT_MULTI_DOUBLE_HAS_AVX2_FMA
@@ -271,6 +301,16 @@ TEST_CASE("num_collect::multi_double::impl::two_prod_fma") {
         CHECK_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
         CHECK_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
     }
+
+    SECTION("calculate with zeros") {
+        constexpr double a = 0.0;
+        constexpr double b = 0.0;
+        constexpr double s_true = 0.0;
+        constexpr double e_true = 0.0;
+        const auto [s, e] = two_prod_fma(a, b);
+        CHECK(s == s_true);  // NOLINT
+        CHECK(e == e_true);  // NOLINT
+    }
 }
 
 #endif
@@ -328,5 +368,15 @@ TEST_CASE("num_collect::multi_double::impl::two_prod") {
         const auto [s, e] = two_prod(a, b);
         CHECK_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
         CHECK_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+    }
+
+    SECTION("calculate with zeros") {
+        constexpr double a = 0.0;
+        constexpr double b = 0.0;
+        constexpr double s_true = 0.0;
+        constexpr double e_true = 0.0;
+        const auto [s, e] = two_prod(a, b);
+        CHECK(s == s_true);  // NOLINT
+        CHECK(e == e_true);  // NOLINT
     }
 }
