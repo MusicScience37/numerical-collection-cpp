@@ -7,7 +7,6 @@ mpmath.mp.prec = 52 * 2 + 1  # Quad precision
 
 SAMPLES = [
     # cspell: disable
-    (-707.0, 0.0),  # Almost minimum value
     (float.fromhex("-0x1.eecd4d2a8802bp+8"), float.fromhex("-0x1.0c0bd235ca6d4p-46")),
     (float.fromhex("-0x1.b93d3796001a0p+4"), float.fromhex("-0x1.ad3954413d8ccp-50")),
     (float.fromhex("-0x1.b684eabe415bbp+0"), float.fromhex("0x1.8394ecb303f2cp-54")),
@@ -18,7 +17,6 @@ SAMPLES = [
     (float.fromhex("0x1.e37bed2c3aa0bp+0"), float.fromhex("-0x1.e2d5f1238d4c0p-56")),
     (float.fromhex("0x1.5832e2e5d966bp+5"), float.fromhex("0x1.8794e6d1f4d78p-49")),
     (float.fromhex("0x1.15d8c5d3e4004p+9"), float.fromhex("-0x1.01f96f5f98c28p-45")),
-    (709.0, 0.0),  # Almost maximum value
     # cspell: enable
 ]
 

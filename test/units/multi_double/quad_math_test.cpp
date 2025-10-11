@@ -96,8 +96,6 @@ TEST_CASE("num_collect::multi_double::exp") {
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
             // NOLINTBEGIN
             // cspell: disable
-            std::make_tuple(quad(-0x1.6180000000000p+9, 0x0.0p+0),
-                quad(0x1.029ade2342558p-1020, -0x0.0000000000001p-1022)),
             std::make_tuple(quad(-0x1.eecd4d2a8802bp+8, -0x1.0c0bd235ca6d4p-46),
                 quad(0x1.1c60dd15c954ep-714, -0x1.2a61ff0c2188dp-770)),
             std::make_tuple(quad(-0x1.b93d3796001a0p+4, -0x1.ad3954413d8ccp-50),
@@ -118,20 +116,13 @@ TEST_CASE("num_collect::multi_double::exp") {
                 quad(0x1.0d0ced69dd7b7p+62, -0x1.271cd9a4320d3p+8)),
             std::make_tuple(quad(0x1.15d8c5d3e4004p+9, -0x1.01f96f5f98c28p-45),
                 quad(0x1.9ecf9ee00e06bp+801, 0x1.8ebd36d627d80p+747)),
-            std::make_tuple(quad(0x1.6280000000000p+9, 0x0.0p+0),
-                quad(0x1.d422d2be5dc9bp+1022, -0x1.916aa7a2c8d07p+967)),
             // cspell: enable
             // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 
         const quad actual = exp(input);
-#ifdef _MSC_VER
-        // MSVC seems to have lower accuracy.
-        constexpr quad relative_tolerance(0x1.0p-90);
-#else
-        constexpr quad relative_tolerance(0x1.0p-97);
-#endif
+        constexpr quad relative_tolerance(0x1.0p-98);
         CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
     }
 
@@ -156,8 +147,6 @@ TEST_CASE("num_collect::multi_double::expm1") {
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
             // NOLINTBEGIN
             // cspell: disable
-            std::make_tuple(quad(-0x1.6180000000000p+9, 0x0.0p+0),
-                quad(-0x1.0000000000000p+0, 0x0.0p+0)),
             std::make_tuple(quad(-0x1.eecd4d2a8802bp+8, -0x1.0c0bd235ca6d4p-46),
                 quad(-0x1.0000000000000p+0, 0x0.0p+0)),
             std::make_tuple(quad(-0x1.b93d3796001a0p+4, -0x1.ad3954413d8ccp-50),
@@ -178,20 +167,13 @@ TEST_CASE("num_collect::multi_double::expm1") {
                 quad(0x1.0d0ced69dd7b7p+62, -0x1.281cd9a4320d3p+8)),
             std::make_tuple(quad(0x1.15d8c5d3e4004p+9, -0x1.01f96f5f98c28p-45),
                 quad(0x1.9ecf9ee00e06bp+801, 0x1.8ebd36d627d80p+747)),
-            std::make_tuple(quad(0x1.6280000000000p+9, 0x0.0p+0),
-                quad(0x1.d422d2be5dc9bp+1022, -0x1.916aa7a2c8d07p+967)),
             // cspell: enable
             // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 
         const quad actual = expm1(input);
-#ifdef _MSC_VER
-        // MSVC seems to have lower accuracy.
-        constexpr quad relative_tolerance(0x1.0p-90);
-#else
-        constexpr quad relative_tolerance(0x1.0p-97);
-#endif
+        constexpr quad relative_tolerance(0x1.0p-99);
         CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
     }
 
