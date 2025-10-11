@@ -183,6 +183,9 @@ public:
      * If it is zero, the result can be infinity or NaN.
      */
     auto operator/=(const quad& right) noexcept -> quad& {
+        if (high_ == 0.0) {
+            return *this;
+        }
         const double inv_right_h = 1.0 / right.high_;
         const double rate_right = right.low_ * inv_right_h;
         const double x_h = high_ * inv_right_h;
@@ -205,6 +208,9 @@ public:
      */
     template <concepts::implicitly_convertible_to<double> Scalar>
     auto operator/=(Scalar right) noexcept -> quad& {
+        if (high_ == 0.0) {
+            return *this;
+        }
         const double right_as_double = static_cast<double>(right);
         const double inv_right_h = 1.0 / right_as_double;
         const double x_h = high_ * inv_right_h;

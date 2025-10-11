@@ -1,5 +1,8 @@
 set(SOURCE_FILES
     impl/basic_operations_test.cpp
+    impl/quad_exp_impl_test.cpp
+    impl/quad_internal_constants_test.cpp
+    impl/quad_ldexp_impl_test.cpp
     quad_math_test.cpp
     quad_test.cpp
 )
