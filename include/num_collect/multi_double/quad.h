@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <compare>
 #include <tuple>
 
 #include "num_collect/base/concepts/implicitly_convertible_to.h"
@@ -229,7 +230,7 @@ private:
  * \param[in] right Right-hand-side number.
  * \return Result.
  */
-inline auto operator+(const quad& left, const quad& right) -> quad {
+inline auto operator+(const quad& left, const quad& right) noexcept -> quad {
     return quad(left) += right;
 }
 
@@ -242,7 +243,7 @@ inline auto operator+(const quad& left, const quad& right) -> quad {
  * \return Result.
  */
 template <concepts::implicitly_convertible_to<double> Scalar>
-inline auto operator+(const quad& left, Scalar right) -> quad {
+inline auto operator+(const quad& left, Scalar right) noexcept -> quad {
     return quad(left) += right;
 }
 
@@ -255,7 +256,7 @@ inline auto operator+(const quad& left, Scalar right) -> quad {
  * \return Result.
  */
 template <concepts::implicitly_convertible_to<double> Scalar>
-inline auto operator+(Scalar left, const quad& right) -> quad {
+inline auto operator+(Scalar left, const quad& right) noexcept -> quad {
     return quad(right) += left;
 }
 
@@ -266,7 +267,7 @@ inline auto operator+(Scalar left, const quad& right) -> quad {
  * \param[in] right Right-hand-side number.
  * \return Result.
  */
-inline auto operator-(const quad& left, const quad& right) -> quad {
+inline auto operator-(const quad& left, const quad& right) noexcept -> quad {
     return quad(left) -= right;
 }
 
@@ -279,7 +280,7 @@ inline auto operator-(const quad& left, const quad& right) -> quad {
  * \return Result.
  */
 template <concepts::implicitly_convertible_to<double> Scalar>
-inline auto operator-(const quad& left, Scalar right) -> quad {
+inline auto operator-(const quad& left, Scalar right) noexcept -> quad {
     return quad(left) -= right;
 }
 
@@ -292,7 +293,7 @@ inline auto operator-(const quad& left, Scalar right) -> quad {
  * \return Result.
  */
 template <concepts::implicitly_convertible_to<double> Scalar>
-inline auto operator-(Scalar left, const quad& right) -> quad {
+inline auto operator-(Scalar left, const quad& right) noexcept -> quad {
     return -quad(right) += left;
 }
 
@@ -303,7 +304,7 @@ inline auto operator-(Scalar left, const quad& right) -> quad {
  * \param[in] right Right-hand-side number.
  * \return Result.
  */
-inline auto operator*(const quad& left, const quad& right) -> quad {
+inline auto operator*(const quad& left, const quad& right) noexcept -> quad {
     return quad(left) *= right;
 }
 
@@ -316,7 +317,7 @@ inline auto operator*(const quad& left, const quad& right) -> quad {
  * \return Result.
  */
 template <concepts::implicitly_convertible_to<double> Scalar>
-inline auto operator*(const quad& left, Scalar right) -> quad {
+inline auto operator*(const quad& left, Scalar right) noexcept -> quad {
     return quad(left) *= right;
 }
 
@@ -329,7 +330,7 @@ inline auto operator*(const quad& left, Scalar right) -> quad {
  * \return Result.
  */
 template <concepts::implicitly_convertible_to<double> Scalar>
-inline auto operator*(Scalar left, const quad& right) -> quad {
+inline auto operator*(Scalar left, const quad& right) noexcept -> quad {
     return quad(right) *= left;
 }
 
@@ -343,7 +344,7 @@ inline auto operator*(Scalar left, const quad& right) -> quad {
  * This function does not check whether the right-hand-side number is zero.
  * If it is zero, the result can be infinity or NaN.
  */
-inline auto operator/(const quad& left, const quad& right) -> quad {
+inline auto operator/(const quad& left, const quad& right) noexcept -> quad {
     return quad(left) /= right;
 }
 
@@ -359,7 +360,7 @@ inline auto operator/(const quad& left, const quad& right) -> quad {
  * If it is zero, the result can be infinity or NaN.
  */
 template <concepts::implicitly_convertible_to<double> Scalar>
-inline auto operator/(const quad& left, Scalar right) -> quad {
+inline auto operator/(const quad& left, Scalar right) noexcept -> quad {
     return quad(left) /= right;
 }
 
@@ -375,8 +376,36 @@ inline auto operator/(const quad& left, Scalar right) -> quad {
  * If it is zero, the result can be infinity or NaN.
  */
 template <concepts::implicitly_convertible_to<double> Scalar>
-inline auto operator/(Scalar left, const quad& right) -> quad {
+inline auto operator/(Scalar left, const quad& right) noexcept -> quad {
     return quad(left) /= right;
+}
+
+/*!
+ * \brief Compare two numbers.
+ *
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
+ */
+inline auto operator<=>(const quad& left, const quad& right) noexcept
+    -> std::partial_ordering {
+    const std::partial_ordering result_high = left.high() <=> right.high();
+    if (result_high != 0) {
+        return result_high;
+    }
+    return left.low() <=> right.low();
+}
+
+/*!
+ * \brief Compare two numbers.
+ *
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \retval true Two numbers are equal.
+ * \retval false Two numbers are not equal.
+ */
+inline auto operator==(const quad& left, const quad& right) noexcept -> bool {
+    return (left.high() == right.high()) && (left.low() == right.low());
 }
 
 }  // namespace num_collect::multi_double

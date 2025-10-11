@@ -33,8 +33,8 @@ TEST_CASE("num_collect::multi_double::impl::quick_two_sum") {
         constexpr double s_true = 0x1.0000000000001p+0;
         constexpr double e_true = 0.0;
         const auto [s, e] = quick_two_sum(a, b);
-        REQUIRE_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
-        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+        CHECK_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
+        CHECK_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
     }
 
     SECTION("calculate sum with error") {
@@ -43,8 +43,8 @@ TEST_CASE("num_collect::multi_double::impl::quick_two_sum") {
         constexpr double s_true = 0x1.0000000000002p+0;
         constexpr double e_true = -0x1.0p-53;
         const auto [s, e] = quick_two_sum(a, b);
-        REQUIRE_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
-        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+        CHECK_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
+        CHECK_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
     }
 
     SECTION("random problems") {
@@ -65,8 +65,8 @@ TEST_CASE("num_collect::multi_double::impl::quick_two_sum") {
                 // clang-format on
             }));
         const auto [s, e] = quick_two_sum(a, b);
-        REQUIRE_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
-        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+        CHECK_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
+        CHECK_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
     }
 }
 
@@ -79,8 +79,8 @@ TEST_CASE("num_collect::multi_double::impl::two_sum") {
         constexpr double s_true = 0x1.0000000000001p+0;
         constexpr double e_true = 0.0;
         const auto [s, e] = two_sum(a, b);
-        REQUIRE_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
-        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+        CHECK_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
+        CHECK_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
     }
 
     SECTION("calculate sum with error when a > b") {
@@ -89,8 +89,8 @@ TEST_CASE("num_collect::multi_double::impl::two_sum") {
         constexpr double s_true = 0x1.0000000000002p+0;
         constexpr double e_true = -0x1.0p-53;
         const auto [s, e] = two_sum(a, b);
-        REQUIRE_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
-        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+        CHECK_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
+        CHECK_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
     }
 
     SECTION("calculate sum without error when a < b") {
@@ -99,8 +99,8 @@ TEST_CASE("num_collect::multi_double::impl::two_sum") {
         constexpr double s_true = 0x1.0000000000001p+0;
         constexpr double e_true = 0.0;
         const auto [s, e] = two_sum(a, b);
-        REQUIRE_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
-        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+        CHECK_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
+        CHECK_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
     }
 
     SECTION("calculate sum with error when a < b") {
@@ -109,8 +109,8 @@ TEST_CASE("num_collect::multi_double::impl::two_sum") {
         constexpr double s_true = 0x1.0000000000002p+0;
         constexpr double e_true = -0x1.0p-53;
         const auto [s, e] = two_sum(a, b);
-        REQUIRE_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
-        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+        CHECK_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
+        CHECK_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
     }
 
     SECTION("random problems") {
@@ -132,8 +132,8 @@ TEST_CASE("num_collect::multi_double::impl::two_sum") {
                 // clang-format on
             }));
         const auto [s, e] = two_sum(a, b);
-        REQUIRE_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
-        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+        CHECK_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
+        CHECK_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
     }
 }
 
@@ -145,8 +145,8 @@ TEST_CASE("num_collect::multi_double::impl::split") {
         constexpr double a_h_true = 0x1.AAAAAA8p+0;
         constexpr double a_l_true = 0x0.0000002AAAAAAp+0;
         const auto [a_h, a_l] = split(a);
-        REQUIRE_THAT(a_h, Catch::Matchers::WithinULP(a_h_true, 0));
-        REQUIRE_THAT(a_l, Catch::Matchers::WithinULP(a_l_true, 0));
+        CHECK_THAT(a_h, Catch::Matchers::WithinULP(a_h_true, 0));
+        CHECK_THAT(a_l, Catch::Matchers::WithinULP(a_l_true, 0));
     }
 
     SECTION("split another number") {
@@ -154,8 +154,8 @@ TEST_CASE("num_collect::multi_double::impl::split") {
         constexpr double a_h_true = 0x1.5555558p+0;
         constexpr double a_l_true = a - a_h_true;
         const auto [a_h, a_l] = split(a);
-        REQUIRE_THAT(a_h, Catch::Matchers::WithinULP(a_h_true, 0));
-        REQUIRE_THAT(a_l, Catch::Matchers::WithinULP(a_l_true, 0));
+        CHECK_THAT(a_h, Catch::Matchers::WithinULP(a_h_true, 0));
+        CHECK_THAT(a_l, Catch::Matchers::WithinULP(a_l_true, 0));
     }
 }
 
@@ -168,8 +168,8 @@ TEST_CASE("num_collect::multi_double::impl::two_prod_no_fma") {
         constexpr double p_true = 0x1.0000011000001p+3;
         constexpr double e_true = 0.0;
         const auto [p, e] = two_prod_no_fma(a, b);
-        REQUIRE_THAT(p, Catch::Matchers::WithinULP(p_true, 0));
-        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+        CHECK_THAT(p, Catch::Matchers::WithinULP(p_true, 0));
+        CHECK_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
     }
 
     SECTION("calculate product with error") {
@@ -178,8 +178,8 @@ TEST_CASE("num_collect::multi_double::impl::two_prod_no_fma") {
         constexpr double p_true = 0x1.0000009p-1;
         constexpr double e_true = 0x1.0p-54;
         const auto [p, e] = two_prod_no_fma(a, b);
-        REQUIRE_THAT(p, Catch::Matchers::WithinULP(p_true, 0));
-        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+        CHECK_THAT(p, Catch::Matchers::WithinULP(p_true, 0));
+        CHECK_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
     }
 
     SECTION("calculate product with small error") {
@@ -188,8 +188,8 @@ TEST_CASE("num_collect::multi_double::impl::two_prod_no_fma") {
         constexpr double p_true = 0x1.0000000000002p-1;
         constexpr double e_true = 0x1.0p-105;
         const auto [p, e] = two_prod_no_fma(a, b);
-        REQUIRE_THAT(p, Catch::Matchers::WithinULP(p_true, 0));
-        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+        CHECK_THAT(p, Catch::Matchers::WithinULP(p_true, 0));
+        CHECK_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
     }
 
     SECTION("random problems") {
@@ -210,8 +210,8 @@ TEST_CASE("num_collect::multi_double::impl::two_prod_no_fma") {
                 // clang-format on
             }));
         const auto [s, e] = two_prod_no_fma(a, b);
-        REQUIRE_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
-        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+        CHECK_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
+        CHECK_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
     }
 }
 
@@ -226,8 +226,8 @@ TEST_CASE("num_collect::multi_double::impl::two_prod_fma") {
         constexpr double p_true = 0x1.0000011000001p+3;
         constexpr double e_true = 0.0;
         const auto [p, e] = two_prod_fma(a, b);
-        REQUIRE_THAT(p, Catch::Matchers::WithinULP(p_true, 0));
-        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+        CHECK_THAT(p, Catch::Matchers::WithinULP(p_true, 0));
+        CHECK_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
     }
 
     SECTION("calculate product with error") {
@@ -236,8 +236,8 @@ TEST_CASE("num_collect::multi_double::impl::two_prod_fma") {
         constexpr double p_true = 0x1.0000009p-1;
         constexpr double e_true = 0x1.0p-54;
         const auto [p, e] = two_prod_fma(a, b);
-        REQUIRE_THAT(p, Catch::Matchers::WithinULP(p_true, 0));
-        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+        CHECK_THAT(p, Catch::Matchers::WithinULP(p_true, 0));
+        CHECK_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
     }
 
     SECTION("calculate product with small error") {
@@ -246,8 +246,8 @@ TEST_CASE("num_collect::multi_double::impl::two_prod_fma") {
         constexpr double p_true = 0x1.0000000000002p-1;
         constexpr double e_true = 0x1.0p-105;
         const auto [p, e] = two_prod_fma(a, b);
-        REQUIRE_THAT(p, Catch::Matchers::WithinULP(p_true, 0));
-        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+        CHECK_THAT(p, Catch::Matchers::WithinULP(p_true, 0));
+        CHECK_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
     }
 
     SECTION("random problems") {
@@ -268,8 +268,8 @@ TEST_CASE("num_collect::multi_double::impl::two_prod_fma") {
                 // clang-format on
             }));
         const auto [s, e] = two_prod_fma(a, b);
-        REQUIRE_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
-        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+        CHECK_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
+        CHECK_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
     }
 }
 
@@ -284,8 +284,8 @@ TEST_CASE("num_collect::multi_double::impl::two_prod") {
         constexpr double p_true = 0x1.0000011000001p+3;
         constexpr double e_true = 0.0;
         const auto [p, e] = two_prod(a, b);
-        REQUIRE_THAT(p, Catch::Matchers::WithinULP(p_true, 0));
-        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+        CHECK_THAT(p, Catch::Matchers::WithinULP(p_true, 0));
+        CHECK_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
     }
 
     SECTION("calculate product with error") {
@@ -294,8 +294,8 @@ TEST_CASE("num_collect::multi_double::impl::two_prod") {
         constexpr double p_true = 0x1.0000009p-1;
         constexpr double e_true = 0x1.0p-54;
         const auto [p, e] = two_prod(a, b);
-        REQUIRE_THAT(p, Catch::Matchers::WithinULP(p_true, 0));
-        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+        CHECK_THAT(p, Catch::Matchers::WithinULP(p_true, 0));
+        CHECK_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
     }
 
     SECTION("calculate product with small error") {
@@ -304,8 +304,8 @@ TEST_CASE("num_collect::multi_double::impl::two_prod") {
         constexpr double p_true = 0x1.0000000000002p-1;
         constexpr double e_true = 0x1.0p-105;
         const auto [p, e] = two_prod(a, b);
-        REQUIRE_THAT(p, Catch::Matchers::WithinULP(p_true, 0));
-        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+        CHECK_THAT(p, Catch::Matchers::WithinULP(p_true, 0));
+        CHECK_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
     }
 
     SECTION("random problems") {
@@ -326,7 +326,7 @@ TEST_CASE("num_collect::multi_double::impl::two_prod") {
                 // clang-format on
             }));
         const auto [s, e] = two_prod(a, b);
-        REQUIRE_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
-        REQUIRE_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
+        CHECK_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
+        CHECK_THAT(e, Catch::Matchers::WithinULP(e_true, 0));
     }
 }

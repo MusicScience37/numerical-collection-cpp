@@ -31,23 +31,23 @@ TEST_CASE("num_collect::multi_double::quad") {
 
     SECTION("construct without arguments") {
         quad num;
-        REQUIRE_THAT(num.high(), Catch::Matchers::WithinULP(0.0, 0));
-        REQUIRE_THAT(num.low(), Catch::Matchers::WithinULP(0.0, 0));
+        CHECK_THAT(num.high(), Catch::Matchers::WithinULP(0.0, 0));
+        CHECK_THAT(num.low(), Catch::Matchers::WithinULP(0.0, 0));
     }
 
     SECTION("construct with double argument") {
         constexpr double value = 3.14;
         quad num = value;
-        REQUIRE_THAT(num.high(), Catch::Matchers::WithinULP(value, 0));
-        REQUIRE_THAT(num.low(), Catch::Matchers::WithinULP(0.0, 0));
+        CHECK_THAT(num.high(), Catch::Matchers::WithinULP(value, 0));
+        CHECK_THAT(num.low(), Catch::Matchers::WithinULP(0.0, 0));
     }
 
     SECTION("construct with int argument") {
         constexpr int value = 37;
         quad num = value;
-        REQUIRE_THAT(num.high(),
+        CHECK_THAT(num.high(),
             Catch::Matchers::WithinULP(static_cast<double>(value), 0));
-        REQUIRE_THAT(num.low(), Catch::Matchers::WithinULP(0.0, 0));
+        CHECK_THAT(num.low(), Catch::Matchers::WithinULP(0.0, 0));
     }
 
     constexpr std::uint64_t ulp_limit = 8;
@@ -59,9 +59,8 @@ TEST_CASE("num_collect::multi_double::quad") {
             quad(0x2.0000000000008p+0, 0x0.F000000000003p-52);
         auto sum = a;
         sum += b;
-        REQUIRE_THAT(
-            sum.high(), Catch::Matchers::WithinULP(sum_true.high(), 0));
-        REQUIRE_THAT(
+        CHECK_THAT(sum.high(), Catch::Matchers::WithinULP(sum_true.high(), 0));
+        CHECK_THAT(
             sum.low(), Catch::Matchers::WithinULP(sum_true.low(), ulp_limit));
     }
 
@@ -71,9 +70,8 @@ TEST_CASE("num_collect::multi_double::quad") {
         constexpr auto sum_true = quad(0x1.8000000000001p+0, -0x0.7p-52);
         auto sum = a;
         sum += b;
-        REQUIRE_THAT(
-            sum.high(), Catch::Matchers::WithinULP(sum_true.high(), 0));
-        REQUIRE_THAT(
+        CHECK_THAT(sum.high(), Catch::Matchers::WithinULP(sum_true.high(), 0));
+        CHECK_THAT(
             sum.low(), Catch::Matchers::WithinULP(sum_true.low(), ulp_limit));
     }
 
@@ -83,9 +81,8 @@ TEST_CASE("num_collect::multi_double::quad") {
         constexpr auto sum_true = quad(0x0.9p-52);
         auto sum = a;
         sum += b;
-        REQUIRE_THAT(
-            sum.high(), Catch::Matchers::WithinULP(sum_true.high(), 0));
-        REQUIRE_THAT(
+        CHECK_THAT(sum.high(), Catch::Matchers::WithinULP(sum_true.high(), 0));
+        CHECK_THAT(
             sum.low(), Catch::Matchers::WithinULP(sum_true.low(), ulp_limit));
     }
 
@@ -99,9 +96,8 @@ TEST_CASE("num_collect::multi_double::quad") {
             quad(0x3.1D8986DD9D182p+0, 0x0.8A9A4EF90D801p-52 - 0x1.0p-52);
         auto sum = a;
         sum += b;
-        REQUIRE_THAT(
-            sum.high(), Catch::Matchers::WithinULP(sum_true.high(), 0));
-        REQUIRE_THAT(
+        CHECK_THAT(sum.high(), Catch::Matchers::WithinULP(sum_true.high(), 0));
+        CHECK_THAT(
             sum.low(), Catch::Matchers::WithinULP(sum_true.low(), ulp_limit));
     }
 
@@ -114,9 +110,8 @@ TEST_CASE("num_collect::multi_double::quad") {
         constexpr auto sum_true =
             quad(0x3.1D8986DD9D182p+0, 0x0.8A9A4EF90D801p-52 - 0x1.0p-52);
         const auto sum = a + b;
-        REQUIRE_THAT(
-            sum.high(), Catch::Matchers::WithinULP(sum_true.high(), 0));
-        REQUIRE_THAT(
+        CHECK_THAT(sum.high(), Catch::Matchers::WithinULP(sum_true.high(), 0));
+        CHECK_THAT(
             sum.low(), Catch::Matchers::WithinULP(sum_true.low(), ulp_limit));
     }
 
@@ -146,9 +141,8 @@ TEST_CASE("num_collect::multi_double::quad") {
         }));
 
         const auto sum = a + b;
-        REQUIRE_THAT(
-            sum.high(), Catch::Matchers::WithinULP(sum_true.high(), 0));
-        REQUIRE_THAT(
+        CHECK_THAT(sum.high(), Catch::Matchers::WithinULP(sum_true.high(), 0));
+        CHECK_THAT(
             sum.low(), Catch::Matchers::WithinULP(sum_true.low(), ulp_limit));
     }
 
@@ -178,17 +172,17 @@ TEST_CASE("num_collect::multi_double::quad") {
 
         SECTION("quad + double") {
             const quad sum = a + b;
-            REQUIRE_THAT(
+            CHECK_THAT(
                 sum.high(), Catch::Matchers::WithinULP(sum_true.high(), 0));
-            REQUIRE_THAT(sum.low(),
+            CHECK_THAT(sum.low(),
                 Catch::Matchers::WithinULP(sum_true.low(), ulp_limit));
         }
 
         SECTION("double + quad") {
             const quad sum = b + a;
-            REQUIRE_THAT(
+            CHECK_THAT(
                 sum.high(), Catch::Matchers::WithinULP(sum_true.high(), 0));
-            REQUIRE_THAT(sum.low(),
+            CHECK_THAT(sum.low(),
                 Catch::Matchers::WithinULP(sum_true.low(), ulp_limit));
         }
     }
@@ -200,9 +194,8 @@ TEST_CASE("num_collect::multi_double::quad") {
             quad(0x2.0000000000008p+0, 0x0.F000000000003p-52);
         auto dif = a;
         dif -= b;
-        REQUIRE_THAT(
-            dif.high(), Catch::Matchers::WithinULP(dif_true.high(), 0));
-        REQUIRE_THAT(
+        CHECK_THAT(dif.high(), Catch::Matchers::WithinULP(dif_true.high(), 0));
+        CHECK_THAT(
             dif.low(), Catch::Matchers::WithinULP(dif_true.low(), ulp_limit));
     }
 
@@ -216,9 +209,8 @@ TEST_CASE("num_collect::multi_double::quad") {
             quad(0xD.8A26E30153E30p-4, 0xC.6D263E6A9A7Dp-56 - 0x10.0p-56);
         auto dif = a;
         dif -= b;
-        REQUIRE_THAT(
-            dif.high(), Catch::Matchers::WithinULP(dif_true.high(), 0));
-        REQUIRE_THAT(
+        CHECK_THAT(dif.high(), Catch::Matchers::WithinULP(dif_true.high(), 0));
+        CHECK_THAT(
             dif.low(), Catch::Matchers::WithinULP(dif_true.low(), ulp_limit));
     }
 
@@ -231,9 +223,8 @@ TEST_CASE("num_collect::multi_double::quad") {
         constexpr auto dif_true =
             quad(0xD.8A26E30153E30p-4, 0xC.6D263E6A9A7dp-56 - 0x10.0p-56);
         const auto dif = a - b;
-        REQUIRE_THAT(
-            dif.high(), Catch::Matchers::WithinULP(dif_true.high(), 0));
-        REQUIRE_THAT(
+        CHECK_THAT(dif.high(), Catch::Matchers::WithinULP(dif_true.high(), 0));
+        CHECK_THAT(
             dif.low(), Catch::Matchers::WithinULP(dif_true.low(), ulp_limit));
     }
 
@@ -263,9 +254,8 @@ TEST_CASE("num_collect::multi_double::quad") {
         }));
 
         const auto dif = a - b;
-        REQUIRE_THAT(
-            dif.high(), Catch::Matchers::WithinULP(dif_true.high(), 0));
-        REQUIRE_THAT(
+        CHECK_THAT(dif.high(), Catch::Matchers::WithinULP(dif_true.high(), 0));
+        CHECK_THAT(
             dif.low(), Catch::Matchers::WithinULP(dif_true.low(), ulp_limit));
     }
 
@@ -295,17 +285,17 @@ TEST_CASE("num_collect::multi_double::quad") {
 
         SECTION("quad - double") {
             const quad dif = a - b;
-            REQUIRE_THAT(
+            CHECK_THAT(
                 dif.high(), Catch::Matchers::WithinULP(dif_true.high(), 0));
-            REQUIRE_THAT(dif.low(),
+            CHECK_THAT(dif.low(),
                 Catch::Matchers::WithinULP(dif_true.low(), ulp_limit));
         }
 
         SECTION("double - quad") {
             const quad dif = -(b - a);
-            REQUIRE_THAT(
+            CHECK_THAT(
                 dif.high(), Catch::Matchers::WithinULP(dif_true.high(), 0));
-            REQUIRE_THAT(dif.low(),
+            CHECK_THAT(dif.low(),
                 Catch::Matchers::WithinULP(dif_true.low(), ulp_limit));
         }
     }
@@ -316,9 +306,9 @@ TEST_CASE("num_collect::multi_double::quad") {
         constexpr auto prod_true = quad(0x1.0p+3, 0x0.3p-49);
         auto prod = a;
         prod *= b;
-        REQUIRE_THAT(
+        CHECK_THAT(
             prod.high(), Catch::Matchers::WithinULP(prod_true.high(), 0));
-        REQUIRE_THAT(
+        CHECK_THAT(
             prod.low(), Catch::Matchers::WithinULP(prod_true.low(), ulp_limit));
     }
 
@@ -328,9 +318,9 @@ TEST_CASE("num_collect::multi_double::quad") {
         constexpr auto prod_true = quad(0x1.0000002p+3, 0x0.1p-49);
         auto prod = a;
         prod *= b;
-        REQUIRE_THAT(
+        CHECK_THAT(
             prod.high(), Catch::Matchers::WithinULP(prod_true.high(), 0));
-        REQUIRE_THAT(
+        CHECK_THAT(
             prod.low(), Catch::Matchers::WithinULP(prod_true.low(), ulp_limit));
     }
 
@@ -344,9 +334,9 @@ TEST_CASE("num_collect::multi_double::quad") {
             quad(0x2.3F53C6A82F118p+0, 0x0.12DAD9C5FD34Dp-52 - 0x1.0p-52);
         auto prod = a;
         prod *= b;
-        REQUIRE_THAT(
+        CHECK_THAT(
             prod.high(), Catch::Matchers::WithinULP(prod_true.high(), 0));
-        REQUIRE_THAT(
+        CHECK_THAT(
             prod.low(), Catch::Matchers::WithinULP(prod_true.low(), ulp_limit));
     }
 
@@ -359,9 +349,9 @@ TEST_CASE("num_collect::multi_double::quad") {
         constexpr auto prod_true =
             quad(0x2.3F53C6A82F118p+0, 0x0.12DAD9C5FD34Dp-52 - 0x1.0p-52);
         const auto prod = a * b;
-        REQUIRE_THAT(
+        CHECK_THAT(
             prod.high(), Catch::Matchers::WithinULP(prod_true.high(), 0));
-        REQUIRE_THAT(
+        CHECK_THAT(
             prod.low(), Catch::Matchers::WithinULP(prod_true.low(), ulp_limit));
     }
 
@@ -423,17 +413,17 @@ TEST_CASE("num_collect::multi_double::quad") {
 
         SECTION("quad * double") {
             const quad prod = a * b;
-            REQUIRE_THAT(
+            CHECK_THAT(
                 prod.high(), Catch::Matchers::WithinULP(prod_true.high(), 0));
-            REQUIRE_THAT(prod.low(),
+            CHECK_THAT(prod.low(),
                 Catch::Matchers::WithinULP(prod_true.low(), ulp_limit));
         }
 
         SECTION("double * quad") {
             const quad prod = b * a;
-            REQUIRE_THAT(
+            CHECK_THAT(
                 prod.high(), Catch::Matchers::WithinULP(prod_true.high(), 0));
-            REQUIRE_THAT(prod.low(),
+            CHECK_THAT(prod.low(),
                 Catch::Matchers::WithinULP(prod_true.low(), ulp_limit));
         }
     }
@@ -445,9 +435,9 @@ TEST_CASE("num_collect::multi_double::quad") {
         constexpr auto quotient_true = quad(0x1.0p+2, 0x0.2p-50);
         auto quotient = a;
         quotient /= b;
-        REQUIRE_THAT(quotient.high(),
+        CHECK_THAT(quotient.high(),
             Catch::Matchers::WithinULP(quotient_true.high(), 0));
-        REQUIRE_THAT(quotient.low(),
+        CHECK_THAT(quotient.low(),
             Catch::Matchers::WithinULP(quotient_true.low(), ulp_limit));
     }
 
@@ -462,9 +452,9 @@ TEST_CASE("num_collect::multi_double::quad") {
             quad(0x1.BEF0545A14FDAp+0, 0x0.729D96FA6624Bp-52);
         auto quotient = a;
         quotient /= b;
-        REQUIRE_THAT(quotient.high(),
+        CHECK_THAT(quotient.high(),
             Catch::Matchers::WithinULP(quotient_true.high(), 0));
-        REQUIRE_THAT(quotient.low(),
+        CHECK_THAT(quotient.low(),
             Catch::Matchers::WithinULP(quotient_true.low(), ulp_limit));
     }
 
@@ -477,9 +467,9 @@ TEST_CASE("num_collect::multi_double::quad") {
         constexpr auto quotient_true =
             quad(0x1.BEF0545A14FDAp+0, 0x0.729D96FA6624Bp-52);
         const auto quotient = a / b;
-        REQUIRE_THAT(quotient.high(),
+        CHECK_THAT(quotient.high(),
             Catch::Matchers::WithinULP(quotient_true.high(), 0));
-        REQUIRE_THAT(quotient.low(),
+        CHECK_THAT(quotient.low(),
             Catch::Matchers::WithinULP(quotient_true.low(), ulp_limit));
     }
 
@@ -581,5 +571,83 @@ TEST_CASE("num_collect::multi_double::quad") {
             Catch::Matchers::WithinULP(quotient_true.high(), 0));
         CHECK_THAT(quotient.low(),
             Catch::Matchers::WithinULP(quotient_true.low(), ulp_limit));
+    }
+
+    SECTION("compare two quad numbers when higher digits differs") {
+        const auto a = quad(0x1.0000000000000p+0, 0x1.0p-53);
+        const auto b = quad(0x1.0000000000001p+0, 0x1.0p-53);
+
+        CHECK(a < b);
+        CHECK(a <= b);
+        CHECK_FALSE(a > b);
+        CHECK_FALSE(a >= b);
+        CHECK_FALSE(a == b);
+        CHECK(a != b);
+
+        CHECK_FALSE(b < a);
+        CHECK_FALSE(b <= a);
+        CHECK(b > a);
+        CHECK(b >= a);
+        CHECK_FALSE(b == a);
+        CHECK(b != a);
+    }
+
+    SECTION(
+        "compare two quad numbers with same higher digits and different lower "
+        "digits") {
+        const auto a = quad(0x1.0p+0, 0x1.0000000000000p-53);
+        const auto b = quad(0x1.0p+0, 0x1.0000000000001p-53);
+
+        CHECK(a < b);
+        CHECK(a <= b);
+        CHECK_FALSE(a > b);
+        CHECK_FALSE(a >= b);
+        CHECK_FALSE(a == b);
+        CHECK(a != b);
+
+        CHECK_FALSE(b < a);
+        CHECK_FALSE(b <= a);
+        CHECK(b > a);
+        CHECK(b >= a);
+        CHECK_FALSE(b == a);
+        CHECK(b != a);
+    }
+
+    SECTION("compare two quad numbers which are equal") {
+        const auto a = quad(0x1.0p+0, 0x1.0p-53);
+        const auto b = quad(0x1.0p+0, 0x1.0p-53);
+
+        CHECK_FALSE(a < b);
+        CHECK(a <= b);
+        CHECK_FALSE(a > b);
+        CHECK(a >= b);
+        CHECK(a == b);
+        CHECK_FALSE(a != b);
+
+        CHECK_FALSE(b < a);
+        CHECK(b <= a);
+        CHECK_FALSE(b > a);
+        CHECK(b >= a);
+        CHECK(b == a);
+        CHECK_FALSE(b != a);
+    }
+
+    SECTION("compare a quad number with a double number") {
+        const auto a = quad(0x1.0000000000000p+0, 0x1.0p-53);
+        const auto b = 0x1.0000000000001p+0;
+
+        CHECK(a < b);
+        CHECK(a <= b);
+        CHECK_FALSE(a > b);
+        CHECK_FALSE(a >= b);
+        CHECK_FALSE(a == b);
+        CHECK(a != b);
+
+        CHECK_FALSE(b < a);
+        CHECK_FALSE(b <= a);
+        CHECK(b > a);
+        CHECK(b >= a);
+        CHECK_FALSE(b == a);
+        CHECK(b != a);
     }
 }
