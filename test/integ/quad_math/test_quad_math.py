@@ -379,7 +379,7 @@ def test_quad_math(build_dir: str, num_inputs: int, reuse_inputs: bool) -> None:
     """Test quad calculation."""
     build_path = pathlib.Path(build_dir).absolute()
     executable_path = build_path / "bin" / "test_integ_multi_double_calculate_quad"
-    results_dir_path = build_path / "bench" / "multi_double" / "quad_math"
+    results_dir_path = build_path / "temp_test" / "multi_double" / "quad_math"
     results_dir_path.mkdir(parents=True, exist_ok=True)
 
     total_results = pandas.DataFrame()
