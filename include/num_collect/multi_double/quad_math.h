@@ -90,4 +90,14 @@ inline auto expm1(const quad& x) noexcept -> quad {
  */
 inline auto log(const quad& x) noexcept -> quad { return impl::log_impl(x); }
 
+/*!
+ * \brief Calculate common logarithm \f$ \log_{10}(x) \f$.
+ *
+ * \param[in] x Input value.
+ * \return Result.
+ */
+inline auto log10(const quad& x) noexcept -> quad {
+    return impl::log10_impl(x);
+}
+
 }  // namespace num_collect::multi_double

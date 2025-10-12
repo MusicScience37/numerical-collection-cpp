@@ -22,6 +22,7 @@
 #include <cmath>
 
 #include "num_collect/multi_double/impl/quad_exp_impl.h"
+#include "num_collect/multi_double/impl/quad_internal_constants.h"
 #include "num_collect/multi_double/quad.h"
 
 namespace num_collect::multi_double::impl {
@@ -43,6 +44,20 @@ inline auto log_impl(quad x) noexcept -> quad {
     }
     guess += x * exp_impl(-guess) - quad(1.0);
     return guess;
+}
+
+/*!
+ * \brief Calculate common logarithm \f$ \log_{10}(x) \f$.
+ *
+ * \param[in] x Input value.
+ * \return Result.
+ */
+inline auto log10_impl(quad x) noexcept -> quad {
+    const auto log_value = log_impl(x);
+    if (!std::isfinite(log_value.high())) {
+        return log_value;
+    }
+    return log_value * log10_inv_quad;
 }
 
 }  // namespace num_collect::multi_double::impl

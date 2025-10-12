@@ -266,3 +266,64 @@ TEST_CASE("num_collect::multi_double::log") {
         CHECK(std::isnan(actual.high()));
     }
 }
+
+TEST_CASE("num_collect::multi_double::log10") {
+    using num_collect::multi_double::log10;
+    using num_collect::multi_double::quad;
+
+    SECTION("calculate for non-zero values") {
+        quad input;
+        quad expected;
+        std::tie(
+            input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(0x1.01c016cf3b315p-29, -0x1.ec067815a7138p-84),
+                quad(-0x1.1742d9f9958c5p+3, 0x1.94691d3552870p-52)),
+            std::make_tuple(quad(0x1.197e3eb11c9f1p-11, 0x1.600b1b3bfbf70p-65),
+                quad(-0x1.a292b499e8026p+1, 0x1.c6edc9d96eeb0p-53)),
+            std::make_tuple(quad(0x1.1d050b4ff7bbfp-2, -0x1.5cd3ea0636098p-57),
+                quad(-0x1.1c60acd057bafp-1, -0x1.f9edcedb44f01p-57)),
+            std::make_tuple(quad(0x1.5957a572db657p+1, -0x1.ba4f2cdf77ab8p-53),
+                quad(0x1.b9628594ceca1p-2, 0x1.484739e5283ffp-56)),
+            std::make_tuple(quad(0x1.ec8b6be14f39fp+19, 0x1.780a9e47ae320p-35),
+                quad(0x1.803ddbb5c0d13p+2, 0x1.7d25276139c81p-55)),
+            std::make_tuple(quad(0x1.ab2d7adaa1156p+33, -0x1.a5b71b73af190p-23),
+                quad(0x1.4500e35f71782p+3, -0x1.ee544ea574060p-53)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+        INFO("input: " << format_quad_for_test(input));
+
+        const quad actual = log10(input);
+        constexpr quad relative_tolerance(0x1.0p-99);
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+
+    SECTION("calculate for one") {
+        const quad input(1.0);
+        const quad expected(0.0);
+
+        const quad actual = log10(input);
+
+        CHECK(actual == expected);
+    }
+
+    SECTION("calculate for zero") {
+        const quad input(0.0);
+
+        const quad actual = log10(input);
+
+        INFO("actual: " << format_quad_for_test(actual));
+        CHECK(actual < 0.0);
+    }
+
+    SECTION("calculate for a negative value") {
+        const quad input(-1.0);
+
+        const quad actual = log10(input);
+
+        INFO("actual: " << format_quad_for_test(actual));
+        CHECK(std::isnan(actual.high()));
+    }
+}
