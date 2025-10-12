@@ -30,6 +30,12 @@ constexpr auto log2_quad =  // cspell: disable-next-line
     quad(0x1.62e42fefa39efp-1, 0x1.abc9e3b39803fp-56);
 
 /*!
+ * \brief \f$ 0.5 \log{2} \f$ as quad value.
+ */
+constexpr auto half_log2_quad =  // cspell: disable-next-line
+    quad(0x1.62e42fefa39efp-2, 0x1.abc9e3b398040p-57);
+
+/*!
  * \brief \f$ 1 / \log{2} \f$ as quad value.
  */
 constexpr auto log2_inv_quad =  // cspell: disable-next-line
@@ -53,5 +59,17 @@ constexpr auto log10_inv_quad =  // cspell: disable-next-line
  */
 constexpr auto exp_maclaurin_limit_quad =  // cspell: disable-next-line
     quad(0x1.64840e1719f80p-10, -0x1.cd5f99c38b04cp-64);
+
+/*!
+ * \brief \f$ \sqrt{2} \f$ as quad value.
+ */
+constexpr auto sqrt2_quad =  // cspell: disable-next-line
+    quad(0x1.6a09e667f3bcdp+0, -0x1.bdd3413b26456p-54);
+
+/*!
+ * \brief \f$ 1 / \sqrt{2} \f$ as quad value.
+ */
+constexpr auto sqrt2_inv_quad =  // cspell: disable-next-line
+    quad(0x1.6a09e667f3bcdp-1, -0x1.bdd3413b26454p-55);
 
 }  // namespace num_collect::multi_double::impl

@@ -110,6 +110,31 @@ def write_inputs_to_file(
             file.write(line)
 
 
+def parse_inputs(*, input_file_path: pathlib.Path, num_args: int) -> list[list]:
+    """Parse inputs.
+
+    Args:
+        input_file_path (pathlib.Path): Path to the input file.
+        num_args (int): Number of arguments.
+
+    Returns:
+        list[list]: Parsed inputs.
+    """
+    with open(input_file_path, "r", encoding="utf-8") as file:
+        inputs: list[list] = []
+        for line in file:
+            values = line.split(",")
+            if len(values) != 2 * num_args:
+                raise ValueError("Invalid number of values.")
+            current_input = []
+            for i in range(num_args):
+                upper = mpmath.mpf(float.fromhex(values[2 * i]))
+                lower = mpmath.mpf(float.fromhex(values[2 * i + 1]))
+                current_input.append(upper + lower)
+            inputs.append(current_input)
+    return inputs
+
+
 def run_calculator(
     *,
     executable_path: str,
@@ -221,6 +246,7 @@ def test_one_operator(  # pylint: disable=too-many-arguments
     max_input: float,
     executable_path: str,
     num_inputs: int,
+    reuse_inputs: bool,
 ) -> tuple[pandas.DataFrame, float]:
     """Test one operator.
 
@@ -231,6 +257,7 @@ def test_one_operator(  # pylint: disable=too-many-arguments
         max_input (float): Maximum input.
         executable_path (str): Path to the executable.
         num_inputs (int): Number of inputs to be generated.
+        reuse_inputs (bool): Whether to reuse inputs.
 
     Returns:
         tuple[pandas.DataFrame, float]: Results and
@@ -243,14 +270,19 @@ def test_one_operator(  # pylint: disable=too-many-arguments
     LOGGER.debug("Input file path: %s", input_file_path)
     LOGGER.debug("Output file path: %s", output_file_path)
 
-    inputs = generate_inputs(
-        num_args=num_args,
-        min_input=min_input,
-        max_input=max_input,
-        num_inputs=num_inputs,
-    )
+    if reuse_inputs and not input_file_path.exists():
+        raise ValueError("Input file does not exist.")
 
-    write_inputs_to_file(inputs=inputs, input_file_path=input_file_path)
+    if reuse_inputs:
+        inputs = parse_inputs(input_file_path=input_file_path, num_args=num_args)
+    else:
+        inputs = generate_inputs(
+            num_args=num_args,
+            min_input=min_input,
+            max_input=max_input,
+            num_inputs=num_inputs,
+        )
+        write_inputs_to_file(inputs=inputs, input_file_path=input_file_path)
 
     time_s = run_calculator(
         executable_path=executable_path,
@@ -342,11 +374,12 @@ def show_stats(
 @click.command()
 @click.option("--build_dir", "-b", required=True, help="Build directory.")
 @click.option("--num_inputs", "-n", default=1000, help="Number of inputs.")
-def test_quad_math(build_dir: str, num_inputs: int) -> None:
+@click.option("--reuse_inputs", is_flag=True, help="Reuse inputs.")
+def test_quad_math(build_dir: str, num_inputs: int, reuse_inputs: bool) -> None:
     """Test quad calculation."""
     build_path = pathlib.Path(build_dir).absolute()
     executable_path = build_path / "bin" / "test_integ_multi_double_calculate_quad"
-    results_dir_path = build_path / "bench" / "multi_double" / "quad_math"
+    results_dir_path = build_path / "temp_test" / "multi_double" / "quad_math"
     results_dir_path.mkdir(parents=True, exist_ok=True)
 
     total_results = pandas.DataFrame()
@@ -361,6 +394,7 @@ def test_quad_math(build_dir: str, num_inputs: int) -> None:
             max_input=max_input,
             executable_path=str(executable_path),
             num_inputs=num_inputs,
+            reuse_inputs=reuse_inputs,
         )
         total_results = pandas.concat([total_results, results], ignore_index=True)
         time_list.append((operator_name, time_s))

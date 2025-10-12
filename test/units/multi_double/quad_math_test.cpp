@@ -172,6 +172,9 @@ TEST_CASE("num_collect::multi_double::expm1") {
                 quad(-0x1.fffffffffdae1p-1, -0x1.3107d5f6151d6p-57)),
             std::make_tuple(quad(-0x1.b684eabe415bbp+0, 0x1.8394ecb303f2cp-54),
                 quad(-0x1.a3abc27e11bfap-1, -0x1.e8c26a6109bbep-56)),
+            std::make_tuple(
+                quad(-0x1.672324c836651p-10, -0x1.b6c3760bf5d78p-64),
+                quad(-0x1.66e431b1a3f40p-10, 0x1.311abd9deeb44p-64)),
             std::make_tuple(quad(-0x1.61e4f765fd8aep-10, 0x1.5182a9930be0cp-64),
                 quad(-0x1.61a7d748f8fc1p-10, 0x1.99bf973030078p-64)),
             std::make_tuple(quad(-0x1.fd71823e9ed31p-28, 0x1.456b15bb2ec98p-83),
@@ -180,6 +183,8 @@ TEST_CASE("num_collect::multi_double::expm1") {
                 quad(0x1.3e3e59d301ba1p-40, 0x1.a2e3928e1558cp-94)),
             std::make_tuple(quad(0x1.61e4f765fd8aep-10, -0x1.5182a9930be0cp-64),
                 quad(0x1.62222599f4d87p-10, 0x1.0307ea3a1eec9p-64)),
+            std::make_tuple(quad(0x1.672324c836651p-10, 0x1.b6c3760bf5d78p-64),
+                quad(0x1.676226986da0ep-10, -0x1.89ff79b779b39p-64)),
             std::make_tuple(quad(0x1.e37bed2c3aa0bp+0, -0x1.e2d5f1238d4c0p-56),
                 quad(0x1.670d100d10754p+2, 0x1.fa696398ba718p-52)),
             std::make_tuple(quad(0x1.5832e2e5d966bp+5, 0x1.8794e6d1f4d78p-49),
@@ -223,6 +228,8 @@ TEST_CASE("num_collect::multi_double::log") {
                 quad(-0x1.e1e669ea72951p+2, 0x1.6fa409eea7fadp-52)),
             std::make_tuple(quad(0x1.1d050b4ff7bbfp-2, -0x1.5cd3ea0636098p-57),
                 quad(-0x1.4766dfe3cc8f7p+0, -0x1.684aba195d050p-55)),
+            std::make_tuple(quad(0x1.f638b3e0e9e53p-1, -0x1.39d9b27ddcc18p-55),
+                quad(-0x1.3bf059929289ap-6, 0x1.854e79ada7d8dp-61)),
             std::make_tuple(quad(0x1.5957a572db657p+1, -0x1.ba4f2cdf77ab8p-53),
                 quad(0x1.fc29c030db576p-1, -0x1.064e0ce82f619p-56)),
             std::make_tuple(quad(0x1.ec8b6be14f39fp+19, 0x1.780a9e47ae320p-35),
@@ -296,7 +303,7 @@ TEST_CASE("num_collect::multi_double::log1p") {
         INFO("input: " << format_quad_for_test(input));
 
         const quad actual = log1p(input);
-        constexpr quad relative_tolerance(0x1.0p-92);
+        constexpr quad relative_tolerance(0x1.0p-99);
         CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
     }
 }
