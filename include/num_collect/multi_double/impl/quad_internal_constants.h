@@ -30,6 +30,12 @@ constexpr auto log2_quad =  // cspell: disable-next-line
     quad(0x1.62e42fefa39efp-1, 0x1.abc9e3b39803fp-56);
 
 /*!
+ * \brief \f$ 0.5 \log{2} \f$ as quad value.
+ */
+constexpr auto half_log2_quad =  // cspell: disable-next-line
+    quad(0x1.62e42fefa39efp-2, 0x1.abc9e3b398040p-57);
+
+/*!
  * \brief \f$ 1 / \log{2} \f$ as quad value.
  */
 constexpr auto log2_inv_quad =  // cspell: disable-next-line

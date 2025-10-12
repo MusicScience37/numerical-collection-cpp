@@ -120,6 +120,25 @@ inline auto expm1_impl(quad x) noexcept -> quad {
     if (std::abs(x.high()) <= exp_maclaurin_limit_quad.high()) {
         return expm1_maclaurin_series(x);
     }
+    if (std::abs(x.high()) <= half_log2_quad.high()) {
+        constexpr unsigned int num_last_multiplication = 8;
+        const quad reduced_x =
+            ldexp_impl(x, -static_cast<int>(num_last_multiplication));
+        // Here |reduced_x| <= 0.3465... / 256 < exp_maclaurin_limit_quad
+        const quad reduced_expm1 = expm1_maclaurin_series(reduced_x);
+        quad result = reduced_expm1;
+        // Unroll the loop for performance.
+        const auto two = quad(2.0);
+        result = (result + two) * result;
+        result = (result + two) * result;
+        result = (result + two) * result;
+        result = (result + two) * result;
+        result = (result + two) * result;
+        result = (result + two) * result;
+        result = (result + two) * result;
+        result = (result + two) * result;
+        return result;
+    }
     return exp_impl(x) - quad(1.0);
 }
 

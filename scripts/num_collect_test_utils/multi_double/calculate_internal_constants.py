@@ -7,6 +7,7 @@ mpmath.mp.prec = 52 * 2 + 1  # Quad precision
 
 VALUES = [
     ("log2", mpmath.extraprec(20, True)(mpmath.log)(2)),
+    ("half_log2", 0.5 * mpmath.extraprec(20, True)(mpmath.log)(2)),
     ("log2_inv", 1 / mpmath.extraprec(20, True)(mpmath.log)(2)),
     ("log10", mpmath.extraprec(20, True)(mpmath.log)(10)),
     ("log10_inv", 1 / mpmath.extraprec(20, True)(mpmath.log)(10)),

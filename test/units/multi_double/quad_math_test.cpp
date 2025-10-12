@@ -172,6 +172,9 @@ TEST_CASE("num_collect::multi_double::expm1") {
                 quad(-0x1.fffffffffdae1p-1, -0x1.3107d5f6151d6p-57)),
             std::make_tuple(quad(-0x1.b684eabe415bbp+0, 0x1.8394ecb303f2cp-54),
                 quad(-0x1.a3abc27e11bfap-1, -0x1.e8c26a6109bbep-56)),
+            std::make_tuple(
+                quad(-0x1.672324c836651p-10, -0x1.b6c3760bf5d78p-64),
+                quad(-0x1.66e431b1a3f40p-10, 0x1.311abd9deeb44p-64)),
             std::make_tuple(quad(-0x1.61e4f765fd8aep-10, 0x1.5182a9930be0cp-64),
                 quad(-0x1.61a7d748f8fc1p-10, 0x1.99bf973030078p-64)),
             std::make_tuple(quad(-0x1.fd71823e9ed31p-28, 0x1.456b15bb2ec98p-83),
@@ -180,6 +183,8 @@ TEST_CASE("num_collect::multi_double::expm1") {
                 quad(0x1.3e3e59d301ba1p-40, 0x1.a2e3928e1558cp-94)),
             std::make_tuple(quad(0x1.61e4f765fd8aep-10, -0x1.5182a9930be0cp-64),
                 quad(0x1.62222599f4d87p-10, 0x1.0307ea3a1eec9p-64)),
+            std::make_tuple(quad(0x1.672324c836651p-10, 0x1.b6c3760bf5d78p-64),
+                quad(0x1.676226986da0ep-10, -0x1.89ff79b779b39p-64)),
             std::make_tuple(quad(0x1.e37bed2c3aa0bp+0, -0x1.e2d5f1238d4c0p-56),
                 quad(0x1.670d100d10754p+2, 0x1.fa696398ba718p-52)),
             std::make_tuple(quad(0x1.5832e2e5d966bp+5, 0x1.8794e6d1f4d78p-49),
