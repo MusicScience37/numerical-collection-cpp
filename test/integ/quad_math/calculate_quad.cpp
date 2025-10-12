@@ -230,13 +230,11 @@ auto main(int argc, char** argv) -> int {
             {"abs", unary_operator_evaluator([](quad a) { return abs(a); })},
             {"sqrt", unary_operator_evaluator([](quad a) { return sqrt(a); })},
             {"exp", unary_operator_evaluator([](quad a) { return exp(a); })},
-            {"expm1", unary_operator_evaluator([](quad a) {
-                 return exp(a) - quad(1.0);
-             })},
+            {"expm1",
+                unary_operator_evaluator([](quad a) { return expm1(a); })},
             {"log", unary_operator_evaluator([](quad a) { return log(a); })},
-            {"log1p", unary_operator_evaluator([](quad a) {
-                 return log(a + quad(1.0));
-             })},
+            {"log1p",
+                unary_operator_evaluator([](quad a) { return log1p(a); })},
             {"log10",
                 unary_operator_evaluator([](quad a) { return log10(a); })},
         };
