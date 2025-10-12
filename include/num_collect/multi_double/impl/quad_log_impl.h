@@ -42,7 +42,14 @@ inline auto log_impl(quad x) noexcept -> quad {
     if (!std::isfinite(guess.high())) {
         return guess;
     }
-    guess += x * exp_impl(-guess) - quad(1.0);
+    if (sqrt2_inv_quad.high() < x.high() && x.high() < sqrt2_quad.high()) {
+        // Case of small x using expm1
+        const quad expm1_guess = expm1_impl(guess);
+        guess += (x - quad(1.0) - expm1_guess) / (expm1_guess + quad(1.0));
+    } else {
+        const quad exp_guess = exp_impl(guess);
+        guess += (x - exp_guess) / exp_guess;
+    }
     return guess;
 }
 
@@ -58,16 +65,17 @@ inline auto log_impl(quad x) noexcept -> quad {
  * However, for not small values, this function uses log_impl function.
  */
 inline auto log1p_impl(quad x) noexcept -> quad {
-    constexpr double upper_threshold = 1.36e-3;    // expm1(1.36e-3)
-    constexpr double lower_threshold = -1.359e-3;  // expm1(-1.36e-3)
-    if (x.high() < lower_threshold || upper_threshold < x.high()) {
-        return log_impl(quad(1.0) + x);
+    constexpr double small_upper_threshold = 0.414;   // sqrt(2)-1
+    constexpr double small_lower_threshold = -0.292;  // 1/sqrt(2) - 1
+    if (small_lower_threshold < x.high() && x.high() < small_upper_threshold) {
+        // Case of small x using expm1
+        quad guess = quad(std::log1p(x.high()));
+        const quad expm1_guess = expm1_impl(guess);
+        guess += (x - expm1_guess) / (expm1_guess + quad(1.0));
+        return guess;
     }
-    // special implementation
-    quad guess = quad(std::log1p(x.high()));
-    const quad exp_neg_guess = expm1_maclaurin_series(-guess);
-    guess += x * (exp_neg_guess + quad(1.0)) + exp_neg_guess;
-    return guess;
+    // Not small x without special treatment
+    return log_impl(quad(1.0) + x);
 }
 
 /*!

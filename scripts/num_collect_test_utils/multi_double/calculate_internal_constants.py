@@ -12,6 +12,8 @@ VALUES = [
     ("log10", mpmath.extraprec(20, True)(mpmath.log)(10)),
     ("log10_inv", 1 / mpmath.extraprec(20, True)(mpmath.log)(10)),
     ("exp_maclaurin_limit", mpmath.mpf("1.36e-3")),
+    ("sqrt2", mpmath.extraprec(20, True)(mpmath.sqrt)(2)),
+    ("sqrt2_inv", 1 / mpmath.extraprec(20, True)(mpmath.sqrt)(2)),
 ]
 
 

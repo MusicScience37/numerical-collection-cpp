@@ -228,6 +228,8 @@ TEST_CASE("num_collect::multi_double::log") {
                 quad(-0x1.e1e669ea72951p+2, 0x1.6fa409eea7fadp-52)),
             std::make_tuple(quad(0x1.1d050b4ff7bbfp-2, -0x1.5cd3ea0636098p-57),
                 quad(-0x1.4766dfe3cc8f7p+0, -0x1.684aba195d050p-55)),
+            std::make_tuple(quad(0x1.f638b3e0e9e53p-1, -0x1.39d9b27ddcc18p-55),
+                quad(-0x1.3bf059929289ap-6, 0x1.854e79ada7d8dp-61)),
             std::make_tuple(quad(0x1.5957a572db657p+1, -0x1.ba4f2cdf77ab8p-53),
                 quad(0x1.fc29c030db576p-1, -0x1.064e0ce82f619p-56)),
             std::make_tuple(quad(0x1.ec8b6be14f39fp+19, 0x1.780a9e47ae320p-35),
@@ -301,7 +303,7 @@ TEST_CASE("num_collect::multi_double::log1p") {
         INFO("input: " << format_quad_for_test(input));
 
         const quad actual = log1p(input);
-        constexpr quad relative_tolerance(0x1.0p-92);
+        constexpr quad relative_tolerance(0x1.0p-99);
         CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
     }
 }

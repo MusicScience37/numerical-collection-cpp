@@ -60,4 +60,16 @@ constexpr auto log10_inv_quad =  // cspell: disable-next-line
 constexpr auto exp_maclaurin_limit_quad =  // cspell: disable-next-line
     quad(0x1.64840e1719f80p-10, -0x1.cd5f99c38b04cp-64);
 
+/*!
+ * \brief \f$ \sqrt{2} \f$ as quad value.
+ */
+constexpr auto sqrt2_quad =  // cspell: disable-next-line
+    quad(0x1.6a09e667f3bcdp+0, -0x1.bdd3413b26456p-54);
+
+/*!
+ * \brief \f$ 1 / \sqrt{2} \f$ as quad value.
+ */
+constexpr auto sqrt2_inv_quad =  // cspell: disable-next-line
+    quad(0x1.6a09e667f3bcdp-1, -0x1.bdd3413b26454p-55);
+
 }  // namespace num_collect::multi_double::impl
