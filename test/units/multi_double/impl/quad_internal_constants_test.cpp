@@ -59,3 +59,39 @@ TEST_CASE("num_collect::multi_double::impl::log2_inv_quad") {
         CHECK_THAT(result, quad_within_rel(expected, relative_tolerance));
     }
 }
+
+TEST_CASE("num_collect::multi_double::impl::log10_quad") {
+    using num_collect::multi_double::quad;
+    using num_collect::multi_double::impl::log10_quad;
+
+    SECTION("check exp(log10_quad) == 10") {
+        // Use Maclaurin series here because exp function depends on this
+        // constant.
+        quad term = log10_quad;
+        quad result = term;
+        constexpr int num_terms = 200;
+        for (int i = 2; i <= num_terms; ++i) {
+            term *= log10_quad;
+            term /= i;
+            result += term;
+        }
+        result += quad(1.0);
+
+        constexpr quad expected = quad(10.0);
+        constexpr quad relative_tolerance(0x1.0p-102);
+        CHECK_THAT(result, quad_within_rel(expected, relative_tolerance));
+    }
+}
+
+TEST_CASE("num_collect::multi_double::impl::log10_inv_quad") {
+    using num_collect::multi_double::quad;
+    using num_collect::multi_double::impl::log10_inv_quad;
+    using num_collect::multi_double::impl::log10_quad;
+
+    SECTION("check log10_quad * log10_inv_quad == 1") {
+        const quad result = log10_quad * log10_inv_quad;
+        constexpr quad expected = quad(1.0);
+        constexpr quad relative_tolerance(0x1.0p-102);
+        CHECK_THAT(result, quad_within_rel(expected, relative_tolerance));
+    }
+}

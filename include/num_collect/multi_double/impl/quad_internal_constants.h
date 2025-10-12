@@ -36,6 +36,18 @@ constexpr auto log2_inv_quad =  // cspell: disable-next-line
     quad(0x1.71547652b82fep+0, 0x1.777d0ffda0d20p-56);
 
 /*!
+ * \brief \f$ \log{10} \f$ as quad value.
+ */
+constexpr auto log10_quad =  // cspell: disable-next-line
+    quad(0x1.26bb1bbb55516p+1, -0x1.f48ad494ea3e9p-53);
+
+/*!
+ * \brief \f$ 1 / \log{10} \f$ as quad value.
+ */
+constexpr auto log10_inv_quad =  // cspell: disable-next-line
+    quad(0x1.bcb7b1526e50ep-2, 0x1.95355baaafad0p-57);
+
+/*!
  * \brief Maximum absolute value for input of expm1_maclaurin_series,
  * exp_maclaurin_series functions.
  */

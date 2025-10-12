@@ -23,6 +23,7 @@
 
 #include "num_collect/multi_double/impl/basic_operations.h"
 #include "num_collect/multi_double/impl/quad_exp_impl.h"
+#include "num_collect/multi_double/impl/quad_log_impl.h"
 #include "num_collect/multi_double/quad.h"
 
 namespace num_collect::multi_double {
@@ -79,6 +80,34 @@ inline auto exp(const quad& x) noexcept -> quad { return impl::exp_impl(x); }
  */
 inline auto expm1(const quad& x) noexcept -> quad {
     return impl::expm1_impl(x);
+}
+
+/*!
+ * \brief Calculate natural logarithm \f$ \log(x) \f$.
+ *
+ * \param[in] x Input value.
+ * \return Result.
+ */
+inline auto log(const quad& x) noexcept -> quad { return impl::log_impl(x); }
+
+/*!
+ * \brief Calculate natural logarithm \f$ \log(1 + x) \f$.
+ *
+ * \param[in] x Input value.
+ * \return Result.
+ */
+inline auto log1p(const quad& x) noexcept -> quad {
+    return impl::log1p_impl(x);
+}
+
+/*!
+ * \brief Calculate common logarithm \f$ \log_{10}(x) \f$.
+ *
+ * \param[in] x Input value.
+ * \return Result.
+ */
+inline auto log10(const quad& x) noexcept -> quad {
+    return impl::log10_impl(x);
 }
 
 }  // namespace num_collect::multi_double
