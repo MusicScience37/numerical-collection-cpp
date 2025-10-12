@@ -47,6 +47,30 @@ inline auto log_impl(quad x) noexcept -> quad {
 }
 
 /*!
+ * \brief Calculate natural logarithm \f$ \log(1 + x) \f$.
+ *
+ * \param[in] x Input value.
+ * \return Result.
+ *
+ * This function uses Newton method for
+ * \f$ f(y) = e^y - x - 1 \f$,
+ * Starting from the value of log function of double.
+ * However, for not small values, this function uses log_impl function.
+ */
+inline auto log1p_impl(quad x) noexcept -> quad {
+    constexpr double upper_threshold = 1.36e-3;    // expm1(1.36e-3)
+    constexpr double lower_threshold = -1.359e-3;  // expm1(-1.36e-3)
+    if (x.high() < lower_threshold || upper_threshold < x.high()) {
+        return log_impl(quad(1.0) + x);
+    }
+    // special implementation
+    quad guess = quad(std::log1p(x.high()));
+    const quad exp_neg_guess = expm1_maclaurin_series(-guess);
+    guess += x * (exp_neg_guess + quad(1.0)) + exp_neg_guess;
+    return guess;
+}
+
+/*!
  * \brief Calculate common logarithm \f$ \log_{10}(x) \f$.
  *
  * \param[in] x Input value.

@@ -267,6 +267,40 @@ TEST_CASE("num_collect::multi_double::log") {
     }
 }
 
+TEST_CASE("num_collect::multi_double::log1p") {
+    using num_collect::multi_double::log1p;
+    using num_collect::multi_double::quad;
+
+    SECTION("calculate for non-zero values") {
+        quad input;
+        quad expected;
+        std::tie(
+            input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(
+                quad(-0x1.0502c4a06925ep-10, -0x1.958f20a5e1030p-64),
+                quad(-0x1.05240e1d32d3cp-10, -0x1.ba17fbb28ed42p-64)),
+            std::make_tuple(
+                quad(-0x1.eb9d5a6f5e582p-13, -0x1.3ce4a88bcd750p-69),
+                quad(-0x1.ebac1b5a60ad6p-13, 0x1.de3158dfb888cp-68)),
+            std::make_tuple(quad(0x1.800465b45ad46p-48, 0x1.a273de5b32fd8p-103),
+                quad(0x1.800465b45ad34p-48, 0x1.9f2792419199cp-103)),
+            std::make_tuple(quad(0x1.11e0a04f502acp-9, 0x1.f80d9d284506cp-63),
+                quad(0x1.11977a2d596d3p-9, -0x1.1e926d1e549ecp-63)),
+            std::make_tuple(quad(0x1.067ec9978934cp+15, -0x1.c28e47aebe040p-39),
+                quad(0x1.4d836cbe7d2dfp+3, 0x1.ab32b8c12b0d7p-51)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+        INFO("input: " << format_quad_for_test(input));
+
+        const quad actual = log1p(input);
+        constexpr quad relative_tolerance(0x1.0p-92);
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+}
+
 TEST_CASE("num_collect::multi_double::log10") {
     using num_collect::multi_double::log10;
     using num_collect::multi_double::quad;
