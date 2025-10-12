@@ -70,7 +70,8 @@ static auto parse_input_file(const std::string& file_path)
             }
             char* end_ptr = nullptr;
             values[i] = std::strtod(value_str.data(), &end_ptr);
-            if (end_ptr != value_str.data() + value_str.size()) {
+            if (end_ptr != value_str.data() + value_str.size() ||
+                !std::isfinite(values[i])) {
                 throw num_collect::invalid_argument(
                     fmt::format("Invalid value: {}", value_str));
             }
