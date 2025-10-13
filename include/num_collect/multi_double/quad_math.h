@@ -139,4 +139,14 @@ inline auto trunc(const quad& x) noexcept -> quad {
     return impl::trunc_impl(x);
 }
 
+/*!
+ * \brief Round to nearest integer.
+ *
+ * \param[in] x Value.
+ * \return Rounded value.
+ */
+inline auto round(const quad& x) noexcept -> quad {
+    return impl::round_impl(x);
+}
+
 }  // namespace num_collect::multi_double

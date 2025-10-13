@@ -12,6 +12,9 @@ import click
 import mpmath
 import pandas
 import plotly.express
+
+# pylint: disable=redefined-builtin
+from num_collect_test_utils.multi_double.round import round
 from num_collect_test_utils.multi_double.split_quad import split_quad
 from num_collect_test_utils.multi_double.trunc import trunc
 
@@ -54,6 +57,7 @@ OPERATORS = [
     ("floor", mpmath.floor, 1, -1e120, 1e120),
     ("ceil", mpmath.ceil, 1, -1e120, 1e120),
     ("trunc", trunc, 1, -1e120, 1e120),
+    ("round", round, 1, -1e120, 1e120),
 ]
 
 

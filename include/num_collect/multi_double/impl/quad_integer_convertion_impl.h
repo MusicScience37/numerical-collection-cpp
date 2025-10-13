@@ -21,7 +21,6 @@
 
 #include <cmath>
 
-#include "num_collect/multi_double/impl/basic_operations.h"
 #include "num_collect/multi_double/quad.h"
 
 namespace num_collect::multi_double::impl {
@@ -65,6 +64,19 @@ inline auto trunc_impl(quad x) noexcept -> quad {
         return floor_impl(x);
     }
     return ceil_impl(x);
+}
+
+/*!
+ * \brief Round to nearest integer.
+ *
+ * \param[in] x Value.
+ * \return Rounded value.
+ */
+inline auto round_impl(quad x) noexcept -> quad {
+    if (x >= quad(0.0)) {
+        return floor_impl(x + 0.5);  // NOLINT(*-magic-numbers)
+    }
+    return ceil_impl(x - 0.5);  // NOLINT(*-magic-numbers)
 }
 
 }  // namespace num_collect::multi_double::impl
