@@ -149,6 +149,14 @@ inline auto sin(quad x) noexcept -> quad { return impl::sin_impl(x); }
 inline auto cos(quad x) noexcept -> quad { return impl::cos_impl(x); }
 
 /*!
+ * \brief Calculate tan function.
+ *
+ * \param[in] x Input value.
+ * \return Result.
+ */
+inline auto tan(quad x) noexcept -> quad { return impl::tan_impl(x); }
+
+/*!
  * \brief Calculate floor function.
  *
  * \param[in] x Value.

@@ -144,4 +144,14 @@ inline auto cos_impl(quad x) noexcept -> quad {
     }
 }
 
+/*!
+ * \brief Calculate tan function.
+ *
+ * \param[in] x Input value.
+ * \return Result.
+ */
+inline auto tan_impl(quad x) noexcept -> quad {
+    return sin_impl(x) / cos_impl(x);
+}
+
 }  // namespace num_collect::multi_double::impl

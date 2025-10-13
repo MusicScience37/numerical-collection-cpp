@@ -62,6 +62,7 @@ OPERATORS = [
     ("round", round, 1, -1e120, 1e120),
     ("sin", mpmath.sin, 1, -1e2, 1e2),
     ("cos", mpmath.cos, 1, -1e2, 1e2),
+    ("tan", mpmath.tan, 1, -1e2, 1e2),
 ]
 
 
