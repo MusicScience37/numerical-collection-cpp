@@ -25,6 +25,7 @@
 #include "num_collect/multi_double/impl/quad_exp_impl.h"
 #include "num_collect/multi_double/impl/quad_integer_convertion_impl.h"
 #include "num_collect/multi_double/impl/quad_log_impl.h"
+#include "num_collect/multi_double/impl/quad_pow_impl.h"
 #include "num_collect/multi_double/quad.h"
 
 namespace num_collect::multi_double {
@@ -109,6 +110,17 @@ inline auto log1p(const quad& x) noexcept -> quad {
  */
 inline auto log10(const quad& x) noexcept -> quad {
     return impl::log10_impl(x);
+}
+
+/*!
+ * \brief Calculate the value of `base` raised to the power of `exponent`.
+ *
+ * \param[in] base Base value.
+ * \param[in] exponent Exponent value.
+ * \return Result.
+ */
+inline auto pow(const quad& base, const quad& exponent) noexcept -> quad {
+    return impl::pow_general_impl(base, exponent);
 }
 
 /*!

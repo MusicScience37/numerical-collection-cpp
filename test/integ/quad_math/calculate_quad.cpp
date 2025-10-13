@@ -237,6 +237,9 @@ auto main(int argc, char** argv) -> int {
                 unary_operator_evaluator([](quad a) { return log1p(a); })},
             {"log10",
                 unary_operator_evaluator([](quad a) { return log10(a); })},
+            {"pow", binary_operator_evaluator([](quad a, quad b) {
+                 return pow(a, b);
+             })},
             {"floor",
                 unary_operator_evaluator([](quad a) { return floor(a); })},
             {"ceil", unary_operator_evaluator([](quad a) { return ceil(a); })},

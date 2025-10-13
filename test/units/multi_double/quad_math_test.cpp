@@ -369,6 +369,59 @@ TEST_CASE("num_collect::multi_double::log10") {
     }
 }
 
+TEST_CASE("num_collect::multi_double::pow") {
+    using num_collect::multi_double::pow;
+    using num_collect::multi_double::quad;
+
+    SECTION("calculate for non-zero values") {
+        quad base;
+        quad exponent;
+        quad expected;
+        std::tie(base, exponent,
+            expected) = GENERATE(Catch::Generators::table<quad, quad, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(0x1.be580cb8d6672p+5, -0x1.7c1b0862537e4p-49),
+                quad(0x1.7ff89514e4ba3p+2, 0x1.d9043a8ea4840p-55),
+                quad(0x1.c0a64f3223e64p+34, 0x1.7e91903471238p-20)),
+            std::make_tuple(quad(0x1.5a2b98fe9585cp-10, -0x1.0c36fa4e937a0p-66),
+                quad(0x1.377eb204dfb45p+2, 0x1.61c693b9f146cp-52),
+                quad(0x1.5d29dca66ad6bp-47, 0x1.0abe488f081a0p-103)),
+            std::make_tuple(quad(0x1.abf6487b5305fp+5, 0x1.924c526aeb870p-50),
+                quad(0x1.5b7d6d2e1b674p-2, 0x1.79c41e9ec3e18p-56),
+                quad(0x1.edf9f83e3942fp+1, 0x1.8d17126891f64p-53)),
+            std::make_tuple(quad(0x1.5df1c02a3661fp-12, 0x1.98c0818650188p-67),
+                quad(-0x1.30a1b401d3ba5p+3, 0x1.c85f223c97498p-52),
+                quad(0x1.ec627b697f044p+109, 0x1.4e4e95fa15f0cp+55)),
+            std::make_tuple(quad(0x1.17ce6ac42961cp-8, -0x1.070ccd508d778p-63),
+                quad(-0x1.1f55dcd10d285p-3, -0x1.2c2ce0b511ca4p-57),
+                quad(0x1.13368fce32b95p+1, 0x1.8f8f57d27c7b8p-53)),
+            std::make_tuple(quad(0x1.6cda60be6b14fp-2, 0x1.399372f983e40p-56),
+                quad(0x1.0000000000000p+1, 0x0.0p+0),
+                quad(0x1.03fedeb334b0bp-3, -0x1.3da45e9c7b7a4p-57)),
+            std::make_tuple(quad(0x1.2c05b961881ddp+9, 0x1.53c917c681b20p-45),
+                quad(0x1.9000000000000p+6, 0x0.0p+0),
+                quad(0x1.db46a2ddff7bcp+922, -0x1.e96b9fff8c450p+866)),
+            std::make_tuple(quad(0x1.d1b18f6ad52ffp-2, -0x1.4ec7fb6021200p-62),
+                quad(-0x1.2c00000000000p+8, 0x0.0p+0),
+                quad(0x1.052adfbd40811p+341, -0x1.87e957bcb8680p+284)),
+            std::make_tuple(quad(0x1.dad80bdd56581p-10, -0x1.f97511af07900p-70),
+                quad(0x1.0000000000000p-1, 0x0.0p+0),
+                quad(0x1.5ca795647210ap-5, -0x1.a71cf5472d030p-60)),
+            std::make_tuple(quad(0x1.645eaa2f888ecp-7, 0x1.11285a34d2f78p-62),
+                quad(0x0.0p+0, 0x0.0p+0), quad(0x1.0000000000000p+0, 0x0.0p+0)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+        INFO("base: " << format_quad_for_test(base));
+        INFO("exponent: " << format_quad_for_test(exponent));
+
+        const quad actual = pow(base, exponent);
+        constexpr quad relative_tolerance(0x1.0p-90);
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+}
+
 TEST_CASE("num_collect::multi_double::floor") {
     using num_collect::multi_double::floor;
     using num_collect::multi_double::quad;
