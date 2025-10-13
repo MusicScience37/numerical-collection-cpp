@@ -240,6 +240,9 @@ auto main(int argc, char** argv) -> int {
             {"pow", binary_operator_evaluator([](quad a, quad b) {
                  return pow(a, b);
              })},
+            {"pow_int", binary_operator_evaluator([](quad a, quad b) {
+                 return pow(a, static_cast<int>(b.high()));
+             })},
             {"floor",
                 unary_operator_evaluator([](quad a) { return floor(a); })},
             {"ceil", unary_operator_evaluator([](quad a) { return ceil(a); })},
