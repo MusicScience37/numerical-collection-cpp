@@ -721,6 +721,42 @@ TEST_CASE("num_collect::multi_double::tan") {
     }
 }
 
+TEST_CASE("num_collect::multi_double::asin") {
+    using num_collect::multi_double::asin;
+    using num_collect::multi_double::quad;
+
+    SECTION("calculate for non-zero values") {
+        quad input;
+        quad expected;
+        std::tie(
+            input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(-0x1.0000000000000p+0, 0x0.0p+0),
+                quad(-0x1.921fb54442d18p+0, -0x1.1a62633145c07p-54)),
+            std::make_tuple(quad(-0x1.f858f4b0b2a03p-1, 0x1.c08ae3c4a76d4p-55),
+                quad(-0x1.65ceb54ed5013p+0, 0x1.b6ebd73674b5dp-55)),
+            std::make_tuple(quad(-0x1.6e29015574577p-5, -0x1.42a63fd385670p-60),
+                quad(-0x1.6e483ecee0060p-5, -0x1.a359ced9faebfp-59)),
+            std::make_tuple(quad(0x1.a8c218be4484dp-32, 0x1.a231ce8c92588p-87),
+                quad(0x1.a8c218be4484dp-32, 0x1.a29340baf8262p-87)),
+            std::make_tuple(quad(0x1.65528728f7924p-8, 0x1.69b0488d1a5e0p-63),
+                quad(0x1.6552fb2f9e86cp-8, 0x1.686ab6978ab06p-62)),
+            std::make_tuple(quad(0x1.9f63608ae2177p-1, -0x1.72f68eb27d260p-58),
+                quad(0x1.e48c0c6020b2bp-1, 0x1.5f2eddab20b8cp-55)),
+            std::make_tuple(quad(0x1.0000000000000p+0, 0x0.0p+0),
+                quad(0x1.921fb54442d18p+0, 0x1.1a62633145c07p-54)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+        INFO("input: " << format_quad_for_test(input));
+
+        const quad actual = asin(input);
+        constexpr quad relative_tolerance(0x1.0p-99);
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+}
+
 TEST_CASE("num_collect::multi_double::sinh") {
     using num_collect::multi_double::quad;
     using num_collect::multi_double::sinh;

@@ -25,6 +25,7 @@
 #include "num_collect/multi_double/impl/quad_exp_impl.h"
 #include "num_collect/multi_double/impl/quad_hyperbolic_impl.h"
 #include "num_collect/multi_double/impl/quad_integer_convertion_impl.h"
+#include "num_collect/multi_double/impl/quad_inv_trigonometric_impl.h"
 #include "num_collect/multi_double/impl/quad_log_impl.h"
 #include "num_collect/multi_double/impl/quad_pow_impl.h"
 #include "num_collect/multi_double/impl/quad_trigonometric_impl.h"
@@ -156,6 +157,14 @@ inline auto cos(quad x) noexcept -> quad { return impl::cos_impl(x); }
  * \return Result.
  */
 inline auto tan(quad x) noexcept -> quad { return impl::tan_impl(x); }
+
+/*!
+ * \brief Calculate asin function.
+ *
+ * \param[in] x Input value.
+ * \return Result.
+ */
+inline auto asin(quad x) noexcept -> quad { return impl::asin_impl(x); }
 
 /*!
  * \brief Calculate sinh function.
