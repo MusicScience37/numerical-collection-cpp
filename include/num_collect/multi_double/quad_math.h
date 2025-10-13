@@ -20,13 +20,13 @@
 #pragma once
 
 #include <cmath>
-#include <concepts>
 
 #include "num_collect/multi_double/impl/basic_operations.h"
 #include "num_collect/multi_double/impl/quad_exp_impl.h"
 #include "num_collect/multi_double/impl/quad_integer_convertion_impl.h"
 #include "num_collect/multi_double/impl/quad_log_impl.h"
 #include "num_collect/multi_double/impl/quad_pow_impl.h"
+#include "num_collect/multi_double/impl/quad_trigonometric_impl.h"
 #include "num_collect/multi_double/quad.h"
 
 namespace num_collect::multi_double {
@@ -131,6 +131,30 @@ template <typename Exponent>
 inline auto pow(quad base, Exponent exponent) noexcept -> quad {
     return impl::pow_impl(base, exponent);
 }
+
+/*!
+ * \brief Calculate sin function.
+ *
+ * \param[in] x Input value.
+ * \return Result.
+ */
+inline auto sin(quad x) noexcept -> quad { return impl::sin_impl(x); }
+
+/*!
+ * \brief Calculate cos function.
+ *
+ * \param[in] x Input value.
+ * \return Result.
+ */
+inline auto cos(quad x) noexcept -> quad { return impl::cos_impl(x); }
+
+/*!
+ * \brief Calculate tan function.
+ *
+ * \param[in] x Input value.
+ * \return Result.
+ */
+inline auto tan(quad x) noexcept -> quad { return impl::tan_impl(x); }
 
 /*!
  * \brief Calculate floor function.

@@ -23,6 +23,7 @@
 #include <fmt/format.h>
 
 #include "num_collect/multi_double/quad.h"
+#include "num_collect/multi_double/quad_io.h"  // IWYU pragma: keep
 
 /*!
  * \brief Format a quad number for test.
@@ -32,7 +33,8 @@
  */
 inline auto format_quad_for_test(const num_collect::multi_double::quad& value)
     -> std::string {
-    return fmt::format("quad({:.13a}, {:.13a})", value.high(), value.low());
+    return fmt::format(
+        "quad({:.13a}, {:.13a}) ({})", value.high(), value.low(), value);
 }
 
 namespace Catch {

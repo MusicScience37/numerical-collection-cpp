@@ -14,6 +14,12 @@ VALUES = [
     ("exp_maclaurin_limit", mpmath.mpf("1.36e-3")),
     ("sqrt2", mpmath.extraprec(20, True)(mpmath.sqrt)(2)),
     ("sqrt2_inv", 1 / mpmath.extraprec(20, True)(mpmath.sqrt)(2)),
+    ("two_pi", 2 * mpmath.pi),
+    ("two_pi_inv", 1 / (2 * mpmath.pi)),
+    ("pi_over_2", mpmath.pi / 2),
+    ("three_pi_over_2", 3 * mpmath.pi / 2),
+    ("pi_over_4", mpmath.pi / 4),
+    ("pi_over_4_inv", 1 / (mpmath.pi / 4)),
 ]
 
 
