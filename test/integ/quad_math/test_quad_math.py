@@ -54,6 +54,8 @@ OPERATORS = [
     ("log", mpmath.log, 1, 1e-10, 1e10),
     ("log1p", mpmath.log1p, 1, -0.999, 1e10),
     ("log10", mpmath.log10, 1, 1e-10, 1e10),
+    ("pow", mpmath.power, 2, 1e-2, 1e2),
+    ("pow_int", lambda x, y: x ** int(y), 2, 1e-2, 1e2),
     ("floor", mpmath.floor, 1, -1e120, 1e120),
     ("ceil", mpmath.ceil, 1, -1e120, 1e120),
     ("trunc", trunc, 1, -1e120, 1e120),

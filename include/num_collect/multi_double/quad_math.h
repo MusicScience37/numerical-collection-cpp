@@ -20,11 +20,13 @@
 #pragma once
 
 #include <cmath>
+#include <concepts>
 
 #include "num_collect/multi_double/impl/basic_operations.h"
 #include "num_collect/multi_double/impl/quad_exp_impl.h"
 #include "num_collect/multi_double/impl/quad_integer_convertion_impl.h"
 #include "num_collect/multi_double/impl/quad_log_impl.h"
+#include "num_collect/multi_double/impl/quad_pow_impl.h"
 #include "num_collect/multi_double/quad.h"
 
 namespace num_collect::multi_double {
@@ -35,7 +37,7 @@ namespace num_collect::multi_double {
  * \param[in] value Input number.
  * \return Absolute value of the input number.
  */
-inline auto abs(const quad& value) noexcept -> quad {
+inline auto abs(quad value) noexcept -> quad {
     if (value < quad(0.0)) {
         return -value;
     }
@@ -50,7 +52,7 @@ inline auto abs(const quad& value) noexcept -> quad {
  *
  * If the input number is negative, the result is unspecified.
  */
-inline auto sqrt(const quad& value) noexcept -> quad {
+inline auto sqrt(quad value) noexcept -> quad {
     if (value == quad(0.0)) {
         return quad(0.0);
     }
@@ -71,7 +73,7 @@ inline auto sqrt(const quad& value) noexcept -> quad {
  * \param[in] x Input value.
  * \return Result.
  */
-inline auto exp(const quad& x) noexcept -> quad { return impl::exp_impl(x); }
+inline auto exp(quad x) noexcept -> quad { return impl::exp_impl(x); }
 
 /*!
  * \brief Calculate exponential minus one \f$ e^x - 1 \f$.
@@ -79,9 +81,7 @@ inline auto exp(const quad& x) noexcept -> quad { return impl::exp_impl(x); }
  * \param[in] x Input value.
  * \return Result.
  */
-inline auto expm1(const quad& x) noexcept -> quad {
-    return impl::expm1_impl(x);
-}
+inline auto expm1(quad x) noexcept -> quad { return impl::expm1_impl(x); }
 
 /*!
  * \brief Calculate natural logarithm \f$ \log(x) \f$.
@@ -89,7 +89,7 @@ inline auto expm1(const quad& x) noexcept -> quad {
  * \param[in] x Input value.
  * \return Result.
  */
-inline auto log(const quad& x) noexcept -> quad { return impl::log_impl(x); }
+inline auto log(quad x) noexcept -> quad { return impl::log_impl(x); }
 
 /*!
  * \brief Calculate natural logarithm \f$ \log(1 + x) \f$.
@@ -97,9 +97,7 @@ inline auto log(const quad& x) noexcept -> quad { return impl::log_impl(x); }
  * \param[in] x Input value.
  * \return Result.
  */
-inline auto log1p(const quad& x) noexcept -> quad {
-    return impl::log1p_impl(x);
-}
+inline auto log1p(quad x) noexcept -> quad { return impl::log1p_impl(x); }
 
 /*!
  * \brief Calculate common logarithm \f$ \log_{10}(x) \f$.
@@ -107,8 +105,31 @@ inline auto log1p(const quad& x) noexcept -> quad {
  * \param[in] x Input value.
  * \return Result.
  */
-inline auto log10(const quad& x) noexcept -> quad {
-    return impl::log10_impl(x);
+inline auto log10(quad x) noexcept -> quad { return impl::log10_impl(x); }
+
+/*!
+ * \brief Calculate the value of `base` raised to the power of `exponent`.
+ *
+ * \param[in] base Base value.
+ * \param[in] exponent Exponent value.
+ * \return Result.
+ */
+inline auto pow(quad base, quad exponent) noexcept -> quad {
+    return impl::pow_impl(base, exponent);
+}
+
+/*!
+ * \brief Calculate the value of `base` raised to the power of `exponent`.
+ *
+ * \tparam Exponent Type of the exponent value.
+ * \param[in] base Base value.
+ * \param[in] exponent Exponent value.
+ * \return Result.
+ */
+template <typename Exponent>
+    requires concepts::implicitly_convertible_to<Exponent, double>
+inline auto pow(quad base, Exponent exponent) noexcept -> quad {
+    return impl::pow_impl(base, exponent);
 }
 
 /*!
@@ -117,9 +138,7 @@ inline auto log10(const quad& x) noexcept -> quad {
  * \param[in] x Value.
  * \return Floor value.
  */
-inline auto floor(const quad& x) noexcept -> quad {
-    return impl::floor_impl(x);
-}
+inline auto floor(quad x) noexcept -> quad { return impl::floor_impl(x); }
 
 /*!
  * \brief Calculate ceil function.
@@ -127,7 +146,7 @@ inline auto floor(const quad& x) noexcept -> quad {
  * \param[in] x Value.
  * \return Ceil value.
  */
-inline auto ceil(const quad& x) noexcept -> quad { return impl::ceil_impl(x); }
+inline auto ceil(quad x) noexcept -> quad { return impl::ceil_impl(x); }
 
 /*!
  * \brief Truncate to integer.
@@ -135,9 +154,7 @@ inline auto ceil(const quad& x) noexcept -> quad { return impl::ceil_impl(x); }
  * \param[in] x Value.
  * \return Truncated value.
  */
-inline auto trunc(const quad& x) noexcept -> quad {
-    return impl::trunc_impl(x);
-}
+inline auto trunc(quad x) noexcept -> quad { return impl::trunc_impl(x); }
 
 /*!
  * \brief Round to nearest integer.
@@ -145,8 +162,6 @@ inline auto trunc(const quad& x) noexcept -> quad {
  * \param[in] x Value.
  * \return Rounded value.
  */
-inline auto round(const quad& x) noexcept -> quad {
-    return impl::round_impl(x);
-}
+inline auto round(quad x) noexcept -> quad { return impl::round_impl(x); }
 
 }  // namespace num_collect::multi_double
