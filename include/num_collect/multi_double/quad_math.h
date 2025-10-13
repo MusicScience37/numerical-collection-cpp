@@ -121,4 +121,12 @@ inline auto floor(const quad& x) noexcept -> quad {
     return impl::floor_impl(x);
 }
 
+/*!
+ * \brief Calculate ceil function.
+ *
+ * \param[in] x Value.
+ * \return Ceil value.
+ */
+inline auto ceil(const quad& x) noexcept -> quad { return impl::ceil_impl(x); }
+
 }  // namespace num_collect::multi_double

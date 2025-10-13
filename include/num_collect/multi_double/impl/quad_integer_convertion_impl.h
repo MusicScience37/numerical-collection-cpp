@@ -39,4 +39,18 @@ inline auto floor_impl(quad x) noexcept -> quad {
     return quad(high_int, low_int) + std::floor(high_frac + low_frac);
 }
 
+/*!
+ * \brief Calculate ceil function.
+ *
+ * \param[in] x Value.
+ * \return Ceil value.
+ */
+inline auto ceil_impl(quad x) noexcept -> quad {
+    double high_int{};
+    double high_frac = std::modf(x.high(), &high_int);
+    double low_int{};
+    double low_frac = std::modf(x.low(), &low_int);
+    return quad(high_int, low_int) + std::ceil(high_frac + low_frac);
+}
+
 }  // namespace num_collect::multi_double::impl

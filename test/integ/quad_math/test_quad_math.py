@@ -51,6 +51,7 @@ OPERATORS = [
     ("log1p", mpmath.log1p, 1, -0.999, 1e10),
     ("log10", mpmath.log10, 1, 1e-10, 1e10),
     ("floor", mpmath.floor, 1, -1e120, 1e120),
+    ("ceil", mpmath.ceil, 1, -1e120, 1e120),
 ]
 
 
