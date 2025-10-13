@@ -37,7 +37,7 @@ inline auto sinh_impl(quad x) noexcept -> quad {
     constexpr double threshold = 1.0;
     if (-threshold < x.high() && x.high() < threshold) {
         const quad expm1_x = expm1_impl(x);
-        const quad expm1_neg_x = expm1_impl(-x);
+        const quad expm1_neg_x = -expm1_x / (expm1_x + 1.0);
         return (expm1_x - expm1_neg_x) * 0.5;  // NOLINT(*-magic-numbers)
     }
     const quad exp_x = exp_impl(x);
