@@ -56,13 +56,14 @@ OPERATORS = [
     ("log10", mpmath.log10, 1, 1e-10, 1e10),
     ("pow", mpmath.power, 2, 1e-2, 1e2),
     ("pow_int", lambda x, y: x ** int(y), 2, 1e-2, 1e2),
+    ("sin", mpmath.sin, 1, -1e2, 1e2),
+    ("cos", mpmath.cos, 1, -1e2, 1e2),
+    ("tan", mpmath.tan, 1, -1e2, 1e2),
+    ("sinh", mpmath.sinh, 1, -300.0, 300.0),
     ("floor", mpmath.floor, 1, -1e120, 1e120),
     ("ceil", mpmath.ceil, 1, -1e120, 1e120),
     ("trunc", trunc, 1, -1e120, 1e120),
     ("round", round, 1, -1e120, 1e120),
-    ("sin", mpmath.sin, 1, -1e2, 1e2),
-    ("cos", mpmath.cos, 1, -1e2, 1e2),
-    ("tan", mpmath.tan, 1, -1e2, 1e2),
 ]
 
 

@@ -721,6 +721,75 @@ TEST_CASE("num_collect::multi_double::tan") {
     }
 }
 
+TEST_CASE("num_collect::multi_double::sinh") {
+    using num_collect::multi_double::quad;
+    using num_collect::multi_double::sinh;
+
+    SECTION("calculate for non-zero values") {
+        quad input;
+        quad expected;
+        std::tie(
+            input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(-0x1.86b257fa21711p+8, -0x1.2a5a2e167baa8p-46),
+                quad(-0x1.936aa4a814ad9p+562, -0x1.88a77b52b55e8p+506)),
+            std::make_tuple(quad(-0x1.a96c8c1fe280ap-3, 0x1.1deefd798cca0p-59),
+                quad(-0x1.ac7d7a96e192dp-3, 0x1.8bcee97468237p-57)),
+            std::make_tuple(
+                quad(-0x1.0a98bfb3fdaf8p-22, -0x1.6b4e354230ce8p-76),
+                quad(-0x1.0a98bfb3fdb29p-22, 0x1.d4da3808ed83ep-76)),
+            std::make_tuple(
+                quad(-0x1.04824626c4105p-48, 0x1.1e4507ff1e4b8p-103),
+                quad(-0x1.04824626c4105p-48, 0x1.1e4507ff1e350p-103)),
+            std::make_tuple(
+                quad(0x1.6e9219342dc4dp-49, -0x1.e01ec099a42d8p-103),
+                quad(0x1.6e9219342dc4dp-49, -0x1.e01ec099a425bp-103)),
+            std::make_tuple(quad(0x1.db931072e257dp-10, -0x1.cc1d6d3cdf740p-68),
+                quad(0x1.db93218b8f962p-10, -0x1.2e8228a67e6bdp-66)),
+            std::make_tuple(quad(0x1.0dd4be2b57836p-1, 0x1.1326afb4ab2e0p-58),
+                quad(0x1.1a7f0bad8f04fp-1, -0x1.fcc816caa066fp-55)),
+            std::make_tuple(quad(0x1.8ff7def2ecb82p+7, 0x1.5e17780a516e0p-47),
+                quad(0x1.6e1a23e145ddap+287, -0x1.09b4e14c1fdcap+233)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+        INFO("input: " << format_quad_for_test(input));
+
+        const quad actual = sinh(input);
+        constexpr quad relative_tolerance(0x1.0p-98);
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+
+    SECTION("calculate for zero") {
+        const quad input(0x0.0p+0, 0x0.0p+0);
+        const quad expected(0x0.0p+0, 0x0.0p+0);
+
+        const quad actual = sinh(input);
+        CHECK(actual == expected);
+    }
+
+    SECTION("calculate for too large value") {
+        const auto input = quad(710.0);
+
+        const quad actual = sinh(input);
+
+        INFO("actual: " << format_quad_for_test(actual));
+        CHECK(std::isinf(actual.high()));
+        CHECK(actual.high() > 0.0);
+    }
+
+    SECTION("calculate for too small value") {
+        const auto input = quad(-708.0);
+
+        const auto actual = sinh(input);
+
+        INFO("actual: " << format_quad_for_test(actual));
+        CHECK(std::isinf(actual.high()));
+        CHECK(actual.high() < 0.0);
+    }
+}
+
 TEST_CASE("num_collect::multi_double::floor") {
     using num_collect::multi_double::floor;
     using num_collect::multi_double::quad;
