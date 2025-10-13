@@ -12,7 +12,11 @@ import click
 import mpmath
 import pandas
 import plotly.express
+
+# pylint: disable=redefined-builtin
+from num_collect_test_utils.multi_double.round import round
 from num_collect_test_utils.multi_double.split_quad import split_quad
+from num_collect_test_utils.multi_double.trunc import trunc
 
 QUAD_PRECISION = 52 * 2 + 1
 mpmath.mp.prec = QUAD_PRECISION  # Quad precision
@@ -50,6 +54,10 @@ OPERATORS = [
     ("log", mpmath.log, 1, 1e-10, 1e10),
     ("log1p", mpmath.log1p, 1, -0.999, 1e10),
     ("log10", mpmath.log10, 1, 1e-10, 1e10),
+    ("floor", mpmath.floor, 1, -1e120, 1e120),
+    ("ceil", mpmath.ceil, 1, -1e120, 1e120),
+    ("trunc", trunc, 1, -1e120, 1e120),
+    ("round", round, 1, -1e120, 1e120),
 ]
 
 
@@ -323,17 +331,12 @@ def visualize_results(
         lambda x: max(x, small_value)
     )
 
-    min_rel_error = results[REL_ERROR_COLUMN].min()
-    max_rel_error = results[REL_ERROR_COLUMN].max()
-
-    figure = plotly.express.violin(
+    figure = plotly.express.box(
         results,
         x=OPERATOR_NAME_COLUMN,
         y=REL_ERROR_COLUMN,
         hover_data=[CALCULATION_COLUMN],
-        box=True,
         log_y=True,
-        range_y=[0.1 * min_rel_error, 10.0 * max_rel_error],
         title="Error of Quad Calculations",
     )
     figure.write_html(str(output_dir_path / "rel_error.html"))

@@ -23,6 +23,7 @@
 
 #include "num_collect/multi_double/impl/basic_operations.h"
 #include "num_collect/multi_double/impl/quad_exp_impl.h"
+#include "num_collect/multi_double/impl/quad_integer_convertion_impl.h"
 #include "num_collect/multi_double/impl/quad_log_impl.h"
 #include "num_collect/multi_double/quad.h"
 
@@ -108,6 +109,44 @@ inline auto log1p(const quad& x) noexcept -> quad {
  */
 inline auto log10(const quad& x) noexcept -> quad {
     return impl::log10_impl(x);
+}
+
+/*!
+ * \brief Calculate floor function.
+ *
+ * \param[in] x Value.
+ * \return Floor value.
+ */
+inline auto floor(const quad& x) noexcept -> quad {
+    return impl::floor_impl(x);
+}
+
+/*!
+ * \brief Calculate ceil function.
+ *
+ * \param[in] x Value.
+ * \return Ceil value.
+ */
+inline auto ceil(const quad& x) noexcept -> quad { return impl::ceil_impl(x); }
+
+/*!
+ * \brief Truncate to integer.
+ *
+ * \param[in] x Value.
+ * \return Truncated value.
+ */
+inline auto trunc(const quad& x) noexcept -> quad {
+    return impl::trunc_impl(x);
+}
+
+/*!
+ * \brief Round to nearest integer.
+ *
+ * \param[in] x Value.
+ * \return Rounded value.
+ */
+inline auto round(const quad& x) noexcept -> quad {
+    return impl::round_impl(x);
 }
 
 }  // namespace num_collect::multi_double

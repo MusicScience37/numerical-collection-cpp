@@ -237,6 +237,13 @@ auto main(int argc, char** argv) -> int {
                 unary_operator_evaluator([](quad a) { return log1p(a); })},
             {"log10",
                 unary_operator_evaluator([](quad a) { return log10(a); })},
+            {"floor",
+                unary_operator_evaluator([](quad a) { return floor(a); })},
+            {"ceil", unary_operator_evaluator([](quad a) { return ceil(a); })},
+            {"trunc",
+                unary_operator_evaluator([](quad a) { return trunc(a); })},
+            {"round",
+                unary_operator_evaluator([](quad a) { return round(a); })},
         };
 
     const auto iter = operator_map.find(operator_name);
