@@ -50,4 +50,21 @@ inline auto sinh_impl(quad x) noexcept -> quad {
     return (exp_x - 1.0 / exp_x) * 0.5;  // NOLINT(*-magic-numbers)
 }
 
+/*!
+ * \brief Calculate cosh function.
+ *
+ * \param[in] x Input value.
+ * \return Result.
+ */
+inline auto cosh_impl(quad x) noexcept -> quad {
+    const quad exp_x = exp_impl(x);
+    if (!std::isfinite(exp_x.high())) {
+        return exp_x;
+    }
+    if (exp_x.high() == 0.0) {
+        return quad(std::numeric_limits<double>::infinity());
+    }
+    return (exp_x + 1.0 / exp_x) * 0.5;  // NOLINT(*-magic-numbers)
+}
+
 }  // namespace num_collect::multi_double::impl

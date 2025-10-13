@@ -166,6 +166,14 @@ inline auto tan(quad x) noexcept -> quad { return impl::tan_impl(x); }
 inline auto sinh(quad x) noexcept -> quad { return impl::sinh_impl(x); }
 
 /*!
+ * \brief Calculate cosh function.
+ *
+ * \param[in] x Input value.
+ * \return Result.
+ */
+inline auto cosh(quad x) noexcept -> quad { return impl::cosh_impl(x); }
+
+/*!
  * \brief Calculate floor function.
  *
  * \param[in] x Value.
