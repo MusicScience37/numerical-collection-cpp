@@ -63,7 +63,7 @@ inline auto expm1_maclaurin_series(quad x) noexcept -> quad {
  * with relative error up to \f$ 2^{-102} \f$.
  */
 inline auto exp_maclaurin_series(quad x) noexcept -> quad {
-    return expm1_maclaurin_series(x) + quad(1.0);
+    return expm1_maclaurin_series(x) + 1.0;
 }
 
 /*!
@@ -75,10 +75,10 @@ inline auto exp_maclaurin_series(quad x) noexcept -> quad {
 inline auto exp_impl(quad x) noexcept -> quad {
     const quad log2_rate = x * log2_inv_quad;
 
-    constexpr quad max_exponent =
-        quad(std::numeric_limits<double>::max_exponent);
-    constexpr quad min_exponent =
-        quad(std::numeric_limits<double>::min_exponent);
+    constexpr double max_exponent =
+        static_cast<double>(std::numeric_limits<double>::max_exponent);
+    constexpr double min_exponent =
+        static_cast<double>(std::numeric_limits<double>::min_exponent);
     if (log2_rate > max_exponent) {
         return quad(std::numeric_limits<double>::infinity());
     }
@@ -86,7 +86,7 @@ inline auto exp_impl(quad x) noexcept -> quad {
         return quad(0.0);
     }
 
-    const int two_exponent = static_cast<int>(std::lrint(log2_rate.high()));
+    const int two_exponent = static_cast<int>(std::lround(log2_rate.high()));
     const quad remainder = x - log2_quad * two_exponent;
     // Here |remainder| <= 0.5 * log(2) = 0.3465...
 
@@ -128,7 +128,7 @@ inline auto expm1_impl(quad x) noexcept -> quad {
         const quad reduced_expm1 = expm1_maclaurin_series(reduced_x);
         quad result = reduced_expm1;
         // Unroll the loop for performance.
-        const auto two = quad(2.0);
+        constexpr double two = 2.0;
         result = (result + two) * result;
         result = (result + two) * result;
         result = (result + two) * result;
@@ -139,7 +139,7 @@ inline auto expm1_impl(quad x) noexcept -> quad {
         result = (result + two) * result;
         return result;
     }
-    return exp_impl(x) - quad(1.0);
+    return exp_impl(x) - 1.0;
 }
 
 }  // namespace num_collect::multi_double::impl

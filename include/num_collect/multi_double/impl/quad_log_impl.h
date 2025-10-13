@@ -45,7 +45,7 @@ inline auto log_impl(quad x) noexcept -> quad {
     if (sqrt2_inv_quad.high() < x.high() && x.high() < sqrt2_quad.high()) {
         // Case of small x using expm1
         const quad expm1_guess = expm1_impl(guess);
-        guess += (x - quad(1.0) - expm1_guess) / (expm1_guess + quad(1.0));
+        guess += (x - 1.0 - expm1_guess) / (expm1_guess + 1.0);
     } else {
         const quad exp_guess = exp_impl(guess);
         guess += (x - exp_guess) / exp_guess;
@@ -71,11 +71,11 @@ inline auto log1p_impl(quad x) noexcept -> quad {
         // Case of small x using expm1
         quad guess = quad(std::log1p(x.high()));
         const quad expm1_guess = expm1_impl(guess);
-        guess += (x - expm1_guess) / (expm1_guess + quad(1.0));
+        guess += (x - expm1_guess) / (expm1_guess + 1.0);
         return guess;
     }
     // Not small x without special treatment
-    return log_impl(quad(1.0) + x);
+    return log_impl(1.0 + x);
 }
 
 /*!
