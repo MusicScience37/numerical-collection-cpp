@@ -72,10 +72,6 @@ inline auto acos_newton(quad x) noexcept -> quad {
  *
  * \param[in] x Input value.
  * \return Result.
- *
- * This function uses Newton method for
- * \f$ f(y) = \sin(y) - x \f$,
- * starting from the value of asin function of double.
  */
 inline auto asin_impl(quad x) noexcept -> quad {
     if (x < -1.0 || x > 1.0) {
@@ -88,6 +84,25 @@ inline auto asin_impl(quad x) noexcept -> quad {
         return -pi_over_2_quad + acos_newton(-x);
     }
     return asin_newton(x);
+}
+
+/*!
+ * \brief Calculate acos function.
+ *
+ * \param[in] x Input value.
+ * \return Result.
+ */
+inline auto acos_impl(quad x) noexcept -> quad {
+    if (x < -1.0 || x > 1.0) {
+        return quad(std::numeric_limits<double>::quiet_NaN());
+    }
+    if (x > sqrt2_inv_quad) {
+        return acos_newton(x);
+    }
+    if (x < -sqrt2_inv_quad) {
+        return pi_quad - acos_newton(-x);
+    }
+    return pi_over_2_quad - asin_newton(x);
 }
 
 }  // namespace num_collect::multi_double::impl
