@@ -12,6 +12,7 @@ def main() -> None:
     number = mpmath.power(10, random * 30 - 15)
     upper, lower = split_quad(number)
     print(f'(float.fromhex("{upper.hex()}"), float.fromhex("{lower.hex()}"))')
+    print(number)
 
 
 if __name__ == "__main__":

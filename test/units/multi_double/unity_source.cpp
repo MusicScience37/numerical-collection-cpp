@@ -1,5 +1,6 @@
 #include "impl/basic_operations_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/quad_exp_impl_test.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "impl/quad_format_decimal_scientific_to_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/quad_internal_constants_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/quad_ldexp_impl_test.cpp"  // NOLINT(bugprone-suspicious-include)
 #include "impl/quad_pow_impl_test.cpp"    // NOLINT(bugprone-suspicious-include)

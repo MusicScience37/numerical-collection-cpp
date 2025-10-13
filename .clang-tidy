@@ -47,6 +47,7 @@ Checks: >
     -bugprone-chained-comparison,
     -bugprone-optional-value-conversion,
     -bugprone-crtp-constructor-accessibility,
+    -bugprone-misplaced-widening-cast,
   concurrency-*,
   -boost-*,
   openmp-*,
@@ -87,6 +88,7 @@ Checks: >
 # - cppcoreguidelines-pro-bounds-pointer-arithmetic prevents implementation of containers and use of arguments of main functions.
 # - readability-simplify-boolean-expr generates unfixable warnings in assertion macros.
 # - openmp-exception-escape is generating warnings for rare cases that cannot be tested.
+# - bugprone-misplaced-widening-cast generates false positives.
 
 CheckOptions:
   # Naming Conventions
