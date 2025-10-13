@@ -20,6 +20,7 @@
 #pragma once
 
 #include <cmath>
+#include <concepts>
 
 #include "num_collect/multi_double/impl/basic_operations.h"
 #include "num_collect/multi_double/impl/quad_exp_impl.h"
@@ -121,6 +122,21 @@ inline auto log10(const quad& x) noexcept -> quad {
  */
 inline auto pow(const quad& base, const quad& exponent) noexcept -> quad {
     return impl::pow_general_impl(base, exponent);
+}
+
+/*!
+ * \brief Calculate the value of `base` raised to the power of `exponent`.
+ *
+ * \tparam Exponent Type of the exponent value.
+ * \param[in] base Base value.
+ * \param[in] exponent Exponent value.
+ * \return Result.
+ */
+template <typename Exponent>
+    requires concepts::implicitly_convertible_to<Exponent, double> &&
+    (!std::integral<Exponent>)
+inline auto pow(const quad& base, Exponent exponent) noexcept -> quad {
+    return impl::pow_general_impl(base, static_cast<double>(exponent));
 }
 
 /*!

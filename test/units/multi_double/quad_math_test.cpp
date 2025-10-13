@@ -369,7 +369,7 @@ TEST_CASE("num_collect::multi_double::log10") {
     }
 }
 
-TEST_CASE("num_collect::multi_double::pow") {
+TEST_CASE("num_collect::multi_double::pow(quad, quad)") {
     using num_collect::multi_double::pow;
     using num_collect::multi_double::quad;
 
@@ -410,6 +410,59 @@ TEST_CASE("num_collect::multi_double::pow") {
                 quad(0x1.5ca795647210ap-5, -0x1.a71cf5472d030p-60)),
             std::make_tuple(quad(0x1.645eaa2f888ecp-7, 0x1.11285a34d2f78p-62),
                 quad(0x0.0p+0, 0x0.0p+0), quad(0x1.0000000000000p+0, 0x0.0p+0)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+        INFO("base: " << format_quad_for_test(base));
+        INFO("exponent: " << format_quad_for_test(exponent));
+
+        const quad actual = pow(base, exponent);
+        constexpr quad relative_tolerance(0x1.0p-90);
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+}
+
+TEST_CASE("num_collect::multi_double::pow(quad, double)") {
+    using num_collect::multi_double::pow;
+    using num_collect::multi_double::quad;
+
+    SECTION("calculate for non-zero values") {
+        quad base;
+        double exponent{};
+        quad expected;
+        std::tie(base, exponent,
+            expected) = GENERATE(Catch::Generators::table<quad, double, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(0x1.be580cb8d6672p+5, -0x1.7c1b0862537e4p-49),
+                0x1.7ff89514e4ba3p+2,
+                quad(0x1.c0a64f3223e63p+34, -0x1.045ce8d712c3cp-20)),
+            std::make_tuple(quad(0x1.5a2b98fe9585cp-10, -0x1.0c36fa4e937a0p-66),
+                0x1.377eb204dfb45p+2,
+                quad(0x1.5d29dca66ad78p-47, -0x1.c1618a26a885cp-101)),
+            std::make_tuple(quad(0x1.abf6487b5305fp+5, 0x1.924c526aeb870p-50),
+                0x1.5b7d6d2e1b674p-2,
+                quad(0x1.edf9f83e3942fp+1, -0x1.482073d138208p-53)),
+            std::make_tuple(quad(0x1.5df1c02a3661fp-12, 0x1.98c0818650188p-67),
+                -0x1.30a1b401d3ba5p+3,
+                quad(0x1.ec627b697f060p+109, -0x1.cd7c251297920p+54)),
+            std::make_tuple(quad(0x1.17ce6ac42961cp-8, -0x1.070ccd508d778p-63),
+                -0x1.1f55dcd10d285p-3,
+                quad(0x1.13368fce32b95p+1, 0x1.66ee5a266fc08p-54)),
+            std::make_tuple(quad(0x1.6cda60be6b14fp-2, 0x1.399372f983e40p-56),
+                0x1.0000000000000p+1,
+                quad(0x1.03fedeb334b0bp-3, -0x1.3da45e9c7b7a4p-57)),
+            std::make_tuple(quad(0x1.2c05b961881ddp+9, 0x1.53c917c681b20p-45),
+                0x1.9000000000000p+6,
+                quad(0x1.db46a2ddff7bcp+922, -0x1.e96b9fff8c450p+866)),
+            std::make_tuple(quad(0x1.d1b18f6ad52ffp-2, -0x1.4ec7fb6021200p-62),
+                -0x1.2c00000000000p+8,
+                quad(0x1.052adfbd40811p+341, -0x1.87e957bcb8680p+284)),
+            std::make_tuple(quad(0x1.dad80bdd56581p-10, -0x1.f97511af07900p-70),
+                0x1.0000000000000p-1,
+                quad(0x1.5ca795647210ap-5, -0x1.a71cf5472d030p-60)),
+            std::make_tuple(quad(0x1.645eaa2f888ecp-7, 0x1.11285a34d2f78p-62),
+                0x0.0p+0, quad(0x1.0000000000000p+0, 0x0.0p+0)),
             // cspell: enable
             // NOLINTEND
         }));

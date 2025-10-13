@@ -40,4 +40,18 @@ inline auto pow_general_impl(quad base, quad exponent) noexcept -> quad {
     return exp_impl(log_impl(base) * exponent);
 }
 
+/*!
+ * \brief Calculate the value of `base` raised to the power of `exponent`
+ * using exp and log functions.
+ *
+ * \param[in] base Base value.
+ * \param[in] exponent Exponent value.
+ * \return Result.
+ *
+ * This function can handle only positive base values.
+ */
+inline auto pow_general_impl(quad base, double exponent) noexcept -> quad {
+    return exp_impl(log_impl(base) * exponent);
+}
+
 }  // namespace num_collect::multi_double::impl
