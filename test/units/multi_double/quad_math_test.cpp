@@ -859,6 +859,71 @@ TEST_CASE("num_collect::multi_double::cosh") {
     }
 }
 
+TEST_CASE("num_collect::multi_double::tanh") {
+    using num_collect::multi_double::quad;
+    using num_collect::multi_double::tanh;
+
+    SECTION("calculate for non-zero values") {
+        quad input;
+        quad expected;
+        std::tie(
+            input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(-0x1.86b257fa21711p+8, -0x1.2a5a2e167baa8p-46),
+                quad(-0x1.0000000000000p+0, 0x0.0p+0)),
+            std::make_tuple(quad(-0x1.a96c8c1fe280ap-3, 0x1.1deefd798cca0p-59),
+                quad(-0x1.a368a41d12df7p-3, -0x1.cc8939802a7b4p-58)),
+            std::make_tuple(
+                quad(-0x1.0a98bfb3fdaf8p-22, -0x1.6b4e354230ce8p-76),
+                quad(-0x1.0a98bfb3fda98p-22, 0x1.460f02786ca90p-80)),
+            std::make_tuple(
+                quad(-0x1.04824626c4105p-48, 0x1.1e4507ff1e4b8p-103),
+                quad(-0x1.04824626c4105p-48, 0x1.1e4507ff1e787p-103)),
+            std::make_tuple(
+                quad(0x1.6e9219342dc4dp-49, -0x1.e01ec099a42d8p-103),
+                quad(0x1.6e9219342dc4dp-49, -0x1.e01ec099a43d3p-103)),
+            std::make_tuple(quad(0x1.db931072e257dp-10, -0x1.cc1d6d3cdf740p-68),
+                quad(0x1.db92ee418b2cdp-10, -0x1.b5948159b373dp-67)),
+            std::make_tuple(quad(0x1.0dd4be2b57836p-1, 0x1.1326afb4ab2e0p-58),
+                quad(0x1.eeb0789dcd574p-2, 0x1.0dea3642d7219p-57)),
+            std::make_tuple(quad(0x1.8ff7def2ecb82p+7, 0x1.5e17780a516e0p-47),
+                quad(0x1.0000000000000p+0, 0x0.0p+0)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+        INFO("input: " << format_quad_for_test(input));
+
+        const quad actual = tanh(input);
+        constexpr quad relative_tolerance(0x1.0p-96);
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+
+    SECTION("calculate for zero") {
+        const quad input(0x0.0p+0, 0x0.0p+0);
+        const quad expected(0x0.0p+0, 0x0.0p+0);
+
+        const quad actual = tanh(input);
+        CHECK(actual == expected);
+    }
+
+    SECTION("calculate for too large value") {
+        const auto input = quad(710.0);
+        const quad expected(0x1.0p+0, 0x0.0p+0);
+
+        const quad actual = tanh(input);
+        CHECK(actual == expected);
+    }
+
+    SECTION("calculate for too small value") {
+        const auto input = quad(-708.0);
+        const quad expected(-0x1.0p+0, 0x0.0p+0);
+
+        const auto actual = tanh(input);
+        CHECK(actual == expected);
+    }
+}
+
 TEST_CASE("num_collect::multi_double::floor") {
     using num_collect::multi_double::floor;
     using num_collect::multi_double::quad;

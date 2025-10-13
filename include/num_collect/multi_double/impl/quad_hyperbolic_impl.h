@@ -67,4 +67,19 @@ inline auto cosh_impl(quad x) noexcept -> quad {
     return (exp_x + 1.0 / exp_x) * 0.5;  // NOLINT(*-magic-numbers)
 }
 
+/*!
+ * \brief Calculate tanh function.
+ *
+ * \param[in] x Input value.
+ * \return Result.
+ */
+inline auto tanh_impl(quad x) noexcept -> quad {
+    if (x.high() > 0.0) {
+        const quad expm1_neg_2x = expm1_impl(-2.0 * x);
+        return -expm1_neg_2x / (expm1_neg_2x + 2.0);  // NOLINT(*-magic-numbers)
+    }
+    const quad expm1_2x = expm1_impl(2.0 * x);
+    return expm1_2x / (expm1_2x + 2.0);  // NOLINT(*-magic-numbers)
+}
+
 }  // namespace num_collect::multi_double::impl
