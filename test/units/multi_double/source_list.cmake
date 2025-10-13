@@ -5,6 +5,7 @@ set(SOURCE_FILES
     impl/quad_internal_constants_test.cpp
     impl/quad_ldexp_impl_test.cpp
     impl/quad_pow_impl_test.cpp
+    quad_io_test.cpp
     quad_math_test.cpp
     quad_test.cpp
 )
