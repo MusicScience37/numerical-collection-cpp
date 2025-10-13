@@ -62,7 +62,6 @@ complexity:
     - poetry install
     - mkdir -p complexity
     - poetry run lizard -o complexity/complexity_per_function.html include
-    - poetry run lizard -o complexity/result.txt -E duplicate include
   cache:
     key:
       prefix: cache-${CI_JOB_NAME}
