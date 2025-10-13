@@ -72,4 +72,40 @@ constexpr auto sqrt2_quad =  // cspell: disable-next-line
 constexpr auto sqrt2_inv_quad =  // cspell: disable-next-line
     quad(0x1.6a09e667f3bcdp-1, -0x1.bdd3413b26454p-55);
 
+/*!
+ * \brief \f$ 2 \pi \f$ as quad value.
+ */
+constexpr auto two_pi_quad =  // cspell: disable-next-line
+    quad(0x1.921fb54442d18p+2, 0x1.1a62633145c08p-52);
+
+/*!
+ * \brief \f$ 1 / (2 \pi) \f$ as quad value.
+ */
+constexpr auto two_pi_inv_quad =  // cspell: disable-next-line
+    quad(0x1.45f306dc9c883p-3, -0x1.6b01ec5417058p-57);
+
+/*!
+ * \brief \f$ \pi / 2 \f$ as quad value.
+ */
+constexpr auto pi_over_2_quad =  // cspell: disable-next-line
+    quad(0x1.921fb54442d18p+0, 0x1.1a62633145c08p-54);
+
+/*!
+ * \brief \f$ 3 \pi / 2 \f$ as quad value.
+ */
+constexpr auto three_pi_over_2_quad =  // cspell: disable-next-line
+    quad(0x1.2d97c7f3321d2p+2, 0x1.a79394c9e8a10p-53);
+
+/*!
+ * \brief \f$ \pi / 4 \f$ as quad value.
+ */
+constexpr auto pi_over_4_quad =  // cspell: disable-next-line
+    quad(0x1.921fb54442d18p-1, 0x1.1a62633145c08p-55);
+
+/*!
+ * \brief \f$ 4 / \pi \f$ as quad value.
+ */
+constexpr auto pi_over_4_inv_quad =  // cspell: disable-next-line
+    quad(0x1.45f306dc9c883p+0, -0x1.6b01ec5417058p-54);
+
 }  // namespace num_collect::multi_double::impl

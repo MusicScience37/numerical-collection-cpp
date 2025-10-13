@@ -60,6 +60,8 @@ OPERATORS = [
     ("ceil", mpmath.ceil, 1, -1e120, 1e120),
     ("trunc", trunc, 1, -1e120, 1e120),
     ("round", round, 1, -1e120, 1e120),
+    ("sin", mpmath.sin, 1, -1e2, 1e2),
+    ("cos", mpmath.cos, 1, -1e2, 1e2),
 ]
 
 

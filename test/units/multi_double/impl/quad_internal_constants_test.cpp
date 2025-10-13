@@ -23,6 +23,9 @@
 
 #include "../format_quad_for_test.h"  // IWYU pragma: keep
 #include "../quad_approx.h"
+#include "num_collect/multi_double/impl/quad_trigonometric_impl.h"
+#include "num_collect/multi_double/quad.h"
+#include "num_collect/multi_double/quad_math.h"
 
 TEST_CASE("num_collect::multi_double::impl::log2_quad") {
     using num_collect::multi_double::quad;
@@ -90,6 +93,32 @@ TEST_CASE("num_collect::multi_double::impl::log10_inv_quad") {
 
     SECTION("check log10_quad * log10_inv_quad == 1") {
         const quad result = log10_quad * log10_inv_quad;
+        constexpr quad expected = quad(1.0);
+        constexpr quad relative_tolerance(0x1.0p-102);
+        CHECK_THAT(result, quad_within_rel(expected, relative_tolerance));
+    }
+}
+
+TEST_CASE("num_collect::multi_double::impl::pi_over_4_quad") {
+    using num_collect::multi_double::quad;
+    using num_collect::multi_double::impl::pi_over_4_quad;
+
+    SECTION("check sin(pi_over_4) == sqrt(0.5)") {
+        const quad left =
+            num_collect::multi_double::impl::sin_maclaurin(pi_over_4_quad);
+        const quad right = num_collect::multi_double::sqrt(quad(0.5));
+        constexpr quad relative_tolerance(0x1.0p-100);
+        CHECK_THAT(left, quad_within_rel(right, relative_tolerance));
+    }
+}
+
+TEST_CASE("num_collect::multi_double::impl::pi_over_4_inv_quad") {
+    using num_collect::multi_double::quad;
+    using num_collect::multi_double::impl::pi_over_4_inv_quad;
+    using num_collect::multi_double::impl::pi_over_4_quad;
+
+    SECTION("check pi_over_4_quad * pi_over_4_inv_quad == 1") {
+        const quad result = pi_over_4_quad * pi_over_4_inv_quad;
         constexpr quad expected = quad(1.0);
         constexpr quad relative_tolerance(0x1.0p-102);
         CHECK_THAT(result, quad_within_rel(expected, relative_tolerance));

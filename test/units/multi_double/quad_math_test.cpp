@@ -562,6 +562,112 @@ TEST_CASE("num_collect::multi_double::pow(quad, int)") {
     }
 }
 
+TEST_CASE("num_collect::multi_double::sin") {
+    using num_collect::multi_double::quad;
+    using num_collect::multi_double::sin;
+
+    SECTION("calculate for non-zero values") {
+        quad input;
+        quad expected;
+        std::tie(
+            input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(0x1.921fb54442d18p-2, 0x1.1a62633145c08p-56),
+                quad(0x1.87de2a6aea963p-2, -0x1.72cedd3d5a60ep-57)),
+            std::make_tuple(quad(0x1.2d97c7f3321d2p+0, 0x1.a79394c9e8a10p-55),
+                quad(0x1.d906bcf328d46p-1, 0x1.457e610231ac6p-56)),
+            std::make_tuple(quad(0x1.f6a7a2955385ep+0, 0x1.60fafbfd97308p-54),
+                quad(0x1.d906bcf328d46p-1, 0x1.457e610231ac3p-56)),
+            std::make_tuple(quad(0x1.5fdbbe9bba775p+1, 0x1.ee2c2d963a110p-54),
+                quad(0x1.87de2a6aea963p-2, -0x1.72cedd3d5a62dp-57)),
+            std::make_tuple(quad(0x1.c463abeccb2bbp+1, 0x1.3daeaf976e788p-53),
+                quad(-0x1.87de2a6aea963p-2, 0x1.72cedd3d5a60cp-57)),
+            std::make_tuple(quad(0x1.1475cc9eedf01p+2, -0x1.3ddc5bce200bcp-52),
+                quad(-0x1.d906bcf328d46p-1, -0x1.457e610231abdp-56)),
+            std::make_tuple(quad(0x1.46b9c347764a4p+2, -0x1.1a900f67f7538p-52),
+                quad(-0x1.d906bcf328d46p-1, -0x1.457e610231ab3p-56)),
+            std::make_tuple(quad(0x1.78fdb9effea47p+2, -0x1.ee8786039d370p-53),
+                quad(-0x1.87de2a6aea963p-2, 0x1.72cedd3d5a63ep-57)),
+            std::make_tuple(quad(0x1.ab41b09886feap+2, -0x1.a7eeed374bc70p-53),
+                quad(0x1.87de2a6aea963p-2, -0x1.72cedd3d5a5fcp-57)),
+            std::make_tuple(quad(0x1.284ed19fda3c1p-6, -0x1.323876d6af6e4p-60),
+                quad(0x1.284aaf1314df0p-6, 0x1.198254ed96bfep-60)),
+            std::make_tuple(quad(0x1.807eb74675238p+4, 0x1.10f7197fc8ba4p-50),
+                quad(-0x1.c8b770408dc53p-1, -0x1.4d118e6f5dd9bp-56)),
+            std::make_tuple(quad(0x1.7861bf3a3a90fp-6, -0x1.1a15c2c1ded18p-61),
+                quad(0x1.785945b59ad25p-6, 0x1.27ea58f56d7bap-60)),
+            std::make_tuple(quad(-0x1.d63e4eda10237p-9, -0x1.3debc994dbed8p-64),
+                quad(-0x1.d63e0cbd887ccp-9, -0x1.49d3f930dc66ep-63)),
+            std::make_tuple(quad(-0x1.6b4fee68b4baap+3, 0x1.f3bba23239db0p-51),
+                quad(0x1.df8d0c82494e5p-1, -0x1.aacae5aca431bp-56)),
+            std::make_tuple(
+                quad(-0x1.e76a585102824p-28, -0x1.3e79f43e85a60p-82),
+                quad(-0x1.e76a585102824p-28, -0x1.e9b5884a27d49p-83)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+        INFO("input: " << format_quad_for_test(input));
+
+        const quad actual = sin(input);
+        constexpr quad relative_tolerance(0x1.0p-99);
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+}
+
+TEST_CASE("num_collect::multi_double::cos") {
+    using num_collect::multi_double::cos;
+    using num_collect::multi_double::quad;
+
+    SECTION("calculate for non-zero values") {
+        quad input;
+        quad expected;
+        std::tie(
+            input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(0x1.921fb54442d18p-2, 0x1.1a62633145c08p-56),
+                quad(0x1.d906bcf328d46p-1, 0x1.457e610231ac1p-56)),
+            std::make_tuple(quad(0x1.2d97c7f3321d2p+0, 0x1.a79394c9e8a10p-55),
+                quad(0x1.87de2a6aea963p-2, -0x1.72cedd3d5a625p-57)),
+            std::make_tuple(quad(0x1.f6a7a2955385ep+0, 0x1.60fafbfd97308p-54),
+                quad(-0x1.87de2a6aea963p-2, 0x1.72cedd3d5a615p-57)),
+            std::make_tuple(quad(0x1.5fdbbe9bba775p+1, 0x1.ee2c2d963a110p-54),
+                quad(-0x1.d906bcf328d46p-1, -0x1.457e610231ac8p-56)),
+            std::make_tuple(quad(0x1.c463abeccb2bbp+1, 0x1.3daeaf976e788p-53),
+                quad(-0x1.d906bcf328d46p-1, -0x1.457e610231ac1p-56)),
+            std::make_tuple(quad(0x1.1475cc9eedf01p+2, -0x1.3ddc5bce200bcp-52),
+                quad(-0x1.87de2a6aea963p-2, 0x1.72cedd3d5a5fbp-57)),
+            std::make_tuple(quad(0x1.46b9c347764a4p+2, -0x1.1a900f67f7538p-52),
+                quad(0x1.87de2a6aea963p-2, -0x1.72cedd3d5a5c9p-57)),
+            std::make_tuple(quad(0x1.78fdb9effea47p+2, -0x1.ee8786039d370p-53),
+                quad(0x1.d906bcf328d46p-1, 0x1.457e610231acbp-56)),
+            std::make_tuple(quad(0x1.ab41b09886feap+2, -0x1.a7eeed374bc70p-53),
+                quad(0x1.d906bcf328d46p-1, 0x1.457e610231abep-56)),
+            std::make_tuple(quad(0x1.284ed19fda3c1p-6, -0x1.323876d6af6e4p-60),
+                quad(0x1.ffea90c079720p-1, 0x1.223206a762eaep-57)),
+            std::make_tuple(quad(0x1.807eb74675238p+4, 0x1.10f7197fc8ba4p-50),
+                quad(0x1.ced5ae1141032p-2, 0x1.385f0dcacb32ap-56)),
+            std::make_tuple(quad(0x1.7861bf3a3a90fp-6, -0x1.1a15c2c1ded18p-61),
+                quad(0x1.ffdd6a6f3d1a8p-1, -0x1.c6c306eb18fd6p-55)),
+            std::make_tuple(quad(-0x1.d63e4eda10237p-9, -0x1.3debc994dbed8p-64),
+                quad(0x1.ffff280dd9015p-1, -0x1.40e5050410656p-62)),
+            std::make_tuple(quad(-0x1.6b4fee68b4baap+3, 0x1.f3bba23239db0p-51),
+                quad(0x1.66bf40022bf4bp-2, 0x1.e5ffa5f7079e4p-58)),
+            std::make_tuple(
+                quad(-0x1.e76a585102824p-28, -0x1.3e79f43e85a60p-82),
+                quad(0x1.0000000000000p+0, -0x1.d002e418bc8ccp-56)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+        INFO("input: " << format_quad_for_test(input));
+
+        const quad actual = cos(input);
+        constexpr quad relative_tolerance(0x1.0p-99);
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+}
+
 TEST_CASE("num_collect::multi_double::floor") {
     using num_collect::multi_double::floor;
     using num_collect::multi_double::quad;
