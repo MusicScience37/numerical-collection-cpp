@@ -121,7 +121,7 @@ inline auto log10(const quad& x) noexcept -> quad {
  * \return Result.
  */
 inline auto pow(const quad& base, const quad& exponent) noexcept -> quad {
-    return impl::pow_general_impl(base, exponent);
+    return impl::pow_impl(base, exponent);
 }
 
 /*!
@@ -133,10 +133,9 @@ inline auto pow(const quad& base, const quad& exponent) noexcept -> quad {
  * \return Result.
  */
 template <typename Exponent>
-    requires concepts::implicitly_convertible_to<Exponent, double> &&
-    (!std::integral<Exponent>)
+    requires concepts::implicitly_convertible_to<Exponent, double>
 inline auto pow(const quad& base, Exponent exponent) noexcept -> quad {
-    return impl::pow_general_impl(base, static_cast<double>(exponent));
+    return impl::pow_impl(base, static_cast<double>(exponent));
 }
 
 /*!

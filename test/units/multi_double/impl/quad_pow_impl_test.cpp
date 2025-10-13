@@ -64,3 +64,40 @@ TEST_CASE("num_collect::multi_double::impl::pow_general_impl") {
         CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
     }
 }
+
+TEST_CASE("num_collect::multi_double::impl::pow_positive_int_impl") {
+    using num_collect::multi_double::quad;
+    using num_collect::multi_double::impl::pow_positive_int_impl;
+
+    SECTION("calculate for non-zero values") {
+        quad base;
+        unsigned int exponent{};
+        quad expected;
+        std::tie(
+            base, exponent, expected) = GENERATE(Catch::Generators::table<quad,
+            unsigned int, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(0x1.7e55eca788245p+5, 0x1.d2c49ebca1298p-50),
+                0U, quad(0x1.0000000000000p+0, 0x0.0p+0)),
+            std::make_tuple(quad(0x1.be580cb8d6672p+5, -0x1.7c1b0862537e4p-49),
+                1U, quad(0x1.be580cb8d6672p+5, -0x1.7c1b0862537e4p-49)),
+            std::make_tuple(quad(0x1.5a2b98fe9585cp-10, -0x1.0c36fa4e937a0p-66),
+                3U, quad(0x1.3c7d5917c1d42p-29, 0x1.4c0fc0ed47200p-86)),
+            std::make_tuple(quad(0x1.abf6487b5305fp+5, 0x1.924c526aeb870p-50),
+                10U, quad(0x1.54f1a0875d249p+57, 0x1.5ebf6de7c21d8p+2)),
+            std::make_tuple(quad(0x1.5df1c02a3661fp-1, 0x1.98c0818650188p-57),
+                100U, quad(0x1.12067fc5ef49ep-55, -0x1.6a922fa1c14a0p-112)),
+            std::make_tuple(quad(0x1.17ce6ac42961cp+0, -0x1.070ccd508d778p-55),
+                1024U, quad(0x1.495e1a4023cf3p+131, 0x1.b42de2ff34708p+77)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+        INFO("base: " << format_quad_for_test(base));
+        INFO("exponent: " << format_quad_for_test(exponent));
+
+        const quad actual = pow_positive_int_impl(base, exponent);
+        constexpr quad relative_tolerance(0x1.0p-97);
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+}
