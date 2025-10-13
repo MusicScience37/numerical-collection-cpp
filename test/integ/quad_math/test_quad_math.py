@@ -13,6 +13,7 @@ import mpmath
 import pandas
 import plotly.express
 from num_collect_test_utils.multi_double.split_quad import split_quad
+from num_collect_test_utils.multi_double.trunc import trunc
 
 QUAD_PRECISION = 52 * 2 + 1
 mpmath.mp.prec = QUAD_PRECISION  # Quad precision
@@ -52,6 +53,7 @@ OPERATORS = [
     ("log10", mpmath.log10, 1, 1e-10, 1e10),
     ("floor", mpmath.floor, 1, -1e120, 1e120),
     ("ceil", mpmath.ceil, 1, -1e120, 1e120),
+    ("trunc", trunc, 1, -1e120, 1e120),
 ]
 
 

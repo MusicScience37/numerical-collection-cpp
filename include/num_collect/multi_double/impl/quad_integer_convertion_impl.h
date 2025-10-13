@@ -21,6 +21,7 @@
 
 #include <cmath>
 
+#include "num_collect/multi_double/impl/basic_operations.h"
 #include "num_collect/multi_double/quad.h"
 
 namespace num_collect::multi_double::impl {
@@ -51,6 +52,19 @@ inline auto ceil_impl(quad x) noexcept -> quad {
     double low_int{};
     double low_frac = std::modf(x.low(), &low_int);
     return quad(high_int, low_int) + std::ceil(high_frac + low_frac);
+}
+
+/*!
+ * \brief Truncate to integer.
+ *
+ * \param[in] x Value.
+ * \return Truncated value.
+ */
+inline auto trunc_impl(quad x) noexcept -> quad {
+    if (x >= quad(0.0)) {
+        return floor_impl(x);
+    }
+    return ceil_impl(x);
 }
 
 }  // namespace num_collect::multi_double::impl

@@ -129,4 +129,14 @@ inline auto floor(const quad& x) noexcept -> quad {
  */
 inline auto ceil(const quad& x) noexcept -> quad { return impl::ceil_impl(x); }
 
+/*!
+ * \brief Truncate to integer.
+ *
+ * \param[in] x Value.
+ * \return Truncated value.
+ */
+inline auto trunc(const quad& x) noexcept -> quad {
+    return impl::trunc_impl(x);
+}
+
 }  // namespace num_collect::multi_double

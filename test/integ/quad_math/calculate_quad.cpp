@@ -240,6 +240,8 @@ auto main(int argc, char** argv) -> int {
             {"floor",
                 unary_operator_evaluator([](quad a) { return floor(a); })},
             {"ceil", unary_operator_evaluator([](quad a) { return ceil(a); })},
+            {"trunc",
+                unary_operator_evaluator([](quad a) { return trunc(a); })},
         };
 
     const auto iter = operator_map.find(operator_name);
