@@ -61,6 +61,7 @@ OPERATORS = [
     ("tan", mpmath.tan, 1, -1.57, 1.57),
     ("asin", mpmath.asin, 1, -1.0, 1.0),
     ("acos", mpmath.acos, 1, -1.0, 1.0),
+    ("atan", mpmath.atan, 1, -1e5, 1e5),
     ("sinh", mpmath.sinh, 1, -300.0, 300.0),
     ("cosh", mpmath.cosh, 1, -300.0, 300.0),
     ("tanh", mpmath.tanh, 1, -300.0, 300.0),

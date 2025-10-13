@@ -68,6 +68,27 @@ inline auto acos_newton(quad x) noexcept -> quad {
 }
 
 /*!
+ * \brief Calculate atan function using Newton method.
+ *
+ * \param[in] x Input value.
+ * \return Result.
+ *
+ * This function assumes that the input is in the range
+ * \f$ [-1, 1] \f$.
+ *
+ * This function uses Newton method for
+ * \f$ f(y) = \tan(y) - x \f$,
+ * starting from the value of atan function of double.
+ */
+inline auto atan_newton(quad x) noexcept -> quad {
+    quad guess = quad(std::atan(x.high()));
+    const quad sin_guess = sin_maclaurin(guess);
+    const quad cos_guess = cos_maclaurin(guess);
+    guess -= cos_guess * (sin_guess - x * cos_guess);
+    return guess;
+}
+
+/*!
  * \brief Calculate asin function.
  *
  * \param[in] x Input value.
@@ -103,6 +124,22 @@ inline auto acos_impl(quad x) noexcept -> quad {
         return pi_quad - acos_newton(-x);
     }
     return pi_over_2_quad - asin_newton(x);
+}
+
+/*!
+ * \brief Calculate atan function.
+ *
+ * \param[in] x Input value.
+ * \return Result.
+ */
+inline auto atan_impl(quad x) noexcept -> quad {
+    if (x > 1.0) {
+        return pi_over_2_quad - atan_newton(1.0 / x);
+    }
+    if (x < -1.0) {
+        return -pi_over_2_quad - atan_newton(1.0 / x);
+    }
+    return atan_newton(x);
 }
 
 }  // namespace num_collect::multi_double::impl

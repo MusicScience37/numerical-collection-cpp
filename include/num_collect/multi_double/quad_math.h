@@ -175,6 +175,14 @@ inline auto asin(quad x) noexcept -> quad { return impl::asin_impl(x); }
 inline auto acos(quad x) noexcept -> quad { return impl::acos_impl(x); }
 
 /*!
+ * \brief Calculate atan function.
+ *
+ * \param[in] x Input value.
+ * \return Result.
+ */
+inline auto atan(quad x) noexcept -> quad { return impl::atan_impl(x); }
+
+/*!
  * \brief Calculate sinh function.
  *
  * \param[in] x Input value.

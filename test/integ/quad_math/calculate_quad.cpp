@@ -248,6 +248,7 @@ auto main(int argc, char** argv) -> int {
             {"tan", unary_operator_evaluator([](quad a) { return tan(a); })},
             {"asin", unary_operator_evaluator([](quad a) { return asin(a); })},
             {"acos", unary_operator_evaluator([](quad a) { return acos(a); })},
+            {"atan", unary_operator_evaluator([](quad a) { return atan(a); })},
             {"sinh", unary_operator_evaluator([](quad a) { return sinh(a); })},
             {"cosh", unary_operator_evaluator([](quad a) { return cosh(a); })},
             {"tanh", unary_operator_evaluator([](quad a) { return tanh(a); })},
