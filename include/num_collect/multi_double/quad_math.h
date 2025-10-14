@@ -183,6 +183,20 @@ inline auto acos(quad x) noexcept -> quad { return impl::acos_impl(x); }
 inline auto atan(quad x) noexcept -> quad { return impl::atan_impl(x); }
 
 /*!
+ * \brief Calculate atan2 function.
+ *
+ * \param[in] y Input value.
+ * \param[in] x Input value.
+ * \return Result.
+ *
+ * This function returns NaN if both inputs are zero or
+ * either input is infinite or NaN.
+ */
+inline auto atan2(quad y, quad x) noexcept -> quad {
+    return impl::atan2_impl(y, x);
+}
+
+/*!
  * \brief Calculate sinh function.
  *
  * \param[in] x Input value.

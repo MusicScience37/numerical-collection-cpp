@@ -142,4 +142,34 @@ inline auto atan_impl(quad x) noexcept -> quad {
     return atan_newton(x);
 }
 
+/*!
+ * \brief Calculate atan2 function.
+ *
+ * \param[in] y Input value.
+ * \param[in] x Input value.
+ * \return Result.
+ *
+ * This function returns NaN if both inputs are zero or
+ * either input is infinite or NaN.
+ */
+inline auto atan2_impl(quad y, quad x) noexcept -> quad {
+    if ((x.high() == 0.0 && y.high() == 0.0) || !std::isfinite(x.high()) ||
+        !std::isfinite(y.high())) {
+        return quad(std::numeric_limits<double>::quiet_NaN());
+    }
+    if (x > y) {
+        if (x > -y) {
+            return atan_newton(y / x);
+        }
+        return -pi_over_2_quad - atan_newton(x / y);
+    }
+    if (x > -y) {
+        return pi_over_2_quad - atan_newton(x / y);
+    }
+    if (y >= 0.0) {
+        return pi_quad + atan_newton(y / x);
+    }
+    return -pi_quad + atan_newton(y / x);
+}
+
 }  // namespace num_collect::multi_double::impl

@@ -839,6 +839,54 @@ TEST_CASE("num_collect::multi_double::atan") {
     }
 }
 
+TEST_CASE("num_collect::multi_double::atan2") {
+    using num_collect::multi_double::atan2;
+    using num_collect::multi_double::quad;
+
+    SECTION("calculate for non-zero values") {
+        quad x;
+        quad y;
+        quad expected;
+        std::tie(x, y,
+            expected) = GENERATE(Catch::Generators::table<quad, quad, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(0x1.6bc343cde7d78p+4, -0x1.6ec624ec8377cp-50),
+                quad(0x1.bdc89c1b355f6p+5, 0x1.4b1291c09af00p-53),
+                quad(0x1.2ef3e962ba84bp+0, -0x1.3ca0c36a6da60p-56)),
+            std::make_tuple(quad(0x1.3b807cf424316p+5, 0x1.dbef1155dcc00p-53),
+                quad(0x1.31de8194c625ep-3, -0x1.e355f96cf3440p-57),
+                quad(0x1.f05d91d70ccb5p-9, -0x1.c407ddcdedaccp-63)),
+            std::make_tuple(quad(-0x1.ef79cb69682b3p+4, -0x1.baf6037aca920p-50),
+                quad(0x1.2e413fa320922p-26, 0x1.bc40a8e9b8dc0p-80),
+                quad(0x1.921fb5430a7bbp+1, 0x1.f631194219d2cp-53)),
+            std::make_tuple(quad(-0x1.f83d67f10f754p-9, -0x1.336e7c43305a0p-63),
+                quad(0x1.41e44f511915ep+2, 0x1.7ec6660534cf0p-52),
+                quad(0x1.9251d5f02b900p+0, 0x1.92996a9cdc598p-54)),
+            std::make_tuple(quad(-0x1.caabfff431e59p-1, -0x1.45d69a833ede8p-55),
+                quad(-0x1.ceffedf90709bp-39, 0x1.73d1b3e7f3b38p-93),
+                quad(-0x1.921fb54440ccbp+1, 0x1.547c8ae9b5740p-57)),
+            std::make_tuple(quad(-0x1.44c1e07279ba0p+8, 0x1.edf61195839d0p-46),
+                quad(-0x1.cd4129453a9eep+23, -0x1.a2e5334833370p-32),
+                quad(-0x1.92211dc0a6534p+0, 0x1.47210e57152e0p-55)),
+            std::make_tuple(quad(0x1.67dcf604801f0p-24, 0x1.eb129515c9954p-78),
+                quad(-0x1.613d97a2deb7ep-26, -0x1.782271675e068p-80),
+                quad(-0x1.ecd6b53cfbd96p-3, -0x1.6cde7a81e2300p-58)),
+            std::make_tuple(quad(0x1.89c0e175ffb91p+6, -0x1.fd08ee8c9f4acp-48),
+                quad(-0x1.9d56a4d62f911p+19, -0x1.6553801ca5aa0p-36),
+                quad(-0x1.9218164e57ef4p+0, -0x1.adc1a3e7d1e80p-59)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+        INFO("x: " << format_quad_for_test(x));
+        INFO("y: " << format_quad_for_test(y));
+
+        const quad actual = atan2(y, x);
+        constexpr quad relative_tolerance(0x1.0p-99);
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+}
+
 TEST_CASE("num_collect::multi_double::sinh") {
     using num_collect::multi_double::quad;
     using num_collect::multi_double::sinh;
