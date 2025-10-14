@@ -19,12 +19,14 @@
  */
 #include "num_collect/multi_double/quad_math.h"
 
+#include <cmath>
 #include <limits>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
 #include "format_quad_for_test.h"  // IWYU pragma: keep
+#include "num_collect/multi_double/impl/quad_internal_constants.h"
 #include "quad_approx.h"
 
 TEST_CASE("num_collect::multi_double::abs") {
@@ -718,6 +720,243 @@ TEST_CASE("num_collect::multi_double::tan") {
         const quad actual = tan(input);
         constexpr quad relative_tolerance(0x1.0p-99);
         CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+}
+
+TEST_CASE("num_collect::multi_double::asin") {
+    using num_collect::multi_double::asin;
+    using num_collect::multi_double::quad;
+
+    SECTION("calculate for non-zero values") {
+        quad input;
+        quad expected;
+        std::tie(
+            input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(-0x1.0000000000000p+0, 0x0.0p+0),
+                quad(-0x1.921fb54442d18p+0, -0x1.1a62633145c07p-54)),
+            std::make_tuple(quad(-0x1.f858f4b0b2a03p-1, 0x1.c08ae3c4a76d4p-55),
+                quad(-0x1.65ceb54ed5013p+0, 0x1.b6ebd73674b5dp-55)),
+            std::make_tuple(quad(-0x1.6e29015574577p-5, -0x1.42a63fd385670p-60),
+                quad(-0x1.6e483ecee0060p-5, -0x1.a359ced9faebfp-59)),
+            std::make_tuple(quad(0x1.a8c218be4484dp-32, 0x1.a231ce8c92588p-87),
+                quad(0x1.a8c218be4484dp-32, 0x1.a29340baf8262p-87)),
+            std::make_tuple(quad(0x1.65528728f7924p-8, 0x1.69b0488d1a5e0p-63),
+                quad(0x1.6552fb2f9e86cp-8, 0x1.686ab6978ab06p-62)),
+            std::make_tuple(quad(0x1.9f63608ae2177p-1, -0x1.72f68eb27d260p-58),
+                quad(0x1.e48c0c6020b2bp-1, 0x1.5f2eddab20b8cp-55)),
+            std::make_tuple(quad(0x1.0000000000000p+0, 0x0.0p+0),
+                quad(0x1.921fb54442d18p+0, 0x1.1a62633145c07p-54)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+        INFO("input: " << format_quad_for_test(input));
+
+        const quad actual = asin(input);
+        constexpr quad relative_tolerance(0x1.0p-99);
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+
+    SECTION("calculate for zero") {
+        const quad input(0.0);
+        const quad expected(0.0);
+
+        const quad actual = asin(input);
+        CHECK(actual == expected);
+    }
+
+    SECTION("calculate for large values") {
+        const quad input(1.0, 1e-30);
+
+        const quad actual = asin(input);
+        CHECK(std::isnan(actual.high()));
+    }
+
+    SECTION("calculate for small values") {
+        const quad input(-1.0, -1e-30);
+
+        const quad actual = asin(input);
+        CHECK(std::isnan(actual.high()));
+    }
+}
+
+TEST_CASE("num_collect::multi_double::acos") {
+    using num_collect::multi_double::acos;
+    using num_collect::multi_double::quad;
+
+    SECTION("calculate for non-zero values") {
+        quad input;
+        quad expected;
+        std::tie(
+            input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(-0x1.0000000000000p+0, 0x0.0p+0),
+                quad(0x1.921fb54442d18p+1, 0x1.1a62633145c07p-53)),
+            std::make_tuple(quad(-0x1.f858f4b0b2a03p-1, 0x1.c08ae3c4a76d4p-55),
+                quad(0x1.7bf735498be96p+1, -0x1.e089c434fa4d4p-53)),
+            std::make_tuple(quad(-0x1.6e29015574577p-5, -0x1.42a63fd385670p-60),
+                quad(0x1.9d91f73ab9d1bp+0, 0x1.277d31a81597dp-54)),
+            std::make_tuple(quad(0x1.a8c218be4484dp-32, 0x1.a231ce8c92588p-87),
+                quad(0x1.921fb5429a0f7p+0, -0x1.152ebe038b893p-54)),
+            std::make_tuple(quad(0x1.65528728f7924p-8, 0x1.69b0488d1a5e0p-63),
+                quad(0x1.90ba624913330p+0, -0x1.2e0c0f0aa3948p-55)),
+            std::make_tuple(quad(0x1.9f63608ae2177p-1, -0x1.72f68eb27d260p-58),
+                quad(0x1.3fb35e2864f05p-1, 0x1.ab2bd16ed5904p-56)),
+            std::make_tuple(
+                quad(0x1.0000000000000p+0, 0x0.0p+0), quad(0x0.0p+0, 0x0.0p+0)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+        INFO("input: " << format_quad_for_test(input));
+
+        const quad actual = acos(input);
+        constexpr quad relative_tolerance(0x1.0p-99);
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+
+    SECTION("calculate for zero") {
+        const quad input(0.0);
+        const quad expected = num_collect::multi_double::impl::pi_over_2_quad;
+
+        const quad actual = acos(input);
+        constexpr quad relative_tolerance(0x1.0p-99);
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+
+    SECTION("calculate for large values") {
+        const quad input(1.0, 1e-30);
+
+        const quad actual = asin(input);
+        CHECK(std::isnan(actual.high()));
+    }
+
+    SECTION("calculate for small values") {
+        const quad input(-1.0, -1e-30);
+
+        const quad actual = asin(input);
+        CHECK(std::isnan(actual.high()));
+    }
+}
+
+TEST_CASE("num_collect::multi_double::atan") {
+    using num_collect::multi_double::atan;
+    using num_collect::multi_double::quad;
+
+    SECTION("calculate for non-zero values") {
+        quad input;
+        quad expected;
+        std::tie(
+            input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(-0x1.81b6443eaab93p+35, 0x1.a72f57922eef8p-20),
+                quad(-0x1.921fb5442d947p+0, 0x1.bb23cfee81d5dp-55)),
+            std::make_tuple(quad(-0x1.669ed2612fc1cp+7, -0x1.ff9fcb47b9e00p-53),
+                quad(-0x1.90b238ead9f1ep+0, 0x1.d19d4360964c1p-54)),
+            std::make_tuple(quad(-0x1.0000000000000p+0, 0x0.0p+0),
+                quad(-0x1.921fb54442d18p-1, -0x1.1a62633145c07p-55)),
+            std::make_tuple(quad(-0x1.5bc7759f2479ep-2, 0x1.370ac47213f70p-57),
+                quad(-0x1.4f43469bde1ffp-2, -0x1.bcddcdba17c4dp-56)),
+            std::make_tuple(quad(-0x1.c792b1acb54c8p-3, -0x1.de97dcdf1ce84p-57),
+                quad(-0x1.c0462f0ee4d55p-3, -0x1.d834a222f8519p-62)),
+            std::make_tuple(quad(-0x1.d3f23b88b6ab2p-41, 0x1.2e25012d428a0p-96),
+                quad(-0x1.d3f23b88b6ab2p-41, 0x1.2e25016e6841dp-96)),
+            std::make_tuple(quad(0x1.592550521dba1p-42, 0x1.b8ec35b72f7e8p-96),
+                quad(0x1.592550521dba1p-42, 0x1.b8ec35b3eafe4p-96)),
+            std::make_tuple(quad(0x1.076d4d74eca62p-1, -0x1.5065cd615be8cp-55),
+                quad(0x1.e696d6e427a0fp-2, 0x1.2b9d82418a8c3p-56)),
+            std::make_tuple(quad(0x1.0000000000000p+0, 0x0.0p+0),
+                quad(0x1.921fb54442d18p-1, 0x1.1a62633145c07p-55)),
+            std::make_tuple(quad(0x1.5eda751c2c50fp+1, -0x1.5d54e671ea9d0p-53),
+                quad(0x1.3891e39b73475p+0, 0x1.177a04405f124p-57)),
+            std::make_tuple(quad(0x1.65c5033df841fp+19, -0x1.1c8698d601558p-36),
+                quad(0x1.921f9e5e8590ep+0, 0x1.87596b527b805p-55)),
+            std::make_tuple(quad(0x1.94ae79531ccc5p+42, 0x1.3b24e86e7e6d8p-13),
+                quad(0x1.921fb54442a90p+0, 0x1.fd33632baddc4p-54)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+        INFO("input: " << format_quad_for_test(input));
+
+        const quad actual = atan(input);
+        constexpr quad relative_tolerance(0x1.0p-99);
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+
+    SECTION("calculate for infinity") {
+        const quad input = std::numeric_limits<double>::infinity();
+        const quad expected = num_collect::multi_double::impl::pi_over_2_quad;
+
+        const quad actual = atan(input);
+        constexpr quad relative_tolerance(0x1.0p-99);
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+
+    SECTION("calculate for -infinity") {
+        const quad input = -std::numeric_limits<double>::infinity();
+        const quad expected = -num_collect::multi_double::impl::pi_over_2_quad;
+
+        const quad actual = atan(input);
+        constexpr quad relative_tolerance(0x1.0p-99);
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+}
+
+TEST_CASE("num_collect::multi_double::atan2") {
+    using num_collect::multi_double::atan2;
+    using num_collect::multi_double::quad;
+
+    SECTION("calculate for non-zero values") {
+        quad x;
+        quad y;
+        quad expected;
+        std::tie(x, y,
+            expected) = GENERATE(Catch::Generators::table<quad, quad, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(0x1.6bc343cde7d78p+4, -0x1.6ec624ec8377cp-50),
+                quad(0x1.bdc89c1b355f6p+5, 0x1.4b1291c09af00p-53),
+                quad(0x1.2ef3e962ba84bp+0, -0x1.3ca0c36a6da60p-56)),
+            std::make_tuple(quad(0x1.3b807cf424316p+5, 0x1.dbef1155dcc00p-53),
+                quad(0x1.31de8194c625ep-3, -0x1.e355f96cf3440p-57),
+                quad(0x1.f05d91d70ccb5p-9, -0x1.c407ddcdedaccp-63)),
+            std::make_tuple(quad(-0x1.ef79cb69682b3p+4, -0x1.baf6037aca920p-50),
+                quad(0x1.2e413fa320922p-26, 0x1.bc40a8e9b8dc0p-80),
+                quad(0x1.921fb5430a7bbp+1, 0x1.f631194219d2cp-53)),
+            std::make_tuple(quad(-0x1.f83d67f10f754p-9, -0x1.336e7c43305a0p-63),
+                quad(0x1.41e44f511915ep+2, 0x1.7ec6660534cf0p-52),
+                quad(0x1.9251d5f02b900p+0, 0x1.92996a9cdc598p-54)),
+            std::make_tuple(quad(-0x1.caabfff431e59p-1, -0x1.45d69a833ede8p-55),
+                quad(-0x1.ceffedf90709bp-39, 0x1.73d1b3e7f3b38p-93),
+                quad(-0x1.921fb54440ccbp+1, 0x1.547c8ae9b5740p-57)),
+            std::make_tuple(quad(-0x1.44c1e07279ba0p+8, 0x1.edf61195839d0p-46),
+                quad(-0x1.cd4129453a9eep+23, -0x1.a2e5334833370p-32),
+                quad(-0x1.92211dc0a6534p+0, 0x1.47210e57152e0p-55)),
+            std::make_tuple(quad(0x1.67dcf604801f0p-24, 0x1.eb129515c9954p-78),
+                quad(-0x1.613d97a2deb7ep-26, -0x1.782271675e068p-80),
+                quad(-0x1.ecd6b53cfbd96p-3, -0x1.6cde7a81e2300p-58)),
+            std::make_tuple(quad(0x1.89c0e175ffb91p+6, -0x1.fd08ee8c9f4acp-48),
+                quad(-0x1.9d56a4d62f911p+19, -0x1.6553801ca5aa0p-36),
+                quad(-0x1.9218164e57ef4p+0, -0x1.adc1a3e7d1e80p-59)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+        INFO("x: " << format_quad_for_test(x));
+        INFO("y: " << format_quad_for_test(y));
+
+        const quad actual = atan2(y, x);
+        constexpr quad relative_tolerance(0x1.0p-99);
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+
+    SECTION("calculate for zeros") {
+        const quad x(0.0);
+        const quad y(0.0);
+
+        const quad actual = atan2(y, x);
+        CHECK(std::isnan(actual.high()));
     }
 }
 
