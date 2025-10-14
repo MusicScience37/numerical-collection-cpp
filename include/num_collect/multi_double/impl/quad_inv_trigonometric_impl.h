@@ -133,6 +133,12 @@ inline auto acos_impl(quad x) noexcept -> quad {
  * \return Result.
  */
 inline auto atan_impl(quad x) noexcept -> quad {
+    if (std::isinf(x.high())) {
+        if (x.high() > 0.0) {
+            return pi_over_2_quad;
+        }
+        return -pi_over_2_quad;
+    }
     if (x > 1.0) {
         return pi_over_2_quad - atan_newton(1.0 / x);
     }

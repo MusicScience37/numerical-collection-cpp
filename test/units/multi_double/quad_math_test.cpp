@@ -19,12 +19,14 @@
  */
 #include "num_collect/multi_double/quad_math.h"
 
+#include <cmath>
 #include <limits>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
 #include "format_quad_for_test.h"  // IWYU pragma: keep
+#include "num_collect/multi_double/impl/quad_internal_constants.h"
 #include "quad_approx.h"
 
 TEST_CASE("num_collect::multi_double::abs") {
@@ -755,6 +757,28 @@ TEST_CASE("num_collect::multi_double::asin") {
         constexpr quad relative_tolerance(0x1.0p-99);
         CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
     }
+
+    SECTION("calculate for zero") {
+        const quad input(0.0);
+        const quad expected(0.0);
+
+        const quad actual = asin(input);
+        CHECK(actual == expected);
+    }
+
+    SECTION("calculate for large values") {
+        const quad input(1.0, 1e-30);
+
+        const quad actual = asin(input);
+        CHECK(std::isnan(actual.high()));
+    }
+
+    SECTION("calculate for small values") {
+        const quad input(-1.0, -1e-30);
+
+        const quad actual = asin(input);
+        CHECK(std::isnan(actual.high()));
+    }
 }
 
 TEST_CASE("num_collect::multi_double::acos") {
@@ -790,6 +814,29 @@ TEST_CASE("num_collect::multi_double::acos") {
         const quad actual = acos(input);
         constexpr quad relative_tolerance(0x1.0p-99);
         CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+
+    SECTION("calculate for zero") {
+        const quad input(0.0);
+        const quad expected = num_collect::multi_double::impl::pi_over_2_quad;
+
+        const quad actual = acos(input);
+        constexpr quad relative_tolerance(0x1.0p-99);
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+
+    SECTION("calculate for large values") {
+        const quad input(1.0, 1e-30);
+
+        const quad actual = asin(input);
+        CHECK(std::isnan(actual.high()));
+    }
+
+    SECTION("calculate for small values") {
+        const quad input(-1.0, -1e-30);
+
+        const quad actual = asin(input);
+        CHECK(std::isnan(actual.high()));
     }
 }
 
@@ -832,6 +879,24 @@ TEST_CASE("num_collect::multi_double::atan") {
             // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
+
+        const quad actual = atan(input);
+        constexpr quad relative_tolerance(0x1.0p-99);
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+
+    SECTION("calculate for infinity") {
+        const quad input = std::numeric_limits<double>::infinity();
+        const quad expected = num_collect::multi_double::impl::pi_over_2_quad;
+
+        const quad actual = atan(input);
+        constexpr quad relative_tolerance(0x1.0p-99);
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+
+    SECTION("calculate for -infinity") {
+        const quad input = -std::numeric_limits<double>::infinity();
+        const quad expected = -num_collect::multi_double::impl::pi_over_2_quad;
 
         const quad actual = atan(input);
         constexpr quad relative_tolerance(0x1.0p-99);
@@ -884,6 +949,14 @@ TEST_CASE("num_collect::multi_double::atan2") {
         const quad actual = atan2(y, x);
         constexpr quad relative_tolerance(0x1.0p-99);
         CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+
+    SECTION("calculate for zeros") {
+        const quad x(0.0);
+        const quad y(0.0);
+
+        const quad actual = atan2(y, x);
+        CHECK(std::isnan(actual.high()));
     }
 }
 
