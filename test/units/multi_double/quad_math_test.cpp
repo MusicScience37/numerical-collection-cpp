@@ -1244,6 +1244,14 @@ TEST_CASE("num_collect::multi_double::acosh") {
         const quad actual = acosh(input);
         CHECK(actual == expected);
     }
+
+    SECTION("calculate for less than one") {
+        const quad input(1.0, -1e-30);
+
+        const quad actual = acosh(input);
+
+        CHECK(std::isnan(actual.high()));
+    }
 }
 
 TEST_CASE("num_collect::multi_double::atanh") {
@@ -1289,6 +1297,22 @@ TEST_CASE("num_collect::multi_double::atanh") {
 
         const quad actual = atanh(input);
         CHECK(actual == expected);
+    }
+
+    SECTION("calculate for 1") {
+        const quad input(1.0);
+
+        const quad actual = atanh(input);
+
+        CHECK(std::isnan(actual.high()));
+    }
+
+    SECTION("calculate for -1") {
+        const quad input(-1.0);
+
+        const quad actual = atanh(input);
+
+        CHECK(std::isnan(actual.high()));
     }
 }
 
