@@ -19,6 +19,9 @@
  */
 #pragma once
 
+#include <cmath>
+
+#include "num_collect/multi_double/impl/basic_operations.h"
 #include "num_collect/multi_double/quad.h"
 
 namespace num_collect::multi_double::impl {
