@@ -19,15 +19,14 @@
  */
 #pragma once
 
-#include <cmath>
-
-#include "num_collect/multi_double/impl/basic_operations.h"
 #include "num_collect/multi_double/impl/quad_exp_impl.h"
 #include "num_collect/multi_double/impl/quad_hyperbolic_impl.h"
 #include "num_collect/multi_double/impl/quad_integer_convertion_impl.h"
+#include "num_collect/multi_double/impl/quad_inv_hyperbolic_impl.h"
 #include "num_collect/multi_double/impl/quad_inv_trigonometric_impl.h"
 #include "num_collect/multi_double/impl/quad_log_impl.h"
 #include "num_collect/multi_double/impl/quad_pow_impl.h"
+#include "num_collect/multi_double/impl/quad_sqrt_impl.h"
 #include "num_collect/multi_double/impl/quad_trigonometric_impl.h"
 #include "num_collect/multi_double/quad.h"
 
@@ -54,20 +53,7 @@ inline auto abs(quad value) noexcept -> quad {
  *
  * If the input number is negative, the result is unspecified.
  */
-inline auto sqrt(quad value) noexcept -> quad {
-    if (value == quad(0.0)) {
-        return quad(0.0);
-    }
-    const double approx = std::sqrt(value.high());
-    const auto [approx_square_high, approx_square_low] =
-        impl::two_prod(approx, approx);
-    const auto remaining =
-        ((value.high() - approx_square_high) - approx_square_low) + value.low();
-    const double correction = 0.5 * remaining / approx;
-    const auto [result_high, result_low] =
-        impl::quick_two_sum(approx, correction);
-    return quad(result_high, result_low);
-}
+inline auto sqrt(quad value) noexcept -> quad { return impl::sqrt_impl(value); }
 
 /*!
  * \brief Calculate exponential \f$ e^x \f$.
@@ -219,6 +205,14 @@ inline auto cosh(quad x) noexcept -> quad { return impl::cosh_impl(x); }
  * \return Result.
  */
 inline auto tanh(quad x) noexcept -> quad { return impl::tanh_impl(x); }
+
+/*!
+ * \brief Calculate asinh function.
+ *
+ * \param[in] x Input value.
+ * \return Result.
+ */
+inline auto asinh(quad x) noexcept -> quad { return impl::asinh_impl(x); }
 
 /*!
  * \brief Calculate floor function.
