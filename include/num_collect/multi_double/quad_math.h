@@ -215,6 +215,14 @@ inline auto tanh(quad x) noexcept -> quad { return impl::tanh_impl(x); }
 inline auto asinh(quad x) noexcept -> quad { return impl::asinh_impl(x); }
 
 /*!
+ * \brief Calculate acosh function.
+ *
+ * \param[in] x Input value.
+ * \return Result.
+ */
+inline auto acosh(quad x) noexcept -> quad { return impl::acosh_impl(x); }
+
+/*!
  * \brief Calculate floor function.
  *
  * \param[in] x Value.

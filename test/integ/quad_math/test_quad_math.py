@@ -67,6 +67,7 @@ OPERATORS = [
     ("cosh", mpmath.cosh, 1, -300.0, 300.0),
     ("tanh", mpmath.tanh, 1, -300.0, 300.0),
     ("asinh", mpmath.asinh, 1, -1e10, 1e10),
+    ("acosh", mpmath.acosh, 1, 1.0, 1e10),
     ("floor", mpmath.floor, 1, -1e120, 1e120),
     ("ceil", mpmath.ceil, 1, -1e120, 1e120),
     ("trunc", trunc, 1, -1e120, 1e120),

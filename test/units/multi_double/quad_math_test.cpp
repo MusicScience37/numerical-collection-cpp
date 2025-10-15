@@ -1210,6 +1210,42 @@ TEST_CASE("num_collect::multi_double::asinh") {
     }
 }
 
+TEST_CASE("num_collect::multi_double::acosh") {
+    using num_collect::multi_double::acosh;
+    using num_collect::multi_double::quad;
+
+    SECTION("calculate for values") {
+        quad input;
+        quad expected;
+        std::tie(
+            input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(0x1.02252dc716765p+0, -0x1.1991ea087ceb0p-55),
+                quad(0x1.08f270e485dd3p-3, -0x1.f86a2dfe815c4p-58)),
+            std::make_tuple(quad(0x1.d0327dcded31dp+10, -0x1.068f5953bba90p-44),
+                quad(0x1.0708333ff2a23p+3, 0x1.0244c087069fbp-52)),
+            std::make_tuple(quad(0x1.9ef917859d81fp+46, 0x1.7e00e7b8a7110p-10),
+                quad(0x1.087cd53526736p+5, 0x1.a3348cdac0c5dp-53)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+        INFO("input: " << format_quad_for_test(input));
+
+        const quad actual = acosh(input);
+        constexpr quad relative_tolerance(0x1.0p-99);
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+
+    SECTION("calculate for one") {
+        const quad input(1.0);
+        const quad expected(0.0);
+
+        const quad actual = acosh(input);
+        CHECK(actual == expected);
+    }
+}
+
 TEST_CASE("num_collect::multi_double::floor") {
     using num_collect::multi_double::floor;
     using num_collect::multi_double::quad;

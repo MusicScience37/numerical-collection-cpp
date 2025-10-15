@@ -20,6 +20,8 @@
  */
 #pragma once
 
+#include <limits>
+
 #include "num_collect/multi_double/impl/quad_log_impl.h"
 #include "num_collect/multi_double/impl/quad_root_of_one_plus_square.h"
 #include "num_collect/multi_double/quad.h"
@@ -63,6 +65,24 @@ inline auto asinh_impl(quad x) noexcept -> quad {
     }
     const quad root = root_of_one_plus_square(1.0 / x);
     return -log_impl(-x - x * root);
+}
+
+/*!
+ * \brief Calculate acosh function.
+ *
+ * \param[in] x Input value.
+ * \return Result.
+ *
+ * This calculates
+ * \f[
+ * \mathrm{acosh}(x) = \log(x + \sqrt{x^2 - 1})
+ * \f]
+ */
+inline auto acosh_impl(quad x) noexcept -> quad {
+    if (x < 1.0) {
+        return quad(std::numeric_limits<double>::quiet_NaN());
+    }
+    return log_impl(x + sqrt_impl(x * x - 1.0));
 }
 
 }  // namespace num_collect::multi_double::impl
