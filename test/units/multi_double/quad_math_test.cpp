@@ -375,7 +375,7 @@ TEST_CASE("num_collect::multi_double::pow(quad, quad)") {
     using num_collect::multi_double::pow;
     using num_collect::multi_double::quad;
 
-    SECTION("calculate for non-zero values") {
+    SECTION("calculate for ordinary values") {
         quad base;
         quad exponent;
         quad expected;
@@ -419,7 +419,32 @@ TEST_CASE("num_collect::multi_double::pow(quad, quad)") {
         INFO("exponent: " << format_quad_for_test(exponent));
 
         const quad actual = pow(base, exponent);
-        constexpr quad relative_tolerance(0x1.0p-90);
+        constexpr quad relative_tolerance(0x1.0p-97);
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+
+    SECTION("calculate for large exponents") {
+        quad base;
+        quad exponent;
+        quad expected;
+        std::tie(base, exponent,
+            expected) = GENERATE(Catch::Generators::table<quad, quad, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(0x1.0000000000000p+0, 0x1.0000000000000p-60),
+                quad(0x1.0000000000000p+54, 0x0.0p+0),
+                quad(0x1.04080ab55de39p+0, 0x1.7a97e3b292590p-56)),
+            std::make_tuple(quad(0x1.0000000000000p+0, 0x1.0000000000000p-60),
+                quad(-0x1.0000000000000p+55, 0x0.0p+0),
+                quad(0x1.f03f56a88b5d8p-1, -0x1.bab4f95aaf99cp-55)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+        INFO("base: " << format_quad_for_test(base));
+        INFO("exponent: " << format_quad_for_test(exponent));
+
+        const quad actual = pow(base, exponent);
+        constexpr quad relative_tolerance(0x1.0p-55);
         CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
     }
 }
@@ -428,7 +453,7 @@ TEST_CASE("num_collect::multi_double::pow(quad, double)") {
     using num_collect::multi_double::pow;
     using num_collect::multi_double::quad;
 
-    SECTION("calculate for non-zero values") {
+    SECTION("calculate for ordinary values") {
         quad base;
         double exponent{};
         quad expected;
@@ -472,7 +497,32 @@ TEST_CASE("num_collect::multi_double::pow(quad, double)") {
         INFO("exponent: " << format_quad_for_test(exponent));
 
         const quad actual = pow(base, exponent);
-        constexpr quad relative_tolerance(0x1.0p-90);
+        constexpr quad relative_tolerance(0x1.0p-97);
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+
+    SECTION("calculate for large exponents") {
+        quad base;
+        double exponent{};
+        quad expected;
+        std::tie(base, exponent,
+            expected) = GENERATE(Catch::Generators::table<quad, double, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(0x1.0000000000000p+0, 0x1.0000000000000p-60),
+                0x1.0000000000000p+54,
+                quad(0x1.04080ab55de39p+0, 0x1.7a97e3b292590p-56)),
+            std::make_tuple(quad(0x1.0000000000000p+0, 0x1.0000000000000p-60),
+                -0x1.0000000000000p+55,
+                quad(0x1.f03f56a88b5d8p-1, -0x1.bab4f95aaf99cp-55)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+        INFO("base: " << format_quad_for_test(base));
+        INFO("exponent: " << format_quad_for_test(exponent));
+
+        const quad actual = pow(base, exponent);
+        constexpr quad relative_tolerance(0x1.0p-55);
         CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
     }
 }
@@ -511,7 +561,7 @@ TEST_CASE("num_collect::multi_double::pow(quad, unsigned int)") {
         INFO("exponent: " << exponent);
 
         const quad actual = pow(base, exponent);
-        constexpr quad relative_tolerance(0x1.0p-90);
+        constexpr quad relative_tolerance(0x1.0p-96);
         CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
     }
 }
@@ -559,7 +609,7 @@ TEST_CASE("num_collect::multi_double::pow(quad, int)") {
         INFO("exponent: " << exponent);
 
         const quad actual = pow(base, exponent);
-        constexpr quad relative_tolerance(0x1.0p-90);
+        constexpr quad relative_tolerance(0x1.0p-96);
         CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
     }
 }

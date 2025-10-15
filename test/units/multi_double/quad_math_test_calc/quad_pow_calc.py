@@ -92,6 +92,15 @@ SAMPLES = [
         ),
         (0.0, 0.0),
     ),
+    # Extreme cases.
+    (
+        (1.0, float.fromhex("0x1.0p-60")),
+        (float.fromhex("0x1.0p+54"), 0.0),
+    ),
+    (
+        (1.0, float.fromhex("0x1.0p-60")),
+        (float.fromhex("-0x1.0p+55"), 0.0),
+    ),
     # cspell: enable
 ]
 
