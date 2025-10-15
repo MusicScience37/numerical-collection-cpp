@@ -223,6 +223,14 @@ inline auto asinh(quad x) noexcept -> quad { return impl::asinh_impl(x); }
 inline auto acosh(quad x) noexcept -> quad { return impl::acosh_impl(x); }
 
 /*!
+ * \brief Calculate atanh function.
+ *
+ * \param[in] x Input value.
+ * \return Result.
+ */
+inline auto atanh(quad x) noexcept -> quad { return impl::atanh_impl(x); }
+
+/*!
  * \brief Calculate floor function.
  *
  * \param[in] x Value.

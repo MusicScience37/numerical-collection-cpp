@@ -85,4 +85,24 @@ inline auto acosh_impl(quad x) noexcept -> quad {
     return log_impl(x + sqrt_impl(x * x - 1.0));
 }
 
+/*!
+ * \brief Calculate atanh function.
+ *
+ * \param[in] x Input value.
+ * \return Result.
+ *
+ * This calculates
+ * \f[
+ * \mathrm{atanh}(x) = \frac{1}{2} \log\left(\frac{1 + x}{1 - x}\right)
+ * = \frac{1}{2} \left(\log(1 + x) - \log(1 - x)\right)
+ * \f]
+ */
+inline auto atanh_impl(quad x) noexcept -> quad {
+    if (x <= -1.0 || 1.0 <= x) {
+        return quad(std::numeric_limits<double>::quiet_NaN());
+    }
+    // NOLINTNEXTLINE(*-magic-numbers)
+    return 0.5 * (log1p_impl(x) - log1p_impl(-x));
+}
+
 }  // namespace num_collect::multi_double::impl
