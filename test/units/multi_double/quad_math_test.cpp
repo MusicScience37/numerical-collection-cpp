@@ -1163,6 +1163,159 @@ TEST_CASE("num_collect::multi_double::tanh") {
     }
 }
 
+TEST_CASE("num_collect::multi_double::asinh") {
+    using num_collect::multi_double::asinh;
+    using num_collect::multi_double::quad;
+
+    SECTION("calculate for non-zero values") {
+        quad input;
+        quad expected;
+        std::tie(
+            input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(
+                quad(-0x1.1ecf1dae30939p+39, -0x1.509a5c491b400p-20),
+                quad(-0x1.bd6eb343ee218p+4, 0x1.3de21f2af69a4p-51)),
+            std::make_tuple(quad(-0x1.13e2f13993d5ap+3, -0x1.183a1b317b3c0p-53),
+                quad(-0x1.6ce54a2500a36p+1, -0x1.1a1efa9d01042p-53)),
+            std::make_tuple(quad(-0x1.0759396169785p-11, 0x1.f5ecdb3ae8adcp-65),
+                quad(-0x1.075938a79f533p-11, -0x1.b2995df178c2ap-65)),
+            std::make_tuple(quad(-0x1.68e5691a87c5ep-32, 0x1.b27f0efafe080p-89),
+                quad(-0x1.68e5691a87c5ep-32, 0x1.b36e23c76df9fp-89)),
+            std::make_tuple(quad(0x1.44bcc8101fba9p-25, 0x1.3a48d94efba60p-82),
+                quad(0x1.44bcc8101fba8p-25, -0x1.4a258921d8063p-79)),
+            std::make_tuple(quad(0x1.dcd48122989b0p-9, -0x1.b596773838700p-68),
+                quad(0x1.dcd43c34f7305p-9, 0x1.c921852cde45fp-63)),
+            std::make_tuple(quad(0x1.d0327dcded31dp+10, -0x1.068f5953bba90p-44),
+                quad(0x1.0708338dcecfep+3, 0x1.51a56d2e85bdep-51)),
+            std::make_tuple(quad(0x1.9ef917859d81fp+46, 0x1.7e00e7b8a7110p-10),
+                quad(0x1.087cd53526736p+5, 0x1.a3348cdac1274p-53)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+        INFO("input: " << format_quad_for_test(input));
+
+        const quad actual = asinh(input);
+        constexpr quad relative_tolerance(0x1.0p-99);
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+
+    SECTION("calculate for zero") {
+        const quad input(0x0.0p+0, 0x0.0p+0);
+        const quad expected(0x0.0p+0, 0x0.0p+0);
+
+        const quad actual = asinh(input);
+        CHECK(actual == expected);
+    }
+}
+
+TEST_CASE("num_collect::multi_double::acosh") {
+    using num_collect::multi_double::acosh;
+    using num_collect::multi_double::quad;
+
+    SECTION("calculate for values") {
+        quad input;
+        quad expected;
+        std::tie(
+            input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(0x1.02252dc716765p+0, -0x1.1991ea087ceb0p-55),
+                quad(0x1.08f270e485dd3p-3, -0x1.f86a2dfe815c4p-58)),
+            std::make_tuple(quad(0x1.d0327dcded31dp+10, -0x1.068f5953bba90p-44),
+                quad(0x1.0708333ff2a23p+3, 0x1.0244c087069fbp-52)),
+            std::make_tuple(quad(0x1.9ef917859d81fp+46, 0x1.7e00e7b8a7110p-10),
+                quad(0x1.087cd53526736p+5, 0x1.a3348cdac0c5dp-53)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+        INFO("input: " << format_quad_for_test(input));
+
+        const quad actual = acosh(input);
+        constexpr quad relative_tolerance(0x1.0p-99);
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+
+    SECTION("calculate for one") {
+        const quad input(1.0);
+        const quad expected(0.0);
+
+        const quad actual = acosh(input);
+        CHECK(actual == expected);
+    }
+
+    SECTION("calculate for less than one") {
+        const quad input(1.0, -1e-30);
+
+        const quad actual = acosh(input);
+
+        CHECK(std::isnan(actual.high()));
+    }
+}
+
+TEST_CASE("num_collect::multi_double::atanh") {
+    using num_collect::multi_double::atanh;
+    using num_collect::multi_double::quad;
+
+    SECTION("calculate for values") {
+        quad input;
+        quad expected;
+        std::tie(
+            input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(-0x1.eecc475c72064p-1, 0x1.52e3fa5837064p-55),
+                quad(-0x1.0472ba8d4abb5p+1, -0x1.821428c251f2bp-54)),
+            std::make_tuple(quad(-0x1.63a7b3aa9fe62p-1, 0x1.6a76ccde58c50p-56),
+                quad(-0x1.b6b6fd81e09abp-1, -0x1.32001cbac9aa6p-56)),
+            std::make_tuple(quad(-0x1.19c4d7a962942p-7, -0x1.34c3b51ec3a60p-62),
+                quad(-0x1.19c69ed0872dcp-7, 0x1.bd9f2f66cf857p-61)),
+            std::make_tuple(quad(-0x1.d7b5b86e430bep-33, 0x1.c0648d22baa00p-91),
+                quad(-0x1.d7b5b86e430bep-33, 0x1.be4eb22775be8p-91)),
+            std::make_tuple(quad(0x1.c9e645feeaceep-48, 0x1.be9b281dbd348p-102),
+                quad(0x1.c9e645feeaceep-48, 0x1.be9b281dbdae9p-102)),
+            std::make_tuple(quad(0x1.6bfc419161f86p-26, -0x1.7e6aa79445bd0p-81),
+                quad(0x1.6bfc419161f87p-26, -0x1.d43a89ce46373p-81)),
+            std::make_tuple(quad(0x1.5635d7afaf2cep-1, 0x1.2e624f2d1fd50p-55),
+                quad(0x1.9d9912bdf7712p-1, 0x1.f51893fd037d5p-55)),
+            std::make_tuple(quad(0x1.b450f9a197e92p-1, 0x1.0a9fbc263c338p-55),
+                quad(0x1.43999d0ec62dbp+0, -0x1.db7f7e3c85fadp-54)),
+            // cspell: enable
+            // NOLINTEND
+        }));
+        INFO("input: " << format_quad_for_test(input));
+
+        const quad actual = atanh(input);
+        constexpr quad relative_tolerance(0x1.0p-98);
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+
+    SECTION("calculate for zero") {
+        const quad input(0.0);
+        const quad expected(0.0);
+
+        const quad actual = atanh(input);
+        CHECK(actual == expected);
+    }
+
+    SECTION("calculate for 1") {
+        const quad input(1.0);
+
+        const quad actual = atanh(input);
+
+        CHECK(std::isnan(actual.high()));
+    }
+
+    SECTION("calculate for -1") {
+        const quad input(-1.0);
+
+        const quad actual = atanh(input);
+
+        CHECK(std::isnan(actual.high()));
+    }
+}
+
 TEST_CASE("num_collect::multi_double::floor") {
     using num_collect::multi_double::floor;
     using num_collect::multi_double::quad;
