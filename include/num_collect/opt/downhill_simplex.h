@@ -394,8 +394,7 @@ private:
     index_type dim_{0};
 
     //! Points.
-    std::vector<variable_type, Eigen::aligned_allocator<variable_type>>
-        points_{};
+    std::vector<variable_type> points_{};
 
     //! Function values.
     std::vector<value_type> values_{};
