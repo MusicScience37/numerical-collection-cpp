@@ -42,7 +42,7 @@ namespace impl {
  * \return Exponential function value.
  */
 template <typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
-consteval auto exp_at_compile_time(T x) -> T {
+constexpr auto exp_at_compile_time(T x) -> T {
     if (x < zero<T>) {
         return one<T> / exp_at_compile_time(-x);
     }

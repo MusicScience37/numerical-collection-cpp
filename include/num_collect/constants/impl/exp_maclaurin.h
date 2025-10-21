@@ -38,7 +38,7 @@ namespace num_collect::constants::impl {
  * \return Exponential function.
  */
 template <typename T>
-consteval auto exp_maclaurin(T x) -> T {
+constexpr auto exp_maclaurin(T x) -> T {
     T sum = one<T>;
     T term = one<T>;
     constexpr int max_loops = 1000;
