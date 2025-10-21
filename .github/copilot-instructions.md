@@ -20,4 +20,4 @@ To update Python packages, follow the following instructions:
 ## Conventions
 
 - Conventions are written in [conventions.md](../doc/sphinx/src/conventions.md).
-- All source codes in C++ will be compiled with C++20 standard.
+- All source codes in C++ will be compiled with C++23 standard.

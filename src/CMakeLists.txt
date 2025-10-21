@@ -15,7 +15,7 @@ target_link_libraries(
            concurrentqueue::concurrentqueue
            nanoflann::nanoflann
            $<BUILD_INTERFACE:num_collect_cpp_warnings>)
-target_compile_features(num_collect PUBLIC cxx_std_20)
+target_compile_features(num_collect PUBLIC cxx_std_23)
 target_add_ausan(num_collect)
 
 set_target_properties(
@@ -49,7 +49,7 @@ target_link_libraries(
            concurrentqueue::concurrentqueue
            nanoflann::nanoflann
            $<BUILD_INTERFACE:num_collect_cpp_warnings>)
-target_compile_features(num_collect_unity PUBLIC cxx_std_20)
+target_compile_features(num_collect_unity PUBLIC cxx_std_23)
 
 # ##############################################################################
 # Configure AVX CPU instruction
