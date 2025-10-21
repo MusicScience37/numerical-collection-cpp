@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <cmath>
 #include <limits>
 #include <type_traits>
 
@@ -44,24 +45,28 @@ namespace num_collect::constants {
  */
 template <typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
 constexpr auto exp(T x) -> T {
-    if (x < zero<T>) {
-        return one<T> / exp(-x);
-    }
-    if (x < std::numeric_limits<T>::min()) {
-        return one<T>;
-    }
+    if consteval {
+        if (x < zero<T>) {
+            return one<T> / exp(-x);
+        }
+        if (x < std::numeric_limits<T>::min()) {
+            return one<T>;
+        }
 
-    constexpr auto thresh_inf =
-        static_cast<T>(std::numeric_limits<T>::max_exponent);
-    if (x >= thresh_inf) {
-        return std::numeric_limits<T>::infinity();
-    }
+        constexpr auto thresh_inf =
+            static_cast<T>(std::numeric_limits<T>::max_exponent);
+        if (x >= thresh_inf) {
+            return std::numeric_limits<T>::infinity();
+        }
 
-    int int_part = static_cast<int>(trunc(x));
-    T rem_part = x - static_cast<T>(int_part);
-    T exp_int_part = impl::pow_pos_int(napier<T>, int_part);
-    T exp_rem_part = impl::exp_maclaurin(rem_part);
-    return exp_int_part * exp_rem_part;
+        int int_part = static_cast<int>(trunc(x));
+        T rem_part = x - static_cast<T>(int_part);
+        T exp_int_part = impl::pow_pos_int(napier<T>, int_part);
+        T exp_rem_part = impl::exp_maclaurin(rem_part);
+        return exp_int_part * exp_rem_part;
+    } else {
+        return std::exp(x);
+    }
 }
 
 }  // namespace num_collect::constants
