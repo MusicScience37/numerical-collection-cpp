@@ -52,34 +52,52 @@ void prevent_ordering() { std::atomic_signal_fence(std::memory_order_seq_cst); }
 auto create_line_dash_map() -> std::unordered_map<std::string, std::string> {
     return std::unordered_map<std::string, std::string>{
         // Explicit Runge-Kutta.
-        {"RKF45", "solid"}, {"DOPRI5", "solid"}, {"ARK4(3)-ERK", "solid"},
+        {"RKF45", "solid"},
+        {"DOPRI5", "solid"},
+        {"ARK4(3)-ERK", "solid"},
         {"RK4", "solid"},
         // Implicit Runge-Kutta.
-        {"Tanaka1", "dot"}, {"Tanaka2", "dot"}, {"SDIRK4", "dot"},
-        {"ARK4(3)-ESDIRK", "dot"}, {"ARK5(4)-ESDIRK", "dot"},
+        {"Tanaka1", "dot"},
+        {"Tanaka2", "dot"},
+        {"SDIRK4", "dot"},
+        {"ARK4(3)-ESDIRK", "dot"},
+        {"ARK5(4)-ESDIRK", "dot"},
         {"ESDIRK45c", "dot"},
         // Rosenbrock.
-        {"ROS3w", "longdash"}, {"ROS34PW3", "longdash"}, {"RODASP", "longdash"},
+        {"ROS3w", "longdash"},
+        {"ROS34PW3", "longdash"},
+        {"RODASP", "longdash"},
         {"RODASPR", "longdash"},
         // AVF.
-        {"AVF2", "dashdot"}, {"AVF3", "dashdot"}, {"AVF4", "dashdot"},
+        {"AVF2", "dashdot"},
+        {"AVF3", "dashdot"},
+        {"AVF4", "dashdot"},
         // Symplectic.
-        {"LeapFrog", "longdash"}, {"Forest4", "longdash"},
+        {"LeapFrog", "longdash"},
+        {"Forest4", "longdash"},
         // LU in Rosenbrock.
-        {"ROS3w_lu", "solid"}, {"ROS34PW3_lu", "solid"}, {"RODASP_lu", "solid"},
+        {"ROS3w_lu", "solid"},
+        {"ROS34PW3_lu", "solid"},
+        {"RODASP_lu", "solid"},
         // Broyden in Rosenbrock.
-        {"ROS3w_broyden", "longdash"}, {"ROS34PW3_broyden", "longdash"},
+        {"ROS3w_broyden", "longdash"},
+        {"ROS34PW3_broyden", "longdash"},
         // GMRES in Rosenbrock.
-        {"ROS3w_gmres", "dashdot"}, {"ROS34PW3_gmres", "dashdot"},
+        {"ROS3w_gmres", "dashdot"},
+        {"ROS34PW3_gmres", "dashdot"},
         {"RODASP_gmres", "dashdot"},
         // BiCGstab in Rosenbrock.
-        {"ROS3w_bicgstab", "dot"}, {"ROS34PW3_bicgstab", "dot"},
+        {"ROS3w_bicgstab", "dot"},
+        {"ROS34PW3_bicgstab", "dot"},
         {"RODASP_bicgstab", "dot"},
         // Basic step size controller.
-        {"RKF45_basic", "solid"}, {"ROS3w_basic", "solid"},
+        {"RKF45_basic", "solid"},
+        {"ROS3w_basic", "solid"},
         {"RODASP_basic", "solid"},
         // PI step size controller.
-        {"RKF45_pi", "dot"}, {"ROS3w_pi", "dot"}, {"RODASP_pi", "dot"},
+        {"RKF45_pi", "dot"},
+        {"ROS3w_pi", "dot"},
+        {"RODASP_pi", "dot"},
         //
     };
 }
