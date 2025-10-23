@@ -1,4 +1,4 @@
-FROM registry.gitlab.com/musicscience37projects/docker/my-cpp-env-docker:clang20
+FROM registry.gitlab.com/musicscience37projects/docker/my-cpp-env-docker:clang21
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -27,7 +27,7 @@ RUN apt-get update && \
 ENV LANG=en_US.UTF-8
 
 # mimalloc
-RUN git clone https://github.com/microsoft/mimalloc.git -b v3.0.3 && \
+RUN git clone https://github.com/microsoft/mimalloc.git -b v3.0.10 && \
     cd mimalloc && \
     mkdir -p out/release && \
     cd out/release && \

@@ -10,7 +10,7 @@ import typing
 import click
 import tqdm
 
-CLANG_INCLUDE_OPTION = ["-isystem", "/usr/lib/llvm-18/include/c++/v1/"]
+CLANG_INCLUDE_OPTION = ["-isystem", "/usr/lib/llvm-21/include/c++/v1/"]
 
 ROOT_DIR = pathlib.Path(__file__).absolute().parent.parent
 IWYU_MAPPING_PATH = ROOT_DIR / "iwyu_mappings.imp"
