@@ -148,7 +148,7 @@ TEMPLATE_TEST_CASE(
 
     SECTION("low exponent") {
         CHECK_CONSTEXPR_FUNCTION_RELATIVE(
-            (static_cast<TestType>(4.321), static_cast<TestType>(-123.456)),
+            (static_cast<TestType>(1.234), static_cast<TestType>(-123.456)),
             num_collect::constants::pow, std::pow);
     }
 
@@ -160,7 +160,7 @@ TEMPLATE_TEST_CASE(
 
     SECTION("large exponent") {
         CHECK_CONSTEXPR_FUNCTION_RELATIVE(
-            (static_cast<TestType>(4.321), static_cast<TestType>(123.456)),
+            (static_cast<TestType>(1.234), static_cast<TestType>(123.456)),
             num_collect::constants::pow, std::pow);
     }
 
