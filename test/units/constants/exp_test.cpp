@@ -29,6 +29,35 @@
 #include "check_constexpr_function.h"
 
 // NOLINTNEXTLINE
+TEMPLATE_TEST_CASE(
+    "num_collect::constants::impl::exp_at_compile_time", "", float, double) {
+    SECTION("negative number") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(-1.234)),
+            num_collect::constants::impl::exp_at_compile_time, std::exp);
+    }
+
+    SECTION("low negative number") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(-50.123)),
+            num_collect::constants::impl::exp_at_compile_time, std::exp);
+    }
+
+    SECTION("zero") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(0.0)),
+            num_collect::constants::impl::exp_at_compile_time, std::exp);
+    }
+
+    SECTION("positive number") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(1.234)),
+            num_collect::constants::impl::exp_at_compile_time, std::exp);
+    }
+
+    SECTION("positive number") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(50.123)),
+            num_collect::constants::impl::exp_at_compile_time, std::exp);
+    }
+}
+
+// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::constants::exp", "", float, double) {
     SECTION("negative number") {
         CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(-1.234)),
