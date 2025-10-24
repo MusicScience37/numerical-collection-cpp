@@ -14,6 +14,7 @@ Checks: >
     -cppcoreguidelines-missing-std-forward,
     -cppcoreguidelines-avoid-do-while,
     -cppcoreguidelines-c-copy-assignment-signature,
+    -cppcoreguidelines-macro-usage,
   google-*,
     -google-runtime-references,
     -google-readability-todo,
@@ -89,6 +90,7 @@ Checks: >
 # - readability-simplify-boolean-expr generates unfixable warnings in assertion macros.
 # - openmp-exception-escape is generating warnings for rare cases that cannot be tested.
 # - bugprone-misplaced-widening-cast generates false positives.
+# - cppcoreguidelines-macro-usage generates false positives in this project.
 
 CheckOptions:
   # Naming Conventions
