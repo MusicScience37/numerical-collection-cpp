@@ -27,66 +27,62 @@
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+#include "check_constexpr_function.h"
+
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::constants::log1p", "", float, double) {
     SECTION("x < -1") {
         constexpr auto x = static_cast<TestType>(-2);
-        constexpr TestType val = num_collect::constants::log1p(x);
-        REQUIRE(std::isnan(val));
+        constexpr TestType value_at_compile_time =
+            num_collect::constants::log1p(x);
+        const TestType value_runtime = num_collect::constants::log1p(x);
+        CHECK(std::isnan(value_at_compile_time));
+        CHECK(std::isnan(value_runtime));
     }
 
     SECTION("x == -1") {
         constexpr auto x = static_cast<TestType>(-1);
-        constexpr TestType val = num_collect::constants::log1p(x);
-        REQUIRE(std::isinf(val));
-        REQUIRE(val < num_collect::constants::zero<TestType>);
+        constexpr TestType value_at_compile_time =
+            num_collect::constants::log1p(x);
+        const TestType value_runtime = num_collect::constants::log1p(x);
+        CHECK(std::isinf(value_at_compile_time));
+        CHECK(value_at_compile_time < num_collect::constants::zero<TestType>);
+        CHECK(std::isinf(value_runtime));
+        CHECK(value_runtime < num_collect::constants::zero<TestType>);
     }
 
     SECTION("x = -0.9999") {
-        constexpr auto x = static_cast<TestType>(-0.9999);
-        constexpr TestType val = num_collect::constants::log1p(x);
-        const auto reference = std::log1p(x);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(-0.9999)),
+            num_collect::constants::log1p, std::log1p);
     }
 
     SECTION("x = -0.1") {
-        constexpr auto x = static_cast<TestType>(-0.1);
-        constexpr TestType val = num_collect::constants::log1p(x);
-        const auto reference = std::log1p(x);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(-0.1)),
+            num_collect::constants::log1p, std::log1p);
     }
 
     SECTION("x = -0.00001") {
-        constexpr auto x = static_cast<TestType>(-0.00001);
-        constexpr TestType val = num_collect::constants::log1p(x);
-        const auto reference = std::log1p(x);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(-0.00001)),
+            num_collect::constants::log1p, std::log1p);
     }
 
     SECTION("x = 0") {
-        constexpr auto x = static_cast<TestType>(0);
-        constexpr TestType val = num_collect::constants::log1p(x);
-        REQUIRE(val == num_collect::constants::zero<TestType>);
+        CHECK_CONSTEXPR_FUNCTION_ABSOLUTE((static_cast<TestType>(0)),
+            num_collect::constants::log1p, std::log1p);
     }
 
     SECTION("x = 0.00001") {
-        constexpr auto x = static_cast<TestType>(0.00001);
-        constexpr TestType val = num_collect::constants::log1p(x);
-        const auto reference = std::log1p(x);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(0.00001)),
+            num_collect::constants::log1p, std::log1p);
     }
 
     SECTION("x = 3") {
-        constexpr auto x = static_cast<TestType>(3);
-        constexpr TestType val = num_collect::constants::log1p(x);
-        const auto reference = std::log1p(x);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(3)),
+            num_collect::constants::log1p, std::log1p);
     }
 
     SECTION("x = 1e+10") {
-        constexpr auto x = static_cast<TestType>(1e+10);
-        constexpr TestType val = num_collect::constants::log1p(x);
-        const auto reference = std::log1p(x);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(1e+10)),
+            num_collect::constants::log1p, std::log1p);
     }
 }

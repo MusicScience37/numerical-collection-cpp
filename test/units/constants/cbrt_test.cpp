@@ -21,48 +21,45 @@
 
 #include <cmath>
 #include <limits>
-#include <ostream>
 
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+#include "check_constexpr_function.h"
+
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::constants::cbrt", "", float, double) {
     SECTION("cbrt of negative number") {
-        constexpr auto x = static_cast<TestType>(-1.234);
-        constexpr auto val = num_collect::constants::cbrt(x);
-        const auto true_val = std::cbrt(x);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(-1.234)),
+            num_collect::constants::cbrt, std::cbrt);
     }
 
     SECTION("cbrt of zero") {
-        constexpr auto x = static_cast<TestType>(0.0);
-        constexpr auto val = num_collect::constants::cbrt(x);
-        const auto true_val = std::cbrt(x);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+        CHECK_CONSTEXPR_FUNCTION_ABSOLUTE((static_cast<TestType>(0.0)),
+            num_collect::constants::cbrt, std::cbrt);
     }
 
     SECTION("cbrt of positive number") {
-        constexpr auto x = static_cast<TestType>(1.234);
-        constexpr auto val = num_collect::constants::cbrt(x);
-        const auto true_val = std::cbrt(x);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(1.234)),
+            num_collect::constants::cbrt, std::cbrt);
     }
 
     SECTION("cbrt of large positive number") {
-        constexpr auto x = static_cast<TestType>(1.234e+30);
-        constexpr auto val = num_collect::constants::cbrt(x);
-        const auto true_val = std::cbrt(x);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(1.234e+30)),
+            num_collect::constants::cbrt, std::cbrt);
     }
 
     SECTION("cbrt of infinity") {
         constexpr TestType x = std::numeric_limits<TestType>::infinity();
-        constexpr TestType val = num_collect::constants::cbrt(x);
-        REQUIRE(std::isinf(val));
-        REQUIRE(val > num_collect::constants::zero<TestType>);
+        constexpr TestType value_at_compile_time =
+            num_collect::constants::cbrt(x);
+        const TestType value_runtime = num_collect::constants::cbrt(x);
+        REQUIRE(std::isinf(value_at_compile_time));
+        REQUIRE(value_at_compile_time > num_collect::constants::zero<TestType>);
+        REQUIRE(std::isinf(value_runtime));
+        REQUIRE(value_runtime > num_collect::constants::zero<TestType>);
     }
 }
 
@@ -70,23 +67,17 @@ TEMPLATE_TEST_CASE("num_collect::constants::cbrt", "", float, double) {
 TEMPLATE_TEST_CASE(
     "num_collect::constants::cbrt (integers)", "", int, long long) {
     SECTION("cbrt of negative number") {
-        constexpr auto x = static_cast<TestType>(-5);
-        constexpr auto val = num_collect::constants::cbrt(x);
-        const double true_val = std::cbrt(x);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(-5)),
+            num_collect::constants::cbrt, std::cbrt);
     }
 
     SECTION("cbrt of zero") {
-        constexpr auto x = static_cast<TestType>(0);
-        constexpr auto val = num_collect::constants::cbrt(x);
-        const double true_val = std::cbrt(x);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+        CHECK_CONSTEXPR_FUNCTION_ABSOLUTE((static_cast<TestType>(0)),
+            num_collect::constants::cbrt, std::cbrt);
     }
 
     SECTION("cbrt of positive number") {
-        constexpr auto x = static_cast<TestType>(10);
-        constexpr auto val = num_collect::constants::cbrt(x);
-        const double true_val = std::cbrt(x);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(10)),
+            num_collect::constants::cbrt, std::cbrt);
     }
 }

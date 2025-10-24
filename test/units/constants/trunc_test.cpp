@@ -22,68 +22,52 @@
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
 
+#include "check_constexpr_function.h"
+
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::constants::trunc", "", float, double) {
     SECTION("x = -2") {
-        constexpr auto x = static_cast<TestType>(-2.0);
-        constexpr TestType val = num_collect::constants::trunc(x);
-        constexpr auto true_val = static_cast<TestType>(-2.0);
-        STATIC_REQUIRE(val == true_val);
+        CHECK_CONSTEXPR_FUNCTION_EQUAL((static_cast<TestType>(-2.0)),
+            num_collect::constants::trunc, std::trunc);
     }
 
     SECTION("x = -1.5") {
-        constexpr auto x = static_cast<TestType>(-1.5);
-        constexpr TestType val = num_collect::constants::trunc(x);
-        constexpr auto true_val = static_cast<TestType>(-1.0);
-        STATIC_REQUIRE(val == true_val);
+        CHECK_CONSTEXPR_FUNCTION_EQUAL((static_cast<TestType>(-1.5)),
+            num_collect::constants::trunc, std::trunc);
     }
 
     SECTION("x = -1") {
-        constexpr auto x = static_cast<TestType>(-1.0);
-        constexpr TestType val = num_collect::constants::trunc(x);
-        constexpr auto true_val = static_cast<TestType>(-1.0);
-        STATIC_REQUIRE(val == true_val);
+        CHECK_CONSTEXPR_FUNCTION_EQUAL((static_cast<TestType>(-1.0)),
+            num_collect::constants::trunc, std::trunc);
     }
 
     SECTION("x = -0.5") {
-        constexpr auto x = static_cast<TestType>(-0.5);
-        constexpr TestType val = num_collect::constants::trunc(x);
-        constexpr auto true_val = static_cast<TestType>(0.0);
-        STATIC_REQUIRE(val == true_val);
+        CHECK_CONSTEXPR_FUNCTION_EQUAL((static_cast<TestType>(-0.5)),
+            num_collect::constants::trunc, std::trunc);
     }
 
     SECTION("x = 0") {
-        constexpr auto x = static_cast<TestType>(0.0);
-        constexpr TestType val = num_collect::constants::trunc(x);
-        constexpr auto true_val = static_cast<TestType>(0.0);
-        STATIC_REQUIRE(val == true_val);
+        CHECK_CONSTEXPR_FUNCTION_EQUAL((static_cast<TestType>(0.0)),
+            num_collect::constants::trunc, std::trunc);
     }
 
     SECTION("x = 0.5") {
-        constexpr auto x = static_cast<TestType>(0.5);
-        constexpr TestType val = num_collect::constants::trunc(x);
-        constexpr auto true_val = static_cast<TestType>(0.0);
-        STATIC_REQUIRE(val == true_val);
+        CHECK_CONSTEXPR_FUNCTION_EQUAL((static_cast<TestType>(0.5)),
+            num_collect::constants::trunc, std::trunc);
     }
 
     SECTION("x = 1.0") {
-        constexpr auto x = static_cast<TestType>(1.0);
-        constexpr TestType val = num_collect::constants::trunc(x);
-        constexpr auto true_val = static_cast<TestType>(1.0);
-        STATIC_REQUIRE(val == true_val);
+        CHECK_CONSTEXPR_FUNCTION_EQUAL((static_cast<TestType>(1.0)),
+            num_collect::constants::trunc, std::trunc);
     }
 
     SECTION("x = 1.5") {
-        constexpr auto x = static_cast<TestType>(1.5);
-        constexpr TestType val = num_collect::constants::trunc(x);
-        constexpr auto true_val = static_cast<TestType>(1.0);
-        STATIC_REQUIRE(val == true_val);
+        CHECK_CONSTEXPR_FUNCTION_EQUAL((static_cast<TestType>(1.5)),
+            num_collect::constants::trunc, std::trunc);
     }
 
     SECTION("x = 2.0") {
-        constexpr auto x = static_cast<TestType>(2.0);
-        constexpr TestType val = num_collect::constants::trunc(x);
-        constexpr auto true_val = static_cast<TestType>(2.0);
-        STATIC_REQUIRE(val == true_val);
+        CHECK_CONSTEXPR_FUNCTION_EQUAL((static_cast<TestType>(2.0)),
+            num_collect::constants::trunc, std::trunc);
     }
 }

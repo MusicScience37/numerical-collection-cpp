@@ -70,3 +70,23 @@
         CHECK_THAT(result_runtime,                                             \
             Catch::Matchers::WithinAbs(reference_result, epsilon));            \
     } while (false)
+
+/*!
+ * \brief Macro to check constexpr function by comparing with reference function
+ * using equality.
+ *
+ * \param ARGS Arguments to be passed to the functions enclosed in parentheses.
+ * \param TESTED_FUNCTION Function to be tested.
+ * \param REFERENCE_FUNCTION Function to calculate reference values.
+ */
+#define CHECK_CONSTEXPR_FUNCTION_EQUAL(                                     \
+    ARGS, TESTED_FUNCTION, REFERENCE_FUNCTION)                              \
+    do {                                                                    \
+        constexpr auto result_at_compile_time = TESTED_FUNCTION ARGS;       \
+        using result_type = std::decay_t<decltype(result_at_compile_time)>; \
+        const result_type result_runtime = TESTED_FUNCTION ARGS;            \
+        const result_type reference_result =                                \
+            static_cast<result_type>(REFERENCE_FUNCTION ARGS);              \
+        CHECK(result_at_compile_time == reference_result);                  \
+        CHECK(result_runtime == reference_result);                          \
+    } while (false)
