@@ -20,7 +20,6 @@
 #include "num_collect/constants/impl/pow_pos_int.h"
 
 #include <cmath>
-#include <ostream>
 #include <utility>
 
 #include <catch2/catch_template_test_macros.hpp>
@@ -28,88 +27,66 @@
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+#include "../check_constexpr_function.h"
+
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::constants::impl::pow_pos_int", "",
     (std::pair<float, int>), (std::pair<double, unsigned int>)) {
+    using num_collect::constants::impl::pow_pos_int;
     using Base = typename TestType::first_type;
     using Exp = typename TestType::second_type;
 
     SECTION("for exponent = 0") {
-        constexpr auto base = static_cast<Base>(1.234);
-        constexpr auto exp = static_cast<Exp>(0);
-        constexpr Base val =
-            num_collect::constants::impl::pow_pos_int(base, exp);
-        REQUIRE(val == static_cast<Base>(1));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<Base>(1.234), static_cast<Exp>(0)), pow_pos_int,
+            std::pow);
     }
 
     SECTION("for exponent = 1") {
-        constexpr auto base = static_cast<Base>(1.234);
-        constexpr auto exp = static_cast<Exp>(1);
-        constexpr Base val =
-            num_collect::constants::impl::pow_pos_int(base, exp);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(base));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<Base>(1.234), static_cast<Exp>(1)), pow_pos_int,
+            std::pow);
     }
 
     SECTION("for exponent = 2") {
-        constexpr auto base = static_cast<Base>(1.234);
-        constexpr auto exp = static_cast<Exp>(2);
-        constexpr Base val =
-            num_collect::constants::impl::pow_pos_int(base, exp);
-        const Base reference = std::pow(base, static_cast<Base>(exp));
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<Base>(1.234), static_cast<Exp>(2)), pow_pos_int,
+            std::pow);
     }
 
     SECTION("for exponent = 3") {
-        constexpr auto base = static_cast<Base>(1.234);
-        constexpr auto exp = static_cast<Exp>(3);
-        constexpr Base val =
-            num_collect::constants::impl::pow_pos_int(base, exp);
-        const Base reference = std::pow(base, static_cast<Base>(exp));
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<Base>(1.234), static_cast<Exp>(3)), pow_pos_int,
+            std::pow);
     }
 
     SECTION("for exponent = 4") {
-        constexpr auto base = static_cast<Base>(1.234);
-        constexpr auto exp = static_cast<Exp>(4);
-        constexpr Base val =
-            num_collect::constants::impl::pow_pos_int(base, exp);
-        const Base reference = std::pow(base, static_cast<Base>(exp));
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<Base>(1.234), static_cast<Exp>(4)), pow_pos_int,
+            std::pow);
     }
 
     SECTION("for exponent = 5") {
-        constexpr auto base = static_cast<Base>(1.234);
-        constexpr auto exp = static_cast<Exp>(5);
-        constexpr Base val =
-            num_collect::constants::impl::pow_pos_int(base, exp);
-        const Base reference = std::pow(base, static_cast<Base>(exp));
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<Base>(1.234), static_cast<Exp>(5)), pow_pos_int,
+            std::pow);
     }
 
     SECTION("for exponent = 6") {
-        constexpr auto base = static_cast<Base>(1.234);
-        constexpr auto exp = static_cast<Exp>(6);
-        constexpr Base val =
-            num_collect::constants::impl::pow_pos_int(base, exp);
-        const Base reference = std::pow(base, static_cast<Base>(exp));
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<Base>(1.234), static_cast<Exp>(6)), pow_pos_int,
+            std::pow);
     }
 
     SECTION("for exponent = 10") {
-        constexpr auto base = static_cast<Base>(1.234);
-        constexpr auto exp = static_cast<Exp>(10);
-        constexpr Base val =
-            num_collect::constants::impl::pow_pos_int(base, exp);
-        const Base reference = std::pow(base, static_cast<Base>(exp));
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<Base>(1.234), static_cast<Exp>(10)), pow_pos_int,
+            std::pow);
     }
 
     SECTION("for exponent = 100") {
-        constexpr auto base = static_cast<Base>(1.234);
-        constexpr auto exp = static_cast<Exp>(100);
-        constexpr Base val =
-            num_collect::constants::impl::pow_pos_int(base, exp);
-        const Base reference = std::pow(base, static_cast<Base>(exp));
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<Base>(1.234), static_cast<Exp>(100)), pow_pos_int,
+            std::pow);
     }
 }
