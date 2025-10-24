@@ -41,7 +41,7 @@ namespace impl {
  * \return Value of \f$ \Gamma(n + 1/2) \f$.
  */
 template <std::floating_point Result, std::integral Integer>
-consteval auto gamma_half_plus_at_compile_time(const Integer n) -> Result {
+constexpr auto gamma_half_plus_at_compile_time(const Integer n) -> Result {
     if constexpr (std::signed_integral<Integer>) {
         if (n < 0) {
             // Negative integers.

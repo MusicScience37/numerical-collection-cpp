@@ -40,7 +40,7 @@ namespace impl {
  * \return Exponential function minus one.
  */
 template <typename T>
-consteval auto expm1_at_compile_time(T x) -> T {
+constexpr auto expm1_at_compile_time(T x) -> T {
     if (x < -one<T> || one<T> < x) {
         return exp(x) - one<T>;
     }

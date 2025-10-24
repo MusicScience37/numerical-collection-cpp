@@ -38,7 +38,7 @@ namespace impl {
  * \return Largest integer not greater than x.
  */
 template <typename T>
-consteval auto floor_at_compile_time(T x) -> T {
+constexpr auto floor_at_compile_time(T x) -> T {
     if (x >= zero<T>) {
         return trunc(x);
     }

@@ -38,7 +38,7 @@ namespace impl {
  * \return Smallest integer not less than x.
  */
 template <typename T>
-consteval auto ceil_at_compile_time(T x) -> T {
+constexpr auto ceil_at_compile_time(T x) -> T {
     if (x <= zero<T>) {
         return trunc(x);
     }
