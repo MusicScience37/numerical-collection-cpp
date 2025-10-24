@@ -48,7 +48,7 @@ template <typename B, std::integral E>
 constexpr auto pow(B base, E exp) -> B {
     if constexpr (std::is_signed_v<E>) {
         if (exp < zero<E>) {
-            return one<B> / pow(base, -exp);
+            return pow(one<B> / base, -exp);
         }
     }
     return impl::pow_pos_int(base, exp);
