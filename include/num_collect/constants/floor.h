@@ -19,11 +19,38 @@
  */
 #pragma once
 
+#include <cmath>
+
 #include "num_collect/constants/one.h"  // IWYU pragma: keep
 #include "num_collect/constants/trunc.h"
 #include "num_collect/constants/zero.h"  // IWYU pragma: keep
 
 namespace num_collect::constants {
+
+namespace impl {
+
+/*!
+ * \brief Calculate the largest integer not greater than x, \f$ \lfloor x
+ * \rfloor \f$ at compile time.
+ *
+ * \tparam T Number type.
+ * \param[in] x Number.
+ * \return Largest integer not greater than x.
+ */
+template <typename T>
+consteval auto floor_at_compile_time(T x) -> T {
+    if (x >= zero<T>) {
+        return trunc(x);
+    }
+
+    T trunc_x = trunc(x);
+    if (x == trunc_x) {
+        return x;
+    }
+    return trunc_x - one<T>;
+}
+
+}  // namespace impl
 
 /*!
  * \brief Calculate the largest integer not greater than x, \f$ \lfloor x
@@ -41,15 +68,11 @@ namespace num_collect::constants {
  */
 template <typename T>
 constexpr auto floor(T x) -> T {
-    if (x >= zero<T>) {
-        return trunc(x);
+    if consteval {
+        return impl::floor_at_compile_time(x);
+    } else {
+        return std::floor(x);
     }
-
-    T trunc_x = trunc(x);
-    if (x == trunc_x) {
-        return x;
-    }
-    return trunc_x - one<T>;
 }
 
 }  // namespace num_collect::constants

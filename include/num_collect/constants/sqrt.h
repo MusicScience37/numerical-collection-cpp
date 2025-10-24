@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <cmath>
 #include <concepts>
 #include <limits>
 
@@ -28,19 +29,17 @@
 
 namespace num_collect::constants {
 
+namespace impl {
+
 /*!
- * \brief Calculate square root \f$ \sqrt{x} \f$.
- *
- * This function calculates similar values as
- * [sqrt](https://en.cppreference.com/w/cpp/numeric/math/sqrt) function in C++
- * standard library in constexpr.
+ * \brief Calculate square root \f$ \sqrt{x} \f$ at compile time.
  *
  * \tparam F Value type.
  * \param[in] x Value to calculate square root of.
  * \return Square root.
  */
 template <std::floating_point F>
-constexpr auto sqrt(F x) -> F {
+constexpr auto sqrt_at_compile_time(F x) -> F {
     if (x < zero<F>) {
         return std::numeric_limits<F>::quiet_NaN();
     }
@@ -60,6 +59,28 @@ constexpr auto sqrt(F x) -> F {
     }
 
     return value;
+}
+
+}  // namespace impl
+
+/*!
+ * \brief Calculate square root \f$ \sqrt{x} \f$.
+ *
+ * This function calculates similar values as
+ * [sqrt](https://en.cppreference.com/w/cpp/numeric/math/sqrt) function in C++
+ * standard library in constexpr.
+ *
+ * \tparam F Value type.
+ * \param[in] x Value to calculate square root of.
+ * \return Square root.
+ */
+template <std::floating_point F>
+constexpr auto sqrt(F x) -> F {
+    if consteval {
+        return impl::sqrt_at_compile_time(x);
+    } else {
+        return std::sqrt(x);
+    }
 }
 
 /*!

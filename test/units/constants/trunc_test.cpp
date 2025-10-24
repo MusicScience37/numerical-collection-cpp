@@ -27,6 +27,55 @@
 #include "check_constexpr_function.h"
 
 // NOLINTNEXTLINE
+TEMPLATE_TEST_CASE(
+    "num_collect::constants::impl::trunc_at_compile_time", "", float, double) {
+    SECTION("x = -2") {
+        CHECK_CONSTEXPR_FUNCTION_EQUAL((static_cast<TestType>(-2.0)),
+            num_collect::constants::impl::trunc_at_compile_time, std::trunc);
+    }
+
+    SECTION("x = -1.5") {
+        CHECK_CONSTEXPR_FUNCTION_EQUAL((static_cast<TestType>(-1.5)),
+            num_collect::constants::impl::trunc_at_compile_time, std::trunc);
+    }
+
+    SECTION("x = -1") {
+        CHECK_CONSTEXPR_FUNCTION_EQUAL((static_cast<TestType>(-1.0)),
+            num_collect::constants::impl::trunc_at_compile_time, std::trunc);
+    }
+
+    SECTION("x = -0.5") {
+        CHECK_CONSTEXPR_FUNCTION_EQUAL((static_cast<TestType>(-0.5)),
+            num_collect::constants::impl::trunc_at_compile_time, std::trunc);
+    }
+
+    SECTION("x = 0") {
+        CHECK_CONSTEXPR_FUNCTION_EQUAL((static_cast<TestType>(0.0)),
+            num_collect::constants::impl::trunc_at_compile_time, std::trunc);
+    }
+
+    SECTION("x = 0.5") {
+        CHECK_CONSTEXPR_FUNCTION_EQUAL((static_cast<TestType>(0.5)),
+            num_collect::constants::impl::trunc_at_compile_time, std::trunc);
+    }
+
+    SECTION("x = 1.0") {
+        CHECK_CONSTEXPR_FUNCTION_EQUAL((static_cast<TestType>(1.0)),
+            num_collect::constants::impl::trunc_at_compile_time, std::trunc);
+    }
+
+    SECTION("x = 1.5") {
+        CHECK_CONSTEXPR_FUNCTION_EQUAL((static_cast<TestType>(1.5)),
+            num_collect::constants::impl::trunc_at_compile_time, std::trunc);
+    }
+
+    SECTION("x = 2.0") {
+        CHECK_CONSTEXPR_FUNCTION_EQUAL((static_cast<TestType>(2.0)),
+            num_collect::constants::impl::trunc_at_compile_time, std::trunc);
+    }
+}
+
+// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::constants::trunc", "", float, double) {
     SECTION("x = -2") {
         CHECK_CONSTEXPR_FUNCTION_EQUAL((static_cast<TestType>(-2.0)),

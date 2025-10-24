@@ -86,6 +86,53 @@ TEMPLATE_TEST_CASE("num_collect::constants::pow(Float, Int)", "",
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
+    "num_collect::constants::impl::pow_at_compile_time(Float, Float)", "",
+    float, double) {
+    SECTION("ordinary") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<TestType>(4.321), static_cast<TestType>(1.234)),
+            num_collect::constants::impl::pow_at_compile_time, std::pow);
+    }
+
+    SECTION("negative exponent") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<TestType>(4.321), static_cast<TestType>(-2.345)),
+            num_collect::constants::impl::pow_at_compile_time, std::pow);
+    }
+
+    SECTION("low exponent") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<TestType>(4.321), static_cast<TestType>(-123.456)),
+            num_collect::constants::impl::pow_at_compile_time, std::pow);
+    }
+
+    SECTION("zero exponent") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<TestType>(4.321), static_cast<TestType>(0)),
+            num_collect::constants::impl::pow_at_compile_time, std::pow);
+    }
+
+    SECTION("large exponent") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<TestType>(4.321), static_cast<TestType>(123.456)),
+            num_collect::constants::impl::pow_at_compile_time, std::pow);
+    }
+
+    SECTION("small base") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<TestType>(4.321e-10), static_cast<TestType>(1.234)),
+            num_collect::constants::impl::pow_at_compile_time, std::pow);
+    }
+
+    SECTION("large base") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<TestType>(4.321e+10), static_cast<TestType>(1.234)),
+            num_collect::constants::impl::pow_at_compile_time, std::pow);
+    }
+}
+
+// NOLINTNEXTLINE
+TEMPLATE_TEST_CASE(
     "num_collect::constants::pow(Float, Float)", "", float, double) {
     SECTION("ordinary") {
         CHECK_CONSTEXPR_FUNCTION_RELATIVE(

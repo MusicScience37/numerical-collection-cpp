@@ -29,6 +29,157 @@
 #include "check_constexpr_function.h"
 
 // NOLINTNEXTLINE
+TEMPLATE_TEST_CASE(
+    "num_collect::constants::impl::root_at_compile_time", "", float, double) {
+    const auto reference_function = [](TestType x, int n) -> TestType {
+        if (x < static_cast<TestType>(0)) {
+            return -static_cast<TestType>(std::pow(
+                -static_cast<double>(x), 1.0 / static_cast<double>(n)));
+        }
+        return static_cast<TestType>(
+            std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n)));
+    };
+
+    SECTION("x < 0, n is even") {
+        constexpr auto x = static_cast<TestType>(-1.0);
+        SECTION("n = 2") {
+            constexpr auto n = 2;
+            constexpr TestType value_at_compile_time =
+                num_collect::constants::impl::root_at_compile_time(x, n);
+            const TestType value_runtime =
+                num_collect::constants::impl::root_at_compile_time(x, n);
+            CHECK(std::isnan(value_at_compile_time));
+            CHECK(std::isnan(value_runtime));
+        }
+        SECTION("n = 4") {
+            constexpr auto n = 4;
+            constexpr TestType value_at_compile_time =
+                num_collect::constants::impl::root_at_compile_time(x, n);
+            const TestType value_runtime =
+                num_collect::constants::impl::root_at_compile_time(x, n);
+            CHECK(std::isnan(value_at_compile_time));
+            CHECK(std::isnan(value_runtime));
+        }
+    }
+
+    SECTION("x < 0, n is odd") {
+        constexpr auto x = static_cast<TestType>(-1.234);
+        SECTION("n = 3") {
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(3)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
+        }
+        SECTION("n = 5") {
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(5)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
+        }
+        SECTION("n = 11") {
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(11)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
+        }
+    }
+
+    SECTION("x = 0") {
+        constexpr auto x = static_cast<TestType>(0);
+        SECTION("n = 2") {
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(2)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
+        }
+        SECTION("n = 3") {
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(3)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
+        }
+        SECTION("n = 4") {
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(4)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
+        }
+    }
+
+    SECTION("x > 0") {
+        constexpr auto x = static_cast<TestType>(1.234);
+        SECTION("n = 2") {
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(2)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
+        }
+        SECTION("n = 3") {
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(3)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
+        }
+        SECTION("n = 4") {
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(4)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
+        }
+        SECTION("n = 5") {
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(5)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
+        }
+        SECTION("n = 10") {
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(10)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
+        }
+        SECTION("n = 11") {
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(11)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
+        }
+    }
+
+    SECTION("x >> 0") {
+        constexpr auto x = static_cast<TestType>(1.234e+10);
+        SECTION("n = 2") {
+            constexpr auto n = 2;
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(n)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
+        }
+        SECTION("n = 3") {
+            constexpr auto n = 3;
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(n)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
+        }
+    }
+
+    SECTION("x == infinity") {
+        constexpr auto x = std::numeric_limits<TestType>::infinity();
+        SECTION("n = 2") {
+            constexpr auto n = 2;
+            constexpr TestType value_at_compile_time =
+                num_collect::constants::impl::root_at_compile_time(x, n);
+            const TestType value_runtime =
+                num_collect::constants::impl::root_at_compile_time(x, n);
+            CHECK(std::isinf(value_at_compile_time));
+            CHECK(
+                value_at_compile_time > num_collect::constants::zero<TestType>);
+            CHECK(std::isinf(value_runtime));
+            CHECK(value_runtime > num_collect::constants::zero<TestType>);
+        }
+        SECTION("n = 3") {
+            constexpr auto n = 3;
+            constexpr TestType value_at_compile_time =
+                num_collect::constants::impl::root_at_compile_time(x, n);
+            const TestType value_runtime =
+                num_collect::constants::impl::root_at_compile_time(x, n);
+            CHECK(std::isinf(value_at_compile_time));
+            CHECK(
+                value_at_compile_time > num_collect::constants::zero<TestType>);
+            CHECK(std::isinf(value_runtime));
+            CHECK(value_runtime > num_collect::constants::zero<TestType>);
+        }
+    }
+}
+
+// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::constants::root", "", float, double) {
     const auto reference_function = [](TestType x, int n) -> TestType {
         if (x < static_cast<TestType>(0)) {

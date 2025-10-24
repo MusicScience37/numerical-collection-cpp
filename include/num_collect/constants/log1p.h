@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <cmath>
 #include <limits>
 #include <type_traits>
 
@@ -29,22 +30,18 @@
 
 namespace num_collect::constants {
 
+namespace impl {
+
 /*!
- * \brief Calculate natural logarithm of 1 + x, \f$ \log(1 + x) \f$.
- *
- * This function calculates similar values as
- * [log1p](https://en.cppreference.com/w/cpp/numeric/math/log1p) function in C++
- * standard library in constexpr.
- *
- * This function can calculate natural logarithm of numbers near to 1 more
- * accurately.
+ * \brief Calculate natural logarithm of 1 + x, \f$ \log(1 + x) \f$ at compile
+ * time.
  *
  * \tparam T Number type.
  * \param[in] x Number.
- * \return Logarithm of 1 - x.
+ * \return Logarithm of 1 + x.
  */
 template <typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
-constexpr auto log1p(T x) -> T {
+constexpr auto log1p_at_compile_time(T x) -> T {
     if (x < -one<T>) {
         return std::numeric_limits<T>::quiet_NaN();
     }
@@ -56,12 +53,12 @@ constexpr auto log1p(T x) -> T {
         return log(x + one<T>);
     }
     if (x > zero<T>) {
-        return -log1p(-x / (x + one<T>));
+        return -log1p_at_compile_time(-x / (x + one<T>));
     }
 
     T value = x;
     if (x > zero<T>) {
-        value = -log1p(-x / (x + one<T>));
+        value = -log1p_at_compile_time(-x / (x + one<T>));
     } else {
         value = impl::log1m_maclaurin(-x);
     }
@@ -76,6 +73,31 @@ constexpr auto log1p(T x) -> T {
     }
 
     return value;
+}
+
+}  // namespace impl
+
+/*!
+ * \brief Calculate natural logarithm of 1 + x, \f$ \log(1 + x) \f$.
+ *
+ * This function calculates similar values as
+ * [log1p](https://en.cppreference.com/w/cpp/numeric/math/log1p) function in C++
+ * standard library in constexpr.
+ *
+ * This function can calculate natural logarithm of numbers near to 1 more
+ * accurately.
+ *
+ * \tparam T Number type.
+ * \param[in] x Number.
+ * \return Logarithm of 1 + x.
+ */
+template <typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
+constexpr auto log1p(T x) -> T {
+    if consteval {
+        return impl::log1p_at_compile_time(x);
+    } else {
+        return std::log1p(x);
+    }
 }
 
 }  // namespace num_collect::constants

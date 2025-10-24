@@ -29,6 +29,69 @@
 #include "num_collect/functions/gamma.h"
 
 // NOLINTNEXTLINE
+TEMPLATE_TEST_CASE_SIG(
+    "num_collect::constants::impl::gamma_half_plus_at_compile_time", "",
+    ((typename Result, typename Integer), Result, Integer), (double, int),
+    (double, unsigned int)) {
+    const auto reference_function = [](Integer n) -> Result {
+        return num_collect::functions::gamma(
+            // NOLINTNEXTLINE(*-magic-numbers)
+            static_cast<Result>(n) + static_cast<Result>(0.5));
+    };
+
+    if constexpr (std::signed_integral<Integer>) {
+        SECTION("n = -3") {
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<Integer>(-3)),
+                num_collect::constants::impl::gamma_half_plus_at_compile_time<
+                    Result>,
+                reference_function);
+        }
+
+        SECTION("n = -2") {
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<Integer>(-2)),
+                num_collect::constants::impl::gamma_half_plus_at_compile_time<
+                    Result>,
+                reference_function);
+        }
+
+        SECTION("n = -1") {
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<Integer>(-1)),
+                num_collect::constants::impl::gamma_half_plus_at_compile_time<
+                    Result>,
+                reference_function);
+        }
+    }
+
+    SECTION("n = 0") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<Integer>(0)),
+            num_collect::constants::impl::gamma_half_plus_at_compile_time<
+                Result>,
+            reference_function);
+    }
+
+    SECTION("n = 1") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<Integer>(1)),
+            num_collect::constants::impl::gamma_half_plus_at_compile_time<
+                Result>,
+            reference_function);
+    }
+
+    SECTION("n = 2") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<Integer>(2)),
+            num_collect::constants::impl::gamma_half_plus_at_compile_time<
+                Result>,
+            reference_function);
+    }
+
+    SECTION("n = 3") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<Integer>(3)),
+            num_collect::constants::impl::gamma_half_plus_at_compile_time<
+                Result>,
+            reference_function);
+    }
+}
+
+// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE_SIG("num_collect::constants::gamma_half_plus", "",
     ((typename Result, typename Integer), Result, Integer), (double, int),
     (double, unsigned int)) {

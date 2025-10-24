@@ -25,7 +25,8 @@
 #include "num_collect/constants/exp.h"
 #include "num_collect/constants/impl/pow_pos_int.h"
 #include "num_collect/constants/log.h"
-#include "num_collect/constants/one.h"   // IWYU pragma: keep
+#include "num_collect/constants/one.h"  // IWYU pragma: keep
+#include "num_collect/constants/trunc.h"
 #include "num_collect/constants/zero.h"  // IWYU pragma: keep
 
 namespace num_collect::constants {
@@ -53,6 +54,25 @@ constexpr auto pow(B base, E exp) -> B {
     return impl::pow_pos_int(base, exp);
 }
 
+namespace impl {
+
+/*!
+ * \brief Calculate power \f$ {base}^{exp} \f$ at compile time.
+ *
+ * \tparam T Number type.
+ * \param[in] base Base.
+ * \param[in] exp Exponent.
+ * \return Power.
+ */
+template <std::floating_point T>
+constexpr auto pow_at_compile_time(T base, T exp) -> T {
+    int int_part = static_cast<int>(trunc(exp));
+    T rem_part = exp - static_cast<T>(int_part);
+    return pow(base, int_part) * exp_at_compile_time(rem_part * log(base));
+}
+
+}  // namespace impl
+
 /*!
  * \brief Calculate power \f$ {base}^{exp} \f$.
  *
@@ -67,7 +87,11 @@ constexpr auto pow(B base, E exp) -> B {
  */
 template <std::floating_point T>
 constexpr auto pow(T base, T exp) -> T {
-    return ::num_collect::constants::exp(exp * log(base));
+    if consteval {
+        return impl::pow_at_compile_time(base, exp);
+    } else {
+        return std::pow(base, exp);
+    }
 }
 
 }  // namespace num_collect::constants

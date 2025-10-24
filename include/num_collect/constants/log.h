@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <cmath>
 #include <limits>
 #include <type_traits>
 
@@ -28,19 +29,17 @@
 
 namespace num_collect::constants {
 
+namespace impl {
+
 /*!
- * \brief Calculate logarithm \f$ \log(x) \f$.
- *
- * This function calculates similar values as
- * [log](https://en.cppreference.com/w/cpp/numeric/math/log) function in C++
- * standard library in constexpr.
+ * \brief Calculate logarithm \f$ \log(x) \f$ at compile time.
  *
  * \tparam T Number type.
  * \param[in] x Number.
  * \return Logarithm
  */
 template <typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
-constexpr auto log(T x) -> T {
+constexpr auto log_at_compile_time(T x) -> T {
     if (x < zero<T>) {
         return std::numeric_limits<T>::quiet_NaN();
     }
@@ -49,7 +48,7 @@ constexpr auto log(T x) -> T {
     }
 
     if (x > one<T>) {
-        return -log(one<T> / x);
+        return -log_at_compile_time(one<T> / x);
     }
 
     T value = impl::log1m_maclaurin(one<T> - x);
@@ -64,6 +63,28 @@ constexpr auto log(T x) -> T {
     }
 
     return value;
+}
+
+}  // namespace impl
+
+/*!
+ * \brief Calculate logarithm \f$ \log(x) \f$.
+ *
+ * This function calculates similar values as
+ * [log](https://en.cppreference.com/w/cpp/numeric/math/log) function in C++
+ * standard library in constexpr.
+ *
+ * \tparam T Number type.
+ * \param[in] x Number.
+ * \return Logarithm
+ */
+template <typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
+constexpr auto log(T x) -> T {
+    if consteval {
+        return impl::log_at_compile_time(x);
+    } else {
+        return std::log(x);
+    }
 }
 
 }  // namespace num_collect::constants

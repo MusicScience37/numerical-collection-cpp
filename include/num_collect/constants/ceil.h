@@ -19,11 +19,38 @@
  */
 #pragma once
 
+#include <cmath>
+
 #include "num_collect/constants/one.h"  // IWYU pragma: keep
 #include "num_collect/constants/trunc.h"
 #include "num_collect/constants/zero.h"  // IWYU pragma: keep
 
 namespace num_collect::constants {
+
+namespace impl {
+
+/*!
+ * \brief Calculate the smallest integer not less than x, \f$ \lceil x \rceil
+ * \f$ at compile time.
+ *
+ * \tparam T Number type.
+ * \param[in] x Number.
+ * \return Smallest integer not less than x.
+ */
+template <typename T>
+consteval auto ceil_at_compile_time(T x) -> T {
+    if (x <= zero<T>) {
+        return trunc(x);
+    }
+
+    T trunc_x = trunc(x);
+    if (x == trunc_x) {
+        return x;
+    }
+    return trunc_x + one<T>;
+}
+
+}  // namespace impl
 
 /*!
  * \brief Calculate the smallest integer not less than x, \f$ \lceil x \rceil
@@ -41,15 +68,11 @@ namespace num_collect::constants {
  */
 template <typename T>
 constexpr auto ceil(T x) -> T {
-    if (x <= zero<T>) {
-        return trunc(x);
+    if consteval {
+        return impl::ceil_at_compile_time(x);
+    } else {
+        return std::ceil(x);
     }
-
-    T trunc_x = trunc(x);
-    if (x == trunc_x) {
-        return x;
-    }
-    return trunc_x + one<T>;
 }
 
 }  // namespace num_collect::constants

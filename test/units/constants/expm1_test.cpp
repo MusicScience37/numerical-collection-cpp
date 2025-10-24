@@ -29,6 +29,45 @@
 #include "check_constexpr_function.h"
 
 // NOLINTNEXTLINE
+TEMPLATE_TEST_CASE(
+    "num_collect::constants::impl::expm1_at_compile_time", "", float, double) {
+    SECTION("negative number") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(-0.123)),
+            num_collect::constants::impl::expm1_at_compile_time, std::expm1);
+    }
+
+    SECTION("small negative number") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(-0.123e-5)),
+            num_collect::constants::impl::expm1_at_compile_time, std::expm1);
+    }
+
+    SECTION("low negative number") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(-50.123)),
+            num_collect::constants::impl::expm1_at_compile_time, std::expm1);
+    }
+
+    SECTION("zero") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(0.0)),
+            num_collect::constants::impl::expm1_at_compile_time, std::expm1);
+    }
+
+    SECTION("positive number") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(0.123)),
+            num_collect::constants::impl::expm1_at_compile_time, std::expm1);
+    }
+
+    SECTION("small positive number") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(0.123e-5)),
+            num_collect::constants::impl::expm1_at_compile_time, std::expm1);
+    }
+
+    SECTION("positive number") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(50.123)),
+            num_collect::constants::impl::expm1_at_compile_time, std::expm1);
+    }
+}
+
+// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::constants::expm1", "", float, double) {
     SECTION("negative number") {
         CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(-0.123)),

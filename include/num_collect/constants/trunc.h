@@ -19,12 +19,35 @@
  */
 #pragma once
 
+#include <cmath>
 #include <cstdint>
 #include <limits>
 
 #include "num_collect/constants/zero.h"  // IWYU pragma: keep
 
 namespace num_collect::constants {
+
+namespace impl {
+
+/*!
+ * \brief Truncate the decimal part of a number x at compile time.
+ *
+ * \tparam T Number type.
+ * \param[in] x Number to truncate.
+ * \return Truncated number.
+ */
+template <typename T>
+constexpr auto trunc_at_compile_time(T x) -> T {
+    if (x < zero<T>) {
+        return -trunc_at_compile_time(-x);
+    }
+    if (x > static_cast<T>(std::numeric_limits<std::uintmax_t>::max())) {
+        return x;
+    }
+    return static_cast<T>(static_cast<std::uintmax_t>(x));
+}
+
+}  // namespace impl
 
 /*!
  * \brief Truncate the decimal part of a number x.
@@ -41,13 +64,11 @@ namespace num_collect::constants {
  */
 template <typename T>
 constexpr auto trunc(T x) -> T {
-    if (x < zero<T>) {
-        return -trunc(-x);
+    if consteval {
+        return impl::trunc_at_compile_time(x);
+    } else {
+        return std::trunc(x);
     }
-    if (x > static_cast<T>(std::numeric_limits<std::uintmax_t>::max())) {
-        return x;
-    }
-    return static_cast<T>(static_cast<std::uintmax_t>(x));
 }
 
 }  // namespace num_collect::constants

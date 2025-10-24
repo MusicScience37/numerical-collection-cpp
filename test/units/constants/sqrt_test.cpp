@@ -29,6 +29,47 @@
 #include "check_constexpr_function.h"
 
 // NOLINTNEXTLINE
+TEMPLATE_TEST_CASE(
+    "num_collect::constants::impl::sqrt_at_compile_time", "", float, double) {
+    SECTION("sqrt of negative number") {
+        constexpr auto x = static_cast<TestType>(-1.0);
+        constexpr TestType value_at_compile_time =
+            num_collect::constants::impl::sqrt_at_compile_time(x);
+        const TestType value_runtime =
+            num_collect::constants::impl::sqrt_at_compile_time(x);
+        CHECK(std::isnan(value_at_compile_time));
+        CHECK(std::isnan(value_runtime));
+    }
+
+    SECTION("sqrt of zero") {
+        CHECK_CONSTEXPR_FUNCTION_ABSOLUTE((static_cast<TestType>(0)),
+            num_collect::constants::impl::sqrt_at_compile_time, std::sqrt);
+    }
+
+    SECTION("sqrt of positive number") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(1.234)),
+            num_collect::constants::impl::sqrt_at_compile_time, std::sqrt);
+    }
+
+    SECTION("sqrt of large positive number") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(1.234e+10)),
+            num_collect::constants::impl::sqrt_at_compile_time, std::sqrt);
+    }
+
+    SECTION("sqrt of infinity") {
+        constexpr TestType x = std::numeric_limits<TestType>::infinity();
+        constexpr TestType value_at_compile_time =
+            num_collect::constants::impl::sqrt_at_compile_time(x);
+        const TestType value_runtime =
+            num_collect::constants::impl::sqrt_at_compile_time(x);
+        CHECK(std::isinf(value_at_compile_time));
+        CHECK(value_at_compile_time > num_collect::constants::zero<TestType>);
+        CHECK(std::isinf(value_runtime));
+        CHECK(value_runtime > num_collect::constants::zero<TestType>);
+    }
+}
+
+// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::constants::sqrt", "", float, double) {
     SECTION("sqrt of negative number") {
         constexpr auto x = static_cast<TestType>(-1.0);
