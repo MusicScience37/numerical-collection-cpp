@@ -46,6 +46,7 @@ TEST_CASE(
         const parameter_value_type param_value{value};
         CHECK(param_value.get() == 123);
 
+        // NOLINTNEXTLINE(clang-analyzer-deadcode.DeadStores): false positive
         value = 2345;
         void* algorithm = nullptr;
         CHECK(param_value.get(algorithm) == 2345);

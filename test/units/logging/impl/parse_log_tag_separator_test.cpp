@@ -27,12 +27,14 @@ TEST_CASE("num_collect::logging::impl::parse_log_tag_separator") {
     using num_collect::logging::impl::parse_log_tag_separator;
 
     SECTION("parse colons") {
+        // NOLINTNEXTLINE(*-size-empty)
         CHECK(std::string(parse_log_tag_separator("::")) == "");
         CHECK(std::string(parse_log_tag_separator("::a")) == "a");
         CHECK(std::string(parse_log_tag_separator("::tag")) == "tag");
     }
 
     SECTION("parse periods") {
+        // NOLINTNEXTLINE(*-size-empty)
         CHECK(std::string(parse_log_tag_separator(".")) == "");
         CHECK(std::string(parse_log_tag_separator(".a")) == "a");
         CHECK(std::string(parse_log_tag_separator(".tag")) == "tag");

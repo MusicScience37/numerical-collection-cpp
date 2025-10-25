@@ -47,6 +47,7 @@ TEST_CASE("num_collect::logging::impl::separate_top_log_tag_element") {
 
         const auto [element, rem] = separate_top_log_tag_element(tag);
         CHECK(element.name() == "test");
+        // NOLINTNEXTLINE(*-size-empty)
         CHECK(std::string(rem) == "");
     }
 

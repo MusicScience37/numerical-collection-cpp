@@ -54,7 +54,7 @@ public:
      * \note This function does nothing in this class.
      */
     template <typename MatType>
-    auto analyzePattern(const MatType&)  // NOLINT(*-naming)
+    auto analyzePattern(const MatType& /*mat*/)  // NOLINT(*-naming)
         -> amg_preconditioner& {
         return *this;
     }
