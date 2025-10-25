@@ -48,9 +48,9 @@ TEST_CASE(
             member_variable_iteration_parameter_value<algorithm_type,
                 value_type>;
 
-        algorithm_type algorithm{123};  // NOLINT
+        algorithm_type algorithm{123};
         const parameter_value_type param_value{&algorithm_type::value1};
-        CHECK(param_value.get(&algorithm) == 123);  // NOLINT
+        CHECK(param_value.get(&algorithm) == 123);
 
         CHECK_THROWS((void)param_value.get());
     }

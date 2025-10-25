@@ -59,7 +59,7 @@ static auto get_config_value(
 auto main(int argc, char** argv) -> int {
     std::string_view config_filepath = "examples/pde/fd_rodasp_wave1d.toml";
     if (argc == 2) {
-        config_filepath = argv[1];  // NOLINT
+        config_filepath = argv[1];
     }
     num_collect::logging::load_logging_config_file(
         std::string(config_filepath));

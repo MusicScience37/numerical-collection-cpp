@@ -1,22 +1,22 @@
-#include "adaptive_diagonal_curves_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "annealing_downhill_simplex_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "any_objective_function_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "backtracking_line_searcher_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "bfgs_optimizer_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "conjugate_gradient_optimizer_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "dfp_optimizer_test.cpp"        // NOLINT(bugprone-suspicious-include)
-#include "dividing_rectangles_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "downhill_simplex_test.cpp"     // NOLINT(bugprone-suspicious-include)
-#include "firefly_optimizer_test.cpp"    // NOLINT(bugprone-suspicious-include)
-#include "function_object_wrapper_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "gaussian_process_optimizer_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "golden_section_search_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "heuristic_global_optimizer_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "impl/adc_group_test.cpp"        // NOLINT(bugprone-suspicious-include)
-#include "impl/adc_rectangle_test.cpp"    // NOLINT(bugprone-suspicious-include)
-#include "impl/adc_sample_dict_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "impl/adc_ternary_vector_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "newton_optimizer_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "real_value_genetic_optimizer_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "sampling_optimizer_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "steepest_descent_test.cpp"    // NOLINT(bugprone-suspicious-include)
+#include "adaptive_diagonal_curves_test.cpp"
+#include "annealing_downhill_simplex_test.cpp"
+#include "any_objective_function_test.cpp"
+#include "backtracking_line_searcher_test.cpp"
+#include "bfgs_optimizer_test.cpp"
+#include "conjugate_gradient_optimizer_test.cpp"
+#include "dfp_optimizer_test.cpp"
+#include "dividing_rectangles_test.cpp"
+#include "downhill_simplex_test.cpp"
+#include "firefly_optimizer_test.cpp"
+#include "function_object_wrapper_test.cpp"
+#include "gaussian_process_optimizer_test.cpp"
+#include "golden_section_search_test.cpp"
+#include "heuristic_global_optimizer_test.cpp"
+#include "impl/adc_group_test.cpp"
+#include "impl/adc_rectangle_test.cpp"
+#include "impl/adc_sample_dict_test.cpp"
+#include "impl/adc_ternary_vector_test.cpp"
+#include "newton_optimizer_test.cpp"
+#include "real_value_genetic_optimizer_test.cpp"
+#include "sampling_optimizer_test.cpp"
+#include "steepest_descent_test.cpp"

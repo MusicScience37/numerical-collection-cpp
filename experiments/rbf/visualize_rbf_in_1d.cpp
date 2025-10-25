@@ -50,7 +50,7 @@ static void plot_sample_points(plotly_plotter::figure& fig,
     trace.y(sample_point_y_list);
     trace.mode("markers");
     trace.marker().color("#66F");
-    trace.marker().size(10);  // NOLINT(*-magic-numbers)
+    trace.marker().size(10);
 }
 
 static void plot_rbfs_without_coeffs(plotly_plotter::figure& fig,
@@ -148,11 +148,11 @@ static void set_layout(plotly_plotter::figure& fig) {
     fig.layout().xaxis().show_tick_labels(false);
     fig.layout().xaxis().show_line(true);
     fig.layout().xaxis().line_color("black");
-    fig.layout().xaxis().line_width(2.0);  // NOLINT(*-magic-numbers)
+    fig.layout().xaxis().line_width(2.0);
     fig.layout().yaxis().show_tick_labels(false);
     fig.layout().yaxis().show_line(true);
     fig.layout().yaxis().line_color("black");
-    fig.layout().yaxis().line_width(2.0);  // NOLINT(*-magic-numbers)
+    fig.layout().yaxis().line_width(2.0);
     fig.layout().plot_bg_color("#FFFFFF");
 }
 

@@ -53,7 +53,6 @@ template <num_collect::concepts::sparse_matrix Matrix>
     using scalar_type = typename Matrix::value_type;
     using storage_index_type = typename Matrix::StorageIndex;
 
-    // NOLINTNEXTLINE(readability-simplify-boolean-expr): Impossible to fix this case.
     NUM_COLLECT_PRECONDITION(original_outer_size > 0 &&
             original_inner_size > 0 && downsampled_outer_size > 0 &&
             downsampled_inner_size > 0,

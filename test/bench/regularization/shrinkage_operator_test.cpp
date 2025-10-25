@@ -33,12 +33,12 @@ class shrinkage_operator_fixture : public stat_bench::FixtureBase {
 public:
     shrinkage_operator_fixture() {
         add_param<num_collect::index_type>("size")
-            ->add(10)   // NOLINT
-            ->add(100)  // NOLINT
+            ->add(10)
+            ->add(100)
 #ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
-            ->add(1000)    // NOLINT
-            ->add(10000)   // NOLINT
-            ->add(100000)  // NOLINT
+            ->add(1000)
+            ->add(10000)
+            ->add(100000)
 #endif
             ;
     }
@@ -46,7 +46,7 @@ public:
     void setup(stat_bench::InvocationContext& context) override {
         const num_collect::index_type size =
             context.get_param<num_collect::index_type>("size");
-        std::mt19937 engine;  // NOLINT
+        std::mt19937 engine;
         std::uniform_real_distribution<double> dist{-1.0, 1.0};
         target_ =
             Eigen::VectorXd::NullaryExpr(size, [&]() { return dist(engine); });

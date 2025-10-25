@@ -157,7 +157,7 @@ TEST_CASE("num_collect::regularization::full_gen_tikhonov") {
         REQUIRE_THAT(full_gen_tikhonov.residual_norm(solution),
             Catch::Matchers::WithinRel(
                 full_gen_tikhonov.internal_solver().residual_norm(param),
-                1e-10));  // NOLINT
+                1e-10));
         REQUIRE_THAT(full_gen_tikhonov.regularization_term(solution),
             Catch::Matchers::WithinRel(
                 full_gen_tikhonov.internal_solver().regularization_term(

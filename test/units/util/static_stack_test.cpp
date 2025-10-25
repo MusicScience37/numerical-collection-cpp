@@ -31,7 +31,7 @@ TEST_CASE("num_collect::util::static_stack") {
         static_stack<int, size> stack;
 
         CHECK(stack.empty());
-        CHECK(stack.size() == 0U);  // NOLINT
+        CHECK(stack.size() == 0U);  // NOLINT(*-size-empty)
     }
 
     SECTION("push an integer") {
@@ -47,7 +47,7 @@ TEST_CASE("num_collect::util::static_stack") {
         SECTION("pop the value") {
             CHECK_NOTHROW(stack.pop());
             CHECK(stack.empty());
-            CHECK(stack.size() == 0U);  // NOLINT
+            CHECK(stack.size() == 0U);  // NOLINT(*-size-empty)
         }
 
         SECTION("push another value") {
@@ -66,7 +66,7 @@ TEST_CASE("num_collect::util::static_stack") {
                 SECTION("pop the first value") {
                     CHECK_NOTHROW(stack.pop());
                     CHECK(stack.empty());
-                    CHECK(stack.size() == 0U);  // NOLINT
+                    CHECK(stack.size() == 0U);  // NOLINT(*-size-empty)
                 }
 
                 SECTION("destroy values in destructor") {
@@ -97,7 +97,7 @@ TEST_CASE("num_collect::util::static_stack") {
         SECTION("pop the value") {
             CHECK_NOTHROW(stack.pop());
             CHECK(stack.empty());
-            CHECK(stack.size() == 0U);  // NOLINT
+            CHECK(stack.size() == 0U);  // NOLINT(*-size-empty)
         }
 
         SECTION("push another value") {
@@ -116,7 +116,7 @@ TEST_CASE("num_collect::util::static_stack") {
                 SECTION("pop the first value") {
                     CHECK_NOTHROW(stack.pop());
                     CHECK(stack.empty());
-                    CHECK(stack.size() == 0U);  // NOLINT
+                    CHECK(stack.size() == 0U);  // NOLINT(*-size-empty)
                 }
 
                 SECTION("destroy values in destructor") {
@@ -138,15 +138,15 @@ TEST_CASE("num_collect::util::static_stack") {
         constexpr std::size_t size = 5;
         static_stack<int, size> stack;
 
-        CHECK_NOTHROW(stack.push(1));  // NOLINT
-        CHECK_NOTHROW(stack.push(2));  // NOLINT
-        CHECK_NOTHROW(stack.push(3));  // NOLINT
-        CHECK_NOTHROW(stack.push(4));  // NOLINT
-        CHECK_NOTHROW(stack.push(5));  // NOLINT
-        CHECK_THROWS(stack.push(6));   // NOLINT
+        CHECK_NOTHROW(stack.push(1));
+        CHECK_NOTHROW(stack.push(2));
+        CHECK_NOTHROW(stack.push(3));
+        CHECK_NOTHROW(stack.push(4));
+        CHECK_NOTHROW(stack.push(5));
+        CHECK_THROWS(stack.push(6));
 
         CHECK_FALSE(stack.empty());
         CHECK(stack.size() == 5U);
-        CHECK(stack.top() == 5);  // NOLINT
+        CHECK(stack.top() == 5);
     }
 }

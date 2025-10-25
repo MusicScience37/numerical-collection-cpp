@@ -29,7 +29,6 @@
 
 #include "check_constexpr_function.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::constants::pow(Float, Int)", "",
     (std::pair<float, long long>), (std::pair<double, int>)) {
     using Base = typename TestType::first_type;
@@ -84,7 +83,6 @@ TEMPLATE_TEST_CASE("num_collect::constants::pow(Float, Int)", "",
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::constants::impl::pow_at_compile_time(Float, Float)", "",
     float, double) {
@@ -131,7 +129,6 @@ TEMPLATE_TEST_CASE(
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::constants::pow(Float, Float)", "", float, double) {
     SECTION("ordinary") {

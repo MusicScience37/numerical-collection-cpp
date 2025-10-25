@@ -28,14 +28,12 @@
 #include "check_constexpr_function.h"
 #include "num_collect/functions/gamma.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE_SIG(
     "num_collect::constants::impl::gamma_half_plus_at_compile_time", "",
     ((typename Result, typename Integer), Result, Integer), (double, int),
     (double, unsigned int)) {
     const auto reference_function = [](Integer n) -> Result {
         return num_collect::functions::gamma(
-            // NOLINTNEXTLINE(*-magic-numbers)
             static_cast<Result>(n) + static_cast<Result>(0.5));
     };
 
@@ -91,13 +89,11 @@ TEMPLATE_TEST_CASE_SIG(
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE_SIG("num_collect::constants::gamma_half_plus", "",
     ((typename Result, typename Integer), Result, Integer), (double, int),
     (double, unsigned int)) {
     const auto reference_function = [](Integer n) -> Result {
         return num_collect::functions::gamma(
-            // NOLINTNEXTLINE(*-magic-numbers)
             static_cast<Result>(n) + static_cast<Result>(0.5));
     };
 

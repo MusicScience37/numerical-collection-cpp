@@ -89,7 +89,7 @@ public:
      * \param[in] context Context.
      * \return Iterator.
      */
-    constexpr auto parse(format_parse_context& context)  // NOLINT
+    constexpr auto parse(format_parse_context& context)  // NOLINT(*-static)
         -> decltype(context.begin()) {
         return context.end();
     }
@@ -101,7 +101,7 @@ public:
      * \param[in] context Context.
      * \return Output iterator after formatting.
      */
-    NUM_COLLECT_EXPORT auto format(  // NOLINT
+    NUM_COLLECT_EXPORT auto format(  // NOLINT(*-static)
         num_collect::logging::time_stamp val, format_context& context) const
         -> format_context::iterator;
 };

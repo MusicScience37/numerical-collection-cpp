@@ -99,7 +99,6 @@ private:
     std::shared_ptr<stat_bench::stat::CustomStatOutput> evaluations_stat_;
 };
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(random_quadratic_function_fixture,
     "opt_random_quadratic_function", "golden_section_search") {
     test_optimizer(
@@ -114,7 +113,6 @@ STAT_BENCH_CASE_F(random_quadratic_function_fixture,
         "golden_section_search");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(random_quadratic_function_fixture,
     "opt_random_quadratic_function", "dividing_rectangles") {
     test_optimizer(
@@ -129,7 +127,6 @@ STAT_BENCH_CASE_F(random_quadratic_function_fixture,
         "dividing_rectangles");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(random_quadratic_function_fixture,
     "opt_random_quadratic_function", "sampling_optimizer") {
     test_optimizer(
@@ -144,7 +141,6 @@ STAT_BENCH_CASE_F(random_quadratic_function_fixture,
         "sampling_optimizer");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(random_quadratic_function_fixture,
     "opt_random_quadratic_function", "heuristic_global_optimizer") {
     test_optimizer(

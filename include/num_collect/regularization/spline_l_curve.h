@@ -206,7 +206,6 @@ private:
         sample_points_.clear();
         sample_points_.push_back(compute_sample_point(log_min_param));
         sample_points_.push_back(compute_sample_point(
-            // NOLINTNEXTLINE(*-magic-numbers)
             static_cast<scalar_type>(0.5) * (log_min_param + log_max_param)));
         sample_points_.push_back(compute_sample_point(log_max_param));
         calculate_distance(1);
@@ -231,7 +230,6 @@ private:
             NUM_COLLECT_ASSERT(max_distance_index > 0);
 
             const scalar_type additional_log_param =
-                // NOLINTNEXTLINE(*-magic-numbers)
                 static_cast<scalar_type>(0.5) *
                 (sample_points_[max_distance_index - 1]
                         .log_regularization_parameter +
@@ -256,7 +254,7 @@ private:
                 NUM_COLLECT_LOG_TRACE(logger(),
                     "Remove a too close sample point: reg_param = {}, distance "
                     "= {}",
-                    pow(static_cast<scalar_type>(10),  // NOLINT
+                    pow(static_cast<scalar_type>(10),
                         iter->log_regularization_parameter),
                     iter->distance_from_previous_point);
                 iter = sample_points_.erase(iter);
@@ -370,8 +368,7 @@ private:
 
         const scalar_type log_opt_param =
             convert_length_param_to_log_reg_param(opt_length_param);
-        opt_param_ = pow(static_cast<scalar_type>(10),  // NOLINT
-            log_opt_param);
+        opt_param_ = pow(static_cast<scalar_type>(10), log_opt_param);
         NUM_COLLECT_LOG_SUMMARY(logger(), "Selected parameter: {}", opt_param_);
     }
 
@@ -386,8 +383,7 @@ private:
         scalar_type log_regularization_parameter) -> sample_point {
         using std::pow;
         const scalar_type regularization_parameter =
-            pow(static_cast<scalar_type>(10),  // NOLINT
-                log_regularization_parameter);
+            pow(static_cast<scalar_type>(10), log_regularization_parameter);
 
         solution_ = *initial_solution_;
         solver_->solve(regularization_parameter, solution_);
@@ -469,7 +465,6 @@ private:
             pow(log_residual_norm_derivative * log_residual_norm_derivative +
                     log_regularization_term_derivative *
                         log_regularization_term_derivative,
-                // NOLINTNEXTLINE(*-magic-numbers)
                 static_cast<scalar_type>(1.5));
 
         NUM_COLLECT_LOG_TRACE(logger(), "Curvature at length parameter {}: {}",

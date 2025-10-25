@@ -159,10 +159,7 @@ TEST_CASE("num_collect::rbf::operators::laplacian_operator") {
             return variable.squaredNorm();
         };
         const auto second_derivative_function =
-            [](const Eigen::Vector2d& /*variable*/) {
-                // NOLINTNEXTLINE(*-magic-numbers)
-                return 4.0;
-            };
+            [](const Eigen::Vector2d& /*variable*/) { return 4.0; };
 
         const auto sample_variables = generate_halton_nodes<double, 2>(100);
         Eigen::VectorXd sample_values{};
@@ -195,10 +192,7 @@ TEST_CASE("num_collect::rbf::operators::laplacian_operator") {
             return variable.squaredNorm();
         };
         const auto second_derivative_function =
-            [](const Eigen::Vector2d& /*variable*/) {
-                // NOLINTNEXTLINE(*-magic-numbers)
-                return 4.0;
-            };
+            [](const Eigen::Vector2d& /*variable*/) { return 4.0; };
 
         const auto sample_variables = generate_halton_nodes<double, 2>(100);
         Eigen::VectorXd sample_values{};
@@ -233,10 +227,7 @@ TEST_CASE("num_collect::rbf::operators::laplacian_operator") {
             return variable.squaredNorm();
         };
         const auto second_derivative_function =
-            [](const Eigen::Vector2d& /*variable*/) {
-                // NOLINTNEXTLINE(*-magic-numbers)
-                return 4.0;
-            };
+            [](const Eigen::Vector2d& /*variable*/) { return 4.0; };
 
         const auto sample_variables = generate_halton_nodes<double, 2>(100);
         Eigen::VectorXd sample_values{};

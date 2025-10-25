@@ -54,7 +54,8 @@ public:
      * \note This function does nothing in this class.
      */
     template <typename MatType>
-    amg_preconditioner& analyzePattern(const MatType&) {  // NOLINT
+    auto analyzePattern(const MatType& /*mat*/)  // NOLINT(*-naming)
+        -> amg_preconditioner& {
         return *this;
     }
 
@@ -66,7 +67,7 @@ public:
      * \return This object.
      */
     template <typename MatType>
-    amg_preconditioner& factorize(const MatType& mat) {  // NOLINT
+    auto factorize(const MatType& mat) -> amg_preconditioner& {
         solver_.compute(mat);
         return *this;
     }
@@ -79,7 +80,7 @@ public:
      * \return This object.
      */
     template <typename MatType>
-    amg_preconditioner& compute(const MatType& mat) {  // NOLINT
+    auto compute(const MatType& mat) -> amg_preconditioner& {
         factorize(mat);
         return *this;
     }
@@ -102,9 +103,7 @@ public:
      *
      * \return Computation information.
      */
-    Eigen::ComputationInfo info() {  // NOLINT
-        return Eigen::Success;
-    }
+    auto info() -> Eigen::ComputationInfo { return Eigen::Success; }
 
 private:
     //! AMG solver.

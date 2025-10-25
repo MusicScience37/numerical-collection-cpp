@@ -243,7 +243,7 @@ public:
         for (index_type i = 0; i < rank; ++i) {
             const scalar_type singular_value = svd_.singularValues()(i);
             const scalar_type den = singular_value * singular_value + param;
-            res += (static_cast<scalar_type>(6) * singular_value *  // NOLINT
+            res += (static_cast<scalar_type>(6) * singular_value *
                        singular_value) /
                 (den * den * den * den) * rot_data_.row(i).squaredNorm();
         }

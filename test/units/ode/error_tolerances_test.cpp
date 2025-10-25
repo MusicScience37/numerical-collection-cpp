@@ -130,36 +130,34 @@ TEST_CASE("num_collect::ode::error_tolerances<scalar>") {
     SECTION("default constructor") {
         const auto tolerances = error_tolerances<double>();
 
-        CHECK_THAT(tolerances.calc_norm(0.0, 1e-6),  // NOLINT
-            Catch::Matchers::WithinRel(1.0));        // NOLINT
+        CHECK_THAT(
+            tolerances.calc_norm(0.0, 1e-6), Catch::Matchers::WithinRel(1.0));
 
-        CHECK_THAT(tolerances.calc_norm(1.5, 1e-6),  // NOLINT
-            Catch::Matchers::WithinRel(0.4));        // NOLINT
+        CHECK_THAT(
+            tolerances.calc_norm(1.5, 1e-6), Catch::Matchers::WithinRel(0.4));
     }
 
     SECTION("set tolerances") {
-        const auto tolerances = error_tolerances<double>()
-                                    .tol_rel_error(1e-2)   // NOLINT
-                                    .tol_abs_error(1e-3);  // NOLINT
+        const auto tolerances =
+            error_tolerances<double>().tol_rel_error(1e-2).tol_abs_error(1e-3);
 
-        CHECK_THAT(tolerances.calc_norm(0.0, 1e-4),  // NOLINT
-            Catch::Matchers::WithinRel(0.1));        // NOLINT
+        CHECK_THAT(
+            tolerances.calc_norm(0.0, 1e-4), Catch::Matchers::WithinRel(0.1));
 
-        CHECK_THAT(tolerances.calc_norm(0.3, 2e-3),  // NOLINT
-            Catch::Matchers::WithinRel(0.5));        // NOLINT
+        CHECK_THAT(
+            tolerances.calc_norm(0.3, 2e-3), Catch::Matchers::WithinRel(0.5));
     }
 
     SECTION("check tolerances") {
-        const auto tolerances = error_tolerances<double>()
-                                    .tol_rel_error(1e-2)   // NOLINT
-                                    .tol_abs_error(1e-3);  // NOLINT
+        const auto tolerances =
+            error_tolerances<double>().tol_rel_error(1e-2).tol_abs_error(1e-3);
 
-        CHECK(tolerances.check(0.0, 0.9e-3));        // NOLINT
-        CHECK(tolerances.check(0.0, 1.0e-3));        // NOLINT
-        CHECK_FALSE(tolerances.check(0.0, 1.1e-3));  // NOLINT
+        CHECK(tolerances.check(0.0, 0.9e-3));
+        CHECK(tolerances.check(0.0, 1.0e-3));
+        CHECK_FALSE(tolerances.check(0.0, 1.1e-3));
 
-        CHECK(tolerances.check(0.1, 1.9e-3));        // NOLINT
-        CHECK(tolerances.check(0.1, 2.0e-3));        // NOLINT
-        CHECK_FALSE(tolerances.check(0.1, 2.1e-3));  // NOLINT
+        CHECK(tolerances.check(0.1, 1.9e-3));
+        CHECK(tolerances.check(0.1, 2.0e-3));
+        CHECK_FALSE(tolerances.check(0.1, 2.1e-3));
     }
 }

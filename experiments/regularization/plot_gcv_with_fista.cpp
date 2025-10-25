@@ -54,7 +54,7 @@ static void add_circle(
 }
 
 static void add_noise(Eigen::MatrixXd& image, double rate) {
-    std::mt19937 engine;  // NOLINT
+    std::mt19937 engine;
     const double sigma = std::sqrt(
         image.squaredNorm() / static_cast<double>(image.size()) * rate);
     std::normal_distribution<double> dist{0.0, sigma};

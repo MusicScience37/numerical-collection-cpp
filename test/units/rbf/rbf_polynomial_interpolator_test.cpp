@@ -141,9 +141,9 @@ TEST_CASE(
     }
 
     std::vector<Eigen::Vector2d> interpolated_variables;
-    for (std::size_t i = 0; i < 5; ++i) {  // NOLINT
+    for (std::size_t i = 0; i < 5; ++i) {
         const double x = static_cast<double>(i) / static_cast<double>(4);
-        for (std::size_t j = 0; j < 5; ++j) {  // NOLINT
+        for (std::size_t j = 0; j < 5; ++j) {
             const double y = static_cast<double>(j) / static_cast<double>(4);
             interpolated_variables.emplace_back(x, y);
         }

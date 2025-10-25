@@ -42,12 +42,13 @@ TEST_CASE(
         using parameter_value_type =
             variable_iteration_parameter_value<algorithm_type, value_type>;
 
-        value_type value = 123;  // NOLINT
+        value_type value = 123;
         const parameter_value_type param_value{value};
-        CHECK(param_value.get() == 123);  // NOLINT
+        CHECK(param_value.get() == 123);
 
-        value = 2345;  // NOLINT
+        // NOLINTNEXTLINE(clang-analyzer-deadcode.DeadStores): false positive
+        value = 2345;
         void* algorithm = nullptr;
-        CHECK(param_value.get(algorithm) == 2345);  // NOLINT
+        CHECK(param_value.get(algorithm) == 2345);
     }
 }

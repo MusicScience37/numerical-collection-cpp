@@ -22,10 +22,9 @@
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::constants::half", "", float, double) {
     SECTION("value") {
         constexpr double val = num_collect::constants::half<TestType>;
-        REQUIRE(val == static_cast<TestType>(0.5));  // NOLINT
+        REQUIRE(val == static_cast<TestType>(0.5));
     }
 }

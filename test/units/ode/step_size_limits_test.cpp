@@ -31,25 +31,22 @@ TEST_CASE("num_collect::ode::step_size_limits") {
     SECTION("apply default limits") {
         const auto limits = step_size_limits<double>();
 
-        // NOLINTNEXTLINE
         CHECK_THAT(limits.apply(0.9), Catch::Matchers::WithinRel(0.9));
 
-        // NOLINTNEXTLINE
         CHECK_THAT(limits.apply(1.0), Catch::Matchers::WithinRel(1.0));
 
-        // NOLINTNEXTLINE
         CHECK_THAT(limits.apply(1.1), Catch::Matchers::WithinRel(1.0));
 
         const double lower_limit =
             std::sqrt(std::numeric_limits<double>::epsilon());
 
-        CHECK_THAT(limits.apply(lower_limit * 1.1),          // NOLINT
-            Catch::Matchers::WithinRel(lower_limit * 1.1));  // NOLINT
+        CHECK_THAT(limits.apply(lower_limit * 1.1),
+            Catch::Matchers::WithinRel(lower_limit * 1.1));
 
-        CHECK_THAT(limits.apply(lower_limit * 1.0),          // NOLINT
-            Catch::Matchers::WithinRel(lower_limit * 1.0));  // NOLINT
+        CHECK_THAT(limits.apply(lower_limit * 1.0),
+            Catch::Matchers::WithinRel(lower_limit * 1.0));
 
-        CHECK_THAT(limits.apply(lower_limit * 0.9),          // NOLINT
-            Catch::Matchers::WithinRel(lower_limit * 1.0));  // NOLINT
+        CHECK_THAT(limits.apply(lower_limit * 0.9),
+            Catch::Matchers::WithinRel(lower_limit * 1.0));
     }
 }

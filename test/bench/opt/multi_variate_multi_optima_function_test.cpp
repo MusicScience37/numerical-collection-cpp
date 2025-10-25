@@ -54,12 +54,12 @@ class multi_variate_multi_optima_function_fixture
 public:
     multi_variate_multi_optima_function_fixture() {
         add_param<num_collect::index_type>("dimension")
-            ->add(2)  // NOLINT
+            ->add(2)
 #ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
-            ->add(3)  // NOLINT
-            ->add(4)  // NOLINT
-            ->add(5)  // NOLINT
-            ->add(6)  // NOLINT
+            ->add(3)
+            ->add(4)
+            ->add(5)
+            ->add(6)
 #endif
             ;
     }
@@ -146,7 +146,6 @@ STAT_BENCH_GROUP("opt_multi_variate_multi_optima_function")
     .add_parameter_to_output_line_plot(
         "dimension", "evaluations", stat_bench::PlotOption::log_output);
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(multi_variate_multi_optima_function_fixture,
     "opt_multi_variate_multi_optima_function", "dividing_rectangles") {
     test_optimizer(
@@ -161,7 +160,6 @@ STAT_BENCH_CASE_F(multi_variate_multi_optima_function_fixture,
         "dividing_rectangles");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(multi_variate_multi_optima_function_fixture,
     "opt_multi_variate_multi_optima_function", "adaptive_diagonal_curves") {
     test_optimizer(
@@ -176,7 +174,6 @@ STAT_BENCH_CASE_F(multi_variate_multi_optima_function_fixture,
         "adaptive_diagonal_curves");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(multi_variate_multi_optima_function_fixture,
     "opt_multi_variate_multi_optima_function", "annealing_downhill_simplex") {
     test_optimizer(
@@ -186,15 +183,14 @@ STAT_BENCH_CASE_F(multi_variate_multi_optima_function_fixture,
                 this->function(sample_index));
             optimizer.seed(0);  // For reproducibility.
             const auto [lower, upper] = this->search_region();
-            optimizer.init((lower + upper) * 0.5);    // NOLINT
-            optimizer.highest_temperature(100.0);     // NOLINT
-            optimizer.max_iterations_per_trial(100);  // NOLINT
+            optimizer.init((lower + upper) * 0.5);
+            optimizer.highest_temperature(100.0);
+            optimizer.max_iterations_per_trial(100);
             return optimizer;
         },
         "annealing_downhill_simplex");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(multi_variate_multi_optima_function_fixture,
     "opt_multi_variate_multi_optima_function", "real_value_genetic_optimizer") {
     test_optimizer(
@@ -210,7 +206,6 @@ STAT_BENCH_CASE_F(multi_variate_multi_optima_function_fixture,
         "real_value_genetic_optimizer");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(multi_variate_multi_optima_function_fixture,
     "opt_multi_variate_multi_optima_function", "firefly_optimizer") {
     test_optimizer(

@@ -64,7 +64,7 @@ TEST_CASE("num_collect::ode::runge_kutta::ark54_esdirk_formula") {
             Catch::Matchers::WithinRel(1.0));
         CHECK_THAT(formula_type::ce1 + formula_type::ce4 + formula_type::ce5 +
                 formula_type::ce6 + formula_type::ce7 + formula_type::ce8,
-            Catch::Matchers::WithinAbs(0.0, 1e-10));  // NOLINT
+            Catch::Matchers::WithinAbs(0.0, 1e-10));
     }
 
     SECTION("initialize") {

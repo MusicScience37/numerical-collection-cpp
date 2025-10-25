@@ -64,8 +64,8 @@ template <typename T>
     binary ^= binary >> 1U;
     binary ^= binary >> 2U;
     binary ^= binary >> 4U;
-    binary ^= binary >> 8U;   // NOLINT(*-magic-numbers)
-    binary ^= binary >> 16U;  // NOLINT(*-magic-numbers)
+    binary ^= binary >> 8U;
+    binary ^= binary >> 16U;
     return binary;
 }
 
@@ -83,9 +83,9 @@ template <typename T>
     binary ^= binary >> 1U;
     binary ^= binary >> 2U;
     binary ^= binary >> 4U;
-    binary ^= binary >> 8U;   // NOLINT(*-magic-numbers)
-    binary ^= binary >> 16U;  // NOLINT(*-magic-numbers)
-    binary ^= binary >> 32U;  // NOLINT(*-magic-numbers)
+    binary ^= binary >> 8U;
+    binary ^= binary >> 16U;
+    binary ^= binary >> 32U;
     return binary;
 }
 

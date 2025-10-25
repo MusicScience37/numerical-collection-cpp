@@ -183,8 +183,7 @@ public:
 
 private:
     //! Random number generator.
-    std::mt19937
-        generator_{};  // NOLINT(cert-msc32-c,cert-msc51-cpp): For reproducibility.
+    std::mt19937 generator_{};
 
     //! Distribution of optimal variables.
     std::uniform_real_distribution<double> optimal_variable_dist_{
@@ -195,8 +194,7 @@ private:
         min_non_global_optimal_value, max_non_global_optimal_value};
 
     //! Distribution of coefficients.
-    std::uniform_real_distribution<double> coefficients_dist_{
-        0.5, 3.0};  // NOLINT
+    std::uniform_real_distribution<double> coefficients_dist_{0.5, 3.0};
 
     //! Number of local minima.
     num_collect::index_type num_local_optima_;

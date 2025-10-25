@@ -37,15 +37,15 @@ TEST_CASE("num_collect::opt::impl::adc_sample_dict") {
     auto dict = dict_type();
 
     SECTION("init") {
-        dict.init(Eigen::VectorXd::Constant(2, -1.0),  // NOLINT
-            Eigen::VectorXd::Constant(2, 2.0));        // NOLINT
+        dict.init(Eigen::VectorXd::Constant(2, -1.0),
+            Eigen::VectorXd::Constant(2, 2.0));
         CHECK(dict.evaluations() == 0);
         CHECK(dict.dim() == 2);
     }
 
     SECTION("evaluate once") {
-        dict.init(Eigen::VectorXd::Constant(2, -1.0),  // NOLINT
-            Eigen::VectorXd::Constant(2, 2.0));        // NOLINT
+        dict.init(Eigen::VectorXd::Constant(2, -1.0),
+            Eigen::VectorXd::Constant(2, 2.0));
         auto point = ternary_vector_type(2);
         point.push_back(0);
         point.push_back(0);
@@ -65,8 +65,8 @@ TEST_CASE("num_collect::opt::impl::adc_sample_dict") {
     }
 
     SECTION("evaluate twice") {
-        dict.init(Eigen::VectorXd::Constant(2, -1.0),  // NOLINT
-            Eigen::VectorXd::Constant(2, 2.0));        // NOLINT
+        dict.init(Eigen::VectorXd::Constant(2, -1.0),
+            Eigen::VectorXd::Constant(2, 2.0));
         auto point = ternary_vector_type(2);
         point.push_back(0);
         point.push_back(0);
@@ -88,8 +88,8 @@ TEST_CASE("num_collect::opt::impl::adc_sample_dict") {
     }
 
     SECTION("evaluate multiple points") {
-        dict.init(Eigen::VectorXd::Constant(2, -1.0),  // NOLINT
-            Eigen::VectorXd::Constant(2, 2.0));        // NOLINT
+        dict.init(Eigen::VectorXd::Constant(2, -1.0),
+            Eigen::VectorXd::Constant(2, 2.0));
         auto point = ternary_vector_type(2);
         point.push_back(0);
         point.push_back(0);

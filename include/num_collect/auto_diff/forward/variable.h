@@ -63,7 +63,7 @@ public:
      *
      * \param[in] value Value.
      */
-    variable(const value_type& value)  // NOLINT: implicit conversion required
+    variable(const value_type& value)  // NOLINT(*-explicit-*)
         : value_(value) {}
 
     /*!
@@ -396,6 +396,8 @@ namespace Eigen {
  *
  * \tparam Value Type of values.
  * \tparam Diff Type of differential coefficients.
+ *
+ * \note Names in this class is defined by Eigen.
  */
 template <typename Value, typename Diff>
 struct NumTraits<num_collect::auto_diff::forward::variable<Value, Diff>> {
@@ -411,28 +413,26 @@ struct NumTraits<num_collect::auto_diff::forward::variable<Value, Diff>> {
     //! Type of the variable.
     using Nested = Real;
 
-    enum {  // NOLINT(performance-enum-size): Preserve the same implementation as Eigen library.
-        //! Whether this type is an integer.
-        IsInteger = 0,  // NOLINT
+    //! Whether this type is an integer.
+    static constexpr int IsInteger = 0;  // NOLINT(*-naming)
 
-        //! Whether this type is signed.
-        IsSigned = 1,  // NOLINT
+    //! Whether this type is signed.
+    static constexpr int IsSigned = 1;  // NOLINT(*-naming)
 
-        //! Whether this type is a complex number.
-        IsComplex = 0,  // NOLINT
+    //! Whether this type is a complex number.
+    static constexpr int IsComplex = 0;  // NOLINT(*-naming)
 
-        //! Whether this type requires initialization.
-        RequireInitialization = 1,  // NOLINT
+    //! Whether this type requires initialization.
+    static constexpr int RequireInitialization = 1;  // NOLINT(*-naming)
 
-        //! Cost to read this value.
-        ReadCost = 1,  // NOLINT
+    //! Cost to read this value.
+    static constexpr int ReadCost = 1;  // NOLINT(*-naming)
 
-        //! Cost to add this value.
-        AddCost = 2,  // NOLINT
+    //! Cost to add this value.
+    static constexpr int AddCost = 2;  // NOLINT(*-naming)
 
-        //! Cost to multiply this value.
-        MulCost = 4  // NOLINT
-    };
+    //! Cost to multiply this value.
+    static constexpr int MulCost = 4;  // NOLINT(*-naming)
 
     /*!
      * \brief Get machine epsilon.
@@ -493,7 +493,7 @@ struct NumTraits<num_collect::auto_diff::forward::variable<Value, Diff>> {
      *
      * \return Quiet NaN value.
      */
-    static constexpr auto quiet_NaN() -> Real {  // NOLINT
+    static constexpr auto quiet_NaN() -> Real {  // NOLINT(*-naming)
         return NumTraits<Value>::quiet_NaN();
     }
 };

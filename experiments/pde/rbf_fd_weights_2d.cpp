@@ -187,7 +187,6 @@ static void evaluate_weights(
         return variable.array().sin().prod();
     };
     const auto laplacian_of_function = [](const Eigen::Vector2d& variable) {
-        // NOLINTNEXTLINE(*-magic-numbers)
         return -2.0 * variable.array().sin().prod();
     };
 

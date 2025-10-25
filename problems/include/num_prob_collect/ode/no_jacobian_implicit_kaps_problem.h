@@ -77,8 +77,8 @@ public:
      */
     void evaluate_on(double /*time*/, const variable_type& variable,
         num_collect::ode::evaluation_type /*evaluations*/) {
-        diff_coeff_(0) = -(1.0 + 2.0 * epsilon_) * variable(0) +  // NOLINT
-            variable(1) * variable(1);
+        diff_coeff_(0) =
+            -(1.0 + 2.0 * epsilon_) * variable(0) + variable(1) * variable(1);
         diff_coeff_(1) = variable(0) - variable(1) - variable(1) * variable(1);
     }
 

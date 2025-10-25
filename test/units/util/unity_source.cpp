@@ -1,25 +1,25 @@
-#include "bidirectional_vector_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "combination_test.cpp"           // NOLINT(bugprone-suspicious-include)
-#include "concepts/comparable_test.cpp"   // NOLINT(bugprone-suspicious-include)
-#include "concepts/comparator_test.cpp"   // NOLINT(bugprone-suspicious-include)
-#include "concepts/kahan_addable_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "concepts/rhs_comparable_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "format_dense_matrix_test.cpp"   // NOLINT(bugprone-suspicious-include)
-#include "format_dense_vector_test.cpp"   // NOLINT(bugprone-suspicious-include)
-#include "format_errno_test.cpp"          // NOLINT(bugprone-suspicious-include)
-#include "format_sparse_matrix_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "gray_code_test.cpp"             // NOLINT(bugprone-suspicious-include)
-#include "greatest_common_divisor_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "hash_string_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "impl/compiler_builtins_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "impl/pointer_iterator_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "iteration_period_checker_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "kahan_adder_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "least_common_multiple_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "multiply_safely_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "nearest_neighbor_searcher_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "safe_cast_test.cpp"         // NOLINT(bugprone-suspicious-include)
-#include "source_info_view_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "static_stack_test.cpp"      // NOLINT(bugprone-suspicious-include)
-#include "trivial_vector_test.cpp"    // NOLINT(bugprone-suspicious-include)
-#include "vector_view_test.cpp"       // NOLINT(bugprone-suspicious-include)
+#include "bidirectional_vector_test.cpp"
+#include "combination_test.cpp"
+#include "concepts/comparable_test.cpp"
+#include "concepts/comparator_test.cpp"
+#include "concepts/kahan_addable_test.cpp"
+#include "concepts/rhs_comparable_test.cpp"
+#include "format_dense_matrix_test.cpp"
+#include "format_dense_vector_test.cpp"
+#include "format_errno_test.cpp"
+#include "format_sparse_matrix_test.cpp"
+#include "gray_code_test.cpp"
+#include "greatest_common_divisor_test.cpp"
+#include "hash_string_test.cpp"
+#include "impl/compiler_builtins_test.cpp"
+#include "impl/pointer_iterator_test.cpp"
+#include "iteration_period_checker_test.cpp"
+#include "kahan_adder_test.cpp"
+#include "least_common_multiple_test.cpp"
+#include "multiply_safely_test.cpp"
+#include "nearest_neighbor_searcher_test.cpp"
+#include "safe_cast_test.cpp"
+#include "source_info_view_test.cpp"
+#include "static_stack_test.cpp"
+#include "trivial_vector_test.cpp"
+#include "vector_view_test.cpp"

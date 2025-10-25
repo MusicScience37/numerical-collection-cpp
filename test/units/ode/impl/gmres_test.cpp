@@ -41,7 +41,7 @@ TEST_CASE("num_collect::ode::impl::gmres") {
         const Eigen::Vector3d rhs = coeff * true_sol;
 
         gmres<Eigen::Vector3d> solver;
-        solver.max_subspace_dim(10);  // NOLINT
+        solver.max_subspace_dim(10);
         Eigen::Vector3d sol = Eigen::Vector3d::Zero();
         solver.solve(coeff_function, rhs, sol);
 

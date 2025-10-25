@@ -39,15 +39,15 @@ class compute_kernel_matrix_fixture : public stat_bench::FixtureBase {
 public:
     compute_kernel_matrix_fixture() {
         add_param<num_collect::index_type>("points")
-            ->add(10)  // NOLINT
+            ->add(10)
 #ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
-            ->add(20)    // NOLINT
-            ->add(50)    // NOLINT
-            ->add(100)   // NOLINT
-            ->add(200)   // NOLINT
-            ->add(500)   // NOLINT
-            ->add(1000)  // NOLINT
-            ->add(2000)  // NOLINT
+            ->add(20)
+            ->add(50)
+            ->add(100)
+            ->add(200)
+            ->add(500)
+            ->add(1000)
+            ->add(2000)
 #endif
             ;
     }

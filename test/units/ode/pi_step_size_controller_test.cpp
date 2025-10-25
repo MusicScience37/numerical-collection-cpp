@@ -75,26 +75,26 @@ TEST_CASE("num_collect::ode::pi_step_size_controller") {
             constexpr double reduction_rate = 0.5;
             controller.reduction_rate(reduction_rate);
 
-            double step_size = 0.5;  // NOLINT
+            double step_size = 0.5;
             const auto error = Eigen::Vector2d{{2e-2, 2e-2}};
             CHECK_FALSE(
                 controller.check_and_calc_next(step_size, variable, error));
-            CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.25));  // NOLINT}
+            CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.25));
         }
 
         SECTION("step size under limit") {
             constexpr double reduction_rate = 0.1;
             controller.reduction_rate(reduction_rate);
 
-            double step_size = 0.5;  // NOLINT
+            double step_size = 0.5;
             const auto error = Eigen::Vector2d{{2e-2, 2e-2}};
             CHECK_FALSE(
                 controller.check_and_calc_next(step_size, variable, error));
-            CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.2));  // NOLINT}
+            CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.2));
         }
 
         SECTION("already small step size") {
-            double step_size = 0.1;  // NOLINT
+            double step_size = 0.1;
             const auto error = Eigen::Vector2d{{2e-2, 2e-2}};
             CHECK(controller.check_and_calc_next(step_size, variable, error));
         }
@@ -137,61 +137,61 @@ TEST_CASE("num_collect::ode::pi_step_size_controller") {
         controller.min_step_size_factor(min_step_size_factor);
 
         SECTION("step size in limit") {
-            double step_size = 0.4;  // NOLINT
+            double step_size = 0.4;
             const double current_error = 2e-3 / std::pow(2.0, 2);
             CHECK(controller.check_and_calc_next(
                 step_size, variable, current_error));
-            CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.64));  // NOLINT}
+            CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.64));
         }
 
         SECTION("use error in the previous step") {
-            double step_size = 0.4;  // NOLINT
+            double step_size = 0.4;
             const double previous_error = 2e-3 / std::pow(4.0, 4);
             CHECK(controller.check_and_calc_next(
                 step_size, variable, previous_error));
 
-            step_size = 0.6;  // NOLINT
+            step_size = 0.6;
             const double current_error = 2e-3 / std::pow(2.0, 2);
             CHECK(controller.check_and_calc_next(
                 step_size, variable, current_error));
-            CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.24));  // NOLINT}
+            CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.24));
         }
 
         SECTION("factor too large") {
-            double step_size = 0.1;  // NOLINT
+            double step_size = 0.1;
             const double current_error = 2e-3 / std::pow(10.0, 2);
             CHECK(controller.check_and_calc_next(
                 step_size, variable, current_error));
-            CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.5));  // NOLINT}
+            CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.5));
         }
 
         SECTION("no error resulting in invalid factor") {
-            double step_size = 0.5;  // NOLINT
+            double step_size = 0.5;
             const double current_error = 0.0;
             CHECK(controller.check_and_calc_next(
                 step_size, variable, current_error));
-            CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.5));  // NOLINT}
+            CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.5));
         }
 
         SECTION("factor too large") {
-            double step_size = 0.5;  // NOLINT
+            double step_size = 0.5;
             const double current_error = 2e-3 / std::pow(10.0, 2);
             CHECK(controller.check_and_calc_next(
                 step_size, variable, current_error));
-            CHECK_THAT(step_size, Catch::Matchers::WithinRel(1.0));  // NOLINT}
+            CHECK_THAT(step_size, Catch::Matchers::WithinRel(1.0));
         }
 
         SECTION("factor too small") {
-            double step_size = 0.4;  // NOLINT
+            double step_size = 0.4;
             const double previous_error = 2e-3 / std::pow(20.0, 4);
             CHECK(controller.check_and_calc_next(
                 step_size, variable, previous_error));
 
-            step_size = 3.0;  // NOLINT
+            step_size = 3.0;
             const double current_error = 2e-3 / std::pow(2.0, 2);
             CHECK(controller.check_and_calc_next(
                 step_size, variable, current_error));
-            CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.3));  // NOLINT}
+            CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.3));
         }
     }
 }

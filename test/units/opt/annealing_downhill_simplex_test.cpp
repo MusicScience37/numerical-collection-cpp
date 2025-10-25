@@ -43,7 +43,7 @@ TEST_CASE("num_collect::opt::annealing_downhill_simplex") {
             (Eigen::VectorXd(3) << 0.0, 1.0, 2.0).finished();
         opt.init(init_var);
         REQUIRE(opt.iterations() == 0);
-        REQUIRE(opt.evaluations() == 4);  // NOLINT
+        REQUIRE(opt.evaluations() == 4);
         REQUIRE(opt.last_process() == decltype(opt)::process_type::none);
         REQUIRE_THAT(opt.opt_variable(), eigen_approx(init_var));
     }
@@ -70,9 +70,9 @@ TEST_CASE("num_collect::opt::annealing_downhill_simplex") {
             (Eigen::VectorXd(3) << 0.0, 1.0, 2.0).finished();
         opt.init(init_var);
 
-        opt.highest_temperature(10.0);      // NOLINT
-        opt.max_iterations_per_trial(100);  // NOLINT
-        opt.max_iterations(1000);           // NOLINT
+        opt.highest_temperature(10.0);
+        opt.max_iterations_per_trial(100);
+        opt.max_iterations(1000);
         opt.solve();
     }
 }

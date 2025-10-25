@@ -57,22 +57,16 @@ TEST_CASE("num_collect::rbf::rbfs::gaussian_m1_rbf") {
         // Values are calculated in gaussian_m1_rbf_calc.py script.
         constexpr double tol_error = 1e-10;
         CHECK_THAT(rbf(0.0), Catch::Matchers::WithinAbs(0.0, tol_error));
-        // NOLINTNEXTLINE(*-magic-numbers)
         CHECK_THAT(rbf(1e-6),
             Catch::Matchers::WithinRel(-9.999999999995e-13, tol_error));
-        // NOLINTNEXTLINE(*-magic-numbers)
         CHECK_THAT(rbf(0.1),
             Catch::Matchers::WithinRel(-0.009950166250831946, tol_error));
-        // NOLINTNEXTLINE(*-magic-numbers)
         CHECK_THAT(rbf(0.5),
             Catch::Matchers::WithinRel(-0.2211992169285951, tol_error));
-        // NOLINTNEXTLINE(*-magic-numbers)
         CHECK_THAT(rbf(0.9),
             Catch::Matchers::WithinRel(-0.5551419337770589, tol_error));
-        // NOLINTNEXTLINE(*-magic-numbers)
         CHECK_THAT(rbf(1.0),
             Catch::Matchers::WithinRel(-0.6321205588285577, tol_error));
-        // NOLINTNEXTLINE(*-magic-numbers)
         CHECK_THAT(rbf(1.5),
             Catch::Matchers::WithinRel(-0.8946007754381357, tol_error));
     }

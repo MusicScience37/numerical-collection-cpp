@@ -30,11 +30,9 @@
 
 #include "num_collect/functions/legendre.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::functions::legendre_roots", "", float, double) {
     const num_collect::index_type degree =
-        // NOLINTNEXTLINE
         GENERATE(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50);
     SECTION("construct with degree") {
         const auto roots =

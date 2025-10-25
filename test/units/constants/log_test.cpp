@@ -29,7 +29,6 @@
 
 #include "check_constexpr_function.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::constants::impl::log_at_compile_time", "", float, double) {
     SECTION("x < 0") {
@@ -80,7 +79,6 @@ TEMPLATE_TEST_CASE(
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::constants::log", "", float, double) {
     SECTION("x < 0") {
         constexpr auto x = static_cast<TestType>(-2);

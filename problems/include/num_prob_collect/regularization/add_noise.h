@@ -37,7 +37,7 @@ namespace num_prob_collect::regularization {
  */
 template <num_collect::base::concepts::dense_matrix Matrix>
 inline void add_noise(Matrix& data, double rate) {
-    std::mt19937 engine;  // NOLINT: fix seed for reproducibility
+    std::mt19937 engine;
     const double sigma =
         std::sqrt(data.squaredNorm() / static_cast<double>(data.size()) * rate);
     std::normal_distribution<double> dist{0.0, sigma};

@@ -15,6 +15,8 @@ Checks: >
     -cppcoreguidelines-avoid-do-while,
     -cppcoreguidelines-c-copy-assignment-signature,
     -cppcoreguidelines-macro-usage,
+    -cppcoreguidelines-avoid-magic-numbers,
+    -cppcoreguidelines-macro-to-enum,
   google-*,
     -google-runtime-references,
     -google-readability-todo,
@@ -30,6 +32,8 @@ Checks: >
     -readability-redundant-member-init,
     -readability-math-missing-parentheses,
     -readability-simplify-boolean-expr,
+    -readability-magic-numbers,
+    -readability-qualified-auto,
   modernize-*,
     -modernize-pass-by-value,
     -modernize-return-braced-init-list,
@@ -37,10 +41,13 @@ Checks: >
     -modernize-use-std-numbers,
     -modernize-use-constraints,
     -modernize-use-auto,
+    -modernize-macro-to-enum,
   hicpp-*,
     -hicpp-use-auto,
   cert-*,
     -cert-err58-cpp,
+    -cert-msc51-cpp,
+    -cert-msc32-c,
   bugprone-*,
     -bugprone-easily-swappable-parameters,
     -bugprone-exception-escape,
@@ -49,6 +56,7 @@ Checks: >
     -bugprone-optional-value-conversion,
     -bugprone-crtp-constructor-accessibility,
     -bugprone-misplaced-widening-cast,
+    -bugprone-suspicious-include,
   concurrency-*,
   -boost-*,
   openmp-*,
@@ -90,7 +98,11 @@ Checks: >
 # - readability-simplify-boolean-expr generates unfixable warnings in assertion macros.
 # - openmp-exception-escape is generating warnings for rare cases that cannot be tested.
 # - bugprone-misplaced-widening-cast generates false positives.
-# - cppcoreguidelines-macro-usage generates false positives in this project.
+# - cppcoreguidelines-macro-to-enum, modernize-macro-to-enum, cppcoreguidelines-macro-usage generates false positives in this project.
+# - cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers resulted in too many NOLINT comments in this project.
+# - bugprone-suspicious-include generates warnings in unity builds.
+# - readability-qualified-auto make source codes less changeable.
+# - cert-msc51-cpp, cert-msc32-c are disabled because reproducibility is important in this project.
 
 CheckOptions:
   # Naming Conventions

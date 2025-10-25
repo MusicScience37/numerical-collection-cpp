@@ -57,28 +57,20 @@ TEST_CASE("num_collect::rbf::rbfs::gaussian_from_square_rbf") {
         // Values are calculated in gaussian_from_square_rbf_calc.py script.
         constexpr double tol_error = 1e-10;
         CHECK_THAT(rbf(0.0), Catch::Matchers::WithinAbs(0.0, tol_error));
-        // NOLINTNEXTLINE(*-magic-numbers)
         CHECK_THAT(rbf(1e-6),
             Catch::Matchers::WithinRel(4.999999999998333e-25, tol_error));
-        // NOLINTNEXTLINE(*-magic-numbers)
         CHECK_THAT(rbf(0.099),
             Catch::Matchers::WithinRel(4.787327086630015e-5, tol_error));
-        // NOLINTNEXTLINE(*-magic-numbers)
         CHECK_THAT(rbf(0.1),
             Catch::Matchers::WithinRel(4.983374916805357e-5, tol_error));
-        // NOLINTNEXTLINE(*-magic-numbers)
         CHECK_THAT(rbf(0.101),
             Catch::Matchers::WithinRel(5.185373074623816e-5, tol_error));
-        // NOLINTNEXTLINE(*-magic-numbers)
         CHECK_THAT(rbf(0.5),
             Catch::Matchers::WithinRel(0.02880078307140487, tol_error));
-        // NOLINTNEXTLINE(*-magic-numbers)
         CHECK_THAT(rbf(0.9),
             Catch::Matchers::WithinRel(0.2548580662229411, tol_error));
-        // NOLINTNEXTLINE(*-magic-numbers)
         CHECK_THAT(rbf(1.0),
             Catch::Matchers::WithinRel(0.3678794411714423, tol_error));
-        // NOLINTNEXTLINE(*-magic-numbers)
         CHECK_THAT(
             rbf(1.5), Catch::Matchers::WithinRel(1.355399224561864, tol_error));
     }
@@ -91,28 +83,20 @@ TEST_CASE("num_collect::rbf::rbfs::gaussian_from_square_rbf") {
         constexpr double tol_error = 1e-10;
         CHECK_THAT(differentiated_rbf(0.0),
             Catch::Matchers::WithinAbs(0.0, tol_error));
-        // NOLINTNEXTLINE(*-magic-numbers)
         CHECK_THAT(differentiated_rbf(1e-6),
             Catch::Matchers::WithinRel(-1.999999999999e-12, tol_error));
-        // NOLINTNEXTLINE(*-magic-numbers)
         CHECK_THAT(differentiated_rbf(0.099),
             Catch::Matchers::WithinRel(-0.0195062534582674, tol_error));
-        // NOLINTNEXTLINE(*-magic-numbers)
         CHECK_THAT(differentiated_rbf(0.1),
             Catch::Matchers::WithinRel(-0.01990033250166389, tol_error));
-        // NOLINTNEXTLINE(*-magic-numbers)
         CHECK_THAT(differentiated_rbf(0.101),
             Catch::Matchers::WithinRel(-0.02029829253850752, tol_error));
-        // NOLINTNEXTLINE(*-magic-numbers)
         CHECK_THAT(differentiated_rbf(0.5),
             Catch::Matchers::WithinRel(-0.4423984338571903, tol_error));
-        // NOLINTNEXTLINE(*-magic-numbers)
         CHECK_THAT(differentiated_rbf(0.9),
             Catch::Matchers::WithinRel(-1.110283867554118, tol_error));
-        // NOLINTNEXTLINE(*-magic-numbers)
         CHECK_THAT(differentiated_rbf(1.0),
             Catch::Matchers::WithinRel(-1.264241117657115, tol_error));
-        // NOLINTNEXTLINE(*-magic-numbers)
         CHECK_THAT(differentiated_rbf(1.5),
             Catch::Matchers::WithinRel(-1.789201550876271, tol_error));
     }

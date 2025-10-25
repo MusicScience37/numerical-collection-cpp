@@ -29,7 +29,6 @@
 
 #include "check_constexpr_function.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::constants::cbrt", "", float, double) {
     SECTION("cbrt of negative number") {
         CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(-1.234)),
@@ -63,7 +62,6 @@ TEMPLATE_TEST_CASE("num_collect::constants::cbrt", "", float, double) {
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::constants::cbrt (integers)", "", int, long long) {
     SECTION("cbrt of negative number") {

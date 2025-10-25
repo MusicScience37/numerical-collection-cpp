@@ -128,10 +128,7 @@ class small_random_multi_quadratic_function_fixture
     : public random_multi_quadratic_function_fixture {
 public:
     small_random_multi_quadratic_function_fixture() {
-        add_param<num_collect::index_type>("dimension")
-            ->add(2)  // NOLINT
-            ->add(5)  // NOLINT
-            ;
+        add_param<num_collect::index_type>("dimension")->add(2)->add(5);
     }
 };
 
@@ -140,14 +137,14 @@ class large_random_multi_quadratic_function_fixture
 public:
     large_random_multi_quadratic_function_fixture() {
         add_param<num_collect::index_type>("dimension")
-            ->add(2)   // NOLINT
-            ->add(5)   // NOLINT
-            ->add(10)  // NOLINT
+            ->add(2)
+            ->add(5)
+            ->add(10)
 #ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
-            ->add(20)   // NOLINT
-            ->add(50)   // NOLINT
-            ->add(100)  // NOLINT
-            ->add(200)  // NOLINT
+            ->add(20)
+            ->add(50)
+            ->add(100)
+            ->add(200)
 #endif
             ;
     }
@@ -161,7 +158,6 @@ STAT_BENCH_GROUP("opt_random_multi_quadratic_function")
         stat_bench::PlotOption::log_parameter |
             stat_bench::PlotOption::log_output);
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(large_random_multi_quadratic_function_fixture,
     "opt_random_multi_quadratic_function", "steepest_descent") {
     test_optimizer(
@@ -175,7 +171,6 @@ STAT_BENCH_CASE_F(large_random_multi_quadratic_function_fixture,
         "steepest_descent");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(small_random_multi_quadratic_function_fixture,
     "opt_random_multi_quadratic_function", "downhill_simplex") {
     test_optimizer(
@@ -189,7 +184,6 @@ STAT_BENCH_CASE_F(small_random_multi_quadratic_function_fixture,
         "downhill_simplex");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(large_random_multi_quadratic_function_fixture,
     "opt_random_multi_quadratic_function", "newton_optimizer") {
     STAT_BENCH_MEASURE_INDEXED(
@@ -202,7 +196,6 @@ STAT_BENCH_CASE_F(large_random_multi_quadratic_function_fixture,
     };
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(large_random_multi_quadratic_function_fixture,
     "opt_random_multi_quadratic_function", "dfp_optimizer") {
     test_optimizer(
@@ -216,7 +209,6 @@ STAT_BENCH_CASE_F(large_random_multi_quadratic_function_fixture,
         "dfp_optimizer");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(large_random_multi_quadratic_function_fixture,
     "opt_random_multi_quadratic_function", "bfgs_optimizer") {
     test_optimizer(
@@ -230,7 +222,6 @@ STAT_BENCH_CASE_F(large_random_multi_quadratic_function_fixture,
         "bfgs_optimizer");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(large_random_multi_quadratic_function_fixture,
     "opt_random_multi_quadratic_function", "conjugate_gradient") {
     test_optimizer(
@@ -244,7 +235,6 @@ STAT_BENCH_CASE_F(large_random_multi_quadratic_function_fixture,
         "conjugate_gradient");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(small_random_multi_quadratic_function_fixture,
     "opt_random_multi_quadratic_function", "dividing_rectangles") {
     test_optimizer(
@@ -259,7 +249,6 @@ STAT_BENCH_CASE_F(small_random_multi_quadratic_function_fixture,
         "dividing_rectangles");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(small_random_multi_quadratic_function_fixture,
     "opt_random_multi_quadratic_function", "heuristic_global_optimizer") {
     test_optimizer(

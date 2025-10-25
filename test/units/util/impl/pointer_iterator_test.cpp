@@ -48,9 +48,9 @@ TEST_CASE("num_collect::util::impl::pointer_iterator(non-const)") {
         STATIC_REQUIRE(std::is_swappable_v<iterator_type>);
 
         SECTION("dereferenceable") {
-            int value = 123;  // NOLINT(*-magic-numbers)
+            int value = 123;
             iterator_type iterator(&value);
-            CHECK(*iterator == 123);  // NOLINT(*-magic-numbers)
+            CHECK(*iterator == 123);
         }
 
         SECTION("incrementable") {
@@ -100,9 +100,9 @@ TEST_CASE("num_collect::util::impl::pointer_iterator(non-const)") {
             int value = 0;
             iterator_type iterator(&value);
 
-            *iterator = 123;  // NOLINT(*-magic-numbers)
+            *iterator = 123;
 
-            CHECK(value == 123);  // NOLINT(*-magic-numbers)
+            CHECK(value == 123);
         }
     }
 
@@ -181,7 +181,7 @@ TEST_CASE("num_collect::util::impl::pointer_iterator(non-const)") {
             CHECK(iterator[1] == 2);
             CHECK(iterator[2] == 3);
 
-            iterator[1] = 4;  // NOLINT
+            iterator[1] = 4;
 
             CHECK(array[1] == 4);
         }
@@ -244,9 +244,9 @@ TEST_CASE("num_collect::util::impl::pointer_iterator(const)") {
         STATIC_REQUIRE(std::is_swappable_v<iterator_type>);
 
         SECTION("dereferenceable") {
-            int value = 123;  // NOLINT(*-magic-numbers)
+            int value = 123;
             iterator_type iterator(&value);
-            CHECK(*iterator == 123);  // NOLINT(*-magic-numbers)
+            CHECK(*iterator == 123);
         }
 
         SECTION("incrementable") {

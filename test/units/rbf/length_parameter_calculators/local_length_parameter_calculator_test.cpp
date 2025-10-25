@@ -62,9 +62,9 @@ TEST_CASE("num_collect::rbf::rbfs::local_length_parameter_calculator") {
             euclidean_distance_function<variable_type>;
         local_length_parameter_calculator<distance_function_type> calculator;
 
-        CHECK_NOTHROW(calculator.scale(0.0001));  // NOLINT
-        CHECK_THROWS(calculator.scale(0.0));      // NOLINT
-        CHECK_THROWS(calculator.scale(-0.0001));  // NOLINT
+        CHECK_NOTHROW(calculator.scale(0.0001));
+        CHECK_THROWS(calculator.scale(0.0));
+        CHECK_THROWS(calculator.scale(-0.0001));
     }
 
     SECTION("compute the length parameter") {
@@ -79,12 +79,12 @@ TEST_CASE("num_collect::rbf::rbfs::local_length_parameter_calculator") {
         const auto variables = std::vector{0.1, 0.2, 0.4};
         calculator.compute(variables, distance_function);
 
-        CHECK_THAT(calculator.length_parameter_at(0),
-            Catch::Matchers::WithinRel(0.3));  // NOLINT
-        CHECK_THAT(calculator.length_parameter_at(1),
-            Catch::Matchers::WithinRel(0.3));  // NOLINT
-        CHECK_THAT(calculator.length_parameter_at(2),
-            Catch::Matchers::WithinRel(0.6));  // NOLINT
+        CHECK_THAT(
+            calculator.length_parameter_at(0), Catch::Matchers::WithinRel(0.3));
+        CHECK_THAT(
+            calculator.length_parameter_at(1), Catch::Matchers::WithinRel(0.3));
+        CHECK_THAT(
+            calculator.length_parameter_at(2), Catch::Matchers::WithinRel(0.6));
     }
 
     SECTION("check number of points for computation") {

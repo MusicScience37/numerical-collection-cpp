@@ -138,7 +138,6 @@ TEST_CASE("num_collect::multi_double::quad") {
         quad sum_true;
         std::tie(a, b,
             sum_true) = GENERATE(Catch::Generators::table<quad, quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.52b527b6c46a6p-17, 0x1.fb1f8716820c8p-71),
                 quad(0x1.3735a527aa3a0p-8, 0x1.a73277b5f0aa0p-65),
@@ -154,7 +153,6 @@ TEST_CASE("num_collect::multi_double::quad") {
                 quad(-0x1.582805a6a9cfcp+5, 0x1.1c37331fcfdacp-49),
                 quad(-0x1.cea945e4c1ffdp+14, -0x1.c97dc89e1a090p-40)),
             // cspell: enable
-            // NOLINTEND
         }));
 
         const auto sum = a + b;
@@ -165,7 +163,6 @@ TEST_CASE("num_collect::multi_double::quad") {
 
     SECTION("add a quad number with operator+ at compile time (random)") {
         static constexpr auto inputs = std::to_array({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.52b527b6c46a6p-17, 0x1.fb1f8716820c8p-71),
                 quad(0x1.3735a527aa3a0p-8, 0x1.a73277b5f0aa0p-65),
@@ -181,7 +178,6 @@ TEST_CASE("num_collect::multi_double::quad") {
                 quad(-0x1.582805a6a9cfcp+5, 0x1.1c37331fcfdacp-49),
                 quad(-0x1.cea945e4c1ffdp+14, -0x1.c97dc89e1a090p-40)),
             // cspell: enable
-            // NOLINTEND
         });
         constexpr auto outputs = [] constexpr {
             std::array<quad, inputs.size()> results{};
@@ -209,7 +205,6 @@ TEST_CASE("num_collect::multi_double::quad") {
         quad sum_true;
         std::tie(a, b,
             sum_true) = GENERATE(Catch::Generators::table<quad, double, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.58645c21bbf0ep-16, -0x1.647a8b7ec08c8p-71),
                 0x1.c17cdbf807483p+16,
@@ -224,7 +219,6 @@ TEST_CASE("num_collect::multi_double::quad") {
                 0x1.1a52be8fe7d1ap+24,
                 quad(0x1.1a52be8fe7d25p+24, -0x1.09daa3c7b8e68p-30)),
             // cspell: enable
-            // NOLINTEND
         }));
 
         SECTION("quad + double") {
@@ -246,7 +240,6 @@ TEST_CASE("num_collect::multi_double::quad") {
 
     SECTION("add a double number with operator+ at compile time (random)") {
         static constexpr auto inputs = std::to_array({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.58645c21bbf0ep-16, -0x1.647a8b7ec08c8p-71),
                 0x1.c17cdbf807483p+16,
@@ -261,7 +254,6 @@ TEST_CASE("num_collect::multi_double::quad") {
                 0x1.1a52be8fe7d1ap+24,
                 quad(0x1.1a52be8fe7d25p+24, -0x1.09daa3c7b8e68p-30)),
             // cspell: enable
-            // NOLINTEND
         });
 
         SECTION("quad + double") {
@@ -368,7 +360,6 @@ TEST_CASE("num_collect::multi_double::quad") {
         quad dif_true;
         std::tie(a, b,
             dif_true) = GENERATE(Catch::Generators::table<quad, quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.52b527b6c46a6p-17, 0x1.fb1f8716820c8p-71),
                 quad(0x1.3735a527aa3a0p-8, 0x1.a73277b5f0aa0p-65),
@@ -384,7 +375,6 @@ TEST_CASE("num_collect::multi_double::quad") {
                 quad(-0x1.582805a6a9cfcp+5, 0x1.1c37331fcfdacp-49),
                 quad(-0x1.cd511ddf1b560p+14, -0x1.da99ffd139d90p-40)),
             // cspell: enable
-            // NOLINTEND
         }));
 
         const auto dif = a - b;
@@ -395,7 +385,6 @@ TEST_CASE("num_collect::multi_double::quad") {
 
     SECTION("subtract a quad number with operator- at compile time (random)") {
         static constexpr auto inputs = std::to_array({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.52b527b6c46a6p-17, 0x1.fb1f8716820c8p-71),
                 quad(0x1.3735a527aa3a0p-8, 0x1.a73277b5f0aa0p-65),
@@ -411,7 +400,6 @@ TEST_CASE("num_collect::multi_double::quad") {
                 quad(-0x1.582805a6a9cfcp+5, 0x1.1c37331fcfdacp-49),
                 quad(-0x1.cd511ddf1b560p+14, -0x1.da99ffd139d90p-40)),
             // cspell: enable
-            // NOLINTEND
         });
         constexpr auto outputs = [] constexpr {
             std::array<quad, inputs.size()> results{};
@@ -439,7 +427,6 @@ TEST_CASE("num_collect::multi_double::quad") {
         quad dif_true;
         std::tie(a, b,
             dif_true) = GENERATE(Catch::Generators::table<quad, double, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.58645c21bbf0ep-16, -0x1.647a8b7ec08c8p-71),
                 0x1.c17cdbf807483p+16,
@@ -454,7 +441,6 @@ TEST_CASE("num_collect::multi_double::quad") {
                 0x1.1a52be8fe7d1ap+24,
                 quad(-0x1.1a52be8fe7d0fp+24, -0x1.09daa3c7b8e68p-30)),
             // cspell: enable
-            // NOLINTEND
         }));
 
         SECTION("quad - double") {
@@ -477,7 +463,6 @@ TEST_CASE("num_collect::multi_double::quad") {
     SECTION(
         "subtract a double number with operator- at compile time (random)") {
         static constexpr auto inputs = std::to_array({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.58645c21bbf0ep-16, -0x1.647a8b7ec08c8p-71),
                 0x1.c17cdbf807483p+16,
@@ -492,7 +477,6 @@ TEST_CASE("num_collect::multi_double::quad") {
                 0x1.1a52be8fe7d1ap+24,
                 quad(-0x1.1a52be8fe7d0fp+24, -0x1.09daa3c7b8e68p-30)),
             // cspell: enable
-            // NOLINTEND
         });
 
         SECTION("quad - double") {
@@ -626,7 +610,6 @@ TEST_CASE("num_collect::multi_double::quad") {
         quad prod_true;
         std::tie(a, b,
             prod_true) = GENERATE(Catch::Generators::table<quad, quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.52b527b6c46a6p-17, 0x1.fb1f8716820c8p-71),
                 quad(0x1.3735a527aa3a0p-8, 0x1.a73277b5f0aa0p-65),
@@ -642,7 +625,6 @@ TEST_CASE("num_collect::multi_double::quad") {
                 quad(-0x1.582805a6a9cfcp+5, 0x1.1c37331fcfdacp-49),
                 quad(0x1.368a3a650d4eep+20, 0x1.a30f167d79cb8p-35)),
             // cspell: enable
-            // NOLINTEND
         }));
 
         const auto prod = a * b;
@@ -654,7 +636,6 @@ TEST_CASE("num_collect::multi_double::quad") {
 
     SECTION("multiply quad numbers with operator* at compile time (random)") {
         static constexpr auto inputs = std::to_array({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.52b527b6c46a6p-17, 0x1.fb1f8716820c8p-71),
                 quad(0x1.3735a527aa3a0p-8, 0x1.a73277b5f0aa0p-65),
@@ -670,7 +651,6 @@ TEST_CASE("num_collect::multi_double::quad") {
                 quad(-0x1.582805a6a9cfcp+5, 0x1.1c37331fcfdacp-49),
                 quad(0x1.368a3a650d4eep+20, 0x1.a30f167d79cb8p-35)),
             // cspell: enable
-            // NOLINTEND
         });
         constexpr auto outputs = [] constexpr {
             std::array<quad, inputs.size()> results{};
@@ -698,7 +678,6 @@ TEST_CASE("num_collect::multi_double::quad") {
         quad prod_true;
         std::tie(a, b,
             prod_true) = GENERATE(Catch::Generators::table<quad, double, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.58645c21bbf0ep-16, -0x1.647a8b7ec08c8p-71),
                 0x1.c17cdbf807483p+16,
@@ -713,7 +692,6 @@ TEST_CASE("num_collect::multi_double::quad") {
                 0x1.1a52be8fe7d1ap+24,
                 quad(0x1.7b083fd31d479p-1, 0x1.697aaad632d6cp-55)),
             // cspell: enable
-            // NOLINTEND
         }));
 
         SECTION("quad * double") {
@@ -736,7 +714,6 @@ TEST_CASE("num_collect::multi_double::quad") {
     SECTION(
         "multiply a double numbers with operator* at compile time (random)") {
         static constexpr auto inputs = std::to_array({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.58645c21bbf0ep-16, -0x1.647a8b7ec08c8p-71),
                 0x1.c17cdbf807483p+16,
@@ -751,7 +728,6 @@ TEST_CASE("num_collect::multi_double::quad") {
                 0x1.1a52be8fe7d1ap+24,
                 quad(0x1.7b083fd31d479p-1, 0x1.697aaad632d6cp-55)),
             // cspell: enable
-            // NOLINTEND
         });
 
         SECTION("quad * double") {
@@ -880,7 +856,6 @@ TEST_CASE("num_collect::multi_double::quad") {
         quad quotient_true;
         std::tie(a, b, quotient_true) = GENERATE(Catch::Generators::table<quad,
             quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.52b527b6c46a6p-17, 0x1.fb1f8716820c8p-71),
                 quad(0x1.3735a527aa3a0p-8, 0x1.a73277b5f0aa0p-65),
@@ -896,7 +871,6 @@ TEST_CASE("num_collect::multi_double::quad") {
                 quad(-0x1.582805a6a9cfcp+5, 0x1.1c37331fcfdacp-49),
                 quad(0x1.57a64da09df73p+9, -0x1.092e7b3636600p-45)),
             // cspell: enable
-            // NOLINTEND
         }));
 
         const auto quotient = a / b;
@@ -910,7 +884,6 @@ TEST_CASE("num_collect::multi_double::quad") {
         "divide a quad number with another quad number with operator/ "
         "(random) at compile time") {
         static constexpr auto inputs = std::to_array({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.52b527b6c46a6p-17, 0x1.fb1f8716820c8p-71),
                 quad(0x1.3735a527aa3a0p-8, 0x1.a73277b5f0aa0p-65),
@@ -926,7 +899,6 @@ TEST_CASE("num_collect::multi_double::quad") {
                 quad(-0x1.582805a6a9cfcp+5, 0x1.1c37331fcfdacp-49),
                 quad(0x1.57a64da09df73p+9, -0x1.092e7b3636600p-45)),
             // cspell: enable
-            // NOLINTEND
         });
         constexpr auto outputs = [] constexpr {
             std::array<quad, inputs.size()> results{};
@@ -956,7 +928,6 @@ TEST_CASE("num_collect::multi_double::quad") {
         quad quotient_true;
         std::tie(a, b, quotient_true) = GENERATE(Catch::Generators::table<quad,
             double, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.58645c21bbf0ep-16, -0x1.647a8b7ec08c8p-71),
                 0x1.c17cdbf807483p+16,
@@ -971,7 +942,6 @@ TEST_CASE("num_collect::multi_double::quad") {
                 0x1.1a52be8fe7d1ap+24,
                 quad(0x1.37a59dd1cb802p-49, -0x1.455c6773ec334p-103)),
             // cspell: enable
-            // NOLINTEND
         }));
 
         const auto quotient = a / b;
@@ -986,7 +956,6 @@ TEST_CASE("num_collect::multi_double::quad") {
         "time"
         "(random)") {
         static constexpr auto inputs = std::to_array({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.58645c21bbf0ep-16, -0x1.647a8b7ec08c8p-71),
                 0x1.c17cdbf807483p+16,
@@ -1001,7 +970,6 @@ TEST_CASE("num_collect::multi_double::quad") {
                 0x1.1a52be8fe7d1ap+24,
                 quad(0x1.37a59dd1cb802p-49, -0x1.455c6773ec334p-103)),
             // cspell: enable
-            // NOLINTEND
         });
         constexpr auto outputs = [] constexpr {
             std::array<quad, inputs.size()> results{};
@@ -1031,7 +999,6 @@ TEST_CASE("num_collect::multi_double::quad") {
         quad quotient_true;
         std::tie(a, b, quotient_true) =
             GENERATE(Catch::Generators::table<double, quad, quad>({
-                // NOLINTBEGIN
                 // cspell: disable
                 std::make_tuple(0x1.c17cdbf807483p+16,
                     quad(0x1.58645c21bbf0ep-16, -0x1.647a8b7ec08c8p-71),
@@ -1046,7 +1013,6 @@ TEST_CASE("num_collect::multi_double::quad") {
                     quad(0x1.57b12ae1c238dp-25, -0x1.d8caf920c9978p-80),
                     quad(0x1.a4941817daa49p+48, -0x1.d5fc65949fabcp-6)),
                 // cspell: enable
-                // NOLINTEND
             }));
 
         const auto quotient = a / b;
@@ -1060,7 +1026,6 @@ TEST_CASE("num_collect::multi_double::quad") {
         "divide a double number with a quad number with operator/ at compile "
         "time (random)") {
         static constexpr auto inputs = std::to_array({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(0x1.c17cdbf807483p+16,
                 quad(0x1.58645c21bbf0ep-16, -0x1.647a8b7ec08c8p-71),
@@ -1075,7 +1040,6 @@ TEST_CASE("num_collect::multi_double::quad") {
                 quad(0x1.57b12ae1c238dp-25, -0x1.d8caf920c9978p-80),
                 quad(0x1.a4941817daa49p+48, -0x1.d5fc65949fabcp-6)),
             // cspell: enable
-            // NOLINTEND
         });
         constexpr auto outputs = [] constexpr {
             std::array<quad, inputs.size()> results{};

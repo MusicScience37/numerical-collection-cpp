@@ -47,7 +47,7 @@ TEST_CASE("num_collect::logging::iterations::iteration_parameter") {
             parameter_value_type>;
 
         const std::string label = "abc";
-        value_type value = 12345;  // NOLINT
+        value_type value = 12345;
         constexpr num_collect::index_type width = 7;
         parameter_type parameter{label, parameter_value_type{value}};
         parameter.width(width);
@@ -87,7 +87,7 @@ TEST_CASE("num_collect::logging::iterations::iteration_parameter") {
             parameter_value_type>;
 
         const std::string label = "abc";
-        algorithm_type algorithm{12345};  // NOLINT
+        algorithm_type algorithm{12345};
         constexpr num_collect::index_type width = 7;
         parameter_type parameter{
             label, parameter_value_type{&algorithm_type::value1}};
@@ -124,7 +124,7 @@ TEST_CASE("num_collect::logging::iterations::iteration_parameter") {
             parameter_value_type>;
 
         const std::string label = "abc";
-        value_type value = 12345;  // NOLINT
+        value_type value = 12345;
         parameter_type parameter{label, parameter_value_type{value}};
 
         CHECK_THROWS(parameter.width(-1));

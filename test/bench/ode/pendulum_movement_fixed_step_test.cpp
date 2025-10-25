@@ -66,7 +66,7 @@ template <typename Solver>
 inline void bench_one(
     const std::string& solver_name, fixed_step_bench_executor& executor) {
     const auto energy_function = [](const Eigen::Vector2d& var) -> double {
-        return 0.5 * var[0] * var[0] - std::cos(var[1]);  // NOLINT
+        return 0.5 * var[0] * var[0] - std::cos(var[1]);
     };
 
 #ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH

@@ -26,11 +26,10 @@
 static void test() {
     num_collect::opt::adaptive_diagonal_curves<
         num_prob_collect::opt::shekel_function>
-        optimizer(num_prob_collect::opt::shekel_function(10));  // NOLINT
-    // NOLINTNEXTLINE
+        optimizer(num_prob_collect::opt::shekel_function(10));
     optimizer.init(Eigen::Vector4d::Zero(), Eigen::Vector4d::Constant(10.0));
-    optimizer.max_evaluations(10000);  // NOLINT
-    optimizer.min_rate_imp(1e-4);      // NOLINT
+    optimizer.max_evaluations(10000);
+    optimizer.min_rate_imp(1e-4);
     optimizer.solve();
 }
 

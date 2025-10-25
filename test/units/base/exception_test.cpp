@@ -29,7 +29,6 @@
 
 #include "num_collect/util/impl/compiler_builtins.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("exceptions", "", num_collect::num_collect_exception,
     num_collect::precondition_not_satisfied, num_collect::invalid_argument,
     num_collect::algorithm_failure, num_collect::file_error) {

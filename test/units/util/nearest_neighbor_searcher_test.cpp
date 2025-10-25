@@ -49,11 +49,9 @@ TEST_CASE("num_collect::util::nearest_neighbor_searcher") {
             REQUIRE(indices_and_distances.size() == 2);
             CHECK(indices_and_distances[0].first == 1);
             CHECK_THAT(indices_and_distances[0].second,
-                // NOLINTNEXTLINE(*-magic-numbers)
                 Catch::Matchers::WithinRel(0.5));
             CHECK(indices_and_distances[1].first == 2);
             CHECK_THAT(indices_and_distances[1].second,
-                // NOLINTNEXTLINE(*-magic-numbers)
                 Catch::Matchers::WithinRel(1.5));
         }
 
@@ -68,7 +66,6 @@ TEST_CASE("num_collect::util::nearest_neighbor_searcher") {
             REQUIRE(indices_and_distances.size() == 1);
             CHECK(indices_and_distances[0].first == 1);
             CHECK_THAT(indices_and_distances[0].second,
-                // NOLINTNEXTLINE(*-magic-numbers)
                 Catch::Matchers::WithinRel(0.5));
         }
     }
@@ -91,11 +88,9 @@ TEST_CASE("num_collect::util::nearest_neighbor_searcher") {
             REQUIRE(indices_and_distances.size() == 2);
             CHECK(indices_and_distances[0].first == 0);
             CHECK_THAT(indices_and_distances[0].second,
-                // NOLINTNEXTLINE(*-magic-numbers)
                 Catch::Matchers::WithinRel(std::sqrt(2.0)));
             CHECK(indices_and_distances[1].first == 2);
             CHECK_THAT(indices_and_distances[1].second,
-                // NOLINTNEXTLINE(*-magic-numbers)
                 Catch::Matchers::WithinRel(std::sqrt(8.0)));
         }
 
@@ -110,15 +105,12 @@ TEST_CASE("num_collect::util::nearest_neighbor_searcher") {
             REQUIRE(indices_and_distances.size() == 3);
             CHECK(indices_and_distances[0].first == 0);
             CHECK_THAT(indices_and_distances[0].second,
-                // NOLINTNEXTLINE(*-magic-numbers)
                 Catch::Matchers::WithinRel(std::sqrt(2.0)));
             CHECK(indices_and_distances[1].first == 2);
             CHECK_THAT(indices_and_distances[1].second,
-                // NOLINTNEXTLINE(*-magic-numbers)
                 Catch::Matchers::WithinRel(std::sqrt(8.0)));
             CHECK(indices_and_distances[2].first == 1);
             CHECK_THAT(indices_and_distances[2].second,
-                // NOLINTNEXTLINE(*-magic-numbers)
                 Catch::Matchers::WithinRel(3.0));
         }
     }

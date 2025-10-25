@@ -47,19 +47,15 @@ public:
      * \param[in] x Variable.
      */
     void evaluate_on(const Eigen::Vector4d& x) {
-        value_ = std::pow(x(0) + 10.0 * x(1), 2)  // NOLINT
-            + 5.0 * std::pow(x(2) - x(3), 2)      // NOLINT
-            + std::pow(x(1) - 2.0 * x(2), 4)      // NOLINT
-            + 10.0 * std::pow(x(0) - x(3), 4);    // NOLINT
+        value_ = std::pow(x(0) + 10.0 * x(1), 2) +
+            5.0 * std::pow(x(2) - x(3), 2) + std::pow(x(1) - 2.0 * x(2), 4) +
+            10.0 * std::pow(x(0) - x(3), 4);
 
-        grad_(0) = 2.0 * (x(0) + 10.0 * x(1))        // NOLINT
-            + 40.0 * std::pow(x(0) - x(3), 3);       // NOLINT
-        grad_(1) = 20.0 * (x(0) + 10.0 * x(1))       // NOLINT
-            + 4.0 * std::pow(x(1) - 2.0 * x(2), 3);  // NOLINT
-        grad_(2) = 10.0 * (x(2) - x(3))              // NOLINT
-            - 8.0 * std::pow(x(1) - 2.0 * x(2), 3);  // NOLINT
-        grad_(3) = -10.0 * (x(2) - x(3))             // NOLINT
-            - 40.0 * std::pow(x(0) - x(3), 3);       // NOLINT
+        grad_(0) = 2.0 * (x(0) + 10.0 * x(1)) + 40.0 * std::pow(x(0) - x(3), 3);
+        grad_(1) =
+            20.0 * (x(0) + 10.0 * x(1)) + 4.0 * std::pow(x(1) - 2.0 * x(2), 3);
+        grad_(2) = 10.0 * (x(2) - x(3)) - 8.0 * std::pow(x(1) - 2.0 * x(2), 3);
+        grad_(3) = -10.0 * (x(2) - x(3)) - 40.0 * std::pow(x(0) - x(3), 3);
     }
 
     /*!

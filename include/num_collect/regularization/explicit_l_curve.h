@@ -66,8 +66,7 @@ public:
     [[nodiscard]] auto operator()(const scalar_type& log_param) const
         -> scalar_type {
         using std::pow;
-        const scalar_type param = pow(static_cast<scalar_type>(10),  // NOLINT
-            log_param);
+        const scalar_type param = pow(static_cast<scalar_type>(10), log_param);
         return -solver_->l_curve_curvature(param);
     }
 
@@ -123,8 +122,8 @@ public:
         const scalar_type log_max_param = log10(max_param);
         optimizer_.init(log_min_param, log_max_param);
         optimizer_.solve();
-        opt_param_ = pow(static_cast<scalar_type>(10),  // NOLINT
-            optimizer_.opt_variable());
+        opt_param_ =
+            pow(static_cast<scalar_type>(10), optimizer_.opt_variable());
         NUM_COLLECT_LOG_SUMMARY(
             this->logger(), "Selected parameter: {}", opt_param_);
     }

@@ -29,7 +29,6 @@
 
 #include "num_collect/constants/pi.h"  // IWYU pragma: keep
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::integration::de_semi_infinite_integrator", "",
     float, double) {
     SECTION("integrate exp(-x)") {

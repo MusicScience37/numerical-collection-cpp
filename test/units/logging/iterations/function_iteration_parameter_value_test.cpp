@@ -35,7 +35,7 @@ TEST_CASE(
         using algorithm_type = void;
         using value_type = int;
 
-        value_type value = 123;  // NOLINT
+        value_type value = 123;
         auto function = [&value]() -> value_type { return value; };
 
         using parameter_value_type =
@@ -45,12 +45,12 @@ TEST_CASE(
             algorithm_type, value_type>);
 
         const parameter_value_type param_value{function};
-        CHECK(param_value.get() == 123);  // NOLINT
+        CHECK(param_value.get() == 123);
         STATIC_REQUIRE(std::is_same_v<decltype(param_value.get()), int>);
 
-        value = 2345;  // NOLINT
+        value = 2345;
         void* algorithm = nullptr;
-        CHECK(param_value.get(algorithm) == 2345);  // NOLINT
+        CHECK(param_value.get(algorithm) == 2345);
         STATIC_REQUIRE(
             std::is_same_v<decltype(param_value.get(algorithm)), int>);
     }
@@ -59,7 +59,7 @@ TEST_CASE(
         using algorithm_type = void;
         using value_type = int;
 
-        value_type value = 123;  // NOLINT
+        value_type value = 123;
         auto function = [&value]() -> const value_type& { return value; };
 
         using parameter_value_type =
@@ -70,12 +70,12 @@ TEST_CASE(
 
         const parameter_value_type param_value{function};
 
-        CHECK(param_value.get() == 123);  // NOLINT
+        CHECK(param_value.get() == 123);
         STATIC_REQUIRE(std::is_same_v<decltype(param_value.get()), const int&>);
 
-        value = 2345;  // NOLINT
+        value = 2345;
         void* algorithm = nullptr;
-        CHECK(param_value.get(algorithm) == 2345);  // NOLINT
+        CHECK(param_value.get(algorithm) == 2345);
         STATIC_REQUIRE(
             std::is_same_v<decltype(param_value.get(algorithm)), const int&>);
     }

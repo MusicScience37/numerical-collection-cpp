@@ -28,7 +28,6 @@
 
 #include "../check_constexpr_function.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::constants::impl::log1m_maclaurin", "", float, double) {
     const auto log1m_reference = [](TestType x) -> TestType {

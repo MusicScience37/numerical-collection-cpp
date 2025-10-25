@@ -50,7 +50,7 @@ static auto expected_function(double x, double y) { return x * x + y * y; }
 static auto make_right_vec(
     num_collect::index_type grid_size, const grid_type& grid) {
     vec_type right_vec =
-        vec_type::Constant((grid_size - 1) * (grid_size - 1), -4.0);  // NOLINT
+        vec_type::Constant((grid_size - 1) * (grid_size - 1), -4.0);
 
     const double off_diag_coeff = grid.off_diag_coeff();
 
@@ -173,7 +173,7 @@ auto main(int argc, char** argv) -> int {
     std::string_view config_filepath =
         "experiments/linear/laplacian_2d_grid.toml";
     if (argc == 2) {
-        config_filepath = argv[1];  // NOLINT
+        config_filepath = argv[1];
     }
     num_collect::logging::load_logging_config_file(
         std::string(config_filepath));

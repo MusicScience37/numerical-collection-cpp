@@ -47,7 +47,7 @@ template <typename Matrix>
 
     const index_type rows = matrix.rows();
 
-    std::mt19937 generator;  // NOLINT: For reproducibility.
+    std::mt19937 generator;
     std::uniform_real_distribution<scalar_type> distribution(
         static_cast<scalar_type>(-1), static_cast<scalar_type>(1));
     vector_type vec = vector_type::Zero(rows);

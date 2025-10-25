@@ -26,7 +26,6 @@
 
 #include "num_collect/functions/legendre.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::functions::legendre (compile time)", "", float, double) {
     SECTION("n = 0") {
@@ -176,7 +175,6 @@ TEMPLATE_TEST_CASE(
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::functions::legendre_with_diff (compile time)",
     "", float, double) {
     SECTION("n = 0") {

@@ -48,7 +48,6 @@ TEST_CASE("num_collect::rbf::operators::hessian_operator") {
         };
         const auto second_derivative_function =
             [](const Eigen::Vector2d& /*variable*/) {
-                // NOLINTNEXTLINE(*-magic-numbers)
                 return Eigen::Matrix2d{{2.0, 0.0}, {0.0, 2.0}};
             };
 
@@ -83,7 +82,6 @@ TEST_CASE("num_collect::rbf::operators::hessian_operator") {
         };
         const auto second_derivative_function =
             [](const Eigen::Vector2d& /*variable*/) {
-                // NOLINTNEXTLINE(*-magic-numbers)
                 return Eigen::Matrix2d{{2.0, 0.0}, {0.0, 2.0}};
             };
 
@@ -120,7 +118,6 @@ TEST_CASE("num_collect::rbf::operators::hessian_operator") {
         };
         const auto second_derivative_function =
             [](const Eigen::Vector2d& /*variable*/) {
-                // NOLINTNEXTLINE(*-magic-numbers)
                 return Eigen::Matrix2d{{2.0, 0.0}, {0.0, 2.0}};
             };
 

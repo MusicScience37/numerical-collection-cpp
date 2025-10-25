@@ -292,13 +292,13 @@ public:
     using scalar_type = Scalar;
 
     //! Type of distances. (Type required in nanoflann.)
-    using DistanceType = scalar_type;  // NOLINT
+    using DistanceType = scalar_type;  // NOLINT(*-naming)
 
     //! Type of indices. (Type required in nanoflann.)
-    using IndexType = index_type;  // NOLINT
+    using IndexType = index_type;  // NOLINT(*-naming)
 
     //! Type of sizes. (Type required in nanoflann.)
-    using CountType = index_type;  // NOLINT
+    using CountType = index_type;  // NOLINT(*-naming)
 
     /*!
      * \brief Constructor.
@@ -416,13 +416,13 @@ public:
     using scalar_type = Scalar;
 
     //! Type of distances. (Type required in nanoflann.)
-    using DistanceType = scalar_type;  // NOLINT
+    using DistanceType = scalar_type;  // NOLINT(*-naming)
 
     //! Type of indices. (Type required in nanoflann.)
-    using IndexType = index_type;  // NOLINT
+    using IndexType = index_type;  // NOLINT(*-naming)
 
     //! Type of sizes. (Type required in nanoflann.)
-    using CountType = index_type;  // NOLINT
+    using CountType = index_type;  // NOLINT(*-naming)
 
     /*!
      * \brief Constructor.

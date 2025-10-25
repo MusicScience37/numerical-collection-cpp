@@ -153,7 +153,6 @@ TEST_CASE("num_collect::rbf::operators::gradient_operator") {
             return variable.squaredNorm();
         };
         const auto derivative_function = [](const Eigen::Vector2d& variable) {
-            // NOLINTNEXTLINE(*-magic-numbers)
             return 2.0 * variable;
         };
 
@@ -187,7 +186,6 @@ TEST_CASE("num_collect::rbf::operators::gradient_operator") {
             return variable.squaredNorm();
         };
         const auto derivative_function = [](const Eigen::Vector2d& variable) {
-            // NOLINTNEXTLINE(*-magic-numbers)
             return 2.0 * variable;
         };
 
@@ -223,7 +221,6 @@ TEST_CASE("num_collect::rbf::operators::gradient_operator") {
             return variable.squaredNorm();
         };
         const auto derivative_function = [](const Eigen::Vector2d& variable) {
-            // NOLINTNEXTLINE(*-magic-numbers)
             return 2.0 * variable;
         };
 

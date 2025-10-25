@@ -38,9 +38,8 @@ TEST_CASE(
         using return_type = value_type;
         using algorithm_type = mock_algorithm<value_type, return_type>;
 
-        value_type value = 123;       // NOLINT
-        algorithm_type algorithm{0};  // NOLINT
-        // NOLINTNEXTLINE
+        value_type value = 123;
+        algorithm_type algorithm{0};
         ALLOW_CALL(algorithm, get_impl()).RETURN(value);
 
         using parameter_value_type =
@@ -50,7 +49,7 @@ TEST_CASE(
             algorithm_type, value_type>);
 
         const parameter_value_type param_value{&algorithm_type::get};
-        CHECK(param_value.get(&algorithm) == 123);  // NOLINT
+        CHECK(param_value.get(&algorithm) == 123);
 
         CHECK_THROWS((void)param_value.get());
     }
@@ -60,9 +59,8 @@ TEST_CASE(
         using return_type = const value_type&;
         using algorithm_type = mock_algorithm<value_type, return_type>;
 
-        value_type value = 123;       // NOLINT
-        algorithm_type algorithm{0};  // NOLINT
-        // NOLINTNEXTLINE
+        value_type value = 123;
+        algorithm_type algorithm{0};
         ALLOW_CALL(algorithm, get_impl()).RETURN(value);
 
         using parameter_value_type =
@@ -72,7 +70,7 @@ TEST_CASE(
             algorithm_type, value_type>);
 
         const parameter_value_type param_value{&algorithm_type::get};
-        CHECK(param_value.get(&algorithm) == 123);  // NOLINT
+        CHECK(param_value.get(&algorithm) == 123);
 
         CHECK_THROWS((void)param_value.get());
     }

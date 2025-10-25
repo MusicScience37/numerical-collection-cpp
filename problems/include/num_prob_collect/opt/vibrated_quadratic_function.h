@@ -70,7 +70,7 @@ public:
 
 private:
     //! Coefficient.
-    double coeff_{0.25};  // NOLINT
+    double coeff_{0.25};
 
     //! Function value.
     double value_{0.0};

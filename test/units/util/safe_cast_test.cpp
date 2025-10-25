@@ -25,7 +25,6 @@
 
 namespace {
 
-// NOLINTNEXTLINE: I want to use line numbers in test cases.
 #define TEST_SAFE(FROM, TO, VALUE)                                  \
     [] {                                                            \
         using from_type = FROM;                                     \
@@ -37,7 +36,6 @@ namespace {
         REQUIRE(casted == static_cast<to_type>(VALUE));             \
     }()
 
-// NOLINTNEXTLINE: I want to use line numbers in test cases.
 #define TEST_UNSAFE(FROM, TO, VALUE)                                        \
     [] {                                                                    \
         using from_type = FROM;                                             \

@@ -28,7 +28,6 @@
 
 #include "num_collect/auto_diff/forward/create_diff_variable.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::auto_diff::forward::exp", "", float, double) {
     using value_type = TestType;
     using variable_type = num_collect::auto_diff::forward::variable<value_type>;
@@ -57,7 +56,6 @@ TEMPLATE_TEST_CASE("num_collect::auto_diff::forward::exp", "", float, double) {
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::auto_diff::forward::log", "", float, double) {
     using value_type = TestType;
     using variable_type = num_collect::auto_diff::forward::variable<value_type>;
@@ -86,7 +84,6 @@ TEMPLATE_TEST_CASE("num_collect::auto_diff::forward::log", "", float, double) {
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::auto_diff::forward::sqrt", "", float, double) {
     using value_type = TestType;
     using variable_type = num_collect::auto_diff::forward::variable<value_type>;

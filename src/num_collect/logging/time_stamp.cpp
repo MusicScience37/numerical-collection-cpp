@@ -24,7 +24,7 @@
 
 #include <fmt/chrono.h>
 #include <fmt/format.h>
-#include <time.h>  // NOLINT: For platform-dependent functions.
+#include <time.h>  // NOLINT(*-deprecated-headers): For platform-dependent functions.
 
 namespace num_collect::logging {
 
@@ -49,7 +49,7 @@ auto time_stamp::now() noexcept -> time_stamp {
 
 namespace fmt {
 
-auto formatter<num_collect::logging::time_stamp>::format(  // NOLINT
+auto formatter<num_collect::logging::time_stamp>::format(  // NOLINT(*-static)
     num_collect::logging::time_stamp val, format_context& context) const
     -> format_context::iterator {
     std::tm time_tm{};

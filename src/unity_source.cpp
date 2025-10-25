@@ -1,7 +1,7 @@
-#include "num_collect/logging/load_logging_config.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "num_collect/logging/log_tag_config_node.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "num_collect/logging/sinks/async_log_sink.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "num_collect/logging/sinks/default_log_sink.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "num_collect/logging/sinks/log_sink.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "num_collect/logging/sinks/simple_log_sink.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "num_collect/logging/time_stamp.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "num_collect/logging/load_logging_config.cpp"
+#include "num_collect/logging/log_tag_config_node.cpp"
+#include "num_collect/logging/sinks/async_log_sink.cpp"
+#include "num_collect/logging/sinks/default_log_sink.cpp"
+#include "num_collect/logging/sinks/log_sink.cpp"
+#include "num_collect/logging/sinks/simple_log_sink.cpp"
+#include "num_collect/logging/time_stamp.cpp"

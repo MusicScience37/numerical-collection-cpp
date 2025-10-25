@@ -28,7 +28,6 @@
 
 #include "eigen_approx.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::auto_diff::backward::differentiate(variable, variable)", "",
     float, double) {
@@ -73,7 +72,6 @@ TEMPLATE_TEST_CASE(
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::auto_diff::backward::differentiate(variable, matrix)", "",
     float, double) {
@@ -112,7 +110,7 @@ TEMPLATE_TEST_CASE(
         mat(1, 0) = mat(0, 1);
         const auto val = mat.sum();
         CHECK_THAT(val.value(),
-            Catch::Matchers::WithinRel(static_cast<scalar_type>(5)));  // NOLINT
+            Catch::Matchers::WithinRel(static_cast<scalar_type>(5)));
 
         const diff_type coeff = differentiate(val, mat);
 
@@ -126,7 +124,6 @@ TEMPLATE_TEST_CASE(
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::auto_diff::backward::differentiate(vector, vector)", "",
     float, double) {

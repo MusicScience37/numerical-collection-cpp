@@ -96,5 +96,5 @@ private:
 
     std::optional<num_collect::logging::logger> logger_{};
 };
-// NOLINTNEXTLINE
+
 CATCH_REGISTER_LISTENER(catch_event_listener);

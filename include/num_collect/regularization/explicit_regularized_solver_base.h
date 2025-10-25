@@ -153,7 +153,7 @@ public:
         using std::pow;
         return (log_res1 * log_reg2 - log_res2 * log_reg1) /
             pow(log_res1 * log_res1 + log_reg1 * log_reg1,
-                static_cast<scalar_type>(1.5));  // NOLINT
+                static_cast<scalar_type>(1.5));
     }
 
     /*!

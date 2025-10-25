@@ -28,7 +28,6 @@
 
 #include "check_constexpr_function.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::constants::impl::expm1_at_compile_time", "", float, double) {
     SECTION("negative number") {
@@ -67,7 +66,6 @@ TEMPLATE_TEST_CASE(
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::constants::expm1", "", float, double) {
     SECTION("negative number") {
         CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(-0.123)),

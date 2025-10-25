@@ -104,8 +104,7 @@ auto main(int argc, char** argv) -> int {
 
     // Implicit formulas are too slow with large step sizes.
     executor.step_size_limits(
-        num_collect::ode::step_size_limits<double>().upper_limit(
-            1e-2));  // NOLINT
+        num_collect::ode::step_size_limits<double>().upper_limit(1e-2));
     bench_one<num_collect::ode::rosenbrock::ros3w_solver<problem_type>>(
         "ROS3w", executor);
     bench_one<num_collect::ode::rosenbrock::ros34pw3_solver<problem_type>>(

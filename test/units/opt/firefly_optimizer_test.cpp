@@ -41,16 +41,16 @@ TEST_CASE("num_collect::opt::firefly_optimizer (multi variables)") {
 
     SECTION("init") {
         auto opt = firefly_optimizer<multi_quadratic_function>();
-        opt.init(Eigen::VectorXd::Constant(3, -1.0),  // NOLINT
-            Eigen::VectorXd::Constant(3, 2.0));       // NOLINT
+        opt.init(Eigen::VectorXd::Constant(3, -1.0),
+            Eigen::VectorXd::Constant(3, 2.0));
         CHECK(opt.iterations() == 0);
-        CHECK(opt.evaluations() == 200);  // NOLINT
+        CHECK(opt.evaluations() == 200);
     }
 
     SECTION("iterate") {
         auto opt = firefly_optimizer<multi_quadratic_function>();
-        opt.init(Eigen::VectorXd::Constant(3, -1.0),  // NOLINT
-            Eigen::VectorXd::Constant(3, 2.0));       // NOLINT
+        opt.init(Eigen::VectorXd::Constant(3, -1.0),
+            Eigen::VectorXd::Constant(3, 2.0));
         const auto prev_value = opt.opt_value();
 
         opt.iterate();
@@ -61,8 +61,8 @@ TEST_CASE("num_collect::opt::firefly_optimizer (multi variables)") {
 
     SECTION("solve") {
         auto opt = firefly_optimizer<multi_quadratic_function>();
-        opt.init(Eigen::VectorXd::Constant(3, -1.0),  // NOLINT
-            Eigen::VectorXd::Constant(3, 2.0));       // NOLINT
+        opt.init(Eigen::VectorXd::Constant(3, -1.0),
+            Eigen::VectorXd::Constant(3, 2.0));
         constexpr double sol_tol = 1e-1;
         opt.solve();
         CHECK_THAT(opt.opt_variable(),

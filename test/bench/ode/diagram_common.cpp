@@ -105,12 +105,11 @@ auto create_line_dash_map() -> std::unordered_map<std::string, std::string> {
 bench_executor::bench_executor()
     : num_collect::logging::logging_mixin(benchmark_tag),
       iter_logger_(this->logger()) {
-    iter_logger_.append("Solver", solver_name_)->width(20);  // NOLINT
+    iter_logger_.append("Solver", solver_name_)->width(20);
     iter_logger_.append("Tol.", tol_);
     iter_logger_.append("Steps", steps_);
-    iter_logger_.append<double>("Time [us]", [this] {
-        return mean_processing_time_sec_ * 1e+6;  // NOLINT
-    });
+    iter_logger_.append<double>(
+        "Time [us]", [this] { return mean_processing_time_sec_ * 1e+6; });
     iter_logger_.append("Error Rate", error_rate_);
 }
 

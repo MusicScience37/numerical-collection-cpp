@@ -39,14 +39,14 @@ class sparse_linear_equation_test_fixture : public stat_bench::FixtureBase {
 public:
     sparse_linear_equation_test_fixture() {
         this->add_param<int>("dim")
-            ->add(100)  // NOLINT
-            ->add(200)  // NOLINT
-            ->add(500)  // NOLINT
+            ->add(100)
+            ->add(200)
+            ->add(500)
 #ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
-            ->add(1000)   // NOLINT
-            ->add(2000)   // NOLINT
-            ->add(5000)   // NOLINT
-            ->add(10000)  // NOLINT
+            ->add(1000)
+            ->add(2000)
+            ->add(5000)
+            ->add(10000)
 #endif
             ;
     }
@@ -57,9 +57,9 @@ public:
         triplets.emplace_back(0, 0, 1.0);
         triplets.emplace_back(size_ - 1, size_ - 1, 1.0);
         for (int i = 1; i < size_ - 1; ++i) {
-            triplets.emplace_back(i, i - 1, 1e-2);  // NOLINT
-            triplets.emplace_back(i, i, 1.0);       // NOLINT
-            triplets.emplace_back(i, i + 1, 1e-2);  // NOLINT
+            triplets.emplace_back(i, i - 1, 1e-2);
+            triplets.emplace_back(i, i, 1.0);
+            triplets.emplace_back(i, i + 1, 1e-2);
         }
         coeff_.resize(size_, size_);
         coeff_.setFromTriplets(triplets.begin(), triplets.end());
@@ -83,43 +83,42 @@ public:
     }
 
 protected:
+    // NOLINTBEGIN(cppcoreguidelines-non-private-member-variables-in-classes)
+
     //! Size.
-    int size_{};  // NOLINT(cppcoreguidelines-non-private-member-variables-in-classes)
+    int size_{};
 
     //! Coefficient matrix.
-    Eigen::SparseMatrix<double, Eigen::RowMajor>
-        coeff_{};  // NOLINT(cppcoreguidelines-non-private-member-variables-in-classes)
+    Eigen::SparseMatrix<double, Eigen::RowMajor> coeff_{};
 
     //! True solution.
-    Eigen::VectorXd
-        true_sol_{};  // NOLINT(cppcoreguidelines-non-private-member-variables-in-classes)
+    Eigen::VectorXd true_sol_{};
 
     //! Right-hand-side vector.
-    Eigen::VectorXd
-        rhs_{};  // NOLINT(cppcoreguidelines-non-private-member-variables-in-classes)
+    Eigen::VectorXd rhs_{};
 
     //! Solution.
-    Eigen::VectorXd
-        sol_{};  // NOLINT(cppcoreguidelines-non-private-member-variables-in-classes)
+    Eigen::VectorXd sol_{};
 
     //! Relative tolerance.
     static constexpr double rel_tol{1e-8};
 
     //! Number of iterations.
-    int iterations_{};  // NOLINT(cppcoreguidelines-non-private-member-variables-in-classes)
+    int iterations_{};
+
+    // NOLINTEND(cppcoreguidelines-non-private-member-variables-in-classes)
 };
 
 class gmres_fixture : public sparse_linear_equation_test_fixture {
 public:
     gmres_fixture() {
         this->add_param<int>("sub_dim")
-            ->add(1)   // NOLINT
-            ->add(2)   // NOLINT
-            ->add(3)   // NOLINT
-            ->add(4)   // NOLINT
-            ->add(5)   // NOLINT
-            ->add(10)  // NOLINT
-            ;
+            ->add(1)
+            ->add(2)
+            ->add(3)
+            ->add(4)
+            ->add(5)
+            ->add(10);
     }
 
     void setup(stat_bench::InvocationContext& context) override {
@@ -128,13 +127,17 @@ public:
     }
 
 protected:
+    // NOLINTBEGIN(cppcoreguidelines-non-private-member-variables-in-classes)
+
     //! Size of the subspace.
-    int subspace_size_{};  // NOLINT(cppcoreguidelines-non-private-member-variables-in-classes)
+    int subspace_size_{};
+
+    // NOLINTEND(cppcoreguidelines-non-private-member-variables-in-classes)
 };
 
 STAT_BENCH_CASE_F(gmres_fixture, "sparse_linear_equation", "repeated_gmres") {
     num_collect::ode::impl::gmres<Eigen::VectorXd> solver;
-    solver.max_subspace_dim(subspace_size_);  // NOLINT
+    solver.max_subspace_dim(subspace_size_);
     const auto coeff_function = [coeff_ptr = &coeff_](
                                     const auto& target, auto& result) {
         result = (*coeff_ptr) * target;

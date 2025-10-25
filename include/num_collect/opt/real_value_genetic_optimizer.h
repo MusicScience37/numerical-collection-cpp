@@ -56,7 +56,7 @@ constexpr auto real_value_genetic_optimizer_tag =
  * \tparam BitsPerDimension Number of bits per dimension.
  */
 template <concepts::objective_function ObjectiveFunction,
-    index_type BitsPerDimension = 10>  // NOLINT(*-magic-numbers)
+    index_type BitsPerDimension = 10>
 class real_value_genetic_optimizer;
 
 /*!

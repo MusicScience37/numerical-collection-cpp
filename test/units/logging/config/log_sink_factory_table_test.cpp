@@ -54,7 +54,6 @@ TEST_CASE("num_collect::logging::config::log_sink_factory_table") {
         table.append(name2, factory2);
 
         {
-            // NOLINTNEXTLINE
             REQUIRE_CALL(*factory1, create(_))
                 .TIMES(1)
                 .RETURN(sink1->to_log_sink());
@@ -64,7 +63,6 @@ TEST_CASE("num_collect::logging::config::log_sink_factory_table") {
         }
 
         {
-            // NOLINTNEXTLINE
             REQUIRE_CALL(*factory2, create(_))
                 .TIMES(1)
                 .RETURN(sink2->to_log_sink());
@@ -88,7 +86,6 @@ TEST_CASE("num_collect::logging::config::log_sink_factory_table") {
         table.append(name2, factory2);
 
         {
-            // NOLINTNEXTLINE
             REQUIRE_CALL(*factory1, create(_))
                 .TIMES(1)
                 .RETURN(sink1->to_log_sink());
@@ -98,7 +95,6 @@ TEST_CASE("num_collect::logging::config::log_sink_factory_table") {
         }
 
         {
-            // NOLINTNEXTLINE
             FORBID_CALL(*factory1, create(_));
 
             std::optional<log_sink> sink;
@@ -140,11 +136,11 @@ TEST_CASE("num_collect::logging::config::log_sink_factory_table") {
             std::optional<log_sink> inner_sink;
             REQUIRE_CALL(*factory1, create(_))
                 .TIMES(1)
-                .LR_SIDE_EFFECT(inner_sink = _1.get(name2))  // NOLINT
-                .RETURN(sink1->to_log_sink());               // NOLINT
+                .LR_SIDE_EFFECT(inner_sink = _1.get(name2))
+                .RETURN(sink1->to_log_sink());
             REQUIRE_CALL(*factory2, create(_))
                 .TIMES(1)
-                .RETURN(sink2->to_log_sink());  // NOLINT
+                .RETURN(sink2->to_log_sink());
 
             std::optional<log_sink> sink;
             CHECK_NOTHROW(sink = table.get(name1));
@@ -166,11 +162,11 @@ TEST_CASE("num_collect::logging::config::log_sink_factory_table") {
 
         {
             ALLOW_CALL(*factory1, create(_))
-                .SIDE_EFFECT((void)_1.get(name2))  // NOLINT
-                .RETURN(sink1->to_log_sink());     // NOLINT
+                .SIDE_EFFECT((void)_1.get(name2))
+                .RETURN(sink1->to_log_sink());
             ALLOW_CALL(*factory2, create(_))
-                .SIDE_EFFECT((void)_1.get(name1))  // NOLINT
-                .RETURN(sink2->to_log_sink());     // NOLINT
+                .SIDE_EFFECT((void)_1.get(name1))
+                .RETURN(sink2->to_log_sink());
 
             CHECK_THROWS(table.get(name1));
             CHECK_THROWS(table.get(name2));

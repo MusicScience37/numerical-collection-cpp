@@ -76,7 +76,6 @@ constexpr auto exp_maclaurin_series(quad x) noexcept -> quad {
 constexpr auto round_double_to_int(double value) noexcept -> int {
     if consteval {
         // std::lround is not constexpr.
-        // NOLINTNEXTLINE(*-magic-numbers)
         return static_cast<int>(constants::floor(value + 0.5));
     } else {
         return static_cast<int>(std::lround(value));

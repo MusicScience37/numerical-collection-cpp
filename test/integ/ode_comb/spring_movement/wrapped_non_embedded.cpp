@@ -32,7 +32,6 @@
 #include "num_collect/ode/runge_kutta/rk4_formula.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_PRODUCT_TEST_CASE(
     "spring_movement_problem with non-embedded formulas with automatic step "
     "sizes",

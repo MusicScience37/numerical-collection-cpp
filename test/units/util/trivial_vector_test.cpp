@@ -60,7 +60,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
     SECTION("default constructor") {
         trivial_vector<int> vector;
 
-        CHECK(vector.size() == 0);  // NOLINT
+        CHECK(vector.size() == 0);  // NOLINT(*-size-empty)
         CHECK(vector.empty());
         CHECK(vector.capacity() > 0);
         CHECK(vector.data() != nullptr);
@@ -89,7 +89,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
     }
 
     SECTION("constructor with invalid sizes") {
-        CHECK_THROWS((void)trivial_vector<int>(-1));  // NOLINT
+        CHECK_THROWS((void)trivial_vector<int>(-1));
         CHECK_THROWS(
             (void)trivial_vector<int>(trivial_vector<int>::max_size() + 1));
     }
@@ -149,7 +149,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
     SECTION("copy constructor") {
         trivial_vector<int> origin{1, 2, 3};
 
-        trivial_vector<int> vector(origin);  // NOLINT
+        trivial_vector<int> vector(origin);  // NOLINT(*-copy-*)
 
         CHECK(vector.size() == 3);
         CHECK(vector.at(0) == 1);
@@ -164,7 +164,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
     SECTION("move constructor") {
         trivial_vector<int> origin{1, 2, 3};
 
-        trivial_vector<int> vector(std::move(origin));  // NOLINT
+        trivial_vector<int> vector(std::move(origin));
 
         CHECK(vector.size() == 3);
         CHECK(vector.at(0) == 1);
@@ -217,16 +217,16 @@ TEST_CASE("num_collect::util::trivial_vector") {
         CHECK(vector.at(1) == 2);
         CHECK(vector.at(2) == 3);
 
-        vector.at(0) = 4;  // NOLINT
-        vector.at(1) = 5;  // NOLINT
-        vector.at(2) = 6;  // NOLINT
+        vector.at(0) = 4;
+        vector.at(1) = 5;
+        vector.at(2) = 6;
 
         CHECK(vector.at(0) == 4);
         CHECK(vector.at(1) == 5);
         CHECK(vector.at(2) == 6);
 
-        CHECK_THROWS(vector.at(-1));  // NOLINT
-        CHECK_THROWS(vector.at(3));   // NOLINT
+        CHECK_THROWS(vector.at(-1));
+        CHECK_THROWS(vector.at(3));
     }
 
     SECTION("access elements via at() for const object") {
@@ -239,8 +239,8 @@ TEST_CASE("num_collect::util::trivial_vector") {
         STATIC_REQUIRE_FALSE(
             std::is_assignable_v<decltype(vector.at(0)), const int&>);
 
-        CHECK_THROWS(vector.at(-1));  // NOLINT
-        CHECK_THROWS(vector.at(3));   // NOLINT
+        CHECK_THROWS(vector.at(-1));
+        CHECK_THROWS(vector.at(3));
     }
 
     SECTION("access elements via operator[] for non-const object") {
@@ -250,9 +250,9 @@ TEST_CASE("num_collect::util::trivial_vector") {
         CHECK(vector[1] == 2);
         CHECK(vector[2] == 3);
 
-        vector[0] = 4;  // NOLINT
-        vector[1] = 5;  // NOLINT
-        vector[2] = 6;  // NOLINT
+        vector[0] = 4;
+        vector[1] = 5;
+        vector[2] = 6;
 
         CHECK(vector[0] == 4);
         CHECK(vector[1] == 5);
@@ -275,7 +275,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
 
         CHECK(vector.front() == 1);
 
-        vector.front() = 4;  // NOLINT
+        vector.front() = 4;
 
         CHECK(vector.front() == 4);
     }
@@ -294,7 +294,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
 
         CHECK(vector.back() == 3);
 
-        vector.back() = 4;  // NOLINT
+        vector.back() = 4;
 
         CHECK(vector.back() == 4);
     }
@@ -318,9 +318,9 @@ TEST_CASE("num_collect::util::trivial_vector") {
         CHECK(data[1] == 2);
         CHECK(data[2] == 3);
 
-        data[0] = 4;  // NOLINT
-        data[1] = 5;  // NOLINT
-        data[2] = 6;  // NOLINT
+        data[0] = 4;
+        data[1] = 5;
+        data[2] = 6;
 
         CHECK(vector.at(0) == 4);
         CHECK(vector.at(1) == 5);
@@ -354,7 +354,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
         CHECK(iterator == vector.end());
 
         iterator = vector.begin();
-        *iterator = 4;  // NOLINT
+        *iterator = 4;
         CHECK(vector.at(0) == 4);
     }
 
@@ -403,7 +403,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
         CHECK(iterator == vector.rend());
 
         iterator = vector.rbegin();
-        *iterator = 4;  // NOLINT
+        *iterator = 4;
         CHECK(vector.at(2) == 4);
     }
 
@@ -443,9 +443,9 @@ TEST_CASE("num_collect::util::trivial_vector") {
         trivial_vector<int> vector{1, 2, 3};
 
         int value = 1;
-        for (auto& element : vector) {  // NOLINT
+        for (auto& element : vector) {
             CHECK(element == value);
-            element = value + 3;  // NOLINT
+            element = value + 3;
             ++value;
         }
 
@@ -458,7 +458,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
         const trivial_vector<int> vector{1, 2, 3};
 
         int value = 1;
-        for (const auto& element : vector) {  // NOLINT
+        for (const auto& element : vector) {
             CHECK(element == value);
             ++value;
         }
@@ -477,7 +477,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
     SECTION("get size") {
         trivial_vector<int> vector;
 
-        CHECK(vector.size() == 0);  // NOLINT
+        CHECK(vector.size() == 0);  // NOLINT(*-size-empty)
 
         vector.resize(3);
 
@@ -504,9 +504,8 @@ TEST_CASE("num_collect::util::trivial_vector") {
     SECTION("try to reserve memory with invalid capacities") {
         trivial_vector<int> vector;
 
-        CHECK_THROWS(vector.reserve(-1));  // NOLINT
-        CHECK_THROWS(
-            vector.reserve(trivial_vector<int>::max_size() + 1));  // NOLINT
+        CHECK_THROWS(vector.reserve(-1));
+        CHECK_THROWS(vector.reserve(trivial_vector<int>::max_size() + 1));
     }
 
     SECTION("get capacity") {
@@ -538,7 +537,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
         vector.shrink_to_fit();
 
         CHECK(vector.capacity() == 1);
-        CHECK(vector.size() == 0);  // NOLINT
+        CHECK(vector.size() == 0);  // NOLINT(*-size-empty)
         CHECK(vector.empty());
     }
 
@@ -550,14 +549,14 @@ TEST_CASE("num_collect::util::trivial_vector") {
         vector.clear();
 
         CHECK(vector.empty());
-        CHECK(vector.size() == 0);  // NOLINT
+        CHECK(vector.size() == 0);  // NOLINT(*-size-empty)
         CHECK(vector.capacity() >= 3);
     }
 
     SECTION("insert an element") {
         trivial_vector<int> vector{1, 2, 3};
 
-        auto iterator = vector.insert(vector.begin() + 1, 4);  // NOLINT
+        auto iterator = vector.insert(vector.begin() + 1, 4);
 
         CHECK(*iterator == 4);
         CHECK(vector.size() == 4);
@@ -570,7 +569,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
     SECTION("insert an element at the end") {
         trivial_vector<int> vector{1, 2, 3};
 
-        auto iterator = vector.insert(vector.end(), 4);  // NOLINT
+        auto iterator = vector.insert(vector.end(), 4);
 
         CHECK(*iterator == 4);
         CHECK(vector.size() == 4);
@@ -583,7 +582,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
     SECTION("insert an element using emplace function") {
         trivial_vector<int> vector{1, 2, 3};
 
-        auto iterator = vector.emplace(vector.begin() + 1, 4);  // NOLINT
+        auto iterator = vector.emplace(vector.begin() + 1, 4);
 
         CHECK(*iterator == 4);
         CHECK(vector.size() == 4);
@@ -596,7 +595,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
     SECTION("remove an element") {
         trivial_vector<int> vector{1, 2, 3};
 
-        auto iterator = vector.erase(vector.begin() + 1);  // NOLINT
+        auto iterator = vector.erase(vector.begin() + 1);
 
         CHECK(*iterator == 3);
         CHECK(vector.size() == 2);
@@ -607,7 +606,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
     SECTION("remove an element at the end") {
         trivial_vector<int> vector{1, 2, 3};
 
-        auto iterator = vector.erase(vector.end() - 1);  // NOLINT
+        auto iterator = vector.erase(vector.end() - 1);
 
         CHECK(iterator == vector.end());
         CHECK(vector.size() == 2);
@@ -652,7 +651,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
     SECTION("resize") {
         trivial_vector<int> vector{1, 2, 3};
 
-        vector.resize(5);  // NOLINT(*-magic-numbers)
+        vector.resize(5);
 
         CHECK(vector.size() == 5);
         CHECK(vector.at(0) == 1);
@@ -671,7 +670,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
     SECTION("resize with value") {
         trivial_vector<int> vector{1, 2, 3};
 
-        vector.resize(5, 4);  // NOLINT(*-magic-numbers)
+        vector.resize(5, 4);
 
         CHECK(vector.size() == 5);
         CHECK(vector.at(0) == 1);
@@ -680,7 +679,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
         CHECK(vector.at(3) == 4);
         CHECK(vector.at(4) == 4);
 
-        vector.resize(2, 5);  // NOLINT(*-magic-numbers)
+        vector.resize(2, 5);
 
         CHECK(vector.size() == 2);
         CHECK(vector.at(0) == 1);
@@ -702,14 +701,13 @@ TEST_CASE("num_collect::util::trivial_vector") {
     SECTION("try to resize with invalid sizes") {
         trivial_vector<int> vector;
 
-        CHECK_THROWS(vector.resize(-1));  // NOLINT
-        CHECK_THROWS(
-            vector.resize(trivial_vector<int>::max_size() + 1));  // NOLINT
+        CHECK_THROWS(vector.resize(-1));
+        CHECK_THROWS(vector.resize(trivial_vector<int>::max_size() + 1));
     }
 
     SECTION("swap with another vector") {
         trivial_vector<int> vector1{1, 2, 3};
-        trivial_vector<int> vector2{4, 5};  // NOLINT(*-magic-numbers)
+        trivial_vector<int> vector2{4, 5};
 
         vector1.swap(vector2);
 
@@ -724,7 +722,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
 
     SECTION("swap with another vector using a free function") {
         trivial_vector<int> vector1{1, 2, 3};
-        trivial_vector<int> vector2{4, 5};  // NOLINT(*-magic-numbers)
+        trivial_vector<int> vector2{4, 5};
 
         swap(vector1, vector2);
 

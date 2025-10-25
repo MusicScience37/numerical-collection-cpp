@@ -57,7 +57,7 @@ TEST_CASE("num_collect::opt::any_objective_function") {
         const Eigen::Vector3d variable{{1.0, 2.0, 3.0}};
         REQUIRE_NOTHROW(function.evaluate_on(variable));
 
-        CHECK(function.value() == 14.0);  // NOLINT
+        CHECK(function.value() == 14.0);
     }
 
     SECTION("set a function object after construction") {
@@ -71,6 +71,6 @@ TEST_CASE("num_collect::opt::any_objective_function") {
         const Eigen::Vector3d variable{{1.0, 2.0, 3.0}};
         REQUIRE_NOTHROW(function.evaluate_on(variable));
 
-        CHECK(function.value() == 14.0);  // NOLINT
+        CHECK(function.value() == 14.0);
     }
 }

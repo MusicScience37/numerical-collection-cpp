@@ -76,7 +76,6 @@ private:
 };
 
 [[nodiscard]] auto init_var() -> Eigen::Vector3d {
-    // NOLINTNEXTLINE
     return (Eigen::Vector3d() << 0, 0, 0).finished();
 }
 
@@ -88,7 +87,6 @@ private:
         Eigen::Vector3d::Constant(max_value)};
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(rosenbrock_function_fixture, "opt_rosenbrock_function",
     "steepest_descent") {
     test_optimizer(
@@ -101,7 +99,6 @@ STAT_BENCH_CASE_F(rosenbrock_function_fixture, "opt_rosenbrock_function",
         "steepest_descent");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(rosenbrock_function_fixture, "opt_rosenbrock_function",
     "downhill_simplex") {
     test_optimizer(
@@ -114,7 +111,6 @@ STAT_BENCH_CASE_F(rosenbrock_function_fixture, "opt_rosenbrock_function",
         "downhill_simplex");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(
     rosenbrock_function_fixture, "opt_rosenbrock_function", "dfp_optimizer") {
     test_optimizer(
@@ -127,7 +123,6 @@ STAT_BENCH_CASE_F(
         "dfp_optimizer");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(
     rosenbrock_function_fixture, "opt_rosenbrock_function", "bfgs_optimizer") {
     test_optimizer(
@@ -140,7 +135,6 @@ STAT_BENCH_CASE_F(
         "bfgs_optimizer");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(rosenbrock_function_fixture, "opt_rosenbrock_function",
     "dividing_rectangles") {
     test_optimizer(
@@ -154,7 +148,6 @@ STAT_BENCH_CASE_F(rosenbrock_function_fixture, "opt_rosenbrock_function",
         "dividing_rectangles");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(rosenbrock_function_fixture, "opt_rosenbrock_function",
     "heuristic_global_optimizer") {
     test_optimizer(

@@ -29,7 +29,6 @@
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::auto_diff::backward::variable", "", float, double) {
     using scalar_type = TestType;
@@ -97,7 +96,6 @@ TEMPLATE_TEST_CASE(
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::auto_diff::backward::operator+", "", float, double) {
     using scalar_type = TestType;
@@ -179,7 +177,6 @@ TEMPLATE_TEST_CASE(
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::auto_diff::backward::operator-", "", float, double) {
     using scalar_type = TestType;
@@ -257,7 +254,7 @@ TEMPLATE_TEST_CASE(
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wself-assign-overloaded"
 #endif
-        var -= var;  // NOLINT
+        var -= var;
 #if defined(__clang__)
 #pragma clang diagnostic pop
 #endif
@@ -267,7 +264,6 @@ TEMPLATE_TEST_CASE(
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::auto_diff::backward::operator*", "", float, double) {
     using scalar_type = TestType;
@@ -358,7 +354,6 @@ TEMPLATE_TEST_CASE(
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::auto_diff::backward::operator/", "", float, double) {
     using scalar_type = TestType;
@@ -443,7 +438,7 @@ TEMPLATE_TEST_CASE(
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wself-assign-overloaded"
 #endif
-        var /= var;  // NOLINT
+        var /= var;
 #if defined(__clang__)
 #pragma clang diagnostic pop
 #endif

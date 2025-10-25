@@ -120,7 +120,6 @@ sink = "not_exist"
     const auto name1 = std::string("sink1");
     const auto sink1 = std::make_shared<mock_log_sink>();
     const auto factory1 = std::make_shared<mock_log_sink_factory>();
-    // NOLINTNEXTLINE
     ALLOW_CALL(*factory1, create(_)).RETURN(sink1->to_log_sink());
     sinks.append(name1, factory1);
 

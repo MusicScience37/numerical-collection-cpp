@@ -43,7 +43,6 @@ TEST_CASE(
     const auto sink1 = std::make_shared<mock_log_sink>();
     const auto factory1 = std::make_shared<mock_log_sink_factory>();
     sinks.append(name1, factory1);
-    // NOLINTNEXTLINE
     ALLOW_CALL(*factory1, create(_)).RETURN(sink1->to_log_sink());
 
     SECTION("create from a configuration") {

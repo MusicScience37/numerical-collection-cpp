@@ -78,12 +78,12 @@ public:
     //! Type of real scalars.
     using real_scalar_type = RealScalar;
 
-    enum {  // NOLINT(performance-enum-size): Preserve the same implementation as Eigen library.
-        //! Number of columns at compile time. (For Eigen library.)
-        ColsAtCompileTime = MatrixType::ColsAtCompileTime,  // NOLINT
-        //! Maximum number of columns at compile time. (For Eigen library.)
-        MaxColsAtCompileTime = MatrixType::MaxColsAtCompileTime  // NOLINT
-    };
+    //! Number of columns at compile time. (For Eigen library.)
+    static constexpr int ColsAtCompileTime =  // NOLINT(*-naming)
+        MatrixType::ColsAtCompileTime;
+    //! Maximum number of columns at compile time. (For Eigen library.)
+    static constexpr int MaxColsAtCompileTime =  // NOLINT(*-naming)
+        MatrixType::MaxColsAtCompileTime;
 
     using Base::derived;
 
@@ -213,7 +213,7 @@ public:
      */
     template <base::concepts::dense_vector_of<scalar_type> Right,
         base::concepts::dense_vector_of<scalar_type> Solution>
-    void _solve_impl(  // NOLINT(readability-identifier-naming
+    void _solve_impl(  // NOLINT(*-naming)
                        // name required by Eigen.
         const Right& right, Solution& solution) const {
         // TODO: Version for matrices.
@@ -231,7 +231,7 @@ public:
      */
     template <base::concepts::dense_vector_of<scalar_type> Right,
         base::concepts::dense_vector_of<scalar_type> Solution>
-    void _solve_with_guess_impl(  // NOLINT(readability-identifier-naming
+    void _solve_with_guess_impl(  // NOLINT(*-naming)
                                   // name required by Eigen.
         const Right& right, Solution& solution) const {
         // TODO: Version for matrices.

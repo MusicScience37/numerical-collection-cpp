@@ -38,7 +38,7 @@ auto main() -> int {
     const double val = sum;
 
     const double reference = std::pow(num_collect::constants::pid, 4) / 90.0;
-    std::cout << std::setprecision(15);  // NOLINT
+    std::cout << std::setprecision(15);
     std::cout << "Value:     " << val << std::endl;
     std::cout << "Reference: " << reference << std::endl;
 

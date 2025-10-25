@@ -42,7 +42,6 @@ struct formatter<num_collect::multi_double::quad> {
      */
     constexpr auto parse(format_parse_context& context)
         -> format_parse_context::iterator {
-        // NOLINTNEXTLINE(readability-qualified-auto)
         auto iter = context.begin();
 
         if (iter == context.end() || *iter == '}') {
@@ -56,7 +55,6 @@ struct formatter<num_collect::multi_double::quad> {
             // Width.
             width_ = 0;
             while (iter != context.end() && is_digit(*iter)) {
-                // NOLINTNEXTLINE(*-magic-numbers)
                 width_ = width_ * 10 + (static_cast<int>(*iter) - '0');
                 ++iter;
             }
@@ -77,7 +75,6 @@ struct formatter<num_collect::multi_double::quad> {
             }
             precision_ = 0;
             while (iter != context.end() && is_digit(*iter)) {
-                // NOLINTNEXTLINE(*-magic-numbers)
                 precision_ = precision_ * 10 + (static_cast<int>(*iter) - '0');
                 ++iter;
             }
@@ -116,7 +113,6 @@ struct formatter<num_collect::multi_double::quad> {
         }
         constexpr std::size_t buffer_size = 45;
         std::array<char, buffer_size> buffer{};
-        // NOLINTNEXTLINE(readability-qualified-auto)
         const auto end =
             num_collect::multi_double::impl::format_decimal_scientific_to(
                 buffer.data(), value, precision_);
@@ -142,7 +138,7 @@ private:
     int width_{0};
 
     //! Precision.
-    int precision_{30};  // NOLINT(*-magic-numbers)
+    int precision_{30};
 };
 
 }  // namespace fmt

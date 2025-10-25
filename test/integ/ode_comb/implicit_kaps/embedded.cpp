@@ -31,7 +31,6 @@
 #include "num_collect/ode/rosenbrock/ros3w_formula.h"
 #include "num_prob_collect/ode/implicit_kaps_problem.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_PRODUCT_TEST_CASE("implicit_kaps_problem with embedded formulas", "",
     (
         // embedded Rosenbrock method.
@@ -60,7 +59,7 @@ TEMPLATE_PRODUCT_TEST_CASE("implicit_kaps_problem with embedded formulas", "",
         solve_and_check_with_reference(
             solver, init_time, finish_time, num_time_samples,
             [](double time) {
-                return Eigen::Vector2d{// NOLINTNEXTLINE
+                return Eigen::Vector2d{
                     {std::exp(-2.0 * time), std::exp(-time)}};
             },
             "epsilon1");
@@ -80,7 +79,7 @@ TEMPLATE_PRODUCT_TEST_CASE("implicit_kaps_problem with embedded formulas", "",
         solve_and_check_with_reference(
             solver, init_time, finish_time, num_time_samples,
             [](double time) {
-                return Eigen::Vector2d{// NOLINTNEXTLINE
+                return Eigen::Vector2d{
                     {std::exp(-2.0 * time), std::exp(-time)}};
             },
             "epsilon1e-4");
@@ -100,7 +99,7 @@ TEMPLATE_PRODUCT_TEST_CASE("implicit_kaps_problem with embedded formulas", "",
         solve_and_check_with_reference(
             solver, init_time, finish_time, num_time_samples,
             [](double time) {
-                return Eigen::Vector2d{// NOLINTNEXTLINE
+                return Eigen::Vector2d{
                     {std::exp(-2.0 * time), std::exp(-time)}};
             },
             "epsilon0");

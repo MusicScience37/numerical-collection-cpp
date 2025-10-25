@@ -34,7 +34,6 @@ TEST_CASE("num_collect::multi_double::impl::root_of_one_plus_square") {
         quad expected;
         std::tie(
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.766868f7c0304p-25, -0x1.f8e07514ac7d8p-80),
                 quad(0x1.0000000000004p+0, 0x1.1ca9ea4acf185p-54)),
@@ -45,7 +44,6 @@ TEST_CASE("num_collect::multi_double::impl::root_of_one_plus_square") {
             std::make_tuple(quad(0x1.4470bceaffb8dp+44, -0x1.33fdd08dd5560p-11),
                 quad(0x1.4470bceaffb8dp+44, -0x1.33fdd08da2d63p-11)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 

@@ -38,54 +38,38 @@ TEST_CASE("num_collect::rbf::rbfs::polyharmonic_spline_rbf") {
     SECTION("Degree 1") {
         const polyharmonic_spline_rbf<double, 1> rbf;
 
-        // NOLINTNEXTLINE
         CHECK_THAT(rbf(0.0), Catch::Matchers::WithinAbs(0.0, epsilon));
-        // NOLINTNEXTLINE
         CHECK_THAT(rbf(0.5), Catch::Matchers::WithinAbs(0.5, epsilon));
-        // NOLINTNEXTLINE
         CHECK_THAT(rbf(1.0), Catch::Matchers::WithinAbs(1.0, epsilon));
-        // NOLINTNEXTLINE
         CHECK_THAT(rbf(1.5), Catch::Matchers::WithinAbs(1.5, epsilon));
     }
 
     SECTION("Degree 2") {
         const polyharmonic_spline_rbf<double, 2> rbf;
 
-        // NOLINTNEXTLINE
         CHECK_THAT(rbf(0.0), Catch::Matchers::WithinAbs(0.0, epsilon));
-        // NOLINTNEXTLINE
         CHECK_THAT(
             rbf(0.5), Catch::Matchers::WithinAbs(-0.1732867951, epsilon));
-        // NOLINTNEXTLINE
         CHECK_THAT(rbf(1.0), Catch::Matchers::WithinAbs(0.0, epsilon));
-        // NOLINTNEXTLINE
         CHECK_THAT(rbf(1.5), Catch::Matchers::WithinAbs(0.9122964932, epsilon));
     }
 
     SECTION("Degree 3") {
         const polyharmonic_spline_rbf<double, 3> rbf;
 
-        // NOLINTNEXTLINE
         CHECK_THAT(rbf(0.0), Catch::Matchers::WithinAbs(0.0, epsilon));
-        // NOLINTNEXTLINE
         CHECK_THAT(rbf(0.5), Catch::Matchers::WithinAbs(0.125, epsilon));
-        // NOLINTNEXTLINE
         CHECK_THAT(rbf(1.0), Catch::Matchers::WithinAbs(1.0, epsilon));
-        // NOLINTNEXTLINE
         CHECK_THAT(rbf(1.5), Catch::Matchers::WithinAbs(3.375, epsilon));
     }
 
     SECTION("Degree 4") {
         const polyharmonic_spline_rbf<double, 4> rbf;
 
-        // NOLINTNEXTLINE
         CHECK_THAT(rbf(0.0), Catch::Matchers::WithinAbs(0.0, epsilon));
-        // NOLINTNEXTLINE
         CHECK_THAT(
             rbf(0.5), Catch::Matchers::WithinAbs(-0.04332169878, epsilon));
-        // NOLINTNEXTLINE
         CHECK_THAT(rbf(1.0), Catch::Matchers::WithinAbs(0.0, epsilon));
-        // NOLINTNEXTLINE
         CHECK_THAT(rbf(1.5), Catch::Matchers::WithinAbs(2.05266711, epsilon));
     }
 }

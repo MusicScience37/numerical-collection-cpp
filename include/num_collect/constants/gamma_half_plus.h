@@ -76,7 +76,6 @@ constexpr auto gamma_half_plus(const Integer n) noexcept -> Result {
         return impl::gamma_half_plus_at_compile_time<Result>(n);
     } else {
         return functions::gamma(
-            // NOLINTNEXTLINE(*-magic-numbers)
             static_cast<Result>(n) + static_cast<Result>(0.5));
     }
 }

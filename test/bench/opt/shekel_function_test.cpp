@@ -48,11 +48,7 @@ constexpr double tol_value = 1e-2;
 class shekel_function_fixture : public stat_bench::FixtureBase {
 public:
     shekel_function_fixture() {
-        add_param<int>("num_terms")
-            ->add(5)   // NOLINT
-            ->add(7)   // NOLINT
-            ->add(10)  // NOLINT
-            ;
+        add_param<int>("num_terms")->add(5)->add(7)->add(10);
     }
 
     void setup(stat_bench::InvocationContext& context) override {
@@ -126,7 +122,6 @@ STAT_BENCH_GROUP("opt_shekel_function")
     .add_parameter_to_output_line_plot(
         "num_terms", "evaluations", stat_bench::PlotOption::log_output);
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(
     shekel_function_fixture, "opt_shekel_function", "dividing_rectangles") {
     test_optimizer(
@@ -140,7 +135,6 @@ STAT_BENCH_CASE_F(
         "dividing_rectangles");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(shekel_function_fixture, "opt_shekel_function",
     "adaptive_diagonal_curves") {
     test_optimizer(
@@ -154,7 +148,6 @@ STAT_BENCH_CASE_F(shekel_function_fixture, "opt_shekel_function",
         "adaptive_diagonal_curves");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(shekel_function_fixture, "opt_shekel_function",
     "real_value_genetic_optimizer") {
     test_optimizer(
@@ -169,7 +162,6 @@ STAT_BENCH_CASE_F(shekel_function_fixture, "opt_shekel_function",
         "real_value_genetic_optimizer");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(shekel_function_fixture, "opt_shekel_function",
     "heuristic_global_optimizer") {
     test_optimizer(
@@ -183,7 +175,6 @@ STAT_BENCH_CASE_F(shekel_function_fixture, "opt_shekel_function",
         "heuristic_global_optimizer");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(shekel_function_fixture, "opt_shekel_function",
     "heuristic_global_optimizer_light") {
     test_optimizer(
@@ -198,7 +189,6 @@ STAT_BENCH_CASE_F(shekel_function_fixture, "opt_shekel_function",
         "heuristic_global_optimizer_light");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(shekel_function_fixture, "opt_shekel_function",
     "heuristic_global_optimizer_heavy") {
     test_optimizer(

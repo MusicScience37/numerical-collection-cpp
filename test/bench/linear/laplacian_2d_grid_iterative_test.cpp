@@ -39,12 +39,12 @@ class laplacian_2d_grid_iterative_fixture : public stat_bench::FixtureBase {
 public:
     laplacian_2d_grid_iterative_fixture() {
         add_param<num_collect::index_type>("size")
-            ->add(4 * 4)    // NOLINT
-            ->add(10 * 10)  // NOLINT
+            ->add(4 * 4)
+            ->add(10 * 10)
 #ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
-            ->add(32 * 32)    // NOLINT
-            ->add(100 * 100)  // NOLINT
-            ->add(320 * 320)  // NOLINT
+            ->add(32 * 32)
+            ->add(100 * 100)
+            ->add(320 * 320)
 #endif
             ;
     }
@@ -94,11 +94,11 @@ class laplacian_2d_grid_iterative_slower_fixture
 public:
     laplacian_2d_grid_iterative_slower_fixture() {
         add_param<num_collect::index_type>("size")
-            ->add(4 * 4)  // NOLINT
+            ->add(4 * 4)
 #ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
-            ->add(10 * 10)    // NOLINT
-            ->add(32 * 32)    // NOLINT
-            ->add(100 * 100)  // NOLINT
+            ->add(10 * 10)
+            ->add(32 * 32)
+            ->add(100 * 100)
 #endif
             ;
     }
@@ -481,7 +481,7 @@ STAT_BENCH_CASE_F(laplacian_2d_grid_iterative_slower_fixture,
     num_collect::linear::symmetric_successive_over_relaxation<mat_type> solver;
     Eigen::VectorXd sol;
 
-    solver.relaxation_coeff(0.5);  // NOLINT
+    solver.relaxation_coeff(0.5);
 
     STAT_BENCH_MEASURE() {
         solver.compute(grid.mat());
@@ -504,7 +504,7 @@ STAT_BENCH_CASE_F(laplacian_2d_grid_iterative_slower_fixture,
     num_collect::linear::symmetric_successive_over_relaxation<mat_type> solver;
     Eigen::VectorXd sol;
 
-    solver.relaxation_coeff(1.0);  // NOLINT
+    solver.relaxation_coeff(1.0);
 
     STAT_BENCH_MEASURE() {
         solver.compute(grid.mat());
@@ -527,7 +527,7 @@ STAT_BENCH_CASE_F(laplacian_2d_grid_iterative_slower_fixture,
     num_collect::linear::symmetric_successive_over_relaxation<mat_type> solver;
     Eigen::VectorXd sol;
 
-    solver.relaxation_coeff(1.5);  // NOLINT
+    solver.relaxation_coeff(1.5);
 
     STAT_BENCH_MEASURE() {
         solver.compute(grid.mat());
@@ -551,7 +551,7 @@ STAT_BENCH_CASE_F(laplacian_2d_grid_iterative_slower_fixture,
         solver;
     Eigen::VectorXd sol;
 
-    solver.relaxation_coeff(0.5);  // NOLINT
+    solver.relaxation_coeff(0.5);
 
     STAT_BENCH_MEASURE() {
         solver.compute(grid.mat());
@@ -576,7 +576,7 @@ STAT_BENCH_CASE_F(laplacian_2d_grid_iterative_slower_fixture,
         solver;
     Eigen::VectorXd sol;
 
-    solver.relaxation_coeff(1.0);  // NOLINT
+    solver.relaxation_coeff(1.0);
 
     STAT_BENCH_MEASURE() {
         solver.compute(grid.mat());
@@ -601,7 +601,7 @@ STAT_BENCH_CASE_F(laplacian_2d_grid_iterative_slower_fixture,
         solver;
     Eigen::VectorXd sol;
 
-    solver.relaxation_coeff(1.0);  // NOLINT
+    solver.relaxation_coeff(1.0);
 
     STAT_BENCH_MEASURE() {
         solver.compute(grid.mat());

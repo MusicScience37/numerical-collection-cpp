@@ -30,7 +30,6 @@
 #include "eigen_approx.h"
 #include "num_collect/auto_diff/forward/create_diff_variable.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::auto_diff::forward::variable<Scalar>", "", float, double) {
     using variable_type = num_collect::auto_diff::forward::variable<TestType>;
@@ -165,7 +164,6 @@ TEMPLATE_TEST_CASE(
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::auto_diff::forward::variable<Scalar> operators", "", float,
     double) {
@@ -308,7 +306,6 @@ TEMPLATE_TEST_CASE(
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::auto_diff::forward::variable<Scalar, Vector> operations", "",
     float, double) {

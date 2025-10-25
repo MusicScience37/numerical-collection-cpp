@@ -74,9 +74,9 @@ inline auto trunc_impl(quad x) noexcept -> quad {
  */
 inline auto round_impl(quad x) noexcept -> quad {
     if (x >= quad(0.0)) {
-        return floor_impl(x + 0.5);  // NOLINT(*-magic-numbers)
+        return floor_impl(x + 0.5);
     }
-    return ceil_impl(x - 0.5);  // NOLINT(*-magic-numbers)
+    return ceil_impl(x - 0.5);
 }
 
 }  // namespace num_collect::multi_double::impl

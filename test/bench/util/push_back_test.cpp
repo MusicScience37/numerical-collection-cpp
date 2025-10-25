@@ -31,11 +31,11 @@ public:
     push_back_fixture() {
         this->add_param<bool>("reserved")->add(true)->add(false);
         this->add_param<num_collect::index_type>("size")
-            ->add(100)  // NOLINT
+            ->add(100)
 #ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
-            ->add(1000)    // NOLINT
-            ->add(10000)   // NOLINT
-            ->add(100000)  // NOLINT
+            ->add(1000)
+            ->add(10000)
+            ->add(100000)
 #endif
             ;
     }

@@ -56,7 +56,6 @@ TEST_CASE("num_collect::multi_double::impl::quick_two_sum") {
         double e_true{};
         std::tie(a, b, s_true, e_true) =
             GENERATE(Catch::Generators::table<double, double, double, double>({
-                // NOLINTBEGIN
                 // cspell: disable
                 std::make_tuple(0x1.4ec8826dadce9p-1, 0x1.1af9948136b00p-21,
                     0x1.4ec8941d4716ap-1, 0x1.b580000000000p-56),
@@ -65,7 +64,6 @@ TEST_CASE("num_collect::multi_double::impl::quick_two_sum") {
                 std::make_tuple(-0x1.4b2089fd0eaf2p-13, 0x1.75ab32e4c3a6ep-54,
                     -0x1.4b2089fd0df45p-13, 0x1.665c9874dc000p-67)
                 // cspell: enable
-                // NOLINTEND
             }));
         const auto [s, e] = quick_two_sum(a, b);
         CHECK_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
@@ -74,7 +72,6 @@ TEST_CASE("num_collect::multi_double::impl::quick_two_sum") {
 
     SECTION("calculate at compile time") {
         static constexpr auto inputs = std::to_array({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(0x1.4ec8826dadce9p-1, 0x1.1af9948136b00p-21,
                 0x1.4ec8941d4716ap-1, 0x1.b580000000000p-56),
@@ -83,7 +80,6 @@ TEST_CASE("num_collect::multi_double::impl::quick_two_sum") {
             std::make_tuple(-0x1.4b2089fd0eaf2p-13, 0x1.75ab32e4c3a6ep-54,
                 -0x1.4b2089fd0df45p-13, 0x1.665c9874dc000p-67),
             // cspell: enable
-            // NOLINTEND
         });
         constexpr auto outputs = [] constexpr {
             std::array<std::tuple<double, double>, inputs.size()> results{};
@@ -109,8 +105,8 @@ TEST_CASE("num_collect::multi_double::impl::quick_two_sum") {
         constexpr double s_true = 0.0;
         constexpr double e_true = 0.0;
         const auto [s, e] = quick_two_sum(a, b);
-        CHECK(s == s_true);  // NOLINT
-        CHECK(e == e_true);  // NOLINT
+        CHECK(s == s_true);
+        CHECK(e == e_true);
     }
 }
 
@@ -164,7 +160,6 @@ TEST_CASE("num_collect::multi_double::impl::two_sum") {
         double e_true{};
         std::tie(a, b, s_true, e_true) =
             GENERATE(Catch::Generators::table<double, double, double, double>({
-                // NOLINTBEGIN
                 // cspell: disable
                 std::make_tuple(0x1.752ce6b30fa8ap-2, 0x1.63ca1efb198f9p-37,
                     0x1.752ce6b33c21ep-2, 0x1.efb198f900000p-57),
@@ -175,7 +170,6 @@ TEST_CASE("num_collect::multi_double::impl::two_sum") {
                 std::make_tuple(-0x1.f20991f2ea560p-17, 0x1.84cadb1bf3b14p-34,
                     -0x1.f208cf8d7cc80p-17, -0x1.89d8000000000p-71),
                 // cspell: enable
-                // NOLINTEND
             }));
         const auto [s, e] = two_sum(a, b);
         CHECK_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
@@ -184,7 +178,6 @@ TEST_CASE("num_collect::multi_double::impl::two_sum") {
 
     SECTION("calculate at compile time") {
         static constexpr auto inputs = std::to_array({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(0x1.752ce6b30fa8ap-2, 0x1.63ca1efb198f9p-37,
                 0x1.752ce6b33c21ep-2, 0x1.efb198f900000p-57),
@@ -195,7 +188,6 @@ TEST_CASE("num_collect::multi_double::impl::two_sum") {
             std::make_tuple(-0x1.f20991f2ea560p-17, 0x1.84cadb1bf3b14p-34,
                 -0x1.f208cf8d7cc80p-17, -0x1.89d8000000000p-71),
             // cspell: enable
-            // NOLINTEND
         });
         constexpr auto outputs = [] constexpr {
             std::array<std::tuple<double, double>, inputs.size()> results{};
@@ -221,8 +213,8 @@ TEST_CASE("num_collect::multi_double::impl::two_sum") {
         constexpr double s_true = 0.0;
         constexpr double e_true = 0.0;
         const auto [s, e] = two_sum(a, b);
-        CHECK(s == s_true);  // NOLINT
-        CHECK(e == e_true);  // NOLINT
+        CHECK(s == s_true);
+        CHECK(e == e_true);
     }
 }
 
@@ -288,7 +280,6 @@ TEST_CASE("num_collect::multi_double::impl::two_prod_no_fma") {
         double e_true{};
         std::tie(a, b, s_true, e_true) =
             GENERATE(Catch::Generators::table<double, double, double, double>({
-                // NOLINTBEGIN
                 // cspell: disable
                 std::make_tuple(0x1.0eda2a085a8b0p+16, 0x1.35e2911f3e380p-10,
                     0x1.47dd0adfd0b7ap+6, -0x1.0b8b34c3cc000p-49),
@@ -297,7 +288,6 @@ TEST_CASE("num_collect::multi_double::impl::two_prod_no_fma") {
                 std::make_tuple(0x1.6ebd2ea984d78p+8, -0x1.83fea770287bcp-21,
                     -0x1.15ea668e531bbp-12, -0x1.6c2fbf7465840p-66),
                 // cspell: enable
-                // NOLINTEND
             }));
         const auto [s, e] = two_prod_no_fma(a, b);
         CHECK_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
@@ -306,7 +296,6 @@ TEST_CASE("num_collect::multi_double::impl::two_prod_no_fma") {
 
     SECTION("calculate at compile time") {
         static constexpr auto inputs = std::to_array({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(0x1.0eda2a085a8b0p+16, 0x1.35e2911f3e380p-10,
                 0x1.47dd0adfd0b7ap+6, -0x1.0b8b34c3cc000p-49),
@@ -315,7 +304,6 @@ TEST_CASE("num_collect::multi_double::impl::two_prod_no_fma") {
             std::make_tuple(0x1.6ebd2ea984d78p+8, -0x1.83fea770287bcp-21,
                 -0x1.15ea668e531bbp-12, -0x1.6c2fbf7465840p-66),
             // cspell: enable
-            // NOLINTEND
         });
         constexpr auto outputs = [] constexpr {
             std::array<std::tuple<double, double>, inputs.size()> results{};
@@ -341,8 +329,8 @@ TEST_CASE("num_collect::multi_double::impl::two_prod_no_fma") {
         constexpr double s_true = 0.0;
         constexpr double e_true = 0.0;
         const auto [s, e] = two_prod_no_fma(a, b);
-        CHECK(s == s_true);  // NOLINT
-        CHECK(e == e_true);  // NOLINT
+        CHECK(s == s_true);
+        CHECK(e == e_true);
     }
 }
 
@@ -388,7 +376,6 @@ TEST_CASE("num_collect::multi_double::impl::two_prod_fma") {
         double e_true{};
         std::tie(a, b, s_true, e_true) =
             GENERATE(Catch::Generators::table<double, double, double, double>({
-                // NOLINTBEGIN
                 // cspell: disable
                 std::make_tuple(0x1.0eda2a085a8b0p+16, 0x1.35e2911f3e380p-10,
                     0x1.47dd0adfd0b7ap+6, -0x1.0b8b34c3cc000p-49),
@@ -397,7 +384,6 @@ TEST_CASE("num_collect::multi_double::impl::two_prod_fma") {
                 std::make_tuple(0x1.6ebd2ea984d78p+8, -0x1.83fea770287bcp-21,
                     -0x1.15ea668e531bbp-12, -0x1.6c2fbf7465840p-66),
                 // cspell: enable
-                // NOLINTEND
             }));
         const auto [s, e] = two_prod_fma(a, b);
         CHECK_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
@@ -410,8 +396,8 @@ TEST_CASE("num_collect::multi_double::impl::two_prod_fma") {
         constexpr double s_true = 0.0;
         constexpr double e_true = 0.0;
         const auto [s, e] = two_prod_fma(a, b);
-        CHECK(s == s_true);  // NOLINT
-        CHECK(e == e_true);  // NOLINT
+        CHECK(s == s_true);
+        CHECK(e == e_true);
     }
 }
 
@@ -457,7 +443,6 @@ TEST_CASE("num_collect::multi_double::impl::two_prod") {
         double e_true{};
         std::tie(a, b, s_true, e_true) =
             GENERATE(Catch::Generators::table<double, double, double, double>({
-                // NOLINTBEGIN
                 // cspell: disable
                 std::make_tuple(0x1.0eda2a085a8b0p+16, 0x1.35e2911f3e380p-10,
                     0x1.47dd0adfd0b7ap+6, -0x1.0b8b34c3cc000p-49),
@@ -466,7 +451,6 @@ TEST_CASE("num_collect::multi_double::impl::two_prod") {
                 std::make_tuple(0x1.6ebd2ea984d78p+8, -0x1.83fea770287bcp-21,
                     -0x1.15ea668e531bbp-12, -0x1.6c2fbf7465840p-66),
                 // cspell: enable
-                // NOLINTEND
             }));
         const auto [s, e] = two_prod(a, b);
         CHECK_THAT(s, Catch::Matchers::WithinULP(s_true, 0));
@@ -475,7 +459,6 @@ TEST_CASE("num_collect::multi_double::impl::two_prod") {
 
     SECTION("calculate at compile time") {
         static constexpr auto inputs = std::to_array({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(0x1.0eda2a085a8b0p+16, 0x1.35e2911f3e380p-10,
                 0x1.47dd0adfd0b7ap+6, -0x1.0b8b34c3cc000p-49),
@@ -484,7 +467,6 @@ TEST_CASE("num_collect::multi_double::impl::two_prod") {
             std::make_tuple(0x1.6ebd2ea984d78p+8, -0x1.83fea770287bcp-21,
                 -0x1.15ea668e531bbp-12, -0x1.6c2fbf7465840p-66),
             // cspell: enable
-            // NOLINTEND
         });
         constexpr auto outputs = [] constexpr {
             std::array<std::tuple<double, double>, inputs.size()> results{};
@@ -510,7 +492,7 @@ TEST_CASE("num_collect::multi_double::impl::two_prod") {
         constexpr double s_true = 0.0;
         constexpr double e_true = 0.0;
         const auto [s, e] = two_prod(a, b);
-        CHECK(s == s_true);  // NOLINT
-        CHECK(e == e_true);  // NOLINT
+        CHECK(s == s_true);
+        CHECK(e == e_true);
     }
 }

@@ -40,7 +40,6 @@
 #include "num_collect/ode/runge_kutta/tanaka2_formula.h"
 #include "num_prob_collect/ode/external_force_vibration_problem.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_PRODUCT_TEST_CASE(
     "external_force_vibration_problem with embedded formulas", "",
     (

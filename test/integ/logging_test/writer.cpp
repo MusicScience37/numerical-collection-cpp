@@ -95,11 +95,11 @@ static void write_iterations() {
     iteration_logger.append("val2", val2);
     iteration_logger.template append<double>("val3", [] {
         // Use a function to return the value.
-        return 1.23456;  // NOLINT
+        return 1.23456;
     });
 
     // Set and write values.
-    val1 = 3;  // NOLINT
+    val1 = 3;
     val2 = "abc";
 
     // Iteratively set and write values.
