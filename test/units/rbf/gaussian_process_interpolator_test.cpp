@@ -26,8 +26,8 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "comparison_approvals.h"
+#include "num_collect/base/constants.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/constants/pi.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
 
 TEST_CASE("num_collect::rbf::gaussian_process_interpolator") {
@@ -40,7 +40,7 @@ TEST_CASE("num_collect::rbf::gaussian_process_interpolator") {
 
     SECTION("interpolate with a fixed scale") {
         const auto function = [](double x) {
-            return std::cos(num_collect::constants::pi<double> * x);
+            return std::cos(num_collect::pi<double> * x);
         };
 
         const auto sample_variables = std::vector<double>{0.0, 0.5, 0.8, 1.0};
@@ -78,7 +78,7 @@ TEST_CASE("num_collect::rbf::gaussian_process_interpolator") {
 
     SECTION("interpolate with a optimal scale") {
         const auto function = [](double x) {
-            return std::cos(num_collect::constants::pi<double> * x);
+            return std::cos(num_collect::pi<double> * x);
         };
 
         const auto sample_variables = std::vector<double>{0.0, 0.5, 0.8, 1.0};

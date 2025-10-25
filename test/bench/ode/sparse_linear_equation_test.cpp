@@ -26,8 +26,8 @@
 #include <stat_bench/invocation_context.h>
 #include <stat_bench/plot_options.h>
 
+#include "num_collect/base/constants.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/constants/pi.h"
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/impl/bicgstab.h"
 #include "num_collect/ode/impl/gmres.h"
@@ -68,7 +68,7 @@ public:
         for (int i = 0; i < size_; ++i) {
             const double rate =
                 static_cast<double>(i) / static_cast<double>(size_);
-            true_sol_(i) = std::sin(rate * num_collect::constants::pi<double>);
+            true_sol_(i) = std::sin(rate * num_collect::pi<double>);
         }
 
         rhs_ = coeff_ * true_sol_;

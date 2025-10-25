@@ -30,8 +30,6 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/isfinite.h"
 #include "num_collect/base/precondition.h"
-#include "num_collect/constants/half.h"
-#include "num_collect/constants/one.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/logging/logging_mixin.h"
@@ -121,7 +119,7 @@ public:
     [[nodiscard]] auto integrate(const Function& function, variable_type left,
         variable_type right) const -> result_type {
         const variable_type center =
-            constants::half<variable_type> * (left + right);
+            static_cast<variable_type>(0.5) * (left + right);
         const variable_type width = right - left;
 
         constexpr auto center_weight_rate = static_cast<variable_type>(0.5);
@@ -173,10 +171,9 @@ public:
         const LeftBoundaryFunction& left_boundary_function,
         const RightBoundaryFunction& right_boundary_function,
         variable_type left, variable_type right) const -> result_type {
-        using constants::half;
-
         const variable_type width = right - left;
-        const variable_type half_width = half<variable_type> * width;
+        const variable_type half_width =
+            static_cast<variable_type>(0.5) * width;
 
         constexpr auto center_weight_rate = static_cast<variable_type>(0.5);
         const variable_type center_weight = width * center_weight_rate;
@@ -280,8 +277,6 @@ private:
      * \note Set points_ before calling this function.
      */
     void calculate_coefficients() {
-        using constants::one;
-
         variable_rate_list_.clear();
         variable_rate_list_.reserve(static_cast<std::size_t>(points_));
         weight_rate_list_.clear();
@@ -293,7 +288,8 @@ private:
                 interval_ * static_cast<variable_type>(i);
             const variable_type exp_value =
                 std::exp(static_cast<variable_type>(-2) * changed_variable);
-            const variable_type denominator = one<variable_type> + exp_value;
+            const variable_type denominator =
+                static_cast<variable_type>(1) + exp_value;
             variable_rate_list_.push_back(exp_value / denominator);
             weight_rate_list_.push_back(static_cast<variable_type>(2) *
                 exp_value / (denominator * denominator));

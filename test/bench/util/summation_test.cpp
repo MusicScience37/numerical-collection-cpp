@@ -26,8 +26,8 @@
 #include <stat_bench/fixture_base.h>
 #include <stat_bench/invocation_context.h>
 
-#include "num_collect/constants/pi.h"
-#include "num_collect/constants/pow.h"
+#include "num_collect/base/constants.h"
+#include "num_collect/functions/pow.h"
 #include "num_collect/multi_double/quad.h"
 #include "num_collect/util/kahan_adder.h"
 
@@ -57,7 +57,7 @@ constexpr std::size_t zeta4_terms = 100;
 constexpr std::size_t zeta4_terms = 100000;
 #endif
 constexpr double zeta4_reference =
-    num_collect::constants::pow(num_collect::constants::pid, 4) / 90.0;
+    num_collect::functions::pow(num_collect::pid, 4) / 90.0;
 
 STAT_BENCH_CASE_F(summation_fixture, "sum_zeta4", "ordinary") {
     double result = 0.0;

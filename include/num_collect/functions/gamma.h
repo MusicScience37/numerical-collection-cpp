@@ -22,7 +22,7 @@
 #include <cmath>
 #include <complex>
 
-#include "num_collect/constants/pi.h"
+#include "num_collect/base/constants.h"
 #include "num_collect/functions/impl/gamma_lanczos.h"
 
 namespace num_collect::functions {
@@ -35,7 +35,7 @@ namespace num_collect::functions {
  */
 [[nodiscard]] constexpr auto gamma(float x) noexcept -> float {
     if (x < 1.0F) {
-        const float pi_1mx = constants::pi<float> * (1.0F - x);
+        const float pi_1mx = pi<float> * (1.0F - x);
         return pi_1mx / std::sin(pi_1mx) /
             impl::gamma_lanczos<float>::gamma(2.0F - x);
     }
@@ -50,7 +50,7 @@ namespace num_collect::functions {
  */
 [[nodiscard]] constexpr auto gamma(double x) noexcept -> double {
     if (x < 1.0) {
-        const double pi_1mx = constants::pi<double> * (1.0 - x);
+        const double pi_1mx = pi<double> * (1.0 - x);
         return pi_1mx / std::sin(pi_1mx) /
             impl::gamma_lanczos<double>::gamma(2.0 - x);
     }
@@ -66,7 +66,7 @@ namespace num_collect::functions {
 [[nodiscard]] constexpr auto gamma(std::complex<float> x) noexcept
     -> std::complex<float> {
     if (x.real() < 1.0F) {
-        const std::complex<float> pi_1mx = constants::pi<float> * (1.0F - x);
+        const std::complex<float> pi_1mx = pi<float> * (1.0F - x);
         return pi_1mx / std::sin(pi_1mx) /
             impl::gamma_lanczos<float>::gamma(2.0F - x);
     }
@@ -82,7 +82,7 @@ namespace num_collect::functions {
 [[nodiscard]] constexpr auto gamma(std::complex<double> x) noexcept
     -> std::complex<double> {
     if (x.real() < 1.0) {
-        const std::complex<double> pi_1mx = constants::pi<double> * (1.0 - x);
+        const std::complex<double> pi_1mx = pi<double> * (1.0 - x);
         return pi_1mx / std::sin(pi_1mx) /
             impl::gamma_lanczos<double>::gamma(2.0 - x);
     }

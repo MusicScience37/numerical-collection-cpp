@@ -26,11 +26,10 @@
 #include <Eigen/Core>
 
 #include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/constants.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
-#include "num_collect/constants/pi.h"    // IWYU pragma: keep
-#include "num_collect/constants/zero.h"  // IWYU pragma: keep
 #include "num_collect/functions/legendre.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/roots/newton_raphson.h"
@@ -158,7 +157,7 @@ public:
             using std::cos;
             constexpr auto offset_in_num = static_cast<variable_type>(0.75);
             constexpr auto offset_in_den = static_cast<variable_type>(0.5);
-            const variable_type init_var = cos(constants::pi<variable_type> *
+            const variable_type init_var = cos(pi<variable_type> *
                 (static_cast<variable_type>(i) + offset_in_num) /
                 (static_cast<variable_type>(degree_) + offset_in_den));
 
@@ -168,7 +167,7 @@ public:
         }
         const index_type center = (degree_ - 1) / 2;
         if (degree_ % 2 == 1) {
-            roots_[center] = constants::zero<variable_type>;
+            roots_[center] = static_cast<variable_type>(0);
         }
         for (index_type i = center + 1; i < degree_; ++i) {
             roots_[i] = -roots_[degree_ - 1 - i];

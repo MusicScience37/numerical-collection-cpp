@@ -24,7 +24,7 @@
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/precondition.h"
-#include "num_collect/constants/sqrt.h"
+#include "num_collect/functions/sqrt.h"
 #include "num_collect/logging/logging_macros.h"
 
 namespace num_collect::ode {
@@ -46,7 +46,7 @@ constexpr auto default_step_size_upper_limit = static_cast<Scalar>(1);
  */
 template <base::concepts::real_scalar Scalar>
 constexpr Scalar default_step_size_lower_limit =
-    constants::sqrt(std::numeric_limits<Scalar>::epsilon());
+    functions::sqrt(std::numeric_limits<Scalar>::epsilon());
 
 }  // namespace impl
 

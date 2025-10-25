@@ -24,10 +24,6 @@
 #include <utility>
 
 #include "num_collect/base/concepts/real_scalar.h"
-#include "num_collect/constants/half.h"  // IWYU pragma: keep
-#include "num_collect/constants/one.h"   // IWYU pragma: keep
-#include "num_collect/constants/two.h"   // IWYU pragma: keep
-#include "num_collect/constants/zero.h"  // IWYU pragma: keep
 
 namespace num_collect::functions {
 
@@ -43,24 +39,24 @@ namespace num_collect::functions {
 template <base::concepts::real_scalar F, std::integral I>
 constexpr auto legendre(F x, I n) -> F {
     if constexpr (std::is_signed_v<I>) {
-        if (n < constants::zero<I>) {
+        if (n < static_cast<I>(0)) {
             return std::numeric_limits<F>::quiet_NaN();
         }
     }
-    if (n == constants::zero<I>) {
-        return constants::one<F>;
+    if (n == static_cast<I>(0)) {
+        return static_cast<F>(1);
     }
-    if (n == constants::one<I>) {
+    if (n == static_cast<I>(1)) {
         return x;
     }
-    F y_p = constants::zero<F>;
+    F y_p = static_cast<F>(0);
     F y = x;
-    F y_m = constants::one<F>;
-    for (I i = constants::one<I>; i < n; ++i) {
+    F y_m = static_cast<F>(1);
+    for (I i = static_cast<I>(1); i < n; ++i) {
         y_p =
-            (static_cast<F>(constants::two<I> * i + constants::one<I>) * x * y -
+            (static_cast<F>(static_cast<I>(2) * i + static_cast<I>(1)) * x * y -
                 static_cast<F>(i) * y_m) /
-            static_cast<F>(i + constants::one<I>);
+            static_cast<F>(i + static_cast<I>(1));
         y_m = y;
         y = y_p;
     }
@@ -79,47 +75,47 @@ constexpr auto legendre(F x, I n) -> F {
 template <base::concepts::real_scalar F, std::integral I>
 constexpr auto legendre_with_diff(F x, I n) -> std::pair<F, F> {
     if constexpr (std::is_signed_v<I>) {
-        if (n < constants::zero<I>) {
+        if (n < static_cast<I>(0)) {
             return {std::numeric_limits<F>::quiet_NaN(),
                 std::numeric_limits<F>::quiet_NaN()};
         }
     }
-    if (n == constants::zero<I>) {
-        return {constants::one<F>, constants::zero<F>};
+    if (n == static_cast<I>(0)) {
+        return {static_cast<F>(1), static_cast<F>(0)};
     }
-    if (n == constants::one<I>) {
-        return {x, constants::one<F>};
+    if (n == static_cast<I>(1)) {
+        return {x, static_cast<F>(1)};
     }
 
-    if (x == constants::one<F>) {
-        return {constants::one<F>,
-            constants::half<F> * static_cast<F>(n) *
-                static_cast<F>(n + constants::one<I>)};
+    if (x == static_cast<F>(1)) {
+        return {static_cast<F>(1),
+            static_cast<F>(0.5) * static_cast<F>(n) *
+                static_cast<F>(n + static_cast<I>(1))};
     }
-    if (x == -constants::one<F>) {
-        if (n % constants::two<I> == constants::zero<I>) {
-            return {constants::one<F>,
-                -constants::half<F> * static_cast<F>(n) *
-                    static_cast<F>(n + constants::one<I>)};
+    if (x == -static_cast<F>(1)) {
+        if (n % static_cast<I>(2) == static_cast<I>(0)) {
+            return {static_cast<F>(1),
+                -static_cast<F>(0.5) * static_cast<F>(n) *
+                    static_cast<F>(n + static_cast<I>(1))};
         }
-        return {-constants::one<F>,
-            constants::half<F> * static_cast<F>(n) *
-                static_cast<F>(n + constants::one<I>)};
+        return {-static_cast<F>(1),
+            static_cast<F>(0.5) * static_cast<F>(n) *
+                static_cast<F>(n + static_cast<I>(1))};
     }
 
-    F y_p = constants::zero<F>;
+    F y_p = static_cast<F>(0);
     F y = x;
-    F y_m = constants::one<F>;
-    for (I i = constants::one<I>; i < n; ++i) {
+    F y_m = static_cast<F>(1);
+    for (I i = static_cast<I>(1); i < n; ++i) {
         y_p =
-            (static_cast<F>(constants::two<I> * i + constants::one<I>) * x * y -
+            (static_cast<F>(static_cast<I>(2) * i + static_cast<I>(1)) * x * y -
                 static_cast<F>(i) * y_m) /
-            static_cast<F>(i + constants::one<I>);
+            static_cast<F>(i + static_cast<I>(1));
         y_m = y;
         y = y_p;
     }
 
-    F dif = static_cast<F>(n) * (y_m - x * y) / (constants::one<F> - x * x);
+    F dif = static_cast<F>(n) * (y_m - x * y) / (static_cast<F>(1) - x * x);
 
     return {y, dif};
 }

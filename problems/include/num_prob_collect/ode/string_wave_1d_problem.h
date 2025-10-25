@@ -23,8 +23,8 @@
 
 #include <Eigen/Core>
 
+#include "num_collect/base/constants.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/constants/pi.h"
 #include "num_collect/ode/evaluation_type.h"
 #include "num_collect/util/assert.h"
 
@@ -154,20 +154,14 @@ public:
 
         // velocity.
         solution_.segment(0, num_points) =
-            (points_ * num_collect::constants::pi<double> / length_)
-                .array()
-                .sin() *
-            (-num_collect::constants::pi<double> * speed_ / length_) *
-            std::sin(
-                time * num_collect::constants::pi<double> * speed_ / length_);
+            (points_ * num_collect::pi<double> / length_).array().sin() *
+            (-num_collect::pi<double> * speed_ / length_) *
+            std::sin(time * num_collect::pi<double> * speed_ / length_);
 
         // displacement.
         solution_.segment(num_points, num_points) =
-            (points_ * num_collect::constants::pi<double> / length_)
-                .array()
-                .sin() *
-            std::cos(
-                time * num_collect::constants::pi<double> * speed_ / length_);
+            (points_ * num_collect::pi<double> / length_).array().sin() *
+            std::cos(time * num_collect::pi<double> * speed_ / length_);
     }
 
     /*!

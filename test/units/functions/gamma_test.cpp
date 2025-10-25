@@ -26,9 +26,9 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "comparison_approvals.h"
+#include "num_collect/base/constants.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/constants/pi.h"  // IWYU pragma: keep
-#include "num_collect/constants/sqrt.h"
+#include "num_collect/functions/sqrt.h"
 
 TEMPLATE_TEST_CASE("num_collect::functions::gamma", "", float, double) {
     using num_collect::functions::gamma;
@@ -47,10 +47,9 @@ TEMPLATE_TEST_CASE("num_collect::functions::gamma", "", float, double) {
             static_cast<TestType>(2.0), static_cast<TestType>(6.0),
             static_cast<TestType>(24.0),
             // real numbers
-            num_collect::constants::sqrt(num_collect::constants::pi<TestType>),
+            num_collect::functions::sqrt(num_collect::pi<TestType>),
             static_cast<TestType>(-2.0) *
-                num_collect::constants::sqrt(
-                    num_collect::constants::pi<TestType>),
+                num_collect::functions::sqrt(num_collect::pi<TestType>),
             static_cast<TestType>(2.6789385347077476337),
             static_cast<TestType>(83385367.89997001),
             static_cast<TestType>(-3.786145218746391e-09)}};
@@ -113,7 +112,7 @@ TEMPLATE_TEST_CASE("num_collect::functions::log_gamma", "", float, double) {
             static_cast<TestType>(6.0),
             static_cast<TestType>(24.0),
             // real numbers
-            num_collect::constants::sqrt(num_collect::constants::pi<TestType>),
+            num_collect::functions::sqrt(num_collect::pi<TestType>),
             static_cast<TestType>(2.6789385347077476337),
             static_cast<TestType>(83385367.89997001),
         }};

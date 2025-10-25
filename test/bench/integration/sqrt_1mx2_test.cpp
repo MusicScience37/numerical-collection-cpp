@@ -25,8 +25,8 @@
 #include <stat_bench/invocation_context.h>
 
 #include "fixtures.h"
+#include "num_collect/base/constants.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/constants/pi.h"
 #include "num_collect/integration/de_finite_integrator.h"
 #include "num_collect/integration/gauss_legendre_integrator.h"
 #include "num_collect/integration/gauss_legendre_kronrod_integrator.h"
@@ -41,7 +41,7 @@ void perform(const Integrator& integrator) {
         val = integrator(
             [](double x) { return std::sqrt(1.0 - x * x); }, -1.0, 1.0);
     };
-    const double true_val = 0.5 * num_collect::constants::pi<double>;
+    const double true_val = 0.5 * num_collect::pi<double>;
     stat_bench::current_invocation_context().add_custom_output(
         "error", std::abs(val - true_val));
 }

@@ -20,7 +20,6 @@
 #pragma once
 
 #include "num_collect/base/index_type.h"
-#include "num_collect/constants/half.h"  // IWYU pragma: keep
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/concepts/formula.h"
 #include "num_collect/ode/embedded_solver.h"
@@ -98,7 +97,7 @@ public:
         step(time, step_size, current, rough_estimate);
         variable_type half_estimate;
         const scalar_type half_step_size =
-            constants::half<scalar_type> * step_size;
+            static_cast<scalar_type>(0.5) * step_size;
         step(time, half_step_size, current, half_estimate);
         step(time, half_step_size, half_estimate, estimate);
         error = rough_estimate - estimate;

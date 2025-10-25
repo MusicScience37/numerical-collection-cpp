@@ -22,7 +22,6 @@
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
-#include "num_collect/constants/half.h"  // IWYU pragma: keep
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/ode/concepts/multi_variate_problem.h"
@@ -100,7 +99,7 @@ public:
         constexpr auto evaluations = evaluation_type{.diff_coeff = true};
 
         problem().evaluate_on(time, estimate, evaluations);
-        estimate.head(half_dim) += step_size * constants::half<scalar_type> *
+        estimate.head(half_dim) += step_size * static_cast<scalar_type>(0.5) *
             problem().diff_coeff().head(half_dim);
 
         problem().evaluate_on(time, estimate, evaluations);
@@ -108,7 +107,7 @@ public:
             step_size * problem().diff_coeff().tail(half_dim);
 
         problem().evaluate_on(time, estimate, evaluations);
-        estimate.head(half_dim) += step_size * constants::half<scalar_type> *
+        estimate.head(half_dim) += step_size * static_cast<scalar_type>(0.5) *
             problem().diff_coeff().head(half_dim);
     }
 };

@@ -29,7 +29,6 @@
 #include "num_collect/base/concepts/dense_matrix.h"
 #include "num_collect/base/concepts/sparse_matrix_of.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/constants/zero.h"
 #include "num_collect/rbf/concepts/csrbf.h"
 #include "num_collect/rbf/concepts/distance_function.h"
 #include "num_collect/rbf/concepts/length_parameter_calculator.h"
@@ -82,7 +81,7 @@ inline void compute_kernel_matrix_parallel(
         length_parameter_calculator.length_parameter_at(0);
     NUM_COLLECT_ASSERT(length_parameter > static_cast<scalar_type>(0));
 
-    const scalar_type diagonal_coeff = rbf(constants::zero<scalar_type>);
+    const scalar_type diagonal_coeff = rbf(static_cast<scalar_type>(0));
 
     const index_type num_variables = variables.size();
     kernel_matrix.resize(num_variables, num_variables);

@@ -23,8 +23,6 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/norm.h"
 #include "num_collect/base/precondition.h"
-#include "num_collect/constants/one.h"   // IWYU pragma: keep
-#include "num_collect/constants/zero.h"  // IWYU pragma: keep
 #include "num_collect/integration/gauss_legendre_integrator.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
@@ -107,8 +105,8 @@ public:
             prev_estimate = estimate;
             estimate = current +
                 coeff *
-                    integrator_(integrand_, constants::zero<scalar_type>,
-                        constants::one<scalar_type>);
+                    integrator_(integrand_, static_cast<scalar_type>(0),
+                        static_cast<scalar_type>(1));
             if (norm(estimate - prev_estimate) < tol_residual_norm_) {
                 return;
             }

@@ -23,9 +23,6 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/norm.h"
 #include "num_collect/base/precondition.h"
-#include "num_collect/constants/half.h"  // IWYU pragma: keep
-#include "num_collect/constants/one.h"   // IWYU pragma: keep
-#include "num_collect/constants/zero.h"  // IWYU pragma: keep
 #include "num_collect/integration/gauss_legendre_integrator.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
@@ -105,7 +102,7 @@ public:
         constexpr index_type max_loops = 10000;
         for (index_type i = 0; i < max_loops; ++i) {
             problem().evaluate_on(time,
-                constants::half<scalar_type> * (current + estimate),
+                static_cast<scalar_type>(0.5) * (current + estimate),
                 evaluation_type{.diff_coeff = true, .jacobian = true});
             coeff = step_size *
                 (jacobian_type::Identity(dim, dim) +
@@ -116,8 +113,8 @@ public:
             prev_estimate = estimate;
             estimate = current +
                 coeff *
-                    integrator_(integrand_, constants::zero<scalar_type>,
-                        constants::one<scalar_type>);
+                    integrator_(integrand_, static_cast<scalar_type>(0),
+                        static_cast<scalar_type>(1));
             if (norm(estimate - prev_estimate) < tol_residual_norm_) {
                 return;
             }

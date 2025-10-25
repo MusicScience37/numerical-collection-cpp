@@ -21,7 +21,7 @@
 
 #include <cmath>
 
-#include "num_collect/constants/pow.h"
+#include "num_collect/functions/pow.h"
 
 namespace num_collect::multi_double::impl {
 
@@ -33,7 +33,7 @@ namespace num_collect::multi_double::impl {
  */
 constexpr auto calculate_pow_of_two(int exponent) noexcept -> double {
     if consteval {
-        return constants::pow(2.0, exponent);
+        return functions::pow(2.0, exponent);
     } else {
         return std::ldexp(1.0, exponent);
     }

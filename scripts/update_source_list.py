@@ -13,7 +13,6 @@ SOURCE_PATHS = (
         for module_name in [
             "auto_diff",
             "base",
-            "constants",
             "functions",
             "integration",
             "linear",

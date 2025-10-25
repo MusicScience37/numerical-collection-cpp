@@ -28,9 +28,7 @@
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include "num_collect/constants/napier.h"  // IWYU pragma: keep
-#include "num_collect/constants/one.h"     // IWYU pragma: keep
-#include "num_collect/constants/pi.h"      // IWYU pragma: keep
+#include "num_collect/base/constants.h"
 
 TEMPLATE_TEST_CASE(
     "num_collect::integration::tanh_finite_integrator", "", float, double) {
@@ -41,7 +39,7 @@ TEMPLATE_TEST_CASE(
 
         constexpr auto left = static_cast<TestType>(0);
         constexpr auto right =
-            static_cast<TestType>(0.5) * num_collect::constants::pi<TestType>;
+            static_cast<TestType>(0.5) * num_collect::pi<TestType>;
         const auto val =
             integrator([](TestType x) { return std::cos(x); }, left, right);
 
@@ -60,8 +58,8 @@ TEMPLATE_TEST_CASE(
         const auto val =
             integrator([](TestType x) { return std::exp(x); }, left, right);
 
-        const TestType true_val = num_collect::constants::napier<TestType> -
-            num_collect::constants::one<TestType>;
+        const TestType true_val =
+            num_collect::napier<TestType> - static_cast<TestType>(1);
         constexpr auto tol = static_cast<TestType>(1e-4);
         REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val, tol));
     }
@@ -99,7 +97,7 @@ TEMPLATE_TEST_CASE(
             left, right);
 
         const auto true_val =
-            static_cast<TestType>(0.5) * num_collect::constants::pi<TestType>;
+            static_cast<TestType>(0.5) * num_collect::pi<TestType>;
         constexpr auto tol = static_cast<TestType>(1e-4);
         REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val, tol));
     }
@@ -110,7 +108,7 @@ TEMPLATE_TEST_CASE(
 
         constexpr auto left = static_cast<TestType>(0);
         constexpr auto right =
-            static_cast<TestType>(2) * num_collect::constants::pi<TestType>;
+            static_cast<TestType>(2) * num_collect::pi<TestType>;
         const auto val = integrator(
             [](TestType x) {
                 return std::exp(
@@ -143,7 +141,7 @@ TEMPLATE_TEST_CASE(
             },
             left, right);
 
-        const auto true_val = num_collect::constants::pi<TestType>;
+        const auto true_val = num_collect::pi<TestType>;
         constexpr auto tol = static_cast<TestType>(1e-4);
         REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val, tol));
     }
@@ -162,7 +160,7 @@ TEMPLATE_TEST_CASE(
             },
             left, right);
 
-        const auto true_val = num_collect::constants::pi<TestType>;
+        const auto true_val = num_collect::pi<TestType>;
         constexpr auto tol = static_cast<TestType>(1e-2);
         REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val, tol));
     }

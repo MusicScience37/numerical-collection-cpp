@@ -27,7 +27,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "comparison_approvals.h"
-#include "num_collect/constants/pi.h"
+#include "num_collect/base/constants.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
 #include "num_collect/rbf/rbfs/inverse_multi_quadric_rbf.h"
 #include "num_collect/rbf/rbfs/inverse_quadratic_rbf.h"
@@ -49,7 +49,7 @@ TEMPLATE_TEST_CASE("gaussian_process_interpolator with different RBFs", "",
     rbf_interpolator_type interpolator;
 
     const auto function = [](double x) {
-        return std::cos(num_collect::constants::pi<double> * x);
+        return std::cos(num_collect::pi<double> * x);
     };
 
     const auto sample_variables = Eigen::VectorXd{{0.0, 0.5, 0.8, 1.0}};

@@ -1,7 +1,25 @@
 set(SOURCE_FILES
+    cbrt_test.cpp
+    ceil_test.cpp
     compile_time_legendre_test.cpp
+    double_factorial_test.cpp
+    exp_test.cpp
+    expm1_test.cpp
+    factorial_test.cpp
+    floor_test.cpp
+    gamma_half_plus_test.cpp
     gamma_test.cpp
+    impl/exp_maclaurin_test.cpp
+    impl/expm1_maclaurin_test.cpp
     impl/gamma_lanczos_test.cpp
+    impl/log1m_maclaurin_test.cpp
+    impl/pow_pos_int_test.cpp
     legendre_roots_test.cpp
     legendre_test.cpp
+    log1p_test.cpp
+    log_test.cpp
+    pow_test.cpp
+    root_test.cpp
+    sqrt_test.cpp
+    trunc_test.cpp
 )

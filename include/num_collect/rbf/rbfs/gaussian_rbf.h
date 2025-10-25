@@ -23,7 +23,7 @@
 
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/constants/pow.h"
+#include "num_collect/functions/pow.h"
 #include "num_collect/rbf/rbfs/differentiated.h"
 
 namespace num_collect::rbf::rbfs {
@@ -75,7 +75,7 @@ public:
         const scalar_type& distance_rate) const noexcept -> scalar_type {
         using std::exp;
         constexpr scalar_type coeff =
-            constants::pow(static_cast<scalar_type>(2), Order);
+            functions::pow(static_cast<scalar_type>(2), Order);
         return coeff * exp(-distance_rate * distance_rate);
     }
 };

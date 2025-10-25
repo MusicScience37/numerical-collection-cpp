@@ -18,6 +18,7 @@
 #include "concepts/reference_of_test.cpp"
 #include "concepts/sparse_matrix_of_test.cpp"
 #include "concepts/sparse_matrix_test.cpp"
+#include "constants_test.cpp"
 #include "exception_test.cpp"
 #include "get_size_test.cpp"
 #include "isfinite_test.cpp"

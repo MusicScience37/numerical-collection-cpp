@@ -25,8 +25,8 @@
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "is_finite.h"
-#include "num_collect/constants/pi.h"
-#include "num_collect/constants/sqrt.h"
+#include "num_collect/base/constants.h"
+#include "num_collect/functions/sqrt.h"
 #include "num_collect/rbf/concepts/rbf.h"
 #include "num_collect/rbf/rbfs/differentiated.h"
 
@@ -38,7 +38,7 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
     constexpr double second_diff_rel_tol =
         0.2;  // Numeric second derivative is unstable.
     static constexpr double diff_width =
-        num_collect::constants::sqrt(std::numeric_limits<double>::epsilon());
+        num_collect::functions::sqrt(std::numeric_limits<double>::epsilon());
     const auto diff = [](const auto& rbf, const double distance) {
         return (rbf(distance + diff_width) - rbf(distance - diff_width)) /
             (2.0 * diff_width) / (-distance);
@@ -180,7 +180,7 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
             SECTION("calculate coefficient") {
                 constexpr double actual = rbf_type::coefficient();
                 constexpr double expected =
-                    1.0 / (8.0 * num_collect::constants::pi<double>);
+                    1.0 / (8.0 * num_collect::pi<double>);
                 CHECK_THAT(
                     actual, Catch::Matchers::WithinRel(expected, rel_tol));
             }
@@ -270,7 +270,7 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
             SECTION("calculate coefficient") {
                 constexpr double actual = rbf_type::coefficient();
                 constexpr double expected =
-                    -1.0 / (8.0 * num_collect::constants::pi<double>);
+                    -1.0 / (8.0 * num_collect::pi<double>);
                 CHECK_THAT(
                     actual, Catch::Matchers::WithinRel(expected, rel_tol));
             }

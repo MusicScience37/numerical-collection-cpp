@@ -27,8 +27,8 @@
 #include <catch2/catch_message.hpp>
 #include <catch2/catch_test_macros.hpp>
 
+#include "num_collect/base/constants.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/constants/pi.h"
 #include "num_collect/rbf/compute_kernel_matrix.h"
 #include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
 #include "num_collect/rbf/kernel_matrix_type.h"
@@ -60,7 +60,7 @@ TEST_CASE(
     kernel_matrix_solver_type solver;
 
     const auto function = [](double x) {
-        return std::cos(num_collect::constants::pi<double> * x);
+        return std::cos(num_collect::pi<double> * x);
     };
 
     SECTION("compute internal parameters") {
@@ -146,7 +146,7 @@ TEST_CASE(
     kernel_matrix_solver_type solver;
 
     const auto function = [](double x) {
-        return std::cos(num_collect::constants::pi<double> * x);
+        return std::cos(num_collect::pi<double> * x);
     };
 
     SECTION("compute internal parameters") {
@@ -201,7 +201,7 @@ TEST_CASE(
     kernel_matrix_solver_type solver;
 
     const auto function = [](double x) {
-        return std::cos(num_collect::constants::pi<double> * x);
+        return std::cos(num_collect::pi<double> * x);
     };
 
     SECTION("compute internal parameters") {

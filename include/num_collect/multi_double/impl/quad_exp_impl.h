@@ -23,7 +23,7 @@
 #include <cmath>
 #include <limits>
 
-#include "num_collect/constants/floor.h"
+#include "num_collect/functions/floor.h"
 #include "num_collect/multi_double/impl/quad_internal_constants.h"
 #include "num_collect/multi_double/impl/quad_ldexp_impl.h"
 #include "num_collect/multi_double/quad.h"
@@ -76,7 +76,7 @@ constexpr auto exp_maclaurin_series(quad x) noexcept -> quad {
 constexpr auto round_double_to_int(double value) noexcept -> int {
     if consteval {
         // std::lround is not constexpr.
-        return static_cast<int>(constants::floor(value + 0.5));
+        return static_cast<int>(functions::floor(value + 0.5));
     } else {
         return static_cast<int>(std::lround(value));
     }
