@@ -15,26 +15,23 @@
  */
 /*!
  * \file
- * \brief Definition of ldexp_impl function for quad class.
+ * \brief Definition of mul_pow2 function for quad class.
  */
 #pragma once
 
-#include "num_collect/multi_double/impl/calculate_pow_of_two.h"
-#include "num_collect/multi_double/impl/quad_mul_pow2.h"
 #include "num_collect/multi_double/quad.h"
 
 namespace num_collect::multi_double::impl {
 
 /*!
- * \brief Calculate \f$ x 2^{exp} \f$.
+ * \brief Multiply by power of two.
  *
- * \param[in] x Multiplied value.
- * \param[in] exp Exponent of 2.
+ * \param[in] q `quad` value.
+ * \param[in] pow2 Power of two.
  * \return Result.
  */
-constexpr auto ldexp_impl(quad x, int exp) noexcept -> quad {
-    const double exp2 = calculate_pow_of_two(exp);
-    return mul_pow2(x, exp2);
+constexpr auto mul_pow2(quad q, double pow2) noexcept -> quad {
+    return quad(q.high() * pow2, q.low() * pow2);
 }
 
 }  // namespace num_collect::multi_double::impl

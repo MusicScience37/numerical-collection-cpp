@@ -23,6 +23,7 @@
 #include <limits>
 
 #include "num_collect/multi_double/impl/quad_exp_impl.h"
+#include "num_collect/multi_double/impl/quad_mul_pow2.h"
 #include "num_collect/multi_double/quad.h"
 
 namespace num_collect::multi_double::impl {
@@ -38,7 +39,7 @@ inline auto sinh_impl(quad x) noexcept -> quad {
     if (-threshold < x.high() && x.high() < threshold) {
         const quad expm1_x = expm1_impl(x);
         const quad expm1_neg_x = -expm1_x / (expm1_x + 1.0);
-        return (expm1_x - expm1_neg_x) * 0.5;
+        return mul_pow2((expm1_x - expm1_neg_x), 0.5);
     }
     const quad exp_x = exp_impl(x);
     if (!std::isfinite(exp_x.high())) {
@@ -47,7 +48,7 @@ inline auto sinh_impl(quad x) noexcept -> quad {
     if (exp_x.high() == 0.0) {
         return quad(-std::numeric_limits<double>::infinity());
     }
-    return (exp_x - 1.0 / exp_x) * 0.5;
+    return mul_pow2((exp_x - 1.0 / exp_x), 0.5);
 }
 
 /*!
@@ -64,7 +65,7 @@ inline auto cosh_impl(quad x) noexcept -> quad {
     if (exp_x.high() == 0.0) {
         return quad(std::numeric_limits<double>::infinity());
     }
-    return (exp_x + 1.0 / exp_x) * 0.5;
+    return mul_pow2((exp_x + 1.0 / exp_x), 0.5);
 }
 
 /*!
@@ -75,10 +76,10 @@ inline auto cosh_impl(quad x) noexcept -> quad {
  */
 inline auto tanh_impl(quad x) noexcept -> quad {
     if (x.high() > 0.0) {
-        const quad expm1_neg_2x = expm1_impl(-2.0 * x);
+        const quad expm1_neg_2x = expm1_impl(mul_pow2(x, -2.0));
         return -expm1_neg_2x / (expm1_neg_2x + 2.0);
     }
-    const quad expm1_2x = expm1_impl(2.0 * x);
+    const quad expm1_2x = expm1_impl(mul_pow2(x, 2.0));
     return expm1_2x / (expm1_2x + 2.0);
 }
 

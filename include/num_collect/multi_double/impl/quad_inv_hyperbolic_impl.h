@@ -23,6 +23,7 @@
 #include <limits>
 
 #include "num_collect/multi_double/impl/quad_log_impl.h"
+#include "num_collect/multi_double/impl/quad_mul_pow2.h"
 #include "num_collect/multi_double/impl/quad_root_of_one_plus_square.h"
 #include "num_collect/multi_double/quad.h"
 
@@ -101,7 +102,7 @@ inline auto atanh_impl(quad x) noexcept -> quad {
     if (x <= -1.0 || 1.0 <= x) {
         return quad(std::numeric_limits<double>::quiet_NaN());
     }
-    return 0.5 * (log1p_impl(x) - log1p_impl(-x));
+    return mul_pow2(log1p_impl(x) - log1p_impl(-x), 0.5);
 }
 
 }  // namespace num_collect::multi_double::impl
