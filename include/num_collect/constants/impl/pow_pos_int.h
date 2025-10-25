@@ -46,12 +46,20 @@ constexpr auto pow_pos_int(T base, I exp) -> T {
     using unsigned_integer_type = std::make_unsigned_t<I>;
     auto remaining_exp = static_cast<unsigned_integer_type>(exp);
     T result = one<T>;
-    while (remaining_exp > zero<unsigned_integer_type>) {
+    {
+        // First time.
         if ((remaining_exp & one<unsigned_integer_type>) !=
             zero<unsigned_integer_type>) {
             result *= base;
         }
+        remaining_exp >>= 1U;
+    }
+    while (remaining_exp > zero<unsigned_integer_type>) {
         base *= base;
+        if ((remaining_exp & one<unsigned_integer_type>) !=
+            zero<unsigned_integer_type>) {
+            result *= base;
+        }
         remaining_exp >>= 1U;
     }
     return result;

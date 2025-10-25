@@ -23,6 +23,7 @@
 #include <cmath>
 #include <limits>
 
+#include "num_collect/constants/floor.h"
 #include "num_collect/multi_double/impl/quad_internal_constants.h"
 #include "num_collect/multi_double/impl/quad_ldexp_impl.h"
 #include "num_collect/multi_double/quad.h"
@@ -40,7 +41,7 @@ namespace num_collect::multi_double::impl {
  * \f$ |x| \leq 1.36 \times 10^{-3} \f$
  * with relative error up to \f$ 2^{-102} \f$.
  */
-inline auto expm1_maclaurin_series(quad x) noexcept -> quad {
+constexpr auto expm1_maclaurin_series(quad x) noexcept -> quad {
     constexpr int num_terms = 9;
     quad term = x;
     quad result = term;
@@ -62,8 +63,24 @@ inline auto expm1_maclaurin_series(quad x) noexcept -> quad {
  * \f$ |x| \leq 1.36 \times 10^{-3} \f$
  * with relative error up to \f$ 2^{-102} \f$.
  */
-inline auto exp_maclaurin_series(quad x) noexcept -> quad {
+constexpr auto exp_maclaurin_series(quad x) noexcept -> quad {
     return expm1_maclaurin_series(x) + 1.0;
+}
+
+/*!
+ * \brief Round a double value to the nearest integer value.
+ *
+ * \param[in] value Input value.
+ * \return Rounded value.
+ */
+constexpr auto round_double_to_int(double value) noexcept -> int {
+    if consteval {
+        // std::lround is not constexpr.
+        // NOLINTNEXTLINE(*-magic-numbers)
+        return static_cast<int>(constants::floor(value + 0.5));
+    } else {
+        return static_cast<int>(std::lround(value));
+    }
 }
 
 /*!
@@ -72,7 +89,7 @@ inline auto exp_maclaurin_series(quad x) noexcept -> quad {
  * \param[in] x Input value.
  * \return Result.
  */
-inline auto exp_impl(quad x) noexcept -> quad {
+constexpr auto exp_impl(quad x) noexcept -> quad {
     const quad log2_rate = x * log2_inv_quad;
 
     constexpr double max_exponent =
@@ -86,7 +103,7 @@ inline auto exp_impl(quad x) noexcept -> quad {
         return quad(0.0);
     }
 
-    const int two_exponent = static_cast<int>(std::lround(log2_rate.high()));
+    const int two_exponent = round_double_to_int(log2_rate.high());
     const quad remainder = x - log2_quad * two_exponent;
     // Here |remainder| <= 0.5 * log(2) = 0.3465...
 
@@ -116,11 +133,13 @@ inline auto exp_impl(quad x) noexcept -> quad {
  * \param[in] x Input value.
  * \return Result.
  */
-inline auto expm1_impl(quad x) noexcept -> quad {
-    if (std::abs(x.high()) <= exp_maclaurin_limit_quad.high()) {
+constexpr auto expm1_impl(quad x) noexcept -> quad {
+    if (-exp_maclaurin_limit_quad.high() <= x.high() &&
+        x.high() <= exp_maclaurin_limit_quad.high()) {
         return expm1_maclaurin_series(x);
     }
-    if (std::abs(x.high()) <= half_log2_quad.high()) {
+    if (-half_log2_quad.high() <= x.high() &&
+        x.high() <= half_log2_quad.high()) {
         constexpr unsigned int num_last_multiplication = 8;
         const quad reduced_x =
             ldexp_impl(x, -static_cast<int>(num_last_multiplication));

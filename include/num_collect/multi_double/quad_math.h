@@ -38,7 +38,7 @@ namespace num_collect::multi_double {
  * \param[in] value Input number.
  * \return Absolute value of the input number.
  */
-inline auto abs(quad value) noexcept -> quad {
+constexpr auto abs(quad value) noexcept -> quad {
     if (value < quad(0.0)) {
         return -value;
     }
@@ -53,7 +53,9 @@ inline auto abs(quad value) noexcept -> quad {
  *
  * If the input number is negative, the result is unspecified.
  */
-inline auto sqrt(quad value) noexcept -> quad { return impl::sqrt_impl(value); }
+constexpr auto sqrt(quad value) noexcept -> quad {
+    return impl::sqrt_impl(value);
+}
 
 /*!
  * \brief Calculate exponential \f$ e^x \f$.
@@ -61,7 +63,7 @@ inline auto sqrt(quad value) noexcept -> quad { return impl::sqrt_impl(value); }
  * \param[in] x Input value.
  * \return Result.
  */
-inline auto exp(quad x) noexcept -> quad { return impl::exp_impl(x); }
+constexpr auto exp(quad x) noexcept -> quad { return impl::exp_impl(x); }
 
 /*!
  * \brief Calculate exponential minus one \f$ e^x - 1 \f$.
@@ -69,7 +71,7 @@ inline auto exp(quad x) noexcept -> quad { return impl::exp_impl(x); }
  * \param[in] x Input value.
  * \return Result.
  */
-inline auto expm1(quad x) noexcept -> quad { return impl::expm1_impl(x); }
+constexpr auto expm1(quad x) noexcept -> quad { return impl::expm1_impl(x); }
 
 /*!
  * \brief Calculate natural logarithm \f$ \log(x) \f$.
@@ -77,7 +79,7 @@ inline auto expm1(quad x) noexcept -> quad { return impl::expm1_impl(x); }
  * \param[in] x Input value.
  * \return Result.
  */
-inline auto log(quad x) noexcept -> quad { return impl::log_impl(x); }
+constexpr auto log(quad x) noexcept -> quad { return impl::log_impl(x); }
 
 /*!
  * \brief Calculate natural logarithm \f$ \log(1 + x) \f$.
@@ -85,7 +87,7 @@ inline auto log(quad x) noexcept -> quad { return impl::log_impl(x); }
  * \param[in] x Input value.
  * \return Result.
  */
-inline auto log1p(quad x) noexcept -> quad { return impl::log1p_impl(x); }
+constexpr auto log1p(quad x) noexcept -> quad { return impl::log1p_impl(x); }
 
 /*!
  * \brief Calculate common logarithm \f$ \log_{10}(x) \f$.
@@ -93,7 +95,7 @@ inline auto log1p(quad x) noexcept -> quad { return impl::log1p_impl(x); }
  * \param[in] x Input value.
  * \return Result.
  */
-inline auto log10(quad x) noexcept -> quad { return impl::log10_impl(x); }
+constexpr auto log10(quad x) noexcept -> quad { return impl::log10_impl(x); }
 
 /*!
  * \brief Calculate the value of `base` raised to the power of `exponent`.
@@ -115,8 +117,24 @@ inline auto pow(quad base, quad exponent) noexcept -> quad {
  * \return Result.
  */
 template <typename Exponent>
-    requires concepts::implicitly_convertible_to<Exponent, double>
+    requires concepts::implicitly_convertible_to<Exponent, double> &&
+    (!std::integral<Exponent>)
 inline auto pow(quad base, Exponent exponent) noexcept -> quad {
+    return impl::pow_impl(base, exponent);
+}
+
+/*!
+ * \brief Calculate the value of `base` raised to the power of `exponent`.
+ *
+ * \tparam Exponent Type of the exponent value.
+ * \param[in] base Base value.
+ * \param[in] exponent Exponent value.
+ * \return Result.
+ */
+template <typename Exponent>
+    requires concepts::implicitly_convertible_to<Exponent, double> &&
+    std::integral<Exponent>
+constexpr auto pow(quad base, Exponent exponent) noexcept -> quad {
     return impl::pow_impl(base, exponent);
 }
 
