@@ -28,7 +28,7 @@ TEST_CASE("num_collect::multi_double::impl::ldexp_impl") {
     using num_collect::multi_double::quad;
     using num_collect::multi_double::impl::ldexp_impl;
 
-    SECTION("calculate") {
+    SECTION("calculate at runtime") {
         constexpr quad input =
             quad(0x1.39ab86e200830p+45, -0x1.fb55396e22028p-9);
         constexpr int exp = -20;
@@ -36,6 +36,19 @@ TEST_CASE("num_collect::multi_double::impl::ldexp_impl") {
             quad(0x1.39ab86e200830p+25, -0x1.fb55396e22028p-29);
 
         const quad actual = ldexp_impl(input, exp);
+
+        constexpr double relative_tolerance = 0x1.0p-102;
+        CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+
+    SECTION("calculate at compile time") {
+        constexpr quad input =
+            quad(0x1.39ab86e200830p+45, -0x1.fb55396e22028p-9);
+        constexpr int exp = -20;
+        constexpr quad expected =
+            quad(0x1.39ab86e200830p+25, -0x1.fb55396e22028p-29);
+
+        constexpr quad actual = ldexp_impl(input, exp);
 
         constexpr double relative_tolerance = 0x1.0p-102;
         CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));

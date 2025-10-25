@@ -69,7 +69,7 @@ inline auto pow_general_impl(quad base, double exponent) noexcept -> quad {
  * \return Result.
  */
 template <std::unsigned_integral Exponent>
-inline auto pow_positive_int_impl(quad base, Exponent exponent) noexcept
+constexpr auto pow_positive_int_impl(quad base, Exponent exponent) noexcept
     -> quad {
     quad result = quad(1.0);
     if (exponent == 0) {
@@ -105,7 +105,7 @@ inline auto pow_positive_int_impl(quad base, Exponent exponent) noexcept
 template <typename Exponent>
     requires concepts::implicitly_convertible_to<Exponent, double> &&
     std::unsigned_integral<Exponent>
-inline auto pow_impl(quad base, Exponent exponent) noexcept -> quad {
+constexpr auto pow_impl(quad base, Exponent exponent) noexcept -> quad {
     return pow_positive_int_impl(base, exponent);
 }
 
@@ -120,7 +120,7 @@ inline auto pow_impl(quad base, Exponent exponent) noexcept -> quad {
 template <typename Exponent>
     requires concepts::implicitly_convertible_to<Exponent, double> &&
     std::signed_integral<Exponent>
-inline auto pow_impl(quad base, Exponent exponent) noexcept -> quad {
+constexpr auto pow_impl(quad base, Exponent exponent) noexcept -> quad {
     if (exponent >= 0) {
         return pow_positive_int_impl(
             base, static_cast<std::make_unsigned_t<Exponent>>(exponent));

@@ -115,8 +115,24 @@ inline auto pow(quad base, quad exponent) noexcept -> quad {
  * \return Result.
  */
 template <typename Exponent>
-    requires concepts::implicitly_convertible_to<Exponent, double>
+    requires concepts::implicitly_convertible_to<Exponent, double> &&
+    (!std::integral<Exponent>)
 inline auto pow(quad base, Exponent exponent) noexcept -> quad {
+    return impl::pow_impl(base, exponent);
+}
+
+/*!
+ * \brief Calculate the value of `base` raised to the power of `exponent`.
+ *
+ * \tparam Exponent Type of the exponent value.
+ * \param[in] base Base value.
+ * \param[in] exponent Exponent value.
+ * \return Result.
+ */
+template <typename Exponent>
+    requires concepts::implicitly_convertible_to<Exponent, double> &&
+    std::integral<Exponent>
+constexpr auto pow(quad base, Exponent exponent) noexcept -> quad {
     return impl::pow_impl(base, exponent);
 }
 

@@ -19,6 +19,7 @@
  */
 #include "num_collect/multi_double/quad_math.h"
 
+#include <array>
 #include <cmath>
 #include <limits>
 
@@ -531,7 +532,7 @@ TEST_CASE("num_collect::multi_double::pow(quad, unsigned int)") {
     using num_collect::multi_double::pow;
     using num_collect::multi_double::quad;
 
-    SECTION("calculate for non-zero values") {
+    SECTION("calculate at runtime") {
         quad base;
         unsigned int exponent{};
         quad expected;
@@ -564,13 +565,55 @@ TEST_CASE("num_collect::multi_double::pow(quad, unsigned int)") {
         constexpr quad relative_tolerance(0x1.0p-96);
         CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
     }
+
+    SECTION("calculate at compile time") {
+        static constexpr auto inputs = std::to_array<
+            std::tuple<quad, unsigned int, quad>>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(0x1.7e55eca788245p+5, 0x1.d2c49ebca1298p-50),
+                0U, quad(0x1.0000000000000p+0, 0x0.0p+0)),
+            std::make_tuple(quad(0x1.be580cb8d6672p+5, -0x1.7c1b0862537e4p-49),
+                1U, quad(0x1.be580cb8d6672p+5, -0x1.7c1b0862537e4p-49)),
+            std::make_tuple(quad(0x1.5a2b98fe9585cp-10, -0x1.0c36fa4e937a0p-66),
+                3U, quad(0x1.3c7d5917c1d42p-29, 0x1.4c0fc0ed47200p-86)),
+            std::make_tuple(quad(0x1.abf6487b5305fp+5, 0x1.924c526aeb870p-50),
+                10U, quad(0x1.54f1a0875d249p+57, 0x1.5ebf6de7c21d8p+2)),
+            std::make_tuple(quad(0x1.5df1c02a3661fp-1, 0x1.98c0818650188p-57),
+                100U, quad(0x1.12067fc5ef49ep-55, -0x1.6a922fa1c14a0p-112)),
+            std::make_tuple(quad(0x1.17ce6ac42961cp+0, -0x1.070ccd508d778p-55),
+                1024U, quad(0x1.495e1a4023cf3p+131, 0x1.b42de2ff34708p+77)),
+            std::make_tuple(quad(0x1.144a41d817304p+0, 0x1.f971a86a04718p-54),
+                1025U, quad(0x1.baea196756e9fp+112, -0x1.fafbbbaa69d30p+56)),
+            // cspell: enable
+            // NOLINTEND
+        });
+        constexpr auto outputs = [] {
+            std::array<quad, inputs.size()> results{};
+            for (std::size_t i = 0; i < inputs.size(); ++i) {
+                const auto& [base, exponent, _] = inputs[i];
+                results[i] = pow(base, exponent);
+            }
+            return results;
+        }();
+
+        for (std::size_t i = 0; i < inputs.size(); ++i) {
+            INFO("i = " << i);
+            const auto& [base, exponent, expected] = inputs[i];
+            const quad actual = outputs[i];
+            INFO("base: " << format_quad_for_test(base));
+            INFO("exponent: " << exponent);
+            constexpr quad relative_tolerance(0x1.0p-96);
+            CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+        }
+    }
 }
 
 TEST_CASE("num_collect::multi_double::pow(quad, int)") {
     using num_collect::multi_double::pow;
     using num_collect::multi_double::quad;
 
-    SECTION("calculate for non-zero values") {
+    SECTION("calculate at runtime") {
         quad base;
         int exponent{};
         quad expected;
@@ -611,6 +654,58 @@ TEST_CASE("num_collect::multi_double::pow(quad, int)") {
         const quad actual = pow(base, exponent);
         constexpr quad relative_tolerance(0x1.0p-96);
         CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+    }
+
+    SECTION("calculate at compile time") {
+        static constexpr auto inputs = std::to_array<
+            std::tuple<quad, int, quad>>({
+            // NOLINTBEGIN
+            // cspell: disable
+            std::make_tuple(quad(0x1.0c05b74da84a2p+0, -0x1.e8d06162c6b5cp-54),
+                -1025, quad(0x1.192fb5a6ea8bep-68, -0x1.5a14deaaa6eacp-122)),
+            std::make_tuple(quad(0x1.a9d0751a1b25ap-1, -0x1.7a911ad8d16f4p-55),
+                -1024, quad(0x1.3b816b00f0323p+272, 0x1.b78835d59f000p+210)),
+            std::make_tuple(quad(0x1.582f99cdb6be9p-3, -0x1.f16591b5a67acp-57),
+                -90, quad(0x1.7afce57d2e86ep+231, 0x1.073462a94c968p+176)),
+            std::make_tuple(quad(0x1.db8b052be4d4fp+24, -0x1.cfb2d37c6e56cp-30),
+                -4, quad(0x1.580068d68b84dp-100, 0x1.d766b8584fcdcp-154)),
+            std::make_tuple(quad(0x1.7aa3801ec43e4p-8, -0x1.f923144bdc7f4p-62),
+                -1, quad(0x1.5a2a9b836fe19p+7, 0x1.75ac58a7918f0p-49)),
+            std::make_tuple(quad(0x1.7e55eca788245p+5, 0x1.d2c49ebca1298p-50),
+                0, quad(0x1.0000000000000p+0, 0x0.0p+0)),
+            std::make_tuple(quad(0x1.be580cb8d6672p+5, -0x1.7c1b0862537e4p-49),
+                1, quad(0x1.be580cb8d6672p+5, -0x1.7c1b0862537e4p-49)),
+            std::make_tuple(quad(0x1.5a2b98fe9585cp-10, -0x1.0c36fa4e937a0p-66),
+                3, quad(0x1.3c7d5917c1d42p-29, 0x1.4c0fc0ed47200p-86)),
+            std::make_tuple(quad(0x1.abf6487b5305fp+5, 0x1.924c526aeb870p-50),
+                10, quad(0x1.54f1a0875d249p+57, 0x1.5ebf6de7c21d8p+2)),
+            std::make_tuple(quad(0x1.5df1c02a3661fp-1, 0x1.98c0818650188p-57),
+                100, quad(0x1.12067fc5ef49ep-55, -0x1.6a922fa1c14a0p-112)),
+            std::make_tuple(quad(0x1.17ce6ac42961cp+0, -0x1.070ccd508d778p-55),
+                1024, quad(0x1.495e1a4023cf3p+131, 0x1.b42de2ff34708p+77)),
+            std::make_tuple(quad(0x1.144a41d817304p+0, 0x1.f971a86a04718p-54),
+                1025, quad(0x1.baea196756e9fp+112, -0x1.fafbbbaa69d30p+56)),
+            // cspell: enable
+            // NOLINTEND
+        });
+        constexpr auto outputs = [] {
+            std::array<quad, inputs.size()> results{};
+            for (std::size_t i = 0; i < inputs.size(); ++i) {
+                const auto& [base, exponent, _] = inputs[i];
+                results[i] = pow(base, exponent);
+            }
+            return results;
+        }();
+
+        for (std::size_t i = 0; i < inputs.size(); ++i) {
+            INFO("i = " << i);
+            const auto& [base, exponent, expected] = inputs[i];
+            const quad actual = outputs[i];
+            INFO("base: " << format_quad_for_test(base));
+            INFO("exponent: " << exponent);
+            constexpr quad relative_tolerance(0x1.0p-96);
+            CHECK_THAT(actual, quad_within_rel(expected, relative_tolerance));
+        }
     }
 }
 
