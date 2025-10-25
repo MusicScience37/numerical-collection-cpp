@@ -1,4 +1,5 @@
 #include "impl/basic_operations_test.cpp"
+#include "impl/oct_renormalize_test.cpp"
 #include "impl/quad_exp_impl_test.cpp"
 #include "impl/quad_format_decimal_scientific_to_test.cpp"
 #include "impl/quad_internal_constants_test.cpp"

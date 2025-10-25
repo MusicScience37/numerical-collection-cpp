@@ -1,5 +1,6 @@
 set(SOURCE_FILES
     impl/basic_operations_test.cpp
+    impl/oct_renormalize_test.cpp
     impl/quad_exp_impl_test.cpp
     impl/quad_format_decimal_scientific_to_test.cpp
     impl/quad_internal_constants_test.cpp
