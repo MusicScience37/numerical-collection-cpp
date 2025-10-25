@@ -41,9 +41,19 @@ namespace num_collect::multi_double::impl {
  */
 constexpr auto log_impl(quad x) noexcept -> quad {
     quad guess = quad(constants::log(x.high()));
+#ifdef _MSC_VER
+    if consteval {
+        // MSVC does not support std::isfinite in consteval context.
+    } else {
+        if (!std::isfinite(guess.high())) {
+            return guess;
+        }
+    }
+#else
     if (!std::isfinite(guess.high())) {
         return guess;
     }
+#endif
     if (sqrt2_inv_quad.high() < x.high() && x.high() < sqrt2_quad.high()) {
         // Case of small x using expm1
         const quad expm1_guess = expm1_impl(guess);
