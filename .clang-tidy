@@ -138,3 +138,6 @@ CheckOptions:
   # Workaround of https://github.com/llvm/llvm-project/issues/46097.
   - key: readability-identifier-naming.TypeTemplateParameterIgnoredRegexp
     value: expr-type
+
+  - key: modernize-use-trailing-return-type.TransformLambdas
+    value: none

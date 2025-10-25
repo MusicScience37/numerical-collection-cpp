@@ -46,7 +46,7 @@ namespace num_collect::multi_double::impl {
  * \param[in] b A number.
  * \return Sum of a and b, and error of the sum.
  */
-inline auto quick_two_sum(double a, double b) -> std::tuple<double, double> {
+constexpr auto quick_two_sum(double a, double b) -> std::tuple<double, double> {
     const double s = a + b;
     const double e = b - (s - a);
     return {s, e};
@@ -61,7 +61,7 @@ inline auto quick_two_sum(double a, double b) -> std::tuple<double, double> {
  * \param[in] b A number.
  * \return Sum of a and b, and error of the sum.
  */
-inline auto two_sum(double a, double b) -> std::tuple<double, double> {
+constexpr auto two_sum(double a, double b) -> std::tuple<double, double> {
     const double s = a + b;
     const double v = s - a;
     const double e = (a - (s - v)) + (b - v);
@@ -75,7 +75,7 @@ inline auto two_sum(double a, double b) -> std::tuple<double, double> {
  * \param[in] a A number.
  * \return Higher bits and lower bits.
  */
-inline auto split(double a) -> std::tuple<double, double> {
+constexpr auto split(double a) -> std::tuple<double, double> {
     constexpr double coeff = 0x1.0p+27 + 1.0;
     const double t = coeff * a;
     const double a_h = t - (t - a);
@@ -92,7 +92,8 @@ inline auto split(double a) -> std::tuple<double, double> {
  * \param[in] b A number.
  * \return Product of a and b, and error of the product.
  */
-inline auto two_prod_no_fma(double a, double b) -> std::tuple<double, double> {
+constexpr auto two_prod_no_fma(double a, double b)
+    -> std::tuple<double, double> {
     const double p = a * b;
     const auto [a_h, a_l] = split(a);
     const auto [b_h, b_l] = split(b);
@@ -135,9 +136,13 @@ inline auto two_prod_fma(double a, double b) -> std::tuple<double, double> {
  * This function selects the faster implementation depending on
  * the availability of FMA instructions.
  */
-inline auto two_prod(double a, double b) -> std::tuple<double, double> {
+constexpr auto two_prod(double a, double b) -> std::tuple<double, double> {
 #ifdef NUM_COLLECT_MULTI_DOUBLE_HAS_AVX2_FMA
-    return two_prod_fma(a, b);
+    if consteval {
+        return two_prod_no_fma(a, b);
+    } else {
+        return two_prod_fma(a, b);
+    }
 #else
     return two_prod_no_fma(a, b);
 #endif
