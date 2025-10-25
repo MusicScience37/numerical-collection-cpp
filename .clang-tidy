@@ -16,6 +16,7 @@ Checks: >
     -cppcoreguidelines-c-copy-assignment-signature,
     -cppcoreguidelines-macro-usage,
     -cppcoreguidelines-avoid-magic-numbers,
+    -cppcoreguidelines-macro-to-enum,
   google-*,
     -google-runtime-references,
     -google-readability-todo,
@@ -40,6 +41,7 @@ Checks: >
     -modernize-use-std-numbers,
     -modernize-use-constraints,
     -modernize-use-auto,
+    -modernize-macro-to-enum,
   hicpp-*,
     -hicpp-use-auto,
   cert-*,
@@ -96,7 +98,7 @@ Checks: >
 # - readability-simplify-boolean-expr generates unfixable warnings in assertion macros.
 # - openmp-exception-escape is generating warnings for rare cases that cannot be tested.
 # - bugprone-misplaced-widening-cast generates false positives.
-# - cppcoreguidelines-macro-usage generates false positives in this project.
+# - cppcoreguidelines-macro-to-enum, modernize-macro-to-enum, cppcoreguidelines-macro-usage generates false positives in this project.
 # - cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers resulted in too many NOLINT comments in this project.
 # - bugprone-suspicious-include generates warnings in unity builds.
 # - readability-qualified-auto make source codes less changeable.
