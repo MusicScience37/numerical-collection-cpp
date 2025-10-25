@@ -21,6 +21,8 @@
 
 #include <cmath>
 
+#include "num_collect/constants/log.h"
+#include "num_collect/constants/log1p.h"
 #include "num_collect/multi_double/impl/quad_exp_impl.h"
 #include "num_collect/multi_double/impl/quad_internal_constants.h"
 #include "num_collect/multi_double/quad.h"
@@ -37,8 +39,8 @@ namespace num_collect::multi_double::impl {
  * \f$ f(y) = e^y - x \f$,
  * Starting from the value of log function of double.
  */
-inline auto log_impl(quad x) noexcept -> quad {
-    quad guess = quad(std::log(x.high()));
+constexpr auto log_impl(quad x) noexcept -> quad {
+    quad guess = quad(constants::log(x.high()));
     if (!std::isfinite(guess.high())) {
         return guess;
     }
@@ -64,12 +66,12 @@ inline auto log_impl(quad x) noexcept -> quad {
  * Starting from the value of log function of double.
  * However, for not small values, this function uses log_impl function.
  */
-inline auto log1p_impl(quad x) noexcept -> quad {
+constexpr auto log1p_impl(quad x) noexcept -> quad {
     constexpr double small_upper_threshold = 0.414;   // sqrt(2)-1
     constexpr double small_lower_threshold = -0.292;  // 1/sqrt(2) - 1
     if (small_lower_threshold < x.high() && x.high() < small_upper_threshold) {
         // Case of small x using expm1
-        quad guess = quad(std::log1p(x.high()));
+        quad guess = quad(constants::log1p(x.high()));
         const quad expm1_guess = expm1_impl(guess);
         guess += (x - expm1_guess) / (expm1_guess + 1.0);
         return guess;
@@ -84,7 +86,7 @@ inline auto log1p_impl(quad x) noexcept -> quad {
  * \param[in] x Input value.
  * \return Result.
  */
-inline auto log10_impl(quad x) noexcept -> quad {
+constexpr auto log10_impl(quad x) noexcept -> quad {
     const auto log_value = log_impl(x);
     if (!std::isfinite(log_value.high())) {
         return log_value;

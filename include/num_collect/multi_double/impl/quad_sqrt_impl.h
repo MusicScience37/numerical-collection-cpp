@@ -19,8 +19,7 @@
  */
 #pragma once
 
-#include <cmath>
-
+#include "num_collect/constants/sqrt.h"
 #include "num_collect/multi_double/impl/basic_operations.h"
 #include "num_collect/multi_double/quad.h"
 
@@ -34,11 +33,11 @@ namespace num_collect::multi_double::impl {
  *
  * If the input number is negative, the result is unspecified.
  */
-inline auto sqrt_impl(quad value) noexcept -> quad {
+constexpr auto sqrt_impl(quad value) noexcept -> quad {
     if (value == quad(0.0)) {
         return quad(0.0);
     }
-    const double approx = std::sqrt(value.high());
+    const double approx = constants::sqrt(value.high());
     const auto [approx_square_high, approx_square_low] =
         impl::two_prod(approx, approx);
     const auto remaining =
