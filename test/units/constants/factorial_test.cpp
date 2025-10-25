@@ -27,7 +27,6 @@
 
 #include "check_constexpr_function.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE_SIG("num_collect::constants::factorial", "",
     ((typename Result, typename Integer), Result, Integer),
     // Integer to integer.

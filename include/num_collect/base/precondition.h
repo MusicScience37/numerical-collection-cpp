@@ -138,7 +138,7 @@ template <typename... Args>
  * - `DESCRIPTION_ARGS...`: Arguments for the format string of the description.
  */
 // clang-format on
-#define NUM_COLLECT_PRECONDITION(CONDITION, ...) /* NOLINT */        \
+#define NUM_COLLECT_PRECONDITION(CONDITION, ...)                     \
     do {                                                             \
         if (!(CONDITION)) [[unlikely]] {                             \
             ::num_collect::base::impl::handle_precondition_failure(  \

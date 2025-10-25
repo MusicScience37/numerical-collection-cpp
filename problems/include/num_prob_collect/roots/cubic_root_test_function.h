@@ -46,7 +46,7 @@ public:
      */
     void evaluate_on(const variable_type& variable) {
         value_ = variable * variable * variable - target_;
-        jacobian_ = 3.0 * variable * variable;  // NOLINT
+        jacobian_ = 3.0 * variable * variable;
     }
 
     /*!

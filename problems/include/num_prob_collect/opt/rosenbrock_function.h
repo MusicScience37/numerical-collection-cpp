@@ -46,17 +46,14 @@ public:
      * \param[in] x Variable.
      */
     void evaluate_on(const Eigen::Vector3d& x) {
-        value_ = 100.0 * std::pow(x(1) - x(0) * x(0), 2)  // NOLINT
-            + std::pow(x(0) - 1.0, 2)                     // NOLINT
-            + 100.0 * std::pow(x(2) - x(1) * x(1), 2)     // NOLINT
-            + std::pow(x(1) - 1.0, 2);                    // NOLINT
+        value_ = 100.0 * std::pow(x(1) - x(0) * x(0), 2) +
+            std::pow(x(0) - 1.0, 2) + 100.0 * std::pow(x(2) - x(1) * x(1), 2) +
+            std::pow(x(1) - 1.0, 2);
 
-        grad_(0) = -400.0 * (x(1) - x(0) * x(0)) * x(0)  // NOLINT
-            + 2.0 * (x(0) - 1.0);                        // NOLINT
-        grad_(1) = 200.0 * (x(1) - x(0) * x(0))          // NOLINT
-            - 400.0 * (x(2) - x(1) * x(1)) * x(1)        // NOLINT
-            + 2.0 * (x(1) - 1.0);                        // NOLINT
-        grad_(2) = 200.0 * (x(2) - x(1) * x(1));         // NOLINT
+        grad_(0) = -400.0 * (x(1) - x(0) * x(0)) * x(0) + 2.0 * (x(0) - 1.0);
+        grad_(1) = 200.0 * (x(1) - x(0) * x(0)) -
+            400.0 * (x(2) - x(1) * x(1)) * x(1) + 2.0 * (x(1) - 1.0);
+        grad_(2) = 200.0 * (x(2) - x(1) * x(1));
     }
 
     /*!

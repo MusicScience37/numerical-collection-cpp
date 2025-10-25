@@ -28,7 +28,6 @@
 #include "check_constexpr_function.h"
 #include "num_collect/functions/gamma.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE_SIG(
     "num_collect::constants::impl::gamma_half_plus_at_compile_time", "",
     ((typename Result, typename Integer), Result, Integer), (double, int),
@@ -90,7 +89,6 @@ TEMPLATE_TEST_CASE_SIG(
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE_SIG("num_collect::constants::gamma_half_plus", "",
     ((typename Result, typename Integer), Result, Integer), (double, int),
     (double, unsigned int)) {

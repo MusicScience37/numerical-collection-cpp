@@ -32,6 +32,7 @@ Checks: >
     -readability-math-missing-parentheses,
     -readability-simplify-boolean-expr,
     -readability-magic-numbers,
+    -readability-qualified-auto,
   modernize-*,
     -modernize-pass-by-value,
     -modernize-return-braced-init-list,
@@ -43,6 +44,8 @@ Checks: >
     -hicpp-use-auto,
   cert-*,
     -cert-err58-cpp,
+    -cert-msc51-cpp,
+    -cert-msc32-c,
   bugprone-*,
     -bugprone-easily-swappable-parameters,
     -bugprone-exception-escape,
@@ -96,6 +99,8 @@ Checks: >
 # - cppcoreguidelines-macro-usage generates false positives in this project.
 # - cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers resulted in too many NOLINT comments in this project.
 # - bugprone-suspicious-include generates warnings in unity builds.
+# - readability-qualified-auto make source codes less changeable.
+# - cert-msc51-cpp, cert-msc32-c are disabled because reproducibility is important in this project.
 
 CheckOptions:
   # Naming Conventions

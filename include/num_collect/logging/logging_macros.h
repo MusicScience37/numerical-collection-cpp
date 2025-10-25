@@ -160,7 +160,7 @@ template <
  *   - the log body, or
  *   - the format string and its arguments of the log body.
  */
-#define INTERNAL_NUM_COLLECT_LOG_IMPL(LOGGER, LEVEL, ...) /*NOLINT*/    \
+#define INTERNAL_NUM_COLLECT_LOG_IMPL(LOGGER, LEVEL, ...)               \
     do {                                                                \
         if (LOGGER.should_log(LEVEL)) {                                 \
             ::num_collect::logging::impl::log_without_condition_check(  \
@@ -181,8 +181,8 @@ template <
  *
  * For log levels, see num_collect::logging::log_level.
  */
-#define NUM_COLLECT_LOG_TRACE(LOGGER, ...) /*NOLINT*/ \
-    INTERNAL_NUM_COLLECT_LOG_IMPL(                    \
+#define NUM_COLLECT_LOG_TRACE(LOGGER, ...) \
+    INTERNAL_NUM_COLLECT_LOG_IMPL(         \
         LOGGER, ::num_collect::logging::log_level::trace, __VA_ARGS__)
 
 /*!
@@ -197,8 +197,8 @@ template <
  *
  * For log levels, see num_collect::logging::log_level.
  */
-#define NUM_COLLECT_LOG_DEBUG(LOGGER, ...) /*NOLINT*/ \
-    INTERNAL_NUM_COLLECT_LOG_IMPL(                    \
+#define NUM_COLLECT_LOG_DEBUG(LOGGER, ...) \
+    INTERNAL_NUM_COLLECT_LOG_IMPL(         \
         LOGGER, ::num_collect::logging::log_level::debug, __VA_ARGS__)
 
 /*!
@@ -213,8 +213,8 @@ template <
  *
  * For log levels, see num_collect::logging::log_level.
  */
-#define NUM_COLLECT_LOG_ITERATION(LOGGER, ...) /*NOLINT*/ \
-    INTERNAL_NUM_COLLECT_LOG_IMPL(                        \
+#define NUM_COLLECT_LOG_ITERATION(LOGGER, ...) \
+    INTERNAL_NUM_COLLECT_LOG_IMPL(             \
         LOGGER, ::num_collect::logging::log_level::iteration, __VA_ARGS__)
 
 /*!
@@ -229,8 +229,8 @@ template <
  *
  * For log levels, see num_collect::logging::log_level.
  */
-#define NUM_COLLECT_LOG_ITERATION_LABEL(LOGGER, ...) /*NOLINT*/ \
-    INTERNAL_NUM_COLLECT_LOG_IMPL(LOGGER,                       \
+#define NUM_COLLECT_LOG_ITERATION_LABEL(LOGGER, ...) \
+    INTERNAL_NUM_COLLECT_LOG_IMPL(LOGGER,            \
         ::num_collect::logging::log_level::iteration_label, __VA_ARGS__)
 
 /*!
@@ -245,8 +245,8 @@ template <
  *
  * For log levels, see num_collect::logging::log_level.
  */
-#define NUM_COLLECT_LOG_SUMMARY(LOGGER, ...) /*NOLINT*/ \
-    INTERNAL_NUM_COLLECT_LOG_IMPL(                      \
+#define NUM_COLLECT_LOG_SUMMARY(LOGGER, ...) \
+    INTERNAL_NUM_COLLECT_LOG_IMPL(           \
         LOGGER, ::num_collect::logging::log_level::summary, __VA_ARGS__)
 
 /*!
@@ -261,8 +261,8 @@ template <
  *
  * For log levels, see num_collect::logging::log_level.
  */
-#define NUM_COLLECT_LOG_INFO(LOGGER, ...) /*NOLINT*/ \
-    INTERNAL_NUM_COLLECT_LOG_IMPL(                   \
+#define NUM_COLLECT_LOG_INFO(LOGGER, ...) \
+    INTERNAL_NUM_COLLECT_LOG_IMPL(        \
         LOGGER, ::num_collect::logging::log_level::info, __VA_ARGS__)
 
 /*!
@@ -277,8 +277,8 @@ template <
  *
  * For log levels, see num_collect::logging::log_level.
  */
-#define NUM_COLLECT_LOG_WARNING(LOGGER, ...) /*NOLINT*/ \
-    INTERNAL_NUM_COLLECT_LOG_IMPL(                      \
+#define NUM_COLLECT_LOG_WARNING(LOGGER, ...) \
+    INTERNAL_NUM_COLLECT_LOG_IMPL(           \
         LOGGER, ::num_collect::logging::log_level::warning, __VA_ARGS__)
 
 /*!
@@ -293,8 +293,8 @@ template <
  *
  * For log levels, see num_collect::logging::log_level.
  */
-#define NUM_COLLECT_LOG_ERROR(LOGGER, ...) /*NOLINT*/ \
-    INTERNAL_NUM_COLLECT_LOG_IMPL(                    \
+#define NUM_COLLECT_LOG_ERROR(LOGGER, ...) \
+    INTERNAL_NUM_COLLECT_LOG_IMPL(         \
         LOGGER, ::num_collect::logging::log_level::error, __VA_ARGS__)
 
 /*!
@@ -309,8 +309,8 @@ template <
  *
  * For log levels, see num_collect::logging::log_level.
  */
-#define NUM_COLLECT_LOG_CRITICAL(LOGGER, ...) /*NOLINT*/ \
-    INTERNAL_NUM_COLLECT_LOG_IMPL(                       \
+#define NUM_COLLECT_LOG_CRITICAL(LOGGER, ...) \
+    INTERNAL_NUM_COLLECT_LOG_IMPL(            \
         LOGGER, ::num_collect::logging::log_level::critical, __VA_ARGS__)
 
 /*!
@@ -330,6 +330,6 @@ template <
  * - `MESSAGE_FORMAT`: Format of the error message.
  * - `MESSAGE_ARGS...`: Arguments for formatting of the error message.
  */
-#define NUM_COLLECT_LOG_AND_THROW(EXCEPTION_TYPE, ...) /*NOLINT*/ \
-    ::num_collect::logging::log_and_throw<EXCEPTION_TYPE>(        \
+#define NUM_COLLECT_LOG_AND_THROW(EXCEPTION_TYPE, ...)     \
+    ::num_collect::logging::log_and_throw<EXCEPTION_TYPE>( \
         ::num_collect::util::source_info_view(), __VA_ARGS__)

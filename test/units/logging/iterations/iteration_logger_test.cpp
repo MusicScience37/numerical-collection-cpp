@@ -60,7 +60,6 @@ TEST_CASE("num_collect::logging::iterations::iteration_logger") {
 
     fmt::memory_buffer logs;
     ALLOW_CALL(*sink, write_impl(_, _, _, _, _))
-        // NOLINTNEXTLINE
         .LR_SIDE_EFFECT(logs.append(static_cast<std::string>(_5) + '\n'));
 
     SECTION("write iterations without an algorithm") {
@@ -70,7 +69,7 @@ TEST_CASE("num_collect::logging::iterations::iteration_logger") {
         iteration_logger_type iter_logger{logger};
 
         value1_type value1{0};
-        auto value2_func = []() -> double { return 1.234; };  // NOLINT
+        auto value2_func = []() -> double { return 1.234; };
 
         iter_logger.append<value1_type>("value1", value1);
         iter_logger.append<double>("value2", value2_func);
@@ -100,9 +99,8 @@ TEST_CASE("num_collect::logging::iterations::iteration_logger") {
 
         algorithm_type algorithm{0};
         value2_type value2{"abc"};
-        // NOLINTNEXTLINE
         ALLOW_CALL(algorithm, get_impl()).RETURN(value2);
-        value3_type value3{1.234};  // NOLINT
+        value3_type value3{1.234};
         auto value4_func = []() -> value4_type { return std::nullopt; };
 
         iter_logger.append<value1_type>("value1", &algorithm_type::value1);
@@ -133,7 +131,7 @@ TEST_CASE("num_collect::logging::iterations::iteration_logger") {
         iteration_logger_type iter_logger{logger};
 
         value1_type value1{0};
-        auto value2_func = []() -> double { return 1.234; };  // NOLINT
+        auto value2_func = []() -> double { return 1.234; };
 
         iter_logger.append<value1_type>("value1", value1);
         iter_logger.append<double>("value2", value2_func);
@@ -159,7 +157,7 @@ TEST_CASE("num_collect::logging::iterations::iteration_logger") {
         iteration_logger_type iter_logger{logger};
 
         value1_type value1{0};
-        auto value2_func = []() -> double { return 1.234; };  // NOLINT
+        auto value2_func = []() -> double { return 1.234; };
 
         iter_logger.append<value1_type>("value1", value1);
         iter_logger.append<double>("value2", value2_func);
@@ -183,7 +181,7 @@ TEST_CASE("num_collect::logging::iterations::iteration_logger") {
         iteration_logger_type iter_logger{logger};
 
         value1_type value1{0};
-        auto value2_func = []() -> double { return 1.234; };  // NOLINT
+        auto value2_func = []() -> double { return 1.234; };
 
         iter_logger.append<value1_type>("value1", value1);
         iter_logger.append<double>("value2", value2_func);

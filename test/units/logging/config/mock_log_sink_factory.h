@@ -30,7 +30,6 @@ namespace num_collect_test::logging::config {
 class mock_log_sink_factory final
     : public num_collect::logging::config::log_sink_factory_base {
 public:
-    // NOLINTNEXTLINE
     MAKE_MOCK1(create,
         num_collect::logging::sinks::log_sink(
             num_collect::logging::config::log_sink_factory_table&),

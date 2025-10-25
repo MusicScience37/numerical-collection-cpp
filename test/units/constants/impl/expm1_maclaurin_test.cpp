@@ -28,7 +28,6 @@
 
 #include "../check_constexpr_function.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::constants::impl::expm1_maclaurin", "", float, double) {
     SECTION("x = 0") {

@@ -38,14 +38,14 @@ TEST_CASE("num_collect::linear::impl::amg::compute_strong_connection_list") {
         constexpr double strong_coeff_rate_threshold = 0.5;
         Eigen::SparseMatrix<double, Eigen::RowMajor> matrix(3, 3);
         num_collect::util::vector<Eigen::Triplet<double>> coefficients;
-        coefficients.emplace_back(0, 0, 1.0);    // NOLINT
-        coefficients.emplace_back(0, 1, -0.5);   // NOLINT
-        coefficients.emplace_back(0, 2, -0.25);  // NOLINT
-        coefficients.emplace_back(1, 0, -0.5);   // NOLINT
-        coefficients.emplace_back(1, 1, 1.0);    // NOLINT
-        coefficients.emplace_back(1, 2, -0.24);  // NOLINT
-        coefficients.emplace_back(2, 1, -0.5);   // NOLINT
-        coefficients.emplace_back(2, 2, 1.0);    // NOLINT
+        coefficients.emplace_back(0, 0, 1.0);
+        coefficients.emplace_back(0, 1, -0.5);
+        coefficients.emplace_back(0, 2, -0.25);
+        coefficients.emplace_back(1, 0, -0.5);
+        coefficients.emplace_back(1, 1, 1.0);
+        coefficients.emplace_back(1, 2, -0.24);
+        coefficients.emplace_back(2, 1, -0.5);
+        coefficients.emplace_back(2, 2, 1.0);
         matrix.setFromTriplets(coefficients.begin(), coefficients.end());
 
         const auto list =

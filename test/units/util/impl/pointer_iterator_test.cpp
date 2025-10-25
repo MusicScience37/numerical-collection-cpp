@@ -181,7 +181,7 @@ TEST_CASE("num_collect::util::impl::pointer_iterator(non-const)") {
             CHECK(iterator[1] == 2);
             CHECK(iterator[2] == 3);
 
-            iterator[1] = 4;  // NOLINT
+            iterator[1] = 4;
 
             CHECK(array[1] == 4);
         }

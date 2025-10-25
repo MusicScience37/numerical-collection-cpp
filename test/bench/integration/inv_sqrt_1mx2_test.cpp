@@ -50,19 +50,16 @@ template <typename Integrator>
 void perform_with_boundary_functions(const Integrator& integrator) {
     double val{};
     STAT_BENCH_MEASURE() {
-        val = integrator(
-            // NOLINTNEXTLINE
-            [](double x) { return 1.0 / std::sqrt((2.0 - x) * x); },
-            // NOLINTNEXTLINE
-            [](double x) { return 1.0 / std::sqrt((-2.0 - x) * x); }, -1.0,
-            1.0);
+        val =
+            integrator([](double x) { return 1.0 / std::sqrt((2.0 - x) * x); },
+                [](double x) { return 1.0 / std::sqrt((-2.0 - x) * x); }, -1.0,
+                1.0);
     };
     const double true_val = num_collect::constants::pi<double>;
     stat_bench::current_invocation_context().add_custom_output(
         "error", std::abs(val - true_val));
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(
     gauss_legendre_fixture, "integ_inv_sqrt_1mx2", "gauss_legendre") {
     const auto degree = stat_bench::current_invocation_context()
@@ -73,7 +70,6 @@ STAT_BENCH_CASE_F(
     perform(integrator);
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(gauss_legendre_kronrod_fixture, "integ_inv_sqrt_1mx2",
     "gauss_legendre_kronrod") {
     const auto degree = stat_bench::current_invocation_context()
@@ -84,7 +80,6 @@ STAT_BENCH_CASE_F(gauss_legendre_kronrod_fixture, "integ_inv_sqrt_1mx2",
     perform(integrator);
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(de_finite_fixture, "integ_inv_sqrt_1mx2", "de_finite") {
     const auto points = stat_bench::current_invocation_context()
                             .get_param<num_collect::index_type>("points");
@@ -93,7 +88,6 @@ STAT_BENCH_CASE_F(de_finite_fixture, "integ_inv_sqrt_1mx2", "de_finite") {
     perform_with_boundary_functions(integrator);
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(tanh_finite_fixture, "integ_inv_sqrt_1mx2", "tanh_finite") {
     const auto points = stat_bench::current_invocation_context()
                             .get_param<num_collect::index_type>("points");

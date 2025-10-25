@@ -175,11 +175,10 @@ public:
 
 private:
     //! Random number generator.
-    std::mt19937
-        generator_{};  // NOLINT(cert-msc32-c,cert-msc51-cpp): For reproducibility.
+    std::mt19937 generator_{};
 
     //! Distribution of coefficients.
-    std::uniform_real_distribution<double> coeff_dist_{0.5, 20.0};  // NOLINT
+    std::uniform_real_distribution<double> coeff_dist_{0.5, 20.0};
 
     //! Distribution of optimal variables.
     std::uniform_real_distribution<double> optimal_variable_dist_{

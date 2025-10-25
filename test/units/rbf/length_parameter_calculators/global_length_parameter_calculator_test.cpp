@@ -62,9 +62,9 @@ TEST_CASE("num_collect::rbf::rbfs::global_length_parameter_calculator") {
             euclidean_distance_function<variable_type>;
         global_length_parameter_calculator<distance_function_type> calculator;
 
-        CHECK_NOTHROW(calculator.scale(0.0001));  // NOLINT
-        CHECK_THROWS(calculator.scale(0.0));      // NOLINT
-        CHECK_THROWS(calculator.scale(-0.0001));  // NOLINT
+        CHECK_NOTHROW(calculator.scale(0.0001));
+        CHECK_THROWS(calculator.scale(0.0));
+        CHECK_THROWS(calculator.scale(-0.0001));
     }
 
     SECTION("compute the length parameter") {

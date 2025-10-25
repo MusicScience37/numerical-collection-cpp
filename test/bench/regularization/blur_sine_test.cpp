@@ -40,18 +40,17 @@ class blur_sine_fixture : public stat_bench::FixtureBase {
 public:
     blur_sine_fixture() {
         add_param<double>("noise_rate")
-            ->add(1e-10)  // NOLINT
-            ->add(1e-4)   // NOLINT
-            ->add(1e-3)   // NOLINT
-            ->add(1e-2)   // NOLINT
-            ->add(1e-1)   // NOLINT
-            ->add(1.0)    // NOLINT
-            ;
+            ->add(1e-10)
+            ->add(1e-4)
+            ->add(1e-3)
+            ->add(1e-2)
+            ->add(1e-1)
+            ->add(1.0);
     }
 
     void setup(stat_bench::InvocationContext& context) override {
         noise_rate_ = context.get_param<double>("noise_rate");
-        std::mt19937 engine;  // NOLINT
+        std::mt19937 engine;
         const double sigma = std::sqrt(prob_.data().squaredNorm() /
             static_cast<double>(prob_.data().size()) * noise_rate_);
         std::normal_distribution<double> dist{0.0, sigma};
@@ -126,7 +125,6 @@ STAT_BENCH_GROUP("reg_blur_sine")
     .add_time_to_output_by_parameter_line_plot(
         "noise_rate", "error_rate", stat_bench::PlotOption::log_output);
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(blur_sine_fixture, "reg_blur_sine", "tikhonov_l_curve") {
     STAT_BENCH_MEASURE() {
         using solver_type =
@@ -147,7 +145,6 @@ STAT_BENCH_CASE_F(blur_sine_fixture, "reg_blur_sine", "tikhonov_l_curve") {
     };
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(blur_sine_fixture, "reg_blur_sine", "tikhonov_gcv") {
     STAT_BENCH_MEASURE() {
         using solver_type =
@@ -168,7 +165,6 @@ STAT_BENCH_CASE_F(blur_sine_fixture, "reg_blur_sine", "tikhonov_gcv") {
     };
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(blur_sine_fixture, "reg_blur_sine", "full_gen_tik_l_curve") {
     STAT_BENCH_MEASURE() {
         using solver_type =
@@ -190,7 +186,6 @@ STAT_BENCH_CASE_F(blur_sine_fixture, "reg_blur_sine", "full_gen_tik_l_curve") {
     };
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(blur_sine_fixture, "reg_blur_sine", "full_gen_tik_gcv") {
     STAT_BENCH_MEASURE() {
         using solver_type =

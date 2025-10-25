@@ -34,7 +34,6 @@ using wrapped_changing_mass_exponential_problem =
     num_collect::ode::single_variate_implicit_problem_wrapper<
         num_prob_collect::ode::changing_mass_exponential_problem>;
 
-// NOLINTNEXTLINE
 TEMPLATE_PRODUCT_TEST_CASE(
     "changing_mass_exponential_problem with embedded formulas with "
     "implicit_problem_wrapper",

@@ -28,7 +28,6 @@
 #include "num_collect/ode/runge_kutta/rk4_formula.h"
 #include "num_prob_collect/ode/exponential_problem.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_PRODUCT_TEST_CASE("exponential_problem with non-embedded formulas", "",
     (num_collect::ode::runge_kutta::implicit_euler_solver,
         num_collect::ode::runge_kutta::rk4_solver),

@@ -27,6 +27,7 @@
 #include <stat_bench/invocation_context.h>
 
 #include "num_collect/constants/pi.h"
+#include "num_collect/constants/pow.h"
 #include "num_collect/multi_double/quad.h"
 #include "num_collect/util/kahan_adder.h"
 
@@ -55,10 +56,9 @@ constexpr std::size_t zeta4_terms = 100;
 #else
 constexpr std::size_t zeta4_terms = 100000;
 #endif
-// NOLINTNEXTLINE: won't throw
-const double zeta4_reference = std::pow(num_collect::constants::pid, 4) / 90.0;
+constexpr double zeta4_reference =
+    num_collect::constants::pow(num_collect::constants::pid, 4) / 90.0;
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(summation_fixture, "sum_zeta4", "ordinary") {
     double result = 0.0;
     STAT_BENCH_MEASURE() {
@@ -73,7 +73,6 @@ STAT_BENCH_CASE_F(summation_fixture, "sum_zeta4", "ordinary") {
     set_error(result, zeta4_reference);
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(summation_fixture, "sum_zeta4", "kahan") {
     double result = 0.0;
     STAT_BENCH_MEASURE() {
@@ -88,7 +87,6 @@ STAT_BENCH_CASE_F(summation_fixture, "sum_zeta4", "kahan") {
     set_error(result, zeta4_reference);
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(summation_fixture, "sum_zeta4", "quad") {
     double result = 0.0;
     STAT_BENCH_MEASURE() {

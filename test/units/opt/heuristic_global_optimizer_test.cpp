@@ -68,8 +68,8 @@ TEST_CASE("num_collect::opt::heuristic_global_optimizer(multi_variate)") {
 
     SECTION("solve") {
         auto opt = heuristic_global_optimizer<multi_quadratic_function>();
-        opt.init(Eigen::VectorXd::Constant(3, -1.0),  // NOLINT
-            Eigen::VectorXd::Constant(3, 2.0));       // NOLINT
+        opt.init(Eigen::VectorXd::Constant(3, -1.0),
+            Eigen::VectorXd::Constant(3, 2.0));
         constexpr num_collect::index_type opt1_max_evaluations = 200;
         constexpr double sol_tol = 1e-4;
         constexpr double tol_size = 0.1 * sol_tol;

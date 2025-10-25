@@ -33,7 +33,7 @@ namespace num_collect_test::logging {
 
 class mock_log_sink {
 public:
-    // NOLINTNEXTLINE
+    // NOLINTNEXTLINE(modernize-use-trailing-return-type)
     MAKE_MOCK5(write_impl,
         void(num_collect::logging::time_stamp time, std::string_view tag,
             num_collect::logging::log_level level,

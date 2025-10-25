@@ -53,7 +53,7 @@ static void write_image(const mat_type& matrix, const std::string& filepath,
     for (num_collect::index_type i = 0; i < rows; ++i) {
         for (num_collect::index_type j = 0; j < cols; ++j) {
             const double coeff = matrix.coeff(i, j);
-            const bool is_zero = coeff == 0.0;  // NOLINT
+            const bool is_zero = coeff == 0.0;
             const std::uint8_t pixel_val = is_zero
                 ? static_cast<std::uint8_t>(255)
                 : static_cast<std::uint8_t>(0);

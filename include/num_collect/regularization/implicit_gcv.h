@@ -212,7 +212,7 @@ public:
      * \brief Generate noise with a random seed.
      */
     void generate_noise() {
-        std::mt19937 generator{};  // NOLINT: For reproducibility.
+        std::mt19937 generator{};
         generate_noise(generator);
     }
 
@@ -320,8 +320,7 @@ public:
             using std::pow;
             using std::log10;
             const scalar_type param =
-                pow(static_cast<scalar_type>(10),  // NOLINT
-                    log_param);
+                pow(static_cast<scalar_type>(10), log_param);
             const scalar_type gcv_value = calculator_(param);
             NUM_COLLECT_LOG_DEBUG(logger(), "gcv({}) = {}", param, gcv_value);
             return log10(gcv_value);
@@ -334,8 +333,8 @@ public:
 
         optimizer_.init(log_min_param, log_max_param);
         optimizer_.solve();
-        opt_param_ = pow(static_cast<scalar_type>(10),  // NOLINT
-            optimizer_.opt_variable());
+        opt_param_ =
+            pow(static_cast<scalar_type>(10), optimizer_.opt_variable());
 
         NUM_COLLECT_LOG_SUMMARY(logger(), "Selected parameter: {}", opt_param_);
     }

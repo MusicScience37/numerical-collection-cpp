@@ -47,7 +47,7 @@ public:
      *
      * \param[in] tag Tag.
      */
-    log_tag_view(const log_tag& tag) noexcept  // NOLINT
+    log_tag_view(const log_tag& tag) noexcept  // NOLINT(*-explicit-*)
         : name_(tag.name()) {}
 
     /*!

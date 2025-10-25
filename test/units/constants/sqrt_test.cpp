@@ -28,7 +28,6 @@
 
 #include "check_constexpr_function.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::constants::impl::sqrt_at_compile_time", "", float, double) {
     SECTION("sqrt of negative number") {
@@ -69,7 +68,6 @@ TEMPLATE_TEST_CASE(
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::constants::sqrt", "", float, double) {
     SECTION("sqrt of negative number") {
         constexpr auto x = static_cast<TestType>(-1.0);
@@ -107,7 +105,6 @@ TEMPLATE_TEST_CASE("num_collect::constants::sqrt", "", float, double) {
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::constants::sqrt (integers)", "", int, long long) {
     SECTION("sqrt of negative number") {

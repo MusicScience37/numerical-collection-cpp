@@ -103,7 +103,7 @@ TEST_CASE("num_collect::rbf::impl::compute_kernel_matrix_parallel") {
         const distance_function_type distance_function;
         const rbf_type rbf;
         length_parameter_calculator_type length_parameter_calculator;
-        length_parameter_calculator.scale(2.0);  // NOLINT
+        length_parameter_calculator.scale(2.0);
         const auto variables = std::vector<double>{0.0, 0.3, 0.5, 0.6};
         Eigen::SparseMatrix<double> kernel_matrix;
 

@@ -405,7 +405,7 @@ private:
     double distance_threshold_coeff_{default_distance_threshold_coeff};
 
     //! Random number generator.
-    std::mt19937 random_number_generator_{};  // NOLINT: for reproducibility
+    std::mt19937 random_number_generator_{};
 };
 
 }  // namespace num_collect::opt

@@ -63,8 +63,7 @@ public:
      *
      * \param[in] integer Integer.
      */
-    constexpr fraction(  // NOLINT(google-explicit-constructor, hicpp-explicit-conversions)
-        integer_type integer) noexcept
+    constexpr fraction(integer_type integer) noexcept  // NOLINT(*-explicit-*)
         : numerator_(integer), denominator_(static_cast<integer_type>(1)) {}
 
     /*!
@@ -347,7 +346,7 @@ public:
      * \param[in] context Context.
      * \return Iterator.
      */
-    constexpr auto parse(format_parse_context& context)  // NOLINT
+    constexpr auto parse(format_parse_context& context)  // NOLINT(*-static)
         -> decltype(context.begin()) {
         return context.end();
     }

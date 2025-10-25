@@ -35,7 +35,6 @@ namespace num_collect::logging::impl {
  */
 [[nodiscard]] inline auto parse_log_tag_element(std::string_view input)
     -> std::tuple<std::string_view, std::string_view> {
-    // NOLINTNEXTLINE(readability-qualified-auto): This is implementation-defined type.
     auto iter = input.begin();
     for (; iter < input.end(); ++iter) {
         if (!is_log_tag_element_char(*iter)) {

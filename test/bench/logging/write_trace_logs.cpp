@@ -36,7 +36,6 @@ static void perform() {
     };
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE("trace_logs", "write no log") {
     num_collect::logging::edit_default_log_tag_config()
         .sink(num_collect::logging::sinks::create_single_file_sink(
@@ -46,7 +45,6 @@ STAT_BENCH_CASE("trace_logs", "write no log") {
     perform();
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE("trace_logs", "write log") {
     num_collect::logging::edit_default_log_tag_config()
         .sink(num_collect::logging::sinks::create_single_file_sink(

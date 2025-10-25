@@ -89,10 +89,10 @@ private:
     double diff_coeff_{};
 
     //! Mass.
-    double mass_{2.0};  // NOLINT
+    double mass_{2.0};
 
     //! Jacobian.
-    double jacobian_{2.0};  // NOLINT
+    double jacobian_{2.0};
 };
 
 static_assert(num_collect::ode::concepts::differentiable_problem<

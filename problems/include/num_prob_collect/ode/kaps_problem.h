@@ -75,15 +75,15 @@ public:
     void evaluate_on(double /*time*/, const variable_type& variable,
         num_collect::ode::evaluation_type evaluations) {
         const double inv_eps = 1.0 / epsilon_;
-        diff_coeff_(0) = -(inv_eps + 2.0) * variable(0) +  // NOLINT
+        diff_coeff_(0) = -(inv_eps + 2.0) * variable(0) +
             inv_eps * variable(1) * variable(1);
         diff_coeff_(1) = variable(0) - variable(1) - variable(1) * variable(1);
 
         if (evaluations.jacobian) {
-            jacobian_(0, 0) = -(inv_eps + 2.0);             // NOLINT
-            jacobian_(0, 1) = 2.0 * inv_eps * variable(1);  // NOLINT
+            jacobian_(0, 0) = -(inv_eps + 2.0);
+            jacobian_(0, 1) = 2.0 * inv_eps * variable(1);
             jacobian_(1, 0) = 1.0;
-            jacobian_(1, 1) = -1.0 - 2.0 * variable(1);  // NOLINT
+            jacobian_(1, 1) = -1.0 - 2.0 * variable(1);
         }
     }
 

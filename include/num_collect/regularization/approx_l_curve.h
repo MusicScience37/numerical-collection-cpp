@@ -267,8 +267,7 @@ private:
         scalar_type log_regularization_parameter) -> sample_point {
         using std::pow;
         const scalar_type regularization_parameter =
-            pow(static_cast<scalar_type>(10),  // NOLINT
-                log_regularization_parameter);
+            pow(static_cast<scalar_type>(10), log_regularization_parameter);
 
         solution_ = *initial_solution_;
         solver_->solve(regularization_parameter, solution_);

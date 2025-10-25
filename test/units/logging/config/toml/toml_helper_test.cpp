@@ -38,7 +38,7 @@ invalid_type_value = "abc"
         const auto table = toml::parse(test_toml);
 
         CHECK(require_value<int>(table, "test_config.valid_value",
-                  "valid_value in test_config", "integer") == 12345);  // NOLINT
+                  "valid_value in test_config", "integer") == 12345);
 
         CHECK_THROWS_WITH(
             require_value<int>(table, "test_config.nonexisting_value",
@@ -60,7 +60,7 @@ test_value = "abc"
         const auto table = toml::parse(test_toml);
 
         CHECK(require_value<std::string>(table, "test_config.test_value",
-                  "test_value in test_config", "string") == "abc");  // NOLINT
+                  "test_value in test_config", "string") == "abc");
 
         CHECK_THROWS_WITH(
             require_value<int>(table, "test_config.nonexisting_value",

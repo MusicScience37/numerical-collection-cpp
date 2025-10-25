@@ -44,7 +44,6 @@ void perform(const Integrator& integrator) {
         "error", std::abs(val - true_val));
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(gauss_legendre_fixture, "integ_exp", "gauss_legendre") {
     const auto degree = stat_bench::current_invocation_context()
                             .get_param<num_collect::index_type>("degree");
@@ -54,7 +53,6 @@ STAT_BENCH_CASE_F(gauss_legendre_fixture, "integ_exp", "gauss_legendre") {
     perform(integrator);
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(
     gauss_legendre_kronrod_fixture, "integ_exp", "gauss_legendre_kronrod") {
     const auto degree = stat_bench::current_invocation_context()
@@ -65,7 +63,6 @@ STAT_BENCH_CASE_F(
     perform(integrator);
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(de_finite_fixture, "integ_exp", "de_finite") {
     const auto points = stat_bench::current_invocation_context()
                             .get_param<num_collect::index_type>("points");
@@ -74,7 +71,6 @@ STAT_BENCH_CASE_F(de_finite_fixture, "integ_exp", "de_finite") {
     perform(integrator);
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(tanh_finite_fixture, "integ_exp", "tanh_finite") {
     const auto points = stat_bench::current_invocation_context()
                             .get_param<num_collect::index_type>("points");

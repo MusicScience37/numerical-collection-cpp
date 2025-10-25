@@ -109,7 +109,6 @@ private:
     std::shared_ptr<stat_bench::stat::CustomStatOutput> evaluations_stat_;
 };
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(single_variate_multiple_optima_function_fixture,
     "opt_single_variate_multiple_optima_function", "dividing_rectangles") {
     test_optimizer(
@@ -124,7 +123,6 @@ STAT_BENCH_CASE_F(single_variate_multiple_optima_function_fixture,
         "dividing_rectangles");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(single_variate_multiple_optima_function_fixture,
     "opt_single_variate_multiple_optima_function", "sampling_optimizer") {
     test_optimizer(
@@ -139,7 +137,6 @@ STAT_BENCH_CASE_F(single_variate_multiple_optima_function_fixture,
         "sampling_optimizer");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(single_variate_multiple_optima_function_fixture,
     "opt_single_variate_multiple_optima_function",
     "gaussian_process_optimizer") {

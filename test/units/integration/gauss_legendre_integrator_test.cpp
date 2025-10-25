@@ -32,7 +32,6 @@
 #include "num_collect/constants/napier.h"  // IWYU pragma: keep
 #include "num_collect/constants/pi.h"      // IWYU pragma: keep
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::integration::gauss_legendre_integrator", "", float, double) {
     SECTION("integrate cos") {

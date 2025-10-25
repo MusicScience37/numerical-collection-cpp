@@ -28,10 +28,9 @@ auto main() -> int {
     configure_logging();
     num_collect::opt::dividing_rectangles<
         num_prob_collect::opt::shekel_function>
-        optimizer(num_prob_collect::opt::shekel_function(5));  // NOLINT
-    // NOLINTNEXTLINE
+        optimizer(num_prob_collect::opt::shekel_function(5));
     optimizer.init(Eigen::Vector4d::Zero(), Eigen::Vector4d::Constant(10.0));
-    optimizer.max_evaluations(200);  // NOLINT
-    optimizer.min_rate_imp(1e-4);    // NOLINT
+    optimizer.max_evaluations(200);
+    optimizer.min_rate_imp(1e-4);
     optimizer.solve();
 }

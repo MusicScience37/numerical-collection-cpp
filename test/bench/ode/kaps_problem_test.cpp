@@ -61,13 +61,13 @@ inline void bench_one(
 #ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
     constexpr num_collect::index_type repetitions = 10;
 #else
-    num_collect::index_type repetitions = 1000;  // NOLINT
+    num_collect::index_type repetitions = 1000;
     if (solver_name == "RKF45" || solver_name == "DOPRI5" ||
         solver_name == "ARK4(3)-ERK") {
         if (epsilon < 1e-4) {
-            repetitions = 10;  // NOLINT
+            repetitions = 10;
         } else {
-            repetitions = 100;  // NOLINT
+            repetitions = 100;
         }
     }
 #endif

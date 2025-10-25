@@ -34,7 +34,6 @@
 #include "num_collect/ode/symplectic/symplectic_forest4_formula.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_PRODUCT_TEST_CASE("spring_movement_problem with non-embedded formulas",
     "",
     (num_collect::ode::runge_kutta::implicit_euler_solver,

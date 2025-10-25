@@ -63,8 +63,7 @@ public:
      * \param[in] function Function object of the objective function.
      */
     template <base::concepts::invocable_as<Value(Variable)> Function>
-    any_objective_function(  // NOLINT(*-explicit-constructor,*-explicit-conversions)
-        Function&& function)
+    any_objective_function(Function&& function)  // NOLINT(*-explicit-*)
         : function_(std::forward<Function>(function)) {}
 
     /*!
@@ -74,8 +73,8 @@ public:
      * \return This object.
      */
     template <base::concepts::invocable_as<Value(Variable)> Function>
-    auto operator=(  // NOLINT(*-explicit-constructor,*-explicit-conversions)
-        Function&& function) -> any_objective_function& {
+    auto operator=(Function&& function)  // NOLINT(*-explicit-*)
+        -> any_objective_function& {
         function_ = std::forward<Function>(function);
         return *this;
     }

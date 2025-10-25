@@ -36,7 +36,6 @@ auto main() -> int {
 
     ProfilerStart("profile_linear_algebraic_multigrid_solver_compute.prof");
 #ifdef NDEBUG
-    // NOLINTNEXTLINE
     for (std::size_t i = 0; i < 10; ++i) {
 #endif
         num_collect::linear::algebraic_multigrid_solver<mat_type> solver;

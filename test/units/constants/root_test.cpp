@@ -28,7 +28,6 @@
 
 #include "check_constexpr_function.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::constants::impl::root_at_compile_time", "", float, double) {
     const auto reference_function = [](TestType x, int n) -> TestType {
@@ -179,7 +178,6 @@ TEMPLATE_TEST_CASE(
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::constants::root", "", float, double) {
     const auto reference_function = [](TestType x, int n) -> TestType {
         if (x < static_cast<TestType>(0)) {
@@ -311,7 +309,6 @@ TEMPLATE_TEST_CASE("num_collect::constants::root", "", float, double) {
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::constants::root (integers)", "", int, long long) {
     const auto reference_function = [](TestType x, int n) -> double {

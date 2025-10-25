@@ -99,37 +99,37 @@ TEST_CASE("num_collect::numbers::custom_float") {
 
     SECTION("move digits") {
         auto num = test_type();
-        num[3] = 7;                       // NOLINT
-        num[4] = 11;                      // NOLINT
-        num[5] = 13;                      // NOLINT
-        REQUIRE(num.lowest_ind() == 0);   // NOLINT
-        REQUIRE(num.highest_ind() == 5);  // NOLINT
+        num[3] = 7;
+        num[4] = 11;
+        num[5] = 13;
+        REQUIRE(num.lowest_ind() == 0);
+        REQUIRE(num.highest_ind() == 5);
 
         REQUIRE_NOTHROW(num.move_digits(-2));
 
-        REQUIRE(num.lowest_ind() == -2);  // NOLINT
-        REQUIRE(num.highest_ind() == 3);  // NOLINT
-        REQUIRE(num.at(1) == 7);          // NOLINT
-        REQUIRE(num.at(2) == 11);         // NOLINT
-        REQUIRE(num.at(3) == 13);         // NOLINT
+        REQUIRE(num.lowest_ind() == -2);
+        REQUIRE(num.highest_ind() == 3);
+        REQUIRE(num.at(1) == 7);
+        REQUIRE(num.at(2) == 11);
+        REQUIRE(num.at(3) == 13);
     }
 
     SECTION("change the range of digits") {
         auto num = test_type();
-        num[3] = 7;                       // NOLINT
-        num[4] = 11;                      // NOLINT
-        num[5] = 13;                      // NOLINT
-        REQUIRE(num.lowest_ind() == 0);   // NOLINT
-        REQUIRE(num.highest_ind() == 5);  // NOLINT
+        num[3] = 7;
+        num[4] = 11;
+        num[5] = 13;
+        REQUIRE(num.lowest_ind() == 0);
+        REQUIRE(num.highest_ind() == 5);
 
-        REQUIRE_NOTHROW(num.resize(-1, 4));  // NOLINT
-        REQUIRE(num.lowest_ind() == -1);     // NOLINT
-        REQUIRE(num.highest_ind() == 4);     // NOLINT
-        REQUIRE(num.at(-1) == 0);            // NOLINT
-        REQUIRE(num.at(0) == 0);             // NOLINT
-        REQUIRE(num.at(1) == 0);             // NOLINT
-        REQUIRE(num.at(2) == 0);             // NOLINT
-        REQUIRE(num.at(3) == 7);             // NOLINT
-        REQUIRE(num.at(4) == 11);            // NOLINT
+        REQUIRE_NOTHROW(num.resize(-1, 4));
+        REQUIRE(num.lowest_ind() == -1);
+        REQUIRE(num.highest_ind() == 4);
+        REQUIRE(num.at(-1) == 0);
+        REQUIRE(num.at(0) == 0);
+        REQUIRE(num.at(1) == 0);
+        REQUIRE(num.at(2) == 0);
+        REQUIRE(num.at(3) == 7);
+        REQUIRE(num.at(4) == 11);
     }
 }

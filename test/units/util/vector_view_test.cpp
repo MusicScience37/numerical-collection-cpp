@@ -34,7 +34,7 @@ TEST_CASE("num_collect::util::vector_view") {
     SECTION("default constructor") {
         vector_view<double> view;
         CHECK(view.data() == nullptr);
-        CHECK(view.size() == 0);  // NOLINT
+        CHECK(view.size() == 0);  // NOLINT(*-size-empty)
     }
 
     SECTION("create from a pointer to data and its size") {
@@ -214,7 +214,7 @@ TEST_CASE("num_collect::util::vector_view") {
         vector_view<int> view = data;
 
         std::vector<int> actual_data;
-        // NOLINTNEXTLINE(*-loop-convert,*-qualified-auto)
+        // NOLINTNEXTLINE(*-loop-convert)
         for (auto iter = view.cbegin(); iter != view.cend(); ++iter) {
             STATIC_REQUIRE(std::is_same_v<decltype(*iter), const int&>);
             actual_data.push_back(*iter);

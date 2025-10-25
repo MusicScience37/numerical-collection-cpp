@@ -27,26 +27,26 @@ TEST_CASE("num_collect::base::isfinite") {
     using num_collect::base::isfinite;
 
     SECTION("check float") {
-        CHECK(isfinite(1.2F));                                 // NOLINT
-        CHECK_FALSE(isfinite(static_cast<float>(NAN)));        // NOLINT
-        CHECK_FALSE(isfinite(static_cast<float>(INFINITY)));   // NOLINT
-        CHECK_FALSE(isfinite(static_cast<float>(-INFINITY)));  // NOLINT
+        CHECK(isfinite(1.2F));
+        CHECK_FALSE(isfinite(static_cast<float>(NAN)));
+        CHECK_FALSE(isfinite(static_cast<float>(INFINITY)));
+        CHECK_FALSE(isfinite(static_cast<float>(-INFINITY)));
     }
 
     SECTION("check double") {
-        CHECK(isfinite(1.2));                                   // NOLINT
-        CHECK_FALSE(isfinite(static_cast<double>(NAN)));        // NOLINT
-        CHECK_FALSE(isfinite(static_cast<double>(INFINITY)));   // NOLINT
-        CHECK_FALSE(isfinite(static_cast<double>(-INFINITY)));  // NOLINT
+        CHECK(isfinite(1.2));
+        CHECK_FALSE(isfinite(static_cast<double>(NAN)));
+        CHECK_FALSE(isfinite(static_cast<double>(INFINITY)));
+        CHECK_FALSE(isfinite(static_cast<double>(-INFINITY)));
     }
 
     SECTION("check complex<double>") {
-        CHECK(isfinite(std::complex<double>(1.2, 2.3)));              // NOLINT
-        CHECK_FALSE(isfinite(std::complex<double>(NAN, 2.3)));        // NOLINT
-        CHECK_FALSE(isfinite(std::complex<double>(1.2, NAN)));        // NOLINT
-        CHECK_FALSE(isfinite(std::complex<double>(INFINITY, 2.3)));   // NOLINT
-        CHECK_FALSE(isfinite(std::complex<double>(1.2, INFINITY)));   // NOLINT
-        CHECK_FALSE(isfinite(std::complex<double>(-INFINITY, 2.3)));  // NOLINT
-        CHECK_FALSE(isfinite(std::complex<double>(1.2, -INFINITY)));  // NOLINT
+        CHECK(isfinite(std::complex<double>(1.2, 2.3)));
+        CHECK_FALSE(isfinite(std::complex<double>(NAN, 2.3)));
+        CHECK_FALSE(isfinite(std::complex<double>(1.2, NAN)));
+        CHECK_FALSE(isfinite(std::complex<double>(INFINITY, 2.3)));
+        CHECK_FALSE(isfinite(std::complex<double>(1.2, INFINITY)));
+        CHECK_FALSE(isfinite(std::complex<double>(-INFINITY, 2.3)));
+        CHECK_FALSE(isfinite(std::complex<double>(1.2, -INFINITY)));
     }
 }

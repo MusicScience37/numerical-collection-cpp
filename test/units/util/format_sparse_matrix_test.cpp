@@ -33,11 +33,11 @@ TEST_CASE("num_collect::util::format_sparse_matrix") {
     using num_collect::util::sparse_matrix_format_type;
 
     SECTION("format") {
-        Eigen::SparseMatrix<double> mat(2, 3);  // NOLINT
+        Eigen::SparseMatrix<double> mat(2, 3);
         num_collect::util::vector<Eigen::Triplet<double>> data;
-        data.emplace_back(0, 0, 1.234);   // NOLINT
-        data.emplace_back(0, 2, 2.345);   // NOLINT
-        data.emplace_back(1, 1, -3.456);  // NOLINT
+        data.emplace_back(0, 0, 1.234);
+        data.emplace_back(0, 2, 2.345);
+        data.emplace_back(1, 1, -3.456);
         mat.setFromTriplets(data.begin(), data.end());
 
         SECTION("one line") {

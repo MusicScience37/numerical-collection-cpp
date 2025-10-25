@@ -36,7 +36,6 @@ TEST_CASE("num_collect::multi_double::impl::pow_general_impl") {
         quad expected;
         std::tie(base, exponent,
             expected) = GENERATE(Catch::Generators::table<quad, quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.be580cb8d6672p+5, -0x1.7c1b0862537e4p-49),
                 quad(0x1.7ff89514e4ba3p+2, 0x1.d9043a8ea4840p-55),
@@ -54,7 +53,6 @@ TEST_CASE("num_collect::multi_double::impl::pow_general_impl") {
                 quad(-0x1.1f55dcd10d285p-3, -0x1.2c2ce0b511ca4p-57),
                 quad(0x1.13368fce32b95p+1, 0x1.8f8f57d27c7b8p-53)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("base: " << format_quad_for_test(base));
         INFO("exponent: " << format_quad_for_test(exponent));
@@ -76,7 +74,6 @@ TEST_CASE("num_collect::multi_double::impl::pow_positive_int_impl") {
         std::tie(
             base, exponent, expected) = GENERATE(Catch::Generators::table<quad,
             unsigned int, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.7e55eca788245p+5, 0x1.d2c49ebca1298p-50),
                 0U, quad(0x1.0000000000000p+0, 0x0.0p+0)),
@@ -91,7 +88,6 @@ TEST_CASE("num_collect::multi_double::impl::pow_positive_int_impl") {
             std::make_tuple(quad(0x1.17ce6ac42961cp+0, -0x1.070ccd508d778p-55),
                 1024U, quad(0x1.495e1a4023cf3p+131, 0x1.b42de2ff34708p+77)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("base: " << format_quad_for_test(base));
         INFO("exponent: " << format_quad_for_test(exponent));

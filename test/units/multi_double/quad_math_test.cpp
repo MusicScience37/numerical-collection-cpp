@@ -68,7 +68,6 @@ TEST_CASE("num_collect::multi_double::sqrt") {
         quad expected;
         std::tie(
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.0000000000000p+0, 0x0.0p+0),
                 quad(0x1.0000000000000p+0, 0x0.0p+0)),
@@ -81,7 +80,6 @@ TEST_CASE("num_collect::multi_double::sqrt") {
             std::make_tuple(quad(0x1.2c6adf012f63ap+27, 0x1.7f94bdac919b8p-27),
                 quad(0x1.8830e22df76a4p+13, -0x1.621a2c2e4f071p-41))
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 
@@ -92,7 +90,6 @@ TEST_CASE("num_collect::multi_double::sqrt") {
 
     SECTION("calculate for positive values at compile time") {
         static constexpr auto inputs = std::to_array({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.0000000000000p+0, 0x0.0p+0),
                 quad(0x1.0000000000000p+0, 0x0.0p+0)),
@@ -105,7 +102,6 @@ TEST_CASE("num_collect::multi_double::sqrt") {
             std::make_tuple(quad(0x1.2c6adf012f63ap+27, 0x1.7f94bdac919b8p-27),
                 quad(0x1.8830e22df76a4p+13, -0x1.621a2c2e4f071p-41))
             // cspell: enable
-            // NOLINTEND
         });
         constexpr auto outputs = [] {
             std::array<quad, inputs.size()> results{};
@@ -143,7 +139,6 @@ TEST_CASE("num_collect::multi_double::exp") {
         quad expected;
         std::tie(
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(-0x1.eecd4d2a8802bp+8, -0x1.0c0bd235ca6d4p-46),
                 quad(0x1.1c60dd15c954ep-714, -0x1.2a61ff0c2188dp-770)),
@@ -166,7 +161,6 @@ TEST_CASE("num_collect::multi_double::exp") {
             std::make_tuple(quad(0x1.15d8c5d3e4004p+9, -0x1.01f96f5f98c28p-45),
                 quad(0x1.9ecf9ee00e06bp+801, 0x1.8ebd36d627d80p+747)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 
@@ -177,7 +171,6 @@ TEST_CASE("num_collect::multi_double::exp") {
 
     SECTION("calculate for non-zero values at compile time") {
         static constexpr auto inputs = std::to_array({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(-0x1.eecd4d2a8802bp+8, -0x1.0c0bd235ca6d4p-46),
                 quad(0x1.1c60dd15c954ep-714, -0x1.2a61ff0c2188dp-770)),
@@ -200,7 +193,6 @@ TEST_CASE("num_collect::multi_double::exp") {
             std::make_tuple(quad(0x1.15d8c5d3e4004p+9, -0x1.01f96f5f98c28p-45),
                 quad(0x1.9ecf9ee00e06bp+801, 0x1.8ebd36d627d80p+747)),
             // cspell: enable
-            // NOLINTEND
         });
         constexpr auto outputs = [] {
             std::array<quad, inputs.size()> results{};
@@ -257,7 +249,6 @@ TEST_CASE("num_collect::multi_double::expm1") {
         quad expected;
         std::tie(
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(-0x1.eecd4d2a8802bp+8, -0x1.0c0bd235ca6d4p-46),
                 quad(-0x1.0000000000000p+0, 0x0.0p+0)),
@@ -285,7 +276,6 @@ TEST_CASE("num_collect::multi_double::expm1") {
             std::make_tuple(quad(0x1.15d8c5d3e4004p+9, -0x1.01f96f5f98c28p-45),
                 quad(0x1.9ecf9ee00e06bp+801, 0x1.8ebd36d627d80p+747)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 
@@ -296,7 +286,6 @@ TEST_CASE("num_collect::multi_double::expm1") {
 
     SECTION("calculate for non-zero values at compile time") {
         static constexpr auto inputs = std::to_array({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(-0x1.eecd4d2a8802bp+8, -0x1.0c0bd235ca6d4p-46),
                 quad(-0x1.0000000000000p+0, 0x0.0p+0)),
@@ -324,7 +313,6 @@ TEST_CASE("num_collect::multi_double::expm1") {
             std::make_tuple(quad(0x1.15d8c5d3e4004p+9, -0x1.01f96f5f98c28p-45),
                 quad(0x1.9ecf9ee00e06bp+801, 0x1.8ebd36d627d80p+747)),
             // cspell: enable
-            // NOLINTEND
         });
         constexpr auto outputs = [] {
             std::array<quad, inputs.size()> results{};
@@ -362,7 +350,6 @@ TEST_CASE("num_collect::multi_double::log") {
         quad expected;
         std::tie(
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.01c016cf3b315p-29, -0x1.ec067815a7138p-84),
                 quad(-0x1.4182e26a42f3ep+4, 0x1.ddb996c01104ap-50)),
@@ -379,7 +366,6 @@ TEST_CASE("num_collect::multi_double::log") {
             std::make_tuple(quad(0x1.ab2d7adaa1156p+33, -0x1.a5b71b73af190p-23),
                 quad(0x1.762c8ffa9ef99p+4, -0x1.288867257e4c6p-51)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 
@@ -390,7 +376,6 @@ TEST_CASE("num_collect::multi_double::log") {
 
     SECTION("calculate for non-zero values at compile time") {
         static constexpr auto inputs = std::to_array({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.01c016cf3b315p-29, -0x1.ec067815a7138p-84),
                 quad(-0x1.4182e26a42f3ep+4, 0x1.ddb996c01104ap-50)),
@@ -407,7 +392,6 @@ TEST_CASE("num_collect::multi_double::log") {
             std::make_tuple(quad(0x1.ab2d7adaa1156p+33, -0x1.a5b71b73af190p-23),
                 quad(0x1.762c8ffa9ef99p+4, -0x1.288867257e4c6p-51)),
             // cspell: enable
-            // NOLINTEND
         });
         constexpr auto outputs = [] {
             std::array<quad, inputs.size()> results{};
@@ -463,7 +447,6 @@ TEST_CASE("num_collect::multi_double::log1p") {
         quad expected;
         std::tie(
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(
                 quad(-0x1.0502c4a06925ep-10, -0x1.958f20a5e1030p-64),
@@ -478,7 +461,6 @@ TEST_CASE("num_collect::multi_double::log1p") {
             std::make_tuple(quad(0x1.067ec9978934cp+15, -0x1.c28e47aebe040p-39),
                 quad(0x1.4d836cbe7d2dfp+3, 0x1.ab32b8c12b0d7p-51)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 
@@ -489,7 +471,6 @@ TEST_CASE("num_collect::multi_double::log1p") {
 
     SECTION("calculate for non-zero values at compile time") {
         static constexpr auto inputs = std::to_array({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(
                 quad(-0x1.0502c4a06925ep-10, -0x1.958f20a5e1030p-64),
@@ -504,7 +485,6 @@ TEST_CASE("num_collect::multi_double::log1p") {
             std::make_tuple(quad(0x1.067ec9978934cp+15, -0x1.c28e47aebe040p-39),
                 quad(0x1.4d836cbe7d2dfp+3, 0x1.ab32b8c12b0d7p-51)),
             // cspell: enable
-            // NOLINTEND
         });
         constexpr auto outputs = [] {
             std::array<quad, inputs.size()> results{};
@@ -533,7 +513,6 @@ TEST_CASE("num_collect::multi_double::log10") {
         quad expected;
         std::tie(
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.01c016cf3b315p-29, -0x1.ec067815a7138p-84),
                 quad(-0x1.1742d9f9958c5p+3, 0x1.94691d3552870p-52)),
@@ -548,7 +527,6 @@ TEST_CASE("num_collect::multi_double::log10") {
             std::make_tuple(quad(0x1.ab2d7adaa1156p+33, -0x1.a5b71b73af190p-23),
                 quad(0x1.4500e35f71782p+3, -0x1.ee544ea574060p-53)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 
@@ -559,7 +537,6 @@ TEST_CASE("num_collect::multi_double::log10") {
 
     SECTION("calculate for non-zero values at compile time") {
         static constexpr auto inputs = std::to_array({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.01c016cf3b315p-29, -0x1.ec067815a7138p-84),
                 quad(-0x1.1742d9f9958c5p+3, 0x1.94691d3552870p-52)),
@@ -574,7 +551,6 @@ TEST_CASE("num_collect::multi_double::log10") {
             std::make_tuple(quad(0x1.ab2d7adaa1156p+33, -0x1.a5b71b73af190p-23),
                 quad(0x1.4500e35f71782p+3, -0x1.ee544ea574060p-53)),
             // cspell: enable
-            // NOLINTEND
         });
         constexpr auto outputs = [] {
             std::array<quad, inputs.size()> results{};
@@ -631,7 +607,6 @@ TEST_CASE("num_collect::multi_double::pow(quad, quad)") {
         quad expected;
         std::tie(base, exponent,
             expected) = GENERATE(Catch::Generators::table<quad, quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.be580cb8d6672p+5, -0x1.7c1b0862537e4p-49),
                 quad(0x1.7ff89514e4ba3p+2, 0x1.d9043a8ea4840p-55),
@@ -663,7 +638,6 @@ TEST_CASE("num_collect::multi_double::pow(quad, quad)") {
             std::make_tuple(quad(0x1.645eaa2f888ecp-7, 0x1.11285a34d2f78p-62),
                 quad(0x0.0p+0, 0x0.0p+0), quad(0x1.0000000000000p+0, 0x0.0p+0)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("base: " << format_quad_for_test(base));
         INFO("exponent: " << format_quad_for_test(exponent));
@@ -679,7 +653,6 @@ TEST_CASE("num_collect::multi_double::pow(quad, quad)") {
         quad expected;
         std::tie(base, exponent,
             expected) = GENERATE(Catch::Generators::table<quad, quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.0000000000000p+0, 0x1.0000000000000p-60),
                 quad(0x1.0000000000000p+54, 0x0.0p+0),
@@ -688,7 +661,6 @@ TEST_CASE("num_collect::multi_double::pow(quad, quad)") {
                 quad(-0x1.0000000000000p+55, 0x0.0p+0),
                 quad(0x1.f03f56a88b5d8p-1, -0x1.bab4f95aaf99cp-55)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("base: " << format_quad_for_test(base));
         INFO("exponent: " << format_quad_for_test(exponent));
@@ -709,7 +681,6 @@ TEST_CASE("num_collect::multi_double::pow(quad, double)") {
         quad expected;
         std::tie(base, exponent,
             expected) = GENERATE(Catch::Generators::table<quad, double, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.be580cb8d6672p+5, -0x1.7c1b0862537e4p-49),
                 0x1.7ff89514e4ba3p+2,
@@ -741,7 +712,6 @@ TEST_CASE("num_collect::multi_double::pow(quad, double)") {
             std::make_tuple(quad(0x1.645eaa2f888ecp-7, 0x1.11285a34d2f78p-62),
                 0x0.0p+0, quad(0x1.0000000000000p+0, 0x0.0p+0)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("base: " << format_quad_for_test(base));
         INFO("exponent: " << format_quad_for_test(exponent));
@@ -757,7 +727,6 @@ TEST_CASE("num_collect::multi_double::pow(quad, double)") {
         quad expected;
         std::tie(base, exponent,
             expected) = GENERATE(Catch::Generators::table<quad, double, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.0000000000000p+0, 0x1.0000000000000p-60),
                 0x1.0000000000000p+54,
@@ -766,7 +735,6 @@ TEST_CASE("num_collect::multi_double::pow(quad, double)") {
                 -0x1.0000000000000p+55,
                 quad(0x1.f03f56a88b5d8p-1, -0x1.bab4f95aaf99cp-55)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("base: " << format_quad_for_test(base));
         INFO("exponent: " << format_quad_for_test(exponent));
@@ -788,7 +756,6 @@ TEST_CASE("num_collect::multi_double::pow(quad, unsigned int)") {
         std::tie(
             base, exponent, expected) = GENERATE(Catch::Generators::table<quad,
             unsigned int, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.7e55eca788245p+5, 0x1.d2c49ebca1298p-50),
                 0U, quad(0x1.0000000000000p+0, 0x0.0p+0)),
@@ -805,7 +772,6 @@ TEST_CASE("num_collect::multi_double::pow(quad, unsigned int)") {
             std::make_tuple(quad(0x1.144a41d817304p+0, 0x1.f971a86a04718p-54),
                 1025U, quad(0x1.baea196756e9fp+112, -0x1.fafbbbaa69d30p+56)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("base: " << format_quad_for_test(base));
         INFO("exponent: " << exponent);
@@ -818,7 +784,6 @@ TEST_CASE("num_collect::multi_double::pow(quad, unsigned int)") {
     SECTION("calculate at compile time") {
         static constexpr auto inputs = std::to_array<
             std::tuple<quad, unsigned int, quad>>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.7e55eca788245p+5, 0x1.d2c49ebca1298p-50),
                 0U, quad(0x1.0000000000000p+0, 0x0.0p+0)),
@@ -835,7 +800,6 @@ TEST_CASE("num_collect::multi_double::pow(quad, unsigned int)") {
             std::make_tuple(quad(0x1.144a41d817304p+0, 0x1.f971a86a04718p-54),
                 1025U, quad(0x1.baea196756e9fp+112, -0x1.fafbbbaa69d30p+56)),
             // cspell: enable
-            // NOLINTEND
         });
         constexpr auto outputs = [] {
             std::array<quad, inputs.size()> results{};
@@ -868,7 +832,6 @@ TEST_CASE("num_collect::multi_double::pow(quad, int)") {
         quad expected;
         std::tie(base, exponent,
             expected) = GENERATE(Catch::Generators::table<quad, int, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.0c05b74da84a2p+0, -0x1.e8d06162c6b5cp-54),
                 -1025, quad(0x1.192fb5a6ea8bep-68, -0x1.5a14deaaa6eacp-122)),
@@ -895,7 +858,6 @@ TEST_CASE("num_collect::multi_double::pow(quad, int)") {
             std::make_tuple(quad(0x1.144a41d817304p+0, 0x1.f971a86a04718p-54),
                 1025, quad(0x1.baea196756e9fp+112, -0x1.fafbbbaa69d30p+56)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("base: " << format_quad_for_test(base));
         INFO("exponent: " << exponent);
@@ -908,7 +870,6 @@ TEST_CASE("num_collect::multi_double::pow(quad, int)") {
     SECTION("calculate at compile time") {
         static constexpr auto inputs = std::to_array<
             std::tuple<quad, int, quad>>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.0c05b74da84a2p+0, -0x1.e8d06162c6b5cp-54),
                 -1025, quad(0x1.192fb5a6ea8bep-68, -0x1.5a14deaaa6eacp-122)),
@@ -935,7 +896,6 @@ TEST_CASE("num_collect::multi_double::pow(quad, int)") {
             std::make_tuple(quad(0x1.144a41d817304p+0, 0x1.f971a86a04718p-54),
                 1025, quad(0x1.baea196756e9fp+112, -0x1.fafbbbaa69d30p+56)),
             // cspell: enable
-            // NOLINTEND
         });
         constexpr auto outputs = [] {
             std::array<quad, inputs.size()> results{};
@@ -967,7 +927,6 @@ TEST_CASE("num_collect::multi_double::sin") {
         quad expected;
         std::tie(
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.921fb54442d18p-2, 0x1.1a62633145c08p-56),
                 quad(0x1.87de2a6aea963p-2, -0x1.72cedd3d5a60ep-57)),
@@ -1001,7 +960,6 @@ TEST_CASE("num_collect::multi_double::sin") {
                 quad(-0x1.e76a585102824p-28, -0x1.3e79f43e85a60p-82),
                 quad(-0x1.e76a585102824p-28, -0x1.e9b5884a27d49p-83)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 
@@ -1020,7 +978,6 @@ TEST_CASE("num_collect::multi_double::cos") {
         quad expected;
         std::tie(
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.921fb54442d18p-2, 0x1.1a62633145c08p-56),
                 quad(0x1.d906bcf328d46p-1, 0x1.457e610231ac1p-56)),
@@ -1054,7 +1011,6 @@ TEST_CASE("num_collect::multi_double::cos") {
                 quad(-0x1.e76a585102824p-28, -0x1.3e79f43e85a60p-82),
                 quad(0x1.0000000000000p+0, -0x1.d002e418bc8ccp-56)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 
@@ -1073,7 +1029,6 @@ TEST_CASE("num_collect::multi_double::tan") {
         quad expected;
         std::tie(
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.921fb54442d18p-2, 0x1.1a62633145c08p-56),
                 quad(0x1.a827999fcef32p-2, 0x1.08b2fb1366eabp-56)),
@@ -1107,7 +1062,6 @@ TEST_CASE("num_collect::multi_double::tan") {
                 quad(-0x1.e76a585102824p-28, -0x1.3e79f43e85a60p-82),
                 quad(-0x1.e76a585102824p-28, -0x1.d1b85471691d7p-82)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 
@@ -1126,7 +1080,6 @@ TEST_CASE("num_collect::multi_double::asin") {
         quad expected;
         std::tie(
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(-0x1.0000000000000p+0, 0x0.0p+0),
                 quad(-0x1.921fb54442d18p+0, -0x1.1a62633145c07p-54)),
@@ -1143,7 +1096,6 @@ TEST_CASE("num_collect::multi_double::asin") {
             std::make_tuple(quad(0x1.0000000000000p+0, 0x0.0p+0),
                 quad(0x1.921fb54442d18p+0, 0x1.1a62633145c07p-54)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 
@@ -1184,7 +1136,6 @@ TEST_CASE("num_collect::multi_double::acos") {
         quad expected;
         std::tie(
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(-0x1.0000000000000p+0, 0x0.0p+0),
                 quad(0x1.921fb54442d18p+1, 0x1.1a62633145c07p-53)),
@@ -1201,7 +1152,6 @@ TEST_CASE("num_collect::multi_double::acos") {
             std::make_tuple(
                 quad(0x1.0000000000000p+0, 0x0.0p+0), quad(0x0.0p+0, 0x0.0p+0)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 
@@ -1243,7 +1193,6 @@ TEST_CASE("num_collect::multi_double::atan") {
         quad expected;
         std::tie(
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(-0x1.81b6443eaab93p+35, 0x1.a72f57922eef8p-20),
                 quad(-0x1.921fb5442d947p+0, 0x1.bb23cfee81d5dp-55)),
@@ -1270,7 +1219,6 @@ TEST_CASE("num_collect::multi_double::atan") {
             std::make_tuple(quad(0x1.94ae79531ccc5p+42, 0x1.3b24e86e7e6d8p-13),
                 quad(0x1.921fb54442a90p+0, 0x1.fd33632baddc4p-54)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 
@@ -1308,7 +1256,6 @@ TEST_CASE("num_collect::multi_double::atan2") {
         quad expected;
         std::tie(x, y,
             expected) = GENERATE(Catch::Generators::table<quad, quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.6bc343cde7d78p+4, -0x1.6ec624ec8377cp-50),
                 quad(0x1.bdc89c1b355f6p+5, 0x1.4b1291c09af00p-53),
@@ -1335,7 +1282,6 @@ TEST_CASE("num_collect::multi_double::atan2") {
                 quad(-0x1.9d56a4d62f911p+19, -0x1.6553801ca5aa0p-36),
                 quad(-0x1.9218164e57ef4p+0, -0x1.adc1a3e7d1e80p-59)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("x: " << format_quad_for_test(x));
         INFO("y: " << format_quad_for_test(y));
@@ -1363,7 +1309,6 @@ TEST_CASE("num_collect::multi_double::sinh") {
         quad expected;
         std::tie(
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(-0x1.86b257fa21711p+8, -0x1.2a5a2e167baa8p-46),
                 quad(-0x1.936aa4a814ad9p+562, -0x1.88a77b52b55e8p+506)),
@@ -1385,7 +1330,6 @@ TEST_CASE("num_collect::multi_double::sinh") {
             std::make_tuple(quad(0x1.8ff7def2ecb82p+7, 0x1.5e17780a516e0p-47),
                 quad(0x1.6e1a23e145ddap+287, -0x1.09b4e14c1fdcap+233)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 
@@ -1432,7 +1376,6 @@ TEST_CASE("num_collect::multi_double::cosh") {
         quad expected;
         std::tie(
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(-0x1.86b257fa21711p+8, -0x1.2a5a2e167baa8p-46),
                 quad(0x1.936aa4a814ad9p+562, 0x1.88a77b52b55e8p+506)),
@@ -1454,7 +1397,6 @@ TEST_CASE("num_collect::multi_double::cosh") {
             std::make_tuple(quad(0x1.8ff7def2ecb82p+7, 0x1.5e17780a516e0p-47),
                 quad(0x1.6e1a23e145ddap+287, -0x1.09b4e14c1fdcap+233)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 
@@ -1501,7 +1443,6 @@ TEST_CASE("num_collect::multi_double::tanh") {
         quad expected;
         std::tie(
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(-0x1.86b257fa21711p+8, -0x1.2a5a2e167baa8p-46),
                 quad(-0x1.0000000000000p+0, 0x0.0p+0)),
@@ -1523,7 +1464,6 @@ TEST_CASE("num_collect::multi_double::tanh") {
             std::make_tuple(quad(0x1.8ff7def2ecb82p+7, 0x1.5e17780a516e0p-47),
                 quad(0x1.0000000000000p+0, 0x0.0p+0)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 
@@ -1566,7 +1506,6 @@ TEST_CASE("num_collect::multi_double::asinh") {
         quad expected;
         std::tie(
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(
                 quad(-0x1.1ecf1dae30939p+39, -0x1.509a5c491b400p-20),
@@ -1586,7 +1525,6 @@ TEST_CASE("num_collect::multi_double::asinh") {
             std::make_tuple(quad(0x1.9ef917859d81fp+46, 0x1.7e00e7b8a7110p-10),
                 quad(0x1.087cd53526736p+5, 0x1.a3348cdac1274p-53)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 
@@ -1613,7 +1551,6 @@ TEST_CASE("num_collect::multi_double::acosh") {
         quad expected;
         std::tie(
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(0x1.02252dc716765p+0, -0x1.1991ea087ceb0p-55),
                 quad(0x1.08f270e485dd3p-3, -0x1.f86a2dfe815c4p-58)),
@@ -1622,7 +1559,6 @@ TEST_CASE("num_collect::multi_double::acosh") {
             std::make_tuple(quad(0x1.9ef917859d81fp+46, 0x1.7e00e7b8a7110p-10),
                 quad(0x1.087cd53526736p+5, 0x1.a3348cdac0c5dp-53)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 
@@ -1657,7 +1593,6 @@ TEST_CASE("num_collect::multi_double::atanh") {
         quad expected;
         std::tie(
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(-0x1.eecc475c72064p-1, 0x1.52e3fa5837064p-55),
                 quad(-0x1.0472ba8d4abb5p+1, -0x1.821428c251f2bp-54)),
@@ -1676,7 +1611,6 @@ TEST_CASE("num_collect::multi_double::atanh") {
             std::make_tuple(quad(0x1.b450f9a197e92p-1, 0x1.0a9fbc263c338p-55),
                 quad(0x1.43999d0ec62dbp+0, -0x1.db7f7e3c85fadp-54)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 
@@ -1719,7 +1653,6 @@ TEST_CASE("num_collect::multi_double::floor") {
         quad expected;
         std::tie(
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(
                 quad(-0x1.1e7c7065eea5ep+112, 0x1.6dcd37ee57648p+58),
@@ -1740,7 +1673,6 @@ TEST_CASE("num_collect::multi_double::floor") {
             std::make_tuple(quad(0x1.661bd7be881a1p+115, 0x1.15d90446d0dc0p+59),
                 quad(0x1.661bd7be881a1p+115, 0x1.15d90446d0dc0p+59)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 
@@ -1758,7 +1690,6 @@ TEST_CASE("num_collect::multi_double::ceil") {
         quad expected;
         std::tie(
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(
                 quad(-0x1.1e7c7065eea5ep+112, 0x1.6dcd37ee57648p+58),
@@ -1779,7 +1710,6 @@ TEST_CASE("num_collect::multi_double::ceil") {
             std::make_tuple(quad(0x1.661bd7be881a1p+115, 0x1.15d90446d0dc0p+59),
                 quad(0x1.661bd7be881a1p+115, 0x1.15d90446d0dc0p+59)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 
@@ -1797,7 +1727,6 @@ TEST_CASE("num_collect::multi_double::trunc") {
         quad expected;
         std::tie(
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(
                 quad(-0x1.1e7c7065eea5ep+112, 0x1.6dcd37ee57648p+58),
@@ -1818,7 +1747,6 @@ TEST_CASE("num_collect::multi_double::trunc") {
             std::make_tuple(quad(0x1.661bd7be881a1p+115, 0x1.15d90446d0dc0p+59),
                 quad(0x1.661bd7be881a1p+115, 0x1.15d90446d0dc0p+59)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 
@@ -1836,7 +1764,6 @@ TEST_CASE("num_collect::multi_double::round") {
         quad expected;
         std::tie(
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(
                 quad(-0x1.1e7c7065eea5ep+112, 0x1.6dcd37ee57648p+58),
@@ -1861,7 +1788,6 @@ TEST_CASE("num_collect::multi_double::round") {
             std::make_tuple(quad(0x1.661bd7be881a1p+115, 0x1.15d90446d0dc0p+59),
                 quad(0x1.661bd7be881a1p+115, 0x1.15d90446d0dc0p+59)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 

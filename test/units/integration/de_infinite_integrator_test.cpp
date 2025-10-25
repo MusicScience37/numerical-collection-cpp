@@ -30,7 +30,6 @@
 #include "num_collect/constants/one.h"  // IWYU pragma: keep
 #include "num_collect/constants/pi.h"   // IWYU pragma: keep
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::integration::de_infinite_integrator", "", float, double) {
     SECTION("integrate exp(-x^2)") {

@@ -30,10 +30,10 @@ class nearest_neighbors_search_fixture : public stat_bench::FixtureBase {
 public:
     nearest_neighbors_search_fixture() {
         this->add_param<num_collect::index_type>("num_points")
-            ->add(100)  // NOLINT
+            ->add(100)
 #ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
-            ->add(1000)   // NOLINT
-            ->add(10000)  // NOLINT
+            ->add(1000)
+            ->add(10000)
 #endif
             ;
     }

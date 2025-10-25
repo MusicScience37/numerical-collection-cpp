@@ -35,7 +35,6 @@ TEST_CASE("num_collect::multi_double::impl::sin_maclaurin") {
         quad expected;
         std::tie(
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(-0x1.921fb54442d18p-1, -0x1.1a62633145c08p-55),
                 quad(-0x1.6a09e667f3bcdp-1, 0x1.bdd3413b26455p-55)),
@@ -46,7 +45,6 @@ TEST_CASE("num_collect::multi_double::impl::sin_maclaurin") {
             std::make_tuple(quad(0x1.921fb54442d18p-1, 0x1.1a62633145c08p-55),
                 quad(0x1.6a09e667f3bcdp-1, -0x1.bdd3413b26455p-55)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 
@@ -74,7 +72,6 @@ TEST_CASE("num_collect::multi_double::impl::cos_maclaurin") {
         quad expected;
         std::tie(
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(-0x1.921fb54442d18p-1, -0x1.1a62633145c08p-55),
                 quad(0x1.6a09e667f3bcdp-1, -0x1.bdd3413b26456p-55)),
@@ -85,7 +82,6 @@ TEST_CASE("num_collect::multi_double::impl::cos_maclaurin") {
             std::make_tuple(quad(0x1.921fb54442d18p-1, 0x1.1a62633145c08p-55),
                 quad(0x1.6a09e667f3bcdp-1, -0x1.bdd3413b26456p-55)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 

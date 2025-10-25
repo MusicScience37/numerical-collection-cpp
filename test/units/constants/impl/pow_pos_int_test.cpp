@@ -29,7 +29,6 @@
 
 #include "../check_constexpr_function.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::constants::impl::pow_pos_int", "",
     (std::pair<float, int>), (std::pair<double, unsigned int>)) {
     using num_collect::constants::impl::pow_pos_int;

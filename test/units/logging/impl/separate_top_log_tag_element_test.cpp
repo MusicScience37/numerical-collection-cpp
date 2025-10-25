@@ -47,7 +47,7 @@ TEST_CASE("num_collect::logging::impl::separate_top_log_tag_element") {
 
         const auto [element, rem] = separate_top_log_tag_element(tag);
         CHECK(element.name() == "test");
-        CHECK(std::string(rem) == "");  // NOLINT
+        CHECK(std::string(rem) == "");
     }
 
     SECTION("invalid tags") {

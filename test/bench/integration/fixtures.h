@@ -28,17 +28,17 @@ public:
     gauss_legendre_fixture() {
         this->add_param<num_collect::index_type>("degree")
 #ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
-            ->add(5)   // NOLINT
-            ->add(10)  // NOLINT
-            ->add(50)  // NOLINT
+            ->add(5)
+            ->add(10)
+            ->add(50)
 #else
-            ->add(3)   // NOLINT
-            ->add(5)   // NOLINT
-            ->add(7)   // NOLINT
-            ->add(10)  // NOLINT
-            ->add(20)  // NOLINT
-            ->add(30)  // NOLINT
-            ->add(50)  // NOLINT
+            ->add(3)
+            ->add(5)
+            ->add(7)
+            ->add(10)
+            ->add(20)
+            ->add(30)
+            ->add(50)
 #endif
             ;
     }
@@ -49,18 +49,18 @@ public:
     gauss_legendre_kronrod_fixture() {
         this->add_param<num_collect::index_type>("degree")
 #ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
-            ->add(5)   // NOLINT
-            ->add(10)  // NOLINT
+            ->add(5)
+            ->add(10)
 #else
-            ->add(2)   // NOLINT
-            ->add(3)   // NOLINT
-            ->add(4)   // NOLINT
-            ->add(5)   // NOLINT
-            ->add(6)   // NOLINT
-            ->add(7)   // NOLINT
-            ->add(8)   // NOLINT
-            ->add(9)   // NOLINT
-            ->add(10)  // NOLINT
+            ->add(2)
+            ->add(3)
+            ->add(4)
+            ->add(5)
+            ->add(6)
+            ->add(7)
+            ->add(8)
+            ->add(9)
+            ->add(10)
 #endif
             ;
     }
@@ -71,18 +71,18 @@ public:
     de_finite_fixture() {
         this->add_param<num_collect::index_type>("points")
 #ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
-            ->add(5)   // NOLINT
-            ->add(10)  // NOLINT
-            ->add(50)  // NOLINT
+            ->add(5)
+            ->add(10)
+            ->add(50)
 #else
-            ->add(3)   // NOLINT
-            ->add(5)   // NOLINT
-            ->add(7)   // NOLINT
-            ->add(10)  // NOLINT
-            ->add(15)  // NOLINT
-            ->add(20)  // NOLINT
-            ->add(30)  // NOLINT
-            ->add(50)  // NOLINT
+            ->add(3)
+            ->add(5)
+            ->add(7)
+            ->add(10)
+            ->add(15)
+            ->add(20)
+            ->add(30)
+            ->add(50)
 #endif
             ;
     }
@@ -93,18 +93,18 @@ public:
     tanh_finite_fixture() {
         this->add_param<num_collect::index_type>("points")
 #ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
-            ->add(10)   // NOLINT
-            ->add(50)   // NOLINT
-            ->add(100)  // NOLINT
+            ->add(10)
+            ->add(50)
+            ->add(100)
 #else
-            ->add(10)   // NOLINT
-            ->add(20)   // NOLINT
-            ->add(30)   // NOLINT
-            ->add(50)   // NOLINT
-            ->add(70)   // NOLINT
-            ->add(100)  // NOLINT
-            ->add(150)  // NOLINT
-            ->add(200)  // NOLINT
+            ->add(10)
+            ->add(20)
+            ->add(30)
+            ->add(50)
+            ->add(70)
+            ->add(100)
+            ->add(150)
+            ->add(200)
 #endif
             ;
     }

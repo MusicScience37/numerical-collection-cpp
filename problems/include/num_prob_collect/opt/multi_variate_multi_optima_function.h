@@ -168,8 +168,7 @@ public:
         Eigen::ArrayXXd optimal_variables;
         optimal_variables.resize(num_local_optima_, num_variables_);
         auto reshaped_optimal_variables = optimal_variables.reshaped();
-        std::generate(reshaped_optimal_variables.begin(),
-            reshaped_optimal_variables.end(),
+        std::ranges::generate(reshaped_optimal_variables,
             [this] { return optimal_variable_dist_(generator_); });
 
         Eigen::ArrayXd optimal_values;
@@ -180,7 +179,7 @@ public:
 
         Eigen::ArrayXd coefficients;
         coefficients.resize(num_local_optima_);
-        coefficients[0] = 1.0;  // NOLINT
+        coefficients[0] = 1.0;
         std::generate(coefficients.begin() + 1, coefficients.end(),
             [this] { return coefficients_dist_(generator_); });
 
@@ -190,8 +189,7 @@ public:
 
 private:
     //! Random number generator.
-    std::mt19937
-        generator_{};  // NOLINT(cert-msc32-c,cert-msc51-cpp): For reproducibility.
+    std::mt19937 generator_{};
 
     //! Distribution of optimal variables.
     std::uniform_real_distribution<double> optimal_variable_dist_{
@@ -202,8 +200,7 @@ private:
         min_non_global_optimal_value, max_non_global_optimal_value};
 
     //! Distribution of coefficients.
-    std::uniform_real_distribution<double> coefficients_dist_{
-        0.5, 3.0};  // NOLINT
+    std::uniform_real_distribution<double> coefficients_dist_{0.5, 3.0};
 
     //! Number of variables.
     num_collect::index_type num_variables_;
@@ -260,8 +257,7 @@ public:
         Eigen::ArrayXXd optimal_variables;
         optimal_variables.resize(num_local_optima_, num_variables_);
         auto reshaped_optimal_variables = optimal_variables.reshaped();
-        std::generate(reshaped_optimal_variables.begin(),
-            reshaped_optimal_variables.end(),
+        std::ranges::generate(reshaped_optimal_variables,
             [this] { return optimal_variable_dist_(generator_); });
 
         Eigen::ArrayXd optimal_values;
@@ -272,7 +268,7 @@ public:
 
         Eigen::ArrayXd coefficients;
         coefficients.resize(num_local_optima_);
-        coefficients[0] = 10.0;  // NOLINT
+        coefficients[0] = 10.0;
         std::generate(coefficients.begin() + 1, coefficients.end(),
             [this] { return coefficients_dist_(generator_); });
 
@@ -282,8 +278,7 @@ public:
 
 private:
     //! Random number generator.
-    std::mt19937
-        generator_{};  // NOLINT(cert-msc32-c,cert-msc51-cpp): For reproducibility.
+    std::mt19937 generator_{};
 
     //! Distribution of optimal variables.
     std::uniform_real_distribution<double> optimal_variable_dist_{
@@ -294,8 +289,7 @@ private:
         min_non_global_optimal_value, max_non_global_optimal_value};
 
     //! Distribution of coefficients.
-    std::uniform_real_distribution<double> coefficients_dist_{
-        0.5, 3.0};  // NOLINT
+    std::uniform_real_distribution<double> coefficients_dist_{0.5, 3.0};
 
     //! Number of variables.
     num_collect::index_type num_variables_;

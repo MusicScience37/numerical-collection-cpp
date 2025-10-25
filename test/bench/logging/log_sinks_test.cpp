@@ -51,11 +51,10 @@ public:
         : num_collect::logging::logging_mixin(num_collect::logging::log_tag(
               "num_collect_bench_logging_log_sinks")),
           iter_logger_(this->logger()) {
-        iter_logger_.append("Sink", log_sink_name_)->width(25);  // NOLINT
-        iter_logger_.append("Log", log_type_name_)->width(15);   // NOLINT
+        iter_logger_.append("Sink", log_sink_name_)->width(25);
+        iter_logger_.append("Log", log_type_name_)->width(15);
         iter_logger_.append<double>("Time [us]", [this] {
-            return cum_mean_time_sec_ * 1e+6  // NOLINT
-                / static_cast<double>(samples);
+            return cum_mean_time_sec_ * 1e+6 / static_cast<double>(samples);
         });
     }
 

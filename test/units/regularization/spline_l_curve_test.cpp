@@ -52,7 +52,7 @@ TEST_CASE("num_collect::regularization::spline_l_curve") {
 
         constexpr double error_rate = 0.01;
 
-        std::mt19937 engine;  // NOLINT
+        std::mt19937 engine;
         std::normal_distribution<double> dist{0.0,
             std::sqrt(prob.data().squaredNorm() /
                 static_cast<double>(prob.data().size()) * error_rate)};

@@ -53,7 +53,7 @@ TEST_CASE("num_collect::ode::rosenbrock::ros34pw3_formula") {
             Catch::Matchers::WithinRel(1.0));
         CHECK_THAT(formula_type::ce1 + formula_type::ce2 + formula_type::ce3 +
                 formula_type::ce4,
-            Catch::Matchers::WithinAbs(0.0, 1e-10));  // NOLINT
+            Catch::Matchers::WithinAbs(0.0, 1e-10));
     }
 
     SECTION("initialize") {

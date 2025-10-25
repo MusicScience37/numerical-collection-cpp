@@ -45,15 +45,10 @@ public:
      * \param[in] m Number of terms.
      */
     explicit shekel_function(int m) : m_(m) {
-        // NOLINTNEXTLINE
         beta_ << 0.1, 0.2, 0.2, 0.4, 0.4, 0.6, 0.3, 0.7, 0.5, 0.5;
-        // NOLINTNEXTLINE
-        c_ << 4.0, 1.0, 8.0, 6.0, 3.0, 2.0, 5.0, 8.0, 6.0, 7.0,
-            // NOLINTNEXTLINE
-            4.0, 1.0, 8.0, 6.0, 7.0, 9.0, 3.0, 1.0, 2.0, 3.6,
-            // NOLINTNEXTLINE
-            4.0, 1.0, 8.0, 6.0, 3.0, 2.0, 5.0, 8.0, 6.0, 7.0,
-            // NOLINTNEXTLINE
+        c_ << 4.0, 1.0, 8.0, 6.0, 3.0, 2.0, 5.0, 8.0, 6.0, 7.0,  //
+            4.0, 1.0, 8.0, 6.0, 7.0, 9.0, 3.0, 1.0, 2.0, 3.6,    //
+            4.0, 1.0, 8.0, 6.0, 3.0, 2.0, 5.0, 8.0, 6.0, 7.0,    //
             4.0, 1.0, 8.0, 6.0, 7.0, 9.0, 3.0, 1.0, 2.0, 3.6;
     }
 
@@ -81,10 +76,10 @@ private:
     int m_;
 
     //! Offset in the function.
-    Eigen::Matrix<double, 10, 1> beta_{};  // NOLINT
+    Eigen::Matrix<double, 10, 1> beta_{};
 
     //! Centers in the function.
-    Eigen::Matrix<double, 4, 10> c_{};  // NOLINT
+    Eigen::Matrix<double, 4, 10> c_{};
 
     //! Function value.
     double value_{};

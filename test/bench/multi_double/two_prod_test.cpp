@@ -30,7 +30,6 @@ STAT_BENCH_MAIN
 constexpr double a = 0x1.0000001p+1;
 constexpr double b = 0x1.0000008p-2;
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE("multi_double_two_prod", "two_prod_no_fma") {
     using num_collect::multi_double::impl::two_prod_no_fma;
     STAT_BENCH_MEASURE() {
@@ -39,7 +38,6 @@ STAT_BENCH_CASE("multi_double_two_prod", "two_prod_no_fma") {
 }
 
 #ifdef NUM_COLLECT_MULTI_DOUBLE_HAS_AVX2_FMA
-// NOLINTNEXTLINE
 STAT_BENCH_CASE("multi_double_two_prod", "two_prod_fma") {
     using num_collect::multi_double::impl::two_prod_fma;
     STAT_BENCH_MEASURE() { stat_bench::do_not_optimize(two_prod_fma(a, b)); };

@@ -46,7 +46,7 @@ TEST_CASE("num_collect::ode::runge_kutta::tanaka1_formula") {
             Catch::Matchers::WithinRel(1.0));
         CHECK_THAT(formula_type::cw1, Catch::Matchers::WithinRel(1.0));
         CHECK_THAT(formula_type::ce1 + formula_type::ce2,
-            Catch::Matchers::WithinAbs(0.0, 1e-10));  // NOLINT
+            Catch::Matchers::WithinAbs(0.0, 1e-10));
     }
 
     SECTION("initialize") {

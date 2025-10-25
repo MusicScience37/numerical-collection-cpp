@@ -30,7 +30,6 @@
 #include "num_collect/auto_diff/forward/create_diff_variable.h"
 #include "num_collect/auto_diff/forward/variable.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::auto_diff::forward::make_jacobian", "", float, double) {
     using value_type = TestType;

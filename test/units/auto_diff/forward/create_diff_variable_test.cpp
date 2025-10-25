@@ -28,7 +28,6 @@
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::auto_diff::forward::create_diff_variable<Scalar>", "", float,
     double) {
@@ -43,7 +42,6 @@ TEMPLATE_TEST_CASE(
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::auto_diff::forward::create_diff_variable<Scalar, Vector>", "",
     float, double) {
@@ -67,7 +65,6 @@ TEMPLATE_TEST_CASE(
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::auto_diff::forward::create_diff_variable_vector", "", float,
     double) {

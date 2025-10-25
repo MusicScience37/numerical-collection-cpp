@@ -30,9 +30,10 @@ class mock_algorithm {
 public:
     explicit mock_algorithm(Value1 value1_in) : value1(std::move(value1_in)) {}
 
-    Value1 value1;  // NOLINT
+    Value1
+        value1;  // NOLINT(cppcoreguidelines-non-private-member-variables-in-classes)
 
-    // NOLINTNEXTLINE
+    // NOLINTNEXTLINE(modernize-use-trailing-return-type)
     MAKE_MOCK0(get_impl, Value2(), const);
 
     [[nodiscard]] auto get() const -> Value2 { return get_impl(); }

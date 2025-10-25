@@ -35,7 +35,6 @@ TEST_CASE("num_collect::multi_double::impl::expm1_maclaurin_series") {
         quad expected;
         std::tie(
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(-0x1.64840e1719f80p-10, 0x1.cd5f99c38b04cp-64),
                 quad(-0x1.64460558e8f48p-10, 0x1.b58b9e5cb561dp-64)),
@@ -50,7 +49,6 @@ TEST_CASE("num_collect::multi_double::impl::expm1_maclaurin_series") {
             std::make_tuple(quad(0x1.64840e1719f80p-10, -0x1.cd5f99c38b04cp-64),
                 quad(0x1.64c2253cfda0ep-10, -0x1.eb059ebed320cp-64)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 
@@ -78,7 +76,6 @@ TEST_CASE("num_collect::multi_double::impl::exp_maclaurin_series") {
         quad expected;
         std::tie(
             input, expected) = GENERATE(Catch::Generators::table<quad, quad>({
-            // NOLINTBEGIN
             // cspell: disable
             std::make_tuple(quad(-0x1.64840e1719f80p-10, 0x1.cd5f99c38b04cp-64),
                 quad(0x1.ff4ddcfd538b8p-1, 0x1.70dac5cf2e5abp-55)),
@@ -93,7 +90,6 @@ TEST_CASE("num_collect::multi_double::impl::exp_maclaurin_series") {
             std::make_tuple(quad(0x1.64840e1719f80p-10, -0x1.cd5f99c38b04cp-64),
                 quad(0x1.005930894f3f7p+0, -0x1.f27ac167afb4dp-54)),
             // cspell: enable
-            // NOLINTEND
         }));
         INFO("input: " << format_quad_for_test(input));
 

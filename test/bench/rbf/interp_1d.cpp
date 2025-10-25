@@ -127,11 +127,11 @@ class interpolate_1d_fixture_light : public interpolate_1d_fixture_base {
 public:
     interpolate_1d_fixture_light() {
         add_param<num_collect::index_type>("points")
-            ->add(10)  // NOLINT
-            ->add(20)  // NOLINT
+            ->add(10)
+            ->add(20)
 #ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
-            ->add(50)   // NOLINT
-            ->add(100)  // NOLINT
+            ->add(50)
+            ->add(100)
 #endif
             ;
     }
@@ -141,13 +141,13 @@ class interpolate_1d_fixture_medium : public interpolate_1d_fixture_base {
 public:
     interpolate_1d_fixture_medium() {
         add_param<num_collect::index_type>("points")
-            ->add(10)  // NOLINT
-            ->add(20)  // NOLINT
-            ->add(50)  // NOLINT
+            ->add(10)
+            ->add(20)
+            ->add(50)
 #ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
-            ->add(100)  // NOLINT
-            ->add(200)  // NOLINT
-            ->add(500)  // NOLINT
+            ->add(100)
+            ->add(200)
+            ->add(500)
 #endif
             ;
     }
@@ -157,15 +157,15 @@ class interpolate_1d_fixture_large : public interpolate_1d_fixture_base {
 public:
     interpolate_1d_fixture_large() {
         add_param<num_collect::index_type>("points")
-            ->add(10)  // NOLINT
-            ->add(20)  // NOLINT
-            ->add(50)  // NOLINT
+            ->add(10)
+            ->add(20)
+            ->add(50)
 #ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
-            ->add(100)   // NOLINT
-            ->add(200)   // NOLINT
-            ->add(500)   // NOLINT
-            ->add(1000)  // NOLINT
-            ->add(2000)  // NOLINT
+            ->add(100)
+            ->add(200)
+            ->add(500)
+            ->add(1000)
+            ->add(2000)
 #endif
             ;
     }

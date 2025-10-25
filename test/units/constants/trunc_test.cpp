@@ -26,7 +26,6 @@
 
 #include "check_constexpr_function.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::constants::impl::trunc_at_compile_time", "", float, double) {
     SECTION("x = -2") {
@@ -75,7 +74,6 @@ TEMPLATE_TEST_CASE(
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::constants::trunc", "", float, double) {
     SECTION("x = -2") {
         CHECK_CONSTEXPR_FUNCTION_EQUAL((static_cast<TestType>(-2.0)),

@@ -29,7 +29,6 @@
 
 #include "num_collect/auto_diff/backward/differentiate.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::auto_diff::backward::exp", "", float, double) {
     using scalar_type = TestType;
     using variable_type =
@@ -62,7 +61,6 @@ TEMPLATE_TEST_CASE("num_collect::auto_diff::backward::exp", "", float, double) {
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::auto_diff::backward::log", "", float, double) {
     using scalar_type = TestType;
     using variable_type =
@@ -95,7 +93,6 @@ TEMPLATE_TEST_CASE("num_collect::auto_diff::backward::log", "", float, double) {
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::auto_diff::backward::sqrt", "", float, double) {
     using scalar_type = TestType;

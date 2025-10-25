@@ -32,10 +32,10 @@ class laplacian_2d_grid_dense_fixture : public stat_bench::FixtureBase {
 public:
     laplacian_2d_grid_dense_fixture() {
         add_param<num_collect::index_type>("size")
-            ->add(4 * 4)    // NOLINT
-            ->add(10 * 10)  // NOLINT
+            ->add(4 * 4)
+            ->add(10 * 10)
 #ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
-            ->add(32 * 32)  // NOLINT
+            ->add(32 * 32)
 #endif
             ;
     }

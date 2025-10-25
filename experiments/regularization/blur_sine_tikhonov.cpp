@@ -49,7 +49,7 @@ auto main() -> int {
     // create test problem
     const auto prob =
         num_prob_collect::regularization::blur_sine(data_size, solution_size);
-    std::mt19937 engine;  // NOLINT
+    std::mt19937 engine;
     std::normal_distribution<double> dist{0.0,
         std::sqrt(prob.data().squaredNorm() /
             static_cast<double>(prob.data().size()) * error_rate)};

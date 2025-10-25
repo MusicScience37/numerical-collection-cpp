@@ -36,7 +36,6 @@
 class sum_fixture : public auto_diff_fixture {
 public:
     sum_fixture() {
-        // NOLINTNEXTLINE
         add_param<num_collect::index_type>("size")->add(2)->add(5)->add(10);
     }
 
@@ -54,7 +53,6 @@ private:
 
 STAT_BENCH_GROUP("sum").add_parameter_to_time_line_plot("size");
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(sum_fixture, "sum", "forward") {
     using scalar_type = double;
     using diff_type = Eigen::VectorXd;
@@ -74,7 +72,6 @@ STAT_BENCH_CASE_F(sum_fixture, "sum", "forward") {
     };
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(sum_fixture, "sum", "backward") {
     using scalar_type = double;
     using diff_type = Eigen::VectorXd;

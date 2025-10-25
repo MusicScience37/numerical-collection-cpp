@@ -125,8 +125,7 @@ public:
         NUM_COLLECT_PRECONDITION(inv_diag_.array().isFinite().all(),
             "All diagonal elements of the coefficient matrix must not be "
             "zero.");
-        run_parallel_ =
-            (coeff().nonZeros() / omp_get_max_threads() > 1000);  // NOLINT
+        run_parallel_ = (coeff().nonZeros() / omp_get_max_threads() > 1000);
         return *this;
     }
 

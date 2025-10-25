@@ -43,13 +43,13 @@ public:
      */
     void evaluate_on(const variable_type& variable) {
         const variable_type cubic = variable.array().pow(3);
-        const variable_type dif = 3.0 * variable.array().pow(2);  // NOLINT
-        value_[0] = cubic[0] * 2.0 - cubic[1] - 46.0;             // NOLINT
-        value_[1] = cubic[1] - 8.0;                               // NOLINT
-        jacobian_(0, 0) = 2.0 * dif[0];                           // NOLINT
-        jacobian_(0, 1) = -dif[1];                                // NOLINT
-        jacobian_(1, 0) = dif[0];                                 // NOLINT
-        jacobian_(1, 1) = 0.0;                                    // NOLINT
+        const variable_type dif = 3.0 * variable.array().pow(2);
+        value_[0] = cubic[0] * 2.0 - cubic[1] - 46.0;
+        value_[1] = cubic[1] - 8.0;
+        jacobian_(0, 0) = 2.0 * dif[0];
+        jacobian_(0, 1) = -dif[1];
+        jacobian_(1, 0) = dif[0];
+        jacobian_(1, 1) = 0.0;
     }
 
     /*!

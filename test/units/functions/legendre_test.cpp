@@ -27,7 +27,6 @@
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::functions::legendre", "", float, double) {
     SECTION("n = -1") {
         constexpr int n = -1;
@@ -183,7 +182,6 @@ TEMPLATE_TEST_CASE("num_collect::functions::legendre", "", float, double) {
     }
 }
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::functions::legendre_with_diff", "", float, double) {
     SECTION("n = -1") {

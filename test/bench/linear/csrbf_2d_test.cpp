@@ -96,13 +96,13 @@ class csrbf_2d_large_fixture : public csrbf_2d_common_fixture {
 public:
     csrbf_2d_large_fixture() {
         add_param<num_collect::index_type>("size")
-            ->add(100)  // NOLINT
+            ->add(100)
 #ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
-            ->add(300)    // NOLINT
-            ->add(1000)   // NOLINT
-            ->add(3000)   // NOLINT
-            ->add(10000)  // NOLINT
-            ->add(30000)  // NOLINT
+            ->add(300)
+            ->add(1000)
+            ->add(3000)
+            ->add(10000)
+            ->add(30000)
 #endif
             ;
     }
@@ -112,12 +112,12 @@ class csrbf_2d_middle_fixture : public csrbf_2d_common_fixture {
 public:
     csrbf_2d_middle_fixture() {
         add_param<num_collect::index_type>("size")
-            ->add(100)  // NOLINT
+            ->add(100)
 #ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
-            ->add(300)    // NOLINT
-            ->add(1000)   // NOLINT
-            ->add(3000)   // NOLINT
-            ->add(10000)  // NOLINT
+            ->add(300)
+            ->add(1000)
+            ->add(3000)
+            ->add(10000)
 #endif
             ;
     }
@@ -127,11 +127,11 @@ class csrbf_2d_small_fixture : public csrbf_2d_common_fixture {
 public:
     csrbf_2d_small_fixture() {
         add_param<num_collect::index_type>("size")
-            ->add(100)  // NOLINT
+            ->add(100)
 #ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
-            ->add(300)   // NOLINT
-            ->add(1000)  // NOLINT
-            ->add(3000)  // NOLINT
+            ->add(300)
+            ->add(1000)
+            ->add(3000)
 #endif
             ;
     }

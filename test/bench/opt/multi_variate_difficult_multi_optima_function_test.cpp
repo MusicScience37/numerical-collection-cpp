@@ -49,10 +49,10 @@ class multi_variate_difficult_multi_optima_function_fixture
 public:
     multi_variate_difficult_multi_optima_function_fixture() {
         add_param<num_collect::index_type>("dimension")
-            ->add(2)  // NOLINT
+            ->add(2)
 #ifdef NUM_COLLECT_ENABLE_HEAVY_BENCH
-            ->add(3)  // NOLINT
-            ->add(4)  // NOLINT
+            ->add(3)
+            ->add(4)
 #endif
             ;
     }
@@ -139,7 +139,6 @@ STAT_BENCH_GROUP("opt_multi_variate_difficult_multi_optima_function")
     .add_parameter_to_output_line_plot(
         "dimension", "evaluations", stat_bench::PlotOption::log_output);
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(multi_variate_difficult_multi_optima_function_fixture,
     "opt_multi_variate_difficult_multi_optima_function",
     "dividing_rectangles") {
@@ -155,7 +154,6 @@ STAT_BENCH_CASE_F(multi_variate_difficult_multi_optima_function_fixture,
         "dividing_rectangles");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(multi_variate_difficult_multi_optima_function_fixture,
     "opt_multi_variate_difficult_multi_optima_function",
     "adaptive_diagonal_curves") {
@@ -171,7 +169,6 @@ STAT_BENCH_CASE_F(multi_variate_difficult_multi_optima_function_fixture,
         "adaptive_diagonal_curves");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(multi_variate_difficult_multi_optima_function_fixture,
     "opt_multi_variate_difficult_multi_optima_function",
     "real_value_genetic_optimizer") {

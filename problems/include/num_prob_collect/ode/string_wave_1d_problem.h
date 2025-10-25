@@ -39,7 +39,7 @@ public:
     double speed{1.0};
 
     //! Number of spatial points.
-    num_collect::index_type num_points{101};  // NOLINT
+    num_collect::index_type num_points{101};
 
     //! Length of the space.
     double length{1.0};
@@ -87,8 +87,7 @@ public:
         // acceleration.
         diff_coeff_.segment(1, num_points_ - 2) = speed_ * speed_ / (dx * dx) *
             (variable.segment(num_points_ + 2, num_points_ - 2) -
-                2.0  // NOLINT
-                    * variable.segment(num_points_ + 1, num_points_ - 2) +
+                2.0 * variable.segment(num_points_ + 1, num_points_ - 2) +
                 variable.segment(num_points_, num_points_ - 2));
 
         // velocity.

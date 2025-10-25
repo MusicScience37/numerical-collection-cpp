@@ -66,7 +66,7 @@ public:
      * numbers to quad numbers.
      */
     template <concepts::implicitly_convertible_to<double> Scalar>
-    constexpr quad(Scalar value) noexcept  // NOLINT
+    constexpr quad(Scalar value) noexcept  // NOLINT(*-explicit-*)
         : high_(static_cast<double>(value)) {}
 
     /*!

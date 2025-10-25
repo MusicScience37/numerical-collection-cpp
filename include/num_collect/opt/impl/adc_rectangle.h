@@ -122,7 +122,8 @@ public:
                 }
             }
 
-            auto last_digit =  // NOLINTNEXTLINE: false positive
+            auto
+                last_digit =  // NOLINTNEXTLINE(bugprone-signed-char-misuse,cert-str34-c): false positive
                 static_cast<std::int_fast32_t>(lowest_vertex(i, digits - 1));
             ++last_digit;
             constexpr std::uint_fast32_t odd_mask = 1;
@@ -153,8 +154,8 @@ private:
                 if (point(i, j) ==
                     typename ternary_vector_type::digit_type{3}) {
                     point(i, j) = 0;
-                    std::int_fast32_t temp =
-                        point(i, j - 1);  // NOLINT: false positive
+                    // NOLINTNEXTLINE(bugprone-signed-char-misuse,cert-str34-c): false positive
+                    std::int_fast32_t temp = point(i, j - 1);
                     ++temp;
                     point(i, j - 1) =
                         static_cast<typename ternary_vector_type::digit_type>(

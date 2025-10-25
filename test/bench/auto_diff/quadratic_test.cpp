@@ -27,7 +27,6 @@
 #include "num_collect/auto_diff/forward/create_diff_variable.h"
 #include "num_collect/auto_diff/forward/variable.h"
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(auto_diff_fixture, "quadratic", "forward") {
     using scalar_type = double;
     using variable_type =
@@ -46,7 +45,6 @@ STAT_BENCH_CASE_F(auto_diff_fixture, "quadratic", "forward") {
     };
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(auto_diff_fixture, "quadratic", "backward") {
     using scalar_type = double;
     using variable_type =

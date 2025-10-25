@@ -254,7 +254,7 @@ private:
                 NUM_COLLECT_LOG_TRACE(logger(),
                     "Remove a too close sample point: reg_param = {}, distance "
                     "= {}",
-                    pow(static_cast<scalar_type>(10),  // NOLINT
+                    pow(static_cast<scalar_type>(10),
                         iter->log_regularization_parameter),
                     iter->distance_from_previous_point);
                 iter = sample_points_.erase(iter);
@@ -368,8 +368,7 @@ private:
 
         const scalar_type log_opt_param =
             convert_length_param_to_log_reg_param(opt_length_param);
-        opt_param_ = pow(static_cast<scalar_type>(10),  // NOLINT
-            log_opt_param);
+        opt_param_ = pow(static_cast<scalar_type>(10), log_opt_param);
         NUM_COLLECT_LOG_SUMMARY(logger(), "Selected parameter: {}", opt_param_);
     }
 
@@ -384,8 +383,7 @@ private:
         scalar_type log_regularization_parameter) -> sample_point {
         using std::pow;
         const scalar_type regularization_parameter =
-            pow(static_cast<scalar_type>(10),  // NOLINT
-                log_regularization_parameter);
+            pow(static_cast<scalar_type>(10), log_regularization_parameter);
 
         solution_ = *initial_solution_;
         solver_->solve(regularization_parameter, solution_);

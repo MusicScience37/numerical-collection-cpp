@@ -31,7 +31,6 @@
 #include "num_collect/ode/rosenbrock/ros3w_formula.h"
 #include "num_prob_collect/ode/no_jacobian_implicit_kaps_problem.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_PRODUCT_TEST_CASE(
     "no_jacobian_implicit_kaps_problem with embedded formulas", "",
     (
@@ -64,7 +63,7 @@ TEMPLATE_PRODUCT_TEST_CASE(
         solve_and_check_with_reference(
             solver, init_time, finish_time, num_time_samples,
             [](double time) {
-                return Eigen::Vector2d{// NOLINTNEXTLINE
+                return Eigen::Vector2d{
                     {std::exp(-2.0 * time), std::exp(-time)}};
             },
             "epsilon1", precision);
@@ -84,7 +83,7 @@ TEMPLATE_PRODUCT_TEST_CASE(
         solve_and_check_with_reference(
             solver, init_time, finish_time, num_time_samples,
             [](double time) {
-                return Eigen::Vector2d{// NOLINTNEXTLINE
+                return Eigen::Vector2d{
                     {std::exp(-2.0 * time), std::exp(-time)}};
             },
             "epsilon1e-4", precision);
@@ -104,7 +103,7 @@ TEMPLATE_PRODUCT_TEST_CASE(
         solve_and_check_with_reference(
             solver, init_time, finish_time, num_time_samples,
             [](double time) {
-                return Eigen::Vector2d{// NOLINTNEXTLINE
+                return Eigen::Vector2d{
                     {std::exp(-2.0 * time), std::exp(-time)}};
             },
             "epsilon0", precision);

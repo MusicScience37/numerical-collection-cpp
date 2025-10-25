@@ -45,7 +45,7 @@ template <num_collect::concepts::sparse_matrix Matrix>
     for (num_collect::index_type i = 0; i < rows; ++i) {
         for (num_collect::index_type j = 0; j < cols; ++j) {
             const scalar_type value = matrix.coeff(i, j);
-            if (value != static_cast<scalar_type>(0)) {  // NOLINT
+            if (value != static_cast<scalar_type>(0)) {
                 buffer.push_back('x');
             } else {
                 buffer.push_back('-');

@@ -58,7 +58,7 @@ TEST_CASE("num_collect::roots::newton_raphson<cubic_root_test_function>") {
         constexpr double init_var = 2.0;
         finder.init(init_var);
         REQUIRE_NOTHROW(finder.iterate());
-        REQUIRE(finder.variable() != init_var);  // NOLINT
+        REQUIRE(finder.variable() != init_var);
         REQUIRE(finder.iterations() == 1);
         REQUIRE(finder.evaluations() > 1);
     }
@@ -104,8 +104,8 @@ TEST_CASE("num_collect::roots::newton_raphson<double_cubic_test_function>") {
         const auto init_var = Eigen::Vector2d(1.0, 1.0);
         finder.init(init_var);
         REQUIRE_NOTHROW(finder.iterate());
-        REQUIRE(finder.variable()(0) != init_var(0));  // NOLINT
-        REQUIRE(finder.variable()(1) != init_var(1));  // NOLINT
+        REQUIRE(finder.variable()(0) != init_var(0));
+        REQUIRE(finder.variable()(1) != init_var(1));
         REQUIRE(finder.iterations() == 1);
         REQUIRE(finder.evaluations() > 1);
     }

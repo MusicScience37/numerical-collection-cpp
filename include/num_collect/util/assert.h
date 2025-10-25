@@ -59,20 +59,19 @@ namespace num_collect::util::impl {
  *
  * \param[in] CONDITION Condition.
  */
-#define NUM_COLLECT_ASSERT_IMPL(CONDITION) /* NOLINT */                        \
-    do {                                   /* NOLINT */                        \
+#define NUM_COLLECT_ASSERT_IMPL(CONDITION)                                     \
+    do {                                                                       \
         if (!(CONDITION)) [[unlikely]] {                                       \
             ::num_collect::util::impl::handle_assertion_failure((#CONDITION)); \
         }                                                                      \
-    } while (false) /* NOLINT */
+    } while (false)
 
 /*!
  * \brief Macro to check whether a condition is satisfied.
  *
  * \param[in] CONDITION Condition.
  */
-#define NUM_COLLECT_ASSERT(CONDITION)  /* NOLINT */ \
-    NUM_COLLECT_ASSERT_IMPL(CONDITION) /* NOLINT */
+#define NUM_COLLECT_ASSERT(CONDITION) NUM_COLLECT_ASSERT_IMPL(CONDITION)
 
 #ifdef NUM_COLLECT_DOCUMENTATION
 /*!
@@ -87,13 +86,12 @@ namespace num_collect::util::impl {
  *
  * \param[in] CONDITION Condition.
  */
-#define NUM_COLLECT_DEBUG_ASSERT(CONDITION) /* NOLINT */ \
-    NUM_COLLECT_ASSERT(CONDITION)           /* NOLINT */
+#define NUM_COLLECT_DEBUG_ASSERT(CONDITION) NUM_COLLECT_ASSERT(CONDITION)
 #else
 /*!
  * \brief Macro to check whether a condition is satisfied in debug build only.
  *
  * \param[in] CONDITION Condition.
  */
-#define NUM_COLLECT_DEBUG_ASSERT(CONDITION) /* NOLINT */ [] {}()
+#define NUM_COLLECT_DEBUG_ASSERT(CONDITION) [] {}()
 #endif

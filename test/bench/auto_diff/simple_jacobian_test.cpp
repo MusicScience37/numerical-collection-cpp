@@ -30,7 +30,6 @@
 #include "num_collect/auto_diff/forward/make_jacobian.h"
 #include "num_collect/auto_diff/forward/variable.h"
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(auto_diff_fixture, "simple_jacobian", "forward") {
     using arg_type =
         num_collect::auto_diff::forward::variable_vector_type<Eigen::Vector2d>;
@@ -47,7 +46,7 @@ STAT_BENCH_CASE_F(auto_diff_fixture, "simple_jacobian", "forward") {
         const jacobian_type coeff = make_jacobian(val);
 
         jacobian_type true_coeff = jacobian_type::Zero();
-        true_coeff(0, 0) = 2.0;  // NOLINT
+        true_coeff(0, 0) = 2.0;
         true_coeff(1, 0) = 1.0;
         true_coeff(1, 1) = 1.0;
         true_coeff(2, 0) = vec(1).value();
@@ -56,7 +55,6 @@ STAT_BENCH_CASE_F(auto_diff_fixture, "simple_jacobian", "forward") {
     };
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(auto_diff_fixture, "simple_jacobian", "backward") {
     using arg_type =
         num_collect::auto_diff::backward::variable_vector_type<Eigen::Vector2d>;
@@ -73,7 +71,7 @@ STAT_BENCH_CASE_F(auto_diff_fixture, "simple_jacobian", "backward") {
         const jacobian_type coeff = differentiate(val, vec);
 
         jacobian_type true_coeff = jacobian_type::Zero();
-        true_coeff(0, 0) = 2.0;  // NOLINT
+        true_coeff(0, 0) = 2.0;
         true_coeff(1, 0) = 1.0;
         true_coeff(1, 1) = 1.0;
         true_coeff(2, 0) = vec(1).value();

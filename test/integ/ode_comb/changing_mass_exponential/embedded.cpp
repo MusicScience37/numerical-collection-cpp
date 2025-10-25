@@ -30,7 +30,6 @@
 #include "num_collect/ode/rosenbrock/ros3w_formula.h"
 #include "num_prob_collect/ode/changing_mass_exponential_problem.h"
 
-// NOLINTNEXTLINE
 TEMPLATE_PRODUCT_TEST_CASE(
     "changing_mass_exponential_problem with embedded formulas", "",
     (

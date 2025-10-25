@@ -42,18 +42,18 @@ TEST_CASE("num_collect::opt::adaptive_diagonal_curves") {
 
     SECTION("init") {
         auto opt = adaptive_diagonal_curves<multi_quadratic_function>();
-        opt.init(Eigen::VectorXd::Constant(3, -2.0),  // NOLINT
-            Eigen::VectorXd::Constant(3, 2.0));       // NOLINT
+        opt.init(Eigen::VectorXd::Constant(3, -2.0),
+            Eigen::VectorXd::Constant(3, 2.0));
         REQUIRE(opt.iterations() == 0);
         REQUIRE(opt.evaluations() == 2);
         REQUIRE_THAT(opt.opt_variable(),
-            eigen_approx(Eigen::VectorXd::Constant(3, -2.0)));  // NOLINT
+            eigen_approx(Eigen::VectorXd::Constant(3, -2.0)));
     }
 
     SECTION("iterate") {
         auto opt = adaptive_diagonal_curves<multi_quadratic_function>();
-        opt.init(Eigen::VectorXd::Constant(3, -2.0),  // NOLINT
-            Eigen::VectorXd::Constant(3, 2.0));       // NOLINT
+        opt.init(Eigen::VectorXd::Constant(3, -2.0),
+            Eigen::VectorXd::Constant(3, 2.0));
         const auto prev_value = opt.opt_value();
 
         opt.iterate();
@@ -64,10 +64,10 @@ TEST_CASE("num_collect::opt::adaptive_diagonal_curves") {
 
     SECTION("solve") {
         auto opt = adaptive_diagonal_curves<multi_quadratic_function>();
-        opt.init(Eigen::VectorXd::Constant(3, -2.0),  // NOLINT
-            Eigen::VectorXd::Constant(3, 2.0));       // NOLINT
+        opt.init(Eigen::VectorXd::Constant(3, -2.0),
+            Eigen::VectorXd::Constant(3, 2.0));
         constexpr double sol_tol = 1e-2;
-        opt.max_evaluations(1000);  // NOLINT
+        opt.max_evaluations(1000);
         opt.solve();
         REQUIRE_THAT(opt.opt_variable(),
             eigen_approx(Eigen::VectorXd::Zero(3), sol_tol));
@@ -76,11 +76,11 @@ TEST_CASE("num_collect::opt::adaptive_diagonal_curves") {
 
     SECTION("check global phase execution") {
         auto opt = adaptive_diagonal_curves<multi_quadratic_function>();
-        opt.init(Eigen::VectorXd::Constant(3, -2.0),  // NOLINT
-            Eigen::VectorXd::Constant(3, 2.0));       // NOLINT
+        opt.init(Eigen::VectorXd::Constant(3, -2.0),
+            Eigen::VectorXd::Constant(3, 2.0));
         constexpr double sol_tol = 1e-2;
-        opt.max_evaluations(1000);     // NOLINT
-        opt.decrease_rate_bound(1.0);  // NOLINT
+        opt.max_evaluations(1000);
+        opt.decrease_rate_bound(1.0);
         REQUIRE_NOTHROW(opt.solve());
         REQUIRE_THAT(opt.opt_variable(),
             eigen_approx(Eigen::VectorXd::Zero(3), sol_tol));
@@ -89,9 +89,9 @@ TEST_CASE("num_collect::opt::adaptive_diagonal_curves") {
 
     SECTION("try to solve with small MaxDigits") {
         auto opt = adaptive_diagonal_curves<multi_quadratic_function, 2>();
-        opt.init(Eigen::VectorXd::Constant(3, -2.0),  // NOLINT
-            Eigen::VectorXd::Constant(3, 2.0));       // NOLINT
-        opt.max_evaluations(1000);                    // NOLINT
+        opt.init(Eigen::VectorXd::Constant(3, -2.0),
+            Eigen::VectorXd::Constant(3, 2.0));
+        opt.max_evaluations(1000);
         REQUIRE_NOTHROW(opt.solve());
         CHECK(opt.last_state() ==
             adaptive_diagonal_curves<multi_quadratic_function,

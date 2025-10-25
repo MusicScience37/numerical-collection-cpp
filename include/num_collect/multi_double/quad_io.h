@@ -42,7 +42,6 @@ struct formatter<num_collect::multi_double::quad> {
      */
     constexpr auto parse(format_parse_context& context)
         -> format_parse_context::iterator {
-        // NOLINTNEXTLINE(readability-qualified-auto)
         auto iter = context.begin();
 
         if (iter == context.end() || *iter == '}') {
@@ -114,7 +113,6 @@ struct formatter<num_collect::multi_double::quad> {
         }
         constexpr std::size_t buffer_size = 45;
         std::array<char, buffer_size> buffer{};
-        // NOLINTNEXTLINE(readability-qualified-auto)
         const auto end =
             num_collect::multi_double::impl::format_decimal_scientific_to(
                 buffer.data(), value, precision_);

@@ -45,16 +45,15 @@ TEST_CASE("num_collect::opt::gaussian_process_optimizer (one variable)") {
 
     SECTION("init") {
         auto opt = gaussian_process_optimizer<vibrated_quadratic_function>();
-        opt.init(-5.0, 10.0);  // NOLINT
+        opt.init(-5.0, 10.0);
         CHECK(opt.iterations() == 0);
-        CHECK(opt.evaluations() == 2);  // NOLINT
-        CHECK_THAT(
-            opt.opt_variable(), Catch::Matchers::WithinRel(-5.0));  // NOLINT
+        CHECK(opt.evaluations() == 2);
+        CHECK_THAT(opt.opt_variable(), Catch::Matchers::WithinRel(-5.0));
     }
 
     SECTION("iterate") {
         auto opt = gaussian_process_optimizer<vibrated_quadratic_function>();
-        opt.init(-5.0, 10.0);  // NOLINT
+        opt.init(-5.0, 10.0);
         const auto prev_value = opt.opt_value();
 
         opt.iterate();
@@ -65,22 +64,22 @@ TEST_CASE("num_collect::opt::gaussian_process_optimizer (one variable)") {
 
     SECTION("solve") {
         auto opt = gaussian_process_optimizer<vibrated_quadratic_function>();
-        opt.init(-5.0, 10.0);  // NOLINT
+        opt.init(-5.0, 10.0);
         constexpr double sol_tol = 1e-2;
-        opt.max_evaluations(10);               // NOLINT
-        opt.max_lower_bound_evaluations(100);  // NOLINT
-        opt.distance_threshold_coeff(1e-3);    // NOLINT
+        opt.max_evaluations(10);
+        opt.max_lower_bound_evaluations(100);
+        opt.distance_threshold_coeff(1e-3);
         opt.solve();
-        CHECK_THAT(opt.opt_variable(),
-            Catch::Matchers::WithinAbs(0.0, sol_tol));  // NOLINT
+        CHECK_THAT(
+            opt.opt_variable(), Catch::Matchers::WithinAbs(0.0, sol_tol));
         CHECK_THAT(opt.opt_value(), Catch::Matchers::WithinAbs(-1.0, sol_tol));
     }
 
     SECTION("solve when the solution is on the boundary") {
         auto opt = gaussian_process_optimizer<identity_function>();
         opt.init(-1.0, 1.0);
-        opt.max_evaluations(20);               // NOLINT
-        opt.max_lower_bound_evaluations(100);  // NOLINT
+        opt.max_evaluations(20);
+        opt.max_lower_bound_evaluations(100);
         opt.solve();
         constexpr double sol_tol = 1e-4;
         constexpr double true_solution = -1.0;
@@ -106,18 +105,18 @@ TEST_CASE("num_collect::opt::gaussian_process_optimizer (multi variables)") {
 
     SECTION("init") {
         auto opt = gaussian_process_optimizer<multi_quadratic_function>();
-        opt.init(Eigen::VectorXd::Constant(3, -1.0),  // NOLINT
-            Eigen::VectorXd::Constant(3, 2.0));       // NOLINT
+        opt.init(Eigen::VectorXd::Constant(3, -1.0),
+            Eigen::VectorXd::Constant(3, 2.0));
         CHECK(opt.iterations() == 0);
-        CHECK(opt.evaluations() == 2);  // NOLINT
+        CHECK(opt.evaluations() == 2);
         CHECK_THAT(opt.opt_variable(),
-            eigen_approx(Eigen::VectorXd::Constant(3, -1.0)));  // NOLINT
+            eigen_approx(Eigen::VectorXd::Constant(3, -1.0)));
     }
 
     SECTION("iterate") {
         auto opt = gaussian_process_optimizer<multi_quadratic_function>();
-        opt.init(Eigen::VectorXd::Constant(3, -1.0),  // NOLINT
-            Eigen::VectorXd::Constant(3, 2.0));       // NOLINT
+        opt.init(Eigen::VectorXd::Constant(3, -1.0),
+            Eigen::VectorXd::Constant(3, 2.0));
         const auto prev_value = opt.opt_value();
 
         opt.iterate();
@@ -128,11 +127,11 @@ TEST_CASE("num_collect::opt::gaussian_process_optimizer (multi variables)") {
 
     SECTION("solve") {
         auto opt = gaussian_process_optimizer<multi_quadratic_function>();
-        opt.init(Eigen::VectorXd::Constant(3, -1.0),  // NOLINT
-            Eigen::VectorXd::Constant(3, 2.0));       // NOLINT
+        opt.init(Eigen::VectorXd::Constant(3, -1.0),
+            Eigen::VectorXd::Constant(3, 2.0));
         constexpr double sol_tol = 1e-1;
-        opt.max_evaluations(20);               // NOLINT
-        opt.max_lower_bound_evaluations(100);  // NOLINT
+        opt.max_evaluations(20);
+        opt.max_lower_bound_evaluations(100);
         opt.solve();
         CHECK_THAT(opt.opt_variable(),
             eigen_approx(Eigen::VectorXd::Zero(3), sol_tol));
@@ -143,8 +142,8 @@ TEST_CASE("num_collect::opt::gaussian_process_optimizer (multi variables)") {
         auto opt = gaussian_process_optimizer<sum_function<Eigen::Vector2d>>();
         opt.init(
             Eigen::Vector2d::Constant(-1.0), Eigen::Vector2d::Constant(1.0));
-        opt.max_evaluations(20);               // NOLINT
-        opt.max_lower_bound_evaluations(100);  // NOLINT
+        opt.max_evaluations(20);
+        opt.max_lower_bound_evaluations(100);
         opt.solve();
         constexpr double sol_tol = 1e-4;
         const Eigen::Vector2d true_solution = Eigen::Vector2d::Constant(-1.0);

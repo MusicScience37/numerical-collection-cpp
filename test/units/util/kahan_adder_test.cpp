@@ -30,28 +30,27 @@
 
 #include "num_collect/constants/pi.h"  // IWYU pragma: keep
 
-// NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::util::kahan_adder (floating-point number)", "",
     float, double) {
     using adder_type = num_collect::util::kahan_adder<TestType>;
 
     SECTION("default constructor") {
         auto adder = adder_type();
-        REQUIRE(adder.sum() == static_cast<TestType>(0));  // NOLINT
+        REQUIRE(adder.sum() == static_cast<TestType>(0));
     }
 
     SECTION("add some numbers") {
         auto adder = adder_type();
-        adder += 1.0;                                      // NOLINT
-        adder += 2.0;                                      // NOLINT
-        REQUIRE(adder.sum() == static_cast<TestType>(3));  // NOLINT
+        adder += 1.0;
+        adder += 2.0;
+        REQUIRE(adder.sum() == static_cast<TestType>(3));
     }
 
     SECTION("subtract some numbers") {
         auto adder = adder_type();
-        adder -= 1.0;                                       // NOLINT
-        adder -= 2.0;                                       // NOLINT
-        REQUIRE(adder.sum() == static_cast<TestType>(-3));  // NOLINT
+        adder -= 1.0;
+        adder -= 2.0;
+        REQUIRE(adder.sum() == static_cast<TestType>(-3));
     }
 
     SECTION("calculate an infinite sum") {

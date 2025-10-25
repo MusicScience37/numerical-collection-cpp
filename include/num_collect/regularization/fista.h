@@ -130,11 +130,10 @@ public:
     void iterate(const scalar_type& param, data_type& solution) {
         const scalar_type t_before = t_;
         using std::sqrt;
-        t_ = static_cast<scalar_type>(0.5) *        // NOLINT
-            (static_cast<scalar_type>(1) +          // NOLINT
-                sqrt(static_cast<scalar_type>(1) +  // NOLINT
-                    static_cast<scalar_type>(4)     // NOLINT
-                        * t_before * t_before));
+        t_ = static_cast<scalar_type>(0.5) *
+            (static_cast<scalar_type>(1) +
+                sqrt(static_cast<scalar_type>(1) +
+                    static_cast<scalar_type>(4) * t_before * t_before));
         const scalar_type coeff_update =
             (t_before - static_cast<scalar_type>(1)) / t_;
 

@@ -75,7 +75,6 @@ private:
 };
 
 [[nodiscard]] auto init_var() -> Eigen::Vector4d {
-    // NOLINTNEXTLINE
     return (Eigen::Vector4d() << 1.0, -2.0, -3.0, 2.0).finished();
 }
 
@@ -87,7 +86,6 @@ private:
         Eigen::Vector4d::Constant(max_value)};
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(
     powell4_function_fixture, "opt_powell4_function", "steepest_descent") {
     test_optimizer(
@@ -100,7 +98,6 @@ STAT_BENCH_CASE_F(
         "steepest_descent");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(
     powell4_function_fixture, "opt_powell4_function", "downhill_simplex") {
     test_optimizer(
@@ -113,7 +110,6 @@ STAT_BENCH_CASE_F(
         "downhill_simplex");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(
     powell4_function_fixture, "opt_powell4_function", "dfp_optimizer") {
     test_optimizer(
@@ -126,7 +122,6 @@ STAT_BENCH_CASE_F(
         "dfp_optimizer");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(
     powell4_function_fixture, "opt_powell4_function", "bfgs_optimizer") {
     test_optimizer(
@@ -139,7 +134,6 @@ STAT_BENCH_CASE_F(
         "bfgs_optimizer");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(
     powell4_function_fixture, "opt_powell4_function", "dividing_rectangles") {
     test_optimizer(
@@ -153,7 +147,6 @@ STAT_BENCH_CASE_F(
         "dividing_rectangles");
 }
 
-// NOLINTNEXTLINE
 STAT_BENCH_CASE_F(powell4_function_fixture, "opt_powell4_function",
     "heuristic_global_optimizer") {
     test_optimizer(

@@ -33,7 +33,6 @@ using wrapped_changing_mass_quadratic_problem =
     num_collect::ode::multi_variate_implicit_problem_wrapper<
         num_prob_collect::ode::changing_mass_quadratic_problem>;
 
-// NOLINTNEXTLINE
 TEMPLATE_PRODUCT_TEST_CASE(
     "changing_mass_quadratic_problem with embedded formulas with "
     "implicit_problem_wrapper",
@@ -62,7 +61,6 @@ TEMPLATE_PRODUCT_TEST_CASE(
 
         solve_and_check_with_reference(
             solver, init_time, finish_time, num_time_samples, [](double time) {
-                // NOLINTNEXTLINE
                 return Eigen::Vector2d(time, 0.5 * time * time);
             });
     }
