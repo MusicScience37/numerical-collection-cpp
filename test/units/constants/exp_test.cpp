@@ -20,47 +20,67 @@
 #include "num_collect/constants/exp.h"
 
 #include <cmath>
-#include <ostream>
 
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+#include "check_constexpr_function.h"
+
 // NOLINTNEXTLINE
-TEMPLATE_TEST_CASE("num_collect::constants::exp", "", float, double) {
+TEMPLATE_TEST_CASE(
+    "num_collect::constants::impl::exp_at_compile_time", "", float, double) {
     SECTION("negative number") {
-        constexpr auto x = static_cast<TestType>(-1.234);
-        constexpr TestType val = num_collect::constants::exp(x);
-        const TestType reference = std::exp(x);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(-1.234)),
+            num_collect::constants::impl::exp_at_compile_time, std::exp);
     }
 
     SECTION("low negative number") {
-        constexpr auto x = static_cast<TestType>(-50.123);
-        constexpr TestType val = num_collect::constants::exp(x);
-        const TestType reference = std::exp(x);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(-50.123)),
+            num_collect::constants::impl::exp_at_compile_time, std::exp);
     }
 
     SECTION("zero") {
-        constexpr auto x = static_cast<TestType>(0.0);
-        constexpr TestType val = num_collect::constants::exp(x);
-        constexpr auto true_val = static_cast<TestType>(1.0);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(0.0)),
+            num_collect::constants::impl::exp_at_compile_time, std::exp);
     }
 
     SECTION("positive number") {
-        constexpr auto x = static_cast<TestType>(1.234);
-        constexpr TestType val = num_collect::constants::exp(x);
-        const TestType reference = std::exp(x);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(1.234)),
+            num_collect::constants::impl::exp_at_compile_time, std::exp);
     }
 
     SECTION("positive number") {
-        constexpr auto x = static_cast<TestType>(50.123);
-        constexpr TestType val = num_collect::constants::exp(x);
-        const TestType reference = std::exp(x);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(50.123)),
+            num_collect::constants::impl::exp_at_compile_time, std::exp);
+    }
+}
+
+// NOLINTNEXTLINE
+TEMPLATE_TEST_CASE("num_collect::constants::exp", "", float, double) {
+    SECTION("negative number") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(-1.234)),
+            num_collect::constants::exp, std::exp);
+    }
+
+    SECTION("low negative number") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(-50.123)),
+            num_collect::constants::exp, std::exp);
+    }
+
+    SECTION("zero") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(0.0)),
+            num_collect::constants::exp, std::exp);
+    }
+
+    SECTION("positive number") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(1.234)),
+            num_collect::constants::exp, std::exp);
+    }
+
+    SECTION("positive number") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(50.123)),
+            num_collect::constants::exp, std::exp);
     }
 }

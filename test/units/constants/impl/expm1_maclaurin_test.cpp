@@ -20,41 +20,34 @@
 #include "num_collect/constants/impl/expm1_maclaurin.h"
 
 #include <cmath>
-#include <ostream>
 
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+#include "../check_constexpr_function.h"
+
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::constants::impl::expm1_maclaurin", "", float, double) {
     SECTION("x = 0") {
-        constexpr auto x = static_cast<TestType>(0);
-        constexpr auto val = num_collect::constants::impl::expm1_maclaurin(x);
-        const auto reference = std::expm1(x);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_ABSOLUTE((static_cast<TestType>(0)),
+            num_collect::constants::impl::expm1_maclaurin, std::expm1);
     }
 
     SECTION("x = 0.2") {
-        constexpr auto x = static_cast<TestType>(0.2);
-        constexpr auto val = num_collect::constants::impl::expm1_maclaurin(x);
-        const auto reference = std::expm1(x);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(0.2)),
+            num_collect::constants::impl::expm1_maclaurin, std::expm1);
     }
 
     SECTION("x = 0.5") {
-        constexpr auto x = static_cast<TestType>(0.5);
-        constexpr auto val = num_collect::constants::impl::expm1_maclaurin(x);
-        const auto reference = std::expm1(x);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(0.5)),
+            num_collect::constants::impl::expm1_maclaurin, std::expm1);
     }
 
     SECTION("x = 1") {
-        constexpr auto x = static_cast<TestType>(1);
-        constexpr auto val = num_collect::constants::impl::expm1_maclaurin(x);
-        const auto reference = std::expm1(x);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(1)),
+            num_collect::constants::impl::expm1_maclaurin, std::expm1);
     }
 }

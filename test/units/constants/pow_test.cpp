@@ -20,13 +20,14 @@
 #include "num_collect/constants/pow.h"
 
 #include <cmath>
-#include <ostream>
 #include <utility>
 
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
+
+#include "check_constexpr_function.h"
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("num_collect::constants::pow(Float, Int)", "",
@@ -35,67 +36,98 @@ TEMPLATE_TEST_CASE("num_collect::constants::pow(Float, Int)", "",
     using Exp = typename TestType::second_type;
 
     SECTION("ordinary") {
-        constexpr auto base = static_cast<Base>(4.321);
-        constexpr auto exp = static_cast<Exp>(3);
-        constexpr Base val = num_collect::constants::pow(base, exp);
-        const Base reference = std::pow(base, static_cast<Base>(exp));
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<Base>(4.321), static_cast<Exp>(3)),
+            num_collect::constants::pow, std::pow);
     }
 
     SECTION("negative exponent") {
-        constexpr auto base = static_cast<Base>(4.321);
-        constexpr auto exp = static_cast<Exp>(-3);
-        constexpr Base val = num_collect::constants::pow(base, exp);
-        const Base reference = std::pow(base, static_cast<Base>(exp));
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<Base>(4.321), static_cast<Exp>(-3)),
+            num_collect::constants::pow, std::pow);
     }
 
     SECTION("low exponent") {
-        constexpr auto base = static_cast<Base>(4.321);
-        constexpr auto exp = static_cast<Exp>(-30);
-        constexpr Base val = num_collect::constants::pow(base, exp);
-        const Base reference = std::pow(base, static_cast<Base>(exp));
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<Base>(4.321), static_cast<Exp>(-30)),
+            num_collect::constants::pow, std::pow);
     }
 
     SECTION("zero exponent") {
-        constexpr auto base = static_cast<Base>(4.321);
-        constexpr auto exp = static_cast<Exp>(0);
-        constexpr Base val = num_collect::constants::pow(base, exp);
-        const Base reference = std::pow(base, static_cast<Base>(exp));
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<Base>(4.321), static_cast<Exp>(0)),
+            num_collect::constants::pow, std::pow);
     }
 
     SECTION("large exponent") {
-        constexpr auto base = static_cast<Base>(4.321);
-        constexpr auto exp = static_cast<Exp>(30);
-        constexpr Base val = num_collect::constants::pow(base, exp);
-        const Base reference = std::pow(base, static_cast<Base>(exp));
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<Base>(4.321), static_cast<Exp>(30)),
+            num_collect::constants::pow, std::pow);
     }
 
     SECTION("negative base") {
-        constexpr auto base = static_cast<Base>(-4.321);
-        constexpr auto exp = static_cast<Exp>(3);
-        constexpr Base val = num_collect::constants::pow(base, exp);
-        const Base reference = std::pow(base, static_cast<Base>(exp));
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<Base>(-4.321), static_cast<Exp>(3)),
+            num_collect::constants::pow, std::pow);
     }
 
     SECTION("low base") {
-        constexpr auto base = static_cast<Base>(-4.321e+5);
-        constexpr auto exp = static_cast<Exp>(3);
-        constexpr Base val = num_collect::constants::pow(base, exp);
-        const Base reference = std::pow(base, static_cast<Base>(exp));
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<Base>(-4.321e+5), static_cast<Exp>(3)),
+            num_collect::constants::pow, std::pow);
     }
 
     SECTION("large base") {
-        constexpr auto base = static_cast<Base>(4.321e+5);
-        constexpr auto exp = static_cast<Exp>(3);
-        constexpr Base val = num_collect::constants::pow(base, exp);
-        const Base reference = std::pow(base, static_cast<Base>(exp));
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<Base>(4.321e+5), static_cast<Exp>(3)),
+            num_collect::constants::pow, std::pow);
+    }
+}
+
+// NOLINTNEXTLINE
+TEMPLATE_TEST_CASE(
+    "num_collect::constants::impl::pow_at_compile_time(Float, Float)", "",
+    float, double) {
+    SECTION("ordinary") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<TestType>(4.321), static_cast<TestType>(1.234)),
+            num_collect::constants::impl::pow_at_compile_time, std::pow);
+    }
+
+    SECTION("negative exponent") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<TestType>(4.321), static_cast<TestType>(-2.345)),
+            num_collect::constants::impl::pow_at_compile_time, std::pow);
+    }
+
+    SECTION("low exponent") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<TestType>(1.234), static_cast<TestType>(-123.456)),
+            num_collect::constants::impl::pow_at_compile_time, std::pow);
+    }
+
+    SECTION("zero exponent") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<TestType>(4.321), static_cast<TestType>(0)),
+            num_collect::constants::impl::pow_at_compile_time, std::pow);
+    }
+
+    SECTION("large exponent") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<TestType>(1.234), static_cast<TestType>(123.456)),
+            num_collect::constants::impl::pow_at_compile_time, std::pow);
+    }
+
+    SECTION("small base") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<TestType>(4.321e-10), static_cast<TestType>(1.234)),
+            num_collect::constants::impl::pow_at_compile_time, std::pow);
+    }
+
+    SECTION("large base") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<TestType>(4.321e+10), static_cast<TestType>(1.234)),
+            num_collect::constants::impl::pow_at_compile_time, std::pow);
     }
 }
 
@@ -103,58 +135,44 @@ TEMPLATE_TEST_CASE("num_collect::constants::pow(Float, Int)", "",
 TEMPLATE_TEST_CASE(
     "num_collect::constants::pow(Float, Float)", "", float, double) {
     SECTION("ordinary") {
-        constexpr auto base = static_cast<TestType>(4.321);
-        constexpr auto exp = static_cast<TestType>(1.234);
-        constexpr TestType val = num_collect::constants::pow(base, exp);
-        const TestType reference = std::pow(base, exp);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<TestType>(4.321), static_cast<TestType>(1.234)),
+            num_collect::constants::pow, std::pow);
     }
 
     SECTION("negative exponent") {
-        constexpr auto base = static_cast<TestType>(4.321);
-        constexpr auto exp = static_cast<TestType>(-2.345);
-        constexpr TestType val = num_collect::constants::pow(base, exp);
-        const TestType reference = std::pow(base, exp);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<TestType>(4.321), static_cast<TestType>(-2.345)),
+            num_collect::constants::pow, std::pow);
     }
 
     SECTION("low exponent") {
-        constexpr auto base = static_cast<TestType>(4.321);
-        constexpr auto exp = static_cast<TestType>(-123.456);
-        constexpr TestType val = num_collect::constants::pow(base, exp);
-        const TestType reference = std::pow(base, exp);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<TestType>(1.234), static_cast<TestType>(-123.456)),
+            num_collect::constants::pow, std::pow);
     }
 
     SECTION("zero exponent") {
-        constexpr auto base = static_cast<TestType>(4.321);
-        constexpr auto exp = static_cast<TestType>(0);
-        constexpr TestType val = num_collect::constants::pow(base, exp);
-        const TestType reference = std::pow(base, exp);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<TestType>(4.321), static_cast<TestType>(0)),
+            num_collect::constants::pow, std::pow);
     }
 
     SECTION("large exponent") {
-        constexpr auto base = static_cast<TestType>(4.321);
-        constexpr auto exp = static_cast<TestType>(123.456);
-        constexpr TestType val = num_collect::constants::pow(base, exp);
-        const TestType reference = std::pow(base, exp);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<TestType>(1.234), static_cast<TestType>(123.456)),
+            num_collect::constants::pow, std::pow);
     }
 
     SECTION("small base") {
-        constexpr auto base = static_cast<TestType>(4.321e-10);
-        constexpr auto exp = static_cast<TestType>(1.234);
-        constexpr TestType val = num_collect::constants::pow(base, exp);
-        const TestType reference = std::pow(base, exp);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<TestType>(4.321e-10), static_cast<TestType>(1.234)),
+            num_collect::constants::pow, std::pow);
     }
 
     SECTION("large base") {
-        constexpr auto base = static_cast<TestType>(4.321e+10);
-        constexpr auto exp = static_cast<TestType>(1.234);
-        constexpr TestType val = num_collect::constants::pow(base, exp);
-        const TestType reference = std::pow(base, exp);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE(
+            (static_cast<TestType>(4.321e+10), static_cast<TestType>(1.234)),
+            num_collect::constants::pow, std::pow);
     }
 }

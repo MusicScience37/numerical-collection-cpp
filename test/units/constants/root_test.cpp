@@ -20,117 +20,117 @@
 #include "num_collect/constants/root.h"
 
 #include <cmath>
-#include <ostream>
 
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+#include "check_constexpr_function.h"
+
 // NOLINTNEXTLINE
-TEMPLATE_TEST_CASE("num_collect::constants::root", "", float, double) {
+TEMPLATE_TEST_CASE(
+    "num_collect::constants::impl::root_at_compile_time", "", float, double) {
+    const auto reference_function = [](TestType x, int n) -> TestType {
+        if (x < static_cast<TestType>(0)) {
+            return -static_cast<TestType>(std::pow(
+                -static_cast<double>(x), 1.0 / static_cast<double>(n)));
+        }
+        return static_cast<TestType>(
+            std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n)));
+    };
+
     SECTION("x < 0, n is even") {
         constexpr auto x = static_cast<TestType>(-1.0);
         SECTION("n = 2") {
             constexpr auto n = 2;
-            constexpr TestType val = num_collect::constants::root(x, n);
-            REQUIRE(std::isnan(val));
+            constexpr TestType value_at_compile_time =
+                num_collect::constants::impl::root_at_compile_time(x, n);
+            const TestType value_runtime =
+                num_collect::constants::impl::root_at_compile_time(x, n);
+            CHECK(std::isnan(value_at_compile_time));
+            CHECK(std::isnan(value_runtime));
         }
         SECTION("n = 4") {
             constexpr auto n = 4;
-            constexpr TestType val = num_collect::constants::root(x, n);
-            REQUIRE(std::isnan(val));
+            constexpr TestType value_at_compile_time =
+                num_collect::constants::impl::root_at_compile_time(x, n);
+            const TestType value_runtime =
+                num_collect::constants::impl::root_at_compile_time(x, n);
+            CHECK(std::isnan(value_at_compile_time));
+            CHECK(std::isnan(value_runtime));
         }
     }
 
     SECTION("x < 0, n is odd") {
         constexpr auto x = static_cast<TestType>(-1.234);
         SECTION("n = 3") {
-            constexpr auto n = 3;
-            constexpr TestType val = num_collect::constants::root(x, n);
-            const auto reference = -static_cast<TestType>(std::pow(
-                -static_cast<TestType>(x), 1.0 / static_cast<TestType>(n)));
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(3)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
         }
         SECTION("n = 5") {
-            constexpr auto n = 5;
-            constexpr TestType val = num_collect::constants::root(x, n);
-            const auto reference = -static_cast<TestType>(std::pow(
-                -static_cast<TestType>(x), 1.0 / static_cast<TestType>(n)));
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(5)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
         }
         SECTION("n = 11") {
-            constexpr auto n = 11;
-            constexpr TestType val = num_collect::constants::root(x, n);
-            const auto reference = -static_cast<TestType>(std::pow(
-                -static_cast<TestType>(x), 1.0 / static_cast<TestType>(n)));
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(11)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
         }
     }
 
     SECTION("x = 0") {
         constexpr auto x = static_cast<TestType>(0);
-        constexpr auto true_val = x;
         SECTION("n = 2") {
-            constexpr auto n = 2;
-            constexpr TestType val = num_collect::constants::root(x, n);
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(2)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
         }
         SECTION("n = 3") {
-            constexpr auto n = 3;
-            constexpr TestType val = num_collect::constants::root(x, n);
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(3)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
         }
         SECTION("n = 4") {
-            constexpr auto n = 4;
-            constexpr TestType val = num_collect::constants::root(x, n);
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(4)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
         }
     }
 
     SECTION("x > 0") {
         constexpr auto x = static_cast<TestType>(1.234);
         SECTION("n = 2") {
-            constexpr auto n = 2;
-            constexpr TestType val = num_collect::constants::root(x, n);
-            const auto reference = static_cast<TestType>(std::pow(
-                static_cast<TestType>(x), 1.0 / static_cast<TestType>(n)));
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(2)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
         }
         SECTION("n = 3") {
-            constexpr auto n = 3;
-            constexpr TestType val = num_collect::constants::root(x, n);
-            const auto reference = static_cast<TestType>(std::pow(
-                static_cast<TestType>(x), 1.0 / static_cast<TestType>(n)));
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(3)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
         }
         SECTION("n = 4") {
-            constexpr auto n = 4;
-            constexpr TestType val = num_collect::constants::root(x, n);
-            const auto reference = static_cast<TestType>(std::pow(
-                static_cast<TestType>(x), 1.0 / static_cast<TestType>(n)));
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(4)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
         }
         SECTION("n = 5") {
-            constexpr auto n = 5;
-            constexpr TestType val = num_collect::constants::root(x, n);
-            const auto reference = static_cast<TestType>(std::pow(
-                static_cast<TestType>(x), 1.0 / static_cast<TestType>(n)));
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(5)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
         }
         SECTION("n = 10") {
-            constexpr auto n = 10;
-            constexpr TestType val = num_collect::constants::root(x, n);
-            const auto reference = static_cast<TestType>(std::pow(
-                static_cast<TestType>(x), 1.0 / static_cast<TestType>(n)));
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(10)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
         }
         SECTION("n = 11") {
-            constexpr auto n = 11;
-            constexpr TestType val = num_collect::constants::root(x, n);
-            const auto reference = static_cast<TestType>(std::pow(
-                static_cast<TestType>(x), 1.0 / static_cast<TestType>(n)));
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(11)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
         }
     }
 
@@ -138,17 +138,15 @@ TEMPLATE_TEST_CASE("num_collect::constants::root", "", float, double) {
         constexpr auto x = static_cast<TestType>(1.234e+10);
         SECTION("n = 2") {
             constexpr auto n = 2;
-            constexpr TestType val = num_collect::constants::root(x, n);
-            const auto reference = static_cast<TestType>(std::pow(
-                static_cast<TestType>(x), 1.0 / static_cast<TestType>(n)));
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(n)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
         }
         SECTION("n = 3") {
             constexpr auto n = 3;
-            constexpr TestType val = num_collect::constants::root(x, n);
-            const auto reference = static_cast<TestType>(std::pow(
-                static_cast<TestType>(x), 1.0 / static_cast<TestType>(n)));
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(n)),
+                num_collect::constants::impl::root_at_compile_time,
+                reference_function);
         }
     }
 
@@ -156,15 +154,159 @@ TEMPLATE_TEST_CASE("num_collect::constants::root", "", float, double) {
         constexpr auto x = std::numeric_limits<TestType>::infinity();
         SECTION("n = 2") {
             constexpr auto n = 2;
-            constexpr TestType val = num_collect::constants::root(x, n);
-            REQUIRE(std::isinf(val));
-            REQUIRE(val > num_collect::constants::zero<TestType>);
+            constexpr TestType value_at_compile_time =
+                num_collect::constants::impl::root_at_compile_time(x, n);
+            const TestType value_runtime =
+                num_collect::constants::impl::root_at_compile_time(x, n);
+            CHECK(std::isinf(value_at_compile_time));
+            CHECK(
+                value_at_compile_time > num_collect::constants::zero<TestType>);
+            CHECK(std::isinf(value_runtime));
+            CHECK(value_runtime > num_collect::constants::zero<TestType>);
         }
         SECTION("n = 3") {
             constexpr auto n = 3;
-            constexpr TestType val = num_collect::constants::root(x, n);
-            REQUIRE(std::isinf(val));
-            REQUIRE(val > num_collect::constants::zero<TestType>);
+            constexpr TestType value_at_compile_time =
+                num_collect::constants::impl::root_at_compile_time(x, n);
+            const TestType value_runtime =
+                num_collect::constants::impl::root_at_compile_time(x, n);
+            CHECK(std::isinf(value_at_compile_time));
+            CHECK(
+                value_at_compile_time > num_collect::constants::zero<TestType>);
+            CHECK(std::isinf(value_runtime));
+            CHECK(value_runtime > num_collect::constants::zero<TestType>);
+        }
+    }
+}
+
+// NOLINTNEXTLINE
+TEMPLATE_TEST_CASE("num_collect::constants::root", "", float, double) {
+    const auto reference_function = [](TestType x, int n) -> TestType {
+        if (x < static_cast<TestType>(0)) {
+            return -static_cast<TestType>(std::pow(
+                -static_cast<double>(x), 1.0 / static_cast<double>(n)));
+        }
+        return static_cast<TestType>(
+            std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n)));
+    };
+
+    SECTION("x < 0, n is even") {
+        constexpr auto x = static_cast<TestType>(-1.0);
+        SECTION("n = 2") {
+            constexpr auto n = 2;
+            constexpr TestType value_at_compile_time =
+                num_collect::constants::root(x, n);
+            const TestType value_runtime = num_collect::constants::root(x, n);
+            CHECK(std::isnan(value_at_compile_time));
+            CHECK(std::isnan(value_runtime));
+        }
+        SECTION("n = 4") {
+            constexpr auto n = 4;
+            constexpr TestType value_at_compile_time =
+                num_collect::constants::root(x, n);
+            const TestType value_runtime = num_collect::constants::root(x, n);
+            CHECK(std::isnan(value_at_compile_time));
+            CHECK(std::isnan(value_runtime));
+        }
+    }
+
+    SECTION("x < 0, n is odd") {
+        constexpr auto x = static_cast<TestType>(-1.234);
+        SECTION("n = 3") {
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(3)),
+                num_collect::constants::root, reference_function);
+        }
+        SECTION("n = 5") {
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(5)),
+                num_collect::constants::root, reference_function);
+        }
+        SECTION("n = 11") {
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(11)),
+                num_collect::constants::root, reference_function);
+        }
+    }
+
+    SECTION("x = 0") {
+        constexpr auto x = static_cast<TestType>(0);
+        SECTION("n = 2") {
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(2)),
+                num_collect::constants::root, reference_function);
+        }
+        SECTION("n = 3") {
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(3)),
+                num_collect::constants::root, reference_function);
+        }
+        SECTION("n = 4") {
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(4)),
+                num_collect::constants::root, reference_function);
+        }
+    }
+
+    SECTION("x > 0") {
+        constexpr auto x = static_cast<TestType>(1.234);
+        SECTION("n = 2") {
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(2)),
+                num_collect::constants::root, reference_function);
+        }
+        SECTION("n = 3") {
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(3)),
+                num_collect::constants::root, reference_function);
+        }
+        SECTION("n = 4") {
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(4)),
+                num_collect::constants::root, reference_function);
+        }
+        SECTION("n = 5") {
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(5)),
+                num_collect::constants::root, reference_function);
+        }
+        SECTION("n = 10") {
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(10)),
+                num_collect::constants::root, reference_function);
+        }
+        SECTION("n = 11") {
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(11)),
+                num_collect::constants::root, reference_function);
+        }
+    }
+
+    SECTION("x >> 0") {
+        constexpr auto x = static_cast<TestType>(1.234e+10);
+        SECTION("n = 2") {
+            constexpr auto n = 2;
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(n)),
+                num_collect::constants::root, reference_function);
+        }
+        SECTION("n = 3") {
+            constexpr auto n = 3;
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(n)),
+                num_collect::constants::root, reference_function);
+        }
+    }
+
+    SECTION("x == infinity") {
+        constexpr auto x = std::numeric_limits<TestType>::infinity();
+        SECTION("n = 2") {
+            constexpr auto n = 2;
+            constexpr TestType value_at_compile_time =
+                num_collect::constants::root(x, n);
+            const TestType value_runtime = num_collect::constants::root(x, n);
+            CHECK(std::isinf(value_at_compile_time));
+            CHECK(
+                value_at_compile_time > num_collect::constants::zero<TestType>);
+            CHECK(std::isinf(value_runtime));
+            CHECK(value_runtime > num_collect::constants::zero<TestType>);
+        }
+        SECTION("n = 3") {
+            constexpr auto n = 3;
+            constexpr TestType value_at_compile_time =
+                num_collect::constants::root(x, n);
+            const TestType value_runtime = num_collect::constants::root(x, n);
+            CHECK(std::isinf(value_at_compile_time));
+            CHECK(
+                value_at_compile_time > num_collect::constants::zero<TestType>);
+            CHECK(std::isinf(value_runtime));
+            CHECK(value_runtime > num_collect::constants::zero<TestType>);
         }
     }
 }
@@ -172,154 +314,120 @@ TEMPLATE_TEST_CASE("num_collect::constants::root", "", float, double) {
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::constants::root (integers)", "", int, long long) {
+    const auto reference_function = [](TestType x, int n) -> double {
+        if (x < static_cast<TestType>(0)) {
+            return -std::pow(
+                -static_cast<double>(x), 1.0 / static_cast<double>(n));
+        }
+        return std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n));
+    };
+
     SECTION("x < 0, n is even") {
         constexpr auto x = static_cast<TestType>(-2);
         SECTION("n = 2") {
             constexpr auto n = 2;
-            constexpr double val = num_collect::constants::root(x, n);
-            REQUIRE(std::isnan(val));
+            constexpr double value_at_compile_time =
+                num_collect::constants::root(x, n);
+            const double value_runtime = num_collect::constants::root(x, n);
+            CHECK(std::isnan(value_at_compile_time));
+            CHECK(std::isnan(value_runtime));
         }
         SECTION("n = 4") {
             constexpr auto n = 4;
-            constexpr double val = num_collect::constants::root(x, n);
-            REQUIRE(std::isnan(val));
+            constexpr double value_at_compile_time =
+                num_collect::constants::root(x, n);
+            const double value_runtime = num_collect::constants::root(x, n);
+            CHECK(std::isnan(value_at_compile_time));
+            CHECK(std::isnan(value_runtime));
         }
     }
 
     SECTION("x < 0, n is odd") {
         constexpr auto x = static_cast<TestType>(-5);
         SECTION("n = 3") {
-            constexpr auto n = 3;
-            constexpr double val = num_collect::constants::root(x, n);
-            const double reference = -std::pow(
-                -static_cast<double>(x), 1.0 / static_cast<double>(n));
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(3)),
+                num_collect::constants::root, reference_function);
         }
         SECTION("n = 5") {
-            constexpr auto n = 5;
-            constexpr double val = num_collect::constants::root(x, n);
-            const double reference = -std::pow(
-                -static_cast<double>(x), 1.0 / static_cast<double>(n));
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(5)),
+                num_collect::constants::root, reference_function);
         }
         SECTION("n = 11") {
-            constexpr auto n = 11;
-            constexpr double val = num_collect::constants::root(x, n);
-            const double reference = -std::pow(
-                -static_cast<double>(x), 1.0 / static_cast<double>(n));
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(11)),
+                num_collect::constants::root, reference_function);
         }
     }
 
     SECTION("x = 0") {
         constexpr auto x = static_cast<TestType>(0);
-        constexpr double true_val = 0.0;
+        // true_val not needed when using macro below
         SECTION("n = 2") {
-            constexpr auto n = 2;
-            constexpr double val = num_collect::constants::root(x, n);
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(2)),
+                num_collect::constants::root, reference_function);
         }
         SECTION("n = 3") {
-            constexpr auto n = 3;
-            constexpr double val = num_collect::constants::root(x, n);
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(3)),
+                num_collect::constants::root, reference_function);
         }
         SECTION("n = 4") {
-            constexpr auto n = 4;
-            constexpr double val = num_collect::constants::root(x, n);
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(4)),
+                num_collect::constants::root, reference_function);
         }
     }
 
     SECTION("x > 0") {
         constexpr auto x = static_cast<TestType>(123);
         SECTION("n = 2") {
-            constexpr auto n = 2;
-            constexpr double val = num_collect::constants::root(x, n);
-            const double reference =
-                std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n));
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(2)),
+                num_collect::constants::root, reference_function);
         }
         SECTION("n = 3") {
-            constexpr auto n = 3;
-            constexpr double val = num_collect::constants::root(x, n);
-            const double reference =
-                std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n));
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(3)),
+                num_collect::constants::root, reference_function);
         }
         SECTION("n = 4") {
-            constexpr auto n = 4;
-            constexpr double val = num_collect::constants::root(x, n);
-            const double reference =
-                std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n));
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(4)),
+                num_collect::constants::root, reference_function);
         }
         SECTION("n = 5") {
-            constexpr auto n = 5;
-            constexpr double val = num_collect::constants::root(x, n);
-            const double reference =
-                std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n));
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(5)),
+                num_collect::constants::root, reference_function);
         }
         SECTION("n = 10") {
-            constexpr auto n = 10;
-            constexpr double val = num_collect::constants::root(x, n);
-            const double reference =
-                std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n));
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(10)),
+                num_collect::constants::root, reference_function);
         }
         SECTION("n = 11") {
-            constexpr auto n = 11;
-            constexpr double val = num_collect::constants::root(x, n);
-            const double reference =
-                std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n));
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(11)),
+                num_collect::constants::root, reference_function);
         }
     }
 
     SECTION("x >> 0") {
         constexpr auto x = static_cast<TestType>(1234566789);
         SECTION("n = 2") {
-            constexpr auto n = 2;
-            constexpr double val = num_collect::constants::root(x, n);
-            const double reference =
-                std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n));
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(2)),
+                num_collect::constants::root, reference_function);
         }
         SECTION("n = 3") {
-            constexpr auto n = 3;
-            constexpr double val = num_collect::constants::root(x, n);
-            const double reference =
-                std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n));
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(3)),
+                num_collect::constants::root, reference_function);
         }
         SECTION("n = 4") {
-            constexpr auto n = 4;
-            constexpr double val = num_collect::constants::root(x, n);
-            const double reference =
-                std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n));
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(4)),
+                num_collect::constants::root, reference_function);
         }
         SECTION("n = 5") {
-            constexpr auto n = 5;
-            constexpr double val = num_collect::constants::root(x, n);
-            const double reference =
-                std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n));
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(5)),
+                num_collect::constants::root, reference_function);
         }
         SECTION("n = 10") {
-            constexpr auto n = 10;
-            constexpr double val = num_collect::constants::root(x, n);
-            const double reference =
-                std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n));
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(10)),
+                num_collect::constants::root, reference_function);
         }
         SECTION("n = 11") {
-            constexpr auto n = 11;
-            constexpr double val = num_collect::constants::root(x, n);
-            const double reference =
-                std::pow(static_cast<double>(x), 1.0 / static_cast<double>(n));
-            REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+            CHECK_CONSTEXPR_FUNCTION_RELATIVE((x, static_cast<int>(11)),
+                num_collect::constants::root, reference_function);
         }
     }
 }

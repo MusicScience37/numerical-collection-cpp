@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <cmath>
 #include <concepts>
 #include <limits>
 
@@ -29,8 +30,10 @@
 
 namespace num_collect::constants {
 
+namespace impl {
+
 /*!
- * \brief Calculate n-th root \f$ \sqrt[n]{x} \f$.
+ * \brief Calculate n-th root \f$ \sqrt[n]{x} \f$ at compile time.
  *
  * \tparam F Value type.
  * \tparam I Integer type for n.
@@ -39,7 +42,7 @@ namespace num_collect::constants {
  * \return n-th root of x.
  */
 template <std::floating_point F, std::integral I>
-constexpr auto root(F x, I n) -> F {
+constexpr auto root_at_compile_time(F x, I n) -> F {
     if (n < 2) {
         return std::numeric_limits<F>::quiet_NaN();
     }
@@ -47,7 +50,7 @@ constexpr auto root(F x, I n) -> F {
         if ((n % 2) == 0) {
             return std::numeric_limits<F>::quiet_NaN();
         }
-        return -root(-x, n);
+        return -root_at_compile_time(-x, n);
     }
     if ((x > std::numeric_limits<F>::max()) ||
         (x < std::numeric_limits<F>::min())) {
@@ -67,6 +70,35 @@ constexpr auto root(F x, I n) -> F {
     }
 
     return value;
+}
+
+}  // namespace impl
+
+/*!
+ * \brief Calculate n-th root \f$ \sqrt[n]{x} \f$.
+ *
+ * \tparam F Value type.
+ * \tparam I Integer type for n.
+ * \param[in] x Value to calculate n-th root of.
+ * \param[in] n Exponent.
+ * \return n-th root of x.
+ */
+template <std::floating_point F, std::integral I>
+constexpr auto root(F x, I n) -> F {
+    if consteval {
+        return impl::root_at_compile_time(x, n);
+    } else {
+        if (n < 2) {
+            return std::numeric_limits<F>::quiet_NaN();
+        }
+        if (x < zero<F>) {
+            if ((n % 2) == 0) {
+                return std::numeric_limits<F>::quiet_NaN();
+            }
+            return -std::pow(-x, one<F> / static_cast<F>(n));
+        }
+        return std::pow(x, one<F> / static_cast<F>(n));
+    }
 }
 
 /*!

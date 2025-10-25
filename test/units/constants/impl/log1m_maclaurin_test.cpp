@@ -20,37 +20,33 @@
 #include "num_collect/constants/impl/log1m_maclaurin.h"
 
 #include <cmath>
-#include <ostream>
 
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+#include "../check_constexpr_function.h"
+
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE(
     "num_collect::constants::impl::log1m_maclaurin", "", float, double) {
+    const auto log1m_reference = [](TestType x) -> TestType {
+        return std::log1p(-x);
+    };
+
     SECTION("x = 0") {
-        constexpr auto x = static_cast<TestType>(0);
-        constexpr TestType val =
-            num_collect::constants::impl::log1m_maclaurin(x);
-        const TestType reference = std::log1p(-x);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_ABSOLUTE((static_cast<TestType>(0)),
+            num_collect::constants::impl::log1m_maclaurin, log1m_reference);
     }
 
     SECTION("x = 0.1") {
-        constexpr auto x = static_cast<TestType>(0.1);
-        constexpr TestType val =
-            num_collect::constants::impl::log1m_maclaurin(x);
-        const TestType reference = std::log1p(-x);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(0.1)),
+            num_collect::constants::impl::log1m_maclaurin, log1m_reference);
     }
 
     SECTION("x = 0.2") {
-        constexpr auto x = static_cast<TestType>(0.2);
-        constexpr TestType val =
-            num_collect::constants::impl::log1m_maclaurin(x);
-        const TestType reference = std::log1p(-x);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(reference));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(0.2)),
+            num_collect::constants::impl::log1m_maclaurin, log1m_reference);
     }
 }

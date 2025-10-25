@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <cmath>
 #include <type_traits>
 
 #include "num_collect/constants/exp.h"
@@ -27,6 +28,32 @@
 #include "num_collect/constants/zero.h"  // IWYU pragma: keep
 
 namespace num_collect::constants {
+
+namespace impl {
+
+/*!
+ * \brief Calculate exponential function minus one \f$ e^x - 1 \f$ at compile
+ * time.
+ *
+ * \tparam T Number type.
+ * \param[in] x Number.
+ * \return Exponential function minus one.
+ */
+template <typename T>
+constexpr auto expm1_at_compile_time(T x) -> T {
+    if (x < -one<T> || one<T> < x) {
+        return exp(x) - one<T>;
+    }
+
+    if (x >= zero<T>) {
+        return expm1_maclaurin(x);
+    }
+
+    T expm1_neg = expm1_maclaurin(-x);
+    return -expm1_neg / (expm1_neg + one<T>);
+}
+
+}  // namespace impl
 
 /*!
  * \brief Calculate exponential function minus one \f$ e^x - 1 \f$.
@@ -47,16 +74,11 @@ namespace num_collect::constants {
  */
 template <typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
 constexpr auto expm1(T x) -> T {
-    if (x < -one<T> || one<T> < x) {
-        return exp(x) - one<T>;
+    if consteval {
+        return impl::expm1_at_compile_time(x);
+    } else {
+        return std::expm1(x);
     }
-
-    if (x >= zero<T>) {
-        return impl::expm1_maclaurin(x);
-    }
-
-    T expm1_neg = impl::expm1_maclaurin(-x);
-    return -expm1_neg / (expm1_neg + one<T>);
 }
 
 }  // namespace num_collect::constants

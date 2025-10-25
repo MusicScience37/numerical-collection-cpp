@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <cmath>
 #include <limits>
 #include <type_traits>
 
@@ -31,21 +32,19 @@
 
 namespace num_collect::constants {
 
+namespace impl {
+
 /*!
- * \brief Calculate exponential function \f$ e^x \f$.
- *
- * This function calculates similar values as
- * [exp](https://en.cppreference.com/w/cpp/numeric/math/exp) function in C++
- * standard library in constexpr.
+ * \brief Calculate exponential function at compile time.
  *
  * \tparam T Number type.
  * \param[in] x Number.
  * \return Exponential function value.
  */
 template <typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
-constexpr auto exp(T x) -> T {
+constexpr auto exp_at_compile_time(T x) -> T {
     if (x < zero<T>) {
-        return one<T> / exp(-x);
+        return one<T> / exp_at_compile_time(-x);
     }
     if (x < std::numeric_limits<T>::min()) {
         return one<T>;
@@ -62,6 +61,28 @@ constexpr auto exp(T x) -> T {
     T exp_int_part = impl::pow_pos_int(napier<T>, int_part);
     T exp_rem_part = impl::exp_maclaurin(rem_part);
     return exp_int_part * exp_rem_part;
+}
+
+}  // namespace impl
+
+/*!
+ * \brief Calculate exponential function \f$ e^x \f$.
+ *
+ * This function calculates similar values as
+ * [exp](https://en.cppreference.com/w/cpp/numeric/math/exp) function in C++
+ * standard library in constexpr.
+ *
+ * \tparam T Number type.
+ * \param[in] x Number.
+ * \return Exponential function value.
+ */
+template <typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
+constexpr auto exp(T x) -> T {
+    if consteval {
+        return impl::exp_at_compile_time(x);
+    } else {
+        return std::exp(x);
+    }
 }
 
 }  // namespace num_collect::constants

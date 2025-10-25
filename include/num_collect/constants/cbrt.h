@@ -19,6 +19,8 @@
  */
 #pragma once
 
+#include <cmath>
+
 #include "num_collect/constants/root.h"
 
 namespace num_collect::constants {
@@ -36,7 +38,11 @@ namespace num_collect::constants {
  */
 template <typename T>
 constexpr auto cbrt(T x) {
-    return root(x, 3);
+    if consteval {
+        return root(x, 3);
+    } else {
+        return std::cbrt(x);
+    }
 }
 
 }  // namespace num_collect::constants

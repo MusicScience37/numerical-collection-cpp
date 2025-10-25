@@ -20,46 +20,90 @@
 #include "num_collect/constants/sqrt.h"
 
 #include <cmath>
-#include <ostream>
 
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+#include "check_constexpr_function.h"
+
 // NOLINTNEXTLINE
-TEMPLATE_TEST_CASE("num_collect::constants::sqrt", "", float, double) {
+TEMPLATE_TEST_CASE(
+    "num_collect::constants::impl::sqrt_at_compile_time", "", float, double) {
     SECTION("sqrt of negative number") {
         constexpr auto x = static_cast<TestType>(-1.0);
-        constexpr TestType val = num_collect::constants::sqrt(x);
-        REQUIRE(std::isnan(val));
+        constexpr TestType value_at_compile_time =
+            num_collect::constants::impl::sqrt_at_compile_time(x);
+        const TestType value_runtime =
+            num_collect::constants::impl::sqrt_at_compile_time(x);
+        CHECK(std::isnan(value_at_compile_time));
+        CHECK(std::isnan(value_runtime));
     }
 
     SECTION("sqrt of zero") {
-        constexpr auto x = static_cast<TestType>(0);
-        constexpr TestType val = num_collect::constants::sqrt(x);
-        REQUIRE(val == num_collect::constants::zero<TestType>);
+        CHECK_CONSTEXPR_FUNCTION_ABSOLUTE((static_cast<TestType>(0)),
+            num_collect::constants::impl::sqrt_at_compile_time, std::sqrt);
     }
 
     SECTION("sqrt of positive number") {
-        constexpr auto true_val = static_cast<TestType>(1.234);
-        constexpr TestType x = true_val * true_val;
-        constexpr TestType val = num_collect::constants::sqrt(x);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(1.234)),
+            num_collect::constants::impl::sqrt_at_compile_time, std::sqrt);
     }
 
     SECTION("sqrt of large positive number") {
-        constexpr auto true_val = static_cast<TestType>(1.234e+10);
-        constexpr TestType x = true_val * true_val;
-        constexpr TestType val = num_collect::constants::sqrt(x);
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(1.234e+10)),
+            num_collect::constants::impl::sqrt_at_compile_time, std::sqrt);
     }
 
     SECTION("sqrt of infinity") {
         constexpr TestType x = std::numeric_limits<TestType>::infinity();
-        constexpr TestType val = num_collect::constants::sqrt(x);
-        REQUIRE(std::isinf(val));
-        REQUIRE(val > num_collect::constants::zero<TestType>);
+        constexpr TestType value_at_compile_time =
+            num_collect::constants::impl::sqrt_at_compile_time(x);
+        const TestType value_runtime =
+            num_collect::constants::impl::sqrt_at_compile_time(x);
+        CHECK(std::isinf(value_at_compile_time));
+        CHECK(value_at_compile_time > num_collect::constants::zero<TestType>);
+        CHECK(std::isinf(value_runtime));
+        CHECK(value_runtime > num_collect::constants::zero<TestType>);
+    }
+}
+
+// NOLINTNEXTLINE
+TEMPLATE_TEST_CASE("num_collect::constants::sqrt", "", float, double) {
+    SECTION("sqrt of negative number") {
+        constexpr auto x = static_cast<TestType>(-1.0);
+        constexpr TestType value_at_compile_time =
+            num_collect::constants::sqrt(x);
+        const TestType value_runtime = num_collect::constants::sqrt(x);
+        CHECK(std::isnan(value_at_compile_time));
+        CHECK(std::isnan(value_runtime));
+    }
+
+    SECTION("sqrt of zero") {
+        CHECK_CONSTEXPR_FUNCTION_ABSOLUTE((static_cast<TestType>(0)),
+            num_collect::constants::sqrt, std::sqrt);
+    }
+
+    SECTION("sqrt of positive number") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(1.234)),
+            num_collect::constants::sqrt, std::sqrt);
+    }
+
+    SECTION("sqrt of large positive number") {
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(1.234e+10)),
+            num_collect::constants::sqrt, std::sqrt);
+    }
+
+    SECTION("sqrt of infinity") {
+        constexpr TestType x = std::numeric_limits<TestType>::infinity();
+        constexpr TestType value_at_compile_time =
+            num_collect::constants::sqrt(x);
+        const TestType value_runtime = num_collect::constants::sqrt(x);
+        CHECK(std::isinf(value_at_compile_time));
+        CHECK(value_at_compile_time > num_collect::constants::zero<TestType>);
+        CHECK(std::isinf(value_runtime));
+        CHECK(value_runtime > num_collect::constants::zero<TestType>);
     }
 }
 
@@ -68,27 +112,25 @@ TEMPLATE_TEST_CASE(
     "num_collect::constants::sqrt (integers)", "", int, long long) {
     SECTION("sqrt of negative number") {
         constexpr auto x = static_cast<TestType>(-2);
-        constexpr double val = num_collect::constants::sqrt(x);
-        REQUIRE(std::isnan(val));
+        constexpr double value_at_compile_time =
+            num_collect::constants::sqrt(x);
+        const double value_runtime = num_collect::constants::sqrt(x);
+        CHECK(std::isnan(value_at_compile_time));
+        CHECK(std::isnan(value_runtime));
     }
 
     SECTION("sqrt of zero") {
-        constexpr auto x = static_cast<TestType>(0);
-        constexpr double val = num_collect::constants::sqrt(x);
-        REQUIRE(val == num_collect::constants::zero<TestType>);
+        CHECK_CONSTEXPR_FUNCTION_ABSOLUTE((static_cast<TestType>(0)),
+            num_collect::constants::sqrt, std::sqrt);
     }
 
     SECTION("sqrt of positive number") {
-        constexpr auto x = static_cast<TestType>(2);
-        constexpr double val = num_collect::constants::sqrt(x);
-        const double true_val = std::sqrt(static_cast<double>(x));
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(2)),
+            num_collect::constants::sqrt, std::sqrt);
     }
 
     SECTION("sqrt of large positive number") {
-        constexpr auto x = static_cast<TestType>(123456789);
-        constexpr double val = num_collect::constants::sqrt(x);
-        const double true_val = std::sqrt(static_cast<double>(x));
-        REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val));
+        CHECK_CONSTEXPR_FUNCTION_RELATIVE((static_cast<TestType>(123456789)),
+            num_collect::constants::sqrt, std::sqrt);
     }
 }

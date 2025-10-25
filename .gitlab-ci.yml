@@ -55,7 +55,7 @@ complexity:
   extends: .retry setting
   stage: test
   needs: []
-  image: musicscience37/clang-ci:clang20
+  image: musicscience37/clang-ci:clang21
   script:
     - poetry config virtualenvs.in-project true
     - poetry env use 3.13
@@ -78,7 +78,7 @@ complexity:
 pre-commit:
   stage: test
   needs: []
-  image: musicscience37/clang-ci:clang20
+  image: musicscience37/clang-ci:clang21
   script:
     - poetry config virtualenvs.in-project true
     - poetry env use 3.13
@@ -120,7 +120,7 @@ spell check:
   needs: []
   parallel:
     matrix:
-      - COMPILER_TYPE: ["clang20"]
+      - COMPILER_TYPE: ["clang21"]
         IMAGE_PATH: "musicscience37/clang-ci"
         TEST_TYPE: "release"
   image: ${IMAGE_PATH}:${COMPILER_TYPE}
@@ -186,14 +186,14 @@ test linux:
       - COMPILER_TYPE: ["gcc12", "gcc13"]
         IMAGE_PATH: "musicscience37/gcc-ci"
         TEST_TYPE: ["debug"]
-      - COMPILER_TYPE: ["clang19", "clang20"]
+      - COMPILER_TYPE: ["clang19", "clang20", "clang21"]
         IMAGE_PATH: "musicscience37/clang-ci"
         TEST_TYPE: ["debug"]
       # Test multiple types of binaries in some compilers.
       - COMPILER_TYPE: "gcc13"
         IMAGE_PATH: "musicscience37/gcc-ci"
         TEST_TYPE: ["release", "bench", "example"]
-      - COMPILER_TYPE: "clang20"
+      - COMPILER_TYPE: "clang21"
         IMAGE_PATH: "musicscience37/clang-ci"
         TEST_TYPE: ["release", "bench", "example"]
   script:
@@ -247,7 +247,7 @@ clang coverage:
   extends: .test linux base
   parallel:
     matrix:
-      - COMPILER_TYPE: "clang20"
+      - COMPILER_TYPE: "clang21"
         IMAGE_PATH: "musicscience37/clang-ci"
         TEST_TYPE: "coverage"
   variables:
@@ -295,7 +295,7 @@ test asan ubsan:
   extends: .test linux base
   parallel:
     matrix:
-      - COMPILER_TYPE: "clang20"
+      - COMPILER_TYPE: "clang21"
         IMAGE_PATH: "musicscience37/clang-ci"
         TEST_TYPE: "asan_ubsan"
   variables:
@@ -365,7 +365,7 @@ doc:
   extends: .test linux base
   parallel:
     matrix:
-      - COMPILER_TYPE: "clang20"
+      - COMPILER_TYPE: "clang21"
         IMAGE_PATH: "musicscience37/sphinx-doxygen"
         TEST_TYPE: "doc"
   variables:
@@ -389,13 +389,13 @@ pages main:
   only:
     - main
   needs:
-    - "doc: [clang20, musicscience37/sphinx-doxygen, doc]"
-    - "clang coverage: [clang20, musicscience37/clang-ci, coverage]"
+    - "doc: [clang21, musicscience37/sphinx-doxygen, doc]"
+    - "clang coverage: [clang21, musicscience37/clang-ci, coverage]"
     - line count
     - complexity
   dependencies:
-    - "doc: [clang20, musicscience37/sphinx-doxygen, doc]"
-    - "clang coverage: [clang20, musicscience37/clang-ci, coverage]"
+    - "doc: [clang21, musicscience37/sphinx-doxygen, doc]"
+    - "clang coverage: [clang21, musicscience37/clang-ci, coverage]"
     - line count
     - complexity
   image: alpine
@@ -415,9 +415,9 @@ pages release:
   rules:
     - if: $CI_COMMIT_TAG =~ /^v/
   needs:
-    - "doc: [clang20, musicscience37/sphinx-doxygen, doc]"
+    - "doc: [clang21, musicscience37/sphinx-doxygen, doc]"
   dependencies:
-    - "doc: [clang20, musicscience37/sphinx-doxygen, doc]"
+    - "doc: [clang21, musicscience37/sphinx-doxygen, doc]"
   image: alpine
   script:
     - rm -rf public

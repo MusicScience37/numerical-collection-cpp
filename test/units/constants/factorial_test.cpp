@@ -25,6 +25,8 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+#include "check_constexpr_function.h"
+
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE_SIG("num_collect::constants::factorial", "",
     ((typename Result, typename Integer), Result, Integer),
@@ -33,56 +35,59 @@ TEMPLATE_TEST_CASE_SIG("num_collect::constants::factorial", "",
     // Integer to floating-point number.
     (double, int), (double, unsigned int)) {
     SECTION("n = 0") {
-        constexpr auto n = static_cast<Integer>(0);
-        constexpr auto val = num_collect::constants::factorial<Result>(n);
-        constexpr auto true_val = static_cast<Result>(1);
-        STATIC_REQUIRE(val == true_val);
+        CHECK_CONSTEXPR_FUNCTION_EQUAL((static_cast<Integer>(0)),
+            num_collect::constants::factorial<Result>,
+            [](Integer /*input*/) -> Result { return static_cast<Result>(1); });
     }
 
     SECTION("n = 1") {
-        constexpr auto n = static_cast<Integer>(1);
-        constexpr auto val = num_collect::constants::factorial<Result>(n);
-        constexpr auto true_val = static_cast<Result>(1);
-        STATIC_REQUIRE(val == true_val);
+        CHECK_CONSTEXPR_FUNCTION_EQUAL((static_cast<Integer>(1)),
+            num_collect::constants::factorial<Result>,
+            [](Integer /*input*/) -> Result { return static_cast<Result>(1); });
     }
 
     SECTION("n = 2") {
-        constexpr auto n = static_cast<Integer>(2);
-        constexpr auto val = num_collect::constants::factorial<Result>(n);
-        constexpr auto true_val = static_cast<Result>(2);
-        STATIC_REQUIRE(val == true_val);
+        CHECK_CONSTEXPR_FUNCTION_EQUAL((static_cast<Integer>(2)),
+            num_collect::constants::factorial<Result>,
+            [](Integer /*input*/) -> Result { return static_cast<Result>(2); });
     }
 
     SECTION("n = 3") {
-        constexpr auto n = static_cast<Integer>(3);
-        constexpr auto val = num_collect::constants::factorial<Result>(n);
-        constexpr auto true_val = static_cast<Result>(6);
-        STATIC_REQUIRE(val == true_val);
+        CHECK_CONSTEXPR_FUNCTION_EQUAL((static_cast<Integer>(3)),
+            num_collect::constants::factorial<Result>,
+            [](Integer /*input*/) -> Result { return static_cast<Result>(6); });
     }
 
     SECTION("n = 4") {
-        constexpr auto n = static_cast<Integer>(4);
-        constexpr auto val = num_collect::constants::factorial<Result>(n);
-        constexpr auto true_val = static_cast<Result>(24);
-        STATIC_REQUIRE(val == true_val);
+        CHECK_CONSTEXPR_FUNCTION_EQUAL((static_cast<Integer>(4)),
+            num_collect::constants::factorial<Result>,
+            [](Integer /*input*/) -> Result {
+                return static_cast<Result>(24);
+            });
     }
 
     SECTION("n = 5") {
-        constexpr auto n = static_cast<Integer>(5);
-        constexpr auto val = num_collect::constants::factorial<Result>(n);
-        constexpr auto true_val = static_cast<Result>(120);
-        STATIC_REQUIRE(val == true_val);
+        CHECK_CONSTEXPR_FUNCTION_EQUAL((static_cast<Integer>(5)),
+            num_collect::constants::factorial<Result>,
+            [](Integer /*input*/) -> Result {
+                return static_cast<Result>(120);
+            });
     }
 
     SECTION("n = -1") {
         if constexpr (std::signed_integral<Integer>) {
             constexpr auto n = static_cast<Integer>(-1);
-            constexpr auto val = num_collect::constants::factorial<Result>(n);
+            constexpr auto value_at_compile_time =
+                num_collect::constants::factorial<Result>(n);
+            const auto value_runtime =
+                num_collect::constants::factorial<Result>(n);
             if constexpr (std::floating_point<Result>) {
-                REQUIRE(std::isnan(val));
+                CHECK(std::isnan(value_at_compile_time));
+                CHECK(std::isnan(value_runtime));
             } else {
                 constexpr auto true_val = static_cast<Result>(0);
-                STATIC_REQUIRE(val == true_val);
+                CHECK(value_at_compile_time == true_val);
+                CHECK(value_runtime == true_val);
             }
         }
     }
