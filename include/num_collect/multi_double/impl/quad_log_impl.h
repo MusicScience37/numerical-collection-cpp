@@ -98,9 +98,19 @@ constexpr auto log1p_impl(quad x) noexcept -> quad {
  */
 constexpr auto log10_impl(quad x) noexcept -> quad {
     const auto log_value = log_impl(x);
+#ifdef _MSC_VER
+    if consteval {
+        // MSVC does not support std::isfinite in consteval context.
+    } else {
+        if (!std::isfinite(log_value.high())) {
+            return log_value;
+        }
+    }
+#else
     if (!std::isfinite(log_value.high())) {
         return log_value;
     }
+#endif
     return log_value * log10_inv_quad;
 }
 
