@@ -51,6 +51,7 @@ Checks: >
     -bugprone-optional-value-conversion,
     -bugprone-crtp-constructor-accessibility,
     -bugprone-misplaced-widening-cast,
+    -bugprone-suspicious-include,
   concurrency-*,
   -boost-*,
   openmp-*,
@@ -94,6 +95,7 @@ Checks: >
 # - bugprone-misplaced-widening-cast generates false positives.
 # - cppcoreguidelines-macro-usage generates false positives in this project.
 # - cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers resulted in too many NOLINT comments in this project.
+# - bugprone-suspicious-include generates warnings in unity builds.
 
 CheckOptions:
   # Naming Conventions

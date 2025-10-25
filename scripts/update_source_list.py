@@ -89,9 +89,7 @@ def write_unity_source(base_path: Path, file_paths: list[str]):
     unity_src_path = base_path / UNITY_SRC_SUFFIX
     with open(str(unity_src_path), mode="w", encoding="ascii", newline="\n") as file:
         for source_file in file_paths:
-            file.write(
-                f'#include "{source_file}" // NOLINT(bugprone-suspicious-include)\n'
-            )
+            file.write(f'#include "{source_file}"\n')
 
     subprocess.run(["clang-format", "-i", str(unity_src_path)], check=True)
 

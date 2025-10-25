@@ -1,15 +1,15 @@
-#include "algebraic_multigrid_solver_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "amg_preconditioner_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "cuthill_mckee_ordering_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "gauss_seidel_iterative_solver_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "impl/amg/build_first_coarse_grid_candidate_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "impl/amg/compute_strong_connection_list_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "impl/amg/create_coarse_grid_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "impl/amg/create_prolongation_matrix_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "impl/amg/index_score_table_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "impl/amg/node_connection_list_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "impl/amg/tune_coarse_grid_selection_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "impl/operator_conjugate_gradient_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "parallel_symmetric_successive_over_relaxation.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "reverse_cuthill_mckee_ordering_test.cpp"  // NOLINT(bugprone-suspicious-include)
-#include "symmetric_successive_over_relaxation.cpp"  // NOLINT(bugprone-suspicious-include)
+#include "algebraic_multigrid_solver_test.cpp"
+#include "amg_preconditioner_test.cpp"
+#include "cuthill_mckee_ordering_test.cpp"
+#include "gauss_seidel_iterative_solver_test.cpp"
+#include "impl/amg/build_first_coarse_grid_candidate_test.cpp"
+#include "impl/amg/compute_strong_connection_list_test.cpp"
+#include "impl/amg/create_coarse_grid_test.cpp"
+#include "impl/amg/create_prolongation_matrix_test.cpp"
+#include "impl/amg/index_score_table_test.cpp"
+#include "impl/amg/node_connection_list_test.cpp"
+#include "impl/amg/tune_coarse_grid_selection_test.cpp"
+#include "impl/operator_conjugate_gradient_test.cpp"
+#include "parallel_symmetric_successive_over_relaxation.cpp"
+#include "reverse_cuthill_mckee_ordering_test.cpp"
+#include "symmetric_successive_over_relaxation.cpp"
