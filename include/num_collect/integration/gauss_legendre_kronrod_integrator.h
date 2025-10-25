@@ -39,10 +39,6 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/norm.h"
 #include "num_collect/base/precondition.h"
-#include "num_collect/constants/half.h"  // IWYU pragma: keep
-#include "num_collect/constants/one.h"   // IWYU pragma: keep
-#include "num_collect/constants/two.h"   // IWYU pragma: keep
-#include "num_collect/constants/zero.h"  // IWYU pragma: keep
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/logging/logging_mixin.h"
@@ -124,11 +120,12 @@ public:
     [[nodiscard]] auto integrate_once(
         const Function& function, variable_type left, variable_type right) const
         -> std::pair<result_type, result_type> {
-        const auto center = constants::half<variable_type> * (left + right);
-        const auto half_width = constants::half<variable_type> * (right - left);
+        const auto center = static_cast<variable_type>(0.5) * (left + right);
+        const auto half_width =
+            static_cast<variable_type>(0.5) * (right - left);
 
         result_type sum_gauss =
-            function(center) * constants::zero<variable_type>;
+            function(center) * static_cast<variable_type>(0);
         result_type sum_kronrod = sum_gauss;
         for (index_type i = 0; i < nodes_gauss_.size(); ++i) {
             const variable_type x = center + half_width * nodes_gauss_[i];
@@ -164,11 +161,11 @@ public:
             "right.");
 
         const variable_type inv_width =
-            constants::one<variable_type> / (right - left);
+            static_cast<variable_type>(1) / (right - left);
 
         result_type sum =
-            function(constants::half<variable_type> * (left + right)) *
-            constants::zero<variable_type>;
+            function(static_cast<variable_type>(0.5) * (left + right)) *
+            static_cast<variable_type>(0);
 
         constexpr auto stack_size = static_cast<std::size_t>(
             std::numeric_limits<variable_type>::digits);
@@ -197,7 +194,7 @@ public:
             } else {
                 remaining_right.push(cur_right);
                 cur_right =
-                    constants::half<variable_type> * (cur_left + cur_right);
+                    static_cast<variable_type>(0.5) * (cur_left + cur_right);
             }
         }
         return sum;
@@ -280,7 +277,7 @@ private:
         vector_type a = vector_type::Zero(extended_size);
         vector_type b = vector_type::Zero(extended_size);
 
-        b[0] = constants::two<variable_type>;
+        b[0] = static_cast<variable_type>(2);
         for (index_type i = 1; i <= (3 * n + 1) / 2; ++i) {
             auto temp = static_cast<variable_type>(i);
             temp *= temp;
@@ -350,7 +347,7 @@ private:
         vector_type t = vector_type::Zero(n / 2 + 2);
         t[1] = b[n + 1];
         for (index_type m = 0; m < n - 1; ++m) {
-            variable_type u = constants::zero<variable_type>;
+            variable_type u = static_cast<variable_type>(0);
             for (index_type k = (m + 1) / 2; k > 0; --k) {
                 index_type l = m - k;
                 u += (a[k + n + 1] - a[l]) * t[k + 1] + b[k + n + 1] * s[k] -
@@ -371,7 +368,7 @@ private:
         }
         s[1] = s[0];
         for (index_type m = n - 1; m <= 2 * n - 3; ++m) {
-            variable_type u = constants::zero<variable_type>;
+            variable_type u = static_cast<variable_type>(0);
             index_type j = 0;
             for (index_type k = m + 1 - n; k <= (m - 1) / 2; ++k) {
                 index_type l = m - k;

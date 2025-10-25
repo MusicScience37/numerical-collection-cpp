@@ -19,7 +19,7 @@
  */
 #pragma once
 
-#include "num_collect/constants/sqrt.h"
+#include "num_collect/functions/sqrt.h"
 #include "num_collect/multi_double/impl/basic_operations.h"
 #include "num_collect/multi_double/quad.h"
 
@@ -37,7 +37,7 @@ constexpr auto sqrt_impl(quad value) noexcept -> quad {
     if (value == quad(0.0)) {
         return quad(0.0);
     }
-    const double approx = constants::sqrt(value.high());
+    const double approx = functions::sqrt(value.high());
     const auto [approx_square_high, approx_square_low] =
         impl::two_prod(approx, approx);
     const auto remaining =

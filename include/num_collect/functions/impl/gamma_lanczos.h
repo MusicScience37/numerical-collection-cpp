@@ -26,7 +26,6 @@
 #include <type_traits>  // IWYU pragma: keep
 
 #include "num_collect/base/concepts/real_scalar.h"
-#include "num_collect/constants/half.h"  // IWYU pragma: keep
 
 namespace num_collect::functions::impl {
 
@@ -86,7 +85,7 @@ public:
         using std::exp;
         using std::log;
         using std::pow;
-        return pow(offset_x, x + constants::half<Real>) * exp(-offset_x) *
+        return pow(offset_x, x + static_cast<Real>(0.5)) * exp(-offset_x) *
             series_coeff * series_sum / x;
     }
 
@@ -103,7 +102,7 @@ public:
             series_sum += coeffs[i] / (x + static_cast<Real>(i + 1U));
         }
         using std::log;
-        return (x + constants::half<Real>)*log(offset_x) - offset_x +
+        return (x + static_cast<Real>(0.5)) * log(offset_x) - offset_x +
             log(series_coeff * series_sum / x);
     }
 };

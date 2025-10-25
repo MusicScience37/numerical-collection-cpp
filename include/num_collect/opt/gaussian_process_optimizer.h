@@ -30,13 +30,13 @@
 #include <Eigen/Core>
 
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"
+#include "num_collect/base/constants.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/get_size.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/isfinite.h"
 #include "num_collect/base/norm.h"
 #include "num_collect/base/precondition.h"
-#include "num_collect/constants/pi.h"  // IWYU pragma: keep
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
@@ -302,7 +302,7 @@ private:
                         static_cast<value_type>(0.5) *
                                 static_cast<value_type>(dim_) +
                             static_cast<value_type>(2)) *
-                    constants::pi<value_type> * constants::pi<value_type> /
+                    pi<value_type> * pi<value_type> /
                     static_cast<value_type>(0.3));
             return mean -
                 sqrt(

@@ -27,7 +27,6 @@
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
-#include "num_collect/constants/zero.h"  // IWYU pragma: keep
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/rbf/concepts/distance_function.h"
 #include "num_collect/rbf/impl/parallelized_num_points.h"
@@ -155,7 +154,7 @@ public:
      * \param[in] value Value.
      */
     void scale(scalar_type value) {
-        NUM_COLLECT_PRECONDITION(value > constants::zero<scalar_type>,
+        NUM_COLLECT_PRECONDITION(value > static_cast<scalar_type>(0),
             "Scale of length parameters must be a positive number.");
         scale_ = value;
     }

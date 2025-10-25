@@ -29,9 +29,6 @@
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
-#include "num_collect/constants/half.h"  // IWYU pragma: keep
-#include "num_collect/constants/one.h"   // IWYU pragma: keep
-#include "num_collect/constants/two.h"   // IWYU pragma: keep
 #include "num_collect/functions/legendre.h"
 #include "num_collect/functions/legendre_roots.h"
 #include "num_collect/logging/log_tag_view.h"
@@ -108,9 +105,10 @@ public:
     [[nodiscard]] auto integrate(const Function& function, variable_type left,
         variable_type right) const -> result_type {
         const auto degree = roots_.degree();
-        const auto mean = constants::half<variable_type> * (left + right);
-        const auto half_width = constants::half<variable_type> * (right - left);
-        Result sum = function(mean) * constants::zero<variable_type>;
+        const auto mean = static_cast<variable_type>(0.5) * (left + right);
+        const auto half_width =
+            static_cast<variable_type>(0.5) * (right - left);
+        Result sum = function(mean) * static_cast<variable_type>(0);
         for (index_type i = 0; i < degree; ++i) {
             const variable_type x = mean + half_width * roots_[i];
             const variable_type weight = weights_[i];
@@ -145,8 +143,8 @@ private:
             const variable_type x = roots_[i];
             const auto temp = static_cast<variable_type>(degree) *
                 functions::legendre(x, degree - 1);
-            weights_[i] = constants::two<variable_type> *
-                (constants::one<variable_type> - x * x) / (temp * temp);
+            weights_[i] = static_cast<variable_type>(2) *
+                (static_cast<variable_type>(1) - x * x) / (temp * temp);
         }
     }
 

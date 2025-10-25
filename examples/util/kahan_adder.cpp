@@ -24,7 +24,7 @@
 #include <iomanip>
 #include <iostream>
 
-#include "num_collect/constants/pi.h"
+#include "num_collect/base/constants.h"
 
 auto main() -> int {
     // calculate zeta(4) using kahan_adder
@@ -37,7 +37,7 @@ auto main() -> int {
     }
     const double val = sum;
 
-    const double reference = std::pow(num_collect::constants::pid, 4) / 90.0;
+    const double reference = std::pow(num_collect::pid, 4) / 90.0;
     std::cout << std::setprecision(15);
     std::cout << "Value:     " << val << std::endl;
     std::cout << "Reference: " << reference << std::endl;

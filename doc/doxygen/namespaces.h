@@ -338,24 +338,6 @@ namespace num_collect {
     }  // namespace multi_double
 
     /*!
-     * \dir num_collect/constants
-     * \brief Directory of constexpr variables and functions.
-     */
-
-    //! Namespace of constexpr variables and functions.
-    namespace constants {
-
-        /*!
-         * \dir num_collect/constants/impl
-         * \brief Directory of internal implementations.
-         */
-
-        //! Namespace of internal implementations.
-        namespace impl {}
-
-    }  // namespace constants
-
-    /*!
      * \dir num_collect/roots
      * \brief Directory of root-finding algorithms.
      */

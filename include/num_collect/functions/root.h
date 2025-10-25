@@ -1,0 +1,117 @@
+/*
+ * Copyright 2021 MusicScience37 (Kenta Kabashima)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*!
+ * \file
+ * \brief Definition of root function.
+ */
+#pragma once
+
+#include <cmath>
+#include <concepts>
+#include <limits>
+
+#include "num_collect/functions/impl/pow_pos_int.h"
+
+namespace num_collect::functions {
+
+namespace impl {
+
+/*!
+ * \brief Calculate n-th root \f$ \sqrt[n]{x} \f$ at compile time.
+ *
+ * \tparam F Value type.
+ * \tparam I Integer type for n.
+ * \param[in] x Value to calculate n-th root of.
+ * \param[in] n Exponent.
+ * \return n-th root of x.
+ */
+template <std::floating_point F, std::integral I>
+constexpr auto root_at_compile_time(F x, I n) -> F {
+    if (n < 2) {
+        return std::numeric_limits<F>::quiet_NaN();
+    }
+    if (x < static_cast<F>(0)) {
+        if ((n % 2) == 0) {
+            return std::numeric_limits<F>::quiet_NaN();
+        }
+        return -root_at_compile_time(-x, n);
+    }
+    if ((x > std::numeric_limits<F>::max()) ||
+        (x < std::numeric_limits<F>::min())) {
+        return x;
+    }
+
+    constexpr int max_loops = 1000;  // safe guard
+    F value = static_cast<F>(1) + (x - static_cast<F>(1)) / static_cast<F>(n);
+    for (int i = 0; i < max_loops; ++i) {
+        F next_value = (static_cast<F>(n - static_cast<I>(1)) * value +
+                           x *
+                               impl::pow_pos_int(static_cast<I>(1) / value,
+                                   n - static_cast<I>(1))) /
+            static_cast<F>(n);
+        if (value == next_value) {
+            break;
+        }
+        value = next_value;
+    }
+
+    return value;
+}
+
+}  // namespace impl
+
+/*!
+ * \brief Calculate n-th root \f$ \sqrt[n]{x} \f$.
+ *
+ * \tparam F Value type.
+ * \tparam I Integer type for n.
+ * \param[in] x Value to calculate n-th root of.
+ * \param[in] n Exponent.
+ * \return n-th root of x.
+ */
+template <std::floating_point F, std::integral I>
+constexpr auto root(F x, I n) -> F {
+    if consteval {
+        return impl::root_at_compile_time(x, n);
+    } else {
+        if (n < 2) {
+            return std::numeric_limits<F>::quiet_NaN();
+        }
+        if (x < static_cast<F>(0)) {
+            if ((n % 2) == 0) {
+                return std::numeric_limits<F>::quiet_NaN();
+            }
+            return -std::pow(-x, static_cast<F>(1) / static_cast<F>(n));
+        }
+        return std::pow(x, static_cast<F>(1) / static_cast<F>(n));
+    }
+}
+
+/*!
+ * \brief Calculate n-th root \f$ \sqrt[n]{x} \f$.
+ *
+ * \tparam IB Value type.
+ * \tparam IE Integer type for n.
+ * \param[in] x Value to calculate n-th root of.
+ * \param[in] n Exponent.
+ * \return n-th root of x.
+ */
+template <std::integral IB, std::integral IE>
+constexpr auto root(IB x, IE n) -> double {
+    return root(static_cast<double>(x), n);
+}
+
+}  // namespace num_collect::functions

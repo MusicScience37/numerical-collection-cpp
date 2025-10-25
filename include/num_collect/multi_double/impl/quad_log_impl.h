@@ -21,8 +21,8 @@
 
 #include <cmath>
 
-#include "num_collect/constants/log.h"
-#include "num_collect/constants/log1p.h"
+#include "num_collect/functions/log.h"
+#include "num_collect/functions/log1p.h"
 #include "num_collect/multi_double/impl/quad_exp_impl.h"
 #include "num_collect/multi_double/impl/quad_internal_constants.h"
 #include "num_collect/multi_double/quad.h"
@@ -40,7 +40,7 @@ namespace num_collect::multi_double::impl {
  * Starting from the value of log function of double.
  */
 constexpr auto log_impl(quad x) noexcept -> quad {
-    quad guess = quad(constants::log(x.high()));
+    quad guess = quad(functions::log(x.high()));
 #ifdef _MSC_VER
     if consteval {
         // MSVC does not support std::isfinite in consteval context.
@@ -81,7 +81,7 @@ constexpr auto log1p_impl(quad x) noexcept -> quad {
     constexpr double small_lower_threshold = -0.292;  // 1/sqrt(2) - 1
     if (small_lower_threshold < x.high() && x.high() < small_upper_threshold) {
         // Case of small x using expm1
-        quad guess = quad(constants::log1p(x.high()));
+        quad guess = quad(functions::log1p(x.high()));
         const quad expm1_guess = expm1_impl(guess);
         guess += (x - expm1_guess) / (expm1_guess + 1.0);
         return guess;

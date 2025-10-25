@@ -24,13 +24,9 @@
 
 #include "num_collect/base/concepts/invocable_as.h"
 #include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/constants.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
-#include "num_collect/constants/half.h"  // IWYU pragma: keep
-#include "num_collect/constants/one.h"   // IWYU pragma: keep
-#include "num_collect/constants/pi.h"    // IWYU pragma: keep
-#include "num_collect/constants/two.h"   // IWYU pragma: keep
-#include "num_collect/constants/zero.h"  // IWYU pragma: keep
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_mixin.h"
 
@@ -118,23 +114,22 @@ public:
         const variable_type interval =
             max_point_ / static_cast<variable_type>(points_);
 
-        constexpr variable_type diff_coeff_center =
-            constants::pi<variable_type>;
+        constexpr variable_type diff_coeff_center = pi<variable_type>;
         result_type sum =
-            function(constants::one<variable_type>) * diff_coeff_center;
+            function(static_cast<variable_type>(1)) * diff_coeff_center;
 
         for (index_type i = 1; i < points_; ++i) {
             const variable_type changed_var =
                 interval * static_cast<variable_type>(i);
             const variable_type pi_sinh_value =
-                constants::pi<variable_type> * std::sinh(changed_var);
+                pi<variable_type> * std::sinh(changed_var);
 
             const variable_type var_plus = std::exp(pi_sinh_value);
             const variable_type diff_coeff_plus = diff_coeff(changed_var);
             sum += function(var_plus) * diff_coeff_plus;
 
             const variable_type var_minus =
-                constants::one<variable_type> / var_plus;
+                static_cast<variable_type>(1) / var_plus;
             const variable_type diff_coeff_minus = diff_coeff(-changed_var);
             sum += function(var_minus) * diff_coeff_minus;
         }
@@ -192,8 +187,8 @@ private:
      */
     [[nodiscard]] static auto diff_coeff(variable_type changed_var)
         -> variable_type {
-        return constants::pi<variable_type> *
-            std::exp(constants::pi<variable_type> * std::sinh(changed_var)) *
+        return pi<variable_type> *
+            std::exp(pi<variable_type> * std::sinh(changed_var)) *
             std::cosh(changed_var);
     }
 

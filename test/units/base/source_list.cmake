@@ -19,6 +19,7 @@ set(SOURCE_FILES
     concepts/reference_of_test.cpp
     concepts/sparse_matrix_of_test.cpp
     concepts/sparse_matrix_test.cpp
+    constants_test.cpp
     exception_test.cpp
     get_size_test.cpp
     isfinite_test.cpp

@@ -22,7 +22,7 @@
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
-#include "num_collect/constants/cbrt.h"
+#include "num_collect/functions/cbrt.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/ode/concepts/multi_variate_problem.h"
@@ -89,7 +89,7 @@ public:
 
     //! A constant of this formula \f$\alpha = 1 - 2^{1/3}\f$.
     static constexpr scalar_type alpha = static_cast<scalar_type>(1) -
-        constants::cbrt(static_cast<scalar_type>(2));
+        functions::cbrt(static_cast<scalar_type>(2));
 
     /*!
      * \name Coefficients of this formula.

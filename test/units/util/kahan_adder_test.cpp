@@ -28,7 +28,7 @@
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include "num_collect/constants/pi.h"  // IWYU pragma: keep
+#include "num_collect/base/constants.h"
 
 TEMPLATE_TEST_CASE("num_collect::util::kahan_adder (floating-point number)", "",
     float, double) {
@@ -61,8 +61,8 @@ TEMPLATE_TEST_CASE("num_collect::util::kahan_adder (floating-point number)", "",
                 static_cast<TestType>(std::pow(static_cast<TestType>(i), -2));
             adder += term;
         }
-        const auto reference = static_cast<TestType>(std::pow(
-                                   num_collect::constants::pi<TestType>, 2)) /
+        const auto reference =
+            static_cast<TestType>(std::pow(num_collect::pi<TestType>, 2)) /
             static_cast<TestType>(6);
         const auto tol = static_cast<TestType>(1e-4);
         REQUIRE_THAT(adder.sum(), Catch::Matchers::WithinRel(reference, tol));

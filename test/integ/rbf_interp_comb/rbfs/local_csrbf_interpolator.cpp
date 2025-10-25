@@ -25,8 +25,8 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "comparison_approvals.h"
+#include "num_collect/base/constants.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/constants/pi.h"
 #include "num_collect/rbf/rbf_interpolator.h"
 #include "num_collect/rbf/rbfs/wendland_csrbf.h"
 #include "num_collect/util/vector.h"
@@ -48,7 +48,7 @@ TEMPLATE_TEST_CASE("local_csrbf_interpolator with different RBFs", "",
     rbf_interpolator_type interpolator;
 
     const auto function = [](double x) {
-        return std::cos(num_collect::constants::pi<double> * x);
+        return std::cos(num_collect::pi<double> * x);
     };
 
     const auto sample_variables =

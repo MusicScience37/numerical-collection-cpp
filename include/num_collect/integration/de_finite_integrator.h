@@ -26,14 +26,10 @@
 
 #include "num_collect/base/concepts/invocable_as.h"
 #include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/constants.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/isfinite.h"
 #include "num_collect/base/precondition.h"
-#include "num_collect/constants/half.h"  // IWYU pragma: keep
-#include "num_collect/constants/one.h"   // IWYU pragma: keep
-#include "num_collect/constants/pi.h"    // IWYU pragma: keep
-#include "num_collect/constants/two.h"   // IWYU pragma: keep
-#include "num_collect/constants/zero.h"  // IWYU pragma: keep
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/logging/logging_mixin.h"
@@ -89,10 +85,8 @@ public:
     template <base::concepts::invocable_as<result_type(variable_type)> Function>
     [[nodiscard]] auto integrate(const Function& function, variable_type left,
         variable_type right) const -> result_type {
-        using constants::pi;
-
         const variable_type center =
-            constants::half<variable_type> * (left + right);
+            static_cast<variable_type>(0.5) * (left + right);
         const variable_type width = right - left;
 
         constexpr variable_type center_weight_rate =
@@ -145,11 +139,9 @@ public:
         const LeftBoundaryFunction& left_boundary_function,
         const RightBoundaryFunction& right_boundary_function,
         variable_type left, variable_type right) const -> result_type {
-        using constants::half;
-        using constants::pi;
-
         const variable_type width = right - left;
-        const variable_type half_width = half<variable_type> * width;
+        const variable_type half_width =
+            static_cast<variable_type>(0.5) * width;
 
         constexpr variable_type center_weight_rate =
             pi<variable_type> / static_cast<variable_type>(4);
@@ -260,12 +252,11 @@ private:
     [[nodiscard]] static auto diff_coeff(
         variable_type changed_var, variable_type half_width) -> variable_type {
         const variable_type exp_value =
-            std::exp(-constants::pi<variable_type> * std::sinh(changed_var));
+            std::exp(-pi<variable_type> * std::sinh(changed_var));
         const variable_type exp_value_p1 =
-            constants::one<variable_type> + exp_value;
-        return constants::two<variable_type> * constants::pi<variable_type> *
-            half_width * std::cosh(changed_var) * exp_value /
-            (exp_value_p1 * exp_value_p1);
+            static_cast<variable_type>(1) + exp_value;
+        return static_cast<variable_type>(2) * pi<variable_type> * half_width *
+            std::cosh(changed_var) * exp_value / (exp_value_p1 * exp_value_p1);
     }
 
     /*!
@@ -274,9 +265,6 @@ private:
      * \note Set points_ before calling this function.
      */
     void calculate_coefficients() {
-        using constants::one;
-        using constants::pi;
-
         variable_rate_list_.clear();
         variable_rate_list_.reserve(static_cast<std::size_t>(points_));
         weight_rate_list_.clear();
@@ -288,7 +276,8 @@ private:
                 interval_ * static_cast<variable_type>(i);
             const variable_type exp_value =
                 std::exp(-pi<variable_type> * std::sinh(changed_variable));
-            const variable_type denominator = one<variable_type> + exp_value;
+            const variable_type denominator =
+                static_cast<variable_type>(1) + exp_value;
             variable_rate_list_.push_back(exp_value / denominator);
             weight_rate_list_.push_back(pi<variable_type> *
                 std::cosh(changed_variable) * exp_value /

@@ -26,9 +26,9 @@
 #include <Eigen/SparseCore>
 
 #include "num_collect/base/concepts/sparse_matrix.h"
+#include "num_collect/base/constants.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
-#include "num_collect/constants/pi.h"
 #include "num_collect/util/vector.h"
 
 namespace num_prob_collect::regularization {
@@ -73,14 +73,14 @@ template <num_collect::concepts::sparse_matrix Matrix>
     const num_collect::index_type cols = image_size * image_size;
 
     constexpr double ray_center_radius = 1.0;
-    constexpr double rays_angle = num_collect::constants::pi<double> / 6.0;
+    constexpr double rays_angle = num_collect::pi<double> / 6.0;
     const double delta_function_width = 1.0 / static_cast<double>(image_size);
 
     num_collect::util::vector<Eigen::Triplet<scalar_type, storage_index_type>>
         triplets;
     for (num_collect::index_type direction_index = 0;
         direction_index < num_directions; ++direction_index) {
-        const double center_angle = 2.0 * num_collect::constants::pi<double> *
+        const double center_angle = 2.0 * num_collect::pi<double> *
             static_cast<double>(direction_index) /
             static_cast<double>(num_directions);
         const Eigen::Vector2d center =
@@ -88,8 +88,7 @@ template <num_collect::concepts::sparse_matrix Matrix>
                 ray_center_radius * std::sin(center_angle));
         for (num_collect::index_type ray_index = 0;
             ray_index < num_rays_per_direction; ++ray_index) {
-            const double ray_angle = center_angle +
-                num_collect::constants::pi<double> +
+            const double ray_angle = center_angle + num_collect::pi<double> +
                 rays_angle *
                     ((static_cast<double>(ray_index) /
                          static_cast<double>(num_rays_per_direction - 1)) *

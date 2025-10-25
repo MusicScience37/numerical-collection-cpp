@@ -24,13 +24,10 @@
 
 #include "num_collect/base/concepts/invocable_as.h"
 #include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/constants.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
-#include "num_collect/constants/half.h"  // IWYU pragma: keep
-#include "num_collect/constants/one.h"   // IWYU pragma: keep
-#include "num_collect/constants/pi.h"    // IWYU pragma: keep
-#include "num_collect/constants/zero.h"  // IWYU pragma: keep
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/logging/logging_mixin.h"
 
@@ -86,7 +83,7 @@ public:
 
         constexpr variable_type diff_coeff_center = half_pi;
         result_type sum =
-            function(constants::zero<variable_type>) * diff_coeff_center;
+            function(static_cast<variable_type>(0)) * diff_coeff_center;
 
         for (index_type i = 1; i < points_; ++i) {
             const variable_type changed_var =
@@ -144,7 +141,7 @@ public:
 private:
     //! Half value of pi.
     static constexpr variable_type half_pi =
-        constants::half<variable_type> * constants::pi<variable_type>;
+        static_cast<variable_type>(0.5) * pi<variable_type>;
 
     //! Default maximum point in changed variable.
     static constexpr auto default_max_point = static_cast<variable_type>(4);

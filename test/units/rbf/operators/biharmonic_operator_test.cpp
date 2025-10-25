@@ -23,8 +23,8 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+#include "num_collect/base/constants.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/constants/pi.h"
 #include "num_collect/rbf/generate_halton_nodes.h"
 #include "num_collect/rbf/operators/operator_evaluator.h"
 #include "num_collect/rbf/rbf_interpolator.h"
@@ -43,14 +43,12 @@ TEST_CASE("num_collect::rbf::operators::biharmonic_operator") {
         using rbf_interpolator_type = global_rbf_interpolator<double(double)>;
 
         const auto function = [](double x) {
-            return std::cos(num_collect::constants::pi<double> * x);
+            return std::cos(num_collect::pi<double> * x);
         };
         const auto fourth_derivative_function = [](double x) {
-            return num_collect::constants::pi<double> *
-                num_collect::constants::pi<double> *
-                num_collect::constants::pi<double> *
-                num_collect::constants::pi<double> *
-                std::cos(num_collect::constants::pi<double> * x);
+            return num_collect::pi<double> * num_collect::pi<double> *
+                num_collect::pi<double> * num_collect::pi<double> *
+                std::cos(num_collect::pi<double> * x);
         };
 
         const auto sample_variables = generate_1d_halton_nodes<double>(30);
@@ -83,14 +81,12 @@ TEST_CASE("num_collect::rbf::operators::biharmonic_operator") {
             global_rbf_polynomial_interpolator<double(double)>;
 
         const auto function = [](double x) {
-            return std::cos(num_collect::constants::pi<double> * x);
+            return std::cos(num_collect::pi<double> * x);
         };
         const auto fourth_derivative_function = [](double x) {
-            return num_collect::constants::pi<double> *
-                num_collect::constants::pi<double> *
-                num_collect::constants::pi<double> *
-                num_collect::constants::pi<double> *
-                std::cos(num_collect::constants::pi<double> * x);
+            return num_collect::pi<double> * num_collect::pi<double> *
+                num_collect::pi<double> * num_collect::pi<double> *
+                std::cos(num_collect::pi<double> * x);
         };
 
         const auto sample_variables = generate_1d_halton_nodes<double>(30);

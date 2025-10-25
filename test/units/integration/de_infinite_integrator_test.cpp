@@ -27,8 +27,7 @@
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include "num_collect/constants/one.h"  // IWYU pragma: keep
-#include "num_collect/constants/pi.h"   // IWYU pragma: keep
+#include "num_collect/base/constants.h"
 
 TEMPLATE_TEST_CASE(
     "num_collect::integration::de_infinite_integrator", "", float, double) {
@@ -40,7 +39,7 @@ TEMPLATE_TEST_CASE(
         const auto val =
             integrator([](TestType x) { return std::exp(-x * x); });
 
-        const auto true_val = std::sqrt(num_collect::constants::pi<TestType>);
+        const auto true_val = std::sqrt(num_collect::pi<TestType>);
         constexpr auto tol = static_cast<TestType>(1e-4);
         REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val, tol));
     }
@@ -51,11 +50,11 @@ TEMPLATE_TEST_CASE(
                 TestType)>();
 
         const auto val = integrator([](TestType x) {
-            return num_collect::constants::one<TestType> /
-                (num_collect::constants::one<TestType> + x * x);
+            return static_cast<TestType>(1) /
+                (static_cast<TestType>(1) + x * x);
         });
 
-        constexpr auto true_val = num_collect::constants::pi<TestType>;
+        constexpr auto true_val = num_collect::pi<TestType>;
         constexpr auto tol = static_cast<TestType>(1e-4);
         REQUIRE_THAT(val, Catch::Matchers::WithinRel(true_val, tol));
     }

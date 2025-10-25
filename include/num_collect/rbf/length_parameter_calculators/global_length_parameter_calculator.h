@@ -25,7 +25,6 @@
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
-#include "num_collect/constants/zero.h"  // IWYU pragma: keep
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/rbf/concepts/distance_function.h"
 #include "num_collect/rbf/impl/parallelized_num_points.h"
@@ -71,7 +70,7 @@ public:
         NUM_COLLECT_PRECONDITION(
             num_samples > 0, "Sample points must be given.");
 
-        auto max_min_distance = constants::zero<scalar_type>;
+        auto max_min_distance = static_cast<scalar_type>(0);
 #pragma omp parallel for if (num_samples >= impl::parallelized_num_points)
         for (index_type i = 0; i < num_samples; ++i) {
             auto min_distance = std::numeric_limits<scalar_type>::max();
@@ -119,7 +118,7 @@ public:
      * \param[in] value Value.
      */
     void scale(scalar_type value) {
-        NUM_COLLECT_PRECONDITION(value > constants::zero<scalar_type>,
+        NUM_COLLECT_PRECONDITION(value > static_cast<scalar_type>(0),
             "Scale of length parameters must be a positive number.");
         scale_ = value;
     }
@@ -132,7 +131,7 @@ private:
     scalar_type scale_{default_scale};
 
     //! Length parameter.
-    scalar_type length_parameter_{constants::zero<scalar_type>};
+    scalar_type length_parameter_{static_cast<scalar_type>(0)};
 };
 
 }  // namespace num_collect::rbf::length_parameter_calculators
