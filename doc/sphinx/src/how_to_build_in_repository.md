@@ -24,6 +24,7 @@ you will require following dependencies:
     - GCC 13
     - Clang 19
     - Clang 20
+    - Clang 21
     - Visual Studio 2022
 
 Additionally, you will require following dependencies
