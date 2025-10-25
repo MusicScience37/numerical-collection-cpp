@@ -11,14 +11,13 @@ A collection of algorithms in numerical analysis implemented in C++.
 
 ## Supported Compilers
 
-This library should compile with most C++ 23 compliant compilers.
-
 Following compilers are tested in CI:
 
 - GCC 12
 - GCC 13
 - Clang 19
 - Clang 20
+- Clang 21
 - Visual Studio 2022
 
 ## Installation
@@ -32,6 +31,7 @@ Documentation built in CI:
 | Version     | Documentation                                                   | Full API Reference (Doxygen)                                        |
 | :---------- | :-------------------------------------------------------------- | :------------------------------------------------------------------ |
 | main branch | [Documentation](https://numcollect.musicscience37.com/)         | [API Reference](https://numcollect.musicscience37.com/api/)         |
+| v0.12.0     | [Documentation](https://numcollect.musicscience37.com/v0.12.0/) | [API Reference](https://numcollect.musicscience37.com/v0.12.0/api/) |
 | v0.11.0     | [Documentation](https://numcollect.musicscience37.com/v0.11.0/) | [API Reference](https://numcollect.musicscience37.com/v0.11.0/api/) |
 
 ## Dependencies (for users)
