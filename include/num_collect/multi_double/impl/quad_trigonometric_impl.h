@@ -85,7 +85,6 @@ inline auto sin_impl(quad x) noexcept -> quad {
 
     const quad pi_over_4_ratio = two_pi_reduced_x * pi_over_4_inv_quad;
     int pi_over_4_count = static_cast<int>(floor_impl(pi_over_4_ratio).high());
-    // NOLINTNEXTLINE(*-magic-numbers)
     pi_over_4_count = std::min(std::max(pi_over_4_count, -4), 3);
 
     switch (pi_over_4_count) {
@@ -121,7 +120,6 @@ inline auto cos_impl(quad x) noexcept -> quad {
 
     const quad pi_over_4_ratio = two_pi_reduced_x * pi_over_4_inv_quad;
     int pi_over_4_count = static_cast<int>(floor_impl(pi_over_4_ratio).high());
-    // NOLINTNEXTLINE(*-magic-numbers)
     pi_over_4_count = std::min(std::max(pi_over_4_count, 0), 7);
 
     switch (pi_over_4_count) {
@@ -133,10 +131,10 @@ inline auto cos_impl(quad x) noexcept -> quad {
     case 3:
     case 4:
         return -cos_maclaurin(two_pi_reduced_x - pi_quad);
-    case 5:  // NOLINT(*-magic-numbers)
-    case 6:  // NOLINT(*-magic-numbers)
+    case 5:
+    case 6:
         return sin_maclaurin(two_pi_reduced_x - three_pi_over_2_quad);
-    case 7:  // NOLINT(*-magic-numbers)
+    case 7:
         return cos_maclaurin(two_pi_reduced_x - two_pi_quad);
     default:
         // Unreachable.

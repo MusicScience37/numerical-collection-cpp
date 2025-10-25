@@ -37,7 +37,6 @@ namespace num_collect::functions {
     if (x < 1.0F) {
         const float pi_1mx = constants::pi<float> * (1.0F - x);
         return pi_1mx / std::sin(pi_1mx) /
-            // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
             impl::gamma_lanczos<float>::gamma(2.0F - x);
     }
     return impl::gamma_lanczos<float>::gamma(x);
@@ -53,7 +52,6 @@ namespace num_collect::functions {
     if (x < 1.0) {
         const double pi_1mx = constants::pi<double> * (1.0 - x);
         return pi_1mx / std::sin(pi_1mx) /
-            // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
             impl::gamma_lanczos<double>::gamma(2.0 - x);
     }
     return impl::gamma_lanczos<double>::gamma(x);
@@ -70,7 +68,6 @@ namespace num_collect::functions {
     if (x.real() < 1.0F) {
         const std::complex<float> pi_1mx = constants::pi<float> * (1.0F - x);
         return pi_1mx / std::sin(pi_1mx) /
-            // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
             impl::gamma_lanczos<float>::gamma(2.0F - x);
     }
     return impl::gamma_lanczos<float>::gamma(x);
@@ -87,7 +84,6 @@ namespace num_collect::functions {
     if (x.real() < 1.0) {
         const std::complex<double> pi_1mx = constants::pi<double> * (1.0 - x);
         return pi_1mx / std::sin(pi_1mx) /
-            // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
             impl::gamma_lanczos<double>::gamma(2.0 - x);
     }
     return impl::gamma_lanczos<double>::gamma(x);

@@ -75,9 +75,7 @@ TEST_CASE("num_collect::regularization::spline_l_curve") {
                 tikhonov, data_with_error, initial_solution};
             searcher.search();
 
-            // NOLINTNEXTLINE(*-magic-numbers)
             CHECK(searcher.opt_param() > 0.1 * reference_searcher.opt_param());
-            // NOLINTNEXTLINE(*-magic-numbers)
             CHECK(searcher.opt_param() < 10.0 * reference_searcher.opt_param());
 
             constexpr double tol_sol = 0.5;
@@ -90,14 +88,11 @@ TEST_CASE("num_collect::regularization::spline_l_curve") {
         SECTION("with too close points in L-curve") {
             param_searcher_type searcher{
                 tikhonov, data_with_error, initial_solution};
-            searcher.min_distance_between_points(
-                0.3);                         // NOLINT(*-magic-numbers)
-            searcher.num_sample_points(100);  // NOLINT(*-magic-numbers)
+            searcher.min_distance_between_points(0.3);
+            searcher.num_sample_points(100);
             searcher.search();
 
-            // NOLINTNEXTLINE(*-magic-numbers)
             CHECK(searcher.opt_param() > 0.1 * reference_searcher.opt_param());
-            // NOLINTNEXTLINE(*-magic-numbers)
             CHECK(searcher.opt_param() < 10.0 * reference_searcher.opt_param());
         }
     }

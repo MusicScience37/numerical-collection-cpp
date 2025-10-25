@@ -57,7 +57,7 @@ constexpr auto adaptive_diagonal_curves_tag =
  * time.
  */
 template <concepts::multi_variate_objective_function ObjectiveFunction,
-    index_type MaxDigits = 8>  // NOLINT(*-magic-numbers)
+    index_type MaxDigits = 8>
 class adaptive_diagonal_curves
     : public optimizer_base<
           adaptive_diagonal_curves<ObjectiveFunction, MaxDigits>> {

@@ -43,9 +43,8 @@ namespace num_collect::multi_double::impl {
  * \return Output iterator after writing characters.
  */
 template <std::output_iterator<char> OutputIterator>
-auto format_decimal_scientific_to(OutputIterator out, quad value,
-    int precision = 30) -> OutputIterator  // NOLINT(*-magic-numbers)
-{
+auto format_decimal_scientific_to(
+    OutputIterator out, quad value, int precision = 30) -> OutputIterator {
     constexpr int double_precision = 14;
     if (precision <= double_precision || !std::isfinite(value.high())) {
         return fmt::format_to(out, "{:.{}e}", value.high(), precision);
@@ -70,25 +69,23 @@ auto format_decimal_scientific_to(OutputIterator out, quad value,
     std::array<char, digits_buffer_size> digits_buffer{};
     digits_buffer.fill(static_cast<char>(0));
 
-    quad remaining =
-        value / pow(quad(10.0), exponent);  // NOLINT(*-magic-numbers)
+    quad remaining = value / pow(quad(10.0), exponent);
     // NOLINTNEXTLINE(*-sign-comparison)
     for (std::size_t i = 2; i < static_cast<std::size_t>(precision + 3); ++i) {
         double digit_double = std::floor(remaining.high());
         digits_buffer[i] = static_cast<char>(static_cast<int>(digit_double));
         remaining -= digit_double;
-        remaining *= 10.0;  // NOLINT(*-magic-numbers)
+        remaining *= 10.0;
     }
     // NOLINTNEXTLINE(*-sign-comparison)
     for (std::size_t i = static_cast<std::size_t>(precision + 2); i > 0; --i) {
         // NOLINTNEXTLINE(bugprone-signed-char-misuse,cert-str34-c): false positive
         const int current_digit = static_cast<int>(digits_buffer[i]);
-        if (current_digit < 0 ||
-            current_digit > 9) {                 // NOLINT(*-magic-numbers)
-            int carry = current_digit / 10;      // NOLINT(*-magic-numbers)
-            int new_digit = current_digit % 10;  // NOLINT(*-magic-numbers)
+        if (current_digit < 0 || current_digit > 9) {
+            int carry = current_digit / 10;
+            int new_digit = current_digit % 10;
             if (new_digit < 0) {
-                new_digit += 10;  // NOLINT(*-magic-numbers)
+                new_digit += 10;
                 --carry;
             }
             digits_buffer[i] = static_cast<char>(new_digit);

@@ -125,7 +125,6 @@ TEST_CASE("num_collect::rbf::operators::biharmonic_operator") {
         };
         const auto fourth_derivative_function =
             [](const Eigen::Vector2d& variable) {
-                // NOLINTNEXTLINE(*-magic-numbers)
                 return 4.0 * variable.array().sin().prod();
             };
 
@@ -163,7 +162,6 @@ TEST_CASE("num_collect::rbf::operators::biharmonic_operator") {
         };
         const auto fourth_derivative_function =
             [](const Eigen::Vector2d& variable) {
-                // NOLINTNEXTLINE(*-magic-numbers)
                 return 4.0 * variable.array().sin().prod();
             };
 

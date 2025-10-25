@@ -101,7 +101,6 @@ inline auto atanh_impl(quad x) noexcept -> quad {
     if (x <= -1.0 || 1.0 <= x) {
         return quad(std::numeric_limits<double>::quiet_NaN());
     }
-    // NOLINTNEXTLINE(*-magic-numbers)
     return 0.5 * (log1p_impl(x) - log1p_impl(-x));
 }
 

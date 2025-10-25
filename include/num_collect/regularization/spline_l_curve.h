@@ -206,7 +206,6 @@ private:
         sample_points_.clear();
         sample_points_.push_back(compute_sample_point(log_min_param));
         sample_points_.push_back(compute_sample_point(
-            // NOLINTNEXTLINE(*-magic-numbers)
             static_cast<scalar_type>(0.5) * (log_min_param + log_max_param)));
         sample_points_.push_back(compute_sample_point(log_max_param));
         calculate_distance(1);
@@ -231,7 +230,6 @@ private:
             NUM_COLLECT_ASSERT(max_distance_index > 0);
 
             const scalar_type additional_log_param =
-                // NOLINTNEXTLINE(*-magic-numbers)
                 static_cast<scalar_type>(0.5) *
                 (sample_points_[max_distance_index - 1]
                         .log_regularization_parameter +
@@ -469,7 +467,6 @@ private:
             pow(log_residual_norm_derivative * log_residual_norm_derivative +
                     log_regularization_term_derivative *
                         log_regularization_term_derivative,
-                // NOLINTNEXTLINE(*-magic-numbers)
                 static_cast<scalar_type>(1.5));
 
         NUM_COLLECT_LOG_TRACE(logger(), "Curvature at length parameter {}: {}",

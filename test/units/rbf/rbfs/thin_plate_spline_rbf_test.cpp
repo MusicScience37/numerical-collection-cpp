@@ -41,13 +41,11 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
         num_collect::constants::sqrt(std::numeric_limits<double>::epsilon());
     const auto diff = [](const auto& rbf, const double distance) {
         return (rbf(distance + diff_width) - rbf(distance - diff_width)) /
-            // NOLINTNEXTLINE(*-magic-numbers)
             (2.0 * diff_width) / (-distance);
     };
     const auto second_diff = [&diff](const auto& rbf, const double distance) {
         return (diff(rbf, distance + diff_width) -
                    diff(rbf, distance - diff_width)) /
-            // NOLINTNEXTLINE(*-magic-numbers)
             (2.0 * diff_width) / (-distance);
     };
 
@@ -68,10 +66,8 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                 constexpr double coeff = rbf_type::coefficient();
 
                 CHECK(rbf(0.0) == 0.0);
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(rbf(1e-10),
                     Catch::Matchers::WithinRel(coeff * 1e-10, rel_tol));
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(
                     rbf(1.5), Catch::Matchers::WithinRel(coeff * 1.5, rel_tol));
             }
@@ -95,10 +91,8 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                 constexpr double coeff = rbf_type::coefficient();
 
                 CHECK(rbf(0.0) == 0.0);
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(rbf(1e-10),
                     Catch::Matchers::WithinRel(coeff * 1e-30, rel_tol));
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(rbf(1.5),
                     Catch::Matchers::WithinRel(coeff * 3.375, rel_tol));
             }
@@ -108,10 +102,8 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                 rbf_type rbf;
 
                 CHECK_THAT(differentiated_rbf(0.0), is_finite());
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(differentiated_rbf(0.1),
                     Catch::Matchers::WithinRel(diff(rbf, 0.1), rel_tol));
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(differentiated_rbf(1.5),
                     Catch::Matchers::WithinRel(diff(rbf, 1.5), rel_tol));
             }
@@ -122,11 +114,9 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                 rbf_type rbf;
 
                 CHECK_THAT(second_differentiated_rbf(0.0), is_finite());
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(second_differentiated_rbf(0.1),
                     Catch::Matchers::WithinRel(
                         second_diff(rbf, 0.1), second_diff_rel_tol));
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(second_differentiated_rbf(1.5),
                     Catch::Matchers::WithinRel(
                         second_diff(rbf, 1.5), second_diff_rel_tol));
@@ -149,10 +139,8 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                 constexpr double coeff = rbf_type::coefficient();
 
                 CHECK(rbf(0.0) == 0.0);
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(rbf(1e-10),
                     Catch::Matchers::WithinRel(coeff * 1e-50, rel_tol));
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(rbf(1.5),
                     Catch::Matchers::WithinRel(coeff * 7.59375, rel_tol));
             }
@@ -162,10 +150,8 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                 rbf_type rbf;
 
                 CHECK_THAT(differentiated_rbf(0.0), is_finite());
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(differentiated_rbf(0.1),
                     Catch::Matchers::WithinRel(diff(rbf, 0.1), rel_tol));
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(differentiated_rbf(1.5),
                     Catch::Matchers::WithinRel(diff(rbf, 1.5), rel_tol));
             }
@@ -176,11 +162,9 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                 rbf_type rbf;
 
                 CHECK_THAT(second_differentiated_rbf(0.0), is_finite());
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(second_differentiated_rbf(0.1),
                     Catch::Matchers::WithinRel(
                         second_diff(rbf, 0.1), second_diff_rel_tol));
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(second_differentiated_rbf(1.5),
                     Catch::Matchers::WithinRel(
                         second_diff(rbf, 1.5), second_diff_rel_tol));
@@ -206,11 +190,9 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                 constexpr double coeff = rbf_type::coefficient();
 
                 CHECK(rbf(0.0) == 0.0);
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(rbf(1e-10),
                     Catch::Matchers::WithinRel(
                         coeff * -2.302585093e-19, rel_tol));
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(rbf(1.5),
                     Catch::Matchers::WithinRel(coeff * 0.9122964932, rel_tol));
             }
@@ -220,10 +202,8 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                 rbf_type rbf;
 
                 CHECK_THAT(differentiated_rbf(0.0), is_finite());
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(differentiated_rbf(0.1),
                     Catch::Matchers::WithinRel(diff(rbf, 0.1), rel_tol));
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(differentiated_rbf(1.5),
                     Catch::Matchers::WithinRel(diff(rbf, 1.5), rel_tol));
             }
@@ -247,11 +227,9 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                 constexpr double coeff = rbf_type::coefficient();
 
                 CHECK(rbf(0.0) == 0.0);
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(rbf(1e-10),
                     Catch::Matchers::WithinRel(
                         coeff * -2.302585092994046e-39, rel_tol));
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(rbf(1.5),
                     Catch::Matchers::WithinRel(
                         coeff * 2.052667109797582, rel_tol));
@@ -262,10 +240,8 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                 rbf_type rbf;
 
                 CHECK_THAT(differentiated_rbf(0.0), is_finite());
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(differentiated_rbf(0.1),
                     Catch::Matchers::WithinRel(diff(rbf, 0.1), rel_tol));
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(differentiated_rbf(1.5),
                     Catch::Matchers::WithinRel(diff(rbf, 1.5), rel_tol));
             }
@@ -276,11 +252,9 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                 rbf_type rbf;
 
                 CHECK_THAT(second_differentiated_rbf(0.0), is_finite());
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(second_differentiated_rbf(0.1),
                     Catch::Matchers::WithinRel(
                         second_diff(rbf, 0.1), second_diff_rel_tol));
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(second_differentiated_rbf(1.5),
                     Catch::Matchers::WithinRel(
                         second_diff(rbf, 1.5), second_diff_rel_tol));
@@ -306,10 +280,8 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                 constexpr double coeff = rbf_type::coefficient();
 
                 CHECK(rbf(0.0) == 0.0);
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(rbf(1e-10),
                     Catch::Matchers::WithinRel(coeff * 1e-10, rel_tol));
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(
                     rbf(1.5), Catch::Matchers::WithinRel(coeff * 1.5, rel_tol));
             }
@@ -333,10 +305,8 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                 constexpr double coeff = rbf_type::coefficient();
 
                 CHECK(rbf(0.0) == 0.0);
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(rbf(1e-10),
                     Catch::Matchers::WithinRel(coeff * 1e-30, rel_tol));
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(rbf(1.5),
                     Catch::Matchers::WithinRel(coeff * 3.375, rel_tol));
             }
@@ -346,10 +316,8 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                 rbf_type rbf;
 
                 CHECK_THAT(differentiated_rbf(0.0), is_finite());
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(differentiated_rbf(0.1),
                     Catch::Matchers::WithinRel(diff(rbf, 0.1), rel_tol));
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(differentiated_rbf(1.5),
                     Catch::Matchers::WithinRel(diff(rbf, 1.5), rel_tol));
             }
@@ -360,11 +328,9 @@ TEST_CASE("num_collect::rbf::rbfs::thin_plate_spline_rbf") {
                 rbf_type rbf;
 
                 CHECK_THAT(second_differentiated_rbf(0.0), is_finite());
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(second_differentiated_rbf(0.1),
                     Catch::Matchers::WithinRel(
                         second_diff(rbf, 0.1), second_diff_rel_tol));
-                // NOLINTNEXTLINE(*-magic-numbers)
                 CHECK_THAT(second_differentiated_rbf(1.5),
                     Catch::Matchers::WithinRel(
                         second_diff(rbf, 1.5), second_diff_rel_tol));

@@ -33,7 +33,6 @@ namespace num_collect::multi_double::impl {
  */
 constexpr auto calculate_pow_of_two(int exponent) noexcept -> double {
     if consteval {
-        // NOLINTNEXTLINE(*-magic-numbers)
         return constants::pow(2.0, exponent);
     } else {
         return std::ldexp(1.0, exponent);

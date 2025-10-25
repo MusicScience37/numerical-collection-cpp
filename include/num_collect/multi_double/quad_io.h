@@ -56,7 +56,6 @@ struct formatter<num_collect::multi_double::quad> {
             // Width.
             width_ = 0;
             while (iter != context.end() && is_digit(*iter)) {
-                // NOLINTNEXTLINE(*-magic-numbers)
                 width_ = width_ * 10 + (static_cast<int>(*iter) - '0');
                 ++iter;
             }
@@ -77,7 +76,6 @@ struct formatter<num_collect::multi_double::quad> {
             }
             precision_ = 0;
             while (iter != context.end() && is_digit(*iter)) {
-                // NOLINTNEXTLINE(*-magic-numbers)
                 precision_ = precision_ * 10 + (static_cast<int>(*iter) - '0');
                 ++iter;
             }
@@ -142,7 +140,7 @@ private:
     int width_{0};
 
     //! Precision.
-    int precision_{30};  // NOLINT(*-magic-numbers)
+    int precision_{30};
 };
 
 }  // namespace fmt

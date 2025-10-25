@@ -35,9 +35,7 @@ table_comparator::table_comparator(std::vector<bool> checked_columns,
     : checked_columns_(std::move(checked_columns)),
       num_rows_(num_rows),
       precision_(std::min(precision, max_precision)),
-      // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
       tol_rel_error_(std::pow(10.0, -precision)),
-      // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
       tol_abs_error_(std::pow(10.0, -precision)) {}
 
 auto table_comparator::contentsAreEquivalent(

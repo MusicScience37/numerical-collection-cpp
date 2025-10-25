@@ -652,7 +652,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
     SECTION("resize") {
         trivial_vector<int> vector{1, 2, 3};
 
-        vector.resize(5);  // NOLINT(*-magic-numbers)
+        vector.resize(5);
 
         CHECK(vector.size() == 5);
         CHECK(vector.at(0) == 1);
@@ -671,7 +671,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
     SECTION("resize with value") {
         trivial_vector<int> vector{1, 2, 3};
 
-        vector.resize(5, 4);  // NOLINT(*-magic-numbers)
+        vector.resize(5, 4);
 
         CHECK(vector.size() == 5);
         CHECK(vector.at(0) == 1);
@@ -680,7 +680,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
         CHECK(vector.at(3) == 4);
         CHECK(vector.at(4) == 4);
 
-        vector.resize(2, 5);  // NOLINT(*-magic-numbers)
+        vector.resize(2, 5);
 
         CHECK(vector.size() == 2);
         CHECK(vector.at(0) == 1);
@@ -709,7 +709,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
 
     SECTION("swap with another vector") {
         trivial_vector<int> vector1{1, 2, 3};
-        trivial_vector<int> vector2{4, 5};  // NOLINT(*-magic-numbers)
+        trivial_vector<int> vector2{4, 5};
 
         vector1.swap(vector2);
 
@@ -724,7 +724,7 @@ TEST_CASE("num_collect::util::trivial_vector") {
 
     SECTION("swap with another vector using a free function") {
         trivial_vector<int> vector1{1, 2, 3};
-        trivial_vector<int> vector2{4, 5};  // NOLINT(*-magic-numbers)
+        trivial_vector<int> vector2{4, 5};
 
         swap(vector1, vector2);
 

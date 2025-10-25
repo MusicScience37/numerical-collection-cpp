@@ -72,7 +72,6 @@ public:
         const scalar_type& distance_rate) const noexcept -> scalar_type {
         using std::pow;
         return pow(static_cast<scalar_type>(1) + distance_rate * distance_rate,
-            // NOLINTNEXTLINE(*-magic-numbers)
             static_cast<scalar_type>(-1.5));
     }
 };

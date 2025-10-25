@@ -74,9 +74,7 @@ TEST_CASE("num_collect::regularization::approx_l_curve") {
             param_searcher_type searcher{tikhonov, initial_solution};
             searcher.search();
 
-            // NOLINTNEXTLINE(*-magic-numbers)
             CHECK(searcher.opt_param() > 0.1 * reference_searcher.opt_param());
-            // NOLINTNEXTLINE(*-magic-numbers)
             CHECK(searcher.opt_param() < 10.0 * reference_searcher.opt_param());
 
             constexpr double tol_sol = 0.5;
@@ -88,14 +86,11 @@ TEST_CASE("num_collect::regularization::approx_l_curve") {
 
         SECTION("with too many sample points") {
             param_searcher_type searcher{tikhonov, initial_solution};
-            searcher.num_sample_points(100);  // NOLINT(*-magic-numbers)
-            searcher.min_distance_between_points(
-                0.3);  // NOLINT(*-magic-numbers)
+            searcher.num_sample_points(100);
+            searcher.min_distance_between_points(0.3);
             REQUIRE_NOTHROW(searcher.search());
 
-            // NOLINTNEXTLINE(*-magic-numbers)
             CHECK(searcher.opt_param() > 0.1 * reference_searcher.opt_param());
-            // NOLINTNEXTLINE(*-magic-numbers)
             CHECK(searcher.opt_param() < 10.0 * reference_searcher.opt_param());
         }
     }
@@ -129,12 +124,10 @@ TEST_CASE("num_collect::regularization::approx_l_curve") {
 
         CHECK_THROWS(searcher.min_distance_between_points(0.0));
         CHECK_THROWS(searcher.min_distance_between_points(-1.0));
-        CHECK_NOTHROW(searcher.min_distance_between_points(
-            1e-10));  // NOLINT(*-magic-numbers)
+        CHECK_NOTHROW(searcher.min_distance_between_points(1e-10));
 
         CHECK_THROWS(searcher.min_curvature_for_optimal_point(0.0));
         CHECK_THROWS(searcher.min_curvature_for_optimal_point(-1.0));
-        CHECK_NOTHROW(searcher.min_curvature_for_optimal_point(
-            1e-10));  // NOLINT(*-magic-numbers)
+        CHECK_NOTHROW(searcher.min_curvature_for_optimal_point(1e-10));
     }
 }

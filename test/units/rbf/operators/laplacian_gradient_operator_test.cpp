@@ -166,9 +166,7 @@ TEST_CASE("num_collect::rbf::operators::laplacian_gradient_operator") {
         const auto third_derivative_function =
             [](const Eigen::Vector2d& variable) {
                 return Eigen::Vector2d(
-                    // NOLINTNEXTLINE(*-magic-numbers)
                     -2.0 * std::cos(variable(0)) * std::sin(variable(1)),
-                    // NOLINTNEXTLINE(*-magic-numbers)
                     -2.0 * std::sin(variable(0)) * std::cos(variable(1)));
             };
 
@@ -205,9 +203,7 @@ TEST_CASE("num_collect::rbf::operators::laplacian_gradient_operator") {
         const auto third_derivative_function =
             [](const Eigen::Vector2d& variable) {
                 return Eigen::Vector2d(
-                    // NOLINTNEXTLINE(*-magic-numbers)
                     -2.0 * std::cos(variable(0)) * std::sin(variable(1)),
-                    // NOLINTNEXTLINE(*-magic-numbers)
                     -2.0 * std::sin(variable(0)) * std::cos(variable(1)));
             };
 
@@ -246,9 +242,7 @@ TEST_CASE("num_collect::rbf::operators::laplacian_gradient_operator") {
         const auto third_derivative_function =
             [](const Eigen::Vector2d& variable) {
                 return Eigen::Vector2d(
-                    // NOLINTNEXTLINE(*-magic-numbers)
                     -2.0 * std::cos(variable(0)) * std::sin(variable(1)),
-                    // NOLINTNEXTLINE(*-magic-numbers)
                     -2.0 * std::sin(variable(0)) * std::cos(variable(1)));
             };
 

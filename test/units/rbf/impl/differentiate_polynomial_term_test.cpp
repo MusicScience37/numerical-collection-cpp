@@ -37,7 +37,7 @@ TEST_CASE("num_collect::rbf::impl::differentiate_polynomial_term") {
 
             REQUIRE(result.has_value());
             CHECK(result->first.degree() == 2);
-            CHECK(result->second == 3.0);  // NOLINT(*-magic-numbers)
+            CHECK(result->second == 3.0);
         }
 
         SECTION("2nd-order derivative of x^3") {
@@ -49,7 +49,7 @@ TEST_CASE("num_collect::rbf::impl::differentiate_polynomial_term") {
 
             REQUIRE(result.has_value());
             CHECK(result->first.degree() == 1);
-            CHECK(result->second == 6.0);  // NOLINT(*-magic-numbers)
+            CHECK(result->second == 6.0);
         }
 
         SECTION("3rd-order derivative of x^3") {
@@ -61,7 +61,7 @@ TEST_CASE("num_collect::rbf::impl::differentiate_polynomial_term") {
 
             REQUIRE(result.has_value());
             CHECK(result->first.degree() == 0);
-            CHECK(result->second == 6.0);  // NOLINT(*-magic-numbers)
+            CHECK(result->second == 6.0);
         }
 
         SECTION("3rd-order derivative of x^2") {
@@ -83,7 +83,7 @@ TEST_CASE("num_collect::rbf::impl::differentiate_polynomial_term") {
 
             REQUIRE(result.has_value());
             CHECK(result->first.degree() == 3);
-            CHECK(result->second == 1.0);  // NOLINT(*-magic-numbers)
+            CHECK(result->second == 1.0);
         }
     }
 
@@ -97,7 +97,7 @@ TEST_CASE("num_collect::rbf::impl::differentiate_polynomial_term") {
 
             REQUIRE(result.has_value());
             CHECK(result->first.degrees() == Eigen::Vector2i{{1, 1}});
-            CHECK(result->second == 2.0);  // NOLINT(*-magic-numbers)
+            CHECK(result->second == 2.0);
         }
 
         SECTION("partially differentiate (x y^3) once by x and twice by y") {
@@ -109,7 +109,7 @@ TEST_CASE("num_collect::rbf::impl::differentiate_polynomial_term") {
 
             REQUIRE(result.has_value());
             CHECK(result->first.degrees() == Eigen::Vector2i{{0, 1}});
-            CHECK(result->second == 6.0);  // NOLINT(*-magic-numbers)
+            CHECK(result->second == 6.0);
         }
 
         SECTION("partially differentiate (x^2 y^4) twice by x and twice by y") {
@@ -121,7 +121,7 @@ TEST_CASE("num_collect::rbf::impl::differentiate_polynomial_term") {
 
             REQUIRE(result.has_value());
             CHECK(result->first.degrees() == Eigen::Vector2i{{0, 2}});
-            CHECK(result->second == 24.0);  // NOLINT(*-magic-numbers)
+            CHECK(result->second == 24.0);
         }
 
         SECTION("partially differentiate (x^2 y) once by x and twice by y") {
@@ -143,7 +143,7 @@ TEST_CASE("num_collect::rbf::impl::differentiate_polynomial_term") {
 
             REQUIRE(result.has_value());
             CHECK(result->first.degrees() == Eigen::Vector2i{{2, 1}});
-            CHECK(result->second == 1.0);  // NOLINT(*-magic-numbers)
+            CHECK(result->second == 1.0);
         }
     }
 }

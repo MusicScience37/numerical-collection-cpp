@@ -223,8 +223,7 @@ TEST_CASE("num_collect::opt::impl::adc_ternary_vector") {
         const variable_type width = variable_type::Constant(3.0);
         const variable_type variable = vec.as_variable(lower_bound, width);
         CHECK_THAT(variable(0), Catch::Matchers::WithinRel(1.0));
-        CHECK_THAT(variable(1),
-            Catch::Matchers::WithinRel(-2.0 / 3.0));  // NOLINT(*-magic-numbers)
+        CHECK_THAT(variable(1), Catch::Matchers::WithinRel(-2.0 / 3.0));
     }
 }
 

@@ -15,6 +15,7 @@ Checks: >
     -cppcoreguidelines-avoid-do-while,
     -cppcoreguidelines-c-copy-assignment-signature,
     -cppcoreguidelines-macro-usage,
+    -cppcoreguidelines-avoid-magic-numbers,
   google-*,
     -google-runtime-references,
     -google-readability-todo,
@@ -30,6 +31,7 @@ Checks: >
     -readability-redundant-member-init,
     -readability-math-missing-parentheses,
     -readability-simplify-boolean-expr,
+    -readability-magic-numbers,
   modernize-*,
     -modernize-pass-by-value,
     -modernize-return-braced-init-list,
@@ -91,6 +93,7 @@ Checks: >
 # - openmp-exception-escape is generating warnings for rare cases that cannot be tested.
 # - bugprone-misplaced-widening-cast generates false positives.
 # - cppcoreguidelines-macro-usage generates false positives in this project.
+# - cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers resulted in too many NOLINT comments in this project.
 
 CheckOptions:
   # Naming Conventions

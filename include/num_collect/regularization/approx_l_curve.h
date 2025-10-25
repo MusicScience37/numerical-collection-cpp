@@ -181,7 +181,6 @@ private:
         sample_points_.clear();
         sample_points_.push_back(compute_sample_point(log_min_param));
         sample_points_.push_back(compute_sample_point(
-            // NOLINTNEXTLINE(*-magic-numbers)
             static_cast<scalar_type>(0.5) * (log_min_param + log_max_param)));
         sample_points_.push_back(compute_sample_point(log_max_param));
         calculate_distance_and_direction(1);
@@ -410,9 +409,7 @@ private:
         NUM_COLLECT_ASSERT(sample_points_[index].distance_from_previous_point >=
             min_distance_between_points_);
 
-        const scalar_type next_log_param =
-            // NOLINTNEXTLINE(*-magic-numbers)
-            static_cast<scalar_type>(0.5) *
+        const scalar_type next_log_param = static_cast<scalar_type>(0.5) *
             (sample_points_[index - 1].log_regularization_parameter +
                 sample_points_[index].log_regularization_parameter);
         sample_points_.insert(sample_points_.begin() + index,
