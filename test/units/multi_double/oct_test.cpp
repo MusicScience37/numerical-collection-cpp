@@ -28,6 +28,7 @@
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+#include "format_oct_for_test.h"
 #include "num_collect/multi_double/quad.h"
 
 TEST_CASE("num_collect::multi_double::oct") {
@@ -138,6 +139,10 @@ TEST_CASE("num_collect::multi_double::oct") {
             const auto result = outputs[i];
             const double abs_tol =
                 (std::abs(a.term(0)) + std::abs(b.term(0))) * rel_tol;
+            INFO("a = " << format_oct_for_test(a));
+            INFO("b = " << format_oct_for_test(b));
+            INFO("result_true = " << format_oct_for_test(result_true));
+            INFO("result = " << format_oct_for_test(result));
 
             CHECK_THAT(result.term(0),
                 Catch::Matchers::WithinAbs(result_true.term(0), abs_tol));
@@ -194,6 +199,10 @@ TEST_CASE("num_collect::multi_double::oct") {
             const auto result = outputs[i];
             const double abs_tol =
                 (std::abs(a.term(0)) + std::abs(b.term(0))) * rel_tol;
+            INFO("a = " << format_oct_for_test(a));
+            INFO("b = " << format_oct_for_test(b));
+            INFO("result_true = " << format_oct_for_test(result_true));
+            INFO("result = " << format_oct_for_test(result));
 
             CHECK_THAT(result.term(0),
                 Catch::Matchers::WithinAbs(result_true.term(0), abs_tol));
@@ -250,6 +259,10 @@ TEST_CASE("num_collect::multi_double::oct") {
             const auto result = outputs[i];
             const double abs_tol =
                 (std::abs(a.term(0)) + std::abs(b.term(0))) * rel_tol;
+            INFO("a = " << format_oct_for_test(a));
+            INFO("b = " << format_oct_for_test(b));
+            INFO("result_true = " << format_oct_for_test(result_true));
+            INFO("result = " << format_oct_for_test(result));
 
             CHECK_THAT(result.term(0),
                 Catch::Matchers::WithinAbs(result_true.term(0), abs_tol));
@@ -306,6 +319,10 @@ TEST_CASE("num_collect::multi_double::oct") {
             const auto result = outputs[i];
             const double abs_tol =
                 (std::abs(a.term(0)) + std::abs(b.term(0))) * rel_tol;
+            INFO("a = " << format_oct_for_test(a));
+            INFO("b = " << format_oct_for_test(b));
+            INFO("result_true = " << format_oct_for_test(result_true));
+            INFO("result = " << format_oct_for_test(result));
 
             CHECK_THAT(result.term(0),
                 Catch::Matchers::WithinAbs(result_true.term(0), abs_tol));
