@@ -23,6 +23,8 @@
 
 #include "num_collect/base/concepts/implicitly_convertible_to.h"
 #include "num_collect/multi_double/impl/basic_operations.h"
+#include "num_collect/multi_double/impl/oct_renormalize.h"
+#include "num_collect/multi_double/impl/three_sums.h"
 #include "num_collect/multi_double/quad.h"
 
 namespace num_collect::multi_double {
@@ -114,9 +116,48 @@ public:
         return oct(-terms_[0], -terms_[1], -terms_[2], -terms_[3]);
     }
 
+    /*!
+     * \brief Add a number.
+     *
+     * \param[in] right Right-hand-side number.
+     * \return This number after calculation.
+     */
+    constexpr auto operator+=(const oct& right) noexcept -> oct& {
+        // Last digit of the variable names indicates the order.
+
+        // First, calculate sums for each order.
+        const auto [s0_0, e0_1] = impl::two_sum(terms_[0], right.terms_[0]);
+        const auto [s1_1, e1_2] = impl::two_sum(terms_[1], right.terms_[1]);
+        const auto [s2_2, e2_3] = impl::two_sum(terms_[2], right.terms_[2]);
+        const auto [s3_3, e3_4] = impl::two_sum(terms_[3], right.terms_[3]);
+
+        // Second, collect terms of each order to get unnormalized results.
+        const auto [u1_1, u1_2] = impl::two_sum(e0_1, s1_1);
+        const auto [u2_2, u2_3, u2_4] =
+            impl::three_to_three_sum(e1_2, s2_2, u1_2);
+        const auto [u3_3, u3_4] = impl::three_to_two_sum(e2_3, s3_3, u2_3);
+        const double u4_4 = e3_4 + u2_4 + u3_4;
+
+        // Finally renormalize the results.
+        terms_ = impl::oct_renormalize({s0_0, u1_1, u2_2, u3_3, u4_4});
+
+        return *this;
+    }
+
 private:
     //! Terms.
     std::array<double, 4> terms_{0.0, 0.0, 0.0, 0.0};
 };
+
+/*!
+ * \brief Add two numbers.
+ *
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
+ */
+constexpr auto operator+(const oct& left, const oct& right) noexcept -> oct {
+    return oct(left) += right;
+}
 
 }  // namespace num_collect::multi_double

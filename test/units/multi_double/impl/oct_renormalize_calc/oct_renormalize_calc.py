@@ -13,7 +13,7 @@ SAMPLES = [
     ),
 ]
 
-mpmath.mp.prec = 53 * 4  # Octuple precision
+mpmath.mp.prec = 53 * 4 - 1  # Octuple precision
 
 
 def calculate_one(a0: float, a1: float, a2: float, a3: float, a4: float) -> None:
