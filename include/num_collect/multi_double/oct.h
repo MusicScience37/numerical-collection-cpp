@@ -1,0 +1,122 @@
+/*
+ * Copyright 2025 MusicScience37 (Kenta Kabashima)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*!
+ * \file
+ * \brief Definition of oct class.
+ */
+#pragma once
+
+#include <array>
+
+#include "num_collect/base/concepts/implicitly_convertible_to.h"
+#include "num_collect/multi_double/impl/basic_operations.h"
+#include "num_collect/multi_double/quad.h"
+
+namespace num_collect::multi_double {
+
+/*!
+ * \brief Class of octuple-precision floating-point numbers
+ * using four double-precision floating-point numbers
+ * \cite Hida2000.
+ */
+class oct {
+public:
+    /*!
+     * \brief Constructor.
+     *
+     * This initializes the number to zero.
+     */
+    constexpr oct() noexcept = default;
+
+    /*!
+     * \brief Constructor.
+     *
+     * \param[in] terms Terms.
+     *
+     * This constructor assumes that the terms satisfy
+     * \f$ |term_{i+1}| \leq 1/2 \mathrm{ulp}(term_i) \f$ for
+     * \f$ i = 0, 1, 2 \f$.
+     * If such condition is not satisfied,
+     * the results of any operations are not accurate.
+     */
+    constexpr explicit oct(const std::array<double, 4>& terms) noexcept
+        : terms_(terms) {}
+
+    /*!
+     * \brief Constructor.
+     *
+     * \param[in] term0 0th order term.
+     * \param[in] term1 1st order term.
+     * \param[in] term2 2nd order term.
+     * \param[in] term3 3rd order term.
+     *
+     * This constructor assumes that the terms satisfy
+     * \f$ |term_{i+1}| \leq 1/2 \mathrm{ulp}(term_i) \f$ for
+     * \f$ i = 0, 1, 2 \f$.
+     * If such condition is not satisfied,
+     * the results of any operations are not accurate.
+     */
+    constexpr oct(
+        double term0, double term1, double term2 = 0.0, double term3 = 0.0)
+        : terms_{term0, term1, term2, term3} {}
+
+    /*!
+     * \brief Constructor.
+     *
+     * \tparam Scalar Type of scalar value.
+     * \param[in] value Value.
+     *
+     * This constructor implicitly converts integers and floating-point
+     * numbers to quad numbers.
+     */
+    template <concepts::implicitly_convertible_to<double> Scalar>
+    constexpr oct(Scalar value) noexcept  // NOLINT(*-explicit-*)
+        : terms_{static_cast<double>(value), 0.0, 0.0, 0.0} {}
+
+    /*!
+     * \brief Constructor.
+     *
+     * \param[in] value Quadruple-precision floating-point number.
+     */
+    constexpr oct(const quad& value) noexcept  // NOLINT(*-explicit-*)
+        : terms_{value.high(), value.low(), 0.0, 0.0} {}
+
+    /*!
+     * \brief Get a term.
+     *
+     * \param[in] index Index of the term.
+     * \return Term at the specified index.
+     */
+    [[nodiscard]] constexpr auto term(std::size_t index) const noexcept
+        -> double {
+        return terms_[index];
+    }
+
+    /*!
+     * \brief Negate this number.
+     *
+     * \return Negated number.
+     */
+    constexpr auto operator-() const noexcept -> oct {
+        return oct(-terms_[0], -terms_[1], -terms_[2], -terms_[3]);
+    }
+
+private:
+    //! Terms.
+    std::array<double, 4> terms_{0.0, 0.0, 0.0, 0.0};
+};
+
+}  // namespace num_collect::multi_double

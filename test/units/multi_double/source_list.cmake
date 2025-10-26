@@ -8,6 +8,7 @@ set(SOURCE_FILES
     impl/quad_pow_impl_test.cpp
     impl/quad_root_of_one_plus_square_test.cpp
     impl/quad_trigonometric_impl_test.cpp
+    oct_test.cpp
     quad_io_test.cpp
     quad_math_test.cpp
     quad_test.cpp
