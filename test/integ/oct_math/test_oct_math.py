@@ -42,6 +42,7 @@ REL_ERROR_COLUMN = "Relative Error"
 # - Maximum input.
 OPERATORS = [
     ("operator+", lambda x, y: x + y, 2, -1e50, 1e50),
+    ("operator-", lambda x, y: x - y, 2, -1e50, 1e50),
 ]
 
 

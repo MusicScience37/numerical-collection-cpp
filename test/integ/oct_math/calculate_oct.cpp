@@ -173,6 +173,8 @@ auto main(int argc, char** argv) -> int {
         operator_map{
             {"operator+",
                 binary_operator_evaluator([](oct a, oct b) { return a + b; })},
+            {"operator-",
+                binary_operator_evaluator([](oct a, oct b) { return a - b; })},
         };
 
     const auto iter = operator_map.find(operator_name);

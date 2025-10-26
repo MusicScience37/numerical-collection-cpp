@@ -144,6 +144,16 @@ public:
         return *this;
     }
 
+    /*!
+     * \brief Subtract a number.
+     *
+     * \param[in] right Right-hand-side number.
+     * \return This number after calculation.
+     */
+    constexpr auto operator-=(const oct& right) noexcept -> oct& {
+        return operator+=(-right);
+    }
+
 private:
     //! Terms.
     std::array<double, 4> terms_{0.0, 0.0, 0.0, 0.0};
@@ -158,6 +168,17 @@ private:
  */
 constexpr auto operator+(const oct& left, const oct& right) noexcept -> oct {
     return oct(left) += right;
+}
+
+/*!
+ * \brief Subtract a number from a number.
+ *
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
+ */
+constexpr auto operator-(const oct& left, const oct& right) noexcept -> oct {
+    return oct(left) -= right;
 }
 
 }  // namespace num_collect::multi_double
