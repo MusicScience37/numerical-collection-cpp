@@ -23,6 +23,7 @@
 
 #include "num_collect/base/concepts/implicitly_convertible_to.h"
 #include "num_collect/multi_double/impl/basic_operations.h"
+#include "num_collect/multi_double/impl/nine_sums.h"
 #include "num_collect/multi_double/impl/oct_renormalize.h"
 #include "num_collect/multi_double/impl/six_sums.h"
 #include "num_collect/multi_double/impl/three_sums.h"
@@ -160,34 +161,37 @@ public:
      *
      * \param[in] right Right-hand-side number.
      * \return This number after calculation.
-     *
-     * This implementation omits calculation of the 4th order term.
      */
     constexpr auto operator*=(const oct& right) noexcept -> oct& {
         // Last digit of the variable names indicates the order.
 
-        // First calculates products of terms up to 3rd order.
+        // First calculates products of terms up to 4th order.
         const auto [p00_0, p00_1] = impl::two_prod(terms_[0], right.terms_[0]);
         const auto [p01_1, p01_2] = impl::two_prod(terms_[0], right.terms_[1]);
         const auto [p02_2, p02_3] = impl::two_prod(terms_[0], right.terms_[2]);
-        const double p03_3 = terms_[0] * right.terms_[3];
+        const auto [p03_3, p03_4] = impl::two_prod(terms_[0], right.terms_[3]);
         const auto [p10_1, p10_2] = impl::two_prod(terms_[1], right.terms_[0]);
         const auto [p11_2, p11_3] = impl::two_prod(terms_[1], right.terms_[1]);
-        const double p12_3 = terms_[1] * right.terms_[2];
+        const auto [p12_3, p12_4] = impl::two_prod(terms_[1], right.terms_[2]);
+        const double p13_4 = terms_[1] * right.terms_[3];
         const auto [p20_2, p20_3] = impl::two_prod(terms_[2], right.terms_[0]);
-        const double p21_3 = terms_[2] * right.terms_[1];
-        const double p30_3 = terms_[3] * right.terms_[0];
+        const auto [p21_3, p21_4] = impl::two_prod(terms_[2], right.terms_[1]);
+        const double p22_4 = terms_[2] * right.terms_[2];
+        const auto [p30_3, p30_4] = impl::two_prod(terms_[3], right.terms_[0]);
+        const double p31_4 = terms_[3] * right.terms_[1];
 
         // Second, collect terms of each order to get unnormalized results.
         const auto [u1_1, u1_2, u1_3] =
             impl::three_to_three_sum(p00_1, p01_1, p10_1);
         const auto [u2_2, u2_3, u2_4] =
             impl::six_to_three_sum(p01_2, p02_2, p10_2, p11_2, p20_2, u1_2);
-        const double u3_3 =
-            p02_3 + p03_3 + p11_3 + p12_3 + p20_3 + p21_3 + p30_3 + u1_3 + u2_3;
+        const auto [u3_3, u3_4] = impl::nine_to_two_sum(
+            p02_3, p03_3, p11_3, p12_3, p20_3, p21_3, p30_3, u1_3, u2_3);
+        const double u4_4 =
+            p03_4 + p12_4 + p13_4 + p21_4 + p22_4 + p30_4 + p31_4 + u2_4 + u3_4;
 
         // Finally renormalize the results.
-        terms_ = impl::oct_renormalize({p00_0, u1_1, u2_2, u3_3, u2_4});
+        terms_ = impl::oct_renormalize({p00_0, u1_1, u2_2, u3_3, u4_4});
 
         return *this;
     }

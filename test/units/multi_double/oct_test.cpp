@@ -361,7 +361,7 @@ TEST_CASE("num_collect::multi_double::oct") {
                     -0x1.77550a7016757p-69, 0x1.b8aae4d2e2940p-123)),
             // cspell: enable
         });
-        constexpr double rel_tol = 0x1.0p-206;  // Empirically determined.
+        constexpr double rel_tol = 0x1.0p-211;  // Empirically determined.
 
         const auto outputs = [] {
             std::array<oct, inputs.size()> results{};
@@ -377,7 +377,7 @@ TEST_CASE("num_collect::multi_double::oct") {
             const auto& [a, b, result_true] = inputs[i];
             const auto result = outputs[i];
             const double abs_tol =
-                (std::abs(a.term(0)) + std::abs(b.term(0))) * rel_tol;
+                (std::abs(a.term(0)) * std::abs(b.term(0))) * rel_tol;
             INFO("a = " << format_oct_for_test(a));
             INFO("b = " << format_oct_for_test(b));
             INFO("result_true = " << format_oct_for_test(result_true));
