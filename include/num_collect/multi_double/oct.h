@@ -20,6 +20,7 @@
 #pragma once
 
 #include <array>
+#include <tuple>
 
 #include "num_collect/base/concepts/implicitly_convertible_to.h"
 #include "num_collect/multi_double/impl/basic_operations.h"
@@ -147,6 +148,32 @@ public:
     }
 
     /*!
+     * \brief Add a number.
+     *
+     * \tparam Scalar Type of the right-hand-side number.
+     * \param[in] right Right-hand-side number.
+     * \return This number after calculation.
+     */
+    template <concepts::implicitly_convertible_to<double> Scalar>
+    constexpr auto operator+=(Scalar right) noexcept -> oct& {
+        std::array<double, 5> unnormalized_terms{
+            terms_[0], terms_[1], terms_[2], terms_[3], 0.0};
+        double remaining = static_cast<double>(right);
+        std::tie(unnormalized_terms[0], remaining) =
+            impl::two_sum(unnormalized_terms[0], remaining);
+        std::tie(unnormalized_terms[1], remaining) =
+            impl::two_sum(unnormalized_terms[1], remaining);
+        std::tie(unnormalized_terms[2], remaining) =
+            impl::two_sum(unnormalized_terms[2], remaining);
+        std::tie(unnormalized_terms[3], unnormalized_terms[4]) =
+            impl::two_sum(unnormalized_terms[3], remaining);
+
+        terms_ = impl::oct_renormalize(unnormalized_terms);
+
+        return *this;
+    }
+
+    /*!
      * \brief Subtract a number.
      *
      * \param[in] right Right-hand-side number.
@@ -196,6 +223,36 @@ public:
         return *this;
     }
 
+    /*!
+     * \brief Multiply with another number.
+     *
+     * \tparam Scalar Type of the right-hand-side number.
+     * \param[in] right Right-hand-side number.
+     * \return This number after calculation.
+     */
+    template <concepts::implicitly_convertible_to<double> Scalar>
+    constexpr auto operator*=(Scalar right) noexcept -> oct& {
+        // Last digit of the variable names indicates the order.
+
+        // First calculates products of terms up to 4th order.
+        const auto [p0_0, p0_1] = impl::two_prod(terms_[0], right);
+        const auto [p1_1, p1_2] = impl::two_prod(terms_[1], right);
+        const auto [p2_2, p2_3] = impl::two_prod(terms_[2], right);
+        const auto [p3_3, p3_4] = impl::two_prod(terms_[3], right);
+
+        // Second, collect terms of each order to get unnormalized results.
+        const auto [u1_1, u1_2] = impl::two_sum(p0_1, p1_1);
+        const auto [u2_2, u2_3, u2_4] =
+            impl::three_to_three_sum(p1_2, p2_2, u1_2);
+        const auto [u3_3, u3_4] = impl::three_to_two_sum(p2_3, p3_3, u2_3);
+        const double u4_4 = p3_4 + u2_4 + u3_4;
+
+        // Finally renormalize the results.
+        terms_ = impl::oct_renormalize({p0_0, u1_1, u2_2, u3_3, u4_4});
+
+        return *this;
+    }
+
 private:
     //! Terms.
     std::array<double, 4> terms_{0.0, 0.0, 0.0, 0.0};
@@ -210,6 +267,32 @@ private:
  */
 constexpr auto operator+(const oct& left, const oct& right) noexcept -> oct {
     return oct(left) += right;
+}
+
+/*!
+ * \brief Add two numbers.
+ *
+ * \tparam Scalar Type of the right-hand-side number.
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
+ */
+template <concepts::implicitly_convertible_to<double> Scalar>
+constexpr auto operator+(const oct& left, Scalar right) noexcept -> oct {
+    return oct(left) += right;
+}
+
+/*!
+ * \brief Add two numbers.
+ *
+ * \tparam Scalar Type of the left-hand-side number.
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
+ */
+template <concepts::implicitly_convertible_to<double> Scalar>
+constexpr auto operator+(Scalar left, const oct& right) noexcept -> oct {
+    return oct(right) += left;
 }
 
 /*!
@@ -232,6 +315,32 @@ constexpr auto operator-(const oct& left, const oct& right) noexcept -> oct {
  */
 constexpr auto operator*(const oct& left, const oct& right) noexcept -> oct {
     return oct(left) *= right;
+}
+
+/*!
+ * \brief Multiply a number by a number.
+ *
+ * \tparam Scalar Type of the right-hand-side number.
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
+ */
+template <concepts::implicitly_convertible_to<double> Scalar>
+constexpr auto operator*(const oct& left, Scalar right) noexcept -> oct {
+    return oct(left) *= right;
+}
+
+/*!
+ * \brief Multiply a number by a number.
+ *
+ * \tparam Scalar Type of the left-hand-side number.
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
+ */
+template <concepts::implicitly_convertible_to<double> Scalar>
+constexpr auto operator*(Scalar left, const oct& right) noexcept -> oct {
+    return oct(right) *= left;
 }
 
 }  // namespace num_collect::multi_double
