@@ -1258,4 +1258,57 @@ TEST_CASE("num_collect::multi_double::oct") {
                 Catch::Matchers::WithinAbs(result_true.term(3), abs_tol));
         }
     }
+
+    SECTION("divide zero") {
+        const oct left;
+
+        SECTION("oct / oct") {
+            const oct right = oct(1.0);
+
+            const oct result = left / right;
+
+            CHECK(result.term(0) == 0.0);
+            CHECK(result.term(1) == 0.0);
+            CHECK(result.term(2) == 0.0);
+            CHECK(result.term(3) == 0.0);
+        }
+
+        SECTION("oct / double") {
+            const double right = 1.0;
+
+            const oct result = left / right;
+
+            CHECK(result.term(0) == 0.0);
+            CHECK(result.term(1) == 0.0);
+            CHECK(result.term(2) == 0.0);
+            CHECK(result.term(3) == 0.0);
+        }
+    }
+
+    SECTION(
+        "divide one by two (only the first term of the result is non-zero)") {
+        const auto left = oct(1.0);
+
+        SECTION("oct / oct") {
+            const auto right = oct(2.0);
+
+            const auto result = left / right;
+
+            CHECK(result.term(0) == 0.5);
+            CHECK(result.term(1) == 0.0);
+            CHECK(result.term(2) == 0.0);
+            CHECK(result.term(3) == 0.0);
+        }
+
+        SECTION("oct / double") {
+            const double right = 2.0;
+
+            const auto result = left / right;
+
+            CHECK(result.term(0) == 0.5);
+            CHECK(result.term(1) == 0.0);
+            CHECK(result.term(2) == 0.0);
+            CHECK(result.term(3) == 0.0);
+        }
+    }
 }
