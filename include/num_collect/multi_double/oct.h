@@ -299,6 +299,44 @@ public:
         return *this;
     }
 
+    /*!
+     * \brief Divide by another number.
+     *
+     * \tparam Scalar Type of the right-hand-side number.
+     * \param[in] right Right-hand-side number.
+     * \return This number after calculation.
+     *
+     * This function does not check whether the right-hand-side number is zero.
+     * If it is zero, the result can be infinity or NaN.
+     */
+    template <concepts::implicitly_convertible_to<double> Scalar>
+    constexpr auto operator/=(Scalar right) noexcept -> oct& {
+        if (terms_[0] == 0.0) {
+            return *this;
+        }
+
+        std::array<double, 5> unnormalized_terms{0.0, 0.0, 0.0, 0.0, 0.0};
+        oct remaining = *this;
+        {
+            // First time.
+            unnormalized_terms[0] =
+                remaining.terms_[0] / static_cast<double>(right);
+        }
+        for (std::size_t i = 1; i < 5; ++i) {
+            const auto [high, low] = impl::two_prod(
+                static_cast<double>(right), unnormalized_terms[i - 1]);
+            remaining += oct(-high, -low, 0.0, 0.0);
+            if (remaining.terms_[0] == 0.0) {
+                break;
+            }
+            unnormalized_terms[i] =
+                remaining.terms_[0] / static_cast<double>(right);
+        }
+
+        terms_ = impl::oct_renormalize(unnormalized_terms);
+        return *this;
+    }
+
 private:
     //! Terms.
     std::array<double, 4> terms_{0.0, 0.0, 0.0, 0.0};
@@ -423,6 +461,19 @@ constexpr auto operator*(Scalar left, const oct& right) noexcept -> oct {
  * \return Result.
  */
 constexpr auto operator/(const oct& left, const oct& right) noexcept -> oct {
+    return oct(left) /= right;
+}
+
+/*!
+ * \brief Divide a number by another number.
+ *
+ * \tparam Scalar Type of the right-hand-side number.
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
+ */
+template <concepts::implicitly_convertible_to<double> Scalar>
+constexpr auto operator/(const oct& left, Scalar right) noexcept -> oct {
     return oct(left) /= right;
 }
 
