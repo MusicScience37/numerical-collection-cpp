@@ -265,6 +265,40 @@ public:
         return *this;
     }
 
+    /*!
+     * \brief Divide by another number.
+     *
+     * \param[in] right Right-hand-side number.
+     * \return This number after calculation.
+     *
+     * This function does not check whether the right-hand-side number is zero.
+     * If it is zero, the result can be infinity or NaN.
+     */
+    constexpr auto operator/=(const oct& right) noexcept -> oct& {
+        if (terms_[0] == 0.0) {
+            return *this;
+        }
+
+        std::array<double, 5> unnormalized_terms{0.0, 0.0, 0.0, 0.0, 0.0};
+        oct remaining = *this;
+        {
+            // First time.
+            unnormalized_terms[0] = remaining.terms_[0] / right.terms_[0];
+        }
+        for (std::size_t i = 1; i < 5; ++i) {
+            oct product = right;
+            product *= unnormalized_terms[i - 1];
+            remaining -= product;
+            if (remaining.terms_[0] == 0.0) {
+                break;
+            }
+            unnormalized_terms[i] = remaining.terms_[0] / right.terms_[0];
+        }
+
+        terms_ = impl::oct_renormalize(unnormalized_terms);
+        return *this;
+    }
+
 private:
     //! Terms.
     std::array<double, 4> terms_{0.0, 0.0, 0.0, 0.0};
@@ -379,6 +413,17 @@ constexpr auto operator*(const oct& left, Scalar right) noexcept -> oct {
 template <concepts::implicitly_convertible_to<double> Scalar>
 constexpr auto operator*(Scalar left, const oct& right) noexcept -> oct {
     return oct(right) *= left;
+}
+
+/*!
+ * \brief Divide a number by another number.
+ *
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
+ */
+constexpr auto operator/(const oct& left, const oct& right) noexcept -> oct {
+    return oct(left) /= right;
 }
 
 }  // namespace num_collect::multi_double

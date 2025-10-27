@@ -44,6 +44,7 @@ OPERATORS = [
     ("operator+", lambda x, y: x + y, 2, -1e10, 1e10),
     ("operator-", lambda x, y: x - y, 2, -1e10, 1e10),
     ("operator*", lambda x, y: x * y, 2, -1e10, 1e10),
+    ("operator/", lambda x, y: x / y, 2, -1e10, 1e10),
 ]
 
 
