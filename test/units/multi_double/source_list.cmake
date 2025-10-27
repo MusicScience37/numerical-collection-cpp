@@ -1,5 +1,6 @@
 set(SOURCE_FILES
     impl/basic_operations_test.cpp
+    impl/oct_renormalize_test.cpp
     impl/quad_exp_impl_test.cpp
     impl/quad_format_decimal_scientific_to_test.cpp
     impl/quad_internal_constants_test.cpp
@@ -7,6 +8,9 @@ set(SOURCE_FILES
     impl/quad_pow_impl_test.cpp
     impl/quad_root_of_one_plus_square_test.cpp
     impl/quad_trigonometric_impl_test.cpp
+    impl/six_sums_test.cpp
+    impl/three_sums_test.cpp
+    oct_test.cpp
     quad_io_test.cpp
     quad_math_test.cpp
     quad_test.cpp
