@@ -184,6 +184,18 @@ public:
     }
 
     /*!
+     * \brief Subtract a number.
+     *
+     * \tparam Scalar Type of the right-hand-side number.
+     * \param[in] right Right-hand-side number.
+     * \return This number after calculation.
+     */
+    template <concepts::implicitly_convertible_to<double> Scalar>
+    constexpr auto operator-=(Scalar right) noexcept -> oct& {
+        return operator+=(-right);
+    }
+
+    /*!
      * \brief Multiply with another number.
      *
      * \param[in] right Right-hand-side number.
@@ -304,6 +316,32 @@ constexpr auto operator+(Scalar left, const oct& right) noexcept -> oct {
  */
 constexpr auto operator-(const oct& left, const oct& right) noexcept -> oct {
     return oct(left) -= right;
+}
+
+/*!
+ * \brief Subtract a number from a number.
+ *
+ * \tparam Scalar Type of the right-hand-side number.
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
+ */
+template <concepts::implicitly_convertible_to<double> Scalar>
+constexpr auto operator-(const oct& left, Scalar right) noexcept -> oct {
+    return oct(left) -= right;
+}
+
+/*!
+ * \brief Subtract a number from a number.
+ *
+ * \tparam Scalar Type of the left-hand-side number.
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
+ */
+template <concepts::implicitly_convertible_to<double> Scalar>
+constexpr auto operator-(Scalar left, const oct& right) noexcept -> oct {
+    return oct(-right) += left;
 }
 
 /*!
