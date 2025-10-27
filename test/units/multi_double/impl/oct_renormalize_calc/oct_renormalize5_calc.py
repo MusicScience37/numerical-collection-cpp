@@ -1,4 +1,4 @@
-"""Calculate true values for tests of oct_renormalize function."""
+"""Calculate true values for tests of oct_renormalize function with 5 arguments."""
 
 import mpmath
 from num_collect_test_utils.multi_double.split_oct import split_oct

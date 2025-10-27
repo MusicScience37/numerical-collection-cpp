@@ -48,4 +48,25 @@ constexpr auto oct_renormalize(std::array<double, 5> inputs)
     return results;
 }
 
+/*!
+ * \brief Renormalize an octuple-precision number.
+ *
+ * \param[in] inputs An array of 4 double-precision numbers.
+ * \return An array of 4 double-precision numbers after renormalization.
+ */
+constexpr auto oct_renormalize(std::array<double, 4> inputs)
+    -> std::array<double, 4> {
+    double temp_high{};
+    std::tie(temp_high, inputs[3]) = quick_two_sum(inputs[2], inputs[3]);
+    std::tie(temp_high, inputs[2]) = quick_two_sum(inputs[1], temp_high);
+    std::tie(inputs[0], inputs[1]) = quick_two_sum(inputs[0], temp_high);
+
+    std::array<double, 4> results{};
+    double temp_low{};
+    std::tie(results[0], temp_low) = quick_two_sum(inputs[0], inputs[1]);
+    std::tie(results[1], temp_low) = quick_two_sum(temp_low, inputs[2]);
+    std::tie(results[2], results[3]) = quick_two_sum(temp_low, inputs[3]);
+    return results;
+}
+
 }  // namespace num_collect::multi_double::impl

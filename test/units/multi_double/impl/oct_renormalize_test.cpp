@@ -30,7 +30,7 @@
 TEST_CASE("num_collect::multi_double::impl::oct_renormalize") {
     using num_collect::multi_double::impl::oct_renormalize;
 
-    SECTION("calculate random problems") {
+    SECTION("calculate random problems with 5 arguments") {
         std::array<double, 5> inputs{};
         std::array<double, 4> results_true{};
         std::tie(inputs, results_true) =
@@ -49,6 +49,40 @@ TEST_CASE("num_collect::multi_double::impl::oct_renormalize") {
         INFO("inputs: " << std::hexfloat << std::setprecision(13) << inputs[0]
                         << ", " << inputs[1] << ", " << inputs[2] << ", "
                         << inputs[3] << ", " << inputs[4]);
+        INFO("results_true: " << std::hexfloat << std::setprecision(13)
+                              << results_true[0] << ", " << results_true[1]
+                              << ", " << results_true[2] << ", "
+                              << results_true[3]);
+
+        const auto results = oct_renormalize(inputs);
+        INFO("results: " << std::hexfloat << std::setprecision(13) << results[0]
+                         << ", " << results[1] << ", " << results[2] << ", "
+                         << results[3]);
+
+        for (std::size_t i = 0; i < results.size(); ++i) {
+            INFO("i = " << i);
+            CHECK_THAT(
+                results[i], Catch::Matchers::WithinULP(results_true[i], 0));
+        }
+    }
+
+    SECTION("calculate random problems with 4 arguments") {
+        std::array<double, 4> inputs{};
+        std::array<double, 4> results_true{};
+        std::tie(inputs, results_true) = GENERATE(Catch::Generators::table<
+            std::array<double, 4>, std::array<double, 4>>({
+            // cspell: disable
+            std::make_tuple(std::to_array<double>({0x1.a45f4d3ecd99ap+28,
+                                0x1.9a21dc10c2ea5p-22, 0x1.a1bf18db488afp-72,
+                                0x1.c36b2a2df1c6fp-122}),
+                std::to_array<double>(
+                    {0x1.a45f4d3ecd9a0p+28, 0x1.a21dc10c2eab8p-26,
+                        0x1.bf18db488b60ep-80, -0x1.4d5d20e391000p-134})),
+            // cspell: enable
+        }));
+        INFO("inputs: " << std::hexfloat << std::setprecision(13) << inputs[0]
+                        << ", " << inputs[1] << ", " << inputs[2] << ", "
+                        << inputs[3]);
         INFO("results_true: " << std::hexfloat << std::setprecision(13)
                               << results_true[0] << ", " << results_true[1]
                               << ", " << results_true[2] << ", "

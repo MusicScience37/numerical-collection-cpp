@@ -334,4 +334,63 @@ TEST_CASE("num_collect::multi_double::oct") {
                 Catch::Matchers::WithinAbs(result_true.term(3), abs_tol));
         }
     }
+
+    SECTION("multiply oct by oct at runtime") {
+        static constexpr auto inputs = std::to_array({
+            // cspell: disable
+            std::make_tuple(
+                oct(0x1.96179cb334bc3p-8, 0x1.410aea50a8609p-63,
+                    -0x1.dc61650752178p-119, -0x1.c877d80cd5a00p-173),
+                oct(0x1.a80aa52d84e0fp-32, 0x1.9b82745fe1ae1p-89,
+                    0x1.98ae81a4ae4a7p-143, -0x1.65a21f469be00p-197),
+                oct(0x1.5053ff3d2da36p-39, 0x1.de21267093bb6p-93,
+                    -0x1.0ed069f1d85f4p-147, 0x1.4610d706c8830p-201)),
+            std::make_tuple(
+                oct(0x1.ac9e3ae780628p-13, -0x1.774892a4c52fap-68,
+                    -0x1.b780d62ef948fp-122, 0x1.3700688b8ca80p-176),
+                oct(0x1.33cc1fd9d87abp-12, 0x1.37be720f182efp-67,
+                    -0x1.3da5094b40d91p-121, 0x1.e86a168b51980p-177),
+                oct(0x1.01abc2073a92bp-24, -0x1.dc93071c53107p-78,
+                    -0x1.b53d52674cceap-136, 0x1.d5787de5a0600p-191)),
+            std::make_tuple(
+                oct(0x1.7ef5f07995547p+3, -0x1.fb22a325fa712p-51,
+                    0x1.573318b2e8163p-107, -0x1.5b06031d45400p-163),
+                oct(-0x1.ad9874de18cdcp+37, -0x1.3e0eb7f68d4ffp-17,
+                    0x1.440e7cdebbc48p-71, -0x1.4361d93087ed0p-125),
+                oct(-0x1.41531a6b1b63dp+41, 0x1.1da03bd52c9d9p-15,
+                    -0x1.77550a7016757p-69, 0x1.b8aae4d2e2940p-123)),
+            // cspell: enable
+        });
+        constexpr double rel_tol = 0x1.0p-206;  // Empirically determined.
+
+        const auto outputs = [] {
+            std::array<oct, inputs.size()> results{};
+            for (std::size_t i = 0; i < inputs.size(); ++i) {
+                const auto& [a, b, _] = inputs[i];
+                results[i] = a * b;
+            }
+            return results;
+        }();
+
+        for (std::size_t i = 0; i < inputs.size(); ++i) {
+            INFO("i = " << i);
+            const auto& [a, b, result_true] = inputs[i];
+            const auto result = outputs[i];
+            const double abs_tol =
+                (std::abs(a.term(0)) + std::abs(b.term(0))) * rel_tol;
+            INFO("a = " << format_oct_for_test(a));
+            INFO("b = " << format_oct_for_test(b));
+            INFO("result_true = " << format_oct_for_test(result_true));
+            INFO("result = " << format_oct_for_test(result));
+
+            CHECK_THAT(result.term(0),
+                Catch::Matchers::WithinAbs(result_true.term(0), abs_tol));
+            CHECK_THAT(result.term(1),
+                Catch::Matchers::WithinAbs(result_true.term(1), abs_tol));
+            CHECK_THAT(result.term(2),
+                Catch::Matchers::WithinAbs(result_true.term(2), abs_tol));
+            CHECK_THAT(result.term(3),
+                Catch::Matchers::WithinAbs(result_true.term(3), abs_tol));
+        }
+    }
 }

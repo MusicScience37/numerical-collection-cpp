@@ -24,6 +24,7 @@
 #include "num_collect/base/concepts/implicitly_convertible_to.h"
 #include "num_collect/multi_double/impl/basic_operations.h"
 #include "num_collect/multi_double/impl/oct_renormalize.h"
+#include "num_collect/multi_double/impl/six_sums.h"
 #include "num_collect/multi_double/impl/three_sums.h"
 #include "num_collect/multi_double/quad.h"
 
@@ -154,6 +155,43 @@ public:
         return operator+=(-right);
     }
 
+    /*!
+     * \brief Multiply with another number.
+     *
+     * \param[in] right Right-hand-side number.
+     * \return This number after calculation.
+     *
+     * This implementation omits calculation of the 4th order term.
+     */
+    constexpr auto operator*=(const oct& right) noexcept -> oct& {
+        // Last digit of the variable names indicates the order.
+
+        // First calculates products of terms up to 3rd order.
+        const auto [p00_0, p00_1] = impl::two_prod(terms_[0], right.terms_[0]);
+        const auto [p01_1, p01_2] = impl::two_prod(terms_[0], right.terms_[1]);
+        const auto [p02_2, p02_3] = impl::two_prod(terms_[0], right.terms_[2]);
+        const double p03_3 = terms_[0] * right.terms_[3];
+        const auto [p10_1, p10_2] = impl::two_prod(terms_[1], right.terms_[0]);
+        const auto [p11_2, p11_3] = impl::two_prod(terms_[1], right.terms_[1]);
+        const double p12_3 = terms_[1] * right.terms_[2];
+        const auto [p20_2, p20_3] = impl::two_prod(terms_[2], right.terms_[0]);
+        const double p21_3 = terms_[2] * right.terms_[1];
+        const double p30_3 = terms_[3] * right.terms_[0];
+
+        // Second, collect terms of each order to get unnormalized results.
+        const auto [u1_1, u1_2, u1_3] =
+            impl::three_to_three_sum(p00_1, p01_1, p10_1);
+        const auto [u2_2, u2_3, u2_4] =
+            impl::six_to_three_sum(p01_2, p02_2, p10_2, p11_2, p20_2, u1_2);
+        const double u3_3 =
+            p02_3 + p03_3 + p11_3 + p12_3 + p20_3 + p21_3 + p30_3 + u1_3 + u2_3;
+
+        // Finally renormalize the results.
+        terms_ = impl::oct_renormalize({p00_0, u1_1, u2_2, u3_3, u2_4});
+
+        return *this;
+    }
+
 private:
     //! Terms.
     std::array<double, 4> terms_{0.0, 0.0, 0.0, 0.0};
@@ -179,6 +217,17 @@ constexpr auto operator+(const oct& left, const oct& right) noexcept -> oct {
  */
 constexpr auto operator-(const oct& left, const oct& right) noexcept -> oct {
     return oct(left) -= right;
+}
+
+/*!
+ * \brief Multiply two numbers.
+ *
+ * \param[in] left Left-hand-side number.
+ * \param[in] right Right-hand-side number.
+ * \return Result.
+ */
+constexpr auto operator*(const oct& left, const oct& right) noexcept -> oct {
+    return oct(left) *= right;
 }
 
 }  // namespace num_collect::multi_double
