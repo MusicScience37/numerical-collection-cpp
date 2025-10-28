@@ -22,8 +22,16 @@
 
 #include <tuple>
 
+#ifdef _MSC_VER
+// MSVC does not define __FMA__, but when __AVX2__ is defined, FMA is available.
+#if defined(__AVX2__)
+#define NUM_COLLECT_MULTI_DOUBLE_HAS_AVX2_FMA
+#endif
+#else
+// Other compilers correctly define both __AVX2__ and __FMA__.
 #if defined(__AVX2__) && defined(__FMA__)
 #define NUM_COLLECT_MULTI_DOUBLE_HAS_AVX2_FMA
+#endif
 #endif
 
 #ifdef NUM_COLLECT_MULTI_DOUBLE_HAS_AVX2_FMA
