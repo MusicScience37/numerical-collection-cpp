@@ -15,7 +15,7 @@ CLANG_INCLUDE_OPTION = ["-isystem", "/usr/lib/llvm-21/include/c++/v1/"]
 ROOT_DIR = pathlib.Path(__file__).absolute().parent.parent
 IWYU_MAPPING_PATH = ROOT_DIR / "iwyu_mappings.imp"
 
-IS_SUCCESS = True
+IS_SUCCESS = True  # pylint: disable=invalid-name
 
 
 class IwyuProcessError(RuntimeError):
