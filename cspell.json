@@ -342,6 +342,7 @@
     "tsan",
     "ubsan",
     "unformattable",
+    "unshallow",
     "unsynchronized",
     "upsampled",
     "upsampling",
