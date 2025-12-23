@@ -23,6 +23,7 @@
 #include <Eigen/SparseCore>
 
 #include "ct_simulation_common.h"
+#include "ct_simulation_write_png.h"
 #include "num_collect/regularization/implicit_gcv.h"
 #include "num_collect/regularization/tgv2_admm.h"
 #include "num_prob_collect/regularization/add_noise.h"
@@ -95,6 +96,7 @@ auto main(int argc, char** argv) -> int {
 
     // Visualize the result.
     visualize_result(origin, solution, "TGV2 Regularization", "tgv2_admm");
+    write_png(origin, solution, "tgv2_admm");
 
     return 0;
 }
