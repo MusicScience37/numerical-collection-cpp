@@ -89,7 +89,7 @@ public:
      * destruct those arguments.
      */
     void compute(const coeff_type& coeff, const data_type& data) {
-        svd_.compute(coeff, Eigen::ComputeThinU | Eigen::ComputeThinV);
+        svd_.compute(coeff);
         rot_data_ = svd_.matrixU().adjoint() * data;
         const index_type rank = svd_.nonzeroSingularValues();
         NUM_COLLECT_LOG_DEBUG(
@@ -278,7 +278,7 @@ public:
 
 private:
     //! SVD of the coefficient matrix.
-    Eigen::BDCSVD<coeff_type> svd_{};
+    Eigen::BDCSVD<coeff_type, Eigen::ComputeThinU | Eigen::ComputeThinV> svd_{};
 
     //! Data in the space of singular values.
     data_type rot_data_{};
