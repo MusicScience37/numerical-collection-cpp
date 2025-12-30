@@ -93,7 +93,12 @@ public:
     //! \copydoc ode::solver_base::steps
     [[nodiscard]] auto steps() const -> index_type { return steps_; }
 
-    //! \copydoc ode::solver_base::step_size(scalar_type)
+    /*!
+     * \brief Set the step size.
+     *
+     * \param[in] val Value.
+     * \return This object.
+     */
     auto step_size(scalar_type val) -> this_type& {
         NUM_COLLECT_PRECONDITION(val > static_cast<scalar_type>(0),
             "Step size must be a positive value.");

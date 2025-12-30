@@ -39,7 +39,7 @@ TEST_CASE("num_collect::util::nearest_neighbor_searcher") {
         const nearest_neighbor_searcher<double> searcher(points);
 
         SECTION("k nearest neighbors") {
-            const double query_point = 2.5;
+            const double query_point = 2.6;
             constexpr index_type num_neighbors = 2;
             vector<std::pair<index_type, double>> indices_and_distances;
 
@@ -49,10 +49,10 @@ TEST_CASE("num_collect::util::nearest_neighbor_searcher") {
             REQUIRE(indices_and_distances.size() == 2);
             CHECK(indices_and_distances[0].first == 1);
             CHECK_THAT(indices_and_distances[0].second,
-                Catch::Matchers::WithinRel(0.5));
+                Catch::Matchers::WithinRel(0.6));
             CHECK(indices_and_distances[1].first == 2);
             CHECK_THAT(indices_and_distances[1].second,
-                Catch::Matchers::WithinRel(1.5));
+                Catch::Matchers::WithinRel(1.4));
         }
 
         SECTION("neighbors within radius") {
