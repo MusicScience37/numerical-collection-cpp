@@ -82,14 +82,8 @@ if(NUM_COLLECT_TESTING)
 endif()
 
 if(NUM_COLLECT_BUILD_EXAMPLES OR NUM_COLLECT_BUILD_EXPERIMENTS)
-    # pngpp
-    find_path(PNGPP_INCLUDE_DIRS "png++/color.hpp")
-    add_library(pngpp_pngpp INTERFACE)
-    target_include_directories(pngpp_pngpp SYSTEM
-                               INTERFACE ${PNGPP_INCLUDE_DIRS})
+    # libpng
     find_package(PNG REQUIRED)
-    target_link_libraries(pngpp_pngpp INTERFACE PNG::PNG)
-    add_library(pngpp::pngpp ALIAS pngpp_pngpp)
 endif()
 
 if(NUM_COLLECT_BUILD_EXAMPLES
@@ -153,7 +147,7 @@ if(NUM_COLLECT_TESTING)
     add_subdirectory(test)
 endif()
 
-if(NUM_COLLECT_BUILD_EXAMPLES)
+if(NUM_COLLECT_BUILD_EXAMPLES OR NUM_COLLECT_BUILD_EXPERIMENTS)
     add_subdirectory(examples)
 endif()
 

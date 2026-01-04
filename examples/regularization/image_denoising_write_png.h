@@ -22,9 +22,6 @@
 #include <string>
 
 #include <Eigen/Core>
-#include <png++/gray_pixel.hpp>
-#include <png++/image.hpp>
-#include <png++/types.hpp>
 
 #include "num_collect/logging/logger.h"
 #include "num_collect/util/assert.h"
