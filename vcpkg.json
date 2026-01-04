@@ -13,7 +13,6 @@
     "zlib",
     "cpp-stat-bench",
     "approval-tests-cpp",
-    "pngpp",
     "libpng",
     "bfgroup-lyra",
     "pkgconf",

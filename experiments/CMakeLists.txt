@@ -2,7 +2,8 @@ option(NUM_COLLECT_TEST_EXPERIMENTS
        "test execution of experiments in numerical-collection-cpp" OFF)
 function(add_experiment TARGET)
     add_executable(${TARGET} ${ARGN})
-    target_link_libraries(${TARGET} PRIVATE num_collect num_prob_collect)
+    target_link_libraries(${TARGET} PRIVATE num_collect num_prob_collect
+                                            example_common)
     if(NUM_COLLECT_TEST_EXPERIMENTS)
         add_test(
             NAME ${TARGET}

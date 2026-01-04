@@ -22,43 +22,10 @@
 #include <string>
 
 #include <Eigen/Core>
-#include <png++/gray_pixel.hpp>
-#include <png++/image.hpp>
-#include <png++/types.hpp>
 
 #include "num_collect/logging/logger.h"
 #include "num_collect/util/assert.h"
-
-/*!
- * \brief Write a PNG file of a single matrix.
- *
- * \param[in] matrix Matrix to write.
- * \param[in] filepath File path to write.
- * \param[in] logger Logger.
- */
-inline void write_png_one(const Eigen::MatrixXd& matrix,
-    const std::string& filepath, const num_collect::logging::logger& logger) {
-    using png_index_type = png::uint_32;
-
-    png::image<png::gray_pixel> image(
-        static_cast<png_index_type>(matrix.cols()),
-        static_cast<png_index_type>(matrix.rows()));
-    constexpr double max_pixel_value = 255.0;
-    constexpr double min_pixel_value = 0.0;
-    constexpr double scale = max_pixel_value;
-    for (num_collect::index_type i = 0; i < matrix.rows(); ++i) {
-        for (num_collect::index_type j = 0; j < matrix.cols(); ++j) {
-            const double raw_pixel_value = scale * matrix(i, j);
-            const auto clipped_pixel_value = static_cast<std::uint8_t>(std::max(
-                min_pixel_value, std::min(max_pixel_value, raw_pixel_value)));
-            image[static_cast<png_index_type>(j)]
-                 [static_cast<png_index_type>(i)] = clipped_pixel_value;
-        }
-    }
-
-    image.write(filepath);
-    logger.info()("Wrote {}.", filepath);
-}
+#include "write_png.h"
 
 /*!
  * \brief Write PNG files of the result.
@@ -78,16 +45,13 @@ inline void write_png(const Eigen::MatrixXd& origin,
     NUM_COLLECT_ASSERT(origin.cols() == solution.cols());
 
     num_collect::logging::logger logger;
-    write_png_one(origin,
+    write_png(origin,
         fmt::format(
-            "./image_denoising_{}_origin.png", algorithm_name_for_file_name),
-        logger);
-    write_png_one(data,
+            "./image_denoising_{}_origin.png", algorithm_name_for_file_name));
+    write_png(data,
         fmt::format(
-            "./image_denoising_{}_data.png", algorithm_name_for_file_name),
-        logger);
-    write_png_one(solution,
+            "./image_denoising_{}_data.png", algorithm_name_for_file_name));
+    write_png(solution,
         fmt::format(
-            "./image_denoising_{}_solution.png", algorithm_name_for_file_name),
-        logger);
+            "./image_denoising_{}_solution.png", algorithm_name_for_file_name));
 }

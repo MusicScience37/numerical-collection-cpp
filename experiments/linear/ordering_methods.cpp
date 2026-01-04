@@ -18,52 +18,35 @@
  * \brief Example of ordering methods for sparse matrices.
  */
 #include <algorithm>
-#include <cstdint>
 #include <random>
 #include <string>
-#include <vector>
 
 #include <Eigen/Core>
 #include <Eigen/OrderingMethods>
 #include <Eigen/SparseCore>
 #include <fmt/format.h>
-#include <png++/image.hpp>
-#include <png++/rgb_pixel.hpp>
-#include <png++/types.hpp>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/linear/cuthill_mckee_ordering.h"
 #include "num_collect/linear/reverse_cuthill_mckee_ordering.h"
 #include "num_collect/logging/logger.h"
 #include "num_prob_collect/linear/laplacian_2d_grid.h"
+#include "write_png.h"
 
 using mat_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 using vec_type = Eigen::VectorXd;
 using grid_type = num_prob_collect::linear::laplacian_2d_grid<mat_type>;
 
-static void write_image(const mat_type& matrix, const std::string& filepath,
-    const num_collect::logging::logger& logger) {
-    const num_collect::index_type rows = matrix.rows();
-    const num_collect::index_type cols = matrix.cols();
-
-    using png_index_type = png::uint_32;
-
-    png::image<png::rgb_pixel> image(
-        static_cast<png_index_type>(rows), static_cast<png_index_type>(cols));
-    for (num_collect::index_type i = 0; i < rows; ++i) {
-        for (num_collect::index_type j = 0; j < cols; ++j) {
-            const double coeff = matrix.coeff(i, j);
-            const bool is_zero = coeff == 0.0;
-            const std::uint8_t pixel_val = is_zero
-                ? static_cast<std::uint8_t>(255)
-                : static_cast<std::uint8_t>(0);
-            image[static_cast<png_index_type>(i)][static_cast<png_index_type>(
-                j)] = png::rgb_pixel(pixel_val, pixel_val, pixel_val);
+static void write_image(const mat_type& matrix, const std::string& filepath) {
+    // Change to matrix of 0 or 1 for visualization.
+    Eigen::MatrixXd output_matrix =
+        Eigen::MatrixXd::Zero(matrix.rows(), matrix.cols());
+    for (num_collect::index_type i = 0; i < matrix.rows(); ++i) {
+        for (typename mat_type::InnerIterator it(matrix, i); it; ++it) {
+            output_matrix(i, it.col()) = 1.0;
         }
     }
-
-    image.write(filepath);
-    logger.info()("Wrote {}.", filepath);
+    write_png(output_matrix, filepath);
 }
 
 static void randomize(const mat_type& input, mat_type& output) {
@@ -83,16 +66,14 @@ static void randomize(const mat_type& input, mat_type& output) {
 }
 
 template <typename Ordering>
-static void test_ordering(const mat_type& matrix,
-    const std::string& method_name,
-    const num_collect::logging::logger& logger) {
+static void test_ordering(
+    const mat_type& matrix, const std::string& method_name) {
     Ordering ordering;
     Eigen::PermutationMatrix<Eigen::Dynamic> permutation;
     ordering(matrix, permutation);
     mat_type ordered_matrix;
     ordered_matrix = matrix.twistedBy(permutation);
-    write_image(
-        ordered_matrix, fmt::format("./ordering_{}.png", method_name), logger);
+    write_image(ordered_matrix, fmt::format("./ordering_{}.png", method_name));
 }
 
 auto main() -> int {
@@ -107,13 +88,13 @@ auto main() -> int {
 
     mat_type matrix;
     randomize(grid.mat(), matrix);
-    write_image(matrix, "./ordering_original.png", logger);
+    write_image(matrix, "./ordering_original.png");
 
-    test_ordering<Eigen::COLAMDOrdering<int>>(matrix, "colamd", logger);
+    test_ordering<Eigen::COLAMDOrdering<int>>(matrix, "colamd");
     test_ordering<num_collect::linear::cuthill_mckee_ordering<int>>(
-        matrix, "cuthill_mckee", logger);
+        matrix, "cuthill_mckee");
     test_ordering<num_collect::linear::reverse_cuthill_mckee_ordering<int>>(
-        matrix, "reverse_cuthill_mckee", logger);
+        matrix, "reverse_cuthill_mckee");
 
     return 0;
 }

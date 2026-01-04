@@ -19,7 +19,7 @@
  */
 #include "num_collect/roots/newton_raphson.h"
 
-#include "../configure_logging.h"
+#include "configure_logging.h"
 #include "num_collect/logging/logger.h"
 #include "num_prob_collect/roots/cubic_root_test_function.h"
 
