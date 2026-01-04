@@ -19,7 +19,7 @@
  */
 #include "num_collect/opt/downhill_simplex.h"
 
-#include "../configure_logging.h"
+#include "configure_logging.h"
 #include "num_prob_collect/opt/multi_quadratic_function.h"
 
 auto main() -> int {

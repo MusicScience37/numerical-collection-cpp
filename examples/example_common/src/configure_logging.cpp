@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 MusicScience37 (Kenta Kabashima)
+ * Copyright 2026 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,12 @@
  */
 /*!
  * \file
- * \brief Example to use adaptive_diagonal_curves class.
+ * \brief Implementation of configure_logging function.
  */
-#include "num_collect/opt/adaptive_diagonal_curves.h"
-
-#include <Eigen/Core>
-
 #include "configure_logging.h"
-#include "num_prob_collect/opt/shekel_function.h"
 
-auto main() -> int {
-    configure_logging(100);
-    num_collect::opt::adaptive_diagonal_curves<
-        num_prob_collect::opt::shekel_function>
-        optimizer(num_prob_collect::opt::shekel_function(5));
-    optimizer.init(Eigen::Vector4d::Zero(), Eigen::Vector4d::Constant(10.0));
-    optimizer.max_evaluations(10000);
-    optimizer.min_rate_imp(1e-4);
-    optimizer.solve();
+void configure_logging(num_collect::index_type iteration_output_period) {
+    num_collect::logging::edit_default_log_tag_config()
+        .output_log_level(num_collect::logging::log_level::iteration)
+        .iteration_output_period(iteration_output_period);
 }

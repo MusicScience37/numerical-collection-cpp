@@ -19,7 +19,7 @@
  */
 #include "num_collect/opt/golden_section_search.h"
 
-#include "../configure_logging.h"
+#include "configure_logging.h"
 #include "num_prob_collect/opt/quadratic_function.h"
 
 auto main() -> int {

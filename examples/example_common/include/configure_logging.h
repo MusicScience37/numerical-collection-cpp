@@ -25,10 +25,7 @@
 
 /*!
  * \brief Configure logging for examples.
+ *
+ * \param[in] iteration_output_period Period to write iteration logs.
  */
-inline void configure_logging(
-    num_collect::index_type iteration_output_period = 1) {
-    num_collect::logging::edit_default_log_tag_config()
-        .output_log_level(num_collect::logging::log_level::iteration)
-        .iteration_output_period(iteration_output_period);
-}
+void configure_logging(num_collect::index_type iteration_output_period = 1);

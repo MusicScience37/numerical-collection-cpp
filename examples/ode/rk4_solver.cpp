@@ -21,7 +21,7 @@
 #include <iomanip>
 #include <iostream>
 
-#include "../configure_logging.h"
+#include "configure_logging.h"
 #include "num_collect/ode/runge_kutta/rk4_formula.h"
 #include "num_prob_collect/ode/exponential_problem.h"
 
