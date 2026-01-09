@@ -33,6 +33,7 @@ Documentation built in CI:
 | Version     | Documentation                                                   | Full API Reference (Doxygen)                                        |
 | :---------- | :-------------------------------------------------------------- | :------------------------------------------------------------------ |
 | main branch | [Documentation](https://numcollect.musicscience37.com/)         | [API Reference](https://numcollect.musicscience37.com/api/)         |
+| v0.13.0     | [Documentation](https://numcollect.musicscience37.com/v0.13.0/) | [API Reference](https://numcollect.musicscience37.com/v0.13.0/api/) |
 | v0.12.0     | [Documentation](https://numcollect.musicscience37.com/v0.12.0/) | [API Reference](https://numcollect.musicscience37.com/v0.12.0/api/) |
 | v0.11.0     | [Documentation](https://numcollect.musicscience37.com/v0.11.0/) | [API Reference](https://numcollect.musicscience37.com/v0.11.0/api/) |
 
