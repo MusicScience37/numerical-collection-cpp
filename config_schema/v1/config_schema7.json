@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft-07/schema",
-  "title": "numerical-collection-cpp configuration schema.",
-  "description": "Schema of configurations in numerical-collection-cpp project for JSON Schema Draft 7.",
+  "title": "Numerical Collection C++ configuration schema.",
+  "description": "Schema of configurations in Numerical Collection C++ project for JSON Schema Draft 7.",
   "type": "object",
   "definitions": {
     "log_tag_config": {
@@ -195,7 +195,7 @@
   },
   "properties": {
     "num_collect": {
-      "description": "Configurations of numerical-collection-cpp.",
+      "description": "Configurations of Numerical Collection C++.",
       "type": "object",
       "properties": {
         "logging": {

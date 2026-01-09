@@ -1,4 +1,4 @@
-# numerical-collection-cpp
+# Numerical Collection C++
 
 ![Project logo](doc/icon_logo/logo.svg)
 

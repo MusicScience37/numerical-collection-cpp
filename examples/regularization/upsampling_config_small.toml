@@ -15,7 +15,7 @@ upsampled_cols = 5
 # 5: Two smooth circles.
 sample_image_index = 4
 
-# Configurations of numerical-collection-cpp library.
+# Configurations of Numerical Collection C++ library.
 "$schema" = "https://numcollect.musicscience37.com/config_schema/v3/config_schema.json"
 
 [[num_collect.logging.tag_configs]]

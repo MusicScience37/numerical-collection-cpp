@@ -19,11 +19,11 @@
  */
 #pragma once
 
-//! Major version of numerical-collection-cpp project.
+//! Major version of Numerical Collection C++ project.
 #define NUM_COLLECT_VERSION_MAJOR 0
 
-//! Minor version of numerical-collection-cpp project.
+//! Minor version of Numerical Collection C++ project.
 #define NUM_COLLECT_VERSION_MINOR 13
 
-//! Patch version of numerical-collection-cpp project.
+//! Patch version of Numerical Collection C++ project.
 #define NUM_COLLECT_VERSION_PATCH 0
