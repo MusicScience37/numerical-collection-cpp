@@ -8,6 +8,8 @@ RUN apt-get update && \
     nano \
     git-lfs \
     sudo \
+    # For icon conversion
+    imagemagick \
     # For configuration of locale
     locales \
     && \
