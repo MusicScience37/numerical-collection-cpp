@@ -12,7 +12,7 @@ THIS_DIR = pathlib.Path(__file__).absolute().parent
 project = "Numerical Collection C++"
 release = "unknown"  # inserted in command line
 
-copyright = "2021, MusicScience37 (Kenta Kabashima). "
+copyright = "2021, MusicScience37 (Kenta Kabashima)"
 author = "MusicScience37"
 
 # -- General configuration ---------------------------------------------------
