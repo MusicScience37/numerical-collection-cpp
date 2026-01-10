@@ -17,3 +17,12 @@ because this project is a collection of various numerical algorithms.
 | 0.7       | #42afbf     |                  |
 | 0.8       | #65d2d1     |                  |
 | 0.95      |             | #fbebe3          |
+
+## Icon sizes
+
+| Size | Usage          |
+| ---: | :------------- |
+|   16 | Favicon        |
+|   32 | Favicon        |
+|   64 | Favicon        |
+|  192 | Icon in GitLab |
