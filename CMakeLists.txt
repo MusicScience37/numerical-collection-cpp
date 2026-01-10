@@ -11,7 +11,7 @@ project(
     DESCRIPTION
         "A collection of algorithms in numerical analysis implemented in C++"
     LANGUAGES CXX)
-set(FULL_PROJECT_NAME "numerical-collection-cpp")
+set(FULL_PROJECT_NAME "Numerical Collection C++")
 message(STATUS "${FULL_PROJECT_NAME} version ${PROJECT_VERSION}")
 message(STATUS "build type: ${CMAKE_BUILD_TYPE}")
 

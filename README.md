@@ -1,4 +1,8 @@
-# numerical-collection-cpp
+# Numerical Collection C++
+
+![Project logo](doc/icon_logo/logo.svg)
+
+A collection of algorithms in numerical analysis implemented in C++.
 
 [![GitLab Release](https://img.shields.io/gitlab/v/release/25109105?sort=semver)](https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp/-/releases)
 [![C++ standard](https://img.shields.io/badge/standard-C%2B%2B23-blue?logo=c%2B%2B)](https://en.cppreference.com/w/cpp/compiler_support/23)
@@ -6,8 +10,6 @@
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![coverage report](https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp/badges/main/coverage.svg)](https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp/-/commits/main)
 ![Scc Count Badge](https://sloc.xyz/github/MusicScience37/numerical-collection-cpp/?lower=true&category=lines)
-
-A collection of algorithms in numerical analysis implemented in C++.
 
 ## Supported Compilers
 
@@ -31,6 +33,7 @@ Documentation built in CI:
 | Version     | Documentation                                                   | Full API Reference (Doxygen)                                        |
 | :---------- | :-------------------------------------------------------------- | :------------------------------------------------------------------ |
 | main branch | [Documentation](https://numcollect.musicscience37.com/)         | [API Reference](https://numcollect.musicscience37.com/api/)         |
+| v0.13.0     | [Documentation](https://numcollect.musicscience37.com/v0.13.0/) | [API Reference](https://numcollect.musicscience37.com/v0.13.0/api/) |
 | v0.12.0     | [Documentation](https://numcollect.musicscience37.com/v0.12.0/) | [API Reference](https://numcollect.musicscience37.com/v0.12.0/api/) |
 | v0.11.0     | [Documentation](https://numcollect.musicscience37.com/v0.11.0/) | [API Reference](https://numcollect.musicscience37.com/v0.11.0/api/) |
 

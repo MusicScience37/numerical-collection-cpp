@@ -1,0 +1,55 @@
+<svg width="403" height="150" version="1.1" viewBox="0 0 106.6271 39.6875" xmlns="http://www.w3.org/2000/svg">
+ <g transform="translate(5.291666 1.322917)">
+  <rect x="-5.291666" y="-1.322917" width="106.6271" height="39.6875" ry="0" fill="#fbebe3" stroke-width="2.05507"/>
+  <rect x="30.42708" y="13.22917" width="5.291666" height="5.291666" fill="#288dac" stroke-width="2.47506"/>
+  <g fill="#1a6a95">
+   <rect x="41.01041" y="23.8125" width="4.497917" height="5.291666" stroke-width="2.2819"/>
+   <rect x="41.01041" y="7.9375" width="4.497917" height="5.291666" stroke-width="2.28191"/>
+   <rect x="30.42708" y="18.52083" width="5.291666" height="5.291666" stroke-width="2.47506"/>
+  </g>
+  <g stroke-width="2.47506">
+   <rect x="35.71875" y="23.8125" width="5.291666" height="5.291666" fill="#17497b"/>
+   <rect x="35.71875" y="7.9375" width="5.291666" height="5.291666" fill="#17497b"/>
+   <rect x="6.614583" y="7.9375" width="5.291666" height="5.291666" fill="#288dac"/>
+   <rect x="6.614583" y="13.22917" width="5.291666" height="5.291666" fill="#17497b"/>
+   <rect x="6.614583" y="18.52083" width="5.291666" height="5.291666" fill="#1c2b54"/>
+   <rect x="6.614584" y="23.8125" width="5.291666" height="5.291666" fill="#12122d"/>
+  </g>
+  <g fill="#65d2d1">
+   <rect x="21.16667" y="7.9375" width="5.291666" height="5.291666" stroke-width="2.47506"/>
+   <rect x="69.85" y="12.96458" width="3.704167" height="3.704167" stroke-width="1.73255"/>
+   <rect x="73.55416" y="16.66875" width="3.704167" height="3.704167" stroke-width="1.73255"/>
+  </g>
+  <rect x="21.16667" y="13.22917" width="5.291666" height="5.291666" fill="#42afbf" stroke-width="2.47506"/>
+  <rect x="69.85" y="16.66875" width="3.704167" height="3.704167" fill="#42afbf" stroke-width="1.73255"/>
+  <g fill="#288dac">
+   <rect x="21.16667" y="18.52083" width="5.291666" height="5.291666" stroke-width="2.47506"/>
+   <rect x="66.14583" y="16.66875" width="3.704167" height="3.704167" stroke-width="1.73255"/>
+   <rect x="69.85" y="20.37292" width="3.704167" height="3.704167" stroke-width="1.73255"/>
+  </g>
+  <g stroke-width="1.73255">
+   <rect x="80.9625" y="7.9375" width="3.704167" height="3.704167" fill="#65d2d1"/>
+   <rect x="84.66666" y="11.64167" width="3.704167" height="3.704167" fill="#65d2d1"/>
+   <rect x="80.9625" y="11.64167" width="3.704167" height="3.704167" fill="#42afbf"/>
+   <rect x="77.25833" y="11.64167" width="3.704167" height="3.704167" fill="#288dac"/>
+   <rect x="80.9625" y="15.34583" width="3.704167" height="3.704167" fill="#288dac"/>
+  </g>
+  <rect x="21.16667" y="23.8125" width="5.291666" height="5.291666" fill="#1a6a95" stroke-width="2.47506"/>
+  <g stroke-width="2.64583">
+   <path d="m11.90625 13.22917v5.291667h6.614583l-1.322917-5.291667z" fill="#288dac"/>
+   <path d="m14.55208 18.52083 1.322917 5.291666h5.291667v-5.291666z" fill="#1a6a95"/>
+   <path d="m30.42708 23.8125a5.291668 5.291668 44.99999 0 0 5.291668 5.291666v-5.291666z" fill="#12122d"/>
+   <path transform="translate(-7.071428e-7 -15.875)" d="m30.42708 29.10416h5.291667v-5.291666h-2e-6a5.291665 5.291665 135 0 0-5.291665 5.291666z" fill="#65d2d1"/>
+  </g>
+  <rect x="48.94791" y="13.22917" width="5.291666" height="5.291666" fill="#288dac" stroke-width="2.47506"/>
+  <g fill="#1a6a95">
+   <rect x="59.53125" y="23.8125" width="4.497917" height="5.291666" stroke-width="2.2819"/>
+   <rect x="59.53125" y="7.9375" width="4.497917" height="5.291666" stroke-width="2.28191"/>
+   <rect x="48.94791" y="18.52083" width="5.291666" height="5.291666" stroke-width="2.47506"/>
+  </g>
+  <rect x="54.23958" y="23.8125" width="5.291666" height="5.291666" fill="#17497b" stroke-width="2.47506"/>
+  <rect x="54.23958" y="7.9375" width="5.291666" height="5.291666" fill="#17497b" stroke-width="2.47506"/>
+  <path transform="translate(18.52084)" d="m30.42708 23.8125a5.291668 5.291668 44.99999 0 0 5.291668 5.291666v-5.291666z" fill="#12122d" stroke-width="2.64583"/>
+  <path transform="translate(18.52084 -15.875)" d="m30.42708 29.10416h5.291667v-5.291666h-2e-6a5.291665 5.291665 135 0 0-5.291665 5.291666z" fill="#65d2d1" stroke-width="2.64583"/>
+ </g>
+</svg>

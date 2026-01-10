@@ -9,10 +9,10 @@ THIS_DIR = pathlib.Path(__file__).absolute().parent
 
 # -- Project information -----------------------------------------------------
 
-project = "numerical-collection-cpp"
+project = "Numerical Collection C++"
 release = "unknown"  # inserted in command line
 
-copyright = "2021, MusicScience37 (Kenta Kabashima). "
+copyright = "2021, MusicScience37 (Kenta Kabashima)"
 author = "MusicScience37"
 
 # -- General configuration ---------------------------------------------------
@@ -62,6 +62,8 @@ bibtex_default_style = "plain"
 html_theme = "sphinx_orange_book_theme"
 html_static_path = ["_static"]
 html_title = project
+html_logo = "../../icon_logo/logo.svg"
+html_favicon = "../../icon_logo/icon.ico"
 html_theme_options = {
     "show_prev_next": False,
     "logo": {

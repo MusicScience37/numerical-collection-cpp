@@ -1,7 +1,7 @@
 add_subdirectory(example_common)
 
 option(NUM_COLLECT_TEST_EXAMPLES
-       "test execution of examples in numerical-collection-cpp" OFF)
+       "test execution of examples in Numerical Collection C++" OFF)
 function(add_example TARGET)
     add_executable(${TARGET} ${ARGN})
     target_link_libraries(${TARGET} PRIVATE num_collect num_prob_collect

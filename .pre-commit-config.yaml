@@ -35,6 +35,7 @@ repos:
         description: Check encoding of files.
         language: system
         entry: poetry run python scripts/check_encoding.py
+        exclude: \.png|\.ico
       - id: black
         name: black
         entry: poetry run black
