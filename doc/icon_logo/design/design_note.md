@@ -20,9 +20,10 @@ because this project is a collection of various numerical algorithms.
 
 ## Icon sizes
 
-| Size | Usage          |
-| ---: | :------------- |
-|   16 | Favicon        |
-|   32 | Favicon        |
-|   64 | Favicon        |
-|  192 | Icon in GitLab |
+| Size | Usage          | Original image |
+| ---: | :------------- | :------------- |
+|   16 | Favicon        | `icon16.svg`   |
+|   32 | Favicon        | `icon32.svg`   |
+|   48 | Favicon        | `icon48.svg`   |
+|   64 | Favicon        | `icon32.svg`   |
+|  192 | Icon in GitLab | `icon32.svg`   |
