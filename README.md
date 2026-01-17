@@ -1,6 +1,6 @@
 # Numerical Collection C++
 
-![Project logo](doc/icon_logo/logo.svg)
+<img src="doc/icon_logo/logo.svg" width="300" />
 
 A collection of algorithms in numerical analysis implemented in C++.
 
