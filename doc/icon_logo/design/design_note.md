@@ -7,6 +7,8 @@ because this project is a collection of various numerical algorithms.
 
 ## Colors
 
+### Colors in Light Theme
+
 | Lightness | Front Color | Background Color |
 | :-------- | :---------- | :--------------- |
 | 0.2       | #12122d     |                  |
@@ -17,6 +19,23 @@ because this project is a collection of various numerical algorithms.
 | 0.7       | #42afbf     |                  |
 | 0.8       | #65d2d1     |                  |
 | 0.95      |             | #fbebe3          |
+
+Background of Sphinx theme: #fefdfd
+
+### Colors in Dark Theme
+
+| Lightness | Front Color | Background Color |
+| :-------- | :---------- | :--------------- |
+| 0.25      |             | #381705          |
+| 0.4       | #17497b     |                  |
+| 0.5       | #1a6a95     |                  |
+| 0.6       | #288dac     |                  |
+| 0.7       | #42afbf     |                  |
+| 0.8       | #65d2d1     |                  |
+| 0.88      | #86eddd     |                  |
+| 0.9       | #8ff4e0     |                  |
+
+Background of Sphinx theme: #260d02
 
 ## Icon sizes
 
