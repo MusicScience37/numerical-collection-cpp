@@ -62,11 +62,12 @@ bibtex_default_style = "plain"
 html_theme = "sphinx_orange_book_theme"
 html_static_path = ["_static"]
 html_title = project
-html_logo = "../../icon_logo/logo.svg"
 html_favicon = "../../icon_logo/icon.ico"
 html_theme_options = {
     "show_prev_next": False,
     "logo": {
+        "image_light": "../../icon_logo/logo.svg",
+        "image_dark": "../../icon_logo/logo-dark.svg",
         "text": html_title,
     },
     "pygment_light_style": "gruvbox-light",
