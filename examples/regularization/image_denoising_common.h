@@ -243,7 +243,7 @@ inline void visualize_result(const Eigen::MatrixXd& origin,
     figure.layout().yaxis(2).matches("y");
 
     figure.layout().color_axis().color_scale(
-        plotly_plotter::color_scales::autumn_full());
+        plotly_plotter::color_scales::autumn_wide());
     figure.layout().color_axis().c_min(0.0);
     figure.layout().color_axis().c_max(1.0);
 
