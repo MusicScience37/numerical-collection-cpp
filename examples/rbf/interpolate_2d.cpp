@@ -92,7 +92,7 @@ auto main() -> int {
         fig.layout().color_axis().c_min(c_min);
         fig.layout().color_axis().c_max(c_max);
         fig.layout().color_axis().color_scale(
-            plotly_plotter::color_scales::autumn());
+            plotly_plotter::color_scales::tea());
         save(fig, "sample_points");
     }
 
@@ -130,7 +130,7 @@ auto main() -> int {
         fig.layout().color_axis().c_max(c_max);
         fig.layout().color_axis().color_bar().title().text("value");
         fig.layout().color_axis().color_scale(
-            plotly_plotter::color_scales::autumn());
+            plotly_plotter::color_scales::tea());
 
         save(fig, "interpolated");
     }

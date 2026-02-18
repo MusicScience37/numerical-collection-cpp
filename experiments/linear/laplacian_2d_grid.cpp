@@ -161,7 +161,7 @@ static auto plot_result(const vec_type& expected, const vec_type& actual,
 
     figure.layout().yaxis(2).matches("y");
     figure.layout().color_axis().color_scale(
-        plotly_plotter::color_scales::autumn());
+        plotly_plotter::color_scales::tea());
 
     plotly_plotter::write_html("laplacian_2d_grid.html", figure);
     if (plotly_plotter::is_png_supported()) {

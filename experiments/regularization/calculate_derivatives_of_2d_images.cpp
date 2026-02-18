@@ -133,7 +133,7 @@ static void visualize_derivatives(const Eigen::MatrixXd& origin,
             derivative2.cwiseAbs().maxCoeff()});
 
     figure.layout().color_axis().color_scale(
-        plotly_plotter::color_scales::blue_to_red());
+        plotly_plotter::color_scales::blue_red_white_wide());
     figure.layout().color_axis().c_min(-max_abs_value);
     figure.layout().color_axis().c_max(max_abs_value);
 
