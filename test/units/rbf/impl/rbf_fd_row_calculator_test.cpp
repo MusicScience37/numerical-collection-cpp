@@ -81,6 +81,7 @@ TEST_CASE("num_collect::rbf::impl::rbf_fd_row_calculator") {
             column_variables_nearest_neighbor_searcher, num_neighbors, triplets,
             row_index);
 
+        CHECK(triplets.size() == num_neighbors);
         Eigen::SparseMatrix<scalar_type> row_matrix(1, num_columns);
         row_matrix.setFromTriplets(triplets.begin(), triplets.end());
         Eigen::VectorXd function_values(num_columns);
@@ -96,4 +97,13 @@ TEST_CASE("num_collect::rbf::impl::rbf_fd_row_calculator") {
 
     // TODO other tests. currently only a test of most simple case is
     // implemented.
+    // - Test of non-zero row_index, column_offset.
+    // - Test of wrong num_neighbors. (zero, too large value.)
+    // - Test of ill-conditioned case with two identical column variables.
+
+    // TODO tests which may be implemented in some places.
+    // - Test of other dimensions.
+    // - Test of other operators.
+    // - Test of other RBFs.
+    // - Test of whole system matrix.
 }
