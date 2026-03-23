@@ -93,13 +93,86 @@ TEST_CASE("num_collect::rbf::impl::rbf_fd_row_calculator") {
         constexpr double tolerance = 1e-2;
         CHECK_THAT(approximated_value,
             Catch::Matchers::WithinRel(true_value, tolerance));
+
+        SECTION("take row_index and column_offset into account") {
+            constexpr num_collect::index_type row_index = 2;
+            constexpr num_collect::index_type column_offset = 5;
+            num_collect::util::vector<Eigen::Triplet<scalar_type>>
+                triplets_with_offset;
+
+            row_calculator.compute_row(distance_function, rbf, target_operator,
+                row_variable, column_variables,
+                column_variables_nearest_neighbor_searcher, num_neighbors,
+                triplets_with_offset, row_index, column_offset);
+
+            REQUIRE(triplets_with_offset.size() == num_neighbors);
+            for (num_collect::index_type i = 0; i < num_neighbors; ++i) {
+                CHECK(triplets_with_offset[i].row() == row_index);
+                CHECK(triplets_with_offset[i].col() ==
+                    column_offset + triplets[i].col());
+                CHECK_THAT(triplets_with_offset[i].value(),
+                    Catch::Matchers::WithinRel(triplets[i].value()));
+            }
+        }
     }
 
-    // TODO other tests. currently only a test of most simple case is
-    // implemented.
-    // - Test of non-zero row_index, column_offset.
-    // - Test of wrong num_neighbors. (zero, too large value.)
-    // - Test of ill-conditioned case with two identical column variables.
+    SECTION("check number of neighbors") {
+        const variable_type row_variable{0.5, 0.5};
+        const auto column_variables =
+            generate_halton_nodes<scalar_type, dimensions>(num_columns);
+        const nearest_neighbor_searcher<variable_type>
+            column_variables_nearest_neighbor_searcher(column_variables);
+        const auto target_operator = laplacian_operator{row_variable};
+        constexpr num_collect::index_type row_index = 0;
+        num_collect::util::vector<Eigen::Triplet<scalar_type>> triplets;
+
+        CHECK_THROWS(row_calculator.compute_row(distance_function, rbf,
+            target_operator, row_variable, column_variables,
+            column_variables_nearest_neighbor_searcher, -1, triplets,
+            row_index));
+        CHECK_THROWS(row_calculator.compute_row(distance_function, rbf,
+            target_operator, row_variable, column_variables,
+            column_variables_nearest_neighbor_searcher, 0, triplets,
+            row_index));
+        CHECK_NOTHROW(row_calculator.compute_row(distance_function, rbf,
+            target_operator, row_variable, column_variables,
+            column_variables_nearest_neighbor_searcher, 1, triplets,
+            row_index));
+        CHECK_NOTHROW(row_calculator.compute_row(distance_function, rbf,
+            target_operator, row_variable, column_variables,
+            column_variables_nearest_neighbor_searcher, num_columns, triplets,
+            row_index));
+        CHECK_THROWS(row_calculator.compute_row(distance_function, rbf,
+            target_operator, row_variable, column_variables,
+            column_variables_nearest_neighbor_searcher, num_columns + 1,
+            triplets, row_index));
+    }
+
+    SECTION("check ill-conditioned case") {
+        const variable_type row_variable{0.5, 0.5};
+        auto column_variables =
+            generate_halton_nodes<scalar_type, dimensions>(num_columns);
+
+        // Identical column variables cause the kernel matrix to be singular.
+        // TODO Only one pair of identical variables did not cause an error.
+        // Investigate the reason.
+        column_variables[1] = column_variables[0];
+        column_variables[2] = column_variables[0];
+        column_variables[3] = column_variables[0];
+        // Make sure that the identical variables are included in the neighbors.
+        constexpr num_collect::index_type num_neighbors = num_columns;
+
+        const nearest_neighbor_searcher<variable_type>
+            column_variables_nearest_neighbor_searcher(column_variables);
+        const auto target_operator = laplacian_operator{row_variable};
+        constexpr num_collect::index_type row_index = 0;
+        num_collect::util::vector<Eigen::Triplet<scalar_type>> triplets;
+
+        CHECK_THROWS(row_calculator.compute_row(distance_function, rbf,
+            target_operator, row_variable, column_variables,
+            column_variables_nearest_neighbor_searcher, num_neighbors, triplets,
+            row_index));
+    }
 
     // TODO tests which may be implemented in some places.
     // - Test of other dimensions.

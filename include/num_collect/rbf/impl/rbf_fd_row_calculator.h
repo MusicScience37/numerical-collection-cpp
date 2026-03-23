@@ -155,8 +155,6 @@ public:
             const scalar_type cond = lu_decomposition_.rcond();
             NUM_COLLECT_LOG_AND_THROW(algorithm_failure,
                 "Failed to solve a linear system for RBF-FD weights. "
-                "The kernel matrix is ill-conditioned, possibly due to sample "
-                "points being too close. "
                 "(row index: {}, estimated reciprocal of condition number: "
                 "{:.2e})",
                 row_index, cond);
