@@ -74,12 +74,13 @@ TEST_CASE("num_collect::rbf::impl::rbf_fd_row_calculator") {
             column_variables_nearest_neighbor_searcher(column_variables);
         const auto target_operator = laplacian_operator{row_variable};
         constexpr num_collect::index_type row_index = 0;
+        constexpr num_collect::index_type column_offset = 0;
         num_collect::util::vector<Eigen::Triplet<scalar_type>> triplets;
 
         row_calculator.compute_row(distance_function, rbf, target_operator,
             row_variable, column_variables,
             column_variables_nearest_neighbor_searcher, num_neighbors, triplets,
-            row_index);
+            row_index, column_offset);
 
         CHECK(triplets.size() == num_neighbors);
         Eigen::SparseMatrix<scalar_type> row_matrix(1, num_columns);
@@ -124,28 +125,29 @@ TEST_CASE("num_collect::rbf::impl::rbf_fd_row_calculator") {
             column_variables_nearest_neighbor_searcher(column_variables);
         const auto target_operator = laplacian_operator{row_variable};
         constexpr num_collect::index_type row_index = 0;
+        constexpr num_collect::index_type column_offset = 0;
         num_collect::util::vector<Eigen::Triplet<scalar_type>> triplets;
 
         CHECK_THROWS(row_calculator.compute_row(distance_function, rbf,
             target_operator, row_variable, column_variables,
-            column_variables_nearest_neighbor_searcher, -1, triplets,
-            row_index));
+            column_variables_nearest_neighbor_searcher, -1, triplets, row_index,
+            column_offset));
         CHECK_THROWS(row_calculator.compute_row(distance_function, rbf,
             target_operator, row_variable, column_variables,
-            column_variables_nearest_neighbor_searcher, 0, triplets,
-            row_index));
+            column_variables_nearest_neighbor_searcher, 0, triplets, row_index,
+            column_offset));
         CHECK_NOTHROW(row_calculator.compute_row(distance_function, rbf,
             target_operator, row_variable, column_variables,
-            column_variables_nearest_neighbor_searcher, 1, triplets,
-            row_index));
+            column_variables_nearest_neighbor_searcher, 1, triplets, row_index,
+            column_offset));
         CHECK_NOTHROW(row_calculator.compute_row(distance_function, rbf,
             target_operator, row_variable, column_variables,
             column_variables_nearest_neighbor_searcher, num_columns, triplets,
-            row_index));
+            row_index, column_offset));
         CHECK_THROWS(row_calculator.compute_row(distance_function, rbf,
             target_operator, row_variable, column_variables,
             column_variables_nearest_neighbor_searcher, num_columns + 1,
-            triplets, row_index));
+            triplets, row_index, column_offset));
     }
 }
 
@@ -194,12 +196,13 @@ TEST_CASE(
             column_variables_nearest_neighbor_searcher(column_variables);
         const auto target_operator = laplacian_operator{row_variable};
         constexpr num_collect::index_type row_index = 0;
+        constexpr num_collect::index_type column_offset = 0;
         num_collect::util::vector<Eigen::Triplet<scalar_type>> triplets;
 
         CHECK_THROWS(row_calculator.compute_row(distance_function, rbf,
             target_operator, row_variable, column_variables,
             column_variables_nearest_neighbor_searcher, num_neighbors, triplets,
-            row_index));
+            row_index, column_offset));
     }
 
     // TODO tests which may be implemented in some places.

@@ -114,7 +114,7 @@ public:
             column_variables_nearest_neighbor_searcher,
         index_type num_neighbors,
         util::vector<Eigen::Triplet<scalar_type, StorageIndex>>& triplets,
-        index_type row_index, index_type column_offset = 0) {
+        index_type row_index, index_type column_offset) {
         using operator_evaluator_type = operators::operator_evaluator<Operator,
             RBF, distance_function_type>;
 
