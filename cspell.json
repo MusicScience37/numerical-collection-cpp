@@ -223,6 +223,7 @@
     "mavx",
     "maxdepth",
     "MAXSIZE",
+    "mayfail",
     "mfma",
     "mkdir",
     "moodycamel",
