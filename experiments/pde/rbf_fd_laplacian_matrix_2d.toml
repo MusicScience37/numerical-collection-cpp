@@ -1,0 +1,7 @@
+"$schema" = "https://numcollect.musicscience37.com/config_schema/v3/config_schema.json"
+
+[[num_collect.logging.tag_configs]]
+tag = ""
+sink = "default"
+output_log_level = "debug"
+output_log_level_in_child_iterations = "info"
