@@ -26,6 +26,7 @@ set(SOURCE_FILES
     operators/third_order_derivative_operator_test.cpp
     polynomial_term_generator_test.cpp
     polynomial_term_test.cpp
+    rbf_fd_assembler_test.cpp
     rbf_interpolator_test.cpp
     rbf_polynomial_interpolator_test.cpp
     rbfs/gaussian_from_square_rbf_test.cpp

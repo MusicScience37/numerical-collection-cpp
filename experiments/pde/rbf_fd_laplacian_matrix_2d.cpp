@@ -23,19 +23,15 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/load_logging_config.h"
 #include "num_collect/logging/logger.h"
-#include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
 #include "num_collect/rbf/generate_halton_nodes.h"
-#include "num_collect/rbf/impl/rbf_fd_row_calculator.h"
-#include "num_collect/rbf/length_parameter_calculators/global_length_parameter_calculator.h"
 #include "num_collect/rbf/operators/laplacian_operator.h"
-#include "num_collect/rbf/rbfs/gaussian_rbf.h"
+#include "num_collect/rbf/rbf_fd_assembler.h"
 #include "num_collect/util/nearest_neighbor_searcher.h"
 #include "num_collect/util/vector_view.h"
 
 using variable_type = Eigen::Vector2d;
 
-constexpr num_collect::index_type num_nodes = 50;
-constexpr num_collect::index_type num_neighbors = 20;
+constexpr num_collect::index_type num_nodes = 100;
 
 static auto test_function(const variable_type& variable) -> double {
     return variable.array().sin().prod();
@@ -71,37 +67,22 @@ static void evaluate_laplacian_matrix(
 
 static void test_laplacian_matrix_without_polynomial(
     num_collect::util::vector_view<const variable_type> nodes) {
-    using distance_function_type =
-        num_collect::rbf::distance_functions::euclidean_distance_function<
-            variable_type>;
-    using rbf_type = num_collect::rbf::rbfs::gaussian_rbf<double>;
-    using length_parameter_calculator_type =
-        num_collect::rbf::length_parameter_calculators::
-            global_length_parameter_calculator<distance_function_type>;
     using operator_type =
         num_collect::rbf::operators::laplacian_operator<variable_type>;
+    using assembler_type = num_collect::rbf::rbf_fd_assembler<variable_type>;
 
     num_collect::logging::logger logger;
     NUM_COLLECT_LOG_INFO(logger,
         "Start computation of the Laplacian matrix without polynomials.");
 
-    const distance_function_type distance_function;
-    const rbf_type rbf;
     const num_collect::util::nearest_neighbor_searcher<variable_type>
         column_variables_nearest_neighbor_searcher(nodes);
 
-    // TODO Replace with a class to calculate the whole matrix later.
-    num_collect::rbf::impl::rbf_fd_row_calculator<
-        length_parameter_calculator_type>
-        row_calculator;
+    assembler_type assembler;
 
     num_collect::util::vector<Eigen::Triplet<double>> triplets;
-    for (num_collect::index_type i = 0; i < nodes.size(); ++i) {
-        const auto target_operator = operator_type{nodes[i]};
-        row_calculator.compute_row(distance_function, rbf, target_operator,
-            nodes[i], nodes, column_variables_nearest_neighbor_searcher,
-            num_neighbors, triplets, i);
-    }
+    assembler.compute_rows<operator_type>(nodes, nodes,
+        column_variables_nearest_neighbor_searcher, triplets, 0, 0);
     Eigen::SparseMatrix<double> laplacian_matrix(nodes.size(), nodes.size());
     laplacian_matrix.setFromTriplets(triplets.begin(), triplets.end());
 
