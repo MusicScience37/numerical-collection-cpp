@@ -22,8 +22,8 @@
 #include <type_traits>
 #include <utility>
 
+#include <Eigen/Cholesky>
 #include <Eigen/Core>
-#include <Eigen/LU>
 #include <Eigen/SparseCore>
 
 #include "num_collect/base/exception.h"
@@ -149,10 +149,10 @@ public:
                     target_operator, neighbor_variables_[i], kernel_coeff);
         }
 
-        lu_decomposition_.compute(kernel_matrix_);
-        weights_ = lu_decomposition_.solve(right_hand_side_);
+        matrix_solver_.compute(kernel_matrix_);
+        weights_ = matrix_solver_.solve(right_hand_side_);
         if (!weights_.allFinite()) {
-            const scalar_type cond = lu_decomposition_.rcond();
+            const scalar_type cond = matrix_solver_.rcond();
             NUM_COLLECT_LOG_AND_THROW(algorithm_failure,
                 "Failed to solve a linear system for RBF-FD weights. "
                 "(row index: {}, estimated reciprocal of condition number: "
@@ -186,7 +186,7 @@ private:
     vector_type right_hand_side_;
 
     //! Solver of the linear equation of kernel matrix.
-    Eigen::PartialPivLU<matrix_type> lu_decomposition_;
+    Eigen::LDLT<matrix_type> matrix_solver_;
 
     //! Buffer of calculated weights.
     vector_type weights_;
