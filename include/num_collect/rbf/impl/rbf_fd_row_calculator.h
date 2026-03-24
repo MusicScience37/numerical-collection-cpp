@@ -115,16 +115,42 @@ public:
         index_type num_neighbors,
         util::vector<Eigen::Triplet<scalar_type, StorageIndex>>& triplets,
         index_type row_index, index_type column_offset) {
-        using operator_evaluator_type = operators::operator_evaluator<Operator,
-            RBF, distance_function_type>;
+        search_neighbors(row_variable, column_variables,
+            column_variables_nearest_neighbor_searcher, num_neighbors);
+        create_linear_system(
+            distance_function, rbf, target_operator, num_neighbors);
+        solve_linear_system(row_index);
 
+        for (index_type i = 0; i < num_neighbors; ++i) {
+            triplets.emplace_back(static_cast<StorageIndex>(row_index),
+                static_cast<StorageIndex>(
+                    column_offset + neighbor_indices_and_distances_[i].first),
+                weights_(i));
+        }
+    }
+
+private:
+    /*!
+     * \brief Search neighbors.
+     *
+     * \param[in] row_variable Variable corresponding to the row to calculate.
+     * \param[in] column_variables Variables corresponding to the columns to
+     * calculate.
+     * \param[in] column_variables_nearest_neighbor_searcher Nearest neighbor
+     * searcher for the column variables.
+     * \param[in] num_neighbors Number of neighbors to use in RBF-FD.
+     */
+    void search_neighbors(const variable_type& row_variable,
+        util::vector_view<const variable_type> column_variables,
+        const util::nearest_neighbor_searcher<variable_type>&
+            column_variables_nearest_neighbor_searcher,
+        index_type num_neighbors) {
         NUM_COLLECT_PRECONDITION(
             num_neighbors > 0, "Number of neighbors must be positive.");
         NUM_COLLECT_PRECONDITION(num_neighbors <= column_variables.size(),
             "Number of neighbors must be less than or equal to the number of "
             "column variables.");
 
-        // Search neighbors.
         neighbor_indices_and_distances_.clear();
         neighbor_indices_and_distances_.reserve(num_neighbors);
         column_variables_nearest_neighbor_searcher.find_k_nearest_neighbors(
@@ -135,6 +161,24 @@ public:
             (void)distance;  // not used.
             neighbor_variables_.push_back(column_variables[index]);
         }
+    }
+
+    /*!
+     * \brief Create a linear system to calculate weights.
+     *
+     * \tparam RBF Type of the RBF.
+     * \tparam Operator Type of the operator to assemble.
+     * \param[in] distance_function Distance function.
+     * \param[in] rbf RBF.
+     * \param[in] target_operator Operator to assemble.
+     * \param[in] num_neighbors Number of neighbors to use in RBF-FD.
+     */
+    template <concepts::rbf RBF, typename Operator>
+    void create_linear_system(const distance_function_type& distance_function,
+        const RBF& rbf, const Operator& target_operator,
+        index_type num_neighbors) {
+        using operator_evaluator_type = operators::operator_evaluator<Operator,
+            RBF, distance_function_type>;
 
         compute_kernel_matrix_serial(distance_function, rbf,
             length_parameter_calculator_, neighbor_variables_, kernel_matrix_);
@@ -148,7 +192,14 @@ public:
                     length_parameter_calculator_.length_parameter_at(i),
                     target_operator, neighbor_variables_[i], kernel_coeff);
         }
+    }
 
+    /*!
+     * \brief Solve the linear system to calculate weights.
+     *
+     * \param[in] row_index Row index to calculate.
+     */
+    void solve_linear_system(index_type row_index) {
         matrix_solver_.compute(kernel_matrix_);
         weights_ = matrix_solver_.solve(right_hand_side_);
         if (!weights_.allFinite()) {
@@ -159,16 +210,8 @@ public:
                 "{:.2e})",
                 row_index, cond);
         }
-
-        for (index_type i = 0; i < num_neighbors; ++i) {
-            triplets.emplace_back(static_cast<StorageIndex>(row_index),
-                static_cast<StorageIndex>(
-                    column_offset + neighbor_indices_and_distances_[i].first),
-                weights_(i));
-        }
     }
 
-private:
     //! Calculator of length parameters.
     length_parameter_calculator_type length_parameter_calculator_;
 
