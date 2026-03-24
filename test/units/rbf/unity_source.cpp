@@ -27,6 +27,7 @@
 #include "polynomial_term_generator_test.cpp"
 #include "polynomial_term_test.cpp"
 #include "rbf_fd_assembler_test.cpp"
+#include "rbf_fd_polynomial_assembler_test.cpp"
 #include "rbf_interpolator_test.cpp"
 #include "rbf_polynomial_interpolator_test.cpp"
 #include "rbfs/gaussian_from_square_rbf_test.cpp"

@@ -23,14 +23,10 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/load_logging_config.h"
 #include "num_collect/logging/logger.h"
-#include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
 #include "num_collect/rbf/generate_halton_nodes.h"
-#include "num_collect/rbf/impl/rbf_fd_polynomial_row_calculator.h"
-#include "num_collect/rbf/length_parameter_calculators/global_length_parameter_calculator.h"
 #include "num_collect/rbf/operators/laplacian_operator.h"
-#include "num_collect/rbf/polynomial_term_generator.h"
 #include "num_collect/rbf/rbf_fd_assembler.h"
-#include "num_collect/rbf/rbfs/gaussian_m1_rbf.h"
+#include "num_collect/rbf/rbf_fd_polynomial_assembler.h"
 #include "num_collect/util/nearest_neighbor_searcher.h"
 #include "num_collect/util/vector_view.h"
 
@@ -104,7 +100,8 @@ static void test_laplacian_matrix_with_polynomial(
     int polynomial_degree) {
     using operator_type =
         num_collect::rbf::operators::laplacian_operator<variable_type>;
-    using assembler_type = num_collect::rbf::rbf_fd_assembler<variable_type>;
+    using assembler_type =
+        num_collect::rbf::rbf_fd_polynomial_assembler<variable_type>;
 
     num_collect::logging::logger logger;
     NUM_COLLECT_LOG_INFO(logger,
@@ -115,33 +112,12 @@ static void test_laplacian_matrix_with_polynomial(
     const num_collect::util::nearest_neighbor_searcher<variable_type>
         column_variables_nearest_neighbor_searcher(nodes);
 
-    // TODO Replace to an assembler after implementation of it.
-    using distance_function_type =
-        num_collect::rbf::distance_functions::euclidean_distance_function<
-            variable_type>;
-    using rbf_type = num_collect::rbf::rbfs::gaussian_m1_rbf<double>;
-    using polynomial_term_generator_type =
-        num_collect::rbf::polynomial_term_generator<2>;
-    using length_parameter_calculator_type =
-        num_collect::rbf::length_parameter_calculators::
-            global_length_parameter_calculator<distance_function_type>;
-
-    const distance_function_type distance_function;
-    const rbf_type rbf;
-    const polynomial_term_generator_type polynomial_term_generator(
-        polynomial_degree);
-    num_collect::rbf::impl::rbf_fd_polynomial_row_calculator<
-        length_parameter_calculator_type>
-        row_calculator;
+    assembler_type assembler(polynomial_degree);
+    assembler.num_neighbors(num_neighbors);
 
     num_collect::util::vector<Eigen::Triplet<double>> triplets;
-    for (num_collect::index_type i = 0; i < nodes.size(); ++i) {
-        const auto target_operator = operator_type{nodes[i]};
-        row_calculator.compute_row(distance_function, rbf,
-            polynomial_term_generator, target_operator, nodes[i], nodes,
-            column_variables_nearest_neighbor_searcher, num_neighbors, triplets,
-            i, 0);
-    }
+    assembler.compute_rows<operator_type>(nodes, nodes,
+        column_variables_nearest_neighbor_searcher, triplets, 0, 0);
     Eigen::SparseMatrix<double> laplacian_matrix(nodes.size(), nodes.size());
     laplacian_matrix.setFromTriplets(triplets.begin(), triplets.end());
 

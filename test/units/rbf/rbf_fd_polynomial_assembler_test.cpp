@@ -15,9 +15,9 @@
  */
 /*!
  * \file
- * \brief Test of rbf_fd_assembler class.
+ * \brief Test of rbf_fd_polynomial_assembler class.
  */
-#include "num_collect/rbf/rbf_fd_assembler.h"
+#include "num_collect/rbf/rbf_fd_polynomial_assembler.h"
 
 #include <Eigen/SparseCore>
 #include <catch2/catch_test_macros.hpp>
@@ -31,9 +31,9 @@
 #include "num_collect/util/nearest_neighbor_searcher.h"
 #include "num_collect/util/vector.h"
 
-TEST_CASE("num_collect::rbf::rbf_fd_assembler") {
+TEST_CASE("num_collect::rbf::rbf_fd_polynomial_assembler") {
     using num_collect::rbf::generate_halton_nodes;
-    using num_collect::rbf::rbf_fd_assembler;
+    using num_collect::rbf::rbf_fd_polynomial_assembler;
     using num_collect::rbf::operators::laplacian_operator;
     using num_collect::util::nearest_neighbor_searcher;
 
@@ -43,7 +43,7 @@ TEST_CASE("num_collect::rbf::rbf_fd_assembler") {
     constexpr num_collect::index_type num_columns = 50;
     using variable_type = Eigen::Vector<scalar_type, dimensions>;
     using operator_type = laplacian_operator<variable_type>;
-    using assembler_type = rbf_fd_assembler<variable_type>;
+    using assembler_type = rbf_fd_polynomial_assembler<variable_type>;
 
     assembler_type assembler;
 
