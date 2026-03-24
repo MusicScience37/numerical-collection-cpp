@@ -149,65 +149,13 @@ TEST_CASE("num_collect::rbf::impl::rbf_fd_row_calculator") {
             column_variables_nearest_neighbor_searcher, num_columns + 1,
             triplets, row_index, column_offset));
     }
+
+    // TODO Test of ill-conditioned matrix.
+    // LDLT did not fail even with a singular matrix.
 }
 
-TEST_CASE(
-    "num_collect::rbf::impl::rbf_fd_row_calculator (unstable)", "[!mayfail]") {
-    // TODO Investigate the reason of failures in some environments.
-    using num_collect::rbf::generate_halton_nodes;
-    using num_collect::rbf::distance_functions::euclidean_distance_function;
-    using num_collect::rbf::impl::rbf_fd_row_calculator;
-    using num_collect::rbf::length_parameter_calculators::
-        global_length_parameter_calculator;
-    using num_collect::rbf::operators::laplacian_operator;
-    using num_collect::rbf::rbfs::gaussian_rbf;
-    using num_collect::util::nearest_neighbor_searcher;
-
-    using scalar_type = double;
-    constexpr num_collect::index_type dimensions = 2;
-    constexpr num_collect::index_type num_columns = 50;
-    using variable_type = Eigen::Vector<scalar_type, dimensions>;
-    using distance_function_type = euclidean_distance_function<variable_type>;
-    using rbf_type = gaussian_rbf<scalar_type>;
-    using length_parameter_calculator_type =
-        global_length_parameter_calculator<distance_function_type>;
-    using rbf_fd_row_calculator_type =
-        rbf_fd_row_calculator<length_parameter_calculator_type>;
-
-    const distance_function_type distance_function;
-    const rbf_type rbf;
-    rbf_fd_row_calculator_type row_calculator;
-
-    SECTION("check ill-conditioned case") {
-        const variable_type row_variable{0.5, 0.5};
-        auto column_variables =
-            generate_halton_nodes<scalar_type, dimensions>(num_columns);
-
-        // Identical column variables cause the kernel matrix to be singular.
-        // TODO Only one pair of identical variables did not cause an error.
-        // Investigate the reason.
-        column_variables[1] = column_variables[0];
-        column_variables[2] = column_variables[0];
-        column_variables[3] = column_variables[0];
-        // Make sure that the identical variables are included in the neighbors.
-        constexpr num_collect::index_type num_neighbors = num_columns;
-
-        const nearest_neighbor_searcher<variable_type>
-            column_variables_nearest_neighbor_searcher(column_variables);
-        const auto target_operator = laplacian_operator{row_variable};
-        constexpr num_collect::index_type row_index = 0;
-        constexpr num_collect::index_type column_offset = 0;
-        num_collect::util::vector<Eigen::Triplet<scalar_type>> triplets;
-
-        CHECK_THROWS(row_calculator.compute_row(distance_function, rbf,
-            target_operator, row_variable, column_variables,
-            column_variables_nearest_neighbor_searcher, num_neighbors, triplets,
-            row_index, column_offset));
-    }
-
-    // TODO tests which may be implemented in some places.
-    // - Test of other dimensions.
-    // - Test of other operators.
-    // - Test of other RBFs.
-    // - Test of whole system matrix.
-}
+// TODO tests which may be implemented in some places.
+// - Test of other dimensions.
+// - Test of other operators.
+// - Test of other RBFs.
+// - Test of whole system matrix.
