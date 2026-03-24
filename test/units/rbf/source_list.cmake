@@ -13,6 +13,7 @@ set(SOURCE_FILES
     impl/differentiate_polynomial_term_test.cpp
     impl/general_spline_equation_solver_test.cpp
     impl/kernel_matrix_solver_test.cpp
+    impl/rbf_fd_polynomial_row_calculator_test.cpp
     impl/rbf_fd_row_calculator_test.cpp
     length_parameter_calculators/global_length_parameter_calculator_test.cpp
     length_parameter_calculators/local_length_parameter_calculator_test.cpp
