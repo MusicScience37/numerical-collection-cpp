@@ -17,8 +17,18 @@
  * \file
  * \brief Experiments to compute matrices of Laplacian using RBF-FD in 2D.
  */
+#include <string_view>
+
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
+#include <fmt/core.h>
+#include <vtkDelaunay2D.h>
+#include <vtkDoubleArray.h>
+#include <vtkNew.h>
+#include <vtkPointData.h>
+#include <vtkPoints.h>
+#include <vtkPolyData.h>
+#include <vtkXMLPolyDataWriter.h>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/load_logging_config.h"
@@ -45,7 +55,8 @@ static auto test_function_laplacian(const variable_type& variable) -> double {
 
 static void evaluate_laplacian_matrix(
     num_collect::util::vector_view<const variable_type> nodes,
-    const Eigen::SparseMatrix<double>& laplacian_matrix) {
+    const Eigen::SparseMatrix<double>& laplacian_matrix,
+    std::string_view name) {
     Eigen::VectorXd function_values(nodes.size());
     Eigen::VectorXd true_laplacian_values(nodes.size());
     for (num_collect::index_type i = 0; i < nodes.size(); ++i) {
@@ -65,6 +76,62 @@ static void evaluate_laplacian_matrix(
     NUM_COLLECT_LOG_INFO(logger,
         "Max error: {:.2e}, Mean error: {:.2e}, Max value: {:.2e}", max_error,
         mean_error, max_value);
+
+    vtkNew<vtkPoints> points;
+    for (const auto& node : nodes) {
+        points->InsertNextPoint(node.x(), node.y(), 0.0);
+    }
+
+    vtkNew<vtkPolyData> poly_data_of_points;
+    poly_data_of_points->SetPoints(points);
+
+    vtkNew<vtkDelaunay2D> delaunay;
+    delaunay->SetInputData(poly_data_of_points);
+    delaunay->Update();
+
+    vtkPolyData* poly_data = delaunay->GetOutput();
+
+    vtkNew<vtkDoubleArray> function_values_array;
+    function_values_array->SetName("Function Values");
+    function_values_array->SetNumberOfComponents(1);
+    for (double value : function_values) {
+        function_values_array->InsertNextValue(value);
+    }
+    poly_data->GetPointData()->AddArray(function_values_array);
+
+    vtkNew<vtkDoubleArray> approximated_laplacian_array;
+    approximated_laplacian_array->SetName("Approximated Laplacian");
+    approximated_laplacian_array->SetNumberOfComponents(1);
+    for (double value : approximated_laplacian_values) {
+        approximated_laplacian_array->InsertNextValue(value);
+    }
+    poly_data->GetPointData()->AddArray(approximated_laplacian_array);
+
+    vtkNew<vtkDoubleArray> true_laplacian_array;
+    true_laplacian_array->SetName("True Laplacian");
+    true_laplacian_array->SetNumberOfComponents(1);
+    for (double value : true_laplacian_values) {
+        true_laplacian_array->InsertNextValue(value);
+    }
+    poly_data->GetPointData()->AddArray(true_laplacian_array);
+
+    vtkNew<vtkDoubleArray> error_array;
+    error_array->SetName("Error");
+    error_array->SetNumberOfComponents(1);
+    for (double value : errors) {
+        error_array->InsertNextValue(value);
+    }
+    poly_data->GetPointData()->AddArray(error_array);
+
+    vtkNew<vtkXMLPolyDataWriter> writer;
+    const auto file_name =
+        fmt::format("rbf_fd_laplacian_matrix_2d_{}.vtp", name);
+    writer->SetFileName(file_name.c_str());
+    writer->SetInputData(poly_data);
+    writer->SetDataModeToBinary();
+    writer->SetCompressorTypeToZLib();
+    writer->SetCompressionLevel(9);
+    writer->Write();
 }
 
 static void test_laplacian_matrix_without_polynomial(
@@ -92,7 +159,7 @@ static void test_laplacian_matrix_without_polynomial(
     NUM_COLLECT_LOG_INFO(logger,
         "Finished computation of the Laplacian matrix without polynomials.");
 
-    evaluate_laplacian_matrix(nodes, laplacian_matrix);
+    evaluate_laplacian_matrix(nodes, laplacian_matrix, "pure");
 }
 
 static void test_laplacian_matrix_with_polynomial(
@@ -127,7 +194,8 @@ static void test_laplacian_matrix_with_polynomial(
         "{}.",
         polynomial_degree);
 
-    evaluate_laplacian_matrix(nodes, laplacian_matrix);
+    evaluate_laplacian_matrix(
+        nodes, laplacian_matrix, fmt::format("poly{}", polynomial_degree));
 }
 
 auto main(int argc, const char** argv) -> int {

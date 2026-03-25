@@ -84,6 +84,8 @@ endif()
 if(NUM_COLLECT_BUILD_EXAMPLES OR NUM_COLLECT_BUILD_EXPERIMENTS)
     # libpng
     find_package(PNG REQUIRED)
+    find_package(VTK COMPONENTS CommonCore CommonDataModel FiltersCore
+                                FiltersGeneral IOXML)
 endif()
 
 if(NUM_COLLECT_BUILD_EXAMPLES
