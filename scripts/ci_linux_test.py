@@ -85,6 +85,10 @@ def execute_command(command: typing.List[str], cwd: str) -> None:
     subprocess.run(command, check=True, cwd=cwd)
 
 
+def _ignore(_):
+    pass
+
+
 @click.command()
 @click.option("--compiler_type", "compiler_type", required=True)
 @click.option("--test_type", "test_type", required=True)
@@ -101,6 +105,7 @@ def check_tests_for_condition(
         test_type (str): Type of the test.
         build_dir (str): Path to the build directory.
     """
+    _ignore(compiler_type)
     os.makedirs(build_dir, exist_ok=True)
 
     # Configure
@@ -113,12 +118,6 @@ def check_tests_for_condition(
     ]
     build_type = BUILD_TYPE_DICT[test_type]
     command = command + [f"-DCMAKE_BUILD_TYPE={build_type}"]
-    if compiler_type.startswith("clang"):
-        command = command + [
-            "-DVCPKG_TARGET_TRIPLET=x64-linux-llvm",
-            "-DVCPKG_HOST_TRIPLET=x64-linux-llvm",
-            "-DCMAKE_CXX_FLAGS=-stdlib=libc++",
-        ]
     command = command + ["-DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON"]
     for key, value in TEST_TYPE_VARIABLES[test_type].items():
         command = command + [f"-D{key}={value}"]
