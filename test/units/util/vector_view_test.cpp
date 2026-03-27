@@ -221,6 +221,32 @@ TEST_CASE("num_collect::util::vector_view") {
         }
     }
 
+    SECTION("access data using rbegin() and rend()") {
+        std::vector<int> data{1, 2, 3};
+        vector_view<int> view = data;
+
+        std::vector<int> actual_data;
+        // NOLINTNEXTLINE(*-loop-convert)
+        for (auto iter = view.rbegin(); iter != view.rend(); ++iter) {
+            STATIC_REQUIRE(std::is_same_v<decltype(*iter), int&>);
+            actual_data.push_back(*iter);
+        }
+        CHECK(actual_data == std::vector<int>{3, 2, 1});
+    }
+
+    SECTION("access data using crbegin() and crend()") {
+        std::vector<int> data{1, 2, 3};
+        vector_view<int> view = data;
+
+        std::vector<int> actual_data;
+        // NOLINTNEXTLINE(*-loop-convert)
+        for (auto iter = view.crbegin(); iter != view.crend(); ++iter) {
+            STATIC_REQUIRE(std::is_same_v<decltype(*iter), const int&>);
+            actual_data.push_back(*iter);
+        }
+        CHECK(actual_data == std::vector<int>{3, 2, 1});
+    }
+
     SECTION("check whether a vector is empty") {
         std::vector<int> data1{};
         std::vector<int> data2{1};

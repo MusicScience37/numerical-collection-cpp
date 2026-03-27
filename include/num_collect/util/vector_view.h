@@ -304,6 +304,44 @@ public:
     }
 
     /*!
+     * \brief Get the reverse iterator to the last element.
+     *
+     * \return Reverse iterator.
+     */
+    [[nodiscard]] constexpr auto rbegin() const noexcept -> reverse_iterator {
+        return reverse_iterator(end());
+    }
+
+    /*!
+     * \brief Get the reverse iterator to the last element.
+     *
+     * \return Reverse iterator.
+     */
+    [[nodiscard]] constexpr auto crbegin() const noexcept
+        -> const_reverse_iterator {
+        return const_reverse_iterator(cend());
+    }
+
+    /*!
+     * \brief Get the past-the-front reverse iterator.
+     *
+     * \return Reverse iterator.
+     */
+    [[nodiscard]] constexpr auto rend() const noexcept -> reverse_iterator {
+        return reverse_iterator(begin());
+    }
+
+    /*!
+     * \brief Get the past-the-front reverse iterator.
+     *
+     * \return Reverse iterator.
+     */
+    [[nodiscard]] constexpr auto crend() const noexcept
+        -> const_reverse_iterator {
+        return const_reverse_iterator(cbegin());
+    }
+
+    /*!
      * \brief Get the pointer to the data.
      *
      * \return Pointer to the data.
