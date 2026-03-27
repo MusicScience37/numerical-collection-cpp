@@ -46,6 +46,7 @@
 #include "num_collect/rbf/rbf_fd_assembler.h"
 #include "num_collect/rbf/rbf_fd_polynomial_assembler.h"
 #include "num_collect/rbf/rbf_interpolator.h"
+#include "num_collect/rbf/rbfs/thin_plate_spline_rbf.h"
 #include "num_collect/util/generate_rectangle_boundary_nodes.h"
 #include "num_collect/util/nearest_neighbor_searcher.h"
 #include "num_collect/util/vector.h"
@@ -124,8 +125,15 @@ static auto assemble_system(
     // Interior nodes.
     const auto interior_nodes = nodes.first(num_interior_nodes);
     if (polynomial_order < 0) {
+        // RBF-FD without polynomials.
+        // Gaussian RBF did not work well, but thin plate spline RBF worked
+        // well.
+        constexpr int degree = 3;
+        using rbf_type =
+            num_collect::rbf::rbfs::thin_plate_spline_rbf<variable_type::Scalar,
+                variable_type::RowsAtCompileTime, degree>;
         using assembler_type =
-            num_collect::rbf::rbf_fd_assembler<variable_type>;
+            num_collect::rbf::rbf_fd_assembler<variable_type, rbf_type>;
         assembler_type assembler;
         assembler.num_neighbors(num_neighbors);
         assembler.length_parameter_scale(length_parameter_scale);
@@ -138,8 +146,16 @@ static auto assemble_system(
             right_vec(i) = test_function_laplacian(interior_nodes[i]);
         }
     } else {
+        // RBF-FD with polynomials.
+        // Gaussian RBF did not work well, but thin plate spline RBF worked
+        // well.
+        constexpr int degree = 3;
+        using rbf_type =
+            num_collect::rbf::rbfs::thin_plate_spline_rbf<variable_type::Scalar,
+                variable_type::RowsAtCompileTime, degree>;
         using assembler_type =
-            num_collect::rbf::rbf_fd_polynomial_assembler<variable_type>;
+            num_collect::rbf::rbf_fd_polynomial_assembler<variable_type,
+                rbf_type>;
         assembler_type assembler(polynomial_order);
         assembler.num_neighbors(num_neighbors);
         assembler.length_parameter_scale(length_parameter_scale);
