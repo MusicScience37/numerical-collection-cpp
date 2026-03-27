@@ -115,6 +115,7 @@ public:
 
         // TODO Parallelization.
         row_calculator_type row_calculator;
+        row_calculator.length_parameter_scale(length_parameter_scale_);
         for (index_type i = 0; i < row_variables.size(); ++i) {
             const auto target_operator = Operator{row_variables[i]};
             row_calculator.compute_row(distance_function_, rbf_,
@@ -144,6 +145,15 @@ public:
         num_neighbors_ = value;
     }
 
+    /*!
+     * \brief Set the scale of length parameters.
+     *
+     * \param[in] value Value.
+     */
+    void length_parameter_scale(scalar_type value) {
+        length_parameter_scale_ = value;
+    }
+
 private:
     //! Type of the calculator of rows.
     using row_calculator_type =
@@ -160,6 +170,13 @@ private:
 
     //! Number of neighbors.
     index_type num_neighbors_{default_num_neighbors};
+
+    //! Default scale of length parameters.
+    static constexpr auto default_length_parameter_scale =
+        static_cast<scalar_type>(10);
+
+    //! Scale of length parameters.
+    scalar_type length_parameter_scale_{default_length_parameter_scale};
 };
 
 }  // namespace num_collect::rbf

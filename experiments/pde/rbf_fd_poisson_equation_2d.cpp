@@ -101,12 +101,13 @@ static auto generate_nodes(num_collect::index_type num_interior_nodes,
  * \param[in] polynomial_order Order of polynomials used in RBF-FD. -1 for no
  * polynomials.
  * \param[in] num_neighbors Number of neighbors used in RBF-FD.
+ * \param[in] length_parameter_scale Scale of length parameters in RBF-FD.
  * \return Coefficient matrix and right-hand side vector.
  */
 static auto assemble_system(
     num_collect::util::vector_view<const variable_type> nodes,
     num_collect::index_type num_interior_nodes, int polynomial_order,
-    num_collect::index_type num_neighbors)
+    num_collect::index_type num_neighbors, double length_parameter_scale)
     -> std::tuple<sparse_matrix_type, Eigen::VectorXd> {
     using operator_type =
         num_collect::rbf::operators::laplacian_operator<variable_type>;
@@ -127,6 +128,7 @@ static auto assemble_system(
             num_collect::rbf::rbf_fd_assembler<variable_type>;
         assembler_type assembler;
         assembler.num_neighbors(num_neighbors);
+        assembler.length_parameter_scale(length_parameter_scale);
         constexpr num_collect::index_type row_offset = 0;
         constexpr num_collect::index_type column_offset = 0;
         assembler.compute_rows<operator_type>(interior_nodes, nodes,
@@ -140,6 +142,7 @@ static auto assemble_system(
             num_collect::rbf::rbf_fd_polynomial_assembler<variable_type>;
         assembler_type assembler(polynomial_order);
         assembler.num_neighbors(num_neighbors);
+        assembler.length_parameter_scale(length_parameter_scale);
         constexpr num_collect::index_type row_offset = 0;
         constexpr num_collect::index_type column_offset = 0;
         assembler.compute_rows<operator_type>(interior_nodes, nodes,
@@ -422,19 +425,25 @@ auto main(int argc, const char** argv) -> int {
         config.at_path("rbf_fd_poisson_equation_2d.num_neighbors")
             .value<num_collect::index_type>()
             .value();
+    const auto length_parameter_scale =
+        config.at_path("rbf_fd_poisson_equation_2d.length_parameter_scale")
+            .value<double>()
+            .value();
     NUM_COLLECT_LOG_INFO(
         logger, "Number of interior nodes: {}", num_interior_nodes);
     NUM_COLLECT_LOG_INFO(logger, "Number of boundary nodes per edge: {}",
         num_boundary_nodes_per_edge);
     NUM_COLLECT_LOG_INFO(logger, "Polynomial order: {}", polynomial_order);
     NUM_COLLECT_LOG_INFO(logger, "Number of neighbors: {}", num_neighbors);
+    NUM_COLLECT_LOG_INFO(
+        logger, "Scale of length parameters: {}", length_parameter_scale);
 
     const auto nodes =
         generate_nodes(num_interior_nodes, num_boundary_nodes_per_edge);
     NUM_COLLECT_LOG_INFO(logger, "Generated {} nodes.", nodes.size());
 
-    const auto [mat, right_vec] = assemble_system(
-        nodes, num_interior_nodes, polynomial_order, num_neighbors);
+    const auto [mat, right_vec] = assemble_system(nodes, num_interior_nodes,
+        polynomial_order, num_neighbors, length_parameter_scale);
     const auto solution = solve_system(mat, right_vec);
 
     const auto [true_values, errors] = evaluate_solution(nodes, solution);

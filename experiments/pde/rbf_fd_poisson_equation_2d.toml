@@ -9,6 +9,8 @@ num_boundary_nodes_per_edge = 10
 polynomial_order = 2
 # Number of neighbors used in RBF-FD.
 num_neighbors = 10
+# Scale of length parameters in RBF-FD.
+length_parameter_scale = 3.0
 
 [[num_collect.logging.tag_configs]]
 tag = ""

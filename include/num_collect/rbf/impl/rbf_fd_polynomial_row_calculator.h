@@ -143,6 +143,15 @@ public:
         }
     }
 
+    /*!
+     * \brief Set the scale of length parameters.
+     *
+     * \param[in] value Value.
+     */
+    void length_parameter_scale(scalar_type value) {
+        length_parameter_calculator_.scale(value);
+    }
+
 private:
     /*!
      * \brief Search neighbors.

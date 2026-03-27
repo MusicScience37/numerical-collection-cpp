@@ -156,6 +156,15 @@ public:
         num_neighbors_ = value;
     }
 
+    /*!
+     * \brief Set the scale of length parameters.
+     *
+     * \param[in] value Value.
+     */
+    void length_parameter_scale(scalar_type value) {
+        length_parameter_scale_ = value;
+    }
+
 private:
     //! Type of generators of polynomial terms.
     using polynomial_term_generator_type = polynomial_term_generator<dimension>;
@@ -178,6 +187,13 @@ private:
 
     //! Number of neighbors.
     index_type num_neighbors_{default_num_neighbors};
+
+    //! Default scale of length parameters.
+    static constexpr auto default_length_parameter_scale =
+        static_cast<scalar_type>(10);
+
+    //! Scale of length parameters.
+    scalar_type length_parameter_scale_{default_length_parameter_scale};
 };
 
 }  // namespace num_collect::rbf
