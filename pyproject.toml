@@ -7,7 +7,7 @@ requires-python = ">=3.12,<3.14"
 authors = [
     { name = "Kenta Kabashima", email = "kenta_program37@hotmail.co.jp" },
 ]
-dependencies = ["setuptools>=80.9.0"]
+dependencies = ["setuptools (>=82.0.1)"]
 
 [tool.poetry]
 packages = [
