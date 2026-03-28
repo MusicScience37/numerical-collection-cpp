@@ -19,6 +19,9 @@
  */
 #pragma once
 
+#include <algorithm>
+#include <utility>
+
 #include <Eigen/SparseCore>
 
 #include "num_collect/base/get_compile_time_size.h"
@@ -95,7 +98,10 @@ public:
         rbf_type rbf = rbf_type())
         : distance_function_(std::move(distance_function)),
           rbf_(std::move(rbf)),
-          polynomial_term_generator_(polynomial_degree) {}
+          polynomial_term_generator_(polynomial_degree),
+          num_neighbors_(std::max(min_default_num_neighbors,
+              static_cast<index_type>(
+                  polynomial_term_generator_.terms().size() + 1))) {}
 
     /*!
      * \brief Compute rows of the system matrix.
@@ -158,7 +164,9 @@ public:
      */
     void num_neighbors(index_type value) {
         NUM_COLLECT_PRECONDITION(
-            value > 0, "Number of neighbors must be positive.");
+            value > polynomial_term_generator_.terms().size(),
+            "Number of neighbors must be greater than the number of polynomial "
+            "terms.");
         num_neighbors_ = value;
     }
 
@@ -188,11 +196,11 @@ private:
     //! Generator of polynomial terms.
     polynomial_term_generator_type polynomial_term_generator_;
 
-    //! Default number of neighbors to use in RBF-FD.
-    static constexpr index_type default_num_neighbors = 10;
+    //! Minimum default number of neighbors to use in RBF-FD.
+    static constexpr index_type min_default_num_neighbors = 10;
 
     //! Number of neighbors.
-    index_type num_neighbors_{default_num_neighbors};
+    index_type num_neighbors_;
 
     //! Default scale of length parameters.
     static constexpr auto default_length_parameter_scale =

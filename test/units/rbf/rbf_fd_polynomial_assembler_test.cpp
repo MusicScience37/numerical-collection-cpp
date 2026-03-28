@@ -116,7 +116,9 @@ TEST_CASE("num_collect::rbf::rbf_fd_polynomial_assembler") {
 
         CHECK_THROWS(assembler.num_neighbors(-1));
         CHECK_THROWS(assembler.num_neighbors(0));
-        CHECK_NOTHROW(assembler.num_neighbors(1));
+        CHECK_THROWS(assembler.num_neighbors(1));
+        CHECK_THROWS(assembler.num_neighbors(6));
+        CHECK_NOTHROW(assembler.num_neighbors(7));
 
         CHECK_NOTHROW(assembler.num_neighbors(num_columns));
         CHECK_NOTHROW(assembler.compute_rows<operator_type>(row_variables,
