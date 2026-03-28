@@ -20,6 +20,7 @@
 #pragma once
 
 #include <Eigen/SparseCore>
+#include <omp.h>
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
@@ -116,15 +117,40 @@ public:
         triplets.reserve(
             triplets.size() + row_variables.size() * num_neighbors_);
 
-        // TODO Parallelization.
-        row_calculator_type row_calculator;
-        row_calculator.length_parameter_scale(length_parameter_scale_);
-        for (index_type i = 0; i < row_variables.size(); ++i) {
-            const auto target_operator = Operator{row_variables[i]};
-            row_calculator.compute_row(distance_function_, rbf_,
-                target_operator, row_variables[i], column_variables,
-                column_variables_nearest_neighbor_searcher, num_neighbors_,
-                triplets, row_offset + i, column_offset);
+        constexpr index_type parallel_threshold = 100;
+        if (row_variables.size() >= parallel_threshold) {
+#pragma omp parallel
+            {
+                row_calculator_type row_calculator;
+                row_calculator.length_parameter_scale(length_parameter_scale_);
+                util::vector<Eigen::Triplet<scalar_type, StorageIndex>>
+                    local_triplets;
+                local_triplets.reserve(row_variables.size() * num_neighbors_);
+#pragma omp for
+                for (index_type i = 0; i < row_variables.size(); ++i) {
+                    const auto target_operator = Operator{row_variables[i]};
+                    row_calculator.compute_row(distance_function_, rbf_,
+                        target_operator, row_variables[i], column_variables,
+                        column_variables_nearest_neighbor_searcher,
+                        num_neighbors_, local_triplets, row_offset + i,
+                        column_offset);
+                }
+#pragma omp critical
+                {
+                    triplets.insert(triplets.end(), local_triplets.begin(),
+                        local_triplets.end());
+                }
+            }
+        } else {
+            row_calculator_type row_calculator;
+            row_calculator.length_parameter_scale(length_parameter_scale_);
+            for (index_type i = 0; i < row_variables.size(); ++i) {
+                const auto target_operator = Operator{row_variables[i]};
+                row_calculator.compute_row(distance_function_, rbf_,
+                    target_operator, row_variables[i], column_variables,
+                    column_variables_nearest_neighbor_searcher, num_neighbors_,
+                    triplets, row_offset + i, column_offset);
+            }
         }
     }
 
