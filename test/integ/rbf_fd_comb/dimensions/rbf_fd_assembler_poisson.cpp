@@ -25,7 +25,7 @@
 #include <Eigen/SparseCore>
 #include <catch2/catch_test_macros.hpp>
 
-#include "comparison_approvals.h"
+#include "eigen_approx.h"
 #include "num_collect/base/constants.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/logger.h"
@@ -96,7 +96,7 @@ TEST_CASE("Poisson equation with rbf_fd_assembler in 1D") {
     for (num_collect::index_type i = 0; i < nodes.size(); ++i) {
         true_values(i) = test_function(nodes[i]);
     }
-    comparison_approvals::verify_with_reference(solution, true_values);
+    CHECK_THAT(solution, eigen_approx(true_values, 1e-4));
 }
 
 TEST_CASE("Poisson equation with rbf_fd_assembler in 2D") {
@@ -163,7 +163,7 @@ TEST_CASE("Poisson equation with rbf_fd_assembler in 2D") {
     for (num_collect::index_type i = 0; i < nodes.size(); ++i) {
         true_values(i) = test_function(nodes[i]);
     }
-    comparison_approvals::verify_with_reference(solution, true_values);
+    CHECK_THAT(solution, eigen_approx(true_values, 5e-2));
 }
 
 TEST_CASE("Poisson equation with rbf_fd_assembler in 3D") {
@@ -186,8 +186,8 @@ TEST_CASE("Poisson equation with rbf_fd_assembler in 3D") {
     num_collect::logging::logger logger;
 
     NUM_COLLECT_LOG_DEBUG(logger, "Generate nodes.");
-    constexpr num_collect::index_type num_interior_nodes = 125;
-    constexpr num_collect::index_type num_boundary_nodes_per_edge = 5;
+    constexpr num_collect::index_type num_interior_nodes = 512;
+    constexpr num_collect::index_type num_boundary_nodes_per_edge = 8;
     auto nodes =
         num_collect::rbf::generate_halton_nodes<typename variable_type::Scalar,
             variable_type::RowsAtCompileTime>(num_interior_nodes);
@@ -202,6 +202,7 @@ TEST_CASE("Poisson equation with rbf_fd_assembler in 3D") {
 
     NUM_COLLECT_LOG_DEBUG(logger, "Assemble the system.");
     assembler_type assembler;
+    assembler.num_neighbors(15);
     num_collect::util::vector<Eigen::Triplet<double>> triplets;
     Eigen::VectorXd right_vec(nodes.size());
     const num_collect::util::nearest_neighbor_searcher<variable_type>
@@ -230,5 +231,5 @@ TEST_CASE("Poisson equation with rbf_fd_assembler in 3D") {
     for (num_collect::index_type i = 0; i < nodes.size(); ++i) {
         true_values(i) = test_function(nodes[i]);
     }
-    comparison_approvals::verify_with_reference(solution, true_values);
+    CHECK_THAT(solution, eigen_approx(true_values, 0.2));
 }
