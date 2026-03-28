@@ -653,6 +653,7 @@ FodyWeavers.xsd
 **/diagrams/*.png
 **/diagrams/*.data
 /*.vtp
+/*.vtu
 
 # Temporary output of ApprovalTests
 *.received.*
