@@ -121,22 +121,13 @@ public:
         if (row_variables.size() >= parallel_threshold) {
 #pragma omp parallel
             {
-                const index_type current_num_threads = omp_get_num_threads();
-                const index_type current_thread_id = omp_get_thread_num();
-                const index_type num_rows_per_thread =
-                    (row_variables.size() + current_num_threads - 1) /
-                    current_num_threads;
-                const index_type start_row =
-                    current_thread_id * num_rows_per_thread;
-                const index_type end_row = std::min(
-                    start_row + num_rows_per_thread, row_variables.size());
-
                 row_calculator_type row_calculator;
                 row_calculator.length_parameter_scale(length_parameter_scale_);
                 util::vector<Eigen::Triplet<scalar_type, StorageIndex>>
                     local_triplets;
-                local_triplets.reserve((end_row - start_row) * num_neighbors_);
-                for (index_type i = start_row; i < end_row; ++i) {
+                local_triplets.reserve(row_variables.size() * num_neighbors_);
+#pragma omp for
+                for (index_type i = 0; i < row_variables.size(); ++i) {
                     const auto target_operator = Operator{row_variables[i]};
                     row_calculator.compute_row(distance_function_, rbf_,
                         target_operator, row_variables[i], column_variables,
