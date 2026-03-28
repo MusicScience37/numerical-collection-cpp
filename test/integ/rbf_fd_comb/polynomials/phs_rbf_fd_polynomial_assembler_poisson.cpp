@@ -107,6 +107,9 @@ TEMPLATE_TEST_CASE_SIG(
     for (num_collect::index_type i = 0; i < nodes.size(); ++i) {
         true_values(i) = test_function(nodes[i]);
     }
+    NUM_COLLECT_LOG_DEBUG(logger, "Max error: {}, mean error: {}",
+        (solution - true_values).cwiseAbs().maxCoeff(),
+        (solution - true_values).cwiseAbs().mean());
     if constexpr (Degree == 0) {
         CHECK_THAT(solution, eigen_approx(true_values, 0.1));
     } else if constexpr (Degree == 1) {

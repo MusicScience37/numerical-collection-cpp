@@ -96,6 +96,9 @@ TEST_CASE("Poisson equation with rbf_fd_assembler in 1D") {
     for (num_collect::index_type i = 0; i < nodes.size(); ++i) {
         true_values(i) = test_function(nodes[i]);
     }
+    NUM_COLLECT_LOG_DEBUG(logger, "Max error: {}, mean error: {}",
+        (solution - true_values).cwiseAbs().maxCoeff(),
+        (solution - true_values).cwiseAbs().mean());
     CHECK_THAT(solution, eigen_approx(true_values, 1e-4));
 }
 
@@ -163,6 +166,9 @@ TEST_CASE("Poisson equation with rbf_fd_assembler in 2D") {
     for (num_collect::index_type i = 0; i < nodes.size(); ++i) {
         true_values(i) = test_function(nodes[i]);
     }
+    NUM_COLLECT_LOG_DEBUG(logger, "Max error: {}, mean error: {}",
+        (solution - true_values).cwiseAbs().maxCoeff(),
+        (solution - true_values).cwiseAbs().mean());
     CHECK_THAT(solution, eigen_approx(true_values, 5e-2));
 }
 
@@ -231,5 +237,8 @@ TEST_CASE("Poisson equation with rbf_fd_assembler in 3D") {
     for (num_collect::index_type i = 0; i < nodes.size(); ++i) {
         true_values(i) = test_function(nodes[i]);
     }
+    NUM_COLLECT_LOG_DEBUG(logger, "Max error: {}, mean error: {}",
+        (solution - true_values).cwiseAbs().maxCoeff(),
+        (solution - true_values).cwiseAbs().mean());
     CHECK_THAT(solution, eigen_approx(true_values, 0.2));
 }
