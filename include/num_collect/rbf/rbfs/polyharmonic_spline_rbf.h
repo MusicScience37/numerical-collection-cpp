@@ -192,4 +192,69 @@ struct differentiated<
         Degree, Order + 1>;
 };
 
+/* *******************************************************************************
+ * Derivatives of polyharmonic spline RBFs for even degrees.
+ * *******************************************************************************/
+
+/*!
+ * \brief Class of the first-order derivative of polyharmonic spline RBF for
+ * even degrees.
+ *
+ * \tparam Scalar Type of scalars.
+ * \tparam Degree Degree of the distance.
+ */
+template <base::concepts::real_scalar Scalar, index_type Degree>
+    requires(Degree >= 1 && (Degree % 2 == 0))
+class even_degree_first_differentiated_polyharmonic_spline_rbf {
+public:
+    //! Type of scalars.
+    using scalar_type = Scalar;
+
+    /*!
+     * \brief Calculate a function value of RBF.
+     *
+     * \param[in] distance_rate Rate of distance.
+     * \return Value of this RBF.
+     */
+    [[nodiscard]] auto operator()(
+        const scalar_type& distance_rate) const noexcept -> scalar_type {
+        using std::log;
+        using std::pow;
+        NUM_COLLECT_DEBUG_ASSERT(distance_rate >= static_cast<scalar_type>(0));
+        if constexpr (Degree == 2) {
+            // Handle specially to prevent pow(0, 0).
+            if (distance_rate == static_cast<scalar_type>(0)) {
+                // This value should disappear in the calculation of
+                // derivatives.
+                return static_cast<scalar_type>(-1);
+            }
+            return -(static_cast<scalar_type>(2) * log(distance_rate) + 1);
+        } else {
+            // General case.
+            if (distance_rate == static_cast<scalar_type>(0)) {
+                // Limit of distance_rate -> 0.
+                return static_cast<scalar_type>(0);
+            }
+            return -pow(distance_rate, Degree - 2) *
+                (static_cast<scalar_type>(Degree) * log(distance_rate) + 1);
+        }
+    }
+};
+
+/*!
+ * \brief Specialization of num_collect::rbf::rbfs::differentiated for
+ * num_collect::rbf::rbfs::polyharmonic_spline_rbf for even degrees.
+ *
+ * \tparam Scalar Type of scalars.
+ * \tparam Degree Degree of the distance.
+ */
+template <base::concepts::real_scalar Scalar, index_type Degree>
+    requires(Degree >= 1 && (Degree % 2 == 0))
+struct differentiated<polyharmonic_spline_rbf<Scalar, Degree>> {
+    //! Type of the differentiated RBF.
+    using type =
+        even_degree_first_differentiated_polyharmonic_spline_rbf<Scalar,
+            Degree>;
+};
+
 }  // namespace num_collect::rbf::rbfs

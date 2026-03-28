@@ -258,6 +258,37 @@ TEST_CASE("num_collect::rbf::rbfs::polyharmonic_spline_rbf") {
             }
         }
 
+        SECTION("Degree 2") {
+            const differentiated_t<polyharmonic_spline_rbf<double, 2>>
+                differentiated_rbf;
+
+            SECTION("ordinary cases") {
+                double distance_rate{};
+                double expected_value{};
+                std::tie(distance_rate, expected_value) =
+                    GENERATE(table<double, double>({
+                        std::make_tuple(1e-6, 26.63102111592855),
+                        std::make_tuple(0.1, 3.605170185988091),
+                        std::make_tuple(0.9, -0.7892789686843474),
+                        std::make_tuple(1.0, -1.0),
+                        std::make_tuple(1.23, -1.414028338768652),
+                        std::make_tuple(7.89, -5.131192269715566),
+                    }));
+                INFO("distance_rate = " << distance_rate);
+
+                const double actual_value = differentiated_rbf(distance_rate);
+                CHECK_THAT(actual_value,
+                    Catch::Matchers::WithinAbs(expected_value,
+                        std::max(abs_tol, std::abs(expected_value) * rel_tol)));
+            }
+            SECTION("calculate for zero") {
+                constexpr double distance_rate = 0.0;
+
+                const double actual_value = differentiated_rbf(distance_rate);
+                CHECK_THAT(actual_value, is_finite());
+            }
+        }
+
         SECTION("Degree 3") {
             const differentiated_t<polyharmonic_spline_rbf<double, 3>>
                 differentiated_rbf;
@@ -273,6 +304,39 @@ TEST_CASE("num_collect::rbf::rbfs::polyharmonic_spline_rbf") {
                         std::make_tuple(1.0, -3.0),
                         std::make_tuple(1.23, -3.69),
                         std::make_tuple(7.89, -23.67),
+                    }));
+                INFO("distance_rate = " << distance_rate);
+
+                const double actual_value = differentiated_rbf(distance_rate);
+                CHECK_THAT(actual_value,
+                    Catch::Matchers::WithinAbs(expected_value,
+                        std::max(abs_tol, std::abs(expected_value) * rel_tol)));
+            }
+            SECTION("calculate for zero") {
+                constexpr double distance_rate = 0.0;
+                constexpr double expected_value = 0.0;
+
+                const double actual_value = differentiated_rbf(distance_rate);
+                CHECK_THAT(actual_value,
+                    Catch::Matchers::WithinAbs(expected_value, abs_tol));
+            }
+        }
+
+        SECTION("Degree 4") {
+            const differentiated_t<polyharmonic_spline_rbf<double, 4>>
+                differentiated_rbf;
+
+            SECTION("ordinary cases") {
+                double distance_rate{};
+                double expected_value{};
+                std::tie(distance_rate, expected_value) =
+                    GENERATE(table<double, double>({
+                        std::make_tuple(1e-6, 5.42620422318571e-11),
+                        std::make_tuple(0.1, 0.08210340371976183),
+                        std::make_tuple(0.9, -0.4686319292686428),
+                        std::make_tuple(1.0, -1.0),
+                        std::make_tuple(1.23, -2.765666947446188),
+                        std::make_tuple(7.89, -576.6028885871207),
                     }));
                 INFO("distance_rate = " << distance_rate);
 
@@ -324,6 +388,39 @@ TEST_CASE("num_collect::rbf::rbfs::polyharmonic_spline_rbf") {
             }
         }
 
+        SECTION("Degree 6") {
+            const differentiated_t<polyharmonic_spline_rbf<double, 6>>
+                differentiated_rbf;
+
+            SECTION("ordinary cases") {
+                double distance_rate{};
+                double expected_value{};
+                std::tie(distance_rate, expected_value) =
+                    GENERATE(table<double, double>({
+                        std::make_tuple(1e-6, 8.189306334778564e-23),
+                        std::make_tuple(0.1, 0.001281551055796427),
+                        std::make_tuple(0.9, -0.241337794061401),
+                        std::make_tuple(1.0, -1.0),
+                        std::make_tuple(1.23, -5.131833082187007),
+                        std::make_tuple(7.89, -51904.44904371645),
+                    }));
+                INFO("distance_rate = " << distance_rate);
+
+                const double actual_value = differentiated_rbf(distance_rate);
+                CHECK_THAT(actual_value,
+                    Catch::Matchers::WithinAbs(expected_value,
+                        std::max(abs_tol, std::abs(expected_value) * rel_tol)));
+            }
+            SECTION("calculate for zero") {
+                constexpr double distance_rate = 0.0;
+                constexpr double expected_value = 0.0;
+
+                const double actual_value = differentiated_rbf(distance_rate);
+                CHECK_THAT(actual_value,
+                    Catch::Matchers::WithinAbs(expected_value, abs_tol));
+            }
+        }
+
         SECTION("Degree 7") {
             const differentiated_t<polyharmonic_spline_rbf<double, 7>>
                 differentiated_rbf;
@@ -339,6 +436,39 @@ TEST_CASE("num_collect::rbf::rbfs::polyharmonic_spline_rbf") {
                         std::make_tuple(1.0, -7.0),
                         std::make_tuple(1.23, -19.7071397901),
                         std::make_tuple(7.89, -214034.1420020643),
+                    }));
+                INFO("distance_rate = " << distance_rate);
+
+                const double actual_value = differentiated_rbf(distance_rate);
+                CHECK_THAT(actual_value,
+                    Catch::Matchers::WithinAbs(expected_value,
+                        std::max(abs_tol, std::abs(expected_value) * rel_tol)));
+            }
+            SECTION("calculate for zero") {
+                constexpr double distance_rate = 0.0;
+                constexpr double expected_value = 0.0;
+
+                const double actual_value = differentiated_rbf(distance_rate);
+                CHECK_THAT(actual_value,
+                    Catch::Matchers::WithinAbs(expected_value, abs_tol));
+            }
+        }
+
+        SECTION("Degree 8") {
+            const differentiated_t<polyharmonic_spline_rbf<double, 8>>
+                differentiated_rbf;
+
+            SECTION("ordinary cases") {
+                double distance_rate{};
+                double expected_value{};
+                std::tie(distance_rate, expected_value) =
+                    GENERATE(table<double, double>({
+                        std::make_tuple(1e-6, 1.095240844637142e-34),
+                        std::make_tuple(0.1, 1.742068074395237e-5),
+                        std::make_tuple(0.9, -0.08349781758631306),
+                        std::make_tuple(1.0, -1.0),
+                        std::make_tuple(1.23, -9.19765836282463),
+                        std::make_tuple(7.89, -4227798.918305012),
                     }));
                 INFO("distance_rate = " << distance_rate);
 
