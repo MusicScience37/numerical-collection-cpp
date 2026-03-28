@@ -27,10 +27,79 @@
 #include "num_collect/functions/factorial.h"
 #include "num_collect/functions/gamma_half_plus.h"
 #include "num_collect/functions/pow.h"
+#include "num_collect/rbf/concepts/rbf.h"
 #include "num_collect/rbf/rbfs/differentiated.h"
-#include "num_collect/util/assert.h"
+#include "num_collect/rbf/rbfs/polyharmonic_spline_rbf.h"
 
 namespace num_collect::rbf::rbfs {
+
+/*!
+ * \brief Class to wrap a polyharmonic spline RBF to use as a thin plate spline
+ * RBF.
+ *
+ * \tparam Scalar Type of scalars.
+ * \tparam Dimension Dimension of the space.
+ * \tparam Degree Number of differentiations.
+ * \tparam BasePHS Type of the polyharmonic spline RBF to wrap.
+ */
+template <base::concepts::real_scalar Scalar, index_type Dimension,
+    index_type Degree, concepts::rbf BasePHS>
+    requires(Dimension > 0 && Degree > 0 && Degree * 2 > Dimension)
+class phs_to_tps_wrapper {
+public:
+    //! Type of scalars.
+    using scalar_type = Scalar;
+
+    //! Type of the polyharmonic spline RBF to wrap.
+    using base_type = BasePHS;
+
+    /*!
+     * \brief Calculate the coefficient of this RBF.
+     *
+     * \return Coefficient of this RBF.
+     */
+    [[nodiscard]] static constexpr auto coefficient() noexcept -> scalar_type {
+        if constexpr (Dimension % 2 == 0) {
+            // 2n - d is even
+            const scalar_type numerator = functions::pow(
+                static_cast<scalar_type>(-1), Dimension / 2 + 1 + Degree);
+            const scalar_type denominator =
+                functions::pow(static_cast<scalar_type>(2), 2 * Degree - 1) *
+                functions::pow(pi<scalar_type>, Dimension / 2) *
+                functions::factorial<scalar_type>(Degree - 1) *
+                functions::factorial<scalar_type>(Degree - Dimension / 2);
+            return numerator / denominator;
+        } else {
+            // 2n - d is odd
+            const scalar_type numerator =
+                functions::gamma_half_plus<scalar_type>(
+                    (Dimension - 1) / 2 - Degree);
+            const scalar_type denominator =
+                functions::pow(static_cast<scalar_type>(2), 2 * Degree) *
+                functions::pow(pi<scalar_type>,
+                    static_cast<scalar_type>(Dimension) /
+                        static_cast<scalar_type>(2)) *
+                functions::factorial<scalar_type>(Degree - 1);
+            return numerator / denominator;
+        }
+    }
+
+    /*!
+     * \brief Calculate a function value of RBF.
+     *
+     * \param[in] distance Distance.
+     * \return Value of this RBF.
+     */
+    [[nodiscard]] auto operator()(const scalar_type& distance) const noexcept
+        -> scalar_type {
+        constexpr scalar_type coeff = coefficient();
+        return coeff * base_(distance);
+    }
+
+private:
+    //! Polyharmonic spline RBF to wrap.
+    BasePHS base_;
+};
 
 /*!
  * \brief Class of RBF of thin plate splines \cite Ghosh2010.
@@ -80,134 +149,9 @@ namespace num_collect::rbf::rbfs {
 template <base::concepts::real_scalar Scalar, index_type Dimension,
     index_type Degree>
     requires(Dimension > 0 && Degree > 0 && Degree * 2 > Dimension)
-class thin_plate_spline_rbf {
-public:
-    //! Type of scalars.
-    using scalar_type = Scalar;
-
-    /*!
-     * \brief Calculate the coefficient of this RBF.
-     *
-     * \return Coefficient of this RBF.
-     */
-    [[nodiscard]] static constexpr auto coefficient() noexcept -> scalar_type {
-        if constexpr (Dimension % 2 == 0) {
-            // 2n - d is even
-            const scalar_type numerator = functions::pow(
-                static_cast<scalar_type>(-1), Dimension / 2 + 1 + Degree);
-            const scalar_type denominator =
-                functions::pow(static_cast<scalar_type>(2), 2 * Degree - 1) *
-                functions::pow(pi<scalar_type>, Dimension / 2) *
-                functions::factorial<scalar_type>(Degree - 1) *
-                functions::factorial<scalar_type>(Degree - Dimension / 2);
-            return numerator / denominator;
-        } else {
-            // 2n - d is odd
-            const scalar_type numerator =
-                functions::gamma_half_plus<scalar_type>(
-                    (Dimension - 1) / 2 - Degree);
-            const scalar_type denominator =
-                functions::pow(static_cast<scalar_type>(2), 2 * Degree) *
-                functions::pow(pi<scalar_type>,
-                    static_cast<scalar_type>(Dimension) /
-                        static_cast<scalar_type>(2)) *
-                functions::factorial<scalar_type>(Degree - 1);
-            return numerator / denominator;
-        }
-    }
-
-    /*!
-     * \brief Calculate a function value of RBF.
-     *
-     * \param[in] distance Distance.
-     * \return Value of this RBF.
-     */
-    [[nodiscard]] auto operator()(const scalar_type& distance) const noexcept
-        -> scalar_type {
-        NUM_COLLECT_DEBUG_ASSERT(distance >= static_cast<scalar_type>(0));
-
-        static constexpr auto coeff = coefficient();
-        if constexpr (Dimension % 2 == 0) {
-            // 2n - d is even
-            using std::log;
-            using std::pow;
-            if (distance == static_cast<scalar_type>(0)) {
-                return static_cast<scalar_type>(0);
-            }
-            return coeff * pow(distance, 2 * Degree - Dimension) *
-                log(distance);
-        } else {
-            // 2n - d is odd
-            using std::pow;
-            return coeff * pow(distance, 2 * Degree - Dimension);
-        }
-    }
-};
-
-/*!
- * \brief Class of differentiated RBF of thin plate splines \cite Ghosh2010.
- *
- * \tparam Scalar Type of scalars.
- * \tparam Dimension Dimension of the space.
- * \tparam Degree Number of differentiations.
- *
- * This class has a constraint \f$ 2n - d \geq 2 \f$
- * to avoid singularities in calculation of the derivative
- * of the interpolation.
- */
-template <base::concepts::real_scalar Scalar, index_type Dimension,
-    index_type Degree>
-    requires(Dimension > 0 && Degree > 0 && Degree * 2 - Dimension >= 2)
-class differentiated_thin_plate_spline_rbf {
-public:
-    //! Type of scalars.
-    using scalar_type = Scalar;
-
-    /*!
-     * \brief Calculate a function value of RBF.
-     *
-     * \param[in] distance Distance.
-     * \return Value of this RBF.
-     */
-    [[nodiscard]] auto operator()(const scalar_type& distance) const noexcept
-        -> scalar_type {
-        NUM_COLLECT_DEBUG_ASSERT(distance >= static_cast<scalar_type>(0));
-
-        static constexpr auto coeff =
-            thin_plate_spline_rbf<Scalar, Dimension, Degree>::coefficient();
-        if constexpr (2 * Degree - Dimension == 2) {
-            // 2n - d = 2 (special case)
-            // In this case, preventing pow(0, 0) is needed.
-            using std::log;
-            using std::pow;
-            const scalar_type no_log_part = -coeff;
-            if (distance == static_cast<scalar_type>(0)) {
-                return no_log_part;
-            }
-            const scalar_type log_part =
-                no_log_part * static_cast<scalar_type>(2) * log(distance);
-            return log_part + no_log_part;
-        } else if constexpr (Dimension % 2 == 0) {
-            // 2n - d is even
-            using std::log;
-            using std::pow;
-            const scalar_type no_log_part =
-                -coeff * pow(distance, 2 * Degree - Dimension - 2);
-            if (distance == static_cast<scalar_type>(0)) {
-                return no_log_part;
-            }
-            const scalar_type log_part = no_log_part *
-                static_cast<scalar_type>(2 * Degree - Dimension) *
-                log(distance);
-            return log_part + no_log_part;
-        } else {
-            // 2n - d is odd
-            using std::pow;
-            return -coeff * (2 * Degree - Dimension) *
-                pow(distance, 2 * Degree - Dimension - 2);
-        }
-    }
-};
+class thin_plate_spline_rbf
+    : public phs_to_tps_wrapper<Scalar, Dimension, Degree,
+          polyharmonic_spline_rbf<Scalar, 2 * Degree - Dimension>> {};
 
 /*!
  * \brief Specialization of num_collect::rbf::rbfs::differentiated for
@@ -222,110 +166,26 @@ template <base::concepts::real_scalar Scalar, index_type Dimension,
     requires(Dimension > 0 && Degree > 0 && Degree * 2 - Dimension >= 2)
 struct differentiated<thin_plate_spline_rbf<Scalar, Dimension, Degree>> {
     //! Type of the differentiated RBF.
-    using type =
-        differentiated_thin_plate_spline_rbf<Scalar, Dimension, Degree>;
-};
-
-/*!
- * \brief Class of twice-differentiated RBF of thin plate splines
- * \cite Ghosh2010.
- *
- * \tparam Scalar Type of scalars.
- * \tparam Dimension Dimension of the space.
- * \tparam Degree Number of differentiations.
- *
- * This class has a constraint \f$ 2n - d \geq 3 \f$
- * to avoid singularities in calculation of the second derivative
- * of the interpolation.
- */
-template <base::concepts::real_scalar Scalar, index_type Dimension,
-    index_type Degree>
-    requires(Dimension > 0 && Degree >= 2 && Degree * 2 - Dimension >= 3)
-class twice_differentiated_thin_plate_spline_rbf {
-public:
-    //! Type of scalars.
-    using scalar_type = Scalar;
-
-    /*!
-     * \brief Calculate a function value of RBF.
-     *
-     * \param[in] distance Distance.
-     * \return Value of this RBF.
-     */
-    [[nodiscard]] auto operator()(const scalar_type& distance) const noexcept
-        -> scalar_type {
-        NUM_COLLECT_DEBUG_ASSERT(distance >= static_cast<scalar_type>(0));
-
-        static constexpr auto coeff =
-            thin_plate_spline_rbf<Scalar, Dimension, Degree>::coefficient();
-        if constexpr (2 * Degree - Dimension == 3) {
-            // 2n - d = 3 (special case)
-            // In this case, preventing division by zero is needed.
-            // This pole won't affect the evaluation of the second derivatives
-            // of interpolation because the square of the distance is multiplied
-            // in the calculation of second derivatives of interpolation.
-            constexpr auto small_number = static_cast<scalar_type>(1e-50);
-            if (distance < small_number) {
-                return coeff * static_cast<scalar_type>(3) / small_number;
-            }
-            return coeff * static_cast<scalar_type>(3) / distance;
-        } else if constexpr (2 * Degree - Dimension == 4) {
-            // 2n - d = 4 (special case)
-            // In this case, preventing pow(0, 0) is needed.
-            using std::log;
-            using std::pow;
-            const scalar_type pow_distance = static_cast<scalar_type>(1);
-            const scalar_type no_log_part =
-                coeff * static_cast<scalar_type>(5) * pow_distance;
-            if (distance == static_cast<scalar_type>(0)) {
-                return no_log_part;
-            }
-            const scalar_type log_part = coeff * static_cast<scalar_type>(8) *
-                pow_distance * log(distance);
-            return log_part + no_log_part;
-        } else if constexpr (Dimension % 2 == 0) {
-            // 2n - d is even
-            using std::log;
-            using std::pow;
-            const scalar_type pow_distance =
-                pow(distance, 2 * Degree - Dimension - 4);
-            const scalar_type no_log_part = coeff *
-                static_cast<scalar_type>(2 * Degree - Dimension + 1) *
-                pow_distance;
-            if (distance == static_cast<scalar_type>(0)) {
-                return no_log_part;
-            }
-            const scalar_type log_part = coeff *
-                static_cast<scalar_type>(2 * Degree - Dimension) *
-                static_cast<scalar_type>(2 * Degree - Dimension - 2) *
-                pow_distance * log(distance);
-            return log_part + no_log_part;
-        } else {
-            // 2n - d is odd
-            using std::pow;
-            return coeff * static_cast<scalar_type>(2 * Degree - Dimension) *
-                static_cast<scalar_type>(2 * Degree - Dimension - 2) *
-                pow(distance, 2 * Degree - Dimension - 4);
-        }
-    }
+    using type = phs_to_tps_wrapper<Scalar, Dimension, Degree,
+        differentiated_t<typename thin_plate_spline_rbf<Scalar, Dimension,
+            Degree>::base_type>>;
 };
 
 /*!
  * \brief Specialization of num_collect::rbf::rbfs::differentiated for
- * num_collect::rbf::rbfs::differentiated_thin_plate_spline_rbf.
+ * num_collect::rbf::rbfs::phs_to_tps_wrapper.
  *
  * \tparam Scalar Type of scalars.
  * \tparam Dimension Dimension of the space.
  * \tparam Degree Number of differentiations.
+ * \tparam BasePHS Type of the polyharmonic spline RBF to wrap.
  */
 template <base::concepts::real_scalar Scalar, index_type Dimension,
-    index_type Degree>
-    requires(Dimension > 0 && Degree >= 2 && Degree * 2 - Dimension >= 3)
-struct differentiated<
-    differentiated_thin_plate_spline_rbf<Scalar, Dimension, Degree>> {
+    index_type Degree, concepts::rbf BasePHS>
+struct differentiated<phs_to_tps_wrapper<Scalar, Dimension, Degree, BasePHS>> {
     //! Type of the differentiated RBF.
-    using type =
-        twice_differentiated_thin_plate_spline_rbf<Scalar, Dimension, Degree>;
+    using type = phs_to_tps_wrapper<Scalar, Dimension, Degree,
+        differentiated_t<BasePHS>>;
 };
 
 }  // namespace num_collect::rbf::rbfs
