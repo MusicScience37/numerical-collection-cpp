@@ -23,6 +23,8 @@
 
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/functions/pow.h"
+#include "num_collect/rbf/rbfs/differentiated.h"
 #include "num_collect/util/assert.h"
 
 namespace num_collect::rbf::rbfs {
@@ -95,6 +97,99 @@ public:
         return static_cast<scalar_type>(pow(distance_rate, Degree)) *
             log(distance_rate);
     }
+};
+
+/* *******************************************************************************
+ * Derivatives of polyharmonic spline RBFs for odd degrees.
+ * *******************************************************************************/
+
+/*!
+ * \brief Class of the derivative of polyharmonic spline RBF for odd degrees.
+ *
+ * \tparam Scalar Type of scalars.
+ * \tparam Degree Degree of the distance.
+ * \tparam Order Number of differentiation.
+ */
+template <base::concepts::real_scalar Scalar, index_type Degree,
+    index_type Order>
+    requires(Degree >= 1 && (Degree % 2 == 1) && Order > 0)
+class odd_degree_differentiated_polyharmonic_spline_rbf {
+public:
+    //! Type of scalars.
+    using scalar_type = Scalar;
+
+    /*!
+     * \brief Calculate a function value of RBF.
+     *
+     * \param[in] distance_rate Rate of distance.
+     * \return Value of this RBF.
+     */
+    [[nodiscard]] auto operator()(
+        const scalar_type& distance_rate) const noexcept -> scalar_type {
+        using std::pow;
+        NUM_COLLECT_DEBUG_ASSERT(distance_rate >= static_cast<scalar_type>(0));
+        constexpr scalar_type coeff = calculate_coeff();
+        constexpr index_type degree_after_diff = Degree - 2 * Order;
+        if constexpr (degree_after_diff > 0) {
+            return coeff * pow(distance_rate, degree_after_diff);
+        } else {
+            constexpr auto small_number = static_cast<scalar_type>(1e-50);
+            if (distance_rate < small_number) {
+                constexpr auto value =
+                    coeff * functions::pow(small_number, degree_after_diff);
+                return value;
+            }
+            return coeff * pow(distance_rate, degree_after_diff);
+        }
+    }
+
+private:
+    /*!
+     * \brief Calculate the coefficient of the derivative of RBF.
+     *
+     * \return Coefficient of the derivative of RBF.
+     */
+    [[nodiscard]] static constexpr auto calculate_coeff() noexcept
+        -> scalar_type {
+        auto coeff = static_cast<scalar_type>(1);
+        for (index_type i = 1; i <= Order; ++i) {
+            coeff *= -static_cast<scalar_type>(Degree - 2 * (i - 1));
+        }
+        return coeff;
+    }
+};
+
+/*!
+ * \brief Specialization of num_collect::rbf::rbfs::differentiated for
+ * num_collect::rbf::rbfs::polyharmonic_spline_rbf for odd degrees.
+ *
+ * \tparam Scalar Type of scalars.
+ * \tparam Degree Degree of the distance.
+ */
+template <base::concepts::real_scalar Scalar, index_type Degree>
+    requires(Degree >= 1 && (Degree % 2 == 1))
+struct differentiated<polyharmonic_spline_rbf<Scalar, Degree>> {
+    //! Type of the differentiated RBF.
+    using type =
+        odd_degree_differentiated_polyharmonic_spline_rbf<Scalar, Degree, 1>;
+};
+
+/*!
+ * \brief Specialization of num_collect::rbf::rbfs::differentiated for
+ * num_collect::rbf::rbfs::odd_degree_differentiated_polyharmonic_spline_rbf.
+ *
+ * \tparam Scalar Type of scalars.
+ * \tparam Degree Degree of the distance.
+ * \tparam Order Number of differentiation.
+ */
+template <base::concepts::real_scalar Scalar, index_type Degree,
+    index_type Order>
+    requires(Degree >= 1 && (Degree % 2 == 1) && Order > 0)
+struct differentiated<
+    odd_degree_differentiated_polyharmonic_spline_rbf<Scalar, Degree, Order>> {
+    //! Type of the differentiated RBF.
+    using type = odd_degree_differentiated_polyharmonic_spline_rbf<Scalar,
+        Degree, Order + 1>;
 };
 
 }  // namespace num_collect::rbf::rbfs
