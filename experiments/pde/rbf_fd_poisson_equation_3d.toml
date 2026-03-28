@@ -1,0 +1,20 @@
+"$schema" = "https://numcollect.musicscience37.com/config_schema/v3/config_schema.json"
+
+[rbf_fd_poisson_equation_3d]
+# Number of nodes in the interior of the domain.
+num_interior_nodes = 512
+# Number of nodes on each edge of the boundary.
+num_boundary_nodes_per_edge = 8
+# Order of polynomials used in RBF-FD. -1 for no polynomials.
+# Without polynomials, use of many nodes results in very large errors in the current implementation.
+polynomial_order = 2
+# Number of neighbors used in RBF-FD.
+num_neighbors = 15
+# Scale of length parameters in RBF-FD.
+length_parameter_scale = 3.0
+
+[[num_collect.logging.tag_configs]]
+tag = ""
+sink = "default"
+output_log_level = "debug"
+output_log_level_in_child_iterations = "info"

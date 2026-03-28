@@ -22,4 +22,12 @@ if(VTK_FOUND)
         PRIVATE ${VTK_LIBRARIES} cpp_plotly_plotter::plotly_plotter)
     vtk_module_autoinit(TARGETS experiment_pde_rbf_fd_poisson_equation_2d
                         MODULES ${VTK_LIBRARIES})
+
+    add_experiment(experiment_pde_rbf_fd_poisson_equation_3d
+                   rbf_fd_poisson_equation_3d.cpp)
+    target_link_libraries(
+        experiment_pde_rbf_fd_poisson_equation_3d
+        PRIVATE ${VTK_LIBRARIES} cpp_plotly_plotter::plotly_plotter)
+    vtk_module_autoinit(TARGETS experiment_pde_rbf_fd_poisson_equation_3d
+                        MODULES ${VTK_LIBRARIES})
 endif()

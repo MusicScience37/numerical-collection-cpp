@@ -8,6 +8,7 @@
 #include "format_dense_vector_test.cpp"
 #include "format_errno_test.cpp"
 #include "format_sparse_matrix_test.cpp"
+#include "generate_cuboid_boundary_nodes_test.cpp"
 #include "generate_rectangle_boundary_nodes_test.cpp"
 #include "gray_code_test.cpp"
 #include "greatest_common_divisor_test.cpp"
