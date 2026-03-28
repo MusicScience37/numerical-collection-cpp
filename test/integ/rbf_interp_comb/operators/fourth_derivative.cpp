@@ -33,6 +33,7 @@
 #include "num_collect/rbf/rbf_interpolator.h"
 #include "num_collect/rbf/rbf_polynomial_interpolator.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
+#include "num_collect/rbf/thin_plate_spline_interpolator.h"
 
 TEMPLATE_TEST_CASE(
     "fourth-order derivative of local_rbf_interpolator with different RBFs", "",
@@ -96,6 +97,55 @@ TEMPLATE_TEST_CASE_SIG(
     using rbf_interpolator_type =
         num_collect::rbf::global_rbf_polynomial_interpolator<
             double(variable_type), rbf_type, Degree>;
+
+    rbf_interpolator_type interpolator;
+
+    const auto function = [](double x) {
+        return std::cos(num_collect::pi<double> * x);
+    };
+    const auto fourth_derivative_function = [](double x) {
+        return num_collect::pi<double> * num_collect::pi<double> *
+            num_collect::pi<double> * num_collect::pi<double> *
+            std::cos(num_collect::pi<double> * x);
+    };
+
+    const auto sample_variables = generate_1d_halton_nodes<double>(10);
+    Eigen::VectorXd sample_values{};
+    sample_values.resize(sample_variables.size());
+    for (num_collect::index_type i = 0; i < sample_variables.size(); ++i) {
+        sample_values(i) = function(sample_variables[i]);
+    }
+
+    interpolator.compute(sample_variables, sample_values);
+
+    const Eigen::VectorXd interpolated_variables =
+        Eigen::VectorXd::LinSpaced(11, 0.0, 1.0);
+    Eigen::VectorXd interpolated_values;
+    interpolated_values.resize(interpolated_variables.size());
+    Eigen::VectorXd actual_values;
+    actual_values.resize(interpolated_variables.size());
+    for (num_collect::index_type i = 0; i < interpolated_variables.size();
+        ++i) {
+        interpolated_values(i) = interpolator.evaluate(
+            biharmonic_operator(interpolated_variables(i)));
+        actual_values(i) =
+            fourth_derivative_function(interpolated_variables(i));
+    }
+    comparison_approvals::verify_with_reference(
+        interpolated_values, actual_values, 2);
+}
+
+TEMPLATE_TEST_CASE_SIG(
+    "fourth-order derivative of thin_plate_spline_interpolator with "
+    "different degrees",
+    "", ((int Degree), Degree), (4)) {
+    using num_collect::rbf::generate_1d_halton_nodes;
+    using num_collect::rbf::thin_plate_spline_interpolator;
+    using num_collect::rbf::operators::biharmonic_operator;
+
+    using variable_type = double;
+    using rbf_interpolator_type =
+        thin_plate_spline_interpolator<variable_type(variable_type), Degree>;
 
     rbf_interpolator_type interpolator;
 

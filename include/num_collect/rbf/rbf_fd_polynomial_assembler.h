@@ -33,7 +33,7 @@
 #include "num_collect/rbf/length_parameter_calculators/identity_length_parameter_calculator.h"
 #include "num_collect/rbf/polynomial_term_generator.h"
 #include "num_collect/rbf/rbfs/gaussian_m1_rbf.h"
-#include "num_collect/rbf/rbfs/thin_plate_spline_rbf.h"
+#include "num_collect/rbf/rbfs/polyharmonic_spline_rbf.h"
 #include "num_collect/util/nearest_neighbor_searcher.h"
 #include "num_collect/util/vector_view.h"
 
@@ -216,14 +216,20 @@ private:
  *
  * \tparam Variable Type of variables.
  * \tparam Degree Degree of the polyharmonic spline RBF.
+ *
+ * \note The default degree is set to 4 for even dimensions and 5 for odd
+ * dimensions. This selection is based on the theory of thin plate splines,
+ * in which even degrees are used for even dimensions and odd degrees are used
+ * for odd dimensions. The default degree supports up to second order
+ * derivatives.
  */
 template <typename Variable,
-    int Degree = base::get_compile_time_size<Variable>() / 2 + 2>
+    int Degree = base::get_compile_time_size<Variable>() % 2 + 4>
 using phs_rbf_fd_polynomial_assembler = rbf_fd_polynomial_assembler<Variable,
-    rbfs::thin_plate_spline_rbf<
+    rbfs::polyharmonic_spline_rbf<
         typename distance_functions::euclidean_distance_function<
             Variable>::value_type,
-        base::get_compile_time_size<Variable>(), Degree>,
+        Degree>,
     distance_functions::euclidean_distance_function<Variable>,
     length_parameter_calculators::identity_length_parameter_calculator<
         distance_functions::euclidean_distance_function<Variable>>>;
