@@ -173,6 +173,7 @@ public:
             }
         } else {
             row_calculator_type row_calculator;
+            row_calculator.length_parameter_scale(length_parameter_scale_);
             for (index_type i = 0; i < row_variables.size(); ++i) {
                 const auto target_operator = Operator{row_variables[i]};
                 row_calculator.compute_row(distance_function_, rbf_,
