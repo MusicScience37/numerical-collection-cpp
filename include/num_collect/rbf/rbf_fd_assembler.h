@@ -43,11 +43,16 @@ template <typename Variable,
     concepts::rbf RBF = rbfs::gaussian_rbf<typename distance_functions::
             euclidean_distance_function<Variable>::value_type>,
     concepts::distance_function DistanceFunction =
-        distance_functions::euclidean_distance_function<Variable>>
+        distance_functions::euclidean_distance_function<Variable>,
+    concepts::length_parameter_calculator LengthParameterCalculator =
+        length_parameter_calculators::global_length_parameter_calculator<
+            DistanceFunction>>
     requires std::is_same_v<Variable,
                  typename DistanceFunction::variable_type> &&
     std::is_same_v<typename DistanceFunction::value_type,
-        typename RBF::scalar_type>
+        typename RBF::scalar_type> &&
+    std::is_same_v<DistanceFunction,
+        typename LengthParameterCalculator::distance_function_type>
 class rbf_fd_assembler {
 public:
     //! Type of variables.
@@ -60,9 +65,7 @@ public:
     using distance_function_type = DistanceFunction;
 
     //! Type of the calculator of length parameters.
-    using length_parameter_calculator_type =
-        length_parameter_calculators::global_length_parameter_calculator<
-            distance_function_type>;
+    using length_parameter_calculator_type = LengthParameterCalculator;
 
     //! Type of scalars.
     using scalar_type = typename rbf_type::scalar_type;

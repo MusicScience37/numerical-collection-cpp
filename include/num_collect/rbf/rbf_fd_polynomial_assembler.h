@@ -21,13 +21,16 @@
 
 #include <Eigen/SparseCore>
 
+#include "num_collect/base/get_compile_time_size.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
 #include "num_collect/rbf/impl/rbf_fd_polynomial_row_calculator.h"
 #include "num_collect/rbf/length_parameter_calculators/global_length_parameter_calculator.h"
+#include "num_collect/rbf/length_parameter_calculators/identity_length_parameter_calculator.h"
 #include "num_collect/rbf/polynomial_term_generator.h"
 #include "num_collect/rbf/rbfs/gaussian_m1_rbf.h"
+#include "num_collect/rbf/rbfs/thin_plate_spline_rbf.h"
 #include "num_collect/util/nearest_neighbor_searcher.h"
 #include "num_collect/util/vector_view.h"
 
@@ -45,11 +48,16 @@ template <typename Variable,
     concepts::rbf RBF = rbfs::gaussian_m1_rbf<typename distance_functions::
             euclidean_distance_function<Variable>::value_type>,
     concepts::distance_function DistanceFunction =
-        distance_functions::euclidean_distance_function<Variable>>
+        distance_functions::euclidean_distance_function<Variable>,
+    concepts::length_parameter_calculator LengthParameterCalculator =
+        length_parameter_calculators::global_length_parameter_calculator<
+            DistanceFunction>>
     requires std::is_same_v<Variable,
                  typename DistanceFunction::variable_type> &&
     std::is_same_v<typename DistanceFunction::value_type,
-        typename RBF::scalar_type>
+        typename RBF::scalar_type> &&
+    std::is_same_v<DistanceFunction,
+        typename LengthParameterCalculator::distance_function_type>
 class rbf_fd_polynomial_assembler {
 public:
     //! Type of variables.
@@ -62,9 +70,7 @@ public:
     using distance_function_type = DistanceFunction;
 
     //! Type of the calculator of length parameters.
-    using length_parameter_calculator_type =
-        length_parameter_calculators::global_length_parameter_calculator<
-            distance_function_type>;
+    using length_parameter_calculator_type = LengthParameterCalculator;
 
     //! Type of scalars.
     using scalar_type = typename rbf_type::scalar_type;
@@ -195,5 +201,23 @@ private:
     //! Scale of length parameters.
     scalar_type length_parameter_scale_{default_length_parameter_scale};
 };
+
+/*!
+ * \brief Class to assemble system matrices in RBF-FD method using polyharmonic
+ * spline RBF with polynomial terms.
+ *
+ * \tparam Variable Type of variables.
+ * \tparam Degree Degree of the polyharmonic spline RBF.
+ */
+template <typename Variable,
+    int Degree = base::get_compile_time_size<Variable>() / 2 + 2>
+using phs_rbf_fd_polynomial_assembler = rbf_fd_polynomial_assembler<Variable,
+    rbfs::thin_plate_spline_rbf<
+        typename distance_functions::euclidean_distance_function<
+            Variable>::value_type,
+        base::get_compile_time_size<Variable>(), Degree>,
+    distance_functions::euclidean_distance_function<Variable>,
+    length_parameter_calculators::identity_length_parameter_calculator<
+        distance_functions::euclidean_distance_function<Variable>>>;
 
 }  // namespace num_collect::rbf
