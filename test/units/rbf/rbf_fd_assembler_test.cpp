@@ -105,6 +105,46 @@ TEST_CASE("num_collect::rbf::rbf_fd_assembler") {
         }
     }
 
+    SECTION("compute a larger matrix") {
+        constexpr num_collect::index_type num_rows = 100;
+        constexpr num_collect::index_type num_columns = 100;
+        const auto row_variables =
+            generate_halton_nodes<scalar_type, dimensions>(num_rows);
+        const auto column_variables =
+            generate_halton_nodes<scalar_type, dimensions>(num_columns);
+        const nearest_neighbor_searcher<variable_type>
+            column_variables_nearest_neighbor_searcher(column_variables);
+        num_collect::util::vector<Eigen::Triplet<scalar_type>> triplets;
+
+        assembler.compute_rows<operator_type>(row_variables, column_variables,
+            column_variables_nearest_neighbor_searcher, triplets, 0, 0);
+
+        CHECK(triplets.size() == num_rows * assembler.num_neighbors());
+        Eigen::SparseMatrix<scalar_type> matrix(num_rows, num_columns);
+        matrix.setFromTriplets(triplets.begin(), triplets.end());
+
+        const auto test_function = [](const variable_type& variable) {
+            return variable.array().sin().prod();
+        };
+        const auto test_function_laplacian = [](const variable_type& variable) {
+            return -2.0 * variable.array().sin().prod();
+        };
+        Eigen::VectorXd function_values(num_columns);
+        for (num_collect::index_type i = 0; i < num_columns; ++i) {
+            function_values(i) = test_function(column_variables[i]);
+        }
+        Eigen::VectorXd expected_laplacian(num_rows);
+        for (num_collect::index_type i = 0; i < num_rows; ++i) {
+            expected_laplacian(i) = test_function_laplacian(row_variables[i]);
+        }
+        const Eigen::VectorXd approximated_laplacian = matrix * function_values;
+
+        const double error_rate =
+            (approximated_laplacian - expected_laplacian).norm() /
+            expected_laplacian.norm();
+        CHECK(error_rate < 0.1);
+    }
+
     SECTION("check number of neighbors") {
         const auto row_variables =
             generate_halton_nodes<scalar_type, dimensions>(num_rows);
