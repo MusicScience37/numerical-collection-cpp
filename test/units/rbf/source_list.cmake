@@ -13,6 +13,8 @@ set(SOURCE_FILES
     impl/differentiate_polynomial_term_test.cpp
     impl/general_spline_equation_solver_test.cpp
     impl/kernel_matrix_solver_test.cpp
+    impl/rbf_fd_polynomial_row_calculator_test.cpp
+    impl/rbf_fd_row_calculator_test.cpp
     length_parameter_calculators/global_length_parameter_calculator_test.cpp
     length_parameter_calculators/local_length_parameter_calculator_test.cpp
     operators/biharmonic_operator_test.cpp
@@ -25,6 +27,8 @@ set(SOURCE_FILES
     operators/third_order_derivative_operator_test.cpp
     polynomial_term_generator_test.cpp
     polynomial_term_test.cpp
+    rbf_fd_assembler_test.cpp
+    rbf_fd_polynomial_assembler_test.cpp
     rbf_interpolator_test.cpp
     rbf_polynomial_interpolator_test.cpp
     rbfs/gaussian_from_square_rbf_test.cpp

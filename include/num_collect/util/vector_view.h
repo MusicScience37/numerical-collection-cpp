@@ -211,6 +211,63 @@ public:
     }
 
     /*!
+     * \brief Get a subview starting at an offset with a given count.
+     *
+     * \param[in] offset Index of the first element of the subview.
+     * \param[in] count Number of elements in the subview.
+     * \return Subview.
+     */
+    [[nodiscard]] constexpr auto subview(
+        index_type offset, index_type count) const -> vector_view<T> {
+        if (offset < 0 || offset > size_) {
+            throw out_of_range(
+                "Offset in vector_view::subview is out of range.");
+        }
+        if (count < 0 || offset + count > size_) {
+            throw out_of_range(
+                "Count in vector_view::subview is out of range.");
+        }
+        return vector_view<T>(data_ + offset, count);
+    }
+
+    /*!
+     * \brief Get a subview starting at an offset to the end.
+     *
+     * \param[in] offset Index of the first element of the subview.
+     * \return Subview.
+     */
+    [[nodiscard]] constexpr auto subview(index_type offset) const
+        -> vector_view<T> {
+        if (offset < 0 || offset > size_) {
+            throw out_of_range(
+                "Offset in vector_view::subview is out of range.");
+        }
+        return vector_view<T>(data_ + offset, size_ - offset);
+    }
+
+    /*!
+     * \brief Get a subview of the first count elements.
+     *
+     * \param[in] count Number of elements.
+     * \return Subview.
+     */
+    [[nodiscard]] constexpr auto first(index_type count) const
+        -> vector_view<T> {
+        return subview(0, count);
+    }
+
+    /*!
+     * \brief Get a subview of the last count elements.
+     *
+     * \param[in] count Number of elements.
+     * \return Subview.
+     */
+    [[nodiscard]] constexpr auto last(index_type count) const
+        -> vector_view<T> {
+        return subview(size_ - count, count);
+    }
+
+    /*!
      * \brief Get the iterator to the first element.
      *
      * \return Iterator.
@@ -244,6 +301,44 @@ public:
      */
     [[nodiscard]] constexpr auto cend() const noexcept -> const_iterator {
         return data_ + size_;
+    }
+
+    /*!
+     * \brief Get the reverse iterator to the last element.
+     *
+     * \return Reverse iterator.
+     */
+    [[nodiscard]] constexpr auto rbegin() const noexcept -> reverse_iterator {
+        return reverse_iterator(end());
+    }
+
+    /*!
+     * \brief Get the reverse iterator to the last element.
+     *
+     * \return Reverse iterator.
+     */
+    [[nodiscard]] constexpr auto crbegin() const noexcept
+        -> const_reverse_iterator {
+        return const_reverse_iterator(cend());
+    }
+
+    /*!
+     * \brief Get the past-the-front reverse iterator.
+     *
+     * \return Reverse iterator.
+     */
+    [[nodiscard]] constexpr auto rend() const noexcept -> reverse_iterator {
+        return reverse_iterator(begin());
+    }
+
+    /*!
+     * \brief Get the past-the-front reverse iterator.
+     *
+     * \return Reverse iterator.
+     */
+    [[nodiscard]] constexpr auto crend() const noexcept
+        -> const_reverse_iterator {
+        return const_reverse_iterator(cbegin());
     }
 
     /*!

@@ -592,6 +592,51 @@ TEST_CASE("num_collect::util::trivial_vector") {
         CHECK(vector.at(3) == 3);
     }
 
+    SECTION("insert a range at the end") {
+        trivial_vector<int> vector{1, 2, 3};
+        const trivial_vector<int> source{4, 5};
+
+        auto iter = vector.insert(vector.end(), source.begin(), source.end());
+
+        CHECK(*iter == 4);
+        CHECK(vector.size() == 5);
+        CHECK(vector.at(0) == 1);
+        CHECK(vector.at(1) == 2);
+        CHECK(vector.at(2) == 3);
+        CHECK(vector.at(3) == 4);
+        CHECK(vector.at(4) == 5);
+    }
+
+    SECTION("insert a range in the middle") {
+        trivial_vector<int> vector{1, 2, 3};
+        const trivial_vector<int> source{4, 5};
+
+        auto iter =
+            vector.insert(vector.begin() + 1, source.begin(), source.end());
+
+        CHECK(*iter == 4);
+        CHECK(vector.size() == 5);
+        CHECK(vector.at(0) == 1);
+        CHECK(vector.at(1) == 4);
+        CHECK(vector.at(2) == 5);
+        CHECK(vector.at(3) == 2);
+        CHECK(vector.at(4) == 3);
+    }
+
+    SECTION("insert an empty range") {
+        trivial_vector<int> vector{1, 2, 3};
+        const trivial_vector<int> source{};
+
+        auto iter =
+            vector.insert(vector.begin() + 1, source.begin(), source.end());
+
+        CHECK(iter == vector.begin() + 1);
+        CHECK(vector.size() == 3);
+        CHECK(vector.at(0) == 1);
+        CHECK(vector.at(1) == 2);
+        CHECK(vector.at(2) == 3);
+    }
+
     SECTION("remove an element") {
         trivial_vector<int> vector{1, 2, 3};
 

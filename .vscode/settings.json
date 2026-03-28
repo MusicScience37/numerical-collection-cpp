@@ -60,5 +60,7 @@
   },
   "isort.args": ["--profile", "black"],
   "todo-tree.filtering.excludeGlobs": ["**/node_modules/*/**", "**/vcpkg/**"],
-  "restructuredtext.pythonRecommendation.disabled": true
+  "restructuredtext.pythonRecommendation.disabled": true,
+  "python-envs.defaultEnvManager": "ms-python.python:poetry",
+  "python-envs.defaultPackageManager": "ms-python.python:poetry"
 }

@@ -221,11 +221,142 @@ TEST_CASE("num_collect::util::vector_view") {
         }
     }
 
+    SECTION("access data using rbegin() and rend()") {
+        std::vector<int> data{1, 2, 3};
+        vector_view<int> view = data;
+
+        std::vector<int> actual_data;
+        // NOLINTNEXTLINE(*-loop-convert)
+        for (auto iter = view.rbegin(); iter != view.rend(); ++iter) {
+            STATIC_REQUIRE(std::is_same_v<decltype(*iter), int&>);
+            actual_data.push_back(*iter);
+        }
+        CHECK(actual_data == std::vector<int>{3, 2, 1});
+    }
+
+    SECTION("access data using crbegin() and crend()") {
+        std::vector<int> data{1, 2, 3};
+        vector_view<int> view = data;
+
+        std::vector<int> actual_data;
+        // NOLINTNEXTLINE(*-loop-convert)
+        for (auto iter = view.crbegin(); iter != view.crend(); ++iter) {
+            STATIC_REQUIRE(std::is_same_v<decltype(*iter), const int&>);
+            actual_data.push_back(*iter);
+        }
+        CHECK(actual_data == std::vector<int>{3, 2, 1});
+    }
+
     SECTION("check whether a vector is empty") {
         std::vector<int> data1{};
         std::vector<int> data2{1};
 
         CHECK(vector_view<int>{data1}.empty());
         CHECK_FALSE(vector_view<int>{data2}.empty());
+    }
+
+    SECTION("subview with offset and count") {
+        std::vector<int> data{1, 2, 3, 4, 5};
+        vector_view<int> view = data;
+
+        const auto sub = view.subview(1, 3);
+        CHECK(sub.size() == 3);
+        CHECK(sub[0] == 2);
+        CHECK(sub[1] == 3);
+        CHECK(sub[2] == 4);
+    }
+
+    SECTION("subview with offset and count (empty result)") {
+        std::vector<int> data{1, 2, 3};
+        vector_view<int> view = data;
+
+        const auto sub = view.subview(1, 0);
+        CHECK(sub.size() == 0);  // NOLINT(*-size-empty)
+    }
+
+    SECTION("subview with offset and count (full range)") {
+        std::vector<int> data{1, 2, 3};
+        vector_view<int> view = data;
+
+        const auto sub = view.subview(0, 3);
+        CHECK(sub.size() == 3);
+        CHECK(sub[0] == 1);
+        CHECK(sub[2] == 3);
+    }
+
+    SECTION("subview with offset and count (out of range)") {
+        std::vector<int> data{1, 2, 3};
+        vector_view<int> view = data;
+
+        CHECK_THROWS(view.subview(-1, 2));
+        CHECK_THROWS(view.subview(4, 0));
+        CHECK_THROWS(view.subview(0, -1));
+        CHECK_THROWS(view.subview(0, 4));
+        CHECK_THROWS(view.subview(2, 2));
+    }
+
+    SECTION("subview with offset only") {
+        std::vector<int> data{1, 2, 3, 4, 5};
+        vector_view<int> view = data;
+
+        const auto sub = view.subview(2);
+        CHECK(sub.size() == 3);
+        CHECK(sub[0] == 3);
+        CHECK(sub[1] == 4);
+        CHECK(sub[2] == 5);
+    }
+
+    SECTION("subview with offset only (offset at end)") {
+        std::vector<int> data{1, 2, 3};
+        vector_view<int> view = data;
+
+        const auto sub = view.subview(3);
+        CHECK(sub.size() == 0);  // NOLINT(*-size-empty)
+    }
+
+    SECTION("subview with offset only (out of range)") {
+        std::vector<int> data{1, 2, 3};
+        vector_view<int> view = data;
+
+        CHECK_THROWS(view.subview(-1));
+        CHECK_THROWS(view.subview(4));
+    }
+
+    SECTION("first") {
+        std::vector<int> data{1, 2, 3, 4, 5};
+        vector_view<int> view = data;
+
+        const auto sub = view.first(3);
+        CHECK(sub.size() == 3);
+        CHECK(sub[0] == 1);
+        CHECK(sub[1] == 2);
+        CHECK(sub[2] == 3);
+    }
+
+    SECTION("first (out of range)") {
+        std::vector<int> data{1, 2, 3};
+        vector_view<int> view = data;
+
+        CHECK_THROWS(view.first(-1));
+        CHECK_THROWS(view.first(4));
+    }
+
+    SECTION("last") {
+        std::vector<int> data{1, 2, 3, 4, 5};
+        vector_view<int> view = data;
+
+        const auto sub = view.last(3);
+        CHECK(sub.size() == 3);
+        CHECK(sub[0] == 3);
+        CHECK(sub[1] == 4);
+        CHECK(sub[2] == 5);
+    }
+
+    SECTION("last (out of range)") {
+        std::vector<int> data{1, 2, 3};
+        vector_view<int> view = data;
+
+        CHECK_THROWS(view.last(-1));
+        CHECK_THROWS(view.last(4));
     }
 }

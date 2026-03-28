@@ -139,6 +139,8 @@ spell check:
     - poetry install
     - mkdir -p $VCPKG_DEFAULT_BINARY_CACHE
     - mkdir $BUILD_DIR
+    - apt-get update
+    - apt-get install -y --no-install-recommends libvtk9-dev
     - poetry run playwright install --only-shell --with-deps chromium
     - poetry run plotly_get_chrome -y
   script:

@@ -552,6 +552,41 @@ public:
     }
 
     /*!
+     * \brief Insert elements from a range.
+     *
+     * \tparam InputIt Type of input iterators.
+     * \param[in] position Position to insert.
+     * \param[in] first Iterator to the first element.
+     * \param[in] last Iterator to the past-the-end element.
+     * \return Iterator to the first inserted element.
+     */
+    template <std::input_iterator InputIt>
+    auto insert(const_iterator position, InputIt first, InputIt last)
+        -> iterator {
+        if constexpr (std::forward_iterator<InputIt>) {
+            const size_type count =
+                static_cast<size_type>(std::distance(first, last));
+            if (count == 0) {
+                return begin() + (position - cbegin());
+            }
+            const size_type index = position - cbegin();
+            expand_to(size_ + count);
+            if (index < size_) {
+                std::memmove(data_ + index + count, data_ + index,
+                    static_cast<std::size_t>(size_ - index) *
+                        sizeof(value_type));
+            }
+            std::copy(first, last, data_ + index);
+            size_ += count;
+            return iterator(data_ + index);
+        } else {
+            // TODO Refactor to avoid unnecessary copying.
+            trivial_vector<T> temp(first, last);
+            return insert(position, temp.begin(), temp.end());
+        }
+    }
+
+    /*!
      * \brief Insert an element using constructor arguments.
      *
      * \tparam Args Types of the arguments of the constructor.

@@ -21,6 +21,7 @@
 
 #include <cstddef>
 #include <initializer_list>
+#include <iterator>
 #include <utility>
 #include <vector>
 
@@ -316,6 +317,21 @@ public:
      */
     auto insert(const_iterator pos, value_type&& value) -> iterator {
         return vector_.insert(pos, std::move(value));
+    }
+
+    /*!
+     * \brief Insert elements from a range.
+     *
+     * \tparam InputIterator Type of input iterators.
+     * \param[in] pos Position to insert.
+     * \param[in] first Iterator to the first element.
+     * \param[in] last Iterator to the past-the-end element.
+     * \return Iterator to the first inserted element.
+     */
+    template <std::input_iterator InputIterator>
+    auto insert(const_iterator pos, InputIterator first, InputIterator last)
+        -> iterator {
+        return vector_.insert(pos, first, last);
     }
 
     /*!
