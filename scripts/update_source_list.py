@@ -32,6 +32,7 @@ SOURCE_PATHS = (
         THIS_DIR.parent / "test" / "integ" / "linear_solvers",
         THIS_DIR.parent / "test" / "integ" / "rbf_interp_comb",
         THIS_DIR.parent / "test" / "integ" / "rbf_fd_comb",
+        THIS_DIR.parent / "test" / "integ" / "rbf_fd_equations",
     ]
 )
 
