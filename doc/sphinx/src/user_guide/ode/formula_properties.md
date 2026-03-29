@@ -1,5 +1,7 @@
 # Properties of Formulas in ODE Solvers
 
+For classes implementing formulas, see [Algorithm List](../../algorithm_list.md#ode-solvers-ode-module)
+
 | Type        | Formula                                      | Explicit | Order | Stiffly-Accurate | Stability | DAE Support | Notes / Keywords     |
 | :---------- | :------------------------------------------- | :------- | :---- | :--------------- | :-------- | :---------- | :------------------- |
 | Runge-Kutta | ARK4(3)6L[2]SA-ERK {cite:p}`Kennedy2003`     | Yes      | 4, 3  | No               |           |             | Additive Runge-Kutta |
@@ -9,7 +11,7 @@
 | Runge-Kutta | ESDIRK45c {cite:p}`Jorgensen2018`            | No       | 4, 5  | Yes              | L-stable  |             |                      |
 | Runge-Kutta | RK4 {cite:p}`Hairer1993`                     | Yes      | 4     | No               |           |             |                      |
 | Runge-Kutta | RKF45 {cite:p}`Hairer1993`                   | Yes      | 4, 5  | No               |           |             |                      |
-| Runge-Kutta | 4th order SDIRK {cite:p}`Hairer1991`         | No       | 4, 3  | Yes              | L-stable  |             |                      |
+| Runge-Kutta | 4th order SDIRK {cite:p}`Hairer1991`         | No       | 4, 3  | Yes              | L-stable  | Index 2     |                      |
 | Runge-Kutta | Tanaka Formula 1 {cite:p}`Togawa2007`        | No       | 3, 1  | No               |           |             |                      |
 | Runge-Kutta | Tanaka Formula 2 {cite:p}`Togawa2007`        | No       | 4, 2  | No               |           |             |                      |
 | Rosenbrock  | RODASP                                       | No       | 4, ?  | Yes              | L-stable  | Index 1     |                      |

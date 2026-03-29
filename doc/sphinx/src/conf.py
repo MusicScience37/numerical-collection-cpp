@@ -29,6 +29,7 @@ myst_enable_extensions = [
     "amsmath",
     "dollarmath",
 ]
+myst_heading_anchors = 2
 
 # setting of MathJax
 # Extension for MathJax is already enabled by myst_nb.

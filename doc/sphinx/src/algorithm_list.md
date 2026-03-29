@@ -122,6 +122,8 @@
 
 ## ODE Solvers (`ode` Module)
 
+For properties of formulas of ODE solvers, see [Properties of Formulas in ODE Solvers](user_guide/ode/formula_properties.md).
+
 ### Formulas of Runge-Kutta method
 
 | Formula                                              | Class                                                 |
