@@ -143,8 +143,8 @@
 | :---------------------------------- | :----------------------------------------------- |
 | RODASP formula                      | `num_collect::ode::rosenbrock::rodasp_formula`   |
 | RODASPR formula {cite:p}`Rang2015`  | `num_collect::ode::rosenbrock::rodaspr_formula`  |
-| ROS3w formula {cite:p}`Rang2015`    | `num_collect::ode::rosenbrock::ros3w_formula`    |
-| ROS34PW3 formula {cite:p}`Rang2015` | `num_collect::ode::rosenbrock::ros34pw3_formula` |
+| ROS3w formula {cite:p}`Rang2005`    | `num_collect::ode::rosenbrock::ros3w_formula`    |
+| ROS34PW3 formula {cite:p}`Rang2005` | `num_collect::ode::rosenbrock::ros34pw3_formula` |
 
 ### Average vector field (AVF) method {cite:p}`Quispel2008`
 

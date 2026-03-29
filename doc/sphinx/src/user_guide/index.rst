@@ -5,3 +5,4 @@ User Guide
     :maxdepth: 1
 
     logging/index
+    ode/index
