@@ -30,7 +30,8 @@
 namespace num_collect::ode::runge_kutta {
 
 /*!
- * \brief Class of Runge-Kutta 4 formula (classic Runge-Kutta method).
+ * \brief Class of Runge-Kutta 4 formula (classic Runge-Kutta method)
+ * \cite Hairer1993.
  *
  * \tparam Problem Type of problem.
  */
