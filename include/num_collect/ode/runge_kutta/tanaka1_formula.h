@@ -30,7 +30,7 @@
 namespace num_collect::ode::runge_kutta {
 
 /*!
- * \brief Class of Tanaka Formula 1.
+ * \brief Class of Tanaka Formula 1 \cite Togawa2007.
  *
  * \tparam Problem Type of problem.
  * \tparam FormulaSolver Type of solver of formula.

@@ -124,18 +124,18 @@
 
 ### Formulas of Runge-Kutta method
 
-| Formula                                             | Class                                                 |
-| :-------------------------------------------------- | :---------------------------------------------------- |
-| ARK4(3)6L[2]SA-ERK formula {cite:p}`Kennedy2003`    | `num_collect::ode::runge_kutta::ark43_erk_formula`    |
-| ARK4(3)6L[2]SA-ESDIRK formula {cite:p}`Kennedy2003` | `num_collect::ode::runge_kutta::ark43_esdirk_formula` |
-| ARK5(4)8L[2]SA-ESDIRK formula {cite:p}`Kennedy2003` | `num_collect::ode::runge_kutta::ark54_esdirk_formula` |
-| DOPRI5 formula {cite:p}`Hairer1991`                 | `num_collect::ode::runge_kutta::dopri5_formula`       |
-| ESDIRK45c formula {cite:p}`Jorgensen2018`           | `num_collect::ode::runge_kutta::esdirk45_formula`     |
-| Runge-Kutta 4 (RK4)                                 | `num_collect::ode::runge_kutta::rk4_formula`          |
-| Runge-Kutta-Fehlberg 45 (RKF45)                     | `num_collect::ode::runge_kutta::rkf45_formula`        |
-| 4th order SDIRK {cite:p}`Hairer1991`                | `num_collect::ode::runge_kutta::sdirk4_formula`       |
-| Tanaka Formula 1                                    | `num_collect::ode::runge_kutta::tanaka1_formula`      |
-| Tanaka Formula 2                                    | `num_collect::ode::runge_kutta::tanaka2_formula`      |
+| Formula                                              | Class                                                 |
+| :--------------------------------------------------- | :---------------------------------------------------- |
+| ARK4(3)6L[2]SA-ERK formula {cite:p}`Kennedy2003`     | `num_collect::ode::runge_kutta::ark43_erk_formula`    |
+| ARK4(3)6L[2]SA-ESDIRK formula {cite:p}`Kennedy2003`  | `num_collect::ode::runge_kutta::ark43_esdirk_formula` |
+| ARK5(4)8L[2]SA-ESDIRK formula {cite:p}`Kennedy2003`  | `num_collect::ode::runge_kutta::ark54_esdirk_formula` |
+| DOPRI5 formula {cite:p}`Hairer1991`                  | `num_collect::ode::runge_kutta::dopri5_formula`       |
+| ESDIRK45c formula {cite:p}`Jorgensen2018`            | `num_collect::ode::runge_kutta::esdirk45_formula`     |
+| Runge-Kutta 4 (RK4) {cite:p}`Hairer1993`             | `num_collect::ode::runge_kutta::rk4_formula`          |
+| Runge-Kutta-Fehlberg 45 (RKF45) {cite:p}`Hairer1993` | `num_collect::ode::runge_kutta::rkf45_formula`        |
+| 4th order SDIRK {cite:p}`Hairer1991`                 | `num_collect::ode::runge_kutta::sdirk4_formula`       |
+| Tanaka Formula 1 {cite:p}`Togawa2007`                | `num_collect::ode::runge_kutta::tanaka1_formula`      |
+| Tanaka Formula 2 {cite:p}`Togawa2007`                | `num_collect::ode::runge_kutta::tanaka2_formula`      |
 
 ### Formulas of Rosenbrock method
 
@@ -143,8 +143,8 @@
 | :---------------------------------- | :----------------------------------------------- |
 | RODASP formula                      | `num_collect::ode::rosenbrock::rodasp_formula`   |
 | RODASPR formula {cite:p}`Rang2015`  | `num_collect::ode::rosenbrock::rodaspr_formula`  |
-| ROS3w formula {cite:p}`Rang2015`    | `num_collect::ode::rosenbrock::ros3w_formula`    |
-| ROS34PW3 formula {cite:p}`Rang2015` | `num_collect::ode::rosenbrock::ros34pw3_formula` |
+| ROS3w formula {cite:p}`Rang2005`    | `num_collect::ode::rosenbrock::ros3w_formula`    |
+| ROS34PW3 formula {cite:p}`Rang2005` | `num_collect::ode::rosenbrock::ros34pw3_formula` |
 
 ### Average vector field (AVF) method {cite:p}`Quispel2008`
 
