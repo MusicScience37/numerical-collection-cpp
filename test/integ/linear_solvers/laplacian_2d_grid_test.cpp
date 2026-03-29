@@ -27,6 +27,8 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "num_collect/base/index_type.h"
+#include "num_collect/linear/algebraic_multigrid_solver.h"
+#include "num_collect/linear/amg_preconditioner.h"
 #include "num_collect/linear/cuthill_mckee_ordering.h"
 #include "num_collect/linear/gauss_seidel_iterative_solver.h"
 #include "num_collect/linear/reverse_cuthill_mckee_ordering.h"
@@ -54,14 +56,20 @@ TEMPLATE_TEST_CASE("Solver Laplacian equation in 2-dimensional grid", "",
     (num_collect::linear::gauss_seidel_iterative_solver<
         Eigen::SparseMatrix<double, Eigen::RowMajor>>),
     (num_collect::linear::symmetric_successive_over_relaxation<
-        Eigen::SparseMatrix<double, Eigen::RowMajor>>)) {
+        Eigen::SparseMatrix<double, Eigen::RowMajor>>),
+    (num_collect::linear::algebraic_multigrid_solver<
+        Eigen::SparseMatrix<double, Eigen::RowMajor>>),
+    (Eigen::ConjugateGradient<Eigen::SparseMatrix<double, Eigen::RowMajor>,
+        Eigen::Upper | Eigen::Lower,
+        num_collect::linear::amg_preconditioner<
+            Eigen::SparseMatrix<double, Eigen::RowMajor>>>)) {
     using solver_type = TestType;
     using mat_type = typename solver_type::MatrixType;
     using vec_type = Eigen::VectorXd;
     using grid_type = num_prob_collect::linear::laplacian_2d_grid<mat_type>;
 
     constexpr double region_size = 1.0;
-    constexpr num_collect::index_type grid_size = 5;
+    constexpr num_collect::index_type grid_size = 25;
 
     const auto expected_function = [](double x, double y) {
         return x * x + y * y;
@@ -109,7 +117,7 @@ TEMPLATE_TEST_CASE(
     using ordering_type = TestType;
 
     constexpr double region_size = 1.0;
-    constexpr num_collect::index_type grid_size = 5;
+    constexpr num_collect::index_type grid_size = 25;
 
     const auto expected_function = [](double x, double y) {
         return x * x + y * y;
