@@ -38,12 +38,12 @@
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/evaluation_type.h"
 
-namespace num_collect::ode {
+namespace num_collect::ode::runge_kutta {
 
 //! Log tag.
 constexpr auto inexact_newton_update_equation_solver_tag =
     logging::log_tag_view(
-        "num_collect::ode::inexact_newton_update_equation_solver");
+        "num_collect::ode::runge_kutta::inexact_newton_update_equation_solver");
 
 /*!
  * \brief Class to solve equations of implicit updates using inexact Newton
@@ -641,4 +641,4 @@ private:
     error_tolerances<variable_type> tolerances_{};
 };
 
-}  // namespace num_collect::ode
+}  // namespace num_collect::ode::runge_kutta

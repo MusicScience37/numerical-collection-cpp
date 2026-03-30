@@ -17,7 +17,7 @@
  * \file
  * \brief Test of inexact_newton_slope_equation_solver class.
  */
-#include "num_collect/ode/inexact_newton_slope_equation_solver.h"
+#include "num_collect/ode/runge_kutta/inexact_newton_slope_equation_solver.h"
 
 #include <limits>
 
@@ -28,10 +28,13 @@
 #include "num_prob_collect/ode/exponential_problem.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
 
-TEST_CASE("num_collect::ode::inexact_newton_slope_equation_solver(scalar)") {
+TEST_CASE(
+    "num_collect::ode::runge_kutta::inexact_newton_slope_equation_solver("
+    "scalar)") {
     using problem_type = num_prob_collect::ode::exponential_problem;
     using solver_type =
-        num_collect::ode::inexact_newton_slope_equation_solver<problem_type>;
+        num_collect::ode::runge_kutta::inexact_newton_slope_equation_solver<
+            problem_type>;
 
     SECTION("check concept") {
         STATIC_REQUIRE(
@@ -92,10 +95,13 @@ TEST_CASE("num_collect::ode::inexact_newton_slope_equation_solver(scalar)") {
     }
 }
 
-TEST_CASE("num_collect::ode::inexact_newton_slope_equation_solver(vector)") {
+TEST_CASE(
+    "num_collect::ode::runge_kutta::inexact_newton_slope_equation_solver("
+    "vector)") {
     using problem_type = num_prob_collect::ode::spring_movement_problem;
     using solver_type =
-        num_collect::ode::inexact_newton_slope_equation_solver<problem_type>;
+        num_collect::ode::runge_kutta::inexact_newton_slope_equation_solver<
+            problem_type>;
 
     SECTION("check concept") {
         STATIC_REQUIRE(

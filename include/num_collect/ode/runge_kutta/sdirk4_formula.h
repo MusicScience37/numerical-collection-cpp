@@ -25,8 +25,8 @@
 #include "num_collect/ode/concepts/problem.h"
 #include "num_collect/ode/concepts/update_equation_solver.h"
 #include "num_collect/ode/embedded_solver.h"
-#include "num_collect/ode/inexact_newton_update_equation_solver.h"
 #include "num_collect/ode/runge_kutta/implicit_formula_base.h"
+#include "num_collect/ode/runge_kutta/inexact_newton_update_equation_solver.h"
 
 namespace num_collect::ode::runge_kutta {
 

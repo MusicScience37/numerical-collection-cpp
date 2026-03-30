@@ -23,8 +23,8 @@
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/concepts/problem.h"
 #include "num_collect/ode/concepts/slope_equation_solver.h"
-#include "num_collect/ode/inexact_newton_slope_equation_solver.h"
 #include "num_collect/ode/runge_kutta/implicit_formula_base.h"
+#include "num_collect/ode/runge_kutta/inexact_newton_slope_equation_solver.h"
 #include "num_collect/ode/simple_solver.h"
 
 namespace num_collect::ode::runge_kutta {
