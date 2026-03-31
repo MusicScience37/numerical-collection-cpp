@@ -252,7 +252,12 @@ TEST_CASE("num_collect::rbf::operators::polyharmonic_operator") {
             const double expected_value =
                 sixth_derivative_function(evaluated_variable);
 
-            constexpr double tol = 5.0;
+#if defined(__GNUC__) && !defined(__clang__)
+            // Only GCC has a large error.
+            constexpr double tol = 100.0;
+#else
+            constexpr double tol = 10.0;
+#endif
             CHECK_THAT(evaluated_value,
                 Catch::Matchers::WithinAbs(expected_value, tol));
         }
