@@ -43,10 +43,30 @@ namespace num_collect::functions {
  * \return Power.
  */
 template <typename B, std::integral E>
+    requires(!std::integral<B>)
 constexpr auto pow(B base, E exp) -> B {
     if constexpr (std::is_signed_v<E>) {
         if (exp < static_cast<E>(0)) {
             return pow(static_cast<B>(1) / base, -exp);
+        }
+    }
+    return impl::pow_pos_int(base, exp);
+}
+
+/*!
+ * \brief Calculate power \f$ {base}^{exp} \f$.
+ *
+ * \tparam B Base type.
+ * \tparam E Exponent type.
+ * \param[in] base Base.
+ * \param[in] exp Exponent.
+ * \return Power.
+ */
+template <std::integral B, std::integral E>
+constexpr auto pow(B base, E exp) -> B {
+    if constexpr (std::is_signed_v<E>) {
+        if (exp < static_cast<E>(0)) {
+            return 0;
         }
     }
     return impl::pow_pos_int(base, exp);

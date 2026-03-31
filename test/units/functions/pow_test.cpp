@@ -83,6 +83,30 @@ TEMPLATE_TEST_CASE("num_collect::functions::pow(Float, Int)", "",
     }
 }
 
+TEMPLATE_TEST_CASE("num_collect::functions::pow(Int, Int)", "",
+    (std::pair<int, long long>), (std::pair<long long, int>)) {
+    using Base = typename TestType::first_type;
+    using Exp = typename TestType::second_type;
+
+    SECTION("ordinary") {
+        CHECK_CONSTEXPR_FUNCTION_EQUAL(
+            (static_cast<Base>(4), static_cast<Exp>(3)),
+            num_collect::functions::pow, std::pow);
+    }
+
+    SECTION("negative exponent") {
+        CHECK_CONSTEXPR_FUNCTION_EQUAL(
+            (static_cast<Base>(4), static_cast<Exp>(-3)),
+            num_collect::functions::pow, std::pow);
+    }
+
+    SECTION("zero exponent") {
+        CHECK_CONSTEXPR_FUNCTION_EQUAL(
+            (static_cast<Base>(4), static_cast<Exp>(0)),
+            num_collect::functions::pow, std::pow);
+    }
+}
+
 TEMPLATE_TEST_CASE(
     "num_collect::functions::impl::pow_at_compile_time(Float, Float)", "",
     float, double) {
