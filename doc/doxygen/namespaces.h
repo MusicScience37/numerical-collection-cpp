@@ -302,7 +302,17 @@ namespace num_collect {
          */
 
         //! Namespace of operators.
-        namespace operators {}
+        namespace operators {
+
+            /*!
+             * \dir num_collect/rbf/operators/impl
+             * \brief Directory of internal implementations.
+             */
+
+            //! Namespace of internal implementations.
+            namespace impl {}
+
+        }  // namespace operators
 
     }  // namespace rbf
 

@@ -23,6 +23,7 @@
 #include "operators/laplacian_gradient_operator_test.cpp"
 #include "operators/laplacian_operator_test.cpp"
 #include "operators/partial_derivative_operator_test.cpp"
+#include "operators/polyharmonic_operator_test.cpp"
 #include "operators/third_order_derivative_operator_test.cpp"
 #include "polynomial_term_generator_test.cpp"
 #include "polynomial_term_test.cpp"
