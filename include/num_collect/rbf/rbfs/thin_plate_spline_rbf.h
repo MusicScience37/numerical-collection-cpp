@@ -53,6 +53,9 @@ public:
     //! Type of the polyharmonic spline RBF to wrap.
     using base_type = BasePHS;
 
+    //! Whether this RBF is positive definite.
+    static constexpr bool is_positive_definite = true;
+
     /*!
      * \brief Calculate the coefficient of this RBF.
      *

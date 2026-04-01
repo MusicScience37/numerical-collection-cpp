@@ -39,6 +39,9 @@ template <typename T>
 concept rbf = requires() {
     typename T::scalar_type;
 
+    T::is_positive_definite;
+    { T::is_positive_definite } -> std::convertible_to<bool>;
+
     requires base::concepts::real_scalar<typename T::scalar_type>;
 
     requires requires(
