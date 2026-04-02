@@ -36,7 +36,8 @@
 
 TEST_CASE(
     "num_collect::rbf::impl::general_spline_equation_solver "
-    "(for dense kernel matrix and global length parameter)") {
+    "(for dense kernel matrix, positive definite RBF and global length "
+    "parameter)") {
     using num_collect::rbf::compute_kernel_matrix;
     using num_collect::rbf::compute_polynomial_term_matrix;
     using num_collect::rbf::kernel_matrix_type;
@@ -54,7 +55,7 @@ TEST_CASE(
     using length_parameter_calculator_type =
         global_length_parameter_calculator<distance_function_type>;
     using kernel_matrix_solver_type = general_spline_equation_solver<double,
-        double, kernel_matrix_type::dense, true>;
+        double, kernel_matrix_type::dense, true, true>;
 
     kernel_matrix_solver_type solver;
 

@@ -9,6 +9,7 @@
 #include "operators/third_derivative.cpp"
 #include "polynomials/global_rbf_polynomial_interpolator.cpp"
 #include "rbfs/gaussian_process_interpolator.cpp"
+#include "rbfs/global_rbf_interpolator.cpp"
 #include "rbfs/global_rbf_polynomial_interpolator.cpp"
 #include "rbfs/local_csrbf_interpolator.cpp"
 #include "rbfs/local_rbf_interpolator.cpp"

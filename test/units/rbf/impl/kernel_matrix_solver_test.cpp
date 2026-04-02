@@ -38,8 +38,8 @@
 #include "num_collect/rbf/rbfs/wendland_csrbf.h"
 
 TEST_CASE(
-    "num_collect::rbf::impl::kernel_matrix_solver (for dense matrix and global "
-    "length parameter)") {
+    "num_collect::rbf::impl::kernel_matrix_solver (for dense matrix, positive "
+    "definite RBF and global length parameter)") {
     using num_collect::rbf::compute_kernel_matrix;
     using num_collect::rbf::kernel_matrix_type;
     using num_collect::rbf::distance_functions::euclidean_distance_function;
@@ -54,8 +54,8 @@ TEST_CASE(
     using rbf_type = gaussian_rbf<value_type>;
     using length_parameter_calculator_type =
         global_length_parameter_calculator<distance_function_type>;
-    using kernel_matrix_solver_type =
-        kernel_matrix_solver<double, double, kernel_matrix_type::dense, true>;
+    using kernel_matrix_solver_type = kernel_matrix_solver<double, double,
+        kernel_matrix_type::dense, true, true>;
 
     kernel_matrix_solver_type solver;
 
@@ -124,8 +124,8 @@ TEST_CASE(
 }
 
 TEST_CASE(
-    "num_collect::rbf::impl::kernel_matrix_solver (for dense matrix and local "
-    "length parameter)") {
+    "num_collect::rbf::impl::kernel_matrix_solver (for dense matrix, positive "
+    "definite RBF and local length parameter)") {
     using num_collect::rbf::compute_kernel_matrix;
     using num_collect::rbf::kernel_matrix_type;
     using num_collect::rbf::distance_functions::euclidean_distance_function;
@@ -140,8 +140,8 @@ TEST_CASE(
     using rbf_type = gaussian_rbf<value_type>;
     using length_parameter_calculator_type =
         local_length_parameter_calculator<distance_function_type>;
-    using kernel_matrix_solver_type =
-        kernel_matrix_solver<double, double, kernel_matrix_type::dense, false>;
+    using kernel_matrix_solver_type = kernel_matrix_solver<double, double,
+        kernel_matrix_type::dense, false, true>;
 
     kernel_matrix_solver_type solver;
 
@@ -179,8 +179,8 @@ TEST_CASE(
 }
 
 TEST_CASE(
-    "num_collect::rbf::impl::kernel_matrix_solver (for sparse matrix and local "
-    "length parameter)") {
+    "num_collect::rbf::impl::kernel_matrix_solver (for sparse matrix, positive "
+    "definite RBF and local length parameter)") {
     using num_collect::rbf::compute_kernel_matrix;
     using num_collect::rbf::kernel_matrix_type;
     using num_collect::rbf::distance_functions::euclidean_distance_function;
@@ -195,8 +195,8 @@ TEST_CASE(
     using rbf_type = wendland_csrbf<value_type, 3, 1>;
     using length_parameter_calculator_type =
         local_length_parameter_calculator<distance_function_type>;
-    using kernel_matrix_solver_type =
-        kernel_matrix_solver<double, double, kernel_matrix_type::sparse, false>;
+    using kernel_matrix_solver_type = kernel_matrix_solver<double, double,
+        kernel_matrix_type::sparse, false, true>;
 
     kernel_matrix_solver_type solver;
 

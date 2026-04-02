@@ -33,7 +33,8 @@
 namespace num_collect::rbf::impl {
 
 /*!
- * \brief Class to solve linear equations of kernel matrices.
+ * \brief Class to solve linear equations of kernel matrices. for positive
+ * definite RBFs with global length parameter.
  *
  * \tparam KernelValue Type of values of the kernel.
  * \tparam FunctionValue Type of the function values.
@@ -54,7 +55,7 @@ namespace num_collect::rbf::impl {
  */
 template <typename KernelValue, typename FunctionValue>
 class kernel_matrix_solver<KernelValue, FunctionValue,
-    kernel_matrix_type::dense, true> {
+    kernel_matrix_type::dense, true, true> {
 public:
     //! Type of matrices.
     using kernel_matrix_type = Eigen::MatrixX<KernelValue>;
