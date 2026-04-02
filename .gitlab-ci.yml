@@ -276,17 +276,6 @@ clang coverage:
     - poetry run lcov_cobertura $BUILD_DIR/coverage/coverage --output $BUILD_DIR/coverage.xml
     # Codecov
     - bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
-    # SonarQube
-    - curl -sSLo ./sonar-scanner.zip 'https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-7.2.0.5079-linux-x64.zip'
-    - unzip -o sonar-scanner.zip
-    - mv sonar-scanner-7.2.0.5079-linux-x64 sonar-scanner
-    - git fetch --unshallow # Ensure full git history for SonarQube
-    - sonar-scanner/bin/sonar-scanner
-      -Dsonar.host.url="${SONAR_HOST_URL}"
-      -Dsonar.token="${SONAR_TOKEN}"
-      -Dsonar.cfamily.compile-commands=${BUILD_DIR}/compile_commands.json
-      -Dsonar.cfamily.llvm-cov.reportPath=${BUILD_DIR}/coverage/coverage.txt
-  coverage: '/[^\s]+%\s+\d+\s+\d+\s+\s[^\s]+%/'
   artifacts:
     paths:
       - $BUILD_DIR/bench
@@ -303,6 +292,48 @@ clang coverage:
         path: $BUILD_DIR/coverage.xml
     when: always
     expire_in: "1 mos"
+
+sonar qube:
+  extends: .test linux base
+  only:
+    - main
+  parallel:
+    matrix:
+      - COMPILER_TYPE: "clang21"
+        IMAGE_PATH: "musicscience37/clang-ci"
+        TEST_TYPE: "coverage"
+  variables:
+    BUILD_TYPE: Debug
+    BUILD_DIR: build_clang_coverage
+  script:
+    - cd $BUILD_DIR
+    - cmake ..
+      -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake
+      -DVCPKG_TARGET_TRIPLET=x64-linux-llvm
+      -DVCPKG_HOST_TRIPLET=x64-linux-llvm
+      -DCMAKE_BUILD_TYPE=Debug
+      -DNUM_COLLECT_TESTING:BOOL=ON
+      -DNUM_COLLECT_WRITE_JUNIT:BOOL=ON
+      "-DCMAKE_CXX_FLAGS=-stdlib=libc++ -fprofile-instr-generate -fcoverage-mapping"
+      "-DCMAKE_MODULE_LINKER_FLAGS=-fprofile-instr-generate -fcoverage-mapping"
+      -DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON
+    - mkdir coverage
+    - export LLVM_PROFILE_FILE=$(pwd)/coverage/coverage_%p.profraw
+    - cmake --build .
+    - ctest -V
+    - cd ../
+    - scripts/collect_llvm_coverage.sh build_clang_coverage
+    - poetry run lcov_cobertura $BUILD_DIR/coverage/coverage --output $BUILD_DIR/coverage.xml
+    # SonarQube
+    - curl -sSLo ./sonar-scanner.zip 'https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-7.2.0.5079-linux-x64.zip'
+    - unzip -o sonar-scanner.zip
+    - mv sonar-scanner-7.2.0.5079-linux-x64 sonar-scanner
+    - git fetch --unshallow # Ensure full git history for SonarQube
+    - sonar-scanner/bin/sonar-scanner
+      -Dsonar.host.url="${SONAR_HOST_URL}"
+      -Dsonar.token="${SONAR_TOKEN}"
+      -Dsonar.cfamily.compile-commands=${BUILD_DIR}/compile_commands.json
+      -Dsonar.cfamily.llvm-cov.reportPath=${BUILD_DIR}/coverage/coverage.txt
 
 test asan ubsan:
   extends: .test linux base
