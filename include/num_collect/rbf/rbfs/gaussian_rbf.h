@@ -39,6 +39,9 @@ public:
     //! Type of scalars.
     using scalar_type = Scalar;
 
+    //! Whether this RBF is positive definite.
+    static constexpr bool is_positive_definite = true;
+
     /*!
      * \brief Calculate a function value of RBF.
      *
@@ -64,6 +67,9 @@ class differentiated_gaussian_rbf {
 public:
     //! Type of scalars.
     using scalar_type = Scalar;
+
+    //! Whether this RBF is positive definite.
+    static constexpr bool is_positive_definite = true;
 
     /*!
      * \brief Calculate a function value of RBF.

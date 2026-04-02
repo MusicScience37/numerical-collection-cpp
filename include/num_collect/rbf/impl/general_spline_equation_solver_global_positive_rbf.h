@@ -40,7 +40,8 @@ namespace num_collect::rbf::impl {
 
 /*!
  * \brief Class to solve linear equations of kernel matrices and matrices of
- * additional terms in RBF interpolation.
+ * additional terms in RBF interpolation for positive definite RBFs with global
+ * length parameters.
  *
  * \tparam KernelValue Type of values of the kernel.
  * \tparam FunctionValue Type of the function values.
@@ -73,7 +74,7 @@ namespace num_collect::rbf::impl {
  */
 template <base::concepts::real_scalar KernelValue, typename FunctionValue>
 class general_spline_equation_solver<KernelValue, FunctionValue,
-    kernel_matrix_type::dense, true> {
+    kernel_matrix_type::dense, true, true> {
 public:
     //! Type of matrices of kernels.
     using kernel_matrix_type = Eigen::MatrixX<KernelValue>;

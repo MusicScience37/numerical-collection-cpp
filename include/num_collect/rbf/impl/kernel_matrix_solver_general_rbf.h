@@ -31,10 +31,13 @@
 namespace num_collect::rbf::impl {
 
 /*!
- * \brief Class to solve linear equations of kernel matrices.
+ * \brief Class to solve linear equations of kernel matrices for general RBFs.
  *
  * \tparam KernelValue Type of values of the kernel.
  * \tparam FunctionValue Type of the function values.
+ * \tparam UsesGlobalLengthParameter Whether to uses the globally fixed length
+ * parameters.
+ * \tparam UsesPositiveDefiniteKernel Whether to use positive definite kernels.
  *
  * This class solves the following linear equations:
  *
@@ -51,9 +54,11 @@ namespace num_collect::rbf::impl {
  * uses the localized length parameters which causes a non-symmetric kernel
  * matrix.
  */
-template <typename KernelValue, typename FunctionValue>
+template <typename KernelValue, typename FunctionValue,
+    bool UsesGlobalLengthParameter, bool UsesPositiveDefiniteKernel>
 class kernel_matrix_solver<KernelValue, FunctionValue,
-    kernel_matrix_type::dense, false> {
+    kernel_matrix_type::dense, UsesGlobalLengthParameter,
+    UsesPositiveDefiniteKernel> {
 public:
     //! Type of matrices.
     using kernel_matrix_type = Eigen::MatrixX<KernelValue>;

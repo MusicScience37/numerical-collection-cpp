@@ -32,6 +32,7 @@ namespace num_collect::rbf::impl {
  * \tparam KernelMatrixType Type of the kernel matrices.
  * \tparam UsesGlobalLengthParameter Whether to uses the globally fixed length
  * parameters.
+ * \tparam UsesPositiveDefiniteKernel Whether to use positive definite kernels.
  *
  * This class solves the following linear equations:
  *
@@ -60,7 +61,8 @@ namespace num_collect::rbf::impl {
  * - \f$ \boldsymbol{y} \f$ is a vector of function values.
  */
 template <typename KernelValue, typename FunctionValue,
-    kernel_matrix_type KernelMatrixType, bool UsesGlobalLengthParameter>
+    kernel_matrix_type KernelMatrixType, bool UsesGlobalLengthParameter,
+    bool UsesPositiveDefiniteKernel>
 class general_spline_equation_solver;
 
 }  // namespace num_collect::rbf::impl

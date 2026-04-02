@@ -31,13 +31,14 @@
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
 #include "num_collect/rbf/rbfs/inverse_multi_quadric_rbf.h"
 #include "num_collect/rbf/rbfs/inverse_quadratic_rbf.h"
+#include "num_collect/rbf/rbfs/multi_quadric_rbf.h"
 #include "num_collect/rbf/rbfs/sech_rbf.h"
 #include "num_collect/rbf/rbfs/wendland_csrbf.h"
 #include "num_collect/util/vector.h"
 
 TEMPLATE_TEST_CASE("local_rbf_interpolator with different RBFs", "",
     num_collect::rbf::rbfs::gaussian_rbf<double>,
-    // num_collect::rbf::rbfs::multi_quadric_rbf<double> didn't work.
+    num_collect::rbf::rbfs::multi_quadric_rbf<double>,
     num_collect::rbf::rbfs::inverse_multi_quadric_rbf<double>,
     num_collect::rbf::rbfs::inverse_quadratic_rbf<double>,
     num_collect::rbf::rbfs::sech_rbf<double>,

@@ -57,6 +57,7 @@ template <typename FunctionSignature,
     concepts::distance_function DistanceFunction =
         distance_functions::euclidean_distance_function<
             impl::get_variable_type_t<FunctionSignature>>>
+    requires RBF::is_positive_definite
 class gaussian_process_interpolator
     : public global_rbf_interpolator<FunctionSignature, RBF, KernelMatrixType,
           DistanceFunction> {

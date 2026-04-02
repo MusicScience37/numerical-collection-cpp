@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 MusicScience37 (Kenta Kabashima)
+ * Copyright 2026 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,26 +15,22 @@
  */
 /*!
  * \file
- * \brief Definition of multi_quadric_rbf class.
+ * \brief Definition of non_positive_definite_rbf class.
  */
 #pragma once
 
 #include <cmath>
 
 #include "num_collect/base/concepts/real_scalar.h"
-
-namespace num_collect::rbf::rbfs {
+#include "num_collect/util/assert.h"
 
 /*!
- * \brief Class of Multi-quadric RBF \cite Fornberg2015.
+ * \brief Class of a non-positive-definite RBF for testing.
  *
- * \tparam Scalar Type of scalars.
- *
- * \warning This RBF is written in \cite Fornberg2015, but didn't work in this
- * library.
+ * This RBF is actually a negative definite RBF $r^5$.
  */
-template <base::concepts::real_scalar Scalar>
-class multi_quadric_rbf {
+template <num_collect::base::concepts::real_scalar Scalar>
+class non_positive_definite_rbf {
 public:
     //! Type of scalars.
     using scalar_type = Scalar;
@@ -50,10 +46,8 @@ public:
      */
     [[nodiscard]] auto operator()(
         const scalar_type& distance_rate) const noexcept -> scalar_type {
-        using std::sqrt;
-        return sqrt(
-            static_cast<scalar_type>(1) + distance_rate * distance_rate);
+        using std::pow;
+        NUM_COLLECT_DEBUG_ASSERT(distance_rate >= static_cast<scalar_type>(0));
+        return static_cast<scalar_type>(pow(distance_rate, 5));
     }
 };
-
-}  // namespace num_collect::rbf::rbfs

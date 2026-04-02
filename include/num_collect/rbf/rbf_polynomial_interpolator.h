@@ -121,14 +121,18 @@ public:
     static constexpr bool uses_global_length_parameter =
         length_parameter_calculator_type::uses_global_length_parameter;
 
+    //! Whether this interpolator uses a positive definite RBF.
+    static constexpr bool uses_positive_definite_rbf =
+        rbf_type::is_positive_definite;
+
     //! Type of kernel values.
     using kernel_value_type = typename DistanceFunction::value_type;
 
     //! Type of the solver of linear equations.
     using equation_solver_type =
         impl::general_spline_equation_solver<kernel_value_type,
-            function_value_type, KernelMatrixType,
-            uses_global_length_parameter>;
+            function_value_type, KernelMatrixType, uses_global_length_parameter,
+            uses_positive_definite_rbf>;
 
     //! Type of kernel matrices.
     using kernel_matrix_type =

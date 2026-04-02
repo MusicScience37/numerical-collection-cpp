@@ -20,4 +20,5 @@
 #pragma once
 
 #include "num_collect/rbf/impl/general_spline_equation_solver_decl.h"  // IWYU pragma: export
+#include "num_collect/rbf/impl/general_spline_equation_solver_general_rbf.h"  // IWYU pragma: export
 #include "num_collect/rbf/impl/general_spline_equation_solver_global_positive_rbf.h"  // IWYU pragma: export

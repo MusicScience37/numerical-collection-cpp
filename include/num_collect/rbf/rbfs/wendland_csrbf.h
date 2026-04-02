@@ -56,6 +56,9 @@ public:
     //! Type of scalars.
     using scalar_type = Scalar;
 
+    //! Whether this RBF is positive definite.
+    static constexpr bool is_positive_definite = true;
+
     /*!
      * \brief Get the boundary of the support of this CSRBF.
      *
@@ -98,6 +101,9 @@ class wendland_csrbf<Scalar, L, 1> {
 public:
     //! Type of scalars.
     using scalar_type = Scalar;
+
+    //! Whether this RBF is positive definite.
+    static constexpr bool is_positive_definite = true;
 
     /*!
      * \brief Get the boundary of the support of this CSRBF.
@@ -151,6 +157,9 @@ class wendland_csrbf<Scalar, L, 2> {
 public:
     //! Type of scalars.
     using scalar_type = Scalar;
+
+    //! Whether this RBF is positive definite.
+    static constexpr bool is_positive_definite = true;
 
     /*!
      * \brief Get the boundary of the support of this CSRBF.
@@ -220,6 +229,10 @@ class differentiated_wendland_csrbf_k0 {
 public:
     //! Type of scalars.
     using scalar_type = Scalar;
+
+    //! Whether this RBF is positive definite.
+    static constexpr bool is_positive_definite = false;
+    // TODO Research whether this RBF is not positive definite.
 
     /*!
      * \brief Get the boundary of the support of this CSRBF.

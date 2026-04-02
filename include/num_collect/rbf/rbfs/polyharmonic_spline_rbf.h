@@ -53,6 +53,9 @@ public:
     //! Type of scalars.
     using scalar_type = Scalar;
 
+    //! Whether this RBF is positive definite.
+    static constexpr bool is_positive_definite = false;
+
     /*!
      * \brief Calculate a function value of RBF.
      *
@@ -80,6 +83,9 @@ class polyharmonic_spline_rbf<Scalar, Degree> {
 public:
     //! Type of scalars.
     using scalar_type = Scalar;
+
+    //! Whether this RBF is positive definite.
+    static constexpr bool is_positive_definite = false;
 
     /*!
      * \brief Calculate a function value of RBF.
@@ -118,6 +124,9 @@ class odd_degree_differentiated_polyharmonic_spline_rbf {
 public:
     //! Type of scalars.
     using scalar_type = Scalar;
+
+    //! Whether this RBF is positive definite.
+    static constexpr bool is_positive_definite = false;
 
     /*!
      * \brief Calculate a function value of RBF.
@@ -212,6 +221,9 @@ class even_degree_differentiated_polyharmonic_spline_rbf {
 public:
     //! Type of scalars.
     using scalar_type = Scalar;
+
+    //! Whether this RBF is positive definite.
+    static constexpr bool is_positive_definite = false;
 
     /*!
      * \brief Calculate a function value of RBF.
