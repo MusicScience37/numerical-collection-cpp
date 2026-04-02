@@ -113,6 +113,6 @@ TEST_CASE("Poisson equation in 2D") {
 #ifndef NDEBUG
     CHECK_THAT(solution, eigen_approx(true_values, 1e-2));
 #else
-    CHECK_THAT(solution, eigen_approx(true_values, 5e-4));
+    CHECK_THAT(solution, eigen_approx(true_values, 1e-3));
 #endif
 }

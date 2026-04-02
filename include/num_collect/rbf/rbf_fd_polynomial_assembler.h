@@ -244,15 +244,8 @@ private:
  *
  * \tparam Variable Type of variables.
  * \tparam Degree Degree of the polyharmonic spline RBF.
- *
- * \note The default degree is set to 4 for even dimensions and 5 for odd
- * dimensions. This selection is based on the theory of thin plate splines,
- * in which even degrees are used for even dimensions and odd degrees are used
- * for odd dimensions. The default degree supports up to second order
- * derivatives.
  */
-template <typename Variable,
-    int Degree = base::get_compile_time_size<Variable>() % 2 + 4>
+template <typename Variable, int Degree = 5>
 using phs_rbf_fd_polynomial_assembler = rbf_fd_polynomial_assembler<Variable,
     rbfs::polyharmonic_spline_rbf<
         typename distance_functions::euclidean_distance_function<
