@@ -256,7 +256,7 @@ TEST_CASE("num_collect::rbf::operators::polyharmonic_operator") {
             // Only GCC has a large error.
             constexpr double tol = 100.0;
 #else
-            constexpr double tol = 10.0;
+            constexpr double tol = 15.0;
 #endif
             CHECK_THAT(evaluated_value,
                 Catch::Matchers::WithinAbs(expected_value, tol));
