@@ -5,8 +5,7 @@
 num_interior_nodes = 100
 # Number of nodes on each edge of the boundary.
 num_boundary_nodes_per_edge = 10
-# Order of polynomials used in RBF-FD. -1 for no polynomials.
-# Without polynomials, use of many nodes results in very large errors in the current implementation.
+# Order of polynomials used in RBF-FD.
 polynomial_order = 2
 # Number of neighbors used in RBF-FD.
 num_neighbors = 15
