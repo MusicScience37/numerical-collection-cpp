@@ -23,7 +23,6 @@
 #include <string_view>
 
 #include <Eigen/Core>
-#include <Eigen/IterativeLinearSolvers>
 #include <Eigen/SparseCore>
 #include <fmt/format.h>
 #include <fmt/ostream.h>
@@ -40,7 +39,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/load_logging_config.h"
 #include "num_collect/logging/logger.h"
-#include "num_collect/ode/evaluation_type.h"
+#include "num_collect/ode/problems/linear_first_order_ode_problem.h"
 #include "num_collect/ode/rosenbrock/rodaspr_formula.h"
 #include "num_collect/rbf/generate_halton_nodes.h"
 #include "num_collect/rbf/operators/laplacian_operator.h"
@@ -50,14 +49,15 @@
 #include "num_collect/util/vector.h"
 #include "num_collect/util/vector_view.h"
 
-using variable_type = Eigen::Vector2d;
+using position_type = Eigen::Vector2d;
+using solution_type = Eigen::VectorXd;
 using sparse_matrix_type = Eigen::SparseMatrix<double,
     Eigen::RowMajor>;  // BiCGstab works better with row-major format.
 
 static constexpr std::string_view output_directory =
     "rbf_fd_diffusion_equation_2d";
 
-static auto test_function(const variable_type& position, double time,
+static auto test_function(const position_type& position, double time,
     double diffusion_coefficient) -> double {
     return std::exp(-2.0 * diffusion_coefficient * num_collect::pi<double> *
                num_collect::pi<double> * time) *
@@ -75,85 +75,23 @@ static auto test_function(const variable_type& position, double time,
  */
 static auto generate_nodes(num_collect::index_type num_interior_nodes,
     num_collect::index_type num_boundary_nodes_per_edge)
-    -> num_collect::util::vector<variable_type> {
+    -> num_collect::util::vector<position_type> {
     const auto interior_nodes =
         num_collect::rbf::generate_halton_nodes<double, 2>(num_interior_nodes);
     const auto boundary_nodes =
         num_collect::util::generate_rectangle_boundary_nodes(
-            Eigen::Vector2d(0.0, 0.0), Eigen::Vector2d(1.0, 1.0),
+            position_type(0.0, 0.0), position_type(1.0, 1.0),
             num_boundary_nodes_per_edge);
-    num_collect::util::vector<variable_type> nodes;
+    num_collect::util::vector<position_type> nodes;
     nodes.reserve(interior_nodes.size() + boundary_nodes.size());
     nodes.insert(nodes.end(), interior_nodes.begin(), interior_nodes.end());
     nodes.insert(nodes.end(), boundary_nodes.begin(), boundary_nodes.end());
     return nodes;
 }
 
-/*!
- * \brief Class of ODE problems written using a matrix.
- *
- * This class defines a problem as follows:
- *
- * \f[
- * \frac{d}{dt} \boldsymbol{u} = A \boldsymbol{u} + \boldsymbol{b}
- * \f]
- */
-class matrix_ode_problem {
-public:
-    //! Type of variables.
-    using variable_type = Eigen::VectorXd;
-
-    //! Type of coefficients matrix.
-    using matrix_type = sparse_matrix_type;
-
-    //! Type of scalars.
-    using scalar_type = double;
-
-    //! Allowed evaluations.
-    static constexpr auto allowed_evaluations =
-        num_collect::ode::evaluation_type{.diff_coeff = true};
-
-    /*!
-     * \brief Constructor.
-     *
-     * \param[in] variable_coefficients Coefficients for variables.
-     * \param[in] constant_term Constant term.
-     */
-    matrix_ode_problem(const matrix_type& variable_coefficients,
-        const variable_type& constant_term)
-        : variable_coefficients_(variable_coefficients),
-          constant_term_(constant_term) {}
-
-    /*!
-     * \brief Evaluate on a (time, variable) pair.
-     *
-     * \param[in] variable Variable.
-     */
-    void evaluate_on(scalar_type /*time*/, const variable_type& variable,
-        num_collect::ode::evaluation_type /*evaluations*/) {
-        diff_coeff_ = constant_term_;
-        diff_coeff_.noalias() += variable_coefficients_ * variable;
-    }
-
-    /*!
-     * \brief Get the differential coefficient.
-     *
-     * \return Differential coefficient.
-     */
-    [[nodiscard]] auto diff_coeff() const noexcept -> const variable_type& {
-        return diff_coeff_;
-    }
-
-private:
-    //! Coefficients for variables.
-    matrix_type variable_coefficients_;
-
-    //! Constant term.
-    variable_type constant_term_;
-
-    //! Differential coefficient.
-    variable_type diff_coeff_;
-};
+using ode_problem_type =
+    num_collect::ode::problems::linear_first_order_ode_problem<solution_type,
+        sparse_matrix_type>;
 
 /*!
  * \brief Assemble the system of the diffusion equation.
@@ -169,12 +107,12 @@ private:
  * \return ODE problem to solve.
  */
 static auto assemble_system(
-    num_collect::util::vector_view<const variable_type> nodes,
+    num_collect::util::vector_view<const position_type> nodes,
     num_collect::index_type num_interior_nodes, int polynomial_order,
     num_collect::index_type num_neighbors, double diffusion_coefficient)
-    -> matrix_ode_problem {
+    -> ode_problem_type {
     using operator_type =
-        num_collect::rbf::operators::laplacian_operator<variable_type>;
+        num_collect::rbf::operators::laplacian_operator<position_type>;
 
     num_collect::logging::logger logger;
     NUM_COLLECT_LOG_INFO(logger, "Start assembly of the system.");
@@ -182,12 +120,12 @@ static auto assemble_system(
     num_collect::util::vector<Eigen::Triplet<double>> triplets;
 
     using assembler_type =
-        num_collect::rbf::phs_rbf_fd_polynomial_assembler<variable_type>;
+        num_collect::rbf::phs_rbf_fd_polynomial_assembler<position_type>;
     assembler_type assembler(polynomial_order);
     assembler.num_neighbors(num_neighbors);
 
     const auto interior_nodes = nodes.first(num_interior_nodes);
-    const num_collect::util::nearest_neighbor_searcher<variable_type>
+    const num_collect::util::nearest_neighbor_searcher<position_type>
         column_variables_nearest_neighbor_searcher(nodes);
     constexpr num_collect::index_type row_offset = 0;
     constexpr num_collect::index_type column_offset = 0;
@@ -201,12 +139,11 @@ static auto assemble_system(
 
     const sparse_matrix_type variable_coefficients =
         whole_coefficients.leftCols(num_interior_nodes);
-    const Eigen::VectorXd constant_term =
-        Eigen::VectorXd::Zero(num_interior_nodes);
+    const solution_type constant_term = solution_type::Zero(num_interior_nodes);
 
     NUM_COLLECT_LOG_INFO(logger, "Finished assembly of the system.");
 
-    return matrix_ode_problem(variable_coefficients, constant_term);
+    return ode_problem_type(variable_coefficients, constant_term);
 }
 
 /*!
@@ -221,9 +158,9 @@ static auto assemble_system(
  * \param[in] errors Errors at the nodes.
  */
 static void write_vtp_file(
-    num_collect::util::vector_view<const variable_type> nodes,
-    const std::string& file_path, const Eigen::VectorXd& solution,
-    const Eigen::VectorXd& true_values, const Eigen::VectorXd& errors) {
+    num_collect::util::vector_view<const position_type> nodes,
+    const std::string& file_path, const solution_type& solution,
+    const solution_type& true_values, const solution_type& errors) {
     num_collect::logging::logger logger;
 
     vtkNew<vtkPoints> points;
@@ -285,9 +222,9 @@ static void write_vtp_file(
  * boundary in the counter-clockwise order.
  * \param[in] num_interior_nodes Number of nodes in the interior of the domain.
  */
-static void solve_system(const matrix_ode_problem& problem,
+static void solve_system(const ode_problem_type& problem,
     double diffusion_coefficient, double time_step_size, double final_time,
-    num_collect::util::vector_view<const variable_type> nodes,
+    num_collect::util::vector_view<const position_type> nodes,
     num_collect::index_type num_interior_nodes) {
     num_collect::logging::logger logger;
 
@@ -295,13 +232,13 @@ static void solve_system(const matrix_ode_problem& problem,
 
     num_collect::index_type time_index = 0;
     double time = 0.0;
-    Eigen::VectorXd whole_variable = Eigen::VectorXd::Zero(nodes.size());
+    solution_type whole_variable = solution_type::Zero(nodes.size());
     for (num_collect::index_type i = 0; i < num_interior_nodes; ++i) {
         whole_variable(i) =
             test_function(nodes[i], time, diffusion_coefficient);
     }
-    Eigen::VectorXd true_values = whole_variable;
-    Eigen::VectorXd errors = Eigen::VectorXd::Zero(nodes.size());
+    solution_type true_values = whole_variable;
+    solution_type errors = solution_type::Zero(nodes.size());
     std::string file_path =
         fmt::format("{}/rbf_fd_diffusion_equation_2d_{:04d}.vtp",
             output_directory, time_index);
@@ -311,9 +248,9 @@ static void solve_system(const matrix_ode_problem& problem,
     time_list.push_back(time);
 
     using solver_type =
-        num_collect::ode::rosenbrock::rodaspr_solver<matrix_ode_problem>;
+        num_collect::ode::rosenbrock::rodaspr_solver<ode_problem_type>;
     solver_type solver(problem);
-    const Eigen::VectorXd initial_variable =
+    const solution_type initial_variable =
         whole_variable.head(num_interior_nodes);
     solver.init(time, initial_variable);
     while (time < final_time) {

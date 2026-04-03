@@ -465,6 +465,14 @@ namespace num_collect {
         //! Namespace of symplectic integration.
         namespace symplectic {}
 
+        /*!
+         * \dir num_collect/ode/problems
+         * \brief Directory of general problems for ODE solvers.
+         */
+
+        //! Namespace of general problems for ODE solvers.
+        namespace problems {}
+
     }  // namespace ode
 
     /*!
