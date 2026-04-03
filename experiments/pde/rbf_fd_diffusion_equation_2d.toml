@@ -1,0 +1,23 @@
+"$schema" = "https://numcollect.musicscience37.com/config_schema/v3/config_schema.json"
+
+[rbf_fd_diffusion_equation_2d]
+# Number of nodes in the interior of the domain.
+num_interior_nodes = 100
+# Number of nodes on each edge of the boundary.
+num_boundary_nodes_per_edge = 10
+# Order of polynomials used in RBF-FD.
+polynomial_order = 2
+# Number of neighbors used in RBF-FD.
+num_neighbors = 15
+# Diffusion coefficient.
+diffusion_coefficient = 0.1
+# Time step size.
+time_step_size = 0.1
+# Final time.
+final_time = 1.0
+
+[[num_collect.logging.tag_configs]]
+tag = ""
+sink = "default"
+output_log_level = "summary"
+output_log_level_in_child_iterations = "info"
