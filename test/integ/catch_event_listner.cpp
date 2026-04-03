@@ -56,7 +56,7 @@ public:
             num_collect::logging::sinks::create_single_file_sink(file_path);
         num_collect::logging::edit_default_log_tag_config()
             .sink(sink)
-            .output_log_level(num_collect::logging::log_level::trace)
+            .output_log_level(num_collect::logging::log_level::debug)
             .output_log_level_in_child_iterations(
                 num_collect::logging::log_level::info);
 

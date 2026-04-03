@@ -85,7 +85,7 @@ public:
 
         scalar_type residual_norm = tolerances_.calc_norm(rhs, residual_);
         if (residual_norm <= tolerance_rate_) {
-            NUM_COLLECT_LOG_DEBUG(this->logger(),
+            NUM_COLLECT_LOG_TRACE(this->logger(),
                 "No iteration needed. residual_norm={}", residual_norm);
             return;
         }
@@ -116,7 +116,7 @@ public:
             residual_norm = tolerances_.calc_norm(rhs, residual_);
             if (residual_norm <= tolerance_rate_ ||
                 iterations_ >= max_iterations_) {
-                NUM_COLLECT_LOG_DEBUG(this->logger(),
+                NUM_COLLECT_LOG_TRACE(this->logger(),
                     "Finished iterations: iterations={}, residual_norm={}",
                     iterations_, residual_norm);
                 return;
