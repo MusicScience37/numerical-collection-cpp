@@ -63,9 +63,11 @@ TEST_CASE("num_collect::rbf::operators::partial_derivative_operator") {
 
         const Eigen::Vector2d evaluated_variable(0.3, 0.4);
         const double evaluated_value_0 = interpolator.evaluate(
-            partial_derivative_operator(evaluated_variable, 0));
+            partial_derivative_operator<Eigen::Vector2d, 0>(
+                evaluated_variable));
         const double evaluated_value_1 = interpolator.evaluate(
-            partial_derivative_operator(evaluated_variable, 1));
+            partial_derivative_operator<Eigen::Vector2d, 1>(
+                evaluated_variable));
         const Eigen::Vector2d expected_value =
             derivative_function(evaluated_variable);
 
@@ -101,9 +103,11 @@ TEST_CASE("num_collect::rbf::operators::partial_derivative_operator") {
 
         const Eigen::Vector2d evaluated_variable(0.3, 0.4);
         const double evaluated_value_0 = interpolator.evaluate(
-            partial_derivative_operator(evaluated_variable, 0));
+            partial_derivative_operator<Eigen::Vector2d, 0>(
+                evaluated_variable));
         const double evaluated_value_1 = interpolator.evaluate(
-            partial_derivative_operator(evaluated_variable, 1));
+            partial_derivative_operator<Eigen::Vector2d, 1>(
+                evaluated_variable));
         const Eigen::Vector2d expected_value =
             derivative_function(evaluated_variable);
 
@@ -141,9 +145,11 @@ TEST_CASE("num_collect::rbf::operators::partial_derivative_operator") {
 
         const Eigen::Vector2d evaluated_variable(0.3, 0.4);
         const double evaluated_value_0 = interpolator.evaluate(
-            partial_derivative_operator(evaluated_variable, 0));
+            partial_derivative_operator<Eigen::Vector2d, 0>(
+                evaluated_variable));
         const double evaluated_value_1 = interpolator.evaluate(
-            partial_derivative_operator(evaluated_variable, 1));
+            partial_derivative_operator<Eigen::Vector2d, 1>(
+                evaluated_variable));
         const Eigen::Vector2d expected_value =
             derivative_function(evaluated_variable);
 

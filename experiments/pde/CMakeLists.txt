@@ -38,4 +38,12 @@ if(VTK_FOUND)
     vtk_module_autoinit(
         TARGETS experiment_pde_rbf_fd_diffusion_equation_2d_dirichlet MODULES
         ${VTK_LIBRARIES})
+
+    add_experiment(experiment_pde_rbf_fd_diffusion_equation_2d_neumann
+                   rbf_fd_diffusion_equation_2d_neumann.cpp)
+    target_link_libraries(experiment_pde_rbf_fd_diffusion_equation_2d_neumann
+                          PRIVATE ${VTK_LIBRARIES})
+    vtk_module_autoinit(
+        TARGETS experiment_pde_rbf_fd_diffusion_equation_2d_neumann MODULES
+        ${VTK_LIBRARIES})
 endif()

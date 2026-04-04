@@ -37,6 +37,8 @@ namespace num_collect::util {
  * \param[in] num_nodes_per_edge Number of nodes on each edge of the rectangle.
  * \param[in] order_in_clockwise Whether the order of nodes is clockwise.
  * \return Generated nodes.
+ *
+ * \note Nodes are generated from the lower left corner in the specified order.
  */
 template <base::concepts::real_scalar Scalar>
 [[nodiscard]] auto generate_rectangle_boundary_nodes(
