@@ -1,4 +1,5 @@
 #include "diffusion_equation_2d_dirichlet.cpp"
+#include "diffusion_equation_2d_neumann.cpp"
 #include "poisson_1d.cpp"
 #include "poisson_2d.cpp"
 #include "poisson_3d.cpp"

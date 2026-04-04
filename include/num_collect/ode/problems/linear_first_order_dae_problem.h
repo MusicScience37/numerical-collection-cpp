@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of linear_first_order_ode_problem class.
+ * \brief Definition of linear_first_order_dae_problem class.
  */
 #pragma once
 
@@ -27,14 +27,15 @@
 namespace num_collect::ode::problems {
 
 /*!
- * \brief Class of linear first-order ODE problems.
+ * \brief Class of linear first-order DAE problems.
  *
  * This class defines a problem as follows:
  *
  * \f[
- * \frac{d}{dt} \boldsymbol{u} = A \boldsymbol{u} + \boldsymbol{b}
+ * M \frac{d}{dt} \boldsymbol{u} = A \boldsymbol{u} + \boldsymbol{b}
  * \f]
  *
+ * - \f$M\f$ is a mass matrix.
  * - \f$A\f$ is a stiffness matrix.
  * - \f$\boldsymbol{b}\f$ is a load vector.
  *
@@ -45,7 +46,7 @@ template <base::concepts::real_scalar_dense_vector Vector, typename Matrix>
     requires base::concepts::dense_matrix_of<Matrix,
                  typename Vector::value_type> ||
     base::concepts::sparse_matrix_of<Matrix, typename Vector::value_type>
-class linear_first_order_ode_problem {
+class linear_first_order_dae_problem {
 public:
     //! Type of vectors.
     using vector_type = Vector;
@@ -59,19 +60,25 @@ public:
     //! Type of variables. (Used by ODE solvers.)
     using variable_type = vector_type;
 
+    //! Type of mass matrix. (Used by ODE solvers.)
+    using mass_type = matrix_type;
+
     //! Allowed evaluations.
     static constexpr auto allowed_evaluations =
-        num_collect::ode::evaluation_type{.diff_coeff = true};
+        num_collect::ode::evaluation_type{.diff_coeff = true, .mass = true};
 
     /*!
      * \brief Constructor.
      *
+     * \param[in] mass_matrix Mass matrix.
      * \param[in] stiffness_matrix Stiffness matrix.
      * \param[in] load_vector Load vector.
      */
-    linear_first_order_ode_problem(
-        const matrix_type& stiffness_matrix, const variable_type& load_vector)
-        : stiffness_matrix_(stiffness_matrix), load_vector_(load_vector) {}
+    linear_first_order_dae_problem(const mass_type& mass_matrix,
+        const matrix_type& stiffness_matrix, const vector_type& load_vector)
+        : mass_matrix_(mass_matrix),
+          stiffness_matrix_(stiffness_matrix),
+          load_vector_(load_vector) {}
 
     /*!
      * \brief Evaluate on a (time, variable) pair.
@@ -93,15 +100,27 @@ public:
         return diff_coeff_;
     }
 
+    /*!
+     * \brief Get the mass matrix.
+     *
+     * \return Mass matrix.
+     */
+    [[nodiscard]] auto mass() const noexcept -> const mass_type& {
+        return mass_matrix_;
+    }
+
 private:
+    //! Mass matrix.
+    matrix_type mass_matrix_;
+
     //! Stiffness matrix.
     matrix_type stiffness_matrix_;
 
     //! Load vector.
-    variable_type load_vector_;
+    vector_type load_vector_;
 
     //! Differential coefficient.
-    variable_type diff_coeff_;
+    vector_type diff_coeff_;
 };
 
 }  // namespace num_collect::ode::problems

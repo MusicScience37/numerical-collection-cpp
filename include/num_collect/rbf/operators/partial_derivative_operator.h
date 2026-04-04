@@ -44,23 +44,24 @@ namespace num_collect::rbf::operators {
  * dimension.
  *
  * \tparam Variable Type of variables.
+ * \tparam DifferentiatedDimension Dimension to partially differentiate.
  *
  * For all dimensions of partial derivatives, use
  * \ref num_collect::rbf::operators::gradient_operator.
  */
-template <base::concepts::real_scalar_dense_vector Variable>
+template <base::concepts::real_scalar_dense_vector Variable,
+    index_type DifferentiatedDimension>
 class partial_derivative_operator {
 public:
     /*!
      * \brief Constructor.
      *
      * \param[in] variable Variable to evaluate the partial derivative at.
-     * \param[in] dimension Dimension to partially differentiate.
      */
-    partial_derivative_operator(Variable variable, index_type dimension)
-        : variable_(std::move(variable)), dimension_(dimension) {
-        NUM_COLLECT_PRECONDITION(
-            dimension_ >= 0 && dimension_ < variable_.size(),
+    explicit partial_derivative_operator(Variable variable)
+        : variable_(std::move(variable)) {
+        NUM_COLLECT_PRECONDITION(DifferentiatedDimension >= 0 &&
+                DifferentiatedDimension < variable_.size(),
             "Dimension must be in [0, variable.size()).");
     }
 
@@ -73,21 +74,9 @@ public:
         return variable_;
     }
 
-    /*!
-     * \brief Get the dimension to partially differentiate.
-     *
-     * \return Dimension.
-     */
-    [[nodiscard]] auto dimension() const noexcept -> index_type {
-        return dimension_;
-    }
-
 private:
     //! Variable to evaluate the slope at.
     Variable variable_;
-
-    //! Dimension to partially differentiate.
-    index_type dimension_;
 };
 
 /*!
@@ -96,19 +85,22 @@ private:
  * variables.
  */
 template <base::concepts::real_scalar_dense_vector Variable,
-    concepts::differentiable_rbf RBF>
-struct operator_evaluator<partial_derivative_operator<Variable>, RBF,
+    concepts::differentiable_rbf RBF, index_type DifferentiatedDimension>
+struct operator_evaluator<
+    partial_derivative_operator<Variable, DifferentiatedDimension>, RBF,
     distance_functions::euclidean_distance_function<Variable>>
     : general_operator_evaluator<
-          operator_evaluator<partial_derivative_operator<Variable>, RBF,
-              distance_functions::euclidean_distance_function<Variable>>,
-          partial_derivative_operator<Variable>, RBF,
+          operator_evaluator<
+              partial_derivative_operator<Variable, DifferentiatedDimension>,
+              RBF, distance_functions::euclidean_distance_function<Variable>>,
+          partial_derivative_operator<Variable, DifferentiatedDimension>, RBF,
           distance_functions::euclidean_distance_function<Variable>> {
     //! Type of the base.
     using base_type = general_operator_evaluator<
-        operator_evaluator<partial_derivative_operator<Variable>, RBF,
+        operator_evaluator<
+            partial_derivative_operator<Variable, DifferentiatedDimension>, RBF,
             distance_functions::euclidean_distance_function<Variable>>,
-        partial_derivative_operator<Variable>, RBF,
+        partial_derivative_operator<Variable, DifferentiatedDimension>, RBF,
         distance_functions::euclidean_distance_function<Variable>>;
 
     using base_type::variable_dimensions;
@@ -117,6 +109,21 @@ struct operator_evaluator<partial_derivative_operator<Variable>, RBF,
     using typename base_type::operator_type;
     using typename base_type::rbf_type;
     using typename base_type::variable_type;
+
+    /*!
+     * \brief Get the orders of differentiations.
+     *
+     * \return Orders of differentiations.
+     */
+    [[nodiscard]] static auto differentiations()
+        -> std::array<Eigen::Vector<int, variable_dimensions>, 1> {
+        std::array<Eigen::Vector<int, variable_dimensions>, 1> orders_list;
+        Eigen::Vector<int, variable_dimensions> orders =
+            Eigen::Vector<int, variable_dimensions>::Zero();
+        orders(DifferentiatedDimension) = 1;
+        orders_list[0] = orders;
+        return orders_list;
+    }
 
     /*!
      * \brief Get the initial value for accumulation of values evaluated for
@@ -161,7 +168,7 @@ struct operator_evaluator<partial_derivative_operator<Variable>, RBF,
 
         const rbfs::differentiated_t<rbf_type> differentiated_rbf;
 
-        const index_type dimension = target_operator.dimension();
+        const index_type dimension = DifferentiatedDimension;
 
         if constexpr (concepts::csrbf<rbf_type>) {
             if (distance_rate < rbf_type::support_boundary()) {
@@ -200,7 +207,7 @@ struct operator_evaluator<partial_derivative_operator<Variable>, RBF,
 
         Eigen::Vector<int, variable_dimensions> orders =
             Eigen::Vector<int, variable_dimensions>::Zero();
-        orders(target_operator.dimension()) = 1;
+        orders(DifferentiatedDimension) = 1;
 
         auto value = initial_value<coeff_type>();
         for (index_type i = 0; i < term_generator.terms().size(); ++i) {
