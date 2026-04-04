@@ -1,6 +1,6 @@
 "$schema" = "https://numcollect.musicscience37.com/config_schema/v3/config_schema.json"
 
-[rbf_fd_diffusion_equation_2d]
+[rbf_fd_diffusion_equation_2d_dirichlet]
 # Number of nodes in the interior of the domain.
 num_interior_nodes = 100
 # Number of nodes on each edge of the boundary.

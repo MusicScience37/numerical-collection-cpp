@@ -15,7 +15,8 @@
  */
 /*!
  * \file
- * \brief Experiments to solve 2D diffusion equation using RBF-FD method.
+ * \brief Experiments to solve 2D diffusion equation with Dirichlet boundary
+ * conditions using RBF-FD method.
  */
 #include <cmath>
 #include <filesystem>
@@ -55,7 +56,7 @@ using sparse_matrix_type = Eigen::SparseMatrix<double,
     Eigen::RowMajor>;  // BiCGstab works better with row-major format.
 
 static constexpr std::string_view output_directory =
-    "rbf_fd_diffusion_equation_2d";
+    "rbf_fd_diffusion_equation_2d_dirichlet";
 
 static auto test_function(const position_type& position, double time,
     double diffusion_coefficient) -> double {
@@ -240,7 +241,7 @@ static void solve_system(const ode_problem_type& problem,
     solution_type true_values = whole_variable;
     solution_type errors = solution_type::Zero(nodes.size());
     std::string file_path =
-        fmt::format("{}/rbf_fd_diffusion_equation_2d_{:04d}.vtp",
+        fmt::format("{}/rbf_fd_diffusion_equation_2d_dirichlet_{:04d}.vtp",
             output_directory, time_index);
     write_vtp_file(nodes, file_path, whole_variable, true_values, errors);
 
@@ -280,13 +281,14 @@ static void solve_system(const ode_problem_type& problem,
             "{:.2e}",
             time, max_error, mean_error, max_value);
 
-        file_path = fmt::format("{}/rbf_fd_diffusion_equation_2d_{:04d}.vtp",
-            output_directory, time_index);
+        file_path =
+            fmt::format("{}/rbf_fd_diffusion_equation_2d_dirichlet_{:04d}.vtp",
+                output_directory, time_index);
         write_vtp_file(nodes, file_path, whole_variable, true_values, errors);
     }
 
-    const std::string para_view_data_file_path =
-        fmt::format("{}/rbf_fd_diffusion_equation_2d.pvd", output_directory);
+    const std::string para_view_data_file_path = fmt::format(
+        "{}/rbf_fd_diffusion_equation_2d_dirichlet.pvd", output_directory);
     std::ofstream para_view_data_file(para_view_data_file_path);
     fmt::print(para_view_data_file, R"(<?xml version="1.0"?>
 <VTKFile type="Collection" version="0.1" byte_order="LittleEndian">
@@ -294,7 +296,7 @@ static void solve_system(const ode_problem_type& problem,
 )");
     for (num_collect::index_type i = 0; i < time_list.size(); ++i) {
         fmt::print(para_view_data_file,
-            R"(    <DataSet timestep="{:.2e}" file="rbf_fd_diffusion_equation_2d_{:04d}.vtp"/>
+            R"(    <DataSet timestep="{:.2e}" file="rbf_fd_diffusion_equation_2d_dirichlet_{:04d}.vtp"/>
 )",
             time_list[i], i);
     }
@@ -305,7 +307,7 @@ static void solve_system(const ode_problem_type& problem,
 
 auto main(int argc, const char** argv) -> int {
     std::string_view config_file_path =
-        "experiments/pde/rbf_fd_diffusion_equation_2d.toml";
+        "experiments/pde/rbf_fd_diffusion_equation_2d_dirichlet.toml";
     if (argc == 2) {
         config_file_path = argv[1];
     }
@@ -314,32 +316,39 @@ auto main(int argc, const char** argv) -> int {
 
     toml::table config = toml::parse_file(config_file_path);
     const auto num_interior_nodes =
-        config.at_path("rbf_fd_diffusion_equation_2d.num_interior_nodes")
+        config
+            .at_path(
+                "rbf_fd_diffusion_equation_2d_dirichlet.num_interior_nodes")
             .value<num_collect::index_type>()
             .value();
     const auto num_boundary_nodes_per_edge =
         config
-            .at_path("rbf_fd_diffusion_equation_2d.num_boundary_nodes_per_edge")
+            .at_path(
+                "rbf_fd_diffusion_equation_2d_dirichlet.num_boundary_nodes_per_"
+                "edge")
             .value<num_collect::index_type>()
             .value();
     const auto polynomial_order =
-        config.at_path("rbf_fd_diffusion_equation_2d.polynomial_order")
+        config
+            .at_path("rbf_fd_diffusion_equation_2d_dirichlet.polynomial_order")
             .value<int>()
             .value();
     const auto num_neighbors =
-        config.at_path("rbf_fd_diffusion_equation_2d.num_neighbors")
+        config.at_path("rbf_fd_diffusion_equation_2d_dirichlet.num_neighbors")
             .value<num_collect::index_type>()
             .value();
     const auto diffusion_coefficient =
-        config.at_path("rbf_fd_diffusion_equation_2d.diffusion_coefficient")
+        config
+            .at_path(
+                "rbf_fd_diffusion_equation_2d_dirichlet.diffusion_coefficient")
             .value<double>()
             .value();
     const auto time_step_size =
-        config.at_path("rbf_fd_diffusion_equation_2d.time_step_size")
+        config.at_path("rbf_fd_diffusion_equation_2d_dirichlet.time_step_size")
             .value<double>()
             .value();
     const auto final_time =
-        config.at_path("rbf_fd_diffusion_equation_2d.final_time")
+        config.at_path("rbf_fd_diffusion_equation_2d_dirichlet.final_time")
             .value<double>()
             .value();
     NUM_COLLECT_LOG_INFO(
