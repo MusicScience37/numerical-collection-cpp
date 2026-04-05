@@ -309,6 +309,9 @@ struct operator_evaluator<operator_multiple<Scalar, TargetOperator>, RBF,
     //! Type of variables.
     using variable_type = typename DistanceFunction::variable_type;
 
+    //! Type of kernel values.
+    using kernel_value_type = typename rbf_type::scalar_type;
+
     //! Type of the operator.
     using operator_type = operator_multiple<Scalar, TargetOperator>;
 
@@ -343,6 +346,32 @@ struct operator_evaluator<operator_multiple<Scalar, TargetOperator>, RBF,
                 distance_function, rbf, length_parameter_calculator,
                 target_operator.target_operator(), sample_variables,
                 kernel_coefficients);
+    }
+
+    /*!
+     * \brief Evaluate an operator for one sample point.
+     *
+     * \tparam FunctionValue Type of function values.
+     * \param[in] distance_function Distance function.
+     * \param[in] rbf RBF.
+     * \param[in] length_parameter Length parameter.
+     * \param[in] target_operator Operator to evaluate.
+     * \param[in] sample_variable Variable of the sample.
+     * \param[in] kernel_coeff Coefficient of the kernel for the sample.
+     * \return Evaluated function value.
+     */
+    template <typename FunctionValue>
+    [[nodiscard]] static auto evaluate_for_one_sample(
+        const distance_function_type& distance_function, const rbf_type& rbf,
+        const kernel_value_type& length_parameter,
+        const operator_type& target_operator,
+        const variable_type& sample_variable, const FunctionValue& kernel_coeff)
+        -> FunctionValue {
+        return target_operator.scalar() *
+            operator_evaluator<TargetOperator, RBF,
+                DistanceFunction>::evaluate_for_one_sample(distance_function,
+                rbf, length_parameter, target_operator.target_operator(),
+                sample_variable, kernel_coeff);
     }
 
     /*!
@@ -401,6 +430,9 @@ struct operator_evaluator<operator_negation<TargetOperator>, RBF,
     //! Type of variables.
     using variable_type = typename DistanceFunction::variable_type;
 
+    //! Type of kernel values.
+    using kernel_value_type = typename rbf_type::scalar_type;
+
     //! Type of the operator.
     using operator_type = operator_negation<TargetOperator>;
 
@@ -434,6 +466,31 @@ struct operator_evaluator<operator_negation<TargetOperator>, RBF,
             DistanceFunction>::evaluate(distance_function, rbf,
             length_parameter_calculator, target_operator.target_operator(),
             sample_variables, kernel_coefficients);
+    }
+
+    /*!
+     * \brief Evaluate an operator for one sample point.
+     *
+     * \tparam FunctionValue Type of function values.
+     * \param[in] distance_function Distance function.
+     * \param[in] rbf RBF.
+     * \param[in] length_parameter Length parameter.
+     * \param[in] target_operator Operator to evaluate.
+     * \param[in] sample_variable Variable of the sample.
+     * \param[in] kernel_coeff Coefficient of the kernel for the sample.
+     * \return Evaluated function value.
+     */
+    template <typename FunctionValue>
+    [[nodiscard]] static auto evaluate_for_one_sample(
+        const distance_function_type& distance_function, const rbf_type& rbf,
+        const kernel_value_type& length_parameter,
+        const operator_type& target_operator,
+        const variable_type& sample_variable, const FunctionValue& kernel_coeff)
+        -> FunctionValue {
+        return -operator_evaluator<TargetOperator, RBF,
+            DistanceFunction>::evaluate_for_one_sample(distance_function, rbf,
+            length_parameter, target_operator.target_operator(),
+            sample_variable, kernel_coeff);
     }
 
     /*!
@@ -491,6 +548,9 @@ struct operator_evaluator<operator_sum<LeftOperator, RightOperator>, RBF,
     //! Type of variables.
     using variable_type = typename DistanceFunction::variable_type;
 
+    //! Type of kernel values.
+    using kernel_value_type = typename rbf_type::scalar_type;
+
     //! Type of the operator.
     using operator_type = operator_sum<LeftOperator, RightOperator>;
 
@@ -528,6 +588,35 @@ struct operator_evaluator<operator_sum<LeftOperator, RightOperator>, RBF,
                 distance_function, rbf, length_parameter_calculator,
                 target_operator.right_operator(), sample_variables,
                 kernel_coefficients);
+    }
+
+    /*!
+     * \brief Evaluate an operator for one sample point.
+     *
+     * \tparam FunctionValue Type of function values.
+     * \param[in] distance_function Distance function.
+     * \param[in] rbf RBF.
+     * \param[in] length_parameter Length parameter.
+     * \param[in] target_operator Operator to evaluate.
+     * \param[in] sample_variable Variable of the sample.
+     * \param[in] kernel_coeff Coefficient of the kernel for the sample.
+     * \return Evaluated function value.
+     */
+    template <typename FunctionValue>
+    [[nodiscard]] static auto evaluate_for_one_sample(
+        const distance_function_type& distance_function, const rbf_type& rbf,
+        const kernel_value_type& length_parameter,
+        const operator_type& target_operator,
+        const variable_type& sample_variable, const FunctionValue& kernel_coeff)
+        -> FunctionValue {
+        return operator_evaluator<LeftOperator, RBF,
+                   DistanceFunction>::evaluate_for_one_sample(distance_function,
+                   rbf, length_parameter, target_operator.left_operator(),
+                   sample_variable, kernel_coeff) +
+            operator_evaluator<RightOperator, RBF,
+                DistanceFunction>::evaluate_for_one_sample(distance_function,
+                rbf, length_parameter, target_operator.right_operator(),
+                sample_variable, kernel_coeff);
     }
 
     /*!

@@ -103,14 +103,12 @@ TEST_CASE("Diffusion equation in 2D with Neumann boundary conditions") {
             num_collect::rbf::operators::laplacian_operator<position_type>;
         constexpr num_collect::index_type row_offset = 0;
         constexpr num_collect::index_type column_offset = 0;
-        assembler.compute_rows<operator_type>(interior_nodes, nodes,
-            column_variables_nearest_neighbor_searcher, stiffness_triplets,
-            row_offset, column_offset);
-        for (auto& triplet : stiffness_triplets) {
-            // TODO Handle coefficients in assemblers.
-            triplet = Eigen::Triplet<double>(triplet.row(), triplet.col(),
-                diffusion_coefficient * triplet.value());
-        }
+        assembler.compute_rows(
+            [](const position_type& position) {
+                return diffusion_coefficient * operator_type(position);
+            },
+            interior_nodes, nodes, column_variables_nearest_neighbor_searcher,
+            stiffness_triplets, row_offset, column_offset);
         for (num_collect::index_type i = 0; i < num_interior_nodes; ++i) {
             mass_triplets.emplace_back(
                 static_cast<int>(i), static_cast<int>(i), 1.0);
