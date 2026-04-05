@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <concepts>
 #include <type_traits>
 #include <utility>
 
@@ -34,8 +35,8 @@
 #include "num_collect/rbf/compute_polynomial_term_matrix.h"
 #include "num_collect/rbf/concepts/length_parameter_calculator.h"
 #include "num_collect/rbf/concepts/rbf.h"
+#include "num_collect/rbf/concepts/rbf_fd_operator_with.h"
 #include "num_collect/rbf/impl/compute_kernel_matrix_serial.h"
-#include "num_collect/rbf/impl/differentiate_polynomial_term.h"
 #include "num_collect/rbf/operators/operator_evaluator.h"
 #include "num_collect/rbf/polynomial_term_generator.h"
 #include "num_collect/util/nearest_neighbor_searcher.h"
@@ -117,7 +118,11 @@ public:
      * because this function will be called multiple times to assemble the whole
      * system matrix.
      */
-    template <concepts::rbf RBF, typename Operator, typename StorageIndex>
+    template <concepts::rbf RBF,
+        concepts::rbf_fd_operator_with<RBF, distance_function_type,
+            length_parameter_calculator_type>
+            Operator,
+        std::signed_integral StorageIndex>
         requires std::is_same_v<typename RBF::scalar_type, scalar_type>
     void compute_row(const distance_function_type& distance_function,
         const RBF& rbf,
@@ -132,7 +137,7 @@ public:
         search_neighbors(row_variable, column_variables,
             column_variables_nearest_neighbor_searcher, num_neighbors);
         create_linear_system(distance_function, rbf, polynomial_term_generator,
-            target_operator, row_variable, num_neighbors);
+            target_operator, num_neighbors);
         solve_linear_system(row_index);
 
         for (index_type i = 0; i < num_neighbors; ++i) {
@@ -195,15 +200,16 @@ private:
      * \param[in] rbf RBF.
      * \param[in] polynomial_term_generator Generator of polynomial terms.
      * \param[in] target_operator Operator to assemble.
-     * \param[in] row_variable Variable corresponding to the row to calculate.
      * \param[in] num_neighbors Number of neighbors to use in RBF-FD.
      */
-    template <concepts::rbf RBF, typename Operator>
+    template <concepts::rbf RBF,
+        concepts::rbf_fd_operator_with<RBF, distance_function_type,
+            length_parameter_calculator_type>
+            Operator>
     void create_linear_system(const distance_function_type& distance_function,
         const RBF& rbf,
         const polynomial_term_generator_type& polynomial_term_generator,
-        const Operator& target_operator, const variable_type& row_variable,
-        index_type num_neighbors) {
+        const Operator& target_operator, index_type num_neighbors) {
         using operator_evaluator_type = operators::operator_evaluator<Operator,
             RBF, distance_function_type>;
 
@@ -237,20 +243,11 @@ private:
                     length_parameter_calculator_.length_parameter_at(0),
                     target_operator, neighbor_variables_[i], 1.0);
         }
-        const auto operator_differentiations =
-            operator_evaluator_type::differentiations();
         for (num_collect::index_type i = 0; i < num_polynomials; ++i) {
             const auto& term = polynomial_term_generator.terms()[i];
-            double value = 0.0;
-            for (const auto& orders : operator_differentiations) {
-                const auto differentiation_result =
-                    num_collect::rbf::impl::differentiate_polynomial_term<
-                        double>(term, orders);
-                if (differentiation_result) {
-                    value += differentiation_result->first(row_variable) *
-                        differentiation_result->second;
-                }
-            }
+            const scalar_type value =
+                operator_evaluator_type::evaluate_polynomial_term(
+                    target_operator, term);
             right_hand_side_(num_neighbors + i) = value;
         }
     }

@@ -103,6 +103,35 @@ struct general_differential_operator_evaluator
         }
         return value;
     }
+
+    /*!
+     * \brief Evaluate a polynomial term.
+     *
+     * \param[in] target_operator Operator to evaluate.
+     * \param[in] polynomial_term Polynomial term to evaluate.
+     * \return Evaluated polynomial value.
+     */
+    template <int NumDimensions>
+    [[nodiscard]] static auto evaluate_polynomial_term(
+        const operator_type& target_operator,
+        const polynomial_term<NumDimensions>& polynomial_term) {
+        using coeff_type = kernel_value_type;
+
+        static const auto orders_list = Derived::differentiations();
+
+        auto value = initial_value<coeff_type>();
+        for (const auto& orders : orders_list) {
+            const auto differentiation_result =
+                impl::differentiate_polynomial_term<coeff_type>(
+                    polynomial_term, orders);
+            if (differentiation_result) {
+                value +=
+                    differentiation_result->first(target_operator.variable()) *
+                    differentiation_result->second;
+            }
+        }
+        return value;
+    }
 };
 
 }  // namespace num_collect::rbf::operators

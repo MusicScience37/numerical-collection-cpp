@@ -162,6 +162,24 @@ struct operator_evaluator<function_value_operator<Variable>, RBF,
         }
         return value;
     }
+
+    /*!
+     * \brief Evaluate a polynomial term.
+     *
+     * \param[in] target_operator Operator to evaluate.
+     * \param[in] polynomial_term Polynomial term to evaluate.
+     * \return Evaluated polynomial value.
+     */
+    template <int NumDimensions>
+    [[nodiscard]] static auto evaluate_polynomial_term(
+        const operator_type& target_operator,
+        const polynomial_term<NumDimensions>& polynomial_term) {
+        using coeff_type = kernel_value_type;
+
+        auto value = initial_value<coeff_type>();
+        value += polynomial_term(target_operator.variable());
+        return value;
+    }
 };
 
 }  // namespace num_collect::rbf::operators
