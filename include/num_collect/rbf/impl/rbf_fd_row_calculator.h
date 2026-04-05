@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <concepts>
 #include <type_traits>
 #include <utility>
 
@@ -32,6 +33,7 @@
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/rbf/concepts/length_parameter_calculator.h"
 #include "num_collect/rbf/concepts/rbf.h"
+#include "num_collect/rbf/concepts/rbf_fd_operator_with.h"
 #include "num_collect/rbf/impl/compute_kernel_matrix_serial.h"
 #include "num_collect/rbf/operators/operator_evaluator.h"
 #include "num_collect/util/nearest_neighbor_searcher.h"
@@ -104,7 +106,11 @@ public:
      * because this function will be called multiple times to assemble the whole
      * system matrix.
      */
-    template <concepts::rbf RBF, typename Operator, typename StorageIndex>
+    template <concepts::rbf RBF,
+        concepts::rbf_fd_operator_with<RBF, distance_function_type,
+            length_parameter_calculator_type>
+            Operator,
+        std::signed_integral StorageIndex>
         requires std::is_same_v<typename RBF::scalar_type, scalar_type>
     void compute_row(const distance_function_type& distance_function,
         const RBF& rbf, const Operator& target_operator,
@@ -182,7 +188,10 @@ private:
      * \param[in] target_operator Operator to assemble.
      * \param[in] num_neighbors Number of neighbors to use in RBF-FD.
      */
-    template <concepts::rbf RBF, typename Operator>
+    template <concepts::rbf RBF,
+        concepts::rbf_fd_operator_with<RBF, distance_function_type,
+            length_parameter_calculator_type>
+            Operator>
     void create_linear_system(const distance_function_type& distance_function,
         const RBF& rbf, const Operator& target_operator,
         index_type num_neighbors) {

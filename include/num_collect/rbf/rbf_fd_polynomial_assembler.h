@@ -20,6 +20,7 @@
 #pragma once
 
 #include <algorithm>
+#include <concepts>
 #include <utility>
 
 #include <Eigen/SparseCore>
@@ -27,6 +28,7 @@
 #include "num_collect/base/get_compile_time_size.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
+#include "num_collect/rbf/concepts/rbf_fd_operator_with.h"
 #include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
 #include "num_collect/rbf/impl/rbf_fd_polynomial_row_calculator.h"
 #include "num_collect/rbf/length_parameter_calculators/global_length_parameter_calculator.h"
@@ -123,7 +125,10 @@ public:
      * because this function will be called multiple times to assemble the whole
      * system matrix.
      */
-    template <typename Operator, typename StorageIndex>
+    template <concepts::rbf_fd_operator_with<rbf_type, distance_function_type,
+                  length_parameter_calculator_type>
+                  Operator,
+        std::signed_integral StorageIndex>
     void compute_rows(util::vector_view<const variable_type> row_variables,
         util::vector_view<const variable_type> column_variables,
         const util::nearest_neighbor_searcher<variable_type>&
