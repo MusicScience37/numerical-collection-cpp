@@ -32,7 +32,6 @@
 #include <Eigen/SparseCore>
 #include <fmt/format.h>
 #include <fmt/ostream.h>
-#include <toml++/toml.h>
 
 #include "num_collect/base/constants.h"
 #include "num_collect/base/index_type.h"
@@ -48,6 +47,7 @@
 #include "num_collect/util/nearest_neighbor_searcher.h"
 #include "num_collect/util/vector.h"
 #include "num_collect/util/vector_view.h"
+#include "toml_parser.h"
 #include "write_vtp_file_for_comparison.h"
 
 using position_type = Eigen::Vector2d;
@@ -306,41 +306,22 @@ auto main(int argc, const char** argv) -> int {
     num_collect::logging::load_logging_config_file(config_file_path);
     num_collect::logging::logger logger;
 
-    toml::table config = toml::parse_file(config_file_path);
-    const auto num_interior_nodes =
-        config
-            .at_path("rbf_fd_diffusion_equation_2d_neumann.num_interior_nodes")
-            .value<num_collect::index_type>()
-            .value();
+    toml_parser parser(config_file_path);
+    const auto num_interior_nodes = parser.get<num_collect::index_type>(
+        "rbf_fd_diffusion_equation_2d_neumann.num_interior_nodes");
     const auto num_boundary_nodes_per_edge =
-        config
-            .at_path(
-                "rbf_fd_diffusion_equation_2d_neumann.num_boundary_nodes_per_"
-                "edge")
-            .value<num_collect::index_type>()
-            .value();
-    const auto polynomial_order =
-        config.at_path("rbf_fd_diffusion_equation_2d_neumann.polynomial_order")
-            .value<int>()
-            .value();
-    const auto num_neighbors =
-        config.at_path("rbf_fd_diffusion_equation_2d_neumann.num_neighbors")
-            .value<num_collect::index_type>()
-            .value();
-    const auto diffusion_coefficient =
-        config
-            .at_path(
-                "rbf_fd_diffusion_equation_2d_neumann.diffusion_coefficient")
-            .value<double>()
-            .value();
-    const auto time_step_size =
-        config.at_path("rbf_fd_diffusion_equation_2d_neumann.time_step_size")
-            .value<double>()
-            .value();
+        parser.get<num_collect::index_type>(
+            "rbf_fd_diffusion_equation_2d_neumann.num_boundary_nodes_per_edge");
+    const auto polynomial_order = parser.get<int>(
+        "rbf_fd_diffusion_equation_2d_neumann.polynomial_order");
+    const auto num_neighbors = parser.get<num_collect::index_type>(
+        "rbf_fd_diffusion_equation_2d_neumann.num_neighbors");
+    const auto diffusion_coefficient = parser.get<double>(
+        "rbf_fd_diffusion_equation_2d_neumann.diffusion_coefficient");
+    const auto time_step_size = parser.get<double>(
+        "rbf_fd_diffusion_equation_2d_neumann.time_step_size");
     const auto final_time =
-        config.at_path("rbf_fd_diffusion_equation_2d_neumann.final_time")
-            .value<double>()
-            .value();
+        parser.get<double>("rbf_fd_diffusion_equation_2d_neumann.final_time");
     NUM_COLLECT_LOG_INFO(
         logger, "Number of interior nodes: {}", num_interior_nodes);
     NUM_COLLECT_LOG_INFO(logger, "Number of boundary nodes per edge: {}",

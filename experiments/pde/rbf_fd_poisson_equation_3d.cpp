@@ -28,7 +28,6 @@
 #include <plotly_plotter/eigen.h>
 #include <plotly_plotter/figure.h>
 #include <plotly_plotter/write_html.h>
-#include <toml++/toml.h>
 
 #include "num_collect/base/constants.h"
 #include "num_collect/base/index_type.h"
@@ -42,6 +41,7 @@
 #include "num_collect/util/nearest_neighbor_searcher.h"
 #include "num_collect/util/vector.h"
 #include "num_collect/util/vector_view.h"
+#include "toml_parser.h"
 #include "write_vtu_file_for_comparison.h"
 
 using variable_type = Eigen::Vector3d;
@@ -232,27 +232,18 @@ auto main(int argc, const char** argv) -> int {
     num_collect::logging::load_logging_config_file(config_file_path);
     num_collect::logging::logger logger;
 
-    toml::table config = toml::parse_file(config_file_path);
-    const auto num_interior_nodes =
-        config.at_path("rbf_fd_poisson_equation_3d.num_interior_nodes")
-            .value<num_collect::index_type>()
-            .value();
+    toml_parser parser(config_file_path);
+    const auto num_interior_nodes = parser.get<num_collect::index_type>(
+        "rbf_fd_poisson_equation_3d.num_interior_nodes");
     const auto num_boundary_nodes_per_edge =
-        config.at_path("rbf_fd_poisson_equation_3d.num_boundary_nodes_per_edge")
-            .value<num_collect::index_type>()
-            .value();
+        parser.get<num_collect::index_type>(
+            "rbf_fd_poisson_equation_3d.num_boundary_nodes_per_edge");
     const auto polynomial_order =
-        config.at_path("rbf_fd_poisson_equation_3d.polynomial_order")
-            .value<int>()
-            .value();
-    const auto num_neighbors =
-        config.at_path("rbf_fd_poisson_equation_3d.num_neighbors")
-            .value<num_collect::index_type>()
-            .value();
+        parser.get<int>("rbf_fd_poisson_equation_3d.polynomial_order");
+    const auto num_neighbors = parser.get<num_collect::index_type>(
+        "rbf_fd_poisson_equation_3d.num_neighbors");
     const auto length_parameter_scale =
-        config.at_path("rbf_fd_poisson_equation_3d.length_parameter_scale")
-            .value<double>()
-            .value();
+        parser.get<double>("rbf_fd_poisson_equation_3d.length_parameter_scale");
     NUM_COLLECT_LOG_INFO(
         logger, "Number of interior nodes: {}", num_interior_nodes);
     NUM_COLLECT_LOG_INFO(logger, "Number of boundary nodes per edge: {}",
