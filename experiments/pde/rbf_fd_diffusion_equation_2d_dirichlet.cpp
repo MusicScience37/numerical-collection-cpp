@@ -28,13 +28,6 @@
 #include <fmt/format.h>
 #include <fmt/ostream.h>
 #include <toml++/toml.h>
-#include <vtkDelaunay2D.h>
-#include <vtkDoubleArray.h>
-#include <vtkNew.h>
-#include <vtkPointData.h>
-#include <vtkPoints.h>
-#include <vtkPolyData.h>
-#include <vtkXMLPolyDataWriter.h>
 
 #include "num_collect/base/constants.h"
 #include "num_collect/base/index_type.h"
@@ -49,6 +42,7 @@
 #include "num_collect/util/nearest_neighbor_searcher.h"
 #include "num_collect/util/vector.h"
 #include "num_collect/util/vector_view.h"
+#include "write_vtp_file_for_comparison.h"
 
 using position_type = Eigen::Vector2d;
 using solution_type = Eigen::VectorXd;
@@ -148,70 +142,6 @@ static auto assemble_system(
 }
 
 /*!
- * \brief Write a VTP file for visualization in ParaView.
- *
- * \param[in] nodes Nodes. Generated in generate_nodes function. First
- * num_interior_nodes nodes are in the interior, and the rest are on the
- * boundary in the counter-clockwise order.
- * \param[in] file_path File path for the VTP file.
- * \param[in] solution Solution values at the nodes.
- * \param[in] true_values True values at the nodes.
- * \param[in] errors Errors at the nodes.
- */
-static void write_vtp_file(
-    num_collect::util::vector_view<const position_type> nodes,
-    const std::string& file_path, const solution_type& solution,
-    const solution_type& true_values, const solution_type& errors) {
-    num_collect::logging::logger logger;
-
-    vtkNew<vtkPoints> points;
-    for (const auto& node : nodes) {
-        points->InsertNextPoint(node.x(), node.y(), 0.0);
-    }
-
-    vtkNew<vtkPolyData> poly_data_of_points;
-    poly_data_of_points->SetPoints(points);
-
-    vtkNew<vtkDelaunay2D> delaunay;
-    delaunay->SetInputData(poly_data_of_points);
-    delaunay->Update();
-
-    vtkPolyData* poly_data = delaunay->GetOutput();
-
-    vtkNew<vtkDoubleArray> true_values_array;
-    true_values_array->SetName("True Values");
-    true_values_array->SetNumberOfComponents(1);
-    for (double value : true_values) {
-        true_values_array->InsertNextValue(value);
-    }
-    poly_data->GetPointData()->AddArray(true_values_array);
-
-    vtkNew<vtkDoubleArray> solution_array;
-    solution_array->SetName("Solution");
-    solution_array->SetNumberOfComponents(1);
-    for (double value : solution) {
-        solution_array->InsertNextValue(value);
-    }
-    poly_data->GetPointData()->AddArray(solution_array);
-
-    vtkNew<vtkDoubleArray> error_array;
-    error_array->SetName("Error");
-    error_array->SetNumberOfComponents(1);
-    for (double value : errors) {
-        error_array->InsertNextValue(value);
-    }
-    poly_data->GetPointData()->AddArray(error_array);
-
-    vtkNew<vtkXMLPolyDataWriter> writer;
-    writer->SetFileName(file_path.c_str());
-    writer->SetInputData(poly_data);
-    writer->SetDataModeToBinary();
-    writer->SetCompressorTypeToZLib();
-    writer->SetCompressionLevel(9);
-    writer->Write();
-}
-
-/*!
  * \brief Solve the assembled system.
  *
  * \param[in] problem ODE problem to solve.
@@ -243,7 +173,8 @@ static void solve_system(const ode_problem_type& problem,
     std::string file_path =
         fmt::format("{}/rbf_fd_diffusion_equation_2d_dirichlet_{:04d}.vtp",
             output_directory, time_index);
-    write_vtp_file(nodes, file_path, whole_variable, true_values, errors);
+    write_vtp_file_for_comparison(
+        file_path, nodes, whole_variable, true_values, errors);
 
     num_collect::util::vector<double> time_list;
     time_list.push_back(time);
@@ -284,7 +215,8 @@ static void solve_system(const ode_problem_type& problem,
         file_path =
             fmt::format("{}/rbf_fd_diffusion_equation_2d_dirichlet_{:04d}.vtp",
                 output_directory, time_index);
-        write_vtp_file(nodes, file_path, whole_variable, true_values, errors);
+        write_vtp_file_for_comparison(
+            file_path, nodes, whole_variable, true_values, errors);
     }
 
     const std::string para_view_data_file_path = fmt::format(

@@ -29,13 +29,6 @@
 #include <plotly_plotter/figure.h>
 #include <plotly_plotter/write_html.h>
 #include <toml++/toml.h>
-#include <vtkDelaunay2D.h>
-#include <vtkDoubleArray.h>
-#include <vtkNew.h>
-#include <vtkPointData.h>
-#include <vtkPoints.h>
-#include <vtkPolyData.h>
-#include <vtkXMLPolyDataWriter.h>
 
 #include "num_collect/base/constants.h"
 #include "num_collect/base/index_type.h"
@@ -50,6 +43,7 @@
 #include "num_collect/util/nearest_neighbor_searcher.h"
 #include "num_collect/util/vector.h"
 #include "num_collect/util/vector_view.h"
+#include "write_vtp_file_for_comparison.h"
 
 using variable_type = Eigen::Vector2d;
 using sparse_matrix_type = Eigen::SparseMatrix<double,
@@ -230,62 +224,6 @@ static auto evaluate_solution(
     return {true_values, errors};
 }
 
-static void write_vtp_file(
-    const num_collect::util::vector_view<const variable_type>& nodes,
-    const Eigen::VectorXd& solution, const Eigen::VectorXd& true_values,
-    const Eigen::VectorXd& errors) {
-    num_collect::logging::logger logger;
-
-    vtkNew<vtkPoints> points;
-    for (const auto& node : nodes) {
-        points->InsertNextPoint(node.x(), node.y(), 0.0);
-    }
-
-    vtkNew<vtkPolyData> poly_data_of_points;
-    poly_data_of_points->SetPoints(points);
-
-    vtkNew<vtkDelaunay2D> delaunay;
-    delaunay->SetInputData(poly_data_of_points);
-    delaunay->Update();
-
-    vtkPolyData* poly_data = delaunay->GetOutput();
-
-    vtkNew<vtkDoubleArray> true_values_array;
-    true_values_array->SetName("True Values");
-    true_values_array->SetNumberOfComponents(1);
-    for (double value : true_values) {
-        true_values_array->InsertNextValue(value);
-    }
-    poly_data->GetPointData()->AddArray(true_values_array);
-
-    vtkNew<vtkDoubleArray> solution_array;
-    solution_array->SetName("Solution");
-    solution_array->SetNumberOfComponents(1);
-    for (double value : solution) {
-        solution_array->InsertNextValue(value);
-    }
-    poly_data->GetPointData()->AddArray(solution_array);
-
-    vtkNew<vtkDoubleArray> error_array;
-    error_array->SetName("Error");
-    error_array->SetNumberOfComponents(1);
-    for (double value : errors) {
-        error_array->InsertNextValue(value);
-    }
-    poly_data->GetPointData()->AddArray(error_array);
-
-    vtkNew<vtkXMLPolyDataWriter> writer;
-    const std::string file_name = "rbf_fd_poisson_equation_2d.vtp";
-    writer->SetFileName(file_name.c_str());
-    writer->SetInputData(poly_data);
-    writer->SetDataModeToBinary();
-    writer->SetCompressorTypeToZLib();
-    writer->SetCompressionLevel(9);
-    writer->Write();
-
-    NUM_COLLECT_LOG_INFO(logger, "Wrote {}.", file_name);
-}
-
 static auto interpolate_data(
     const num_collect::util::vector_view<const variable_type>& nodes,
     const Eigen::VectorXd& origin, const Eigen::VectorXd& x_values,
@@ -456,7 +394,8 @@ auto main(int argc, const char** argv) -> int {
     const auto solution = solve_system(mat, right_vec);
 
     const auto [true_values, errors] = evaluate_solution(nodes, solution);
-    write_vtp_file(nodes, solution, true_values, errors);
+    write_vtp_file_for_comparison("rbf_fd_poisson_equation_2d_solution.vtp",
+        nodes, solution, true_values, errors);
     write_plots(nodes, solution, true_values);
 
     NUM_COLLECT_LOG_INFO(logger, "Finished.");
