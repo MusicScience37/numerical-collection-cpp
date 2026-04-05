@@ -365,8 +365,8 @@ struct operator_evaluator<operator_multiple<Scalar, TargetOperator>, RBF,
         const distance_function_type& distance_function, const rbf_type& rbf,
         const kernel_value_type& length_parameter,
         const operator_type& target_operator,
-        const variable_type& sample_variable, const FunctionValue& kernel_coeff)
-        -> FunctionValue {
+        const variable_type& sample_variable,
+        const FunctionValue& kernel_coeff) {
         return target_operator.scalar() *
             operator_evaluator<TargetOperator, RBF,
                 DistanceFunction>::evaluate_for_one_sample(distance_function,
@@ -485,8 +485,8 @@ struct operator_evaluator<operator_negation<TargetOperator>, RBF,
         const distance_function_type& distance_function, const rbf_type& rbf,
         const kernel_value_type& length_parameter,
         const operator_type& target_operator,
-        const variable_type& sample_variable, const FunctionValue& kernel_coeff)
-        -> FunctionValue {
+        const variable_type& sample_variable,
+        const FunctionValue& kernel_coeff) {
         return -operator_evaluator<TargetOperator, RBF,
             DistanceFunction>::evaluate_for_one_sample(distance_function, rbf,
             length_parameter, target_operator.target_operator(),
@@ -607,8 +607,8 @@ struct operator_evaluator<operator_sum<LeftOperator, RightOperator>, RBF,
         const distance_function_type& distance_function, const rbf_type& rbf,
         const kernel_value_type& length_parameter,
         const operator_type& target_operator,
-        const variable_type& sample_variable, const FunctionValue& kernel_coeff)
-        -> FunctionValue {
+        const variable_type& sample_variable,
+        const FunctionValue& kernel_coeff) {
         return operator_evaluator<LeftOperator, RBF,
                    DistanceFunction>::evaluate_for_one_sample(distance_function,
                    rbf, length_parameter, target_operator.left_operator(),
