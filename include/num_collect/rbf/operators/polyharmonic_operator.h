@@ -29,6 +29,7 @@
 #include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
 #include "num_collect/rbf/operators/general_differential_operator_evaluator.h"
 #include "num_collect/rbf/operators/impl/generate_polyharmonic_operator_differentiations.h"
+#include "num_collect/rbf/operators/operator_base.h"
 #include "num_collect/rbf/operators/operator_evaluator.h"
 #include "num_collect/rbf/rbfs/polyharmonic_spline_rbf.h"
 
@@ -45,7 +46,8 @@ template <int PolyharmonicOrder, typename Variable>
     requires(base::concepts::real_scalar<Variable> ||
                 base::concepts::real_scalar_dense_vector<Variable>) &&
     (PolyharmonicOrder > 0)
-class polyharmonic_operator {
+class polyharmonic_operator
+    : public operator_base<polyharmonic_operator<PolyharmonicOrder, Variable>> {
 public:
     /*!
      * \brief Constructor.

@@ -30,6 +30,7 @@
 #include "num_collect/rbf/concepts/differentiable_rbf.h"
 #include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
 #include "num_collect/rbf/operators/general_differential_operator_evaluator.h"
+#include "num_collect/rbf/operators/operator_base.h"
 #include "num_collect/rbf/operators/operator_evaluator.h"
 #include "num_collect/rbf/rbfs/differentiated.h"
 
@@ -47,7 +48,9 @@ namespace num_collect::rbf::operators {
  */
 template <base::concepts::real_scalar_dense_vector Variable,
     index_type DifferentiatedDimension>
-class partial_derivative_operator {
+class partial_derivative_operator
+    : public operator_base<
+          partial_derivative_operator<Variable, DifferentiatedDimension>> {
 public:
     /*!
      * \brief Constructor.

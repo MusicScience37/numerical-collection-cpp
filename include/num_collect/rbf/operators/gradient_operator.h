@@ -31,6 +31,7 @@
 #include "num_collect/rbf/impl/differentiate_polynomial_term.h"
 #include "num_collect/rbf/operators/general_differential_operator_evaluator.h"
 #include "num_collect/rbf/operators/general_operator_evaluator.h"
+#include "num_collect/rbf/operators/operator_base.h"
 #include "num_collect/rbf/operators/operator_evaluator.h"
 #include "num_collect/rbf/polynomial_term_generator.h"
 #include "num_collect/rbf/rbfs/differentiated.h"
@@ -50,7 +51,7 @@ namespace num_collect::rbf::operators {
 template <typename Variable>
     requires base::concepts::real_scalar<Variable> ||
     base::concepts::real_scalar_dense_vector<Variable>
-class gradient_operator {
+class gradient_operator : public operator_base<gradient_operator<Variable>> {
 public:
     /*!
      * \brief Constructor.
