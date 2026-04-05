@@ -22,6 +22,7 @@
 #include "operators/hessian_operator_test.cpp"
 #include "operators/laplacian_gradient_operator_test.cpp"
 #include "operators/laplacian_operator_test.cpp"
+#include "operators/operator_base_test.cpp"
 #include "operators/partial_derivative_operator_test.cpp"
 #include "operators/polyharmonic_operator_test.cpp"
 #include "operators/third_order_derivative_operator_test.cpp"

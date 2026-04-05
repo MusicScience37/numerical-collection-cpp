@@ -27,6 +27,7 @@
 #include "num_collect/rbf/concepts/rbf.h"
 #include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
 #include "num_collect/rbf/operators/general_operator_evaluator.h"
+#include "num_collect/rbf/operators/operator_base.h"
 #include "num_collect/rbf/operators/operator_evaluator.h"
 #include "num_collect/rbf/polynomial_term_generator.h"
 #include "num_collect/util/assert.h"
@@ -39,7 +40,8 @@ namespace num_collect::rbf::operators {
  * \tparam Variable Type of variables.
  */
 template <typename Variable>
-class function_value_operator {
+class function_value_operator
+    : public operator_base<function_value_operator<Variable>> {
 public:
     /*!
      * \brief Constructor.

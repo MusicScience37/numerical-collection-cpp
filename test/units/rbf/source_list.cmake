@@ -23,6 +23,7 @@ set(SOURCE_FILES
     operators/hessian_operator_test.cpp
     operators/laplacian_gradient_operator_test.cpp
     operators/laplacian_operator_test.cpp
+    operators/operator_base_test.cpp
     operators/partial_derivative_operator_test.cpp
     operators/polyharmonic_operator_test.cpp
     operators/third_order_derivative_operator_test.cpp

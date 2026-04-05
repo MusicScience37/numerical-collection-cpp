@@ -26,6 +26,7 @@
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
+#include "num_collect/rbf/concepts/rbf_fd_operator_factory.h"
 #include "num_collect/rbf/concepts/rbf_fd_operator_with.h"
 #include "num_collect/rbf/distance_functions/euclidean_distance_function.h"
 #include "num_collect/rbf/impl/rbf_fd_row_calculator.h"
@@ -89,6 +90,84 @@ public:
     /*!
      * \brief Compute rows of the system matrix.
      *
+     * \tparam OperatorFactory Type of the factory to create the operator to
+     * assemble.
+     * \tparam StorageIndex Type of indices in the system matrix.
+     * \param[in] operator_factory Factory to create the operator to assemble.
+     * \param[in] row_variables Variables corresponding to rows of the system
+     * matrix.
+     * \param[in] column_variables Variables corresponding to the columns to
+     * calculate.
+     * \param[in] column_variables_nearest_neighbor_searcher Nearest neighbor
+     * searcher for the column variables.
+     * \param[out] triplets Output vector of triplets to set values in the
+     * system matrix.
+     * \param[in] row_offset Offset of row indices in the system matrix.
+     * \param[in] column_offset Offset of column indices in the system matrix.
+     *
+     * \note Existing triplets are not cleared in this function
+     * because this function will be called multiple times to assemble the whole
+     * system matrix.
+     */
+    template <concepts::rbf_fd_operator_factory<rbf_type,
+                  distance_function_type, length_parameter_calculator_type>
+                  OperatorFactory,
+        std::signed_integral StorageIndex>
+    void compute_rows(OperatorFactory&& operator_factory,
+        util::vector_view<const variable_type> row_variables,
+        util::vector_view<const variable_type> column_variables,
+        const util::nearest_neighbor_searcher<variable_type>&
+            column_variables_nearest_neighbor_searcher,
+        util::vector<Eigen::Triplet<scalar_type, StorageIndex>>& triplets,
+        index_type row_offset, index_type column_offset) {
+        NUM_COLLECT_PRECONDITION(column_variables.size() >= num_neighbors_,
+            "Number of column variables must be greater than or equal to the "
+            "number of neighbors.");
+
+        triplets.reserve(
+            triplets.size() + row_variables.size() * num_neighbors_);
+
+        constexpr index_type parallel_threshold = 100;
+        if (row_variables.size() >= parallel_threshold) {
+#pragma omp parallel
+            {
+                row_calculator_type row_calculator;
+                row_calculator.length_parameter_scale(length_parameter_scale_);
+                util::vector<Eigen::Triplet<scalar_type, StorageIndex>>
+                    local_triplets;
+                local_triplets.reserve(row_variables.size() * num_neighbors_);
+#pragma omp for
+                for (index_type i = 0; i < row_variables.size(); ++i) {
+                    const auto target_operator =
+                        operator_factory(row_variables[i]);
+                    row_calculator.compute_row(distance_function_, rbf_,
+                        target_operator, row_variables[i], column_variables,
+                        column_variables_nearest_neighbor_searcher,
+                        num_neighbors_, local_triplets, row_offset + i,
+                        column_offset);
+                }
+#pragma omp critical
+                {
+                    triplets.insert(triplets.end(), local_triplets.begin(),
+                        local_triplets.end());
+                }
+            }
+        } else {
+            row_calculator_type row_calculator;
+            row_calculator.length_parameter_scale(length_parameter_scale_);
+            for (index_type i = 0; i < row_variables.size(); ++i) {
+                const auto target_operator = operator_factory(row_variables[i]);
+                row_calculator.compute_row(distance_function_, rbf_,
+                    target_operator, row_variables[i], column_variables,
+                    column_variables_nearest_neighbor_searcher, num_neighbors_,
+                    triplets, row_offset + i, column_offset);
+            }
+        }
+    }
+
+    /*!
+     * \brief Compute rows of the system matrix.
+     *
      * \tparam Operator Type of the operator to assemble.
      * \tparam StorageIndex Type of indices in the system matrix.
      * \param[in] row_variables Variables corresponding to rows of the system
@@ -116,48 +195,13 @@ public:
             column_variables_nearest_neighbor_searcher,
         util::vector<Eigen::Triplet<scalar_type, StorageIndex>>& triplets,
         index_type row_offset, index_type column_offset) {
-        NUM_COLLECT_PRECONDITION(column_variables.size() >= num_neighbors_,
-            "Number of column variables must be greater than or equal to the "
-            "number of neighbors.");
-
-        triplets.reserve(
-            triplets.size() + row_variables.size() * num_neighbors_);
-
-        constexpr index_type parallel_threshold = 100;
-        if (row_variables.size() >= parallel_threshold) {
-#pragma omp parallel
-            {
-                row_calculator_type row_calculator;
-                row_calculator.length_parameter_scale(length_parameter_scale_);
-                util::vector<Eigen::Triplet<scalar_type, StorageIndex>>
-                    local_triplets;
-                local_triplets.reserve(row_variables.size() * num_neighbors_);
-#pragma omp for
-                for (index_type i = 0; i < row_variables.size(); ++i) {
-                    const auto target_operator = Operator{row_variables[i]};
-                    row_calculator.compute_row(distance_function_, rbf_,
-                        target_operator, row_variables[i], column_variables,
-                        column_variables_nearest_neighbor_searcher,
-                        num_neighbors_, local_triplets, row_offset + i,
-                        column_offset);
-                }
-#pragma omp critical
-                {
-                    triplets.insert(triplets.end(), local_triplets.begin(),
-                        local_triplets.end());
-                }
-            }
-        } else {
-            row_calculator_type row_calculator;
-            row_calculator.length_parameter_scale(length_parameter_scale_);
-            for (index_type i = 0; i < row_variables.size(); ++i) {
-                const auto target_operator = Operator{row_variables[i]};
-                row_calculator.compute_row(distance_function_, rbf_,
-                    target_operator, row_variables[i], column_variables,
-                    column_variables_nearest_neighbor_searcher, num_neighbors_,
-                    triplets, row_offset + i, column_offset);
-            }
-        }
+        compute_rows(
+            [](const variable_type& sample_variable) {
+                return Operator{sample_variable};
+            },
+            row_variables, column_variables,
+            column_variables_nearest_neighbor_searcher, triplets, row_offset,
+            column_offset);
     }
 
     /*!
