@@ -233,9 +233,6 @@ public:
     //! Type of Jacobians.
     using jacobian_type = typename problem_type::jacobian_type;
 
-    //! Type of the LU solver.
-    using lu_solver_type = Eigen::PartialPivLU<jacobian_type>;
-
     //! Whether to use partial derivative with respect to time.
     static constexpr bool use_time_derivative =
         concepts::time_differentiable_problem<problem_type>;
