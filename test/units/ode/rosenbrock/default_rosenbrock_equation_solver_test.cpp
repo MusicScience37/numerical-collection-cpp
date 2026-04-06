@@ -21,9 +21,12 @@
 
 #include <type_traits>
 
+#include <Eigen/Core>
+#include <Eigen/SparseCore>
 #include <catch2/catch_test_macros.hpp>
 
 #include "num_collect/ode/concepts/rosenbrock_equation_solver.h"
+#include "num_collect/ode/problems/linear_first_order_ode_problem.h"
 #include "num_collect/ode/rosenbrock/lu_rosenbrock_equation_solver.h"
 #include "num_collect/ode/rosenbrock/scalar_rosenbrock_equation_solver.h"
 #include "num_prob_collect/ode/exponential_problem.h"
@@ -43,12 +46,26 @@ TEST_CASE(
                     problem_type>>);
     }
 
-    SECTION("for multi-variate differentiable problem") {
+    SECTION(
+        "for multi-variate differentiable problem with dense Jacobian "
+        "matrices") {
         using problem_type = num_prob_collect::ode::spring_movement_problem;
         STATIC_REQUIRE(
             std::is_same_v<default_rosenbrock_equation_solver_t<problem_type>,
                 num_collect::ode::rosenbrock::lu_rosenbrock_equation_solver<
                     problem_type>>);
+    }
+
+    SECTION(
+        "for multi-variate differentiable problem with sparse Jacobian "
+        "matrices") {
+        using problem_type =
+            num_collect::ode::problems::linear_first_order_ode_problem<
+                Eigen::VectorXd, Eigen::SparseMatrix<double, Eigen::RowMajor>>;
+        STATIC_REQUIRE(
+            std::is_same_v<default_rosenbrock_equation_solver_t<problem_type>,
+                num_collect::ode::rosenbrock::
+                    bicgstab_rosenbrock_equation_solver<problem_type>>);
     }
 
     SECTION("for multi-variate non-differentiable problem") {
