@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include "num_collect/base/concepts/dense_matrix.h"
 #include "num_collect/ode/concepts/multi_variate_differentiable_problem.h"
 #include "num_collect/ode/concepts/multi_variate_problem.h"
 #include "num_collect/ode/concepts/problem.h"
@@ -58,6 +59,7 @@ public:
  * \tparam Problem Type of the problem.
  */
 template <concepts::multi_variate_differentiable_problem Problem>
+    requires base::concepts::dense_matrix<typename Problem::jacobian_type>
 struct default_rosenbrock_equation_solver<Problem> {
 public:
     //! Type of the solver.

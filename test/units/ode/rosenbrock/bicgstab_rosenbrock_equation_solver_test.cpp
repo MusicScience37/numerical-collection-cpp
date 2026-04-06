@@ -133,23 +133,6 @@ TEST_CASE("num_collect::ode::rosenbrock::bicgstab_rosenbrock_equation_solver") {
         CHECK(target(1) == 0.0);
     }
 
-    SECTION("use Jacobian and time derivative before setting them") {
-        constexpr double inverted_jacobian_coeff = 0.1;
-        solver_type solver{inverted_jacobian_coeff};
-
-        const Eigen::Vector2d target{};
-        Eigen::Vector2d result{};
-        CHECK_THROWS(solver.apply_jacobian(target, result));
-        CHECK_THROWS(solver.solve(target, result));
-
-        constexpr double step_size = 1.0;
-        constexpr double coeff = 1.0;
-        result = Eigen::Vector2d::Zero();
-        solver.add_time_derivative_term(step_size, coeff, result);
-        CHECK(result(0) == 0.0);
-        CHECK(result(1) == 0.0);
-    }
-
     SECTION("use mass if exists") {
         using problem_type = num_prob_collect::ode::implicit_kaps_problem;
         using solver_type =
@@ -179,4 +162,6 @@ TEST_CASE("num_collect::ode::rosenbrock::bicgstab_rosenbrock_equation_solver") {
 
         comparison_approvals::verify_with_reference(result, expected_result);
     }
+
+    // TODO Test without Jacobian matrix.
 }

@@ -59,9 +59,12 @@ public:
     //! Type of variables. (Used by ODE solvers.)
     using variable_type = vector_type;
 
+    //! Type of Jacobian. (Used by ODE solvers.)
+    using jacobian_type = matrix_type;
+
     //! Allowed evaluations.
     static constexpr auto allowed_evaluations =
-        num_collect::ode::evaluation_type{.diff_coeff = true};
+        num_collect::ode::evaluation_type{.diff_coeff = true, .jacobian = true};
 
     /*!
      * \brief Constructor.
@@ -91,6 +94,15 @@ public:
      */
     [[nodiscard]] auto diff_coeff() const noexcept -> const variable_type& {
         return diff_coeff_;
+    }
+
+    /*!
+     * \brief Get the Jacobian.
+     *
+     * \return Jacobian.
+     */
+    [[nodiscard]] auto jacobian() const noexcept -> const jacobian_type& {
+        return stiffness_matrix_;
     }
 
 private:

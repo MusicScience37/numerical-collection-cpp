@@ -242,6 +242,7 @@ static void solve_system(const ode_problem_type& problem,
     using solver_type =
         num_collect::ode::rosenbrock::rodaspr_solver<ode_problem_type>;
     solver_type solver(problem);
+    solver.step_size(0.01);  // Prevent too small step sizes at the beginning.
     solver.init(time, solution);
     while (time < final_time) {
         double next_time = time + time_step_size;

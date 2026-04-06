@@ -32,7 +32,9 @@
     "BiCGSTAB",
     "bigobj",
     "biharmonic",
+    "Bijl",
     "BINDIR",
+    "Birken",
     "Blom",
     "boldsymbol",
     "booktitle",
@@ -185,6 +187,7 @@
     "Kaps",
     "kdtree",
     "Kenta",
+    "Kess",
     "Kjell",
     "Knabner",
     "Koichi",
@@ -192,6 +195,7 @@
     "Kristensen",
     "Kristian",
     "Kronrod",
+    "Krylov",
     "Kubota",
     "Kunisch",
     "Kutta",
@@ -268,6 +272,7 @@
     "Peleato",
     "Penrose",
     "Perttunen",
+    "Philipp",
     "Physica",
     "pipenv",
     "Pipfile",
@@ -363,6 +368,7 @@
     "Vetterling",
     "Virtualenv",
     "virtualenvs",
+    "Vuik",
     "Watanabe",
     "Wconversion",
     "Wendland",
@@ -378,7 +384,8 @@
     "yaxis",
     "Ying",
     "Yozo",
-    "Zeugmann"
+    "Zeugmann",
+    "Zuijlen"
   ],
   // flagWords - list of words to be always considered incorrect
   // This is useful for offensive words and common spelling errors.
