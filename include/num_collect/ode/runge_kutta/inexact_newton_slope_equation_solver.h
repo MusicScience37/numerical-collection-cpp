@@ -23,8 +23,11 @@
 #include <optional>
 
 #include <Eigen/Core>
+#include <Eigen/IterativeLinearSolvers>
 #include <Eigen/LU>
 
+#include "num_collect/base/concepts/dense_matrix.h"
+#include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/iterative_solver_base.h"
@@ -335,6 +338,7 @@ private:
  * \tparam Problem Type of the problem.
  */
 template <concepts::multi_variate_differentiable_problem Problem>
+    requires base::concepts::dense_matrix<typename Problem::jacobian_type>
 class inexact_newton_slope_equation_solver<Problem>
     : public iterative_solver_base<
           inexact_newton_slope_equation_solver<Problem>> {
@@ -556,6 +560,273 @@ private:
 
     //! LU decomposition of the current coefficient matrix.
     Eigen::PartialPivLU<jacobian_type> lu_{};
+
+    //! Temporary variable.
+    variable_type temp_variable_{};
+
+    //! Residual vector.
+    variable_type residual_{};
+
+    //! Update vector.
+    variable_type update_{};
+
+    //! Norm of update.
+    std::optional<scalar_type> update_norm_{};
+
+    //! Rate in which update is reduced from the previous step.
+    std::optional<scalar_type> update_reduction_rate_{};
+
+    //! Default rate of tolerance in this solver.
+    static constexpr auto default_tolerance_rate =
+        static_cast<scalar_type>(1e-2);
+
+    //! Rate of tolerance in this solver.
+    scalar_type tolerance_rate_{default_tolerance_rate};
+
+    //! Number of iterations.
+    index_type iterations_{0};
+
+    //! Error tolerances.
+    error_tolerances<variable_type> tolerances_{};
+};
+
+/*!
+ * \brief Class to solve equations of implicit slopes using inexact Newton
+ * method.
+ *
+ * This class solves following equation using the stop criterion written in
+ * \cite Hairer1991 :
+ *
+ * \f[
+ *     \boldsymbol{k}_i = \boldsymbol{f}\left(t + b_i h, \boldsymbol{y}(t)
+ *         + h \sum_{j = 1}^s a_{ij} \boldsymbol{k}_j \right)
+ * \f]
+ *
+ * \tparam Problem Type of the problem.
+ */
+template <concepts::multi_variate_differentiable_problem Problem>
+    requires base::concepts::sparse_matrix<typename Problem::jacobian_type>
+class inexact_newton_slope_equation_solver<Problem>
+    : public iterative_solver_base<
+          inexact_newton_slope_equation_solver<Problem>> {
+public:
+    //! This class.
+    using this_type = inexact_newton_slope_equation_solver<Problem>;
+
+    //! Type of problem.
+    using problem_type = Problem;
+
+    //! Type of variables.
+    using variable_type = typename problem_type::variable_type;
+
+    //! Type of scalars.
+    using scalar_type = typename problem_type::scalar_type;
+
+    //! Type of Jacobian.
+    using jacobian_type = typename problem_type::jacobian_type;
+
+    //! Whether to use mass.
+    static constexpr bool use_mass = concepts::mass_problem<problem_type>;
+
+    //! Constructor.
+    inexact_newton_slope_equation_solver()
+        : iterative_solver_base<inexact_newton_slope_equation_solver<Problem>>(
+              inexact_newton_slope_equation_solver_tag) {}
+
+    /*!
+     * \brief Update Jacobian and internal parameters.
+     *
+     * \tparam VariableExpression Type of the matrix expression of the variable.
+     * \param[in] problem Problem.
+     * \param[in] time Time.
+     * \param[in] step_size Step size.
+     * \param[in] variable Variable.
+     * \param[in] solution_coeff Coefficient to multiply to solution in the
+     * equation.
+     */
+    template <typename VariableExpression>
+    void update_jacobian(problem_type& problem, scalar_type time,
+        scalar_type step_size,
+        const Eigen::MatrixBase<VariableExpression>& variable,
+        scalar_type solution_coeff) {
+        problem_ = &problem;
+        time_ = time;
+        step_size_ = step_size;
+        variable_ = variable;
+        solution_coeff_ = solution_coeff;
+
+        problem_->evaluate_on(time_, variable_,
+            evaluation_type{.diff_coeff = true, .jacobian = true});
+
+        const index_type dim = variable_.size();
+        if constexpr (use_mass) {
+            coeff_matrix_ = problem.mass();
+        } else {
+            coeff_matrix_.resize(dim, dim);
+            coeff_matrix_.setIdentity();
+        }
+        coeff_matrix_ -= step_size_ * solution_coeff_ * problem_->jacobian();
+        solver_.compute(coeff_matrix_);
+    }
+
+    /*!
+     * \brief Initialize for solving an equation.
+     *
+     * \param[in,out] solution Solution.
+     */
+    void init(variable_type& solution) {
+        solution_ = &solution;
+        update_norm_.reset();
+        if (update_reduction_rate_) {
+            constexpr auto exponent = static_cast<scalar_type>(0.8);
+            constexpr auto min_rate = static_cast<scalar_type>(0.5);
+            using std::pow;
+            *update_reduction_rate_ = pow(*update_reduction_rate_, exponent);
+            if (*update_reduction_rate_ < min_rate) {
+                *update_reduction_rate_ = min_rate;
+            }
+        }
+        iterations_ = 0;
+    }
+
+    /*!
+     * \brief Iterate the algorithm once.
+     *
+     * \warning Any required initializations (with update_jacobian, init
+     * functions) are assumed to have been done.
+     */
+    void iterate() {
+        NUM_COLLECT_PRECONDITION(problem_ != nullptr && solution_ != nullptr,
+            this->logger(), "Initialization must be done before iterations.");
+
+        temp_variable_ =
+            variable_ + step_size_ * solution_coeff_ * (*solution_);
+
+        problem_->evaluate_on(
+            time_, temp_variable_, evaluation_type{.diff_coeff = true});
+        if constexpr (use_mass) {
+            residual_ =
+                problem_->mass() * (*solution_) - problem_->diff_coeff();
+        } else {
+            residual_ = (*solution_) - problem_->diff_coeff();
+        }
+        update_ = solver_.solve(residual_);
+        update_ = -update_;
+        if (!update_.array().isFinite().all()) {
+            NUM_COLLECT_LOG_AND_THROW(algorithm_failure,
+                "Failed to solve an equation. step_size={}.", step_size_);
+        }
+        *solution_ += update_;
+
+        const scalar_type update_norm =
+            tolerances().calc_norm(variable_, update_);
+        if (update_norm_) {
+            update_reduction_rate_ = update_norm / (*update_norm_);
+        }
+        update_norm_ = update_norm;
+
+        ++iterations_;
+    }
+
+    /*!
+     * \brief Determine if stopping criteria of the algorithm are satisfied.
+     *
+     * \return If stopping criteria of the algorithm are satisfied.
+     */
+    [[nodiscard]] auto is_stop_criteria_satisfied() const -> bool {
+        bool converged = false;
+        if (update_norm_ && update_reduction_rate_ &&
+            *update_reduction_rate_ < static_cast<scalar_type>(1)) {
+            converged =
+                (*update_reduction_rate_ /
+                    (static_cast<scalar_type>(1) - *update_reduction_rate_)) *
+                    (*update_norm_) <=
+                tolerance_rate_;
+        }
+
+        constexpr index_type max_iterations = 100;  // safe guard
+        return converged || (iterations_ > max_iterations);
+    }
+
+    /*!
+     * \brief Configure an iteration logger.
+     *
+     * \param[in] iteration_logger Iteration logger.
+     */
+    void configure_iteration_logger(
+        logging::iterations::iteration_logger<this_type>& iteration_logger)
+        const {
+        iteration_logger.template append<index_type>(
+            "Iter.", &this_type::iterations);
+        iteration_logger.template append<scalar_type>(
+            "Update", &this_type::update_norm);
+    }
+
+    /*!
+     * \brief Get the norm of update.
+     *
+     * \return Norm of update.
+     */
+    [[nodiscard]] auto update_norm() const -> scalar_type {
+        if (!update_norm_) {
+            return static_cast<scalar_type>(0);
+        }
+        return *update_norm_;
+    }
+
+    /*!
+     * \brief Get the number of iterations.
+     *
+     * \return Number of iterations.
+     */
+    [[nodiscard]] auto iterations() const -> index_type { return iterations_; }
+
+    /*!
+     * \brief Set the error tolerances.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto tolerances(const error_tolerances<variable_type>& val)
+        -> inexact_newton_slope_equation_solver& {
+        tolerances_ = val;
+        return *this;
+    }
+
+    /*!
+     * \brief Get the error tolerances.
+     *
+     * \return Error tolerances.
+     */
+    [[nodiscard]] auto tolerances() const
+        -> const error_tolerances<variable_type>& {
+        return tolerances_;
+    }
+
+private:
+    //! Pointer to the problem.
+    problem_type* problem_{nullptr};
+
+    //! Time.
+    scalar_type time_{};
+
+    //! Step size.
+    scalar_type step_size_{};
+
+    //! Coefficient to multiply to solution in the equation.
+    scalar_type solution_coeff_{};
+
+    //! Variable.
+    variable_type variable_{};
+
+    //! Solution.
+    variable_type* solution_{nullptr};
+
+    //! Buffer of the coefficient matrix.
+    jacobian_type coeff_matrix_{};
+
+    //! Solver of the current coefficient matrix.
+    Eigen::BiCGSTAB<jacobian_type> solver_{};
 
     //! Temporary variable.
     variable_type temp_variable_{};
