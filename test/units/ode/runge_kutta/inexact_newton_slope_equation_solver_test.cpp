@@ -19,6 +19,7 @@
  */
 #include "num_collect/ode/runge_kutta/inexact_newton_slope_equation_solver.h"
 
+#include <cmath>
 #include <limits>
 
 #include <catch2/catch_test_macros.hpp>
@@ -26,6 +27,8 @@
 #include "comparison_approvals.h"
 #include "num_collect/ode/concepts/slope_equation_solver.h"
 #include "num_prob_collect/ode/exponential_problem.h"
+#include "num_prob_collect/ode/implicit_exponential_problem.h"
+#include "num_prob_collect/ode/implicit_kaps_problem.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
 
 TEST_CASE(
@@ -92,6 +95,31 @@ TEST_CASE(
         double solution{0.0};
         solver.init(solution);
         CHECK_NOTHROW(solver.solve());
+    }
+
+    SECTION("use mass if exists") {
+        using problem_type =
+            num_prob_collect::ode::implicit_exponential_problem;
+        using solver_type =
+            num_collect::ode::runge_kutta::inexact_newton_slope_equation_solver<
+                problem_type>;
+        solver_type solver;
+
+        problem_type problem;
+        constexpr double init_time = 0.0;
+        constexpr double step_size = 1e-4;
+        constexpr double init_var = 1.0;
+        constexpr double solution_coeff = 1.0;
+
+        solver.update_jacobian(
+            problem, init_time, step_size, init_var, solution_coeff);
+        double solution{0.0};
+        solver.init(solution);
+        solver.solve();
+
+        const double variable = init_var + step_size * solution;
+        const double reference = std::exp(step_size);
+        comparison_approvals::verify_with_reference(variable, reference);
     }
 }
 
@@ -164,5 +192,32 @@ TEST_CASE(
         Eigen::Vector2d solution = Eigen::Vector2d::Zero();
         solver.init(solution);
         CHECK_NOTHROW(solver.solve());
+    }
+
+    SECTION("use mass if exists") {
+        using problem_type = num_prob_collect::ode::implicit_kaps_problem;
+        using solver_type =
+            num_collect::ode::runge_kutta::inexact_newton_slope_equation_solver<
+                problem_type>;
+
+        solver_type solver;
+
+        constexpr double epsilon = 0.1;
+        problem_type problem{epsilon};
+        constexpr double init_time = 0.0;
+        constexpr double step_size = 0.01;
+        const Eigen::Vector2d init_var = Eigen::Vector2d(1.0, 1.0);
+        constexpr double solution_coeff = 1.0;
+
+        solver.update_jacobian(
+            problem, init_time, step_size, init_var, solution_coeff);
+        Eigen::Vector2d solution = Eigen::Vector2d::Zero();
+        solver.init(solution);
+        solver.solve();
+
+        const Eigen::Vector2d variable = init_var + step_size * solution;
+        const Eigen::Vector2d reference =
+            Eigen::Vector2d(std::exp(-2.0 * step_size), std::exp(-step_size));
+        comparison_approvals::verify_with_reference(variable, reference);
     }
 }

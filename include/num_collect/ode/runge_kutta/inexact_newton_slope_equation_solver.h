@@ -33,6 +33,7 @@
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/ode/concepts/differentiable_problem.h"
+#include "num_collect/ode/concepts/mass_problem.h"
 #include "num_collect/ode/concepts/multi_variate_differentiable_problem.h"
 #include "num_collect/ode/concepts/single_variate_differentiable_problem.h"
 #include "num_collect/ode/error_tolerances.h"
@@ -95,10 +96,8 @@ public:
     //! Type of Jacobian.
     using jacobian_type = typename problem_type::jacobian_type;
 
-    static_assert(!problem_type::allowed_evaluations.mass,
-        "Mass matrix is not supported.");
-    // TODO: Actually, support is not difficult, but I want to test after
-    // implementation, so I postpone the implementation.
+    //! Whether to use mass.
+    static constexpr bool use_mass = concepts::mass_problem<problem_type>;
 
     //! Constructor.
     inexact_newton_slope_equation_solver()
@@ -125,11 +124,15 @@ public:
         solution_coeff_ = solution_coeff;
 
         problem_->evaluate_on(time_, variable_,
-            evaluation_type{.diff_coeff = true, .jacobian = true});
+            evaluation_type{
+                .diff_coeff = true, .jacobian = true, .mass = use_mass});
 
-        coeff_inverse_ = static_cast<jacobian_type>(1) /
-            (static_cast<jacobian_type>(1) -
-                step_size_ * solution_coeff_ * problem_->jacobian());
+        auto inverted_value = static_cast<scalar_type>(1);
+        if constexpr (use_mass) {
+            inverted_value = problem.mass();
+        }
+        inverted_value -= step_size * solution_coeff_ * problem.jacobian();
+        coeff_inverse_ = static_cast<jacobian_type>(1) / inverted_value;
         using std::isfinite;
         if (!isfinite(coeff_inverse_)) {
             NUM_COLLECT_LOG_AND_THROW(
@@ -172,7 +175,12 @@ public:
 
         problem_->evaluate_on(
             time_, temp_variable_, evaluation_type{.diff_coeff = true});
-        residual_ = (*solution_) - problem_->diff_coeff();
+        if constexpr (use_mass) {
+            residual_ =
+                problem_->mass() * (*solution_) - problem_->diff_coeff();
+        } else {
+            residual_ = (*solution_) - problem_->diff_coeff();
+        }
         update_ = -coeff_inverse_ * residual_;
         *solution_ += update_;
 
@@ -346,10 +354,8 @@ public:
     //! Type of Jacobian.
     using jacobian_type = typename problem_type::jacobian_type;
 
-    static_assert(!problem_type::allowed_evaluations.mass,
-        "Mass matrix is not supported.");
-    // TODO: Actually, support is not difficult, but I want to test after
-    // implementation, so I postpone the implementation.
+    //! Whether to use mass.
+    static constexpr bool use_mass = concepts::mass_problem<problem_type>;
 
     //! Constructor.
     inexact_newton_slope_equation_solver()
@@ -382,8 +388,14 @@ public:
             evaluation_type{.diff_coeff = true, .jacobian = true});
 
         const index_type dim = variable_.size();
-        lu_.compute(jacobian_type::Identity(dim, dim) -
-            step_size_ * solution_coeff_ * problem_->jacobian());
+        if constexpr (use_mass) {
+            coeff_matrix_ = problem.mass() -
+                step_size_ * solution_coeff_ * problem.jacobian();
+        } else {
+            coeff_matrix_ = jacobian_type::Identity(dim, dim) -
+                step_size_ * solution_coeff_ * problem_->jacobian();
+        }
+        lu_.compute(coeff_matrix_);
     }
 
     /*!
@@ -421,7 +433,12 @@ public:
 
         problem_->evaluate_on(
             time_, temp_variable_, evaluation_type{.diff_coeff = true});
-        residual_ = (*solution_) - problem_->diff_coeff();
+        if constexpr (use_mass) {
+            residual_ =
+                problem_->mass() * (*solution_) - problem_->diff_coeff();
+        } else {
+            residual_ = (*solution_) - problem_->diff_coeff();
+        }
         update_ = -lu_.solve(residual_);
         if (!update_.array().isFinite().all()) {
             NUM_COLLECT_LOG_AND_THROW(algorithm_failure,
@@ -533,6 +550,9 @@ private:
 
     //! Solution.
     variable_type* solution_{nullptr};
+
+    //! Buffer of the coefficient matrix.
+    jacobian_type coeff_matrix_{};
 
     //! LU decomposition of the current coefficient matrix.
     Eigen::PartialPivLU<jacobian_type> lu_{};
