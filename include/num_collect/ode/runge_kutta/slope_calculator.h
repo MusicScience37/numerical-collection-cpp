@@ -27,10 +27,10 @@
 #include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/logging/logging_macros.h"
-#include "num_collect/ode/concepts/differentiable_problem.h"
 #include "num_collect/ode/concepts/mass_problem.h"
-#include "num_collect/ode/concepts/multi_variate_differentiable_problem.h"
-#include "num_collect/ode/concepts/single_variate_differentiable_problem.h"
+#include "num_collect/ode/concepts/multi_variate_problem.h"
+#include "num_collect/ode/concepts/problem.h"
+#include "num_collect/ode/concepts/single_variate_problem.h"
 #include "num_collect/ode/evaluation_type.h"
 
 namespace num_collect::ode::runge_kutta {
@@ -42,7 +42,7 @@ namespace num_collect::ode::runge_kutta {
  *
  * This class calculates a slope with handling of mass matrices if exists.
  */
-template <concepts::differentiable_problem Problem>
+template <concepts::problem Problem>
 class slope_calculator;
 
 /*!
@@ -52,7 +52,7 @@ class slope_calculator;
  *
  * This class calculates a slope with handling of mass matrices if exists.
  */
-template <concepts::single_variate_differentiable_problem Problem>
+template <concepts::single_variate_problem Problem>
 class slope_calculator<Problem> {
 public:
     //! Type of problem.
@@ -99,7 +99,7 @@ public:
  *
  * This class calculates a slope with handling of mass matrices if exists.
  */
-template <concepts::multi_variate_differentiable_problem Problem>
+template <concepts::multi_variate_problem Problem>
     requires(!concepts::mass_problem<Problem>)
 class slope_calculator<Problem> {
 public:
@@ -140,7 +140,7 @@ public:
  *
  * This class calculates a slope with handling of mass matrices if exists.
  */
-template <concepts::multi_variate_differentiable_problem Problem>
+template <concepts::multi_variate_problem Problem>
     requires concepts::mass_problem<Problem> &&
     base::concepts::dense_matrix<typename Problem::mass_type>
 class slope_calculator<Problem> {
@@ -194,7 +194,7 @@ private:
  *
  * This class calculates a slope with handling of mass matrices if exists.
  */
-template <concepts::multi_variate_differentiable_problem Problem>
+template <concepts::multi_variate_problem Problem>
     requires concepts::mass_problem<Problem> &&
     base::concepts::sparse_matrix<typename Problem::mass_type>
 class slope_calculator<Problem> {

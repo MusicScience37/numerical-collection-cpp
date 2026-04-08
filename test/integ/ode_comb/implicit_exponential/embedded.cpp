@@ -28,6 +28,7 @@
 #include "num_collect/ode/rosenbrock/rodaspr_formula.h"
 #include "num_collect/ode/rosenbrock/ros34pw3_formula.h"
 #include "num_collect/ode/rosenbrock/ros3w_formula.h"
+#include "num_collect/ode/runge_kutta/esdirk45_formula.h"
 #include "num_collect/ode/runge_kutta/sdirk4_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka1_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka2_formula.h"
@@ -42,6 +43,7 @@ TEMPLATE_PRODUCT_TEST_CASE(
         num_collect::ode::rosenbrock::ros34pw3_solver,
         num_collect::ode::rosenbrock::ros3w_solver,
         // embedded Runge-Kutta method.
+        num_collect::ode::runge_kutta::esdirk45_solver,
         num_collect::ode::runge_kutta::sdirk4_solver,
         num_collect::ode::runge_kutta::tanaka1_solver,
         num_collect::ode::runge_kutta::tanaka2_solver),
