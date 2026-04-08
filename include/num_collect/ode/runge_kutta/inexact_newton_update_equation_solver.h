@@ -132,7 +132,8 @@ public:
         slope_coeff_ = slope_coeff;
 
         problem_->evaluate_on(time_, variable_,
-            evaluation_type{.diff_coeff = true, .jacobian = true});
+            evaluation_type{
+                .diff_coeff = true, .jacobian = true, .mass = use_mass});
 
         auto inverted_value = static_cast<scalar_type>(1);
         if constexpr (use_mass) {
@@ -196,8 +197,8 @@ public:
 
         temp_variable_ = variable_ + (*solution_);
 
-        problem_->evaluate_on(
-            time_, temp_variable_, evaluation_type{.diff_coeff = true});
+        problem_->evaluate_on(time_, temp_variable_,
+            evaluation_type{.diff_coeff = true, .mass = use_mass});
         if constexpr (use_mass) {
             residual_ = problem_->mass() * (*solution_) -
                 step_size_ * slope_coeff_ * problem_->diff_coeff() -
@@ -426,7 +427,8 @@ public:
         slope_coeff_ = slope_coeff;
 
         problem_->evaluate_on(time_, variable_,
-            evaluation_type{.diff_coeff = true, .jacobian = true});
+            evaluation_type{
+                .diff_coeff = true, .jacobian = true, .mass = use_mass});
 
         const index_type dim = variable_.size();
         if constexpr (use_mass) {
@@ -496,8 +498,8 @@ public:
 
         temp_variable_ = variable_ + (*solution_);
 
-        problem_->evaluate_on(
-            time_, temp_variable_, evaluation_type{.diff_coeff = true});
+        problem_->evaluate_on(time_, temp_variable_,
+            evaluation_type{.diff_coeff = true, .mass = use_mass});
         if constexpr (use_mass) {
             residual_ = problem_->mass() * (*solution_) -
                 step_size_ * slope_coeff_ * problem_->diff_coeff() -
@@ -734,7 +736,8 @@ public:
         slope_coeff_ = slope_coeff;
 
         problem_->evaluate_on(time_, variable_,
-            evaluation_type{.diff_coeff = true, .jacobian = true});
+            evaluation_type{
+                .diff_coeff = true, .jacobian = true, .mass = use_mass});
 
         const index_type dim = variable_.size();
         if constexpr (use_mass) {
@@ -804,8 +807,8 @@ public:
 
         temp_variable_ = variable_ + (*solution_);
 
-        problem_->evaluate_on(
-            time_, temp_variable_, evaluation_type{.diff_coeff = true});
+        problem_->evaluate_on(time_, temp_variable_,
+            evaluation_type{.diff_coeff = true, .mass = use_mass});
         if constexpr (use_mass) {
             residual_ = problem_->mass() * (*solution_) -
                 step_size_ * slope_coeff_ * problem_->diff_coeff() -
