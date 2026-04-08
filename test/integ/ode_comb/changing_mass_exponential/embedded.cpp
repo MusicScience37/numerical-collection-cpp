@@ -59,7 +59,8 @@ TEMPLATE_PRODUCT_TEST_CASE(
         constexpr double init_var = 1.0;
         solver.init(init_time, init_var);
 
-        solve_and_check_with_reference(solver, init_time, finish_time,
-            num_time_samples, [](double time) { return std::exp(time); });
+        solve_and_check_with_reference(
+            solver, init_time, finish_time, num_time_samples,
+            [](double time) { return std::exp(time); }, "", 4);
     }
 }
