@@ -55,6 +55,7 @@ public:
     using typename base_type::scalar_type;
     using typename base_type::variable_type;
 
+    // TODO This formula did not work well with mass matrices. Research why.
     static_assert(!problem_type::allowed_evaluations.mass,
         "Mass matrix is not supported.");
 

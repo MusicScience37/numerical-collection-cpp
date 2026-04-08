@@ -29,6 +29,7 @@
 #include "num_collect/ode/rosenbrock/rodaspr_formula.h"
 #include "num_collect/ode/rosenbrock/ros34pw3_formula.h"
 #include "num_collect/ode/rosenbrock/ros3w_formula.h"
+#include "num_collect/ode/runge_kutta/sdirk4_formula.h"
 #include "num_prob_collect/ode/implicit_kaps_problem.h"
 
 TEMPLATE_PRODUCT_TEST_CASE("implicit_kaps_problem with embedded formulas", "",
@@ -37,7 +38,9 @@ TEMPLATE_PRODUCT_TEST_CASE("implicit_kaps_problem with embedded formulas", "",
         num_collect::ode::rosenbrock::rodasp_solver,
         num_collect::ode::rosenbrock::rodaspr_solver,
         num_collect::ode::rosenbrock::ros34pw3_solver,
-        num_collect::ode::rosenbrock::ros3w_solver),
+        num_collect::ode::rosenbrock::ros3w_solver,
+        // embedded Runge-Kutta method.
+        num_collect::ode::runge_kutta::sdirk4_solver),
     (num_prob_collect::ode::implicit_kaps_problem)) {
     using problem_type = num_prob_collect::ode::implicit_kaps_problem;
     using solver_type = TestType;
