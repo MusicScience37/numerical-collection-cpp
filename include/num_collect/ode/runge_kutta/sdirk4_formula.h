@@ -22,6 +22,7 @@
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/ode/concepts/mass_problem.h"
 #include "num_collect/ode/concepts/problem.h"
 #include "num_collect/ode/concepts/update_equation_solver.h"
 #include "num_collect/ode/embedded_solver.h"
@@ -77,6 +78,9 @@ public:
     static constexpr auto log_tag =
         logging::log_tag_view("num_collect::ode::runge_kutta::sdirk4_formula");
 
+    //! Whether to use mass.
+    static constexpr bool use_mass = concepts::mass_problem<problem_type>;
+
     /*!
      * \name Coefficients in Butcher array.
      *
@@ -131,7 +135,16 @@ public:
         formula_solver().update_jacobian(
             problem(), time, step_size, current, ad);
 
-        z1_ = step_size * ad * problem().diff_coeff();
+        if constexpr (use_mass) {
+            if constexpr (base::concepts::real_scalar_dense_vector<
+                              variable_type>) {
+                z1_ = variable_type::Zero(current.size());
+            } else {
+                z1_ = static_cast<variable_type>(0);
+            }
+        } else {
+            z1_ = step_size * ad * problem().diff_coeff();
+        }
         if constexpr (base::concepts::real_scalar_dense_vector<variable_type>) {
             formula_solver().init(time + b1 * step_size,
                 variable_type::Zero(current.size()), z1_);

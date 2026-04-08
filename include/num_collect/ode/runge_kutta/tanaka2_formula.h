@@ -19,8 +19,10 @@
  */
 #pragma once
 
+#include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/ode/concepts/mass_problem.h"
 #include "num_collect/ode/concepts/problem.h"
 #include "num_collect/ode/concepts/slope_equation_solver.h"
 #include "num_collect/ode/embedded_solver.h"
@@ -74,6 +76,9 @@ public:
     //! Log tag.
     static constexpr auto log_tag =
         logging::log_tag_view("num_collect::ode::runge_kutta::tanaka2_formula");
+
+    //! Whether to use mass.
+    static constexpr bool use_mass = concepts::mass_problem<problem_type>;
 
     /*!
      * \name Coefficients in Butcher array.
@@ -130,19 +135,28 @@ public:
         variable_type& error) {
         formula_solver().update_jacobian(
             problem(), time + b1 * step_size, step_size, current, a11);
-        k1_ = problem().diff_coeff();
+        if constexpr (use_mass) {
+            if constexpr (base::concepts::real_scalar_dense_vector<
+                              variable_type>) {
+                k1_ = variable_type::Zero(current.size());
+            } else {
+                k1_ = static_cast<variable_type>(0);
+            }
+        } else {
+            k1_ = problem().diff_coeff();
+        }
         formula_solver().init(k1_);
         formula_solver().solve();
 
         formula_solver().update_jacobian(problem(), time + b2 * step_size,
             step_size, current + step_size * a21 * k1_, a22);
-        k2_ = problem().diff_coeff();
+        k2_ = k1_;
         formula_solver().init(k2_);
         formula_solver().solve();
 
         formula_solver().update_jacobian(problem(), time + b3 * step_size,
             step_size, current + step_size * (a31 * k1_ + a32 * k2_), a33);
-        k3_ = problem().diff_coeff();
+        k3_ = k2_;
         formula_solver().init(k3_);
         formula_solver().solve();
 
