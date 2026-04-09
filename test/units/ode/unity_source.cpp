@@ -19,6 +19,7 @@
 #include "rosenbrock/mixed_broyden_rosenbrock_equation_solver_test.cpp"
 #include "rosenbrock/rodasp_formula_test.cpp"
 #include "rosenbrock/rodaspr_formula_test.cpp"
+#include "rosenbrock/ros34prw_formula_test.cpp"
 #include "rosenbrock/ros34pw3_formula_test.cpp"
 #include "rosenbrock/ros3w_formula_test.cpp"
 #include "rosenbrock/scalar_rosenbrock_equation_solver_test.cpp"

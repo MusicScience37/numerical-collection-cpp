@@ -20,6 +20,7 @@ set(SOURCE_FILES
     rosenbrock/mixed_broyden_rosenbrock_equation_solver_test.cpp
     rosenbrock/rodasp_formula_test.cpp
     rosenbrock/rodaspr_formula_test.cpp
+    rosenbrock/ros34prw_formula_test.cpp
     rosenbrock/ros34pw3_formula_test.cpp
     rosenbrock/ros3w_formula_test.cpp
     rosenbrock/scalar_rosenbrock_equation_solver_test.cpp

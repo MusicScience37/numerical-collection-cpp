@@ -32,6 +32,7 @@
 #include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/rosenbrock/rodasp_formula.h"
 #include "num_collect/ode/rosenbrock/rodaspr_formula.h"
+#include "num_collect/ode/rosenbrock/ros34prw_formula.h"
 #include "num_collect/ode/rosenbrock/ros34pw3_formula.h"
 #include "num_collect/ode/rosenbrock/ros3w_formula.h"
 #include "num_collect/ode/runge_kutta/sdirk4_formula.h"
@@ -84,6 +85,8 @@ auto main(int argc, char** argv) -> int {
 
         bench_one<num_collect::ode::rosenbrock::ros3w_solver<problem_type>>(
             "ROS3w", epsilon, executor);
+        bench_one<num_collect::ode::rosenbrock::ros34prw_solver<problem_type>>(
+            "ROS34PRw", epsilon, executor);
         bench_one<num_collect::ode::rosenbrock::ros34pw3_solver<problem_type>>(
             "ROS34PW3", epsilon, executor);
         bench_one<num_collect::ode::rosenbrock::rodasp_solver<problem_type>>(
