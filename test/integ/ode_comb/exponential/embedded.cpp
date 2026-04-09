@@ -26,6 +26,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/ode/rosenbrock/rodasp_formula.h"
 #include "num_collect/ode/rosenbrock/rodaspr_formula.h"
+#include "num_collect/ode/rosenbrock/ros34prw_formula.h"
 #include "num_collect/ode/rosenbrock/ros34pw3_formula.h"
 #include "num_collect/ode/rosenbrock/ros3w_formula.h"
 #include "num_collect/ode/runge_kutta/ark43_erk_formula.h"
@@ -54,6 +55,7 @@ TEMPLATE_PRODUCT_TEST_CASE("exponential_problem with embedded formulas", "",
         // embedded Rosenbrock method.
         num_collect::ode::rosenbrock::rodasp_solver,
         num_collect::ode::rosenbrock::rodaspr_solver,
+        num_collect::ode::rosenbrock::ros34prw_solver,
         num_collect::ode::rosenbrock::ros34pw3_solver,
         num_collect::ode::rosenbrock::ros3w_solver),
     (num_prob_collect::ode::exponential_problem)) {
