@@ -16,8 +16,9 @@ For classes implementing formulas, see [Algorithm List](../../algorithm_list.md#
 | Runge-Kutta | Tanaka Formula 2 {cite:p}`Togawa2007`        | No       | 4, 2  | No               |           |             |                      |
 | Rosenbrock  | RODASP                                       | No       | 4, ?  | Yes              | L-stable  | Index 1     |                      |
 | Rosenbrock  | RODASPR {cite:p}`Rang2015`                   | No       | 4, ?  | Yes              | L-stable  | Index 2 ?   |                      |
-| Rosenbrock  | ROS3w {cite:p}`Rang2005`                     | No       | 3, 2  | No               | L-stable  | Index 1     |                      |
-| Rosenbrock  | ROS34PW3 {cite:p}`Rang2005`                  | No       | 4, 2  | No               | A-stable  | Index 1     |                      |
+| Rosenbrock  | ROS3w {cite:p}`Rang2005`                     | No       | 3, 2  | No               | L-stable  | Index 1     | W-method             |
+| Rosenbrock  | ROS34PW3 {cite:p}`Rang2005`                  | No       | 4, 2  | No               | A-stable  | Index 1     | W-method             |
+| Rosenbrock  | ROS34PRW {cite:p}`Rang2015`                  | No       | 3, 2  | No               | A-stable  | Index 2 ?   | W-method             |
 | AVF         | AVF order 2 {cite:p}`Quispel2008`            | No       | 2     |                  |           |             |                      |
 | AVF         | AVF order 3 {cite:p}`Quispel2008`            | No       | 3     |                  |           |             |                      |
 | AVF         | AVF order 4 {cite:p}`Quispel2008`            | No       | 4     |                  |           |             |                      |
@@ -35,5 +36,5 @@ For classes implementing formulas, see [Algorithm List](../../algorithm_list.md#
 - L-stable: A-stable and the stability function goes to zero as the argument goes to infinity.
   This property is desirable for stiff problems.
 - DAE Support: The method can be applied to differential-algebraic equations (DAEs) with the specified index.
-  The index of RODASPR is not explicitly stated in the reference,
+  The index of RODASPR and ROS34PRW is not explicitly stated in the reference,
   but numerical experiments to index 2 problems are reported in the reference.
