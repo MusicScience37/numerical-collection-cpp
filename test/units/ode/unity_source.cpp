@@ -33,6 +33,7 @@
 #include "runge_kutta/rk4_formula_test.cpp"
 #include "runge_kutta/rkf45_formula_test.cpp"
 #include "runge_kutta/sdirk4_formula_test.cpp"
+#include "runge_kutta/slope_calculator_test.cpp"
 #include "runge_kutta/tanaka1_formula_test.cpp"
 #include "runge_kutta/tanaka2_formula_test.cpp"
 #include "simple_solver_test.cpp"

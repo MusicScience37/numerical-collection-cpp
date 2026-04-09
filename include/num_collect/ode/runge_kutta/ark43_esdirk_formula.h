@@ -27,6 +27,7 @@
 #include "num_collect/ode/evaluation_type.h"
 #include "num_collect/ode/runge_kutta/implicit_formula_base.h"
 #include "num_collect/ode/runge_kutta/inexact_newton_update_equation_solver.h"
+#include "num_collect/ode/runge_kutta/slope_calculator.h"
 
 namespace num_collect::ode::runge_kutta {
 
@@ -54,9 +55,6 @@ public:
     using typename base_type::problem_type;
     using typename base_type::scalar_type;
     using typename base_type::variable_type;
-
-    static_assert(!problem_type::allowed_evaluations.mass,
-        "Mass matrix is not supported.");
 
     using base_type::base_type;
     using base_type::problem;
@@ -142,9 +140,7 @@ public:
         formula_solver().update_jacobian(
             problem(), time, step_size, current, ad);
 
-        problem().evaluate_on(
-            time, current, evaluation_type{.diff_coeff = true});
-        k1_ = problem().diff_coeff();
+        slope_calculator_(problem(), time, current, k1_);
 
         z2_ = step_size * ad * k1_;
         formula_solver().init(
@@ -216,6 +212,9 @@ private:
     variable_type z5_{};
     variable_type z6_{};
     ///@}
+
+    //! Calculator of slopes.
+    slope_calculator<problem_type> slope_calculator_;
 };
 
 /*!

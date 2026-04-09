@@ -19,8 +19,10 @@
  */
 #pragma once
 
+#include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/ode/concepts/mass_problem.h"
 #include "num_collect/ode/concepts/problem.h"
 #include "num_collect/ode/concepts/slope_equation_solver.h"
 #include "num_collect/ode/runge_kutta/implicit_formula_base.h"
@@ -55,9 +57,6 @@ public:
     using typename base_type::scalar_type;
     using typename base_type::variable_type;
 
-    static_assert(!problem_type::allowed_evaluations.mass,
-        "Mass matrix is not supported.");
-
     using base_type::base_type;
     using base_type::problem;
 
@@ -76,12 +75,24 @@ public:
     static constexpr auto log_tag = logging::log_tag_view(
         "num_collect::ode::runge_kutta::implicit_euler_formula");
 
+    //! Whether to use mass.
+    static constexpr bool use_mass = concepts::mass_problem<problem_type>;
+
     //! \copydoc runge_kutta::implicit_formula_base::step
     void step(scalar_type time, scalar_type step_size,
         const variable_type& current, variable_type& estimate) {
         formula_solver().update_jacobian(problem(), time + step_size, step_size,
             current, static_cast<scalar_type>(1));
-        slope_ = problem().diff_coeff();
+        if constexpr (use_mass) {
+            if constexpr (base::concepts::real_scalar_dense_vector<
+                              variable_type>) {
+                slope_ = variable_type::Zero(current.size());
+            } else {
+                slope_ = static_cast<variable_type>(0);
+            }
+        } else {
+            slope_ = problem().diff_coeff();
+        }
         formula_solver().init(slope_);
         formula_solver().solve();
         estimate = current + step_size * slope_;
