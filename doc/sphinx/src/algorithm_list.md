@@ -138,6 +138,7 @@ For properties of formulas of ODE solvers, see [Properties of Formulas in ODE So
 | 4th order SDIRK {cite:p}`Hairer1991`                 | `num_collect::ode::runge_kutta::sdirk4_formula`       |
 | Tanaka Formula 1 {cite:p}`Togawa2007`                | `num_collect::ode::runge_kutta::tanaka1_formula`      |
 | Tanaka Formula 2 {cite:p}`Togawa2007`                | `num_collect::ode::runge_kutta::tanaka2_formula`      |
+| Radau IIA method of order 3 {cite:p}`Hairer1991`     | `num_collect::ode::runge_kutta::radau2a3_formula`     |
 
 ### Formulas of Rosenbrock method
 
@@ -147,6 +148,7 @@ For properties of formulas of ODE solvers, see [Properties of Formulas in ODE So
 | RODASPR formula {cite:p}`Rang2015`  | `num_collect::ode::rosenbrock::rodaspr_formula`  |
 | ROS3w formula {cite:p}`Rang2005`    | `num_collect::ode::rosenbrock::ros3w_formula`    |
 | ROS34PW3 formula {cite:p}`Rang2005` | `num_collect::ode::rosenbrock::ros34pw3_formula` |
+| ROS34PRW formula {cite:p}`Rang2015` | `num_collect::ode::rosenbrock::ros34prw_formula` |
 
 ### Average vector field (AVF) method {cite:p}`Quispel2008`
 

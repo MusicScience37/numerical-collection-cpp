@@ -119,6 +119,9 @@ public:
         Eigen::Matrix<scalar_type, NumStages, NumStages>;
 
     //! Type of the vector of intermidiate updates.
+    using update_coeff_vector_type = Eigen::Vector<scalar_type, NumStages>;
+
+    //! Type of the vector of intermidiate updates.
     using update_vector_type = Eigen::Vector<scalar_type, NumStages>;
 
     //! Whether to use mass.
@@ -135,8 +138,8 @@ public:
      */
     inexact_newton_full_update_equation_solver(
         const slope_coeff_matrix_type& slope_coeffs,
-        const update_vector_type& time_coeffs,
-        const update_vector_type& update_coeffs)
+        const update_coeff_vector_type& time_coeffs,
+        const update_coeff_vector_type& update_coeffs)
         : iterative_solver_base<
               inexact_newton_full_update_equation_solver<Problem, NumStages>>(
               inexact_newton_full_update_equation_solver_tag),
@@ -312,10 +315,10 @@ private:
     slope_coeff_matrix_type slope_coeffs_{};
 
     //! Coefficients of time.
-    update_vector_type time_coeffs_{};
+    update_coeff_vector_type time_coeffs_{};
 
     //! Coefficients of intermidiate updates.
-    update_vector_type update_coeffs_{};
+    update_coeff_vector_type update_coeffs_{};
 
     //! Pointer to the problem.
     problem_type* problem_{nullptr};
