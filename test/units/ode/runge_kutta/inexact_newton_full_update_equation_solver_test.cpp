@@ -63,7 +63,7 @@ TEST_CASE(
 
         problem_type problem;
         constexpr double time = 0.0;
-        constexpr double step_size = 1e-3;
+        constexpr double step_size = 1e-2;
         constexpr double variable = 1.0;
         Eigen::Vector2d solution = Eigen::Vector2d::Zero();
         solver.init(problem, time, step_size, variable, solution);
@@ -85,7 +85,7 @@ TEST_CASE(
 
         problem_type problem;
         constexpr double time = 0.0;
-        constexpr double step_size = 1e-3;
+        constexpr double step_size = 1e-2;
         constexpr double variable = 1.0;
         Eigen::Vector2d solution = Eigen::Vector2d::Zero();
         solver.init(problem, time, step_size, variable, solution);
@@ -93,6 +93,51 @@ TEST_CASE(
 
         const double actual = variable + solution(1);
         const double reference = std::exp(step_size);
+        comparison_approvals::verify_with_reference(actual, reference);
+    }
+
+    SECTION("solve a multi-variate problem without mass") {
+        using problem_type = num_prob_collect::ode::spring_movement_problem;
+        using solver_type =
+            inexact_newton_full_update_equation_solver<problem_type,
+                num_stages>;
+
+        solver_type solver(slope_coeffs, time_coeffs, update_coeffs);
+
+        problem_type problem;
+        constexpr double time = 0.0;
+        constexpr double step_size = 1e-2;
+        const Eigen::Vector2d variable{{1.0, 0.0}};
+        Eigen::Vector4d solution = Eigen::Vector4d::Zero();
+        solver.init(problem, time, step_size, variable, solution);
+        REQUIRE_NOTHROW(solver.solve());
+
+        const Eigen::Vector2d actual = variable + solution.tail<2>();
+        const Eigen::Vector2d reference =
+            Eigen::Vector2d(std::cos(step_size), std::sin(step_size));
+        comparison_approvals::verify_with_reference(actual, reference);
+    }
+
+    SECTION("solve a multi-variate problem with mass") {
+        using problem_type = num_prob_collect::ode::implicit_kaps_problem;
+        using solver_type =
+            inexact_newton_full_update_equation_solver<problem_type,
+                num_stages>;
+
+        solver_type solver(slope_coeffs, time_coeffs, update_coeffs);
+
+        constexpr double epsilon = 0.1;
+        problem_type problem{epsilon};
+        constexpr double time = 0.0;
+        constexpr double step_size = 1e-2;
+        const Eigen::Vector2d variable{{1.0, 1.0}};
+        Eigen::Vector4d solution = Eigen::Vector4d::Zero();
+        solver.init(problem, time, step_size, variable, solution);
+        REQUIRE_NOTHROW(solver.solve());
+
+        const Eigen::Vector2d actual = variable + solution.tail<2>();
+        const Eigen::Vector2d reference =
+            Eigen::Vector2d(std::exp(-2.0 * step_size), std::exp(-step_size));
         comparison_approvals::verify_with_reference(actual, reference);
     }
 }
