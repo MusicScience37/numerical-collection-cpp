@@ -27,7 +27,9 @@
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/concepts/differentiable_problem.h"
 #include "num_collect/ode/formula_base.h"
+#include "num_collect/ode/non_embedded_formula_wrapper.h"
 #include "num_collect/ode/runge_kutta/inexact_newton_full_update_equation_solver.h"
+#include "num_collect/ode/simple_solver.h"
 
 namespace num_collect::ode::runge_kutta {
 
@@ -180,5 +182,23 @@ private:
     //! Intermidiate updates.
     update_vector_type updates_;
 };
+
+/*!
+ * \brief Class of solver using Radau IIA method of order 3.
+ *
+ * \tparam Problem Type of problem.
+ */
+template <concepts::differentiable_problem Problem>
+using radau2a3_solver = simple_solver<radau2a3_formula<Problem>>;
+
+/*!
+ * \brief Class of solver using Radau IIA method of order 3 with automatic step
+ * sizes.
+ *
+ * \tparam Problem Type of problem.
+ */
+template <concepts::differentiable_problem Problem>
+using radau2a3_auto_solver =
+    non_embedded_auto_solver<radau2a3_formula<Problem>>;
 
 }  // namespace num_collect::ode::runge_kutta
