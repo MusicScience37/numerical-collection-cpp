@@ -15,9 +15,9 @@
  */
 /*!
  * \file
- * \brief Test of radau2a3_formula class.
+ * \brief Test of radau2a5_formula class.
  */
-#include "num_collect/ode/runge_kutta/radau2a3_formula.h"
+#include "num_collect/ode/runge_kutta/radau2a5_formula.h"
 
 #include <cmath>
 
@@ -29,20 +29,20 @@
 #include "num_prob_collect/ode/exponential_problem.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
 
-TEST_CASE("num_collect::ode::runge_kutta::radau2a3_formula") {
-    using num_collect::ode::runge_kutta::radau2a3_formula;
+TEST_CASE("num_collect::ode::runge_kutta::radau2a5_formula") {
+    using num_collect::ode::runge_kutta::radau2a5_formula;
 
     SECTION("static definition") {
         using problem_type = num_prob_collect::ode::exponential_problem;
-        using formula_type = radau2a3_formula<problem_type>;
+        using formula_type = radau2a5_formula<problem_type>;
 
-        STATIC_REQUIRE(formula_type::stages == 2);
-        STATIC_REQUIRE(formula_type::order == 3);
+        STATIC_REQUIRE(formula_type::stages == 3);
+        STATIC_REQUIRE(formula_type::order == 5);
     }
 
     SECTION("check coefficients") {
         using problem_type = num_prob_collect::ode::exponential_problem;
-        using formula_type = radau2a3_formula<problem_type>;
+        using formula_type = radau2a5_formula<problem_type>;
 
         const auto slope_coeffs = formula_type::slope_coeffs();
         const auto time_coeffs = formula_type::time_coeffs();
@@ -52,12 +52,14 @@ TEST_CASE("num_collect::ode::runge_kutta::radau2a3_formula") {
             Catch::Matchers::WithinRel(time_coeffs(0)));
         CHECK_THAT(slope_coeffs.row(1).sum(),
             Catch::Matchers::WithinRel(time_coeffs(1)));
+        CHECK_THAT(slope_coeffs.row(2).sum(),
+            Catch::Matchers::WithinRel(time_coeffs(2)));
         CHECK_THAT(update_coeffs.sum(), Catch::Matchers::WithinRel(1.0));
     }
 
     SECTION("step in one-dimensional problem") {
         using problem_type = num_prob_collect::ode::exponential_problem;
-        using formula_type = radau2a3_formula<problem_type>;
+        using formula_type = radau2a5_formula<problem_type>;
         auto formula = formula_type(problem_type());
 
         constexpr double time = 0.0;
@@ -72,7 +74,7 @@ TEST_CASE("num_collect::ode::runge_kutta::radau2a3_formula") {
 
     SECTION("step in multi-dimensional problem") {
         using problem_type = num_prob_collect::ode::spring_movement_problem;
-        using formula_type = radau2a3_formula<problem_type>;
+        using formula_type = radau2a5_formula<problem_type>;
         auto formula = formula_type(problem_type());
 
         constexpr double time = 0.0;

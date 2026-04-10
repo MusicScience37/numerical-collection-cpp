@@ -139,6 +139,7 @@ For properties of formulas of ODE solvers, see [Properties of Formulas in ODE So
 | Tanaka Formula 1 {cite:p}`Togawa2007`                | `num_collect::ode::runge_kutta::tanaka1_formula`      |
 | Tanaka Formula 2 {cite:p}`Togawa2007`                | `num_collect::ode::runge_kutta::tanaka2_formula`      |
 | Radau IIA method of order 3 {cite:p}`Hairer1991`     | `num_collect::ode::runge_kutta::radau2a3_formula`     |
+| Radau IIA method of order 5 {cite:p}`Hairer1991`     | `num_collect::ode::runge_kutta::radau2a5_formula`     |
 
 ### Formulas of Rosenbrock method
 

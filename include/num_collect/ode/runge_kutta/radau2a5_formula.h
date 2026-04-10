@@ -15,9 +15,11 @@
  */
 /*!
  * \file
- * \brief Definition of radau2a3_formula class.
+ * \brief Definition of radau2a5_formula class.
  */
 #pragma once
+
+#include <cmath>
 
 #include <Eigen/Core>
 
@@ -34,7 +36,7 @@
 namespace num_collect::ode::runge_kutta {
 
 /*!
- * \brief Class of Radau IIA method of order 3 \cite Hairer1991.
+ * \brief Class of Radau IIA method of order 5 \cite Hairer1991.
  *
  * \tparam Problem Type of problem.
  *
@@ -43,11 +45,11 @@ namespace num_collect::ode::runge_kutta {
  * \note This formula does not support changing mass matrix.
  */
 template <concepts::differentiable_problem Problem>
-class radau2a3_formula
-    : public formula_base<radau2a3_formula<Problem>, Problem> {
+class radau2a5_formula
+    : public formula_base<radau2a5_formula<Problem>, Problem> {
 public:
     //! Type of base class.
-    using base_type = formula_base<radau2a3_formula<Problem>, Problem>;
+    using base_type = formula_base<radau2a5_formula<Problem>, Problem>;
 
     using typename base_type::problem_type;
     using typename base_type::scalar_type;
@@ -61,14 +63,14 @@ protected:
 
 public:
     //! Number of stages of this formula.
-    static constexpr index_type stages = 2;
+    static constexpr index_type stages = 3;
 
     //! Order of this formula.
-    static constexpr index_type order = 3;
+    static constexpr index_type order = 5;
 
     //! Log tag.
     static constexpr auto log_tag = logging::log_tag_view(
-        "num_collect::ode::runge_kutta::radau2a3_formula");
+        "num_collect::ode::runge_kutta::radau2a5_formula");
 
     //! Type of the solver of the implicit formula.
     using formula_solver_type =
@@ -79,12 +81,41 @@ public:
      *
      * \return Coefficients.
      */
-    static auto slope_coeffs() -> Eigen::Matrix<scalar_type, 2, 2> {
-        Eigen::Matrix<scalar_type, 2, 2> coeffs{};
-        coeffs(0, 0) = coeff(5, 12);
-        coeffs(0, 1) = coeff(-1, 12);
-        coeffs(1, 0) = coeff(3, 4);
-        coeffs(1, 1) = coeff(1, 4);
+    static auto slope_coeffs() -> Eigen::Matrix<scalar_type, 3, 3> {
+        using std::sqrt;
+        Eigen::Matrix<scalar_type, 3, 3> coeffs;
+        coeffs(0, 0) = (static_cast<scalar_type>(88) -
+                           static_cast<scalar_type>(7) *
+                               sqrt(static_cast<scalar_type>(6))) /
+            static_cast<scalar_type>(360);
+        coeffs(0, 1) = (static_cast<scalar_type>(296) -
+                           static_cast<scalar_type>(169) *
+                               sqrt(static_cast<scalar_type>(6))) /
+            static_cast<scalar_type>(1800);
+        coeffs(0, 2) = (static_cast<scalar_type>(-2) +
+                           static_cast<scalar_type>(3) *
+                               sqrt(static_cast<scalar_type>(6))) /
+            static_cast<scalar_type>(225);
+        coeffs(1, 0) = (static_cast<scalar_type>(296) +
+                           static_cast<scalar_type>(169) *
+                               sqrt(static_cast<scalar_type>(6))) /
+            static_cast<scalar_type>(1800);
+        coeffs(1, 1) = (static_cast<scalar_type>(88) +
+                           static_cast<scalar_type>(7) *
+                               sqrt(static_cast<scalar_type>(6))) /
+            static_cast<scalar_type>(360);
+        coeffs(1, 2) = (static_cast<scalar_type>(-2) -
+                           static_cast<scalar_type>(3) *
+                               sqrt(static_cast<scalar_type>(6))) /
+            static_cast<scalar_type>(225);
+        coeffs(2, 0) =
+            (static_cast<scalar_type>(16) - sqrt(static_cast<scalar_type>(6))) /
+            static_cast<scalar_type>(36);
+        coeffs(2, 1) =
+            (static_cast<scalar_type>(16) + sqrt(static_cast<scalar_type>(6))) /
+            static_cast<scalar_type>(36);
+        coeffs(2, 2) =
+            static_cast<scalar_type>(1) / static_cast<scalar_type>(9);
         return coeffs;
     }
 
@@ -93,10 +124,16 @@ public:
      *
      * \return Coefficients.
      */
-    static auto time_coeffs() -> Eigen::Vector2<scalar_type> {
-        Eigen::Vector2<scalar_type> coeffs{};
-        coeffs(0) = coeff(1, 3);
-        coeffs(1) = coeff(1, 1);
+    static auto time_coeffs() -> Eigen::Vector3<scalar_type> {
+        using std::sqrt;
+        Eigen::Vector3<scalar_type> coeffs;
+        coeffs(0) =
+            (static_cast<scalar_type>(4) - sqrt(static_cast<scalar_type>(6))) /
+            static_cast<scalar_type>(10);
+        coeffs(1) =
+            (static_cast<scalar_type>(4) + sqrt(static_cast<scalar_type>(6))) /
+            static_cast<scalar_type>(10);
+        coeffs(2) = static_cast<scalar_type>(1);
         return coeffs;
     }
 
@@ -105,10 +142,16 @@ public:
      *
      * \return Coefficients.
      */
-    static auto update_coeffs() -> Eigen::Vector2<scalar_type> {
-        Eigen::Vector2<scalar_type> coeffs{};
-        coeffs(0) = coeff(3, 4);
-        coeffs(1) = coeff(1, 4);
+    static auto update_coeffs() -> Eigen::Vector3<scalar_type> {
+        using std::sqrt;
+        Eigen::Vector3<scalar_type> coeffs;
+        coeffs(0) =
+            (static_cast<scalar_type>(16) - sqrt(static_cast<scalar_type>(6))) /
+            static_cast<scalar_type>(36);
+        coeffs(1) =
+            (static_cast<scalar_type>(16) + sqrt(static_cast<scalar_type>(6))) /
+            static_cast<scalar_type>(36);
+        coeffs(2) = static_cast<scalar_type>(1) / static_cast<scalar_type>(9);
         return coeffs;
     }
 
@@ -151,7 +194,7 @@ public:
      * \return This.
      */
     auto tolerances(const error_tolerances<variable_type>& val)
-        -> radau2a3_formula& {
+        -> radau2a5_formula& {
         formula_solver_.tolerances(val);
         return *this;
     }
@@ -188,21 +231,21 @@ private:
 };
 
 /*!
- * \brief Class of solver using Radau IIA method of order 3.
+ * \brief Class of solver using Radau IIA method of order 5.
  *
  * \tparam Problem Type of problem.
  */
 template <concepts::differentiable_problem Problem>
-using radau2a3_solver = simple_solver<radau2a3_formula<Problem>>;
+using radau2a5_solver = simple_solver<radau2a5_formula<Problem>>;
 
 /*!
- * \brief Class of solver using Radau IIA method of order 3 with automatic step
+ * \brief Class of solver using Radau IIA method of order 5 with automatic step
  * sizes.
  *
  * \tparam Problem Type of problem.
  */
 template <concepts::differentiable_problem Problem>
-using radau2a3_auto_solver =
-    non_embedded_auto_solver<radau2a3_formula<Problem>>;
+using radau2a5_auto_solver =
+    non_embedded_auto_solver<radau2a5_formula<Problem>>;
 
 }  // namespace num_collect::ode::runge_kutta

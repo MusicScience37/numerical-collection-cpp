@@ -14,7 +14,8 @@ For classes implementing formulas, see [Algorithm List](../../algorithm_list.md#
 | Runge-Kutta | 4th order SDIRK {cite:p}`Hairer1991`             | No       | 4, 3  | Yes              | L-stable           | Index 2     | Invertible / singular, changeable |                      |
 | Runge-Kutta | Tanaka Formula 1 {cite:p}`Togawa2007`            | No       | 3, 1  | No               |                    |             | Invertible, changeable            |                      |
 | Runge-Kutta | Tanaka Formula 2 {cite:p}`Togawa2007`            | No       | 4, 2  | No               |                    |             | Invertible, changeable            |                      |
-| Runge-Kutta | Radau IIA method of order 3 {cite:p}`Hairer1991` | No       | 3     | Yes              | B-stable, L-stable | Index 2     | (TODO)                            |                      |
+| Runge-Kutta | Radau IIA method of order 3 {cite:p}`Hairer1991` | No       | 3     | Yes              | B-stable, L-stable | Index 2     | Invertible / singular, constant   |                      |
+| Runge-Kutta | Radau IIA method of order 5 {cite:p}`Hairer1991` | No       | 5     | Yes              | B-stable, L-stable | Index 2     | Invertible / singular, constant   |                      |
 | Rosenbrock  | RODASP                                           | No       | 4, ?  | Yes              | L-stable           | Index 1     | Invertible / singular, constant   |                      |
 | Rosenbrock  | RODASPR {cite:p}`Rang2015`                       | No       | 4, ?  | Yes              | L-stable           | Index 2     | Invertible / singular, constant   |                      |
 | Rosenbrock  | ROS3w {cite:p}`Rang2005`                         | No       | 3, 2  | No               | L-stable           | Index 1     | Invertible / singular, constant   | W-method             |
