@@ -113,8 +113,6 @@ struct radau2a3_coefficients {
  *
  * \tparam Problem Type of problem.
  *
- * \note Current implementation does not support sparse Jacobians.
- * This limitation may be removed in the future.
  * \note This formula does not support changing mass matrix.
  */
 template <concepts::differentiable_problem Problem>

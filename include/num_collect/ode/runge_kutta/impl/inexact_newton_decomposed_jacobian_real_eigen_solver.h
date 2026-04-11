@@ -43,7 +43,7 @@
 namespace num_collect::ode::runge_kutta::impl {
 
 /*!
- * \brief Class to solve solve equations of decomposed Jacobians in inexact
+ * \brief Class to solve equations of decomposed Jacobians in inexact
  * Newton method of implicit Runge-Kutta methods for real eigenvalues.
  *
  * \tparam Problem Type of the problem.
@@ -65,7 +65,7 @@ template <concepts::differentiable_problem Problem>
 class inexact_newton_decomposed_jacobian_real_eigen_solver;
 
 /*!
- * \brief Class to solve solve equations of decomposed Jacobians in inexact
+ * \brief Class to solve equations of decomposed Jacobians in inexact
  * Newton method of implicit Runge-Kutta methods for real eigenvalues.
  *
  * \tparam Problem Type of the problem.
@@ -185,7 +185,7 @@ private:
 };
 
 /*!
- * \brief Class to solve solve equations of decomposed Jacobians in inexact
+ * \brief Class to solve equations of decomposed Jacobians in inexact
  * Newton method of implicit Runge-Kutta methods for real eigenvalues.
  *
  * \tparam Problem Type of the problem.
@@ -269,8 +269,6 @@ public:
      * \tparam Solution Type of the solution.
      * \param[in] rhs Right-hand side of the equation.
      * \param[out] solution_in Solution.
-     *
-     * \note Vectors must have 2 elements.
      */
     template <typename Rhs, typename Solution>
     void solve(const Eigen::DenseBase<Rhs>& rhs,
@@ -329,7 +327,7 @@ private:
 };
 
 /*!
- * \brief Class to solve solve equations of decomposed Jacobians in inexact
+ * \brief Class to solve equations of decomposed Jacobians in inexact
  * Newton method of implicit Runge-Kutta methods for real eigenvalues.
  *
  * \tparam Problem Type of the problem.
@@ -414,8 +412,6 @@ public:
      * \tparam Solution Type of the solution.
      * \param[in] rhs Right-hand side of the equation.
      * \param[out] solution_in Solution.
-     *
-     * \note Vectors must have 2 elements.
      */
     template <typename Rhs, typename Solution>
     void solve(const Eigen::DenseBase<Rhs>& rhs,
