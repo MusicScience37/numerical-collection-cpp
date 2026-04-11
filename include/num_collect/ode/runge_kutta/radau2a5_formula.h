@@ -19,7 +19,10 @@
  */
 #pragma once
 
+#include <array>
 #include <cmath>
+#include <type_traits>
+#include <variant>
 
 #include <Eigen/Core>
 
@@ -31,6 +34,7 @@
 #include "num_collect/ode/concepts/differentiable_problem.h"
 #include "num_collect/ode/formula_base.h"
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
+#include "num_collect/ode/runge_kutta/impl/inexact_newton_decomposed_jacobian_real_eigen_solver.h"
 #include "num_collect/ode/runge_kutta/inexact_newton_decomposed_full_update_equation_solver.h"
 #include "num_collect/ode/simple_solver.h"
 
@@ -224,18 +228,102 @@ public:
         return impl::radau2a5_coefficients<scalar_type>::update_coeffs();
     }
 
+    /*!
+     * \brief Constructor.
+     *
+     * \param[in] problem Problem.
+     */
+    explicit radau2a5_formula(const problem_type& problem = problem_type())
+        : base_type(problem) {
+        // Search for the real eigenvalue.
+        auto& decomposed_solver = formula_solver_.decomposed_solvers();
+        for (auto& solver : decomposed_solver) {
+            std::visit(
+                [this](auto& concrete_solver) {
+                    using solver_type = std::decay_t<decltype(concrete_solver)>;
+                    if constexpr (std::is_same_v<solver_type,
+                                      real_eigenvalue_solver_type>) {
+                        real_eigenvalue_solver_ = &concrete_solver;
+                    }
+                },
+                solver);
+        }
+        // This is guaranteed by the property of the formula.
+        NUM_COLLECT_ASSERT(real_eigenvalue_solver_ != nullptr);
+
+        const scalar_type real_eigenvalue =
+            real_eigenvalue_solver_->eigenvalue();
+
+        using std::sqrt;
+        error_coeffs_[0] = real_eigenvalue;
+        error_coeffs_[1] = real_eigenvalue *
+            (static_cast<scalar_type>(-13) -
+                static_cast<scalar_type>(7) *
+                    sqrt(static_cast<scalar_type>(6))) /
+            static_cast<scalar_type>(3);
+        error_coeffs_[2] = real_eigenvalue *
+            (static_cast<scalar_type>(-13) +
+                static_cast<scalar_type>(7) *
+                    sqrt(static_cast<scalar_type>(6))) /
+            static_cast<scalar_type>(3);
+        error_coeffs_[3] = real_eigenvalue * static_cast<scalar_type>(-1) /
+            static_cast<scalar_type>(3);
+    }
+
     //! \copydoc ode::formula_base::step
     void step(scalar_type time, scalar_type step_size,
         const variable_type& current, variable_type& estimate) {
         updates_.resize(get_size(current) * stages);
         updates_.setZero();
         formula_solver_.init(problem(), time, step_size, current, updates_);
+
+        // Save a slope for error estimation.
+        slope_ = problem().diff_coeff();
+
         formula_solver_.solve();
+
         if constexpr (base::concepts::dense_vector<variable_type>) {
             estimate = current + updates_.tail(get_size(current));
         } else {
             estimate = current + updates_(updates_.size() - 1);
         }
+    }
+
+    /*!
+     * \brief Compute the next variable and the error estimation.
+     *
+     * \param[in] time Current time.
+     * \param[in] step_size Step size.
+     * \param[in] current Current variable.
+     * \param[out] estimate Estimate of the next variable.
+     * \param[out] error Estimate of error.
+     *
+     * \note This is not an embedded formula and the error estimation did not
+     * work for stiff problems.
+     */
+    void step_with_error_estimate(scalar_type time, scalar_type step_size,
+        const variable_type& current, variable_type& estimate,
+        variable_type& error) {
+        step(time, step_size, current, estimate);
+
+        if constexpr (base::concepts::dense_vector<variable_type>) {
+            error_buffer_ = step_size * error_coeffs_[0] * slope_;
+            const index_type dimensions = current.size();
+            error_buffer_ += error_coeffs_[1] * updates_.segment(0, dimensions);
+            error_buffer_ +=
+                error_coeffs_[2] * updates_.segment(dimensions, dimensions);
+            error_buffer_ +=
+                error_coeffs_[3] * updates_.segment(2 * dimensions, dimensions);
+        } else {
+            // Scalars.
+            error_buffer_ = step_size * error_coeffs_[0] * slope_;
+            error_buffer_ += error_coeffs_[1] * updates_(0);
+            error_buffer_ += error_coeffs_[2] * updates_(1);
+            error_buffer_ += error_coeffs_[3] * updates_(2);
+        }
+        real_eigenvalue_solver_->solve(error_buffer_, error);
+        error *= static_cast<scalar_type>(1) /
+            (step_size * real_eigenvalue_solver_->eigenvalue());
     }
 
     /*!
@@ -291,12 +379,29 @@ private:
     //! Type of the vector of intermidiate updates.
     using update_vector_type = typename formula_solver_type::update_vector_type;
 
+    //! Type of the solver of equations of decomposed Jacobians for real eigenvalues.
+    using real_eigenvalue_solver_type =
+        impl::inexact_newton_decomposed_jacobian_real_eigen_solver<
+            problem_type>;
+
     //! Solver of the implicit formula.
     formula_solver_type formula_solver_{
         impl::radau2a5_coefficients<scalar_type>::formula_solver_data()};
 
     //! Intermidiate updates.
     update_vector_type updates_;
+
+    //! Solver for the real eigenvalue.
+    real_eigenvalue_solver_type* real_eigenvalue_solver_{nullptr};
+
+    //! Slope of the last variable.
+    variable_type slope_{};
+
+    //! Buffer for calculation of error estimation.
+    variable_type error_buffer_{};
+
+    //! Coefficients for error estimation.
+    std::array<scalar_type, 4> error_coeffs_{};
 };
 
 /*!

@@ -340,6 +340,21 @@ public:
     //! Whether to use mass.
     static constexpr bool use_mass = concepts::mass_problem<problem_type>;
 
+    //! Type of solvers of decomposed linear equations for real eigenvalues.
+    using real_eigen_decomposed_solver_type =
+        impl::inexact_newton_decomposed_jacobian_real_eigen_solver<
+            problem_type>;
+
+    //! Type of solvers of decomposed linear equations for complex eigenvalues.
+    using complex_eigen_decomposed_solver_type =
+        impl::inexact_newton_decomposed_jacobian_complex_eigen_solver<
+            problem_type>;
+
+    //! Type of variants of solvers of decomposed linear equations.
+    using decomposed_solver_type =
+        std::variant<real_eigen_decomposed_solver_type,
+            complex_eigen_decomposed_solver_type>;
+
     /*!
      * \brief Constructor.
      *
@@ -573,22 +588,27 @@ public:
         return tolerances_;
     }
 
+    /*!
+     * \brief Get the solvers of decomposed linear equations.
+     *
+     * \return Solvers of decomposed linear equations.
+     */
+    [[nodiscard]] auto decomposed_solvers() const noexcept
+        -> const util::vector<decomposed_solver_type>& {
+        return decomposed_solvers_;
+    }
+
+    /*!
+     * \brief Get the solvers of decomposed linear equations.
+     *
+     * \return Solvers of decomposed linear equations.
+     */
+    [[nodiscard]] auto decomposed_solvers() noexcept
+        -> util::vector<decomposed_solver_type>& {
+        return decomposed_solvers_;
+    }
+
 private:
-    //! Type of solvers of decomposed linear equations for real eigenvalues.
-    using real_eigen_decomposed_solver_type =
-        impl::inexact_newton_decomposed_jacobian_real_eigen_solver<
-            problem_type>;
-
-    //! Type of solvers of decomposed linear equations for complex eigenvalues.
-    using complex_eigen_decomposed_solver_type =
-        impl::inexact_newton_decomposed_jacobian_complex_eigen_solver<
-            problem_type>;
-
-    //! Type of variants of solvers of decomposed linear equations.
-    using decomposed_solver_type =
-        std::variant<real_eigen_decomposed_solver_type,
-            complex_eigen_decomposed_solver_type>;
-
     //! Coefficients of intermidiate slopes.
     slope_coeff_matrix_type slope_coeffs_;
 
@@ -728,6 +748,21 @@ public:
     //! Type of the vector of intermidiate updates.
     using update_vector_type =
         Eigen::Vector<scalar_type, update_vector_size_at_compile_time>;
+
+    //! Type of solvers of decomposed linear equations for real eigenvalues.
+    using real_eigen_decomposed_solver_type =
+        impl::inexact_newton_decomposed_jacobian_real_eigen_solver<
+            problem_type>;
+
+    //! Type of solvers of decomposed linear equations for complex eigenvalues.
+    using complex_eigen_decomposed_solver_type =
+        impl::inexact_newton_decomposed_jacobian_complex_eigen_solver<
+            problem_type>;
+
+    //! Type of variants of solvers of decomposed linear equations.
+    using decomposed_solver_type =
+        std::variant<real_eigen_decomposed_solver_type,
+            complex_eigen_decomposed_solver_type>;
 
     /*!
      * \brief Constructor.
@@ -999,22 +1034,27 @@ public:
         return tolerances_;
     }
 
+    /*!
+     * \brief Get the solvers of decomposed linear equations.
+     *
+     * \return Solvers of decomposed linear equations.
+     */
+    [[nodiscard]] auto decomposed_solvers() const noexcept
+        -> const util::vector<decomposed_solver_type>& {
+        return decomposed_solvers_;
+    }
+
+    /*!
+     * \brief Get the solvers of decomposed linear equations.
+     *
+     * \return Solvers of decomposed linear equations.
+     */
+    [[nodiscard]] auto decomposed_solvers() noexcept
+        -> util::vector<decomposed_solver_type>& {
+        return decomposed_solvers_;
+    }
+
 private:
-    //! Type of solvers of decomposed linear equations for real eigenvalues.
-    using real_eigen_decomposed_solver_type =
-        impl::inexact_newton_decomposed_jacobian_real_eigen_solver<
-            problem_type>;
-
-    //! Type of solvers of decomposed linear equations for complex eigenvalues.
-    using complex_eigen_decomposed_solver_type =
-        impl::inexact_newton_decomposed_jacobian_complex_eigen_solver<
-            problem_type>;
-
-    //! Type of variants of solvers of decomposed linear equations.
-    using decomposed_solver_type =
-        std::variant<real_eigen_decomposed_solver_type,
-            complex_eigen_decomposed_solver_type>;
-
     //! Coefficients of intermidiate slopes.
     slope_coeff_matrix_type slope_coeffs_;
 
