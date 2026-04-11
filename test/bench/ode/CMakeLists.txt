@@ -1,6 +1,10 @@
 add_executable(bench_ode_sparse_linear_equation sparse_linear_equation_test.cpp)
 target_add_to_benchmark(bench_ode_sparse_linear_equation)
 
+add_executable(bench_ode_full_update_equation_solver
+               full_update_equation_solver_test.cpp)
+target_add_to_benchmark(bench_ode_full_update_equation_solver)
+
 macro(add_bench_ode PROBLEM)
     add_executable(bench_ode_${PROBLEM} ${PROBLEM}_test.cpp diagram_common.cpp
                                         fixed_step_bench_executor.cpp)
