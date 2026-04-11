@@ -20,6 +20,7 @@
 #pragma once
 
 #include "num_collect/base/index_type.h"
+#include "num_collect/functions/pow.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/concepts/formula.h"
 #include "num_collect/ode/embedded_solver.h"
@@ -27,7 +28,8 @@
 namespace num_collect::ode {
 
 /*!
- * \brief Wrapper class to use a non-embedded formula as an embedded formula.
+ * \brief Wrapper class to use a non-embedded formula as an embedded formula
+ * using Richardson extrapolation \cite Hairer1993.
  *
  * \tparam BaseFormula Type of formula to use.
  */
@@ -93,14 +95,16 @@ public:
     void step_embedded(scalar_type time, scalar_type step_size,
         const variable_type& current, variable_type& estimate,
         variable_type& error) {
-        variable_type rough_estimate;
-        step(time, step_size, current, rough_estimate);
-        variable_type half_estimate;
+        step(time, step_size, current, rough_estimate_);
         const scalar_type half_step_size =
             static_cast<scalar_type>(0.5) * step_size;
-        step(time, half_step_size, current, half_estimate);
-        step(time, half_step_size, half_estimate, estimate);
-        error = rough_estimate - estimate;
+        step(time, half_step_size, current, half_estimate_);
+        step(time + half_step_size, half_step_size, half_estimate_, estimate);
+        error = estimate - rough_estimate_;
+        constexpr scalar_type error_factor = static_cast<scalar_type>(1) /
+            (functions::pow(static_cast<scalar_type>(2), order) -
+                static_cast<scalar_type>(1));
+        estimate += error_factor * error;
     }
 
     /*!
@@ -122,6 +126,12 @@ public:
 private:
     //! Formula.
     base_formula_type formula_;
+
+    //! Buffer of rough estimate.
+    variable_type rough_estimate_;
+
+    //! Buffer of estimate with half step size.
+    variable_type half_estimate_;
 };
 
 /*!
