@@ -20,12 +20,15 @@
 #include "num_collect/ode/runge_kutta/radau2a5_formula.h"
 
 #include <cmath>
+#include <type_traits>
+#include <variant>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "comparison_approvals.h"
+#include "num_collect/logging/logger.h"
 #include "num_prob_collect/ode/exponential_problem.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
 
@@ -55,6 +58,42 @@ TEST_CASE("num_collect::ode::runge_kutta::radau2a5_formula") {
         CHECK_THAT(slope_coeffs.row(2).sum(),
             Catch::Matchers::WithinRel(time_coeffs(2)));
         CHECK_THAT(update_coeffs.sum(), Catch::Matchers::WithinRel(1.0));
+    }
+
+    SECTION("check eigenvalues") {
+        using problem_type = num_prob_collect::ode::exponential_problem;
+        using formula_type = radau2a5_formula<problem_type>;
+        auto formula = formula_type(problem_type());
+
+        const auto& solvers = formula.formula_solver().decomposed_solvers();
+
+        num_collect::logging::logger logger;
+        int num_real_eigenvalues = 0;
+        int num_complex_eigenvalues = 0;
+        for (const auto& solver : solvers) {
+            std::visit(
+                [&logger, &num_real_eigenvalues, &num_complex_eigenvalues](
+                    const auto& concrete_solver) {
+                    const auto eigenvalue = concrete_solver.eigenvalue();
+                    using eigenvalue_type = std::decay_t<decltype(eigenvalue)>;
+                    if constexpr (std::is_same_v<eigenvalue_type, double>) {
+                        NUM_COLLECT_LOG_DEBUG(
+                            logger, "Real eigenvalue: {}", eigenvalue);
+                        ++num_real_eigenvalues;
+                    } else if constexpr (std::is_same_v<eigenvalue_type,
+                                             std::complex<double>>) {
+                        NUM_COLLECT_LOG_DEBUG(logger,
+                            "Complex eigenvalue: {} + {} i", eigenvalue.real(),
+                            eigenvalue.imag());
+                        ++num_complex_eigenvalues;
+                    } else {
+                        FAIL();
+                    }
+                },
+                solver);
+        }
+        CHECK(num_real_eigenvalues == 1);
+        CHECK(num_complex_eigenvalues == 1);
     }
 
     SECTION("step in one-dimensional problem") {
