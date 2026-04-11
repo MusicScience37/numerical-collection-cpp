@@ -24,16 +24,139 @@
 #include <Eigen/Core>
 
 #include "num_collect/base/concepts/dense_vector.h"
+#include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/get_size.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/concepts/differentiable_problem.h"
 #include "num_collect/ode/formula_base.h"
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
-#include "num_collect/ode/runge_kutta/inexact_newton_full_update_equation_solver.h"
+#include "num_collect/ode/runge_kutta/inexact_newton_decomposed_full_update_equation_solver.h"
 #include "num_collect/ode/simple_solver.h"
 
 namespace num_collect::ode::runge_kutta {
+
+namespace impl {
+
+/*!
+ * \brief Coefficients in Radau IIA method of order 5 \cite Hairer1991.
+ *
+ * \tparam Scalar Type of scalars.
+ */
+template <base::concepts::real_scalar Scalar>
+struct radau2a5_coefficients {
+    //! Type of scalars.
+    using scalar_type = Scalar;
+
+    //! Number of stages.
+    static constexpr index_type stages = 3;
+
+    /*!
+     * \brief Get the coefficients of intermidiate slopes in the formula.
+     *
+     * \return Coefficients.
+     */
+    static auto slope_coeffs() -> Eigen::Matrix<scalar_type, 3, 3> {
+        static const Eigen::Matrix<scalar_type, 3, 3> coeffs = []() {
+            using std::sqrt;
+            Eigen::Matrix<scalar_type, 3, 3> coeffs;
+            coeffs(0, 0) = (static_cast<scalar_type>(88) -
+                               static_cast<scalar_type>(7) *
+                                   sqrt(static_cast<scalar_type>(6))) /
+                static_cast<scalar_type>(360);
+            coeffs(0, 1) = (static_cast<scalar_type>(296) -
+                               static_cast<scalar_type>(169) *
+                                   sqrt(static_cast<scalar_type>(6))) /
+                static_cast<scalar_type>(1800);
+            coeffs(0, 2) = (static_cast<scalar_type>(-2) +
+                               static_cast<scalar_type>(3) *
+                                   sqrt(static_cast<scalar_type>(6))) /
+                static_cast<scalar_type>(225);
+            coeffs(1, 0) = (static_cast<scalar_type>(296) +
+                               static_cast<scalar_type>(169) *
+                                   sqrt(static_cast<scalar_type>(6))) /
+                static_cast<scalar_type>(1800);
+            coeffs(1, 1) = (static_cast<scalar_type>(88) +
+                               static_cast<scalar_type>(7) *
+                                   sqrt(static_cast<scalar_type>(6))) /
+                static_cast<scalar_type>(360);
+            coeffs(1, 2) = (static_cast<scalar_type>(-2) -
+                               static_cast<scalar_type>(3) *
+                                   sqrt(static_cast<scalar_type>(6))) /
+                static_cast<scalar_type>(225);
+            coeffs(2, 0) = (static_cast<scalar_type>(16) -
+                               sqrt(static_cast<scalar_type>(6))) /
+                static_cast<scalar_type>(36);
+            coeffs(2, 1) = (static_cast<scalar_type>(16) +
+                               sqrt(static_cast<scalar_type>(6))) /
+                static_cast<scalar_type>(36);
+            coeffs(2, 2) =
+                static_cast<scalar_type>(1) / static_cast<scalar_type>(9);
+            return coeffs;
+        }();
+        return coeffs;
+    }
+
+    /*!
+     * \brief Get the coefficients of time in the formula.
+     *
+     * \return Coefficients.
+     */
+    static auto time_coeffs() -> Eigen::Vector3<scalar_type> {
+        static const Eigen::Vector3<scalar_type> coeffs = []() {
+            using std::sqrt;
+            Eigen::Vector3<scalar_type> coeffs;
+            coeffs(0) = (static_cast<scalar_type>(4) -
+                            sqrt(static_cast<scalar_type>(6))) /
+                static_cast<scalar_type>(10);
+            coeffs(1) = (static_cast<scalar_type>(4) +
+                            sqrt(static_cast<scalar_type>(6))) /
+                static_cast<scalar_type>(10);
+            coeffs(2) = static_cast<scalar_type>(1);
+            return coeffs;
+        }();
+        return coeffs;
+    }
+
+    /*!
+     * \brief Get the coefficients of intermidiate updates in the formula.
+     *
+     * \return Coefficients.
+     */
+    static auto update_coeffs() -> Eigen::Vector3<scalar_type> {
+        static const Eigen::Vector3<scalar_type> coeffs = []() {
+            using std::sqrt;
+            Eigen::Vector3<scalar_type> coeffs;
+            coeffs(0) = (static_cast<scalar_type>(16) -
+                            sqrt(static_cast<scalar_type>(6))) /
+                static_cast<scalar_type>(36);
+            coeffs(1) = (static_cast<scalar_type>(16) +
+                            sqrt(static_cast<scalar_type>(6))) /
+                static_cast<scalar_type>(36);
+            coeffs(2) =
+                static_cast<scalar_type>(1) / static_cast<scalar_type>(9);
+            return coeffs;
+        }();
+        return coeffs;
+    }
+
+    /*!
+     * \brief Get the data for
+     * inexact_newton_decomposed_full_update_equation_solver class.
+     *
+     * \return Data.
+     */
+    static auto formula_solver_data()
+        -> inexact_newton_decomposed_full_update_equation_solver_data<
+            scalar_type, stages> {
+        static const inexact_newton_decomposed_full_update_equation_solver_data<
+            scalar_type, stages>
+            data{slope_coeffs(), time_coeffs(), update_coeffs()};
+        return data;
+    };
+};
+
+}  // namespace impl
 
 /*!
  * \brief Class of Radau IIA method of order 5 \cite Hairer1991.
@@ -74,7 +197,7 @@ public:
 
     //! Type of the solver of the implicit formula.
     using formula_solver_type =
-        inexact_newton_full_update_equation_solver<Problem, stages>;
+        inexact_newton_decomposed_full_update_equation_solver<Problem, stages>;
 
     /*!
      * \brief Get the coefficients of intermidiate slopes in the formula.
@@ -82,41 +205,7 @@ public:
      * \return Coefficients.
      */
     static auto slope_coeffs() -> Eigen::Matrix<scalar_type, 3, 3> {
-        using std::sqrt;
-        Eigen::Matrix<scalar_type, 3, 3> coeffs;
-        coeffs(0, 0) = (static_cast<scalar_type>(88) -
-                           static_cast<scalar_type>(7) *
-                               sqrt(static_cast<scalar_type>(6))) /
-            static_cast<scalar_type>(360);
-        coeffs(0, 1) = (static_cast<scalar_type>(296) -
-                           static_cast<scalar_type>(169) *
-                               sqrt(static_cast<scalar_type>(6))) /
-            static_cast<scalar_type>(1800);
-        coeffs(0, 2) = (static_cast<scalar_type>(-2) +
-                           static_cast<scalar_type>(3) *
-                               sqrt(static_cast<scalar_type>(6))) /
-            static_cast<scalar_type>(225);
-        coeffs(1, 0) = (static_cast<scalar_type>(296) +
-                           static_cast<scalar_type>(169) *
-                               sqrt(static_cast<scalar_type>(6))) /
-            static_cast<scalar_type>(1800);
-        coeffs(1, 1) = (static_cast<scalar_type>(88) +
-                           static_cast<scalar_type>(7) *
-                               sqrt(static_cast<scalar_type>(6))) /
-            static_cast<scalar_type>(360);
-        coeffs(1, 2) = (static_cast<scalar_type>(-2) -
-                           static_cast<scalar_type>(3) *
-                               sqrt(static_cast<scalar_type>(6))) /
-            static_cast<scalar_type>(225);
-        coeffs(2, 0) =
-            (static_cast<scalar_type>(16) - sqrt(static_cast<scalar_type>(6))) /
-            static_cast<scalar_type>(36);
-        coeffs(2, 1) =
-            (static_cast<scalar_type>(16) + sqrt(static_cast<scalar_type>(6))) /
-            static_cast<scalar_type>(36);
-        coeffs(2, 2) =
-            static_cast<scalar_type>(1) / static_cast<scalar_type>(9);
-        return coeffs;
+        return impl::radau2a5_coefficients<scalar_type>::slope_coeffs();
     }
 
     /*!
@@ -125,16 +214,7 @@ public:
      * \return Coefficients.
      */
     static auto time_coeffs() -> Eigen::Vector3<scalar_type> {
-        using std::sqrt;
-        Eigen::Vector3<scalar_type> coeffs;
-        coeffs(0) =
-            (static_cast<scalar_type>(4) - sqrt(static_cast<scalar_type>(6))) /
-            static_cast<scalar_type>(10);
-        coeffs(1) =
-            (static_cast<scalar_type>(4) + sqrt(static_cast<scalar_type>(6))) /
-            static_cast<scalar_type>(10);
-        coeffs(2) = static_cast<scalar_type>(1);
-        return coeffs;
+        return impl::radau2a5_coefficients<scalar_type>::time_coeffs();
     }
 
     /*!
@@ -143,16 +223,7 @@ public:
      * \return Coefficients.
      */
     static auto update_coeffs() -> Eigen::Vector3<scalar_type> {
-        using std::sqrt;
-        Eigen::Vector3<scalar_type> coeffs;
-        coeffs(0) =
-            (static_cast<scalar_type>(16) - sqrt(static_cast<scalar_type>(6))) /
-            static_cast<scalar_type>(36);
-        coeffs(1) =
-            (static_cast<scalar_type>(16) + sqrt(static_cast<scalar_type>(6))) /
-            static_cast<scalar_type>(36);
-        coeffs(2) = static_cast<scalar_type>(1) / static_cast<scalar_type>(9);
-        return coeffs;
+        return impl::radau2a5_coefficients<scalar_type>::update_coeffs();
     }
 
     //! \copydoc ode::formula_base::step
@@ -224,7 +295,7 @@ private:
 
     //! Solver of the implicit formula.
     formula_solver_type formula_solver_{
-        slope_coeffs(), time_coeffs(), update_coeffs()};
+        impl::radau2a5_coefficients<scalar_type>::formula_solver_data()};
 
     //! Intermidiate updates.
     update_vector_type updates_;
