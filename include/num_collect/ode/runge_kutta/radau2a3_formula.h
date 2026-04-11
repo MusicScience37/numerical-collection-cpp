@@ -28,10 +28,85 @@
 #include "num_collect/ode/concepts/differentiable_problem.h"
 #include "num_collect/ode/formula_base.h"
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
-#include "num_collect/ode/runge_kutta/inexact_newton_full_update_equation_solver.h"
+#include "num_collect/ode/runge_kutta/inexact_newton_decomposed_full_update_equation_solver.h"
 #include "num_collect/ode/simple_solver.h"
 
 namespace num_collect::ode::runge_kutta {
+
+namespace impl {
+
+/*!
+ * \brief Coefficients in Radau IIA method of order 3 \cite Hairer1991.
+ *
+ * \tparam Scalar Type of scalars.
+ */
+template <base::concepts::real_scalar Scalar>
+struct radau2a3_coefficients {
+    //! Type of scalars.
+    using scalar_type = Scalar;
+
+    //! Number of stages.
+    static constexpr index_type stages = 2;
+
+    /*!
+     * \brief Get the coefficients of intermidiate slopes in the formula.
+     *
+     * \return Coefficients.
+     */
+    static auto slope_coeffs() -> Eigen::Matrix<scalar_type, 2, 2> {
+        Eigen::Matrix<scalar_type, 2, 2> coeffs{};
+        coeffs(0, 0) =
+            static_cast<scalar_type>(5) / static_cast<scalar_type>(12);
+        coeffs(0, 1) =
+            static_cast<scalar_type>(-1) / static_cast<scalar_type>(12);
+        coeffs(1, 0) =
+            static_cast<scalar_type>(3) / static_cast<scalar_type>(4);
+        coeffs(1, 1) =
+            static_cast<scalar_type>(1) / static_cast<scalar_type>(4);
+        return coeffs;
+    }
+
+    /*!
+     * \brief Get the coefficients of time in the formula.
+     *
+     * \return Coefficients.
+     */
+    static auto time_coeffs() -> Eigen::Vector2<scalar_type> {
+        Eigen::Vector2<scalar_type> coeffs{};
+        coeffs(0) = static_cast<scalar_type>(1) / static_cast<scalar_type>(3);
+        coeffs(1) = static_cast<scalar_type>(1);
+        return coeffs;
+    }
+
+    /*!
+     * \brief Get the coefficients of intermidiate updates in the formula.
+     *
+     * \return Coefficients.
+     */
+    static auto update_coeffs() -> Eigen::Vector2<scalar_type> {
+        Eigen::Vector2<scalar_type> coeffs{};
+        coeffs(0) = static_cast<scalar_type>(3) / static_cast<scalar_type>(4);
+        coeffs(1) = static_cast<scalar_type>(1) / static_cast<scalar_type>(4);
+        return coeffs;
+    }
+
+    /*!
+     * \brief Get the data for
+     * inexact_newton_decomposed_full_update_equation_solver class.
+     *
+     * \return Data.
+     */
+    static auto formula_solver_data()
+        -> inexact_newton_decomposed_full_update_equation_solver_data<
+            scalar_type, stages> {
+        static const inexact_newton_decomposed_full_update_equation_solver_data<
+            scalar_type, stages>
+            data{slope_coeffs(), time_coeffs(), update_coeffs()};
+        return data;
+    };
+};
+
+}  // namespace impl
 
 /*!
  * \brief Class of Radau IIA method of order 3 \cite Hairer1991.
@@ -72,7 +147,7 @@ public:
 
     //! Type of the solver of the implicit formula.
     using formula_solver_type =
-        inexact_newton_full_update_equation_solver<Problem, stages>;
+        inexact_newton_decomposed_full_update_equation_solver<Problem, stages>;
 
     /*!
      * \brief Get the coefficients of intermidiate slopes in the formula.
@@ -80,12 +155,7 @@ public:
      * \return Coefficients.
      */
     static auto slope_coeffs() -> Eigen::Matrix<scalar_type, 2, 2> {
-        Eigen::Matrix<scalar_type, 2, 2> coeffs{};
-        coeffs(0, 0) = coeff(5, 12);
-        coeffs(0, 1) = coeff(-1, 12);
-        coeffs(1, 0) = coeff(3, 4);
-        coeffs(1, 1) = coeff(1, 4);
-        return coeffs;
+        return impl::radau2a3_coefficients<scalar_type>::slope_coeffs();
     }
 
     /*!
@@ -94,10 +164,7 @@ public:
      * \return Coefficients.
      */
     static auto time_coeffs() -> Eigen::Vector2<scalar_type> {
-        Eigen::Vector2<scalar_type> coeffs{};
-        coeffs(0) = coeff(1, 3);
-        coeffs(1) = coeff(1, 1);
-        return coeffs;
+        return impl::radau2a3_coefficients<scalar_type>::time_coeffs();
     }
 
     /*!
@@ -106,10 +173,7 @@ public:
      * \return Coefficients.
      */
     static auto update_coeffs() -> Eigen::Vector2<scalar_type> {
-        Eigen::Vector2<scalar_type> coeffs{};
-        coeffs(0) = coeff(3, 4);
-        coeffs(1) = coeff(1, 4);
-        return coeffs;
+        return impl::radau2a3_coefficients<scalar_type>::update_coeffs();
     }
 
     //! \copydoc ode::formula_base::step
@@ -181,7 +245,7 @@ private:
 
     //! Solver of the implicit formula.
     formula_solver_type formula_solver_{
-        slope_coeffs(), time_coeffs(), update_coeffs()};
+        impl::radau2a3_coefficients<scalar_type>::formula_solver_data()};
 
     //! Intermidiate updates.
     update_vector_type updates_;
