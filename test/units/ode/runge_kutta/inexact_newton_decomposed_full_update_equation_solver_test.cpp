@@ -140,7 +140,7 @@ TEST_CASE(
         comparison_approvals::verify_with_reference(actual, reference);
     }
 
-    SECTION("solve a multi-variate problem without mass, with dense Jacobian") {
+    SECTION("solve a multi-variate problem without mass (dense)") {
         using problem_type = num_prob_collect::ode::spring_movement_problem;
         using formula_type = radau2a5_formula<problem_type>;
         using solver_type =
@@ -169,7 +169,7 @@ TEST_CASE(
         comparison_approvals::verify_with_reference(actual, reference);
     }
 
-    SECTION("solve a multi-variate problem with mass, with dense Jacobian") {
+    SECTION("solve a multi-variate problem with mass (dense)") {
         using problem_type = num_prob_collect::ode::implicit_kaps_problem;
         using formula_type = radau2a5_formula<problem_type>;
         using solver_type =
@@ -199,8 +199,7 @@ TEST_CASE(
         comparison_approvals::verify_with_reference(actual, reference);
     }
 
-    SECTION(
-        "solve a multi-variate problem without mass, with sparse Jacobian") {
+    SECTION("solve a multi-variate problem without mass (sparse)") {
         using vector_type = Eigen::VectorXd;
         using matrix_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
         using problem_type =
@@ -275,7 +274,7 @@ TEST_CASE(
         comparison_approvals::verify_with_reference(actual, reference);
     }
 
-    SECTION("solve a multi-variate problem with mass, with sparse Jacobian") {
+    SECTION("solve a multi-variate problem with mass (sparse)") {
         using vector_type = Eigen::VectorXd;
         using matrix_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
         using problem_type =
