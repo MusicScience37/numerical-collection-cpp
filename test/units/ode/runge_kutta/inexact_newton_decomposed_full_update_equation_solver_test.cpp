@@ -199,7 +199,8 @@ TEST_CASE(
         comparison_approvals::verify_with_reference(actual, reference);
     }
 
-    SECTION("solve a multi-variate problem without mass (sparse)") {
+    // This name is made short due to the limitation of Windows.
+    SECTION("solve a multi-variate without mass sparse") {
         using vector_type = Eigen::VectorXd;
         using matrix_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
         using problem_type =
