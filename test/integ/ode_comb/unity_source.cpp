@@ -7,6 +7,7 @@
 #include "external_force_vibration_problem.h/non_embedded.cpp"
 #include "implicit_exponential/embedded.cpp"
 #include "implicit_kaps/embedded.cpp"
+#include "implicit_kaps/wrapped_non_embedded.cpp"
 #include "no_jacobian_implicit_kaps_problem/embedded.cpp"
 #include "spring_movement/embedded.cpp"
 #include "spring_movement/non_embedded.cpp"

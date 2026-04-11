@@ -429,7 +429,17 @@ namespace num_collect {
          */
 
         //! Namespace of Runge-Kutta method.
-        namespace runge_kutta {}
+        namespace runge_kutta {
+
+            /*!
+             * \dir num_collect/ode/runge_kutta/impl
+             * \brief Directory of internal implementations.
+             */
+
+            //! Namespace of internal implementations.
+            namespace impl {}
+
+        }  // namespace runge_kutta
 
         /*!
          * \dir num_collect/ode/rosenbrock
