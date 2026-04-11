@@ -25,7 +25,8 @@
 #include <concepts>
 #include <type_traits>
 
-#include "num_collect/base/concepts/dense_vector_of.h"
+#include <Eigen/Core>
+
 #include "num_collect/base/exception.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/ode/concepts/differentiable_problem.h"
@@ -168,13 +169,16 @@ public:
      * \tparam Rhs Type of the right-hand side.
      * \tparam Solution Type of the solution.
      * \param[in] rhs Right-hand side of the equation.
-     * \param[out] solution Solution.
+     * \param[out] solution_in Solution.
      *
      * \note Vectors must have 2 elements.
      */
-    template <base::concepts::dense_vector_of<scalar_type> Rhs,
-        base::concepts::dense_vector_of<scalar_type> Solution>
-    void solve(const Rhs& rhs, Solution& solution) const {
+    template <typename Rhs, typename Solution>
+    void solve(const Eigen::DenseBase<Rhs>& rhs,
+        const Eigen::DenseBase<Solution>& solution_in) const {
+        // NOLINTNEXTLINE: Eigen's expression requires non-const lvalue for output.
+        auto& solution = const_cast<Eigen::DenseBase<Solution>&>(solution_in);
+
         NUM_COLLECT_DEBUG_ASSERT(rhs.size() == 2);
         NUM_COLLECT_DEBUG_ASSERT(solution.size() == 2);
 
@@ -184,6 +188,28 @@ public:
             coeff_inverse_ * rhs_as_complex;
         solution[0] = solution_as_complex.real();
         solution[1] = solution_as_complex.imag();
+    }
+
+    /*!
+     * \brief Apply the inverse of the eigenvalue.
+     *
+     * \tparam Target Type of the target values.
+     * \param[in,out] target_in Target values. This is the input and the output.
+     */
+    template <typename Target>
+    void apply_eigenvalue_inverse(
+        const Eigen::DenseBase<Target>& target_in) const {
+        // NOLINTNEXTLINE: Eigen's expression requires non-const lvalue for output.
+        auto& target = const_cast<Eigen::DenseBase<Target>&>(target_in);
+
+        NUM_COLLECT_DEBUG_ASSERT(target.size() == 2);
+
+        const scalar_type first = target[0];
+        const scalar_type second = target[1];
+        target[0] = eigenvalue_inverse_conjugate_.real() * first -
+            eigenvalue_inverse_conjugate_.imag() * second;
+        target[1] = eigenvalue_inverse_conjugate_.imag() * first +
+            eigenvalue_inverse_conjugate_.real() * second;
     }
 
     /*!

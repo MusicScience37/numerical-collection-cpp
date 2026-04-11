@@ -150,6 +150,15 @@ public:
     }
 
     /*!
+     * \brief Apply the inverse of the eigenvalue.
+     *
+     * \param[in,out] target Target value. This is the input and the output.
+     */
+    void apply_eigenvalue_inverse(scalar_type& target) const {
+        target /= eigenvalue_;
+    }
+
+    /*!
      * \brief Get the eigenvalue of the coefficients of intermidiate slopes.
      *
      * \return Eigenvalue.
