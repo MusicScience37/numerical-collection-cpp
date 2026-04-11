@@ -105,10 +105,13 @@ TEST_CASE("num_collect::ode::runge_kutta::radau2a5_formula") {
         constexpr double step_size = 1e-2;
         constexpr double prev_var = 1.0;
         double next_var = 0.0;
-        formula.step(time, step_size, prev_var, next_var);
+        double error = 0.0;
+        formula.step_with_error_estimate(
+            time, step_size, prev_var, next_var, error);
 
         const double reference = std::exp(step_size);
-        comparison_approvals::verify_with_reference(next_var, reference);
+        comparison_approvals::verify_with_reference_and_error(
+            next_var, error, reference);
     }
 
     SECTION("step in multi-dimensional problem") {
@@ -120,10 +123,13 @@ TEST_CASE("num_collect::ode::runge_kutta::radau2a5_formula") {
         constexpr double step_size = 1e-2;
         const Eigen::Vector2d prev_var(1.0, 0.0);
         Eigen::Vector2d next_var;
-        formula.step(time, step_size, prev_var, next_var);
+        Eigen::Vector2d error;
+        formula.step_with_error_estimate(
+            time, step_size, prev_var, next_var, error);
 
         const Eigen::Vector2d reference =
             Eigen::Vector2d(std::cos(step_size), std::sin(step_size));
-        comparison_approvals::verify_with_reference(next_var, reference);
+        comparison_approvals::verify_with_reference_and_error(
+            next_var, error, reference);
     }
 }

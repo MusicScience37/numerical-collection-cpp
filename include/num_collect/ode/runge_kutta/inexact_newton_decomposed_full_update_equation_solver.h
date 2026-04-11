@@ -593,8 +593,18 @@ public:
      *
      * \return Solvers of decomposed linear equations.
      */
-    [[nodiscard]] auto decomposed_solvers() const
+    [[nodiscard]] auto decomposed_solvers() const noexcept
         -> const util::vector<decomposed_solver_type>& {
+        return decomposed_solvers_;
+    }
+
+    /*!
+     * \brief Get the solvers of decomposed linear equations.
+     *
+     * \return Solvers of decomposed linear equations.
+     */
+    [[nodiscard]] auto decomposed_solvers() noexcept
+        -> util::vector<decomposed_solver_type>& {
         return decomposed_solvers_;
     }
 
@@ -1029,8 +1039,18 @@ public:
      *
      * \return Solvers of decomposed linear equations.
      */
-    [[nodiscard]] auto decomposed_solvers() const
+    [[nodiscard]] auto decomposed_solvers() const noexcept
         -> const util::vector<decomposed_solver_type>& {
+        return decomposed_solvers_;
+    }
+
+    /*!
+     * \brief Get the solvers of decomposed linear equations.
+     *
+     * \return Solvers of decomposed linear equations.
+     */
+    [[nodiscard]] auto decomposed_solvers() noexcept
+        -> util::vector<decomposed_solver_type>& {
         return decomposed_solvers_;
     }
 
