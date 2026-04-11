@@ -205,11 +205,7 @@ TEST_CASE(
         using problem_type =
             num_collect::ode::problems::linear_first_order_ode_problem<
                 vector_type, matrix_type>;
-        using formula_type =
-            // TODO Update the formula type to use the correct problem type.
-            // Currently, the formula does not support the actual problem, and
-            // results in compile errors.
-            radau2a5_formula<num_prob_collect::ode::exponential_problem>;
+        using formula_type = radau2a5_formula<problem_type>;
         using solver_type =
             inexact_newton_decomposed_full_update_equation_solver<problem_type,
                 formula_type::stages>;
@@ -280,11 +276,7 @@ TEST_CASE(
         using problem_type =
             num_collect::ode::problems::linear_first_order_dae_problem<
                 vector_type, matrix_type>;
-        using formula_type =
-            // TODO Update the formula type to use the correct problem type.
-            // Currently, the formula does not support the actual problem, and
-            // results in compile errors.
-            radau2a5_formula<num_prob_collect::ode::exponential_problem>;
+        using formula_type = radau2a5_formula<problem_type>;
         using solver_type =
             inexact_newton_decomposed_full_update_equation_solver<problem_type,
                 formula_type::stages>;
