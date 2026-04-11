@@ -23,11 +23,19 @@
 #include <cmath>
 #include <type_traits>
 
+#include <Eigen/Core>
+#include <Eigen/IterativeLinearSolvers>
+#include <Eigen/LU>
+
+#include "num_collect/base/concepts/dense_matrix.h"
 #include "num_collect/base/concepts/real_scalar.h"
+#include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/exception.h"
+#include "num_collect/base/index_type.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/ode/concepts/differentiable_problem.h"
 #include "num_collect/ode/concepts/mass_problem.h"
+#include "num_collect/ode/concepts/multi_variate_differentiable_problem.h"
 #include "num_collect/ode/concepts/single_variate_differentiable_problem.h"
 #include "num_collect/util/assert.h"
 
@@ -173,6 +181,249 @@ private:
 
     //! Inverse of the coefficient of the linear equation.
     scalar_type coeff_inverse_{};
+};
+
+/*!
+ * \brief Class to solve solve equations of decomposed Jacobians in inexact
+ * Newton method of implicit Runge-Kutta methods for real eigenvalues.
+ *
+ * \tparam Problem Type of the problem.
+ *
+ * This class solves equations of the following coefficient matrix:
+ *
+ * \f[
+ * h^{-1} \gamma^{-1} M - J
+ * \f]
+ *
+ * where
+ * - \f$h\f$ is the step size,
+ * - \f$\gamma\f$ is the eigenvalue of the coefficients of intermidiate slopes,
+ * - \f$M\f$ is the mass matrix (identity matrix if the problem is not a mass
+ * problem),
+ * - \f$J\f$ is the Jacobian matrix of the problem.
+ */
+template <concepts::multi_variate_differentiable_problem Problem>
+    requires base::concepts::dense_matrix<typename Problem::jacobian_type>
+class inexact_newton_decomposed_jacobian_real_eigen_solver<Problem> {
+public:
+    //! Type of problem.
+    using problem_type = Problem;
+
+    //! Type of variables.
+    using variable_type = typename problem_type::variable_type;
+
+    //! Type of scalars.
+    using scalar_type = typename problem_type::scalar_type;
+
+    //! Type of Jacobian.
+    using jacobian_type = typename problem_type::jacobian_type;
+
+    static_assert(base::concepts::real_scalar<scalar_type>,
+        "This class only supports real scalars.");
+
+    //! Whether to use mass.
+    static constexpr bool use_mass = concepts::mass_problem<problem_type>;
+
+    /*!
+     * \brief Constructor.
+     *
+     * \param[in] eigenvalue Eigenvalue of the coefficients of intermidiate
+     * slopes.
+     */
+    explicit inexact_newton_decomposed_jacobian_real_eigen_solver(
+        scalar_type eigenvalue)
+        : eigenvalue_(eigenvalue) {}
+
+    /*!
+     * \brief Update Jacobian and internal parameters.
+     *
+     * \param[in] problem Problem.
+     * \param[in] step_size Step size.
+     *
+     * \note Evaluation of the problem is assumed to be already done before
+     * calling this function. This function simply uses the values in the
+     * problem instance.
+     */
+    void update_jacobian(const problem_type& problem, scalar_type step_size) {
+        NUM_COLLECT_DEBUG_ASSERT(step_size != static_cast<scalar_type>(0));
+
+        const index_type dimension = problem.jacobian().rows();
+        if constexpr (use_mass) {
+            coeff_matrix_ = static_cast<scalar_type>(1) /
+                (step_size * eigenvalue_) * problem.mass();
+        } else {
+            coeff_matrix_ = static_cast<scalar_type>(1) /
+                (step_size * eigenvalue_) *
+                jacobian_type::Identity(dimension, dimension);
+        }
+        coeff_matrix_ -= problem.jacobian();
+
+        solver_.compute(coeff_matrix_);
+    }
+
+    /*!
+     * \brief Solve an equation.
+     *
+     * \param[in] rhs Right-hand side of the equation.
+     * \param[out] solution Solution.
+     */
+    void solve(const variable_type& rhs, variable_type& solution) const {
+        solution = solver_.solve(rhs);
+        if (!solution.allFinite()) {
+            NUM_COLLECT_LOG_AND_THROW(
+                algorithm_failure, "Failed to solve an equation.");
+        }
+    }
+
+    /*!
+     * \brief Apply the inverse of the eigenvalue.
+     *
+     * \param[in,out] target Target value. This is the input and the output.
+     */
+    void apply_eigenvalue_inverse(variable_type& target) const {
+        target /= eigenvalue_;
+    }
+
+    /*!
+     * \brief Get the eigenvalue of the coefficients of intermidiate slopes.
+     *
+     * \return Eigenvalue.
+     */
+    [[nodiscard]] auto eigenvalue() const noexcept -> scalar_type {
+        return eigenvalue_;
+    }
+
+private:
+    //! Eigenvalue of the coefficients of intermidiate slopes.
+    scalar_type eigenvalue_;
+
+    //! Buffer of the coefficient matrix.
+    jacobian_type coeff_matrix_{};
+
+    //! Solver of the current coefficient matrix.
+    Eigen::PartialPivLU<jacobian_type> solver_{};
+};
+
+/*!
+ * \brief Class to solve solve equations of decomposed Jacobians in inexact
+ * Newton method of implicit Runge-Kutta methods for real eigenvalues.
+ *
+ * \tparam Problem Type of the problem.
+ *
+ * This class solves equations of the following coefficient matrix:
+ *
+ * \f[
+ * h^{-1} \gamma^{-1} M - J
+ * \f]
+ *
+ * where
+ * - \f$h\f$ is the step size,
+ * - \f$\gamma\f$ is the eigenvalue of the coefficients of intermidiate slopes,
+ * - \f$M\f$ is the mass matrix (identity matrix if the problem is not a mass
+ * problem),
+ * - \f$J\f$ is the Jacobian matrix of the problem.
+ */
+template <concepts::multi_variate_differentiable_problem Problem>
+    requires base::concepts::sparse_matrix<typename Problem::jacobian_type>
+class inexact_newton_decomposed_jacobian_real_eigen_solver<Problem> {
+public:
+    //! Type of problem.
+    using problem_type = Problem;
+
+    //! Type of variables.
+    using variable_type = typename problem_type::variable_type;
+
+    //! Type of scalars.
+    using scalar_type = typename problem_type::scalar_type;
+
+    //! Type of Jacobian.
+    using jacobian_type = typename problem_type::jacobian_type;
+
+    static_assert(base::concepts::real_scalar<scalar_type>,
+        "This class only supports real scalars.");
+
+    //! Whether to use mass.
+    static constexpr bool use_mass = concepts::mass_problem<problem_type>;
+
+    /*!
+     * \brief Constructor.
+     *
+     * \param[in] eigenvalue Eigenvalue of the coefficients of intermidiate
+     * slopes.
+     */
+    explicit inexact_newton_decomposed_jacobian_real_eigen_solver(
+        scalar_type eigenvalue)
+        : eigenvalue_(eigenvalue) {}
+
+    /*!
+     * \brief Update Jacobian and internal parameters.
+     *
+     * \param[in] problem Problem.
+     * \param[in] step_size Step size.
+     *
+     * \note Evaluation of the problem is assumed to be already done before
+     * calling this function. This function simply uses the values in the
+     * problem instance.
+     */
+    void update_jacobian(const problem_type& problem, scalar_type step_size) {
+        NUM_COLLECT_DEBUG_ASSERT(step_size != static_cast<scalar_type>(0));
+
+        const index_type dimension = problem.jacobian().rows();
+        if constexpr (use_mass) {
+            coeff_matrix_ = static_cast<scalar_type>(1) /
+                (step_size * eigenvalue_) * problem.mass();
+        } else {
+            coeff_matrix_.resize(dimension, dimension);
+            coeff_matrix_.setIdentity();
+            coeff_matrix_ *=
+                static_cast<scalar_type>(1) / (step_size * eigenvalue_);
+        }
+        coeff_matrix_ -= problem.jacobian();
+
+        solver_.compute(coeff_matrix_);
+    }
+
+    /*!
+     * \brief Solve an equation.
+     *
+     * \param[in] rhs Right-hand side of the equation.
+     * \param[out] solution Solution.
+     */
+    void solve(const variable_type& rhs, variable_type& solution) const {
+        solution = solver_.solve(rhs);
+        if (!solution.allFinite()) {
+            NUM_COLLECT_LOG_AND_THROW(
+                algorithm_failure, "Failed to solve an equation.");
+        }
+    }
+
+    /*!
+     * \brief Apply the inverse of the eigenvalue.
+     *
+     * \param[in,out] target Target value. This is the input and the output.
+     */
+    void apply_eigenvalue_inverse(variable_type& target) const {
+        target /= eigenvalue_;
+    }
+
+    /*!
+     * \brief Get the eigenvalue of the coefficients of intermidiate slopes.
+     *
+     * \return Eigenvalue.
+     */
+    [[nodiscard]] auto eigenvalue() const noexcept -> scalar_type {
+        return eigenvalue_;
+    }
+
+private:
+    //! Eigenvalue of the coefficients of intermidiate slopes.
+    scalar_type eigenvalue_;
+
+    //! Buffer of the coefficient matrix.
+    jacobian_type coeff_matrix_{};
+
+    //! Solver of the current coefficient matrix.
+    Eigen::BiCGSTAB<jacobian_type> solver_{};
 };
 
 }  // namespace num_collect::ode::runge_kutta::impl
