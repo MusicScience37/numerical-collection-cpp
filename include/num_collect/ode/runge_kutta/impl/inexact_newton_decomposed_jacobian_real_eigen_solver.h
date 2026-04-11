@@ -21,6 +21,7 @@
 #pragma once
 
 #include <cmath>
+#include <memory>
 #include <type_traits>
 
 #include <Eigen/Core>
@@ -264,23 +265,40 @@ public:
     /*!
      * \brief Solve an equation.
      *
+     * \tparam Rhs Type of the right-hand side.
+     * \tparam Solution Type of the solution.
      * \param[in] rhs Right-hand side of the equation.
-     * \param[out] solution Solution.
+     * \param[out] solution_in Solution.
+     *
+     * \note Vectors must have 2 elements.
      */
-    void solve(const variable_type& rhs, variable_type& solution) const {
-        solution = solver_.solve(rhs);
-        if (!solution.allFinite()) {
+    template <typename Rhs, typename Solution>
+    void solve(const Eigen::DenseBase<Rhs>& rhs,
+        const Eigen::DenseBase<Solution>& solution_in) {
+        // NOLINTNEXTLINE: Eigen's expression requires non-const lvalue for output.
+        auto& solution = const_cast<Eigen::DenseBase<Solution>&>(solution_in);
+
+        rhs_buffer_ = rhs;
+        solution_buffer_ = solver_.solve(rhs_buffer_);
+        if (!solution_buffer_.allFinite()) {
             NUM_COLLECT_LOG_AND_THROW(
                 algorithm_failure, "Failed to solve an equation.");
         }
+        solution = solution_buffer_;
     }
 
     /*!
      * \brief Apply the inverse of the eigenvalue.
      *
-     * \param[in,out] target Target value. This is the input and the output.
+     * \tparam Target Type of the target values.
+     * \param[in,out] target_in Target values. This is the input and the output.
      */
-    void apply_eigenvalue_inverse(variable_type& target) const {
+    template <typename Target>
+    void apply_eigenvalue_inverse(
+        const Eigen::DenseBase<Target>& target_in) const {
+        // NOLINTNEXTLINE: Eigen's expression requires non-const lvalue for output.
+        auto& target = const_cast<Eigen::DenseBase<Target>&>(target_in);
+
         target /= eigenvalue_;
     }
 
@@ -302,6 +320,12 @@ private:
 
     //! Solver of the current coefficient matrix.
     Eigen::PartialPivLU<jacobian_type> solver_{};
+
+    //! Buffer of right-hand-side vector for iterative solvers.
+    variable_type rhs_buffer_{};
+
+    //! Buffer of solution vector for iterative solvers.
+    variable_type solution_buffer_{};
 };
 
 /*!
@@ -380,29 +404,45 @@ public:
         }
         coeff_matrix_ -= problem.jacobian();
 
-        solver_.compute(coeff_matrix_);
+        solver_->compute(coeff_matrix_);
     }
 
     /*!
      * \brief Solve an equation.
      *
+     * \tparam Rhs Type of the right-hand side.
+     * \tparam Solution Type of the solution.
      * \param[in] rhs Right-hand side of the equation.
-     * \param[out] solution Solution.
+     * \param[out] solution_in Solution.
+     *
+     * \note Vectors must have 2 elements.
      */
-    void solve(const variable_type& rhs, variable_type& solution) const {
-        solution = solver_.solve(rhs);
-        if (!solution.allFinite()) {
+    template <typename Rhs, typename Solution>
+    void solve(const Eigen::DenseBase<Rhs>& rhs,
+        const Eigen::DenseBase<Solution>& solution_in) {
+        // NOLINTNEXTLINE: Eigen's expression requires non-const lvalue for output.
+        auto& solution = const_cast<Eigen::DenseBase<Solution>&>(solution_in);
+
+        rhs_buffer_ = rhs;
+        solution_buffer_ = solver_->solve(rhs_buffer_);
+        if (!solution_buffer_.allFinite()) {
             NUM_COLLECT_LOG_AND_THROW(
                 algorithm_failure, "Failed to solve an equation.");
         }
+        solution = solution_buffer_;
     }
 
     /*!
      * \brief Apply the inverse of the eigenvalue.
      *
-     * \param[in,out] target Target value. This is the input and the output.
+     * \tparam Target Type of the target values.
+     * \param[in,out] target_in Target values. This is the input and the output.
      */
-    void apply_eigenvalue_inverse(variable_type& target) const {
+    template <typename Target>
+    void apply_eigenvalue_inverse(
+        const Eigen::DenseBase<Target>& target_in) const {
+        // NOLINTNEXTLINE: Eigen's expression requires non-const lvalue for output.
+        auto& target = const_cast<Eigen::DenseBase<Target>&>(target_in);
         target /= eigenvalue_;
     }
 
@@ -423,7 +463,14 @@ private:
     jacobian_type coeff_matrix_{};
 
     //! Solver of the current coefficient matrix.
-    Eigen::BiCGSTAB<jacobian_type> solver_{};
+    std::unique_ptr<Eigen::BiCGSTAB<jacobian_type>> solver_{
+        std::make_unique<Eigen::BiCGSTAB<jacobian_type>>()};
+
+    //! Buffer of right-hand-side vector for iterative solvers.
+    variable_type rhs_buffer_{};
+
+    //! Buffer of solution vector for iterative solvers.
+    variable_type solution_buffer_{};
 };
 
 }  // namespace num_collect::ode::runge_kutta::impl

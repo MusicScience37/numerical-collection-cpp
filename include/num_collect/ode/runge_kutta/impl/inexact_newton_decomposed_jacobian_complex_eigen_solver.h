@@ -23,6 +23,7 @@
 #include <cmath>
 #include <complex>
 #include <concepts>
+#include <memory>
 #include <type_traits>
 
 #include <Eigen/Core>
@@ -529,7 +530,7 @@ public:
         coeff_matrix_ -=
             problem.jacobian().template cast<complex_scalar_type>();
 
-        solver_.compute(coeff_matrix_);
+        solver_->compute(coeff_matrix_);
 
         complex_rhs_.resize(dimension_);
         complex_solution_.resize(dimension_);
@@ -557,7 +558,7 @@ public:
         complex_rhs_.real() = rhs.head(dimension_);
         complex_rhs_.imag() = rhs.tail(dimension_);
 
-        complex_solution_ = solver_.solve(complex_rhs_);
+        complex_solution_ = solver_->solve(complex_rhs_);
 
         solution.head(dimension_) = complex_solution_.real();
         solution.tail(dimension_) = complex_solution_.imag();
@@ -617,7 +618,8 @@ private:
     complex_variable_type complex_solution_{};
 
     //! Solver of the current coefficient matrix.
-    Eigen::BiCGSTAB<complex_jacobian_type> solver_{};
+    std::unique_ptr<Eigen::BiCGSTAB<complex_jacobian_type>> solver_{
+        std::make_unique<Eigen::BiCGSTAB<complex_jacobian_type>>()};
 };
 
 }  // namespace num_collect::ode::runge_kutta::impl
