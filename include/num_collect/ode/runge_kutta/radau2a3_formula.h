@@ -26,8 +26,8 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/concepts/differentiable_problem.h"
-#include "num_collect/ode/formula_base.h"
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
+#include "num_collect/ode/runge_kutta/full_implicit_formula_base.h"
 #include "num_collect/ode/runge_kutta/inexact_newton_decomposed_full_update_equation_solver.h"
 #include "num_collect/ode/simple_solver.h"
 
@@ -118,16 +118,21 @@ struct radau2a3_coefficients {
  */
 template <concepts::differentiable_problem Problem>
 class radau2a3_formula
-    : public formula_base<radau2a3_formula<Problem>, Problem> {
+    : public full_implicit_formula_base<radau2a3_formula<Problem>, Problem,
+          inexact_newton_decomposed_full_update_equation_solver<Problem, 2>> {
 public:
     //! Type of base class.
-    using base_type = formula_base<radau2a3_formula<Problem>, Problem>;
+    using base_type =
+        full_implicit_formula_base<radau2a3_formula<Problem>, Problem,
+            inexact_newton_decomposed_full_update_equation_solver<Problem, 2>>;
 
+    using typename base_type::formula_solver_type;
     using typename base_type::problem_type;
     using typename base_type::scalar_type;
     using typename base_type::variable_type;
 
     using base_type::base_type;
+    using base_type::formula_solver;
     using base_type::problem;
 
 protected:
@@ -143,10 +148,6 @@ public:
     //! Log tag.
     static constexpr auto log_tag = logging::log_tag_view(
         "num_collect::ode::runge_kutta::radau2a3_formula");
-
-    //! Type of the solver of the implicit formula.
-    using formula_solver_type =
-        inexact_newton_decomposed_full_update_equation_solver<Problem, stages>;
 
     /*!
      * \brief Get the coefficients of intermidiate slopes in the formula.
@@ -175,13 +176,23 @@ public:
         return impl::radau2a3_coefficients<scalar_type>::update_coeffs();
     }
 
+    /*!
+     * \brief Constructor.
+     *
+     * \param[in] problem Problem.
+     */
+    explicit radau2a3_formula(const problem_type& problem = problem_type())
+        : base_type(problem,
+              impl::radau2a3_coefficients<scalar_type>::formula_solver_data()) {
+    }
+
     //! \copydoc ode::formula_base::step
     void step(scalar_type time, scalar_type step_size,
         const variable_type& current, variable_type& estimate) {
         updates_.resize(get_size(current) * stages);
         updates_.setZero();
-        formula_solver_.init(problem(), time, step_size, current, updates_);
-        formula_solver_.solve();
+        formula_solver().init(problem(), time, step_size, current, updates_);
+        formula_solver().solve();
         if constexpr (base::concepts::dense_vector<variable_type>) {
             estimate = current + updates_.tail(get_size(current));
         } else {
@@ -189,62 +200,9 @@ public:
         }
     }
 
-    /*!
-     * \brief Get solver of formula.
-     *
-     * \return Solver of formula.
-     */
-    [[nodiscard]] auto formula_solver() -> formula_solver_type& {
-        return formula_solver_;
-    }
-
-    /*!
-     * \brief Get solver of formula.
-     *
-     * \return Solver of formula.
-     */
-    [[nodiscard]] auto formula_solver() const -> const formula_solver_type& {
-        return formula_solver_;
-    }
-
-    /*!
-     * \brief Set the error tolerances.
-     *
-     * \param[in] val Value.
-     * \return This.
-     */
-    auto tolerances(const error_tolerances<variable_type>& val)
-        -> radau2a3_formula& {
-        formula_solver_.tolerances(val);
-        return *this;
-    }
-
-    /*!
-     * \brief Access to the logger.
-     *
-     * \return Logger.
-     */
-    [[nodiscard]] auto logger() const noexcept
-        -> const num_collect::logging::logger& {
-        return formula_solver_.logger();
-    }
-
-    /*!
-     * \brief Access to the logger.
-     *
-     * \return Logger.
-     */
-    [[nodiscard]] auto logger() noexcept -> num_collect::logging::logger& {
-        return formula_solver_.logger();
-    }
-
 private:
     //! Type of the vector of intermidiate updates.
     using update_vector_type = typename formula_solver_type::update_vector_type;
-
-    //! Solver of the implicit formula.
-    formula_solver_type formula_solver_{
-        impl::radau2a3_coefficients<scalar_type>::formula_solver_data()};
 
     //! Intermidiate updates.
     update_vector_type updates_;
