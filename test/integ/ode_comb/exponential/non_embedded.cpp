@@ -25,6 +25,7 @@
 #include "../solve_and_check.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/ode/runge_kutta/implicit_euler_formula.h"
+#include "num_collect/ode/runge_kutta/lobatto3c4_formula.h"
 #include "num_collect/ode/runge_kutta/radau2a3_formula.h"
 #include "num_collect/ode/runge_kutta/radau2a5_formula.h"
 #include "num_collect/ode/runge_kutta/rk4_formula.h"
@@ -33,6 +34,7 @@
 TEMPLATE_PRODUCT_TEST_CASE("exponential_problem with non-embedded formulas", "",
     (num_collect::ode::runge_kutta::implicit_euler_solver,
         num_collect::ode::runge_kutta::rk4_solver,
+        num_collect::ode::runge_kutta::lobatto3c4_solver,
         num_collect::ode::runge_kutta::radau2a3_solver,
         num_collect::ode::runge_kutta::radau2a5_solver),
     (num_prob_collect::ode::exponential_problem)) {

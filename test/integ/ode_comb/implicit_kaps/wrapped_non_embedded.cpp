@@ -31,7 +31,9 @@
 
 TEMPLATE_PRODUCT_TEST_CASE("implicit_kaps_problem with non-embedded formulas",
     "",
-    (num_collect::ode::runge_kutta::radau2a3_auto_solver,
+    (
+        // lobatto3c4_auto_solver took long time, so not included.
+        num_collect::ode::runge_kutta::radau2a3_auto_solver,
         num_collect::ode::runge_kutta::radau2a5_auto_solver),
     (num_prob_collect::ode::implicit_kaps_problem)) {
     using problem_type = num_prob_collect::ode::implicit_kaps_problem;
