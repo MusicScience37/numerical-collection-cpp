@@ -124,9 +124,10 @@ struct lobatto3c4_coefficients {
     static auto formula_solver_data()
         -> inexact_newton_decomposed_full_update_equation_solver_data<
             scalar_type, stages> {
-        static const inexact_newton_decomposed_full_update_equation_solver_data<
-            scalar_type, stages>
-            data{slope_coeffs(), time_coeffs(), update_coeffs()};
+        static const auto data =
+            inexact_newton_decomposed_full_update_equation_solver_data<
+                scalar_type, stages>::from_butcher_tableau(slope_coeffs(),
+                time_coeffs());
         return data;
     };
 };

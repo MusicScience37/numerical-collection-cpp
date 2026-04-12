@@ -61,8 +61,8 @@ STAT_BENCH_CASE("full_update_equation_solver_exponential_problem",
         inexact_newton_decomposed_full_update_equation_solver_data<double,
             formula_type::stages>;
 
-    const solver_data_type data(formula_type::slope_coeffs(),
-        formula_type::time_coeffs(), formula_type::update_coeffs());
+    const solver_data_type data = solver_data_type::from_butcher_tableau(
+        formula_type::slope_coeffs(), formula_type::time_coeffs());
     solver_type solver(data);
 
     problem_type problem;
@@ -115,8 +115,8 @@ STAT_BENCH_CASE("full_update_equation_solver_implicit_kaps_problem",
         inexact_newton_decomposed_full_update_equation_solver_data<double,
             formula_type::stages>;
 
-    const solver_data_type data(formula_type::slope_coeffs(),
-        formula_type::time_coeffs(), formula_type::update_coeffs());
+    const solver_data_type data = solver_data_type::from_butcher_tableau(
+        formula_type::slope_coeffs(), formula_type::time_coeffs());
     solver_type solver(data);
 
     constexpr double epsilon = 0.1;

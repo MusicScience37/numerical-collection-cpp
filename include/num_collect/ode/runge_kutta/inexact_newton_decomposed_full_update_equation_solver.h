@@ -86,20 +86,35 @@ public:
     /*!
      * \brief Constructor.
      *
+     * \param[in] time_coeffs Coefficients of time in the formula.
+     * \param[in] block_diagonal_matrix Block-diagonal matrix in eigenvalue
+     * decomposition.
+     * \param[in] eigenvectors Eigenvectors in eigenvalue decomposition.
+     * \param[in] eigenvectors_inverse Inverse of eigenvectors in eigenvalue
+     * decomposition.
+     */
+    inexact_newton_decomposed_full_update_equation_solver_data(
+        const update_coeff_vector_type& time_coeffs,
+        const slope_coeff_matrix_type& block_diagonal_matrix,
+        const slope_coeff_matrix_type& eigenvectors,
+        const slope_coeff_matrix_type& eigenvectors_inverse)
+        : time_coeffs_(time_coeffs),
+          block_diagonal_matrix_(block_diagonal_matrix),
+          eigenvectors_(eigenvectors),
+          eigenvectors_inverse_(eigenvectors_inverse) {}
+
+    /*!
+     * \brief Generate data from coefficients in Butcher tableau.
+     *
      * \param[in] slope_coeffs Coefficients of intermidiate slopes in the
      * formula.
      * \param[in] time_coeffs Coefficients of time in the formula.
-     * \param[in] update_coeffs Coefficients of intermidiate updates in the
-     * formula.
+     * \return Data.
      */
-    inexact_newton_decomposed_full_update_equation_solver_data(
+    static auto from_butcher_tableau(
         const slope_coeff_matrix_type& slope_coeffs,
-        const update_coeff_vector_type& time_coeffs,
-        const update_coeff_vector_type& update_coeffs)
-        : slope_coeffs_(slope_coeffs),
-          time_coeffs_(time_coeffs),
-          update_coeffs_(update_coeffs) {
-        Eigen::EigenSolver<slope_coeff_matrix_type> eigen_solver(slope_coeffs_);
+        const update_coeff_vector_type& time_coeffs) {
+        Eigen::EigenSolver<slope_coeff_matrix_type> eigen_solver(slope_coeffs);
         const bool is_coeffs_invertible =
             (eigen_solver.eigenvalues().array().abs() >
                 std::numeric_limits<scalar_type>::epsilon())
@@ -109,26 +124,23 @@ public:
                 "Coefficients of intermidiate slopes are not invertible.");
         }
 
-        block_diagonal_matrix_ = eigen_solver.pseudoEigenvalueMatrix();
-        eigenvectors_ = eigen_solver.pseudoEigenvectors();
+        slope_coeff_matrix_type block_diagonal_matrix =
+            eigen_solver.pseudoEigenvalueMatrix();
+        slope_coeff_matrix_type eigenvectors =
+            eigen_solver.pseudoEigenvectors();
 
-        Eigen::FullPivLU<slope_coeff_matrix_type> eigenvectors_lu(
-            eigenvectors_);
+        Eigen::FullPivLU<slope_coeff_matrix_type> eigenvectors_lu(eigenvectors);
         if (!eigenvectors_lu.isInvertible()) {
             NUM_COLLECT_LOG_AND_THROW(algorithm_failure,
                 "Eigenvectors of coefficients of intermidiate slopes are not "
                 "invertible.");
         }
-        eigenvectors_inverse_ = eigenvectors_lu.inverse();
-    }
+        slope_coeff_matrix_type eigenvectors_inverse =
+            eigenvectors_lu.inverse();
 
-    /*!
-     * \brief Get the coefficients of intermidiate slopes.
-     *
-     * \return Coefficients of intermidiate slopes.
-     */
-    [[nodiscard]] auto slope_coeffs() const -> const slope_coeff_matrix_type& {
-        return slope_coeffs_;
+        return inexact_newton_decomposed_full_update_equation_solver_data(
+            time_coeffs, block_diagonal_matrix, eigenvectors,
+            eigenvectors_inverse);
     }
 
     /*!
@@ -138,16 +150,6 @@ public:
      */
     [[nodiscard]] auto time_coeffs() const -> const update_coeff_vector_type& {
         return time_coeffs_;
-    }
-
-    /*!
-     * \brief Get the coefficients of intermidiate updates.
-     *
-     * \return Coefficients of intermidiate updates.
-     */
-    [[nodiscard]] auto update_coeffs() const
-        -> const update_coeff_vector_type& {
-        return update_coeffs_;
     }
 
     /*!
@@ -180,14 +182,8 @@ public:
     }
 
 private:
-    //! Coefficients of intermidiate slopes.
-    slope_coeff_matrix_type slope_coeffs_;
-
     //! Coefficients of time.
     update_coeff_vector_type time_coeffs_;
-
-    //! Coefficients of intermidiate updates.
-    update_coeff_vector_type update_coeffs_;
 
     //! Block-diagonal matrix in eigenvalue decomposition.
     slope_coeff_matrix_type block_diagonal_matrix_{};
@@ -367,9 +363,7 @@ public:
               inexact_newton_decomposed_full_update_equation_solver<Problem,
                   NumStages>>(
               inexact_newton_decomposed_full_update_equation_solver_tag),
-          slope_coeffs_(data.slope_coeffs()),
           time_coeffs_(data.time_coeffs()),
-          update_coeffs_(data.update_coeffs()),
           decomposed_solvers_(
               impl::generate_decomposed_solver_type<problem_type>(data)),
           slope_coeffs_eigenvectors_(data.eigenvectors()),
@@ -609,14 +603,8 @@ public:
     }
 
 private:
-    //! Coefficients of intermidiate slopes.
-    slope_coeff_matrix_type slope_coeffs_;
-
     //! Coefficients of time.
     update_coeff_vector_type time_coeffs_;
-
-    //! Coefficients of intermidiate updates.
-    update_coeff_vector_type update_coeffs_;
 
     //! Solvers of decomposed linear equations.
     util::vector<decomposed_solver_type> decomposed_solvers_;
@@ -776,9 +764,7 @@ public:
               inexact_newton_decomposed_full_update_equation_solver<Problem,
                   NumStages>>(
               inexact_newton_decomposed_full_update_equation_solver_tag),
-          slope_coeffs_(data.slope_coeffs()),
           time_coeffs_(data.time_coeffs()),
-          update_coeffs_(data.update_coeffs()),
           decomposed_solvers_(
               impl::generate_decomposed_solver_type<problem_type>(data)),
           slope_coeffs_eigenvectors_(data.eigenvectors()),
@@ -1055,14 +1041,8 @@ public:
     }
 
 private:
-    //! Coefficients of intermidiate slopes.
-    slope_coeff_matrix_type slope_coeffs_;
-
     //! Coefficients of time.
     update_coeff_vector_type time_coeffs_;
-
-    //! Coefficients of intermidiate updates.
-    update_coeff_vector_type update_coeffs_;
 
     //! Solvers of decomposed linear equations.
     util::vector<decomposed_solver_type> decomposed_solvers_;
