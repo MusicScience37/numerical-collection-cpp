@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of radau2a3_formula class.
+ * \brief Definition of lobatto3c4_formula class.
  */
 #pragma once
 
@@ -36,33 +36,46 @@ namespace num_collect::ode::runge_kutta {
 namespace impl {
 
 /*!
- * \brief Coefficients in Radau IIA method of order 3 \cite Hairer1991.
+ * \brief Coefficients in Lobatto IIIC method of order 4 \cite Hairer1991.
  *
  * \tparam Scalar Type of scalars.
  */
 template <base::concepts::real_scalar Scalar>
-struct radau2a3_coefficients {
+struct lobatto3c4_coefficients {
     //! Type of scalars.
     using scalar_type = Scalar;
 
     //! Number of stages.
-    static constexpr index_type stages = 2;
+    static constexpr index_type stages = 3;
 
     /*!
      * \brief Get the coefficients of intermidiate slopes in the formula.
      *
      * \return Coefficients.
      */
-    static auto slope_coeffs() -> Eigen::Matrix<scalar_type, 2, 2> {
-        Eigen::Matrix<scalar_type, 2, 2> coeffs{};
-        coeffs(0, 0) =
-            static_cast<scalar_type>(5) / static_cast<scalar_type>(12);
-        coeffs(0, 1) =
-            static_cast<scalar_type>(-1) / static_cast<scalar_type>(12);
-        coeffs(1, 0) =
-            static_cast<scalar_type>(3) / static_cast<scalar_type>(4);
-        coeffs(1, 1) =
-            static_cast<scalar_type>(1) / static_cast<scalar_type>(4);
+    static auto slope_coeffs() -> Eigen::Matrix<scalar_type, 3, 3> {
+        static const Eigen::Matrix<scalar_type, 3, 3> coeffs = []() {
+            Eigen::Matrix<scalar_type, 3, 3> coeffs;
+            coeffs(0, 0) =
+                static_cast<scalar_type>(1) / static_cast<scalar_type>(6);
+            coeffs(0, 1) =
+                static_cast<scalar_type>(-1) / static_cast<scalar_type>(3);
+            coeffs(0, 2) =
+                static_cast<scalar_type>(1) / static_cast<scalar_type>(6);
+            coeffs(1, 0) =
+                static_cast<scalar_type>(1) / static_cast<scalar_type>(6);
+            coeffs(1, 1) =
+                static_cast<scalar_type>(5) / static_cast<scalar_type>(12);
+            coeffs(1, 2) =
+                static_cast<scalar_type>(-1) / static_cast<scalar_type>(12);
+            coeffs(2, 0) =
+                static_cast<scalar_type>(1) / static_cast<scalar_type>(6);
+            coeffs(2, 1) =
+                static_cast<scalar_type>(2) / static_cast<scalar_type>(3);
+            coeffs(2, 2) =
+                static_cast<scalar_type>(1) / static_cast<scalar_type>(6);
+            return coeffs;
+        }();
         return coeffs;
     }
 
@@ -71,10 +84,15 @@ struct radau2a3_coefficients {
      *
      * \return Coefficients.
      */
-    static auto time_coeffs() -> Eigen::Vector2<scalar_type> {
-        Eigen::Vector2<scalar_type> coeffs{};
-        coeffs(0) = static_cast<scalar_type>(1) / static_cast<scalar_type>(3);
-        coeffs(1) = static_cast<scalar_type>(1);
+    static auto time_coeffs() -> Eigen::Vector3<scalar_type> {
+        static const Eigen::Vector3<scalar_type> coeffs = []() {
+            Eigen::Vector3<scalar_type> coeffs;
+            coeffs(0) = static_cast<scalar_type>(0);
+            coeffs(1) =
+                static_cast<scalar_type>(1) / static_cast<scalar_type>(2);
+            coeffs(2) = static_cast<scalar_type>(1);
+            return coeffs;
+        }();
         return coeffs;
     }
 
@@ -83,10 +101,17 @@ struct radau2a3_coefficients {
      *
      * \return Coefficients.
      */
-    static auto update_coeffs() -> Eigen::Vector2<scalar_type> {
-        Eigen::Vector2<scalar_type> coeffs{};
-        coeffs(0) = static_cast<scalar_type>(3) / static_cast<scalar_type>(4);
-        coeffs(1) = static_cast<scalar_type>(1) / static_cast<scalar_type>(4);
+    static auto update_coeffs() -> Eigen::Vector3<scalar_type> {
+        static const Eigen::Vector3<scalar_type> coeffs = []() {
+            Eigen::Vector3<scalar_type> coeffs;
+            coeffs(0) =
+                static_cast<scalar_type>(1) / static_cast<scalar_type>(6);
+            coeffs(1) =
+                static_cast<scalar_type>(2) / static_cast<scalar_type>(3);
+            coeffs(2) =
+                static_cast<scalar_type>(1) / static_cast<scalar_type>(6);
+            return coeffs;
+        }();
         return coeffs;
     }
 
@@ -110,21 +135,21 @@ struct radau2a3_coefficients {
 }  // namespace impl
 
 /*!
- * \brief Class of Radau IIA method of order 3 \cite Hairer1991.
+ * \brief Class of Lobatto IIIC method of order 4 \cite Hairer1991.
  *
  * \tparam Problem Type of problem.
  *
  * \note This formula does not support changing mass matrix.
  */
 template <concepts::differentiable_problem Problem>
-class radau2a3_formula
-    : public full_implicit_formula_base<radau2a3_formula<Problem>, Problem,
-          inexact_newton_decomposed_full_update_equation_solver<Problem, 2>> {
+class lobatto3c4_formula
+    : public full_implicit_formula_base<lobatto3c4_formula<Problem>, Problem,
+          inexact_newton_decomposed_full_update_equation_solver<Problem, 3>> {
 public:
     //! Type of base class.
     using base_type =
-        full_implicit_formula_base<radau2a3_formula<Problem>, Problem,
-            inexact_newton_decomposed_full_update_equation_solver<Problem, 2>>;
+        full_implicit_formula_base<lobatto3c4_formula<Problem>, Problem,
+            inexact_newton_decomposed_full_update_equation_solver<Problem, 3>>;
 
     using typename base_type::formula_solver_type;
     using typename base_type::problem_type;
@@ -135,27 +160,23 @@ public:
     using base_type::formula_solver;
     using base_type::problem;
 
-protected:
-    using base_type::coeff;
-
-public:
     //! Number of stages of this formula.
-    static constexpr index_type stages = 2;
+    static constexpr index_type stages = 3;
 
     //! Order of this formula.
-    static constexpr index_type order = 3;
+    static constexpr index_type order = 4;
 
     //! Log tag.
     static constexpr auto log_tag = logging::log_tag_view(
-        "num_collect::ode::runge_kutta::radau2a3_formula");
+        "num_collect::ode::runge_kutta::lobatto3c4_formula");
 
     /*!
      * \brief Get the coefficients of intermidiate slopes in the formula.
      *
      * \return Coefficients.
      */
-    static auto slope_coeffs() -> Eigen::Matrix<scalar_type, 2, 2> {
-        return impl::radau2a3_coefficients<scalar_type>::slope_coeffs();
+    static auto slope_coeffs() -> Eigen::Matrix<scalar_type, 3, 3> {
+        return impl::lobatto3c4_coefficients<scalar_type>::slope_coeffs();
     }
 
     /*!
@@ -163,8 +184,8 @@ public:
      *
      * \return Coefficients.
      */
-    static auto time_coeffs() -> Eigen::Vector2<scalar_type> {
-        return impl::radau2a3_coefficients<scalar_type>::time_coeffs();
+    static auto time_coeffs() -> Eigen::Vector3<scalar_type> {
+        return impl::lobatto3c4_coefficients<scalar_type>::time_coeffs();
     }
 
     /*!
@@ -172,8 +193,8 @@ public:
      *
      * \return Coefficients.
      */
-    static auto update_coeffs() -> Eigen::Vector2<scalar_type> {
-        return impl::radau2a3_coefficients<scalar_type>::update_coeffs();
+    static auto update_coeffs() -> Eigen::Vector3<scalar_type> {
+        return impl::lobatto3c4_coefficients<scalar_type>::update_coeffs();
     }
 
     /*!
@@ -181,10 +202,10 @@ public:
      *
      * \param[in] problem Problem.
      */
-    explicit radau2a3_formula(const problem_type& problem = problem_type())
+    explicit lobatto3c4_formula(const problem_type& problem = problem_type())
         : base_type(problem,
-              impl::radau2a3_coefficients<scalar_type>::formula_solver_data()) {
-    }
+              impl::lobatto3c4_coefficients<
+                  scalar_type>::formula_solver_data()) {}
 
     //! \copydoc ode::formula_base::step
     void step(scalar_type time, scalar_type step_size,
@@ -209,21 +230,21 @@ private:
 };
 
 /*!
- * \brief Class of solver using Radau IIA method of order 3.
+ * \brief Class of solver using Lobatto IIIC method of order 4.
  *
  * \tparam Problem Type of problem.
  */
 template <concepts::differentiable_problem Problem>
-using radau2a3_solver = simple_solver<radau2a3_formula<Problem>>;
+using lobatto3c4_solver = simple_solver<lobatto3c4_formula<Problem>>;
 
 /*!
- * \brief Class of solver using Radau IIA method of order 3 with automatic step
- * sizes.
+ * \brief Class of solver using Lobatto IIIC method of order 4 with automatic
+ * step sizes.
  *
  * \tparam Problem Type of problem.
  */
 template <concepts::differentiable_problem Problem>
-using radau2a3_auto_solver =
-    non_embedded_auto_solver<radau2a3_formula<Problem>>;
+using lobatto3c4_auto_solver =
+    non_embedded_auto_solver<lobatto3c4_formula<Problem>>;
 
 }  // namespace num_collect::ode::runge_kutta

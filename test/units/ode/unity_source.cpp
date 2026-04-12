@@ -35,6 +35,8 @@
 #include "runge_kutta/inexact_newton_full_update_equation_solver_test.cpp"
 #include "runge_kutta/inexact_newton_slope_equation_solver_test.cpp"
 #include "runge_kutta/inexact_newton_update_equation_solver_test.cpp"
+#include "runge_kutta/lobatto3c4_formula_test.cpp"
+#include "runge_kutta/lobatto3c6_formula_test.cpp"
 #include "runge_kutta/radau2a3_formula_test.cpp"
 #include "runge_kutta/radau2a5_formula_test.cpp"
 #include "runge_kutta/rk4_formula_test.cpp"

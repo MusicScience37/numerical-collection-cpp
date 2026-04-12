@@ -48,17 +48,15 @@ TEST_CASE(
             radau2a5_formula<num_prob_collect::ode::exponential_problem>;
         const auto& slope_coeffs = formula_type::slope_coeffs();
         const auto& time_coeffs = formula_type::time_coeffs();
-        const auto& update_coeffs = formula_type::update_coeffs();
 
         using data_type =
             inexact_newton_decomposed_full_update_equation_solver_data<double,
                 formula_type::stages>;
-        data_type data(slope_coeffs, time_coeffs, update_coeffs);
+        data_type data =
+            data_type::from_butcher_tableau(slope_coeffs, time_coeffs);
 
         // Inputs.
-        CHECK_THAT(data.slope_coeffs(), eigen_approx(slope_coeffs));
         CHECK_THAT(data.time_coeffs(), eigen_approx(time_coeffs));
-        CHECK_THAT(data.update_coeffs(), eigen_approx(update_coeffs));
 
         // Eigenvectors.
         const Eigen::Matrix3d eigenvectors_inverse_times_eigenvectors =
@@ -94,8 +92,8 @@ TEST_CASE(
                 solver_type::scalar_type, formula_type::stages>;
         using update_type = solver_type::update_vector_type;
 
-        const solver_data_type data(formula_type::slope_coeffs(),
-            formula_type::time_coeffs(), formula_type::update_coeffs());
+        const solver_data_type data = solver_data_type::from_butcher_tableau(
+            formula_type::slope_coeffs(), formula_type::time_coeffs());
         solver_type solver(data);
 
         problem_type problem;
@@ -123,8 +121,8 @@ TEST_CASE(
                 solver_type::scalar_type, formula_type::stages>;
         using update_type = solver_type::update_vector_type;
 
-        const solver_data_type data(formula_type::slope_coeffs(),
-            formula_type::time_coeffs(), formula_type::update_coeffs());
+        const solver_data_type data = solver_data_type::from_butcher_tableau(
+            formula_type::slope_coeffs(), formula_type::time_coeffs());
         solver_type solver(data);
 
         problem_type problem;
@@ -151,8 +149,8 @@ TEST_CASE(
                 solver_type::scalar_type, formula_type::stages>;
         using update_type = solver_type::update_vector_type;
 
-        const solver_data_type data(formula_type::slope_coeffs(),
-            formula_type::time_coeffs(), formula_type::update_coeffs());
+        const solver_data_type data = solver_data_type::from_butcher_tableau(
+            formula_type::slope_coeffs(), formula_type::time_coeffs());
         solver_type solver(data);
 
         problem_type problem;
@@ -180,8 +178,8 @@ TEST_CASE(
                 solver_type::scalar_type, formula_type::stages>;
         using update_type = solver_type::update_vector_type;
 
-        const solver_data_type data(formula_type::slope_coeffs(),
-            formula_type::time_coeffs(), formula_type::update_coeffs());
+        const solver_data_type data = solver_data_type::from_butcher_tableau(
+            formula_type::slope_coeffs(), formula_type::time_coeffs());
         solver_type solver(data);
 
         constexpr double epsilon = 0.1;
@@ -215,8 +213,8 @@ TEST_CASE(
                 solver_type::scalar_type, formula_type::stages>;
         using update_type = solver_type::update_vector_type;
 
-        const solver_data_type data(formula_type::slope_coeffs(),
-            formula_type::time_coeffs(), formula_type::update_coeffs());
+        const solver_data_type data = solver_data_type::from_butcher_tableau(
+            formula_type::slope_coeffs(), formula_type::time_coeffs());
         solver_type solver(data);
 
         static constexpr double diffusion_coeff = 1.0;
@@ -286,8 +284,8 @@ TEST_CASE(
                 solver_type::scalar_type, formula_type::stages>;
         using update_type = solver_type::update_vector_type;
 
-        const solver_data_type data(formula_type::slope_coeffs(),
-            formula_type::time_coeffs(), formula_type::update_coeffs());
+        const solver_data_type data = solver_data_type::from_butcher_tableau(
+            formula_type::slope_coeffs(), formula_type::time_coeffs());
         solver_type solver(data);
 
         static constexpr double diffusion_coeff = 1.0;

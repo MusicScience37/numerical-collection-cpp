@@ -25,13 +25,17 @@
 
 #include "../solve_and_check.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/ode/runge_kutta/lobatto3c6_formula.h"
 #include "num_collect/ode/runge_kutta/radau2a3_formula.h"
 #include "num_collect/ode/runge_kutta/radau2a5_formula.h"
 #include "num_prob_collect/ode/implicit_kaps_problem.h"
 
 TEMPLATE_PRODUCT_TEST_CASE("implicit_kaps_problem with non-embedded formulas",
     "",
-    (num_collect::ode::runge_kutta::radau2a3_auto_solver,
+    (
+        // lobatto3c4_auto_solver took long time, so not included.
+        num_collect::ode::runge_kutta::lobatto3c6_auto_solver,
+        num_collect::ode::runge_kutta::radau2a3_auto_solver,
         num_collect::ode::runge_kutta::radau2a5_auto_solver),
     (num_prob_collect::ode::implicit_kaps_problem)) {
     using problem_type = num_prob_collect::ode::implicit_kaps_problem;
