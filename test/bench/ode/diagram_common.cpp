@@ -64,6 +64,8 @@ auto create_line_dash_map() -> std::unordered_map<std::string, std::string> {
         {"ARK5(4)-ESDIRK", "dot"},
         {"ESDIRK45c", "dot"},
         // Full implicit Runge-Kutta.
+        {"LobattoIIIC4", "longdashdot"},
+        {"LobattoIIIC6", "longdashdot"},
         {"RadauIIA3", "longdashdot"},
         {"RadauIIA5", "longdashdot"},
         // Rosenbrock.
