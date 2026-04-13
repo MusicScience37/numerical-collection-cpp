@@ -515,6 +515,14 @@ namespace num_collect {
     }  // namespace linear
 
     /*!
+     * \dir num_collect/polynomials
+     * \brief Directory of polynomials.
+     */
+
+    //! Namespace of polynomials.
+    namespace polynomials {}
+
+    /*!
      * \dir num_collect/util
      * \brief Directory of utility classes.
      */
