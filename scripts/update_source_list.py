@@ -21,6 +21,7 @@ SOURCE_PATHS = (
             "numbers",
             "ode",
             "opt",
+            "polynomials",
             "rbf",
             "regularization",
             "roots",
