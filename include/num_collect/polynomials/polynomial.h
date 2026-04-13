@@ -74,9 +74,9 @@ public:
      * \param[in] degree Degree of the coefficient.
      * \return Coefficient of the specified degree.
      */
-    [[nodiscard]] auto operator[](std::size_t degree) const noexcept
+    [[nodiscard]] auto operator[](index_type degree) const noexcept
         -> const coeff_type& {
-        NUM_COLLECT_DEBUG_ASSERT(degree < coeffs_.size());
+        NUM_COLLECT_DEBUG_ASSERT(degree >= 0 && degree < coeffs_.size());
         return coeffs_[degree];
     }
 
@@ -86,8 +86,8 @@ public:
      * \param[in] degree Degree of the coefficient.
      * \return Coefficient of the specified degree.
      */
-    [[nodiscard]] auto operator[](std::size_t degree) noexcept -> coeff_type& {
-        NUM_COLLECT_DEBUG_ASSERT(degree < coeffs_.size());
+    [[nodiscard]] auto operator[](index_type degree) noexcept -> coeff_type& {
+        NUM_COLLECT_DEBUG_ASSERT(degree >= 0 && degree < coeffs_.size());
         return coeffs_[degree];
     }
 
@@ -161,14 +161,20 @@ private:
  *
  * \tparam Coeff Type of coefficients.
  * \param[in,out] poly Polynomial to be differentiated.
+ *
+ * \note Empty polynomials will be unchanged.
  */
 template <typename Coeff>
 void differentiate(polynomial<Coeff>& poly) {
     if (poly.degree() < 0) {
         return;
     }
+    if (poly.degree() == 0) {
+        poly[0] = static_cast<Coeff>(0);
+        return;
+    }
     for (index_type i = 1; i < poly.coeffs().size(); ++i) {
-        poly.coeffs()[i - 1] = static_cast<Coeff>(i) * poly.coeffs()[i];
+        poly[i - 1] = static_cast<Coeff>(i) * poly[i];
     }
     poly.coeffs().pop_back();
 }

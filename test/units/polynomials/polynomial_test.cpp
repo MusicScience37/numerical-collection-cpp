@@ -66,13 +66,22 @@ TEST_CASE("num_collect::polynomials::polynomial") {
         CHECK(poly.degree() == 2);
     }
 
-    SECTION("change the degree of a polynomial") {
+    SECTION("decrease the degree of a polynomial") {
         auto poly = polynomial<double>({1.0, 2.0, 3.0});
 
         poly.change_degree(1);
 
         CHECK_THAT(
             poly.coeffs(), Catch::Matchers::RangeEquals(vector{1.0, 2.0}));
+    }
+
+    SECTION("increase the degree of a polynomial") {
+        auto poly = polynomial<float>({0.5F, 1.5F});
+
+        poly.change_degree(3);
+
+        CHECK_THAT(poly.coeffs(),
+            Catch::Matchers::RangeEquals(vector{0.5F, 1.5F, 0.0F, 0.0F}));
     }
 
     SECTION("change the degree of a polynomial to -1") {
@@ -123,5 +132,21 @@ TEST_CASE("num_collect::polynomials::polynomial") {
 
         CHECK_THAT(
             poly.coeffs(), Catch::Matchers::RangeEquals(vector{2.0, 6.0}));
+    }
+
+    SECTION("differentiate a constant") {
+        auto poly = polynomial<float>({5.0F});  // 5
+
+        num_collect::polynomials::differentiate(poly);  // 0
+
+        CHECK_THAT(poly.coeffs(), Catch::Matchers::RangeEquals(vector{0.0F}));
+    }
+
+    SECTION("differentiate an empty polynomial") {
+        auto poly = polynomial<int>({});  // 0
+
+        num_collect::polynomials::differentiate(poly);  // 0
+
+        CHECK(poly.coeffs().empty());
     }
 }
