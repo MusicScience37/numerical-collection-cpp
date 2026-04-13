@@ -103,9 +103,74 @@ public:
         return coeffs_.size() - 1;
     }
 
+    /*!
+     * \brief Change the degree of the polynomial.
+     *
+     * \param[in] new_degree New degree of the polynomial. -1 for the empty
+     * polynomial.
+     */
+    void change_degree(index_type new_degree) {
+        if (new_degree < 0) {
+            coeffs_.clear();
+        } else {
+            coeffs_.resize(new_degree + 1);
+        }
+    }
+
+    /*!
+     * \brief Multiply a polynomial to this polynomial.
+     *
+     * \param[in] rhs Right-hand-side polynomial.
+     * \return This polynomial after multiplication.
+     */
+    auto operator*=(const polynomial& rhs) -> polynomial& {
+        // Multiplication creates a new vector of coefficients,
+        // so implement operator*= in terms of operator*.
+        *this = *this * rhs;
+        return *this;
+    }
+
+    /*!
+     * \brief Multiply a polynomial to this polynomial.
+     *
+     * \param[in] rhs Right-hand-side polynomial.
+     * \return Product of this polynomial and the right-hand-side polynomial.
+     */
+    auto operator*(const polynomial& rhs) const -> polynomial {
+        if (coeffs_.empty() || rhs.coeffs_.empty()) {
+            return polynomial(coeff_vector_type{});
+        }
+        const index_type new_degree = degree() + rhs.degree();
+        coeff_vector_type new_coeffs(
+            new_degree + 1, static_cast<coeff_type>(0));
+        for (index_type i = 0; i < rhs.coeffs_.size(); ++i) {
+            for (index_type j = 0; j < coeffs_.size(); ++j) {
+                new_coeffs[i + j] += rhs.coeffs_[i] * coeffs_[j];
+            }
+        }
+        return polynomial(std::move(new_coeffs));
+    }
+
 private:
     //! Coefficients of the polynomial from the constant term to the highest degree term.
     coeff_vector_type coeffs_;
 };
+
+/*!
+ * \brief Differentiate a polynomial in-place.
+ *
+ * \tparam Coeff Type of coefficients.
+ * \param[in,out] poly Polynomial to be differentiated.
+ */
+template <typename Coeff>
+void differentiate(polynomial<Coeff>& poly) {
+    if (poly.degree() < 0) {
+        return;
+    }
+    for (index_type i = 1; i < poly.coeffs().size(); ++i) {
+        poly.coeffs()[i - 1] = static_cast<Coeff>(i) * poly.coeffs()[i];
+    }
+    poly.coeffs().pop_back();
+}
 
 }  // namespace num_collect::polynomials

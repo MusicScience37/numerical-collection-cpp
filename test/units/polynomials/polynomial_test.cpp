@@ -65,4 +65,63 @@ TEST_CASE("num_collect::polynomials::polynomial") {
 
         CHECK(poly.degree() == 2);
     }
+
+    SECTION("change the degree of a polynomial") {
+        auto poly = polynomial<double>({1.0, 2.0, 3.0});
+
+        poly.change_degree(1);
+
+        CHECK_THAT(
+            poly.coeffs(), Catch::Matchers::RangeEquals(vector{1.0, 2.0}));
+    }
+
+    SECTION("change the degree of a polynomial to -1") {
+        auto poly = polynomial<float>({0.5F, 1.5F});
+
+        poly.change_degree(-1);
+
+        CHECK(poly.coeffs().empty());
+    }
+
+    SECTION("multiply polynomials using operator*") {
+        const auto poly1 = polynomial<int>({1, 2});  // 1 + 2x
+        const auto poly2 = polynomial<int>({3, 4});  // 3 + 4x
+
+        const auto result = poly1 * poly2;  // (1 + 2x)(3 + 4x) = 3 + 10x + 8x^2
+
+        CHECK_THAT(
+            result.coeffs(), Catch::Matchers::RangeEquals(vector{3, 10, 8}));
+    }
+
+    SECTION("multiply polynomials using operator*=") {
+        auto poly1 = polynomial<int>({1, 2});        // 1 + 2x
+        const auto poly2 = polynomial<int>({3, 4});  // 3 + 4x
+
+        poly1 *= poly2;  // (1 + 2x)(3 + 4x) = 3 + 10x + 8x^2
+
+        CHECK_THAT(
+            poly1.coeffs(), Catch::Matchers::RangeEquals(vector{3, 10, 8}));
+    }
+
+    SECTION("multiply an empty polynomial") {
+        const auto empty_poly = polynomial<double>({});
+        const auto poly = polynomial<double>({1.0, 2.0});
+
+        const auto result1 = empty_poly * poly;
+        const auto result2 = poly * empty_poly;
+
+        CHECK(result1.coeffs().empty());
+        CHECK(result2.coeffs().empty());
+    }
+
+    // Free functions.
+
+    SECTION("differentiate a polynomial") {
+        auto poly = polynomial<double>({1.0, 2.0, 3.0});  // 1 + 2x + 3x^2
+
+        num_collect::polynomials::differentiate(poly);  // 2 + 6x
+
+        CHECK_THAT(
+            poly.coeffs(), Catch::Matchers::RangeEquals(vector{2.0, 6.0}));
+    }
 }
