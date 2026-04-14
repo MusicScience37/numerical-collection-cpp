@@ -104,11 +104,11 @@ using scalar_type = num_collect::multi_double::quad;
 }
 
 auto main(int argc, char** argv) -> int {
-    if (argc != 2) {
-        fmt::print(stderr, "Usage: {} <degree>\n", argv[0]);
-        return 1;
+    const char* degree_str = "9";
+    if (argc > 1) {
+        degree_str = argv[1];
     }
-    const num_collect::index_type degree = std::stoi(argv[1]);
+    const num_collect::index_type degree = std::stoi(degree_str);
 
     const auto poly = generate_radau_polynomial(degree);
     const auto time_coeffs = compute_zeros(poly);
