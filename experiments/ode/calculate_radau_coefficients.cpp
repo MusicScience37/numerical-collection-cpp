@@ -20,6 +20,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
+#include <cstdlib>
 #include <string>
 
 #include <Eigen/Core>
@@ -29,7 +30,9 @@
 #include <fmt/ranges.h>
 
 #include "num_collect/base/index_type.h"
+#include "num_collect/polynomials/compute_polynomial_zeros.h"
 #include "num_collect/polynomials/polynomial.h"
+#include "num_collect/util/assert.h"
 #include "num_collect/util/vector.h"
 
 using scalar_type = long double;
@@ -55,17 +58,12 @@ using scalar_type = long double;
 [[nodiscard]] static auto compute_zeros(
     const num_collect::polynomials::polynomial<scalar_type>& poly)
     -> Eigen::VectorX<scalar_type> {
-    const auto& coeffs = poly.coeffs();
-    Eigen::MatrixX<scalar_type> matrix =
-        Eigen::MatrixX<scalar_type>::Zero(coeffs.size() - 1, coeffs.size() - 1);
-    for (num_collect::index_type i = 0; i < coeffs.size() - 1; ++i) {
-        matrix(0, coeffs.size() - 2 - i) = -coeffs[i] / coeffs.back();
+    const auto complex_zeros = num_collect::polynomials::compute_zeros(poly);
+    Eigen::VectorX<scalar_type> zeros(complex_zeros.size());
+    for (num_collect::index_type i = 0; i < complex_zeros.size(); ++i) {
+        NUM_COLLECT_DEBUG_ASSERT(std::abs(complex_zeros[i].imag()) < 1e-10);
+        zeros(i) = complex_zeros[i].real();
     }
-    for (num_collect::index_type i = 1; i < coeffs.size() - 1; ++i) {
-        matrix(i, i - 1) = 1.0;
-    }
-    Eigen::EigenSolver<Eigen::MatrixX<scalar_type>> solver(matrix);
-    Eigen::VectorX<scalar_type> zeros = solver.eigenvalues().real();
     std::sort(zeros.data(), zeros.data() + zeros.size());
     return zeros;
 }
