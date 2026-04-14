@@ -29,13 +29,10 @@
 #include <fmt/ranges.h>
 
 #include "num_collect/base/index_type.h"
-#include "num_collect/multi_double/quad.h"
-#include "num_collect/multi_double/quad_eigen.h"  // IWYU pragma: keep
-#include "num_collect/multi_double/quad_math.h"
 #include "num_collect/polynomials/polynomial.h"
 #include "num_collect/util/vector.h"
 
-using scalar_type = num_collect::multi_double::quad;
+using scalar_type = long double;
 
 [[nodiscard]] static auto generate_radau_polynomial(
     num_collect::index_type degree)
@@ -68,8 +65,7 @@ using scalar_type = num_collect::multi_double::quad;
         matrix(i, i - 1) = 1.0;
     }
     Eigen::EigenSolver<Eigen::MatrixX<scalar_type>> solver(matrix);
-    Eigen::VectorX<scalar_type> zeros =
-        solver.pseudoEigenvalueMatrix().diagonal();
+    Eigen::VectorX<scalar_type> zeros = solver.eigenvalues().real();
     std::sort(zeros.data(), zeros.data() + zeros.size());
     return zeros;
 }
@@ -115,15 +111,13 @@ auto main(int argc, char** argv) -> int {
     const auto slope_coeffs = compute_slope_coeffs(time_coeffs);
     const Eigen::VectorX<scalar_type> update_coeffs =
         slope_coeffs.row(slope_coeffs.rows() - 1).transpose();
-    fmt::print("Time coefficients: [{:.15e}]\n",
-        fmt::join(time_coeffs.cast<double>(), ", "));
+    fmt::print("Time coefficients: [{:.15e}]\n", fmt::join(time_coeffs, ", "));
     fmt::print("Slope coefficients:\n");
     for (num_collect::index_type i = 0; i < slope_coeffs.rows(); ++i) {
-        fmt::print(
-            "[{:.15e}]\n", fmt::join(slope_coeffs.row(i).cast<double>(), ", "));
+        fmt::print("[{:.15e}]\n", fmt::join(slope_coeffs.row(i), ", "));
     }
-    fmt::print("Update coefficients: [{:.15e}]\n",
-        fmt::join(update_coeffs.cast<double>(), ", "));
+    fmt::print(
+        "Update coefficients: [{:.15e}]\n", fmt::join(update_coeffs, ", "));
 
     return 0;
 }
