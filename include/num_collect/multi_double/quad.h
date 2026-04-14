@@ -86,6 +86,15 @@ public:
     [[nodiscard]] constexpr auto low() const noexcept -> double { return low_; }
 
     /*!
+     * \brief Convert to double.
+     *
+     * \return Converted value.
+     */
+    [[nodiscard]] constexpr explicit operator double() const noexcept {
+        return high_;
+    }
+
+    /*!
      * \brief Negate this number.
      *
      * \return Negated number.
