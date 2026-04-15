@@ -126,22 +126,23 @@ For properties of formulas of ODE solvers, see [Properties of Formulas in ODE So
 
 ### Formulas of Runge-Kutta method
 
-| Formula                                              | Class                                                 |
-| :--------------------------------------------------- | :---------------------------------------------------- |
-| ARK4(3)6L[2]SA-ERK formula {cite:p}`Kennedy2003`     | `num_collect::ode::runge_kutta::ark43_erk_formula`    |
-| ARK4(3)6L[2]SA-ESDIRK formula {cite:p}`Kennedy2003`  | `num_collect::ode::runge_kutta::ark43_esdirk_formula` |
-| ARK5(4)8L[2]SA-ESDIRK formula {cite:p}`Kennedy2003`  | `num_collect::ode::runge_kutta::ark54_esdirk_formula` |
-| DOPRI5 formula {cite:p}`Hairer1991`                  | `num_collect::ode::runge_kutta::dopri5_formula`       |
-| ESDIRK45c formula {cite:p}`Jorgensen2018`            | `num_collect::ode::runge_kutta::esdirk45_formula`     |
-| Runge-Kutta 4 (RK4) {cite:p}`Hairer1993`             | `num_collect::ode::runge_kutta::rk4_formula`          |
-| Runge-Kutta-Fehlberg 45 (RKF45) {cite:p}`Hairer1993` | `num_collect::ode::runge_kutta::rkf45_formula`        |
-| 4th order SDIRK {cite:p}`Hairer1991`                 | `num_collect::ode::runge_kutta::sdirk4_formula`       |
-| Tanaka Formula 1 {cite:p}`Togawa2007`                | `num_collect::ode::runge_kutta::tanaka1_formula`      |
-| Tanaka Formula 2 {cite:p}`Togawa2007`                | `num_collect::ode::runge_kutta::tanaka2_formula`      |
-| Radau IIA method of order 3 {cite:p}`Hairer1991`     | `num_collect::ode::runge_kutta::radau2a3_formula`     |
-| Radau IIA method of order 5 {cite:p}`Hairer1991`     | `num_collect::ode::runge_kutta::radau2a5_formula`     |
-| Lobatto IIIC method of order 4 {cite:p}`Hairer1991`  | `num_collect::ode::runge_kutta::lobatto3c4_formula`   |
-| Lobatto IIIC method of order 6 {cite:p}`Hairer1991`  | `num_collect::ode::runge_kutta::lobatto3c6_formula`   |
+| Formula                                               | Class                                                 |
+| :---------------------------------------------------- | :---------------------------------------------------- |
+| ARK4(3)6L[2]SA-ERK formula {cite:p}`Kennedy2003`      | `num_collect::ode::runge_kutta::ark43_erk_formula`    |
+| ARK4(3)6L[2]SA-ESDIRK formula {cite:p}`Kennedy2003`   | `num_collect::ode::runge_kutta::ark43_esdirk_formula` |
+| ARK5(4)8L[2]SA-ESDIRK formula {cite:p}`Kennedy2003`   | `num_collect::ode::runge_kutta::ark54_esdirk_formula` |
+| DOPRI5 formula {cite:p}`Hairer1991`                   | `num_collect::ode::runge_kutta::dopri5_formula`       |
+| ESDIRK45c formula {cite:p}`Jorgensen2018`             | `num_collect::ode::runge_kutta::esdirk45_formula`     |
+| Runge-Kutta 4 (RK4) {cite:p}`Hairer1993`              | `num_collect::ode::runge_kutta::rk4_formula`          |
+| Runge-Kutta-Fehlberg 45 (RKF45) {cite:p}`Hairer1993`  | `num_collect::ode::runge_kutta::rkf45_formula`        |
+| 4th order SDIRK {cite:p}`Hairer1991`                  | `num_collect::ode::runge_kutta::sdirk4_formula`       |
+| Tanaka Formula 1 {cite:p}`Togawa2007`                 | `num_collect::ode::runge_kutta::tanaka1_formula`      |
+| Tanaka Formula 2 {cite:p}`Togawa2007`                 | `num_collect::ode::runge_kutta::tanaka2_formula`      |
+| Radau IIA method of order 3 {cite:p}`Hairer1991`      | `num_collect::ode::runge_kutta::radau2a3_formula`     |
+| Radau IIA method of order 5 {cite:p}`Hairer1991`      | `num_collect::ode::runge_kutta::radau2a5_formula`     |
+| Radau IIA method of other orders {cite:p}`Hairer1991` | `num_collect::ode::runge_kutta::radau2a_formula`      |
+| Lobatto IIIC method of order 4 {cite:p}`Hairer1991`   | `num_collect::ode::runge_kutta::lobatto3c4_formula`   |
+| Lobatto IIIC method of order 6 {cite:p}`Hairer1991`   | `num_collect::ode::runge_kutta::lobatto3c6_formula`   |
 
 ### Formulas of Rosenbrock method
 
@@ -203,6 +204,13 @@ For properties of formulas of ODE solvers, see [Properties of Formulas in ODE So
 | Algorithm                                                   | Class                                     | Matrix Type                        |
 | :---------------------------------------------------------- | :---------------------------------------- | :--------------------------------- |
 | Algebraic multigrid (AMG) preconditioner {cite:p}`Ruge1987` | `num_collect::linear::amg_preconditioner` | Sparse symmetric positive definite |
+
+## Polynomials (`polynomials` Module)
+
+| Algorithm                                | Class                                     |
+| :--------------------------------------- | :---------------------------------------- |
+| Polynomials                              | `num_collect::polynomials::polynomial`    |
+| Zeros of polynomials {cite:p}`Press2007` | `num_collect::polynomials::compute_zeros` |
 
 ## Common Algorithms (`util` Module)
 

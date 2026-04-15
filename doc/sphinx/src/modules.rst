@@ -43,5 +43,8 @@ ode
 linear
     Solvers of linear equations.
 
+polynomials
+    Polynomials and related algorithms.
+
 util
     Utility common in this project.
