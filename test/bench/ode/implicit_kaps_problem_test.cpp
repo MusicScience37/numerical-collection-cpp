@@ -113,9 +113,6 @@ auto main(int argc, char** argv) -> int {
         bench_one<
             num_collect::ode::runge_kutta::radau2a9_auto_solver<problem_type>>(
             "RadauIIA9", epsilon, executor);
-        bench_one<
-            num_collect::ode::runge_kutta::radau2a13_auto_solver<problem_type>>(
-            "RadauIIA13", epsilon, executor);
 
         executor.write_result(problem_name,
             fmt::format("Kaps' problem (epsilon={:.0e})", epsilon),
