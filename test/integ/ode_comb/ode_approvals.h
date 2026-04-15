@@ -160,11 +160,16 @@ private:
             fmt::format_to(
                 std::back_inserter(buffer), "{}_", problem_condition);
         }
-        const std::string_view formula_name =
-            Solver::formula_type::log_tag.name();
+        std::string_view formula_name = Solver::formula_type::log_tag.name();
         if (auto pos = formula_name.find_last_of(':');
             pos != std::string_view::npos) {
-            buffer.append(formula_name.substr(pos + 1U));
+            formula_name = formula_name.substr(pos + 1U);
+            if (formula_name == "radau2a_formula") {
+                fmt::format_to(std::back_inserter(buffer), "radau2a{}_formula",
+                    Solver::formula_type::order);
+            } else {
+                buffer.append(formula_name);
+            }
         } else {
             buffer.append(formula_name);
         }

@@ -225,4 +225,61 @@ template <index_type Stages, concepts::differentiable_problem Problem>
 using radau2a_auto_solver =
     non_embedded_auto_solver<radau2a_formula<Stages, Problem>>;
 
+/*!
+ * \brief Class of solver using Radau IIA method of order 9.
+ *
+ * \tparam Stages Number of stages.
+ * \tparam Problem Type of problem.
+ */
+template <concepts::differentiable_problem Problem>
+using radau2a9_solver = radau2a_solver<5, Problem>;
+
+/*!
+ * \brief Class of solver using Radau IIA method of order 9 with automatic step
+ * sizes.
+ *
+ * \tparam Stages Number of stages.
+ * \tparam Problem Type of problem.
+ */
+template <concepts::differentiable_problem Problem>
+using radau2a9_auto_solver = radau2a_auto_solver<5, Problem>;
+
+/*!
+ * \brief Class of solver using Radau IIA method of order 13.
+ *
+ * \tparam Stages Number of stages.
+ * \tparam Problem Type of problem.
+ */
+template <concepts::differentiable_problem Problem>
+using radau2a13_solver = radau2a_solver<7, Problem>;
+
+/*!
+ * \brief Class of solver using Radau IIA method of order 13 with automatic step
+ * sizes.
+ *
+ * \tparam Stages Number of stages.
+ * \tparam Problem Type of problem.
+ */
+template <concepts::differentiable_problem Problem>
+using radau2a13_auto_solver = radau2a_auto_solver<7, Problem>;
+
+/*!
+ * \brief Class of solver using Radau IIA method of order 17.
+ *
+ * \tparam Stages Number of stages.
+ * \tparam Problem Type of problem.
+ */
+template <concepts::differentiable_problem Problem>
+using radau2a17_solver = radau2a_solver<9, Problem>;
+
+/*!
+ * \brief Class of solver using Radau IIA method of order 17 with automatic step
+ * sizes.
+ *
+ * \tparam Stages Number of stages.
+ * \tparam Problem Type of problem.
+ */
+template <concepts::differentiable_problem Problem>
+using radau2a17_auto_solver = radau2a_auto_solver<9, Problem>;
+
 }  // namespace num_collect::ode::runge_kutta
