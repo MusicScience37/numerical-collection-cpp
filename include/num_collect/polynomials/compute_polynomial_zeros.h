@@ -37,6 +37,8 @@ namespace num_collect::polynomials {
  * \tparam Coeff Type of coefficients.
  * \param[in] poly Polynomial to compute zeros.
  * \return Zeros of the polynomial.
+ *
+ * This functions uses a method of eigenvalues in \cite Press2007.
  */
 template <std::floating_point Coeff>
 [[nodiscard]] auto compute_zeros(const polynomial<Coeff>& poly)
