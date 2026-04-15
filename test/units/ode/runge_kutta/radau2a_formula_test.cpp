@@ -108,13 +108,16 @@ TEST_CASE("num_collect::ode::runge_kutta::radau2a_formula<9>") {
         const auto time_coeffs = formula_type::time_coeffs();
         const auto update_coeffs = formula_type::update_coeffs();
 
+        // Error is large in MSVC.
+        constexpr double tolerance = 1e-10;
         CHECK_THAT(slope_coeffs.row(0).sum(),
-            Catch::Matchers::WithinRel(time_coeffs(0)));
+            Catch::Matchers::WithinRel(time_coeffs(0), tolerance));
         CHECK_THAT(slope_coeffs.row(1).sum(),
-            Catch::Matchers::WithinRel(time_coeffs(1)));
+            Catch::Matchers::WithinRel(time_coeffs(1), tolerance));
         CHECK_THAT(slope_coeffs.row(2).sum(),
-            Catch::Matchers::WithinRel(time_coeffs(2)));
-        CHECK_THAT(update_coeffs.sum(), Catch::Matchers::WithinRel(1.0));
+            Catch::Matchers::WithinRel(time_coeffs(2), tolerance));
+        CHECK_THAT(
+            update_coeffs.sum(), Catch::Matchers::WithinRel(1.0, tolerance));
     }
 
     SECTION("step in one-dimensional problem") {
