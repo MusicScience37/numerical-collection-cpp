@@ -41,7 +41,8 @@
 namespace num_collect::ode::runge_kutta::impl {
 
 /*!
- * \brief Class to hold coefficients in Butcher tableau of Radau IIA method.
+ * \brief Class to hold coefficients in Butcher tableau of Radau IIA method
+ * \cite Hairer1991.
  *
  * \tparam Stages Number of stages.
  */
@@ -76,7 +77,8 @@ public:
      * \return Coefficients.
      */
     template <base::concepts::real_scalar ResultScalar>
-    auto slope_coeffs() const -> Eigen::Matrix<ResultScalar, Stages, Stages> {
+    [[nodiscard]] auto slope_coeffs() const
+        -> Eigen::Matrix<ResultScalar, Stages, Stages> {
         return slope_coeffs_.template cast<ResultScalar>();
     }
 
@@ -87,7 +89,8 @@ public:
      * \return Coefficients.
      */
     template <base::concepts::real_scalar ResultScalar>
-    auto time_coeffs() const -> Eigen::Vector<ResultScalar, Stages> {
+    [[nodiscard]] auto time_coeffs() const
+        -> Eigen::Vector<ResultScalar, Stages> {
         return time_coeffs_.template cast<ResultScalar>();
     }
 
