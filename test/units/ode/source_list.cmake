@@ -41,6 +41,7 @@ set(SOURCE_FILES
     runge_kutta/lobatto3c6_formula_test.cpp
     runge_kutta/radau2a3_formula_test.cpp
     runge_kutta/radau2a5_formula_test.cpp
+    runge_kutta/radau2a_formula_test.cpp
     runge_kutta/rk4_formula_test.cpp
     runge_kutta/rkf45_formula_test.cpp
     runge_kutta/sdirk4_formula_test.cpp

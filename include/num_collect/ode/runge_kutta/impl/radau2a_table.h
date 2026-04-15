@@ -46,7 +46,7 @@ namespace num_collect::ode::runge_kutta::impl {
  *
  * \tparam Stages Number of stages.
  */
-template <num_collect::index_type Stages>
+template <index_type Stages>
 class radau2a_table {
 public:
     //! Type of coefficients in this class.
@@ -111,7 +111,7 @@ constexpr auto radau2a_table_generator_log_tag = logging::log_tag_view(
  *
  * \tparam Stages Number of stages.
  */
-template <num_collect::index_type Stages>
+template <index_type Stages>
 class radau2a_table_generator {
 public:
     // This class does not have non-static members,
@@ -163,10 +163,10 @@ private:
         starting_coefficients.back() = 1.0;
         auto result = num_collect::polynomials::polynomial<scalar_type>(
             std::move(starting_coefficients));
-        for (num_collect::index_type i = 0; i < Stages; ++i) {
+        for (index_type i = 0; i < Stages; ++i) {
             result *= x_minus_one;
         }
-        for (num_collect::index_type i = 0; i < Stages - 1; ++i) {
+        for (index_type i = 0; i < Stages - 1; ++i) {
             num_collect::polynomials::differentiate(result);
         }
         return result;
@@ -184,7 +184,7 @@ private:
         const auto complex_zeros =
             num_collect::polynomials::compute_zeros(poly);
         Eigen::VectorX<scalar_type> zeros(complex_zeros.size());
-        for (num_collect::index_type i = 0; i < complex_zeros.size(); ++i) {
+        for (index_type i = 0; i < complex_zeros.size(); ++i) {
             NUM_COLLECT_DEBUG_ASSERT(std::abs(complex_zeros[i].imag()) < 1e-10);
             zeros(i) = complex_zeros[i].real();
         }
@@ -202,7 +202,7 @@ private:
     [[nodiscard]] static auto compute_slope_coeffs(
         const Eigen::VectorX<scalar_type>& time_coeffs)
         -> Eigen::MatrixX<scalar_type> {
-        const num_collect::index_type stages = time_coeffs.size();
+        const index_type stages = time_coeffs.size();
 
         Eigen::MatrixX<scalar_type> slope_coeffs(stages, stages);
 
@@ -211,13 +211,13 @@ private:
         Eigen::VectorX<scalar_type> equation_solution(stages);
         Eigen::FullPivLU<Eigen::MatrixX<scalar_type>> lu;
         using std::pow;
-        for (num_collect::index_type i = 0; i < stages; ++i) {
-            for (num_collect::index_type q = 0; q < stages; ++q) {
-                for (num_collect::index_type j = 0; j < stages; ++j) {
+        for (index_type i = 0; i < stages; ++i) {
+            for (index_type q = 0; q < stages; ++q) {
+                for (index_type j = 0; j < stages; ++j) {
                     equation_coeff(q, j) = pow(time_coeffs(j), q);
                 }
             }
-            for (num_collect::index_type q = 0; q < stages; ++q) {
+            for (index_type q = 0; q < stages; ++q) {
                 equation_rhs(q) = pow(time_coeffs(i), q + 1) /
                     static_cast<scalar_type>(q + 1);
             }
@@ -237,7 +237,7 @@ private:
  *
  * \note This function caches the generated coefficients.
  */
-template <num_collect::index_type Stages>
+template <index_type Stages>
 [[nodiscard]] auto get_radau2a_table() -> const radau2a_table<Stages>& {
     static const auto table = radau2a_table_generator<Stages>::compute();
     return table;
