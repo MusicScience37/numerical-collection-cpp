@@ -1,0 +1,247 @@
+/*
+ * Copyright 2026 MusicScience37 (Kenta Kabashima)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*!
+ * \file
+ * \brief Definition of radau2a_formula class.
+ */
+#pragma once
+
+#include <Eigen/Core>
+
+#include "num_collect/base/concepts/dense_vector.h"
+#include "num_collect/base/get_size.h"
+#include "num_collect/base/index_type.h"
+#include "num_collect/logging/log_tag_view.h"
+#include "num_collect/ode/concepts/differentiable_problem.h"
+#include "num_collect/ode/non_embedded_formula_wrapper.h"
+#include "num_collect/ode/runge_kutta/full_implicit_formula_base.h"
+#include "num_collect/ode/runge_kutta/impl/radau2a_table.h"
+#include "num_collect/ode/runge_kutta/inexact_newton_decomposed_full_update_equation_solver.h"
+#include "num_collect/ode/simple_solver.h"
+
+namespace num_collect::ode::runge_kutta {
+
+namespace impl {
+
+/*!
+ * \brief Coefficients in Radau IIA method \cite Hairer1991.
+ *
+ * \tparam Stages Number of stages.
+ * \tparam Scalar Type of scalars.
+ */
+template <index_type Stages, base::concepts::real_scalar Scalar>
+struct radau2a_coefficients {
+    //! Type of scalars.
+    using scalar_type = Scalar;
+
+    //! Number of stages.
+    static constexpr index_type stages = Stages;
+
+    /*!
+     * \brief Get the coefficients of intermidiate slopes in the formula.
+     *
+     * \return Coefficients.
+     */
+    static auto slope_coeffs() -> Eigen::Matrix<scalar_type, stages, stages> {
+        static const Eigen::Matrix<scalar_type, stages, stages> coeffs =
+            get_radau2a_table<stages>().template slope_coeffs<scalar_type>();
+        return coeffs;
+    }
+
+    /*!
+     * \brief Get the coefficients of time in the formula.
+     *
+     * \return Coefficients.
+     */
+    static auto time_coeffs() -> Eigen::Vector<scalar_type, stages> {
+        static const Eigen::Vector<scalar_type, stages> coeffs =
+            get_radau2a_table<stages>().template time_coeffs<scalar_type>();
+        return coeffs;
+    }
+
+    /*!
+     * \brief Get the coefficients of intermidiate updates in the formula.
+     *
+     * \return Coefficients.
+     */
+    static auto update_coeffs() -> Eigen::Vector<scalar_type, stages> {
+        static const Eigen::Vector<scalar_type, stages> coeffs =
+            slope_coeffs().row(stages - 1).transpose();
+        return coeffs;
+    }
+
+    /*!
+     * \brief Get the data for
+     * inexact_newton_decomposed_full_update_equation_solver class.
+     *
+     * \return Data.
+     */
+    static auto formula_solver_data()
+        -> inexact_newton_decomposed_full_update_equation_solver_data<
+            scalar_type, stages> {
+        static const auto data =
+            inexact_newton_decomposed_full_update_equation_solver_data<
+                scalar_type, stages>::from_butcher_tableau(slope_coeffs(),
+                time_coeffs());
+        return data;
+    }
+};
+
+}  // namespace impl
+
+/*!
+ * \brief Class of Radau IIA method of \cite Hairer1991.
+ *
+ * \tparam Stages Number of stages.
+ * \tparam Problem Type of problem.
+ *
+ * \note This formula does not support changing mass matrix.
+ */
+template <num_collect::index_type Stages,
+    concepts::differentiable_problem Problem>
+class radau2a_formula
+    : public full_implicit_formula_base<radau2a_formula<Stages, Problem>,
+          Problem,
+          inexact_newton_decomposed_full_update_equation_solver<Problem,
+              Stages>> {
+public:
+    //! Type of base class.
+    using base_type = full_implicit_formula_base<
+        radau2a_formula<Stages, Problem>, Problem,
+        inexact_newton_decomposed_full_update_equation_solver<Problem, Stages>>;
+
+    using typename base_type::formula_solver_type;
+    using typename base_type::problem_type;
+    using typename base_type::scalar_type;
+    using typename base_type::variable_type;
+
+    using base_type::base_type;
+    using base_type::formula_solver;
+    using base_type::problem;
+
+protected:
+    using base_type::coeff;
+
+public:
+    //! Number of stages of this formula.
+    static constexpr index_type stages = Stages;
+
+    //! Order of this formula.
+    static constexpr index_type order = 2 * Stages - 1;
+
+    //! Log tag.
+    static constexpr auto log_tag =
+        logging::log_tag_view("num_collect::ode::runge_kutta::radau2a_formula");
+
+    /*!
+     * \brief Get the coefficients of intermidiate slopes in the formula.
+     *
+     * \return Coefficients.
+     */
+    static auto slope_coeffs() -> Eigen::Matrix<scalar_type, stages, stages> {
+        return impl::radau2a_coefficients<stages, scalar_type>::slope_coeffs();
+    }
+
+    /*!
+     * \brief Get the coefficients of time in the formula.
+     *
+     * \return Coefficients.
+     */
+    static auto time_coeffs() -> Eigen::Vector<scalar_type, stages> {
+        return impl::radau2a_coefficients<stages, scalar_type>::time_coeffs();
+    }
+
+    /*!
+     * \brief Get the coefficients of intermidiate updates in the formula.
+     *
+     * \return Coefficients.
+     */
+    static auto update_coeffs() -> Eigen::Vector<scalar_type, stages> {
+        return impl::radau2a_coefficients<stages, scalar_type>::update_coeffs();
+    }
+
+    /*!
+     * \brief Constructor.
+     *
+     * \param[in] problem Problem.
+     */
+    explicit radau2a_formula(const problem_type& problem)
+        : base_type(problem,
+              impl::radau2a_coefficients<stages,
+                  scalar_type>::formula_solver_data()) {}
+
+    //! \copydoc ode::formula_base::step
+    void step(scalar_type time, scalar_type step_size,
+        const variable_type& current, variable_type& estimate) {
+        updates_.resize(get_size(current) * stages);
+        updates_.setZero();
+        formula_solver().init(problem(), time, step_size, current, updates_);
+        formula_solver().solve();
+        if constexpr (base::concepts::dense_vector<variable_type>) {
+            estimate = current + updates_.tail(get_size(current));
+        } else {
+            estimate = current + updates_(updates_.size() - 1);
+        }
+    }
+
+private:
+    //! Type of the vector of intermidiate updates.
+    using update_vector_type = typename formula_solver_type::update_vector_type;
+
+    //! Intermidiate updates.
+    update_vector_type updates_;
+};
+
+/*!
+ * \brief Class of solver using Radau IIA method.
+ *
+ * \tparam Stages Number of stages.
+ * \tparam Problem Type of problem.
+ */
+template <index_type Stages, concepts::differentiable_problem Problem>
+using radau2a_solver = simple_solver<radau2a_formula<Stages, Problem>>;
+
+/*!
+ * \brief Class of solver using Radau IIA method with automatic step
+ * sizes.
+ *
+ * \tparam Stages Number of stages.
+ * \tparam Problem Type of problem.
+ */
+template <index_type Stages, concepts::differentiable_problem Problem>
+using radau2a_auto_solver =
+    non_embedded_auto_solver<radau2a_formula<Stages, Problem>>;
+
+/*!
+ * \brief Class of solver using Radau IIA method of order 9.
+ *
+ * \tparam Stages Number of stages.
+ * \tparam Problem Type of problem.
+ */
+template <concepts::differentiable_problem Problem>
+using radau2a9_solver = radau2a_solver<5, Problem>;
+
+/*!
+ * \brief Class of solver using Radau IIA method of order 9 with automatic step
+ * sizes.
+ *
+ * \tparam Stages Number of stages.
+ * \tparam Problem Type of problem.
+ */
+template <concepts::differentiable_problem Problem>
+using radau2a9_auto_solver = radau2a_auto_solver<5, Problem>;
+
+}  // namespace num_collect::ode::runge_kutta
