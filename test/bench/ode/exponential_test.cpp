@@ -36,6 +36,10 @@
 #include "num_collect/ode/runge_kutta/ark54_esdirk_formula.h"
 #include "num_collect/ode/runge_kutta/dopri5_formula.h"
 #include "num_collect/ode/runge_kutta/esdirk45_formula.h"
+#include "num_collect/ode/runge_kutta/lobatto3c4_formula.h"
+#include "num_collect/ode/runge_kutta/lobatto3c6_formula.h"
+#include "num_collect/ode/runge_kutta/radau2a3_formula.h"
+#include "num_collect/ode/runge_kutta/radau2a5_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
 #include "num_collect/ode/runge_kutta/sdirk4_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka1_formula.h"
@@ -102,6 +106,18 @@ auto main(int argc, char** argv) -> int {
         "ARK5(4)-ESDIRK", executor);
     bench_one<num_collect::ode::runge_kutta::esdirk45_solver<problem_type>>(
         "ESDIRK45c", executor);
+    bench_one<
+        num_collect::ode::runge_kutta::lobatto3c4_auto_solver<problem_type>>(
+        "LobattoIIIC4", executor);
+    bench_one<
+        num_collect::ode::runge_kutta::lobatto3c6_auto_solver<problem_type>>(
+        "LobattoIIIC6", executor);
+    bench_one<
+        num_collect::ode::runge_kutta::radau2a3_auto_solver<problem_type>>(
+        "RadauIIA3", executor);
+    bench_one<
+        num_collect::ode::runge_kutta::radau2a5_auto_solver<problem_type>>(
+        "RadauIIA5", executor);
     bench_one<num_collect::ode::rosenbrock::ros3w_solver<problem_type>>(
         "ROS3w", executor);
     bench_one<num_collect::ode::rosenbrock::ros34prw_solver<problem_type>>(

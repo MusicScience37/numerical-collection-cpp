@@ -31,6 +31,10 @@
 #include "num_collect/ode/avf/avf2_formula.h"
 #include "num_collect/ode/avf/avf3_formula.h"
 #include "num_collect/ode/avf/avf4_formula.h"
+#include "num_collect/ode/runge_kutta/lobatto3c4_formula.h"
+#include "num_collect/ode/runge_kutta/lobatto3c6_formula.h"
+#include "num_collect/ode/runge_kutta/radau2a3_formula.h"
+#include "num_collect/ode/runge_kutta/radau2a5_formula.h"
 #include "num_collect/ode/runge_kutta/rk4_formula.h"
 #include "num_collect/ode/symplectic/leap_frog_formula.h"
 #include "num_collect/ode/symplectic/symplectic_forest4_formula.h"
@@ -92,6 +96,14 @@ auto main(int argc, char** argv) -> int {
 
     bench_one<num_collect::ode::runge_kutta::rk4_solver<problem_type>>(
         "RK4", executor);
+    bench_one<num_collect::ode::runge_kutta::lobatto3c4_solver<problem_type>>(
+        "LobattoIIIC4", executor);
+    bench_one<num_collect::ode::runge_kutta::lobatto3c6_solver<problem_type>>(
+        "LobattoIIIC6", executor);
+    bench_one<num_collect::ode::runge_kutta::radau2a3_solver<problem_type>>(
+        "RadauIIA3", executor);
+    bench_one<num_collect::ode::runge_kutta::radau2a5_solver<problem_type>>(
+        "RadauIIA5", executor);
     bench_one<num_collect::ode::symplectic::leap_frog_solver<problem_type>>(
         "LeapFrog", executor);
     bench_one<
