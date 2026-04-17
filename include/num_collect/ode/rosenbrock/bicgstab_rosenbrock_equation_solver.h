@@ -26,7 +26,10 @@
 #include <limits>
 #include <optional>
 
+#include <Eigen/IterativeLinearSolvers>
+
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"
+#include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/ode/concepts/mass_problem.h"
 #include "num_collect/ode/concepts/multi_variate_differentiable_problem.h"
@@ -219,6 +222,7 @@ private:
  * This version is used when the problem provides Jacobian matrices.
  */
 template <concepts::multi_variate_differentiable_problem Problem>
+    requires base::concepts::sparse_matrix<typename Problem::jacobian_type>
 class bicgstab_rosenbrock_equation_solver<Problem> {
 public:
     //! Type of problem.
@@ -280,6 +284,8 @@ public:
             coeff_matrix_.setIdentity();
             coeff_matrix_ -= step_size * inverted_jacobian_coeff_ * jacobian_;
         }
+
+        bicgstab_.compute(coeff_matrix_);
     }
 
     /*!
@@ -315,11 +321,7 @@ public:
      * \param[out] result Result.
      */
     void solve(const variable_type& rhs, variable_type& result) {
-        const auto coeff_function = [this](const auto& target, auto& result) {
-            result = coeff_matrix_ * target;
-        };
-        result = variable_type::Zero(rhs.size());
-        bicgstab_.solve(coeff_function, rhs, result);
+        result = bicgstab_.solve(rhs);
     }
 
     /*!
@@ -327,10 +329,13 @@ public:
      *
      * \param[in] val Value.
      * \return This.
+     *
+     * \note This function does nothing because the default values of the
+     * internal BiCGstab solver works well.
      */
     auto tolerances(const error_tolerances<variable_type>& val)
         -> bicgstab_rosenbrock_equation_solver& {
-        bicgstab_.tolerances(val);
+        (void)val;
         return *this;
     }
 
@@ -345,7 +350,7 @@ private:
     jacobian_type coeff_matrix_{};
 
     //! BiCGstab solver.
-    impl::bicgstab<variable_type> bicgstab_{};
+    Eigen::BiCGSTAB<jacobian_type> bicgstab_{};
 
     //! Coefficient multiplied to Jacobian matrices in inverted matrices.
     scalar_type inverted_jacobian_coeff_{static_cast<scalar_type>(1)};
