@@ -35,8 +35,6 @@ For classes implementing formulas, see [Algorithm List](../../algorithm_list.md#
 
 - Order: The order of the formula.
   Two orders separated by a comma indicate that the method is an embedded method.
-  This property is desirable for stiff problems.
-  A formula is L-stable if it is A-stable and stiffly-accurate (converse is not necessarily true).
 
 ## Properties of Implicit Runge-Kutta and Rosenbrock Formulas
 
@@ -66,6 +64,8 @@ For classes implementing formulas, see [Algorithm List](../../algorithm_list.md#
   This property is desirable for stiff problems.
 - B-stable: A-stable and some additional conditions are satisfied.
 - L-stable: A-stable and the stability function goes to zero as the argument goes to infinity.
+  This property is desirable for stiff problems.
+  A formula is L-stable if it is A-stable and stiffly-accurate (converse is not necessarily true).
 - W-method: Approximate Jacobian can be used instead of the exact Jacobian.
   This property only applies to Rosenbrock methods.
 
