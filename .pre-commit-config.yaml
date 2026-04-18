@@ -35,7 +35,6 @@ repos:
         description: Check encoding of files.
         language: system
         entry: poetry run python scripts/check_encoding.py
-        exclude: \.png|\.ico
       - id: black
         name: black
         entry: poetry run black
@@ -69,5 +68,5 @@ repos:
         require_serial: true
         types_or: [python]
         exclude: \.cmake-format\.py|conftest\.py
-# Automatically generated files should not be checked.
-exclude: "\\.approved\\."
+# Automatically generated files and image files should be excluded.
+exclude: "\\.approved\\.|\\.svg$|\\.png$|\\.ico$"

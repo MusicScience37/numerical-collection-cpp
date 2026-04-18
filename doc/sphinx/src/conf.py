@@ -62,6 +62,7 @@ bibtex_default_style = "plain"
 
 html_theme = "sphinx_orange_book_theme"
 html_static_path = ["_static"]
+html_css_files = ["custom.css"]
 html_title = project
 html_favicon = "../../icon_logo/icon.ico"
 html_theme_options = {

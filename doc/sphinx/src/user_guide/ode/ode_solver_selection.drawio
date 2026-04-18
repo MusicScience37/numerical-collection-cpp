@@ -1,0 +1,117 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.6 Chrome/144.0.7559.236 Electron/40.8.4 Safari/537.36" version="29.6.6">
+  <diagram name="ページ-1" id="_6arVYHVUCfbZcRYlSgy">
+    <mxGraphModel dx="1426" dy="841" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Assg0K-hwRIFxURxFfxa-3" edge="1" parent="1" source="95OcW3Vn8EORuKI-x0yr-2" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;fontFamily=Noto Sans;spacing=8;labelBackgroundColor=none;fontColor=default;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=14;fillColor=none;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;" target="95OcW3Vn8EORuKI-x0yr-3" value="Yes">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="746.6666666666665" y="80" as="sourcePoint" />
+            <mxPoint x="853.3333333333335" y="160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7Br2a1tXHeEOhqPw93C9-3" edge="1" parent="1" source="95OcW3Vn8EORuKI-x0yr-2" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;spacing=8;labelBackgroundColor=none;fontColor=default;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=14;fillColor=none;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;" target="95OcW3Vn8EORuKI-x0yr-4" value="No">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="693.3333333333335" y="80" as="sourcePoint" />
+            <mxPoint x="586.6666666666665" y="160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Assg0K-hwRIFxURxFfxa-5" edge="1" parent="1" source="95OcW3Vn8EORuKI-x0yr-3" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Noto Sans;spacing=8;labelBackgroundColor=none;fontColor=default;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=14;fillColor=none;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;" target="Assg0K-hwRIFxURxFfxa-6" value="No">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="887.3333333333335" y="200" as="sourcePoint" />
+            <mxPoint x="836.6666666666665" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7Br2a1tXHeEOhqPw93C9-1" edge="1" parent="1" source="95OcW3Vn8EORuKI-x0yr-3" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;spacing=8;labelBackgroundColor=none;fontColor=default;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=14;fillColor=none;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;" target="Assg0K-hwRIFxURxFfxa-7" value="Yes">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="911.8518518518517" y="200" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Assg0K-hwRIFxURxFfxa-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;spacing=8;fontFamily=Noto Sans;labelBackgroundColor=none;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=14;fillColor=none;" value="&lt;div&gt;Selections&lt;/div&gt;* ESDIRK45c&lt;div&gt;* 4th order SDIRK&lt;/div&gt;&lt;div&gt;* RODASP&lt;/div&gt;&lt;div&gt;* RODASPR&lt;/div&gt;" vertex="1">
+          <mxGeometry height="90" width="140" x="710" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="Assg0K-hwRIFxURxFfxa-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;spacing=8;fontFamily=Noto Sans;labelBackgroundColor=none;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=14;fillColor=none;" value="Selections&lt;div&gt;* 4th order SDIRK&lt;/div&gt;&lt;div&gt;* RODASP&lt;/div&gt;&lt;div&gt;* RODASPR&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="140" x="870" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="7Br2a1tXHeEOhqPw93C9-5" edge="1" parent="1" source="95OcW3Vn8EORuKI-x0yr-4" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;spacing=8;labelBackgroundColor=none;fontColor=default;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=14;fillColor=none;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;" target="95OcW3Vn8EORuKI-x0yr-5" value="No">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="544" y="200" as="sourcePoint" />
+            <mxPoint x="496.8421052631579" y="260" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7Br2a1tXHeEOhqPw93C9-9" edge="1" parent="1" source="95OcW3Vn8EORuKI-x0yr-4" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;spacing=8;labelBackgroundColor=none;fontColor=default;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=14;fillColor=none;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;" target="FN8ENbpYnsnrRpaCpHmf-1" value="Yes">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="567.4418604651164" y="200" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7Br2a1tXHeEOhqPw93C9-11" edge="1" parent="1" source="95OcW3Vn8EORuKI-x0yr-5" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;spacing=8;labelBackgroundColor=none;fontColor=default;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=14;fillColor=none;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;" target="7Br2a1tXHeEOhqPw93C9-8" value="Yes">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="497.8260869565215" y="300" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7Br2a1tXHeEOhqPw93C9-8" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;spacing=8;fontFamily=Noto Sans;labelBackgroundColor=none;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=14;fillColor=none;verticalAlign=middle;labelPosition=center;verticalLabelPosition=middle;" value="Selections&lt;div&gt;* Radau IIA order 5&lt;/div&gt;&lt;div&gt;* RODASP&lt;/div&gt;&lt;div&gt;* RODASPR&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="150" x="220" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="7Br2a1tXHeEOhqPw93C9-12" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;spacing=8;fontFamily=Noto Sans;labelBackgroundColor=none;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=14;fillColor=none;verticalAlign=middle;labelPosition=center;verticalLabelPosition=middle;" value="Selections&lt;div&gt;* RKF45&lt;/div&gt;&lt;div&gt;* DOPRI5&lt;br&gt;*&amp;nbsp;ARK4(3)-ERK&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="140" x="60" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="7Br2a1tXHeEOhqPw93C9-13" edge="1" parent="1" source="95OcW3Vn8EORuKI-x0yr-5" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;spacing=8;labelBackgroundColor=none;fontColor=default;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=14;fillColor=none;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;" target="7Br2a1tXHeEOhqPw93C9-12" value="No">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="456.086956521739" y="300" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="95OcW3Vn8EORuKI-x0yr-2" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;spacing=10;labelBackgroundColor=none;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=14;fillColor=none;" value="&lt;span&gt;Problem is derived from PDEs.&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="160" x="550" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="95OcW3Vn8EORuKI-x0yr-3" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;spacing=10;labelBackgroundColor=none;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=14;fillColor=none;" value="&lt;span style=&quot;text-align: left;&quot;&gt;Problem is a DAE.&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="160" x="780" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="95OcW3Vn8EORuKI-x0yr-4" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;spacing=10;labelBackgroundColor=none;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=14;fillColor=none;" value="&lt;span style=&quot;text-align: left;&quot;&gt;Problem has a mass matrix.&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="160" x="310" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="95OcW3Vn8EORuKI-x0yr-5" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;spacing=10;labelBackgroundColor=none;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=14;fillColor=none;" value="&lt;span style=&quot;text-align: left;&quot;&gt;Problem is stiff.&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="160" x="130" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="FN8ENbpYnsnrRpaCpHmf-1" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;spacing=10;labelBackgroundColor=none;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=14;fillColor=none;" value="&lt;span style=&quot;text-align: left;&quot;&gt;Mass matrix is constant.&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="160" x="490" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="FN8ENbpYnsnrRpaCpHmf-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;spacing=8;fontFamily=Noto Sans;labelBackgroundColor=none;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=14;fillColor=none;verticalAlign=middle;labelPosition=center;verticalLabelPosition=middle;" value="Selection&lt;div&gt;* ESDIRK45c&lt;br&gt;&lt;div&gt;*&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;4th order SDIRK&lt;/span&gt;&lt;br&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="140" x="330" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="FN8ENbpYnsnrRpaCpHmf-3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;spacing=8;fontFamily=Noto Sans;labelBackgroundColor=none;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=14;fillColor=none;verticalAlign=middle;labelPosition=center;verticalLabelPosition=middle;" value="Selections&lt;div&gt;* Radau IIA order 5&lt;/div&gt;&lt;div&gt;* RODASP&lt;/div&gt;&lt;div&gt;* RODASPR&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="150" x="580" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="W7ESKFbm7PprLvDNY1jx-1" edge="1" parent="1" source="FN8ENbpYnsnrRpaCpHmf-1" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;spacing=8;labelBackgroundColor=none;fontColor=default;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=14;fillColor=none;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;" target="FN8ENbpYnsnrRpaCpHmf-3" value="Yes">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="579.7" y="325.86" as="sourcePoint" />
+            <mxPoint x="685.7" y="399.86" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W7ESKFbm7PprLvDNY1jx-2" edge="1" parent="1" source="FN8ENbpYnsnrRpaCpHmf-1" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;spacing=8;labelBackgroundColor=none;fontColor=default;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=14;fillColor=none;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;" target="njvBe_0hO0YSM9xT8ueO-1" value="No">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="480.3" y="310.13" as="sourcePoint" />
+            <mxPoint x="374.3" y="384.13" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="njvBe_0hO0YSM9xT8ueO-1" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;spacing=10;labelBackgroundColor=none;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=14;fillColor=none;" value="&lt;span style=&quot;text-align: left;&quot;&gt;Problem is a DAE.&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="160" x="400" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="njvBe_0hO0YSM9xT8ueO-2" edge="1" parent="1" source="njvBe_0hO0YSM9xT8ueO-1" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;spacing=8;labelBackgroundColor=none;fontColor=default;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=14;fillColor=none;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;" target="njvBe_0hO0YSM9xT8ueO-5" value="Yes">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="561.76" y="490" as="sourcePoint" />
+            <mxPoint x="606.76" y="560" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="njvBe_0hO0YSM9xT8ueO-4" edge="1" parent="1" source="njvBe_0hO0YSM9xT8ueO-1" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;spacing=8;labelBackgroundColor=none;fontColor=default;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=14;fillColor=none;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;" target="FN8ENbpYnsnrRpaCpHmf-2" value="No">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="433.74" y="459.65999999999997" as="sourcePoint" />
+            <mxPoint x="379.74" y="531.66" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="njvBe_0hO0YSM9xT8ueO-5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;spacing=8;fontFamily=Noto Sans;labelBackgroundColor=none;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=14;fillColor=none;verticalAlign=middle;labelPosition=center;verticalLabelPosition=middle;" value="Selection&lt;div&gt;&lt;div&gt;*&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;4th order SDIRK&lt;/span&gt;&lt;br&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="40" width="140" x="490" y="520" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

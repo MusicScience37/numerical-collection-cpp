@@ -1,0 +1,5 @@
+/* Remove background color set by sphinx-book-theme to prevent strange appearance of images in dark mode. */
+html[data-theme="dark"] .bd-content img:not(.only-dark, .dark-light) {
+  background-color: unset;
+  border-radius: unset;
+}
