@@ -35,6 +35,9 @@
 #include "num_collect/ode/rosenbrock/ros34prw_formula.h"
 #include "num_collect/ode/rosenbrock/ros34pw3_formula.h"
 #include "num_collect/ode/rosenbrock/ros3w_formula.h"
+#include "num_collect/ode/runge_kutta/ark43_esdirk_formula.h"
+#include "num_collect/ode/runge_kutta/ark54_esdirk_formula.h"
+#include "num_collect/ode/runge_kutta/esdirk45_formula.h"
 #include "num_collect/ode/runge_kutta/lobatto3c4_formula.h"
 #include "num_collect/ode/runge_kutta/lobatto3c6_formula.h"
 #include "num_collect/ode/runge_kutta/radau2a3_formula.h"
@@ -109,6 +112,17 @@ auto main(int argc, char** argv) -> int {
             "RODASP", epsilon, executor);
         bench_one<num_collect::ode::rosenbrock::rodaspr_solver<problem_type>>(
             "RODASPR", epsilon, executor);
+
+        if (epsilon > 0.0) {
+            // Solvers which does not support DAEs.
+            bench_one<num_collect::ode::runge_kutta::ark43_esdirk_solver<
+                problem_type>>("ARK4(3)-ESDIRK", epsilon, executor);
+            bench_one<num_collect::ode::runge_kutta::ark54_esdirk_solver<
+                problem_type>>("ARK5(4)-ESDIRK", epsilon, executor);
+            bench_one<
+                num_collect::ode::runge_kutta::esdirk45_solver<problem_type>>(
+                "ESDIRK45c", epsilon, executor);
+        }
 
         executor.write_result(problem_name,
             fmt::format("Kaps' problem (epsilon={:.0e})", epsilon),
