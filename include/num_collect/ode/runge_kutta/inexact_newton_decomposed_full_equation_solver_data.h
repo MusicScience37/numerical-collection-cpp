@@ -28,13 +28,10 @@
 #include <variant>
 
 #include <Eigen/Core>
-#include <Eigen/Eigenvalues>
-#include <Eigen/LU>
 
-#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/logging/logging_macros.h"
 #include "num_collect/ode/concepts/differentiable_problem.h"
+#include "num_collect/ode/runge_kutta/impl/decompose_slope_coeffs.h"
 #include "num_collect/ode/runge_kutta/impl/inexact_newton_decomposed_jacobian_complex_eigen_solver.h"
 #include "num_collect/ode/runge_kutta/impl/inexact_newton_decomposed_jacobian_real_eigen_solver.h"
 #include "num_collect/util/assert.h"
@@ -97,29 +94,11 @@ public:
     static auto from_butcher_tableau(
         const slope_coeff_matrix_type& slope_coeffs,
         const update_coeff_vector_type& time_coeffs) {
-        Eigen::EigenSolver<slope_coeff_matrix_type> eigen_solver(slope_coeffs);
-        const bool is_coeffs_invertible =
-            (eigen_solver.eigenvalues().array().abs() >
-                std::numeric_limits<scalar_type>::epsilon())
-                .all();
-        if (!is_coeffs_invertible) {
-            NUM_COLLECT_LOG_AND_THROW(algorithm_failure,
-                "Coefficients of intermidiate slopes are not invertible.");
-        }
-
-        slope_coeff_matrix_type block_diagonal_matrix =
-            eigen_solver.pseudoEigenvalueMatrix();
-        slope_coeff_matrix_type eigenvectors =
-            eigen_solver.pseudoEigenvectors();
-
-        Eigen::FullPivLU<slope_coeff_matrix_type> eigenvectors_lu(eigenvectors);
-        if (!eigenvectors_lu.isInvertible()) {
-            NUM_COLLECT_LOG_AND_THROW(algorithm_failure,
-                "Eigenvectors of coefficients of intermidiate slopes are not "
-                "invertible.");
-        }
-        slope_coeff_matrix_type eigenvectors_inverse =
-            eigenvectors_lu.inverse();
+        slope_coeff_matrix_type block_diagonal_matrix;
+        slope_coeff_matrix_type eigenvectors;
+        slope_coeff_matrix_type eigenvectors_inverse;
+        impl::decompose_slope_coeffs(slope_coeffs, block_diagonal_matrix,
+            eigenvectors, eigenvectors_inverse);
 
         return inexact_newton_decomposed_full_equation_solver_data(time_coeffs,
             block_diagonal_matrix, eigenvectors, eigenvectors_inverse);

@@ -6,4 +6,5 @@ set(SOURCE_FILES
     num_collect/logging/sinks/log_sink.cpp
     num_collect/logging/sinks/simple_log_sink.cpp
     num_collect/logging/time_stamp.cpp
+    num_collect/ode/runge_kutta/impl/decompose_slope_coeffs.cpp
 )
