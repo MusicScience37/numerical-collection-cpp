@@ -41,7 +41,8 @@ namespace num_collect::ode::runge_kutta {
 
 /*!
  * \brief Class to store data for
- * inexact_newton_decomposed_full_update_equation_solver class.
+ * inexact_newton_decomposed_full_update_equation_solver,
+ * inexact_newton_decomposed_full_slope_equation_solver classes.
  *
  * \tparam Scalar Type of scalar.
  * \tparam NumStages Number of stages of the formula.
@@ -66,6 +67,8 @@ public:
     /*!
      * \brief Constructor.
      *
+     * \param[in] slope_coeffs Coefficients of intermediate slopes in the
+     * formula.
      * \param[in] time_coeffs Coefficients of time in the formula.
      * \param[in] block_diagonal_matrix Block-diagonal matrix in eigenvalue
      * decomposition.
@@ -74,11 +77,13 @@ public:
      * decomposition.
      */
     inexact_newton_decomposed_full_equation_solver_data(
+        const slope_coeff_matrix_type& slope_coeffs,
         const update_coeff_vector_type& time_coeffs,
         const slope_coeff_matrix_type& block_diagonal_matrix,
         const slope_coeff_matrix_type& eigenvectors,
         const slope_coeff_matrix_type& eigenvectors_inverse)
-        : time_coeffs_(time_coeffs),
+        : slope_coeffs_(slope_coeffs),
+          time_coeffs_(time_coeffs),
           block_diagonal_matrix_(block_diagonal_matrix),
           eigenvectors_(eigenvectors),
           eigenvectors_inverse_(eigenvectors_inverse) {}
@@ -100,8 +105,18 @@ public:
         impl::decompose_slope_coeffs(slope_coeffs, block_diagonal_matrix,
             eigenvectors, eigenvectors_inverse);
 
-        return inexact_newton_decomposed_full_equation_solver_data(time_coeffs,
-            block_diagonal_matrix, eigenvectors, eigenvectors_inverse);
+        return inexact_newton_decomposed_full_equation_solver_data(slope_coeffs,
+            time_coeffs, block_diagonal_matrix, eigenvectors,
+            eigenvectors_inverse);
+    }
+
+    /*!
+     * \brief Get the coefficients of intermediate slopes in the formula.
+     *
+     * \return Coefficients of intermediate slopes in the formula.
+     */
+    [[nodiscard]] auto slope_coeffs() const -> const slope_coeff_matrix_type& {
+        return slope_coeffs_;
     }
 
     /*!
@@ -143,6 +158,9 @@ public:
     }
 
 private:
+    //! Coefficients of intermediate slopes in the formula.
+    slope_coeff_matrix_type slope_coeffs_;
+
     //! Coefficients of time.
     update_coeff_vector_type time_coeffs_;
 
