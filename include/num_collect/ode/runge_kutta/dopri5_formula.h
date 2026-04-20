@@ -69,10 +69,10 @@ public:
     /*!
      * \name Coefficients in Butcher array.
      *
-     * - `a` is coefficients of intermidiate variables in calculation of
-     *   intermidiate variables.
-     * - `b` is coefficients of time in calculation of intermidiate variables.
-     * - `c` is coefficients of intermidiate variables in calculation of
+     * - `a` is coefficients of intermediate variables in calculation of
+     *   intermediate variables.
+     * - `b` is coefficients of time in calculation of intermediate variables.
+     * - `c` is coefficients of intermediate variables in calculation of
      *   estimates of next variables.
      */
     ///@{

@@ -122,14 +122,14 @@ public:
     static_assert(std::floating_point<scalar_type>,
         "Current implementation only supports real scalars.");
 
-    //! Type of the matrix of coefficients of intermidiate slopes.
+    //! Type of the matrix of coefficients of intermediate slopes.
     using slope_coeff_matrix_type =
         Eigen::Matrix<scalar_type, NumStages, NumStages>;
 
-    //! Type of the vector of intermidiate updates.
+    //! Type of the vector of intermediate updates.
     using update_coeff_vector_type = Eigen::Vector<scalar_type, NumStages>;
 
-    //! Type of the vector of intermidiate updates.
+    //! Type of the vector of intermediate updates.
     using update_vector_type = Eigen::Vector<scalar_type, NumStages>;
 
     //! Whether to use mass.
@@ -408,10 +408,10 @@ private:
     //! Solvers of decomposed linear equations.
     util::vector<decomposed_solver_type> decomposed_solvers_;
 
-    //! Eigenvectors of coefficients of intermidiate slopes.
+    //! Eigenvectors of coefficients of intermediate slopes.
     slope_coeff_matrix_type slope_coeffs_eigenvectors_;
 
-    //! Inverse of eigenvectors of coefficients of intermidiate slopes.
+    //! Inverse of eigenvectors of coefficients of intermediate slopes.
     slope_coeff_matrix_type slope_coeffs_eigenvectors_inverse_;
 
     //! Pointer to the problem.
@@ -512,11 +512,11 @@ public:
     static_assert(std::floating_point<scalar_type>,
         "Current implementation only supports real scalars.");
 
-    //! Type of the matrix of coefficients of intermidiate slopes.
+    //! Type of the matrix of coefficients of intermediate slopes.
     using slope_coeff_matrix_type =
         Eigen::Matrix<scalar_type, NumStages, NumStages>;
 
-    //! Type of the vector of intermidiate updates.
+    //! Type of the vector of intermediate updates.
     using update_coeff_vector_type = Eigen::Vector<scalar_type, NumStages>;
 
     //! Whether to use mass.
@@ -526,13 +526,13 @@ public:
     static constexpr int num_dimensions_at_compile_time =
         variable_type::SizeAtCompileTime;
 
-    //! Size of the vectors of intermidiate updates at compile-time.
+    //! Size of the vectors of intermediate updates at compile-time.
     static constexpr int update_vector_size_at_compile_time =
         (num_dimensions_at_compile_time == Eigen::Dynamic)
         ? Eigen::Dynamic
         : NumStages * num_dimensions_at_compile_time;
 
-    //! Type of the vector of intermidiate updates.
+    //! Type of the vector of intermediate updates.
     using update_vector_type =
         Eigen::Vector<scalar_type, update_vector_size_at_compile_time>;
 
@@ -846,10 +846,10 @@ private:
     //! Solvers of decomposed linear equations.
     util::vector<decomposed_solver_type> decomposed_solvers_;
 
-    //! Eigenvectors of coefficients of intermidiate slopes.
+    //! Eigenvectors of coefficients of intermediate slopes.
     slope_coeff_matrix_type slope_coeffs_eigenvectors_;
 
-    //! Inverse of eigenvectors of coefficients of intermidiate slopes.
+    //! Inverse of eigenvectors of coefficients of intermediate slopes.
     slope_coeff_matrix_type slope_coeffs_eigenvectors_inverse_;
 
     //! Pointer to the problem.

@@ -78,13 +78,13 @@ public:
     /*!
      * \name Coefficients in Rosenbrock method.
      *
-     * - `a` is coefficients of intermidiate variables in calculation of
-     *   intermidiate variables.
-     * - `b` is coefficients of time in calculation of intermidiate variables.
-     * - `c` is coefficients of intermidiate variables in calculation of
+     * - `a` is coefficients of intermediate variables in calculation of
+     *   intermediate variables.
+     * - `b` is coefficients of time in calculation of intermediate variables.
+     * - `c` is coefficients of intermediate variables in calculation of
      *   estimates of next variables.
-     * - `g` is coefficients of intermidiate variables in calculation of
-     *   intermidiate variables.
+     * - `g` is coefficients of intermediate variables in calculation of
+     *   intermediate variables.
      */
     ///@{
     //! Coefficient in Rosenbrock method.

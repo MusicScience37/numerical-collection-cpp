@@ -127,13 +127,13 @@ public:
 
         matrix_type matrix_product_buffer;
 
-        intermidiate_layers_.clear();
+        intermediate_layers_.clear();
         matrix_buffers_.clear();
         while (next_matrix_size > maximum_directly_solved_matrix_size_) {
             NUM_COLLECT_LOG_TRACE(
                 this->logger(), "AMG layer size {}", next_matrix_size);
-            intermidiate_layer_data& next_layer =
-                intermidiate_layers_.emplace_back(*current_matrix);
+            intermediate_layer_data& next_layer =
+                intermediate_layers_.emplace_back(*current_matrix);
             compute_prolongation_matrix(
                 next_layer.prolongation_matrix, next_layer.coeff_matrix);
             next_layer.restrict_matrix =
@@ -160,16 +160,16 @@ public:
         final_layer_.solver.compute(final_layer_.coeff_matrix);
 
         // Initialization of buffers.
-        if (!intermidiate_layers_.empty()) {
-            residual_buffers_.resize(intermidiate_layers_.size());
+        if (!intermediate_layers_.empty()) {
+            residual_buffers_.resize(intermediate_layers_.size());
             residual_buffers_before_prolongation_.resize(
-                intermidiate_layers_.size());
-            solution_buffers_.resize(intermidiate_layers_.size());
+                intermediate_layers_.size());
+            solution_buffers_.resize(intermediate_layers_.size());
             residual_buffers_before_prolongation_.front() =
                 dense_vector_type::Zero(coeff().cols());
-            for (std::size_t i = 1; i < intermidiate_layers_.size(); ++i) {
+            for (std::size_t i = 1; i < intermediate_layers_.size(); ++i) {
                 const index_type size =
-                    intermidiate_layers_[i].coeff_matrix.cols();
+                    intermediate_layers_[i].coeff_matrix.cols();
                 residual_buffers_[i - 1U] = dense_vector_type::Zero(size);
                 solution_buffers_[i - 1U] = dense_vector_type::Zero(size);
                 residual_buffers_before_prolongation_[i] =
@@ -259,10 +259,10 @@ public:
      * \return Rate of the last residual.
      */
     [[nodiscard]] auto residual_rate() const noexcept -> scalar_type {
-        if (intermidiate_layers_.empty()) {
+        if (intermediate_layers_.empty()) {
             return std::numeric_limits<scalar_type>::epsilon();
         }
-        return intermidiate_layers_.front().smoother.residual_rate();
+        return intermediate_layers_.front().smoother.residual_rate();
     }
 
 private:
@@ -277,7 +277,7 @@ private:
     template <base::concepts::dense_vector_of<scalar_type> Right,
         base::concepts::dense_vector_of<scalar_type> Solution>
     void iterate(const Right& right, Solution& solution) const {
-        if (intermidiate_layers_.empty()) {
+        if (intermediate_layers_.empty()) {
             solution = final_layer_.solver.solve(right);
             return;
         }
@@ -285,18 +285,18 @@ private:
         util::scoped_eigen_no_malloc no_malloc;
 
         // First layer.
-        intermidiate_layers_.front().smoother.solve_vector_in_place(
+        intermediate_layers_.front().smoother.solve_vector_in_place(
             right, solution);
         residual_buffers_before_prolongation_.front() = right;
         residual_buffers_before_prolongation_.front().noalias() -=
             coeff() * solution;
         residual_buffers_.front().noalias() =
-            intermidiate_layers_.front().restrict_matrix *
+            intermediate_layers_.front().restrict_matrix *
             residual_buffers_before_prolongation_.front();
 
         // Intermidiate layers.
-        for (std::size_t i = 1; i < intermidiate_layers_.size(); ++i) {
-            const intermidiate_layer_data& layer = intermidiate_layers_[i];
+        for (std::size_t i = 1; i < intermediate_layers_.size(); ++i) {
+            const intermediate_layer_data& layer = intermediate_layers_[i];
             solution_buffers_[i - 1U] =
                 dense_vector_type::Zero(layer.coeff_matrix.cols());
             layer.smoother.solve_vector_in_place(
@@ -314,8 +314,8 @@ private:
             final_layer_.solver.solve(residual_buffers_.back());
 
         // Intermidiate layers.
-        for (std::size_t i = intermidiate_layers_.size() - 1; i > 0; --i) {
-            const intermidiate_layer_data& layer = intermidiate_layers_[i];
+        for (std::size_t i = intermediate_layers_.size() - 1; i > 0; --i) {
+            const intermediate_layer_data& layer = intermediate_layers_[i];
             solution_buffers_[i - 1U].noalias() +=
                 layer.prolongation_matrix * solution_buffers_[i];
             layer.smoother.solve_vector_in_place(
@@ -323,9 +323,9 @@ private:
         }
 
         // First layer.
-        solution.noalias() += intermidiate_layers_.front().prolongation_matrix *
+        solution.noalias() += intermediate_layers_.front().prolongation_matrix *
             solution_buffers_.front();
-        intermidiate_layers_.front().smoother.solve_vector_in_place(
+        intermediate_layers_.front().smoother.solve_vector_in_place(
             right, solution);
     }
 
@@ -354,8 +354,8 @@ private:
     //! Type of the dense vector used in this algorithm.
     using dense_vector_type = Eigen::VectorX<scalar_type>;
 
-    //! Struct of internal data for the intermidiate layers.
-    struct intermidiate_layer_data {
+    //! Struct of internal data for the intermediate layers.
+    struct intermediate_layer_data {
         //! Coefficient matrix in this layer.
         Eigen::Ref<const matrix_type> coeff_matrix;
 
@@ -373,7 +373,7 @@ private:
          *
          * \param[in] input_coeff_matrix Coefficient matrix in this layer.
          */
-        explicit intermidiate_layer_data(
+        explicit intermediate_layer_data(
             const Eigen::Ref<const matrix_type>& input_coeff_matrix)
             : coeff_matrix(input_coeff_matrix) {}
     };
@@ -388,11 +388,11 @@ private:
     };
 
     /*!
-     * \brief Data of the intermidiate layers.
+     * \brief Data of the intermediate layers.
      *
-     * \note deque is required because intermidiate_layer_data is not copyable.
+     * \note deque is required because intermediate_layer_data is not copyable.
      */
-    std::deque<intermidiate_layer_data> intermidiate_layers_{};
+    std::deque<intermediate_layer_data> intermediate_layers_{};
 
     //! Data of the final layer.
     final_layer_data final_layer_{};

@@ -51,7 +51,7 @@ struct radau2a_coefficients {
     static constexpr index_type stages = Stages;
 
     /*!
-     * \brief Get the coefficients of intermidiate slopes in the formula.
+     * \brief Get the coefficients of intermediate slopes in the formula.
      *
      * \return Coefficients.
      */
@@ -73,7 +73,7 @@ struct radau2a_coefficients {
     }
 
     /*!
-     * \brief Get the coefficients of intermidiate updates in the formula.
+     * \brief Get the coefficients of intermediate updates in the formula.
      *
      * \return Coefficients.
      */
@@ -146,7 +146,7 @@ public:
         logging::log_tag_view("num_collect::ode::runge_kutta::radau2a_formula");
 
     /*!
-     * \brief Get the coefficients of intermidiate slopes in the formula.
+     * \brief Get the coefficients of intermediate slopes in the formula.
      *
      * \return Coefficients.
      */
@@ -164,7 +164,7 @@ public:
     }
 
     /*!
-     * \brief Get the coefficients of intermidiate updates in the formula.
+     * \brief Get the coefficients of intermediate updates in the formula.
      *
      * \return Coefficients.
      */
@@ -197,7 +197,7 @@ public:
     }
 
 private:
-    //! Type of the vector of intermidiate updates.
+    //! Type of the vector of intermediate updates.
     using update_vector_type = typename formula_solver_type::update_vector_type;
 
     //! Intermidiate updates.

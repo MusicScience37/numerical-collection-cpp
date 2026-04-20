@@ -56,11 +56,11 @@ public:
     //! Type of scalars.
     using scalar_type = Scalar;
 
-    //! Type of the matrix of coefficients of intermidiate slopes.
+    //! Type of the matrix of coefficients of intermediate slopes.
     using slope_coeff_matrix_type =
         Eigen::Matrix<scalar_type, NumStages, NumStages>;
 
-    //! Type of the vector of intermidiate updates.
+    //! Type of the vector of intermediate updates.
     using update_coeff_vector_type = Eigen::Vector<scalar_type, NumStages>;
 
     /*!
@@ -86,7 +86,7 @@ public:
     /*!
      * \brief Generate data from coefficients in Butcher tableau.
      *
-     * \param[in] slope_coeffs Coefficients of intermidiate slopes in the
+     * \param[in] slope_coeffs Coefficients of intermediate slopes in the
      * formula.
      * \param[in] time_coeffs Coefficients of time in the formula.
      * \return Data.

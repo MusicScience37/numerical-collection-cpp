@@ -51,7 +51,7 @@ struct lobatto3c6_coefficients {
     static constexpr index_type stages = 4;
 
     /*!
-     * \brief Get the coefficients of intermidiate slopes in the formula.
+     * \brief Get the coefficients of intermediate slopes in the formula.
      *
      * \return Coefficients.
      */
@@ -122,7 +122,7 @@ struct lobatto3c6_coefficients {
     }
 
     /*!
-     * \brief Get the coefficients of intermidiate updates in the formula.
+     * \brief Get the coefficients of intermediate updates in the formula.
      *
      * \return Coefficients.
      */
@@ -197,7 +197,7 @@ public:
         "num_collect::ode::runge_kutta::lobatto3c6_formula");
 
     /*!
-     * \brief Get the coefficients of intermidiate slopes in the formula.
+     * \brief Get the coefficients of intermediate slopes in the formula.
      *
      * \return Coefficients.
      */
@@ -215,7 +215,7 @@ public:
     }
 
     /*!
-     * \brief Get the coefficients of intermidiate updates in the formula.
+     * \brief Get the coefficients of intermediate updates in the formula.
      *
      * \return Coefficients.
      */
@@ -248,7 +248,7 @@ public:
     }
 
 private:
-    //! Type of the vector of intermidiate updates.
+    //! Type of the vector of intermediate updates.
     using update_vector_type = typename formula_solver_type::update_vector_type;
 
     //! Intermidiate updates.

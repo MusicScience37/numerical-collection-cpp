@@ -121,7 +121,7 @@ public:
             diag_(i) = coeff_ref.coeff(i, i);
         }
         inv_diag_ = diag_.cwiseInverse();
-        intermidiate_solution_.resize(coeff().cols());
+        intermediate_solution_.resize(coeff().cols());
         NUM_COLLECT_PRECONDITION(inv_diag_.array().isFinite().all(),
             "All diagonal elements of the coefficient matrix must not be "
             "zero.");
@@ -341,13 +341,13 @@ private:
             ++iter) {
             if (start_row <= iter.index() && iter.index() < i) {
                 numerator -=
-                    iter.value() * intermidiate_solution_(iter.index());
+                    iter.value() * intermediate_solution_(iter.index());
             } else if (iter.index() != i) {
                 numerator -= iter.value() * solution(iter.index());
             }
         }
         const scalar_type row_residual = numerator - diag_(i) * solution(i);
-        intermidiate_solution_(i) =
+        intermediate_solution_(i) =
             relaxation_coeff_ * numerator * inv_diag_(i) +
             prev_sol_coeff * solution(i);
         return row_residual * row_residual;
@@ -379,11 +379,11 @@ private:
                 numerator -= iter.value() * solution(iter.index());
             } else if (iter.index() != i) {
                 numerator -=
-                    iter.value() * intermidiate_solution_(iter.index());
+                    iter.value() * intermediate_solution_(iter.index());
             }
         }
         solution(i) = relaxation_coeff_ * numerator * inv_diag_(i) +
-            prev_sol_coeff * intermidiate_solution_(i);
+            prev_sol_coeff * intermediate_solution_(i);
     }
 
     //! Whether to run in parallel.
@@ -408,7 +408,7 @@ private:
     vector_type inv_diag_{};
 
     //! Intermidiate solution vector.
-    mutable vector_type intermidiate_solution_{};
+    mutable vector_type intermediate_solution_{};
 };
 
 }  // namespace num_collect::linear
