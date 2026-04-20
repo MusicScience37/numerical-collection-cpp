@@ -98,6 +98,30 @@ public:
         return solver_;
     }
 
+    /*!
+     * \brief Access to the logger.
+     *
+     * \return Logger.
+     */
+    [[nodiscard]] auto logger() const noexcept
+        -> const num_collect::logging::logger&
+        requires requires(
+            const equation_solver_type& solver) { solver.logger(); }
+    {
+        return equation_solver().logger();
+    }
+
+    /*!
+     * \brief Access to the logger.
+     *
+     * \return Logger.
+     */
+    [[nodiscard]] auto logger() noexcept -> num_collect::logging::logger&
+        requires requires(equation_solver_type& solver) { solver.logger(); }
+    {
+        return equation_solver().logger();
+    }
+
 private:
     //! Solver of equations in Rosenbrock methods.
     equation_solver_type solver_;
