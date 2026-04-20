@@ -19,6 +19,8 @@
  */
 #pragma once
 
+#include <array>
+
 #include <Eigen/Core>
 
 #include "num_collect/impl/num_collect_export.h"
@@ -26,29 +28,32 @@
 namespace num_collect::ode::runge_kutta::impl {
 
 /*!
- * \brief Decompose the coefficients of intermidiate slopes.
+ * \brief Decompose the coefficients of intermediate slopes.
  *
- * \param[in] slope_coeffs Coefficients of intermidiate slopes.
- * \param[in] block_diagonal_matrix Block-diagonal matrix in eigenvalue
+ * \param[in] num_stages Number of stages.
+ * \param[in] slope_coeffs Coefficients of intermediate slopes.
+ * \param[in] block_diagonal_matrix_coeffs Coefficients of block-diagonal matrix
+ * in eigenvalue decomposition.
+ * \param[in] eigenvectors_coeffs Coefficients of eigenvectors in eigenvalue
  * decomposition.
- * \param[in] eigenvectors Eigenvectors in eigenvalue decomposition.
- * \param[in] eigenvectors_inverse Inverse of eigenvectors in eigenvalue
- * decomposition.
+ * \param[in] eigenvectors_inverse_coeffs Coefficients of inverse of
+ * eigenvectors in eigenvalue decomposition.
+ *
+ * Each matrix is stored in column-major order as in Eigen.
+ * Size of each matrix is num_stages x num_stages.
  *
  * \note This function was separated to a pre-built library to avoid too much
  * memory usage in compilation. Without this, compilers use 2.5 GB memory per a
  * compilation unit, and it caused PC to freeze every time when compiling.
  */
-NUM_COLLECT_EXPORT void decompose_slope_coeffs_impl(
-    const Eigen::MatrixX<long double>& slope_coeffs,
-    Eigen::MatrixX<long double>& block_diagonal_matrix,
-    Eigen::MatrixX<long double>& eigenvectors,
-    Eigen::MatrixX<long double>& eigenvectors_inverse);
+NUM_COLLECT_EXPORT void decompose_slope_coeffs_impl(int num_stages,
+    const long double* slope_coeffs, long double* block_diagonal_matrix_coeffs,
+    long double* eigenvectors_coeffs, long double* eigenvectors_inverse_coeffs);
 
 /*!
- * \brief Decompose the coefficients of intermidiate slopes.
+ * \brief Decompose the coefficients of intermediate slopes.
  *
- * \param[in] slope_coeffs Coefficients of intermidiate slopes.
+ * \param[in] slope_coeffs Coefficients of intermediate slopes.
  * \param[in] block_diagonal_matrix Block-diagonal matrix in eigenvalue
  * decomposition.
  * \param[in] eigenvectors Eigenvectors in eigenvalue decomposition.
@@ -56,26 +61,36 @@ NUM_COLLECT_EXPORT void decompose_slope_coeffs_impl(
  * decomposition.
  */
 template <std::floating_point Scalar, int NumStages>
+    requires(NumStages > 0)
 void decompose_slope_coeffs(
     const Eigen::Matrix<Scalar, NumStages, NumStages>& slope_coeffs,
     Eigen::Matrix<Scalar, NumStages, NumStages>& block_diagonal_matrix,
     Eigen::Matrix<Scalar, NumStages, NumStages>& eigenvectors,
     Eigen::Matrix<Scalar, NumStages, NumStages>& eigenvectors_inverse) {
-    Eigen::MatrixX<long double> slope_coeffs_long_double =
-        slope_coeffs.template cast<long double>();
-    Eigen::MatrixX<long double> block_diagonal_matrix_long_double;
-    Eigen::MatrixX<long double> eigenvectors_long_double;
-    Eigen::MatrixX<long double> eigenvectors_inverse_long_double;
+    constexpr std::size_t buffer_size = static_cast<std::size_t>(NumStages) *
+        static_cast<std::size_t>(NumStages);
+    std::array<long double, buffer_size> slope_coeffs_vec;
+    std::array<long double, buffer_size> block_diagonal_matrix_vec;
+    std::array<long double, buffer_size> eigenvectors_vec;
+    std::array<long double, buffer_size> eigenvectors_inverse_vec;
 
-    decompose_slope_coeffs_impl(slope_coeffs_long_double,
-        block_diagonal_matrix_long_double, eigenvectors_long_double,
-        eigenvectors_inverse_long_double);
+    using mapped_matrix_type =
+        Eigen::Matrix<long double, NumStages, NumStages, Eigen::ColMajor>;
+    Eigen::Map<mapped_matrix_type>(slope_coeffs_vec.data(), NumStages,
+        NumStages) = slope_coeffs.template cast<long double>();
+
+    decompose_slope_coeffs_impl(NumStages, slope_coeffs_vec.data(),
+        block_diagonal_matrix_vec.data(), eigenvectors_vec.data(),
+        eigenvectors_inverse_vec.data());
 
     block_diagonal_matrix =
-        block_diagonal_matrix_long_double.template cast<Scalar>();
-    eigenvectors = eigenvectors_long_double.template cast<Scalar>();
+        Eigen::Map<const mapped_matrix_type>(block_diagonal_matrix_vec.data())
+            .template cast<Scalar>();
+    eigenvectors = Eigen::Map<const mapped_matrix_type>(eigenvectors_vec.data())
+                       .template cast<Scalar>();
     eigenvectors_inverse =
-        eigenvectors_inverse_long_double.template cast<Scalar>();
+        Eigen::Map<const mapped_matrix_type>(eigenvectors_inverse_vec.data())
+            .template cast<Scalar>();
 }
 
 }  // namespace num_collect::ode::runge_kutta::impl

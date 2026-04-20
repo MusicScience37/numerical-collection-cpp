@@ -30,34 +30,53 @@
 
 namespace num_collect::ode::runge_kutta::impl {
 
-void decompose_slope_coeffs_impl(
-    const Eigen::MatrixX<long double>& slope_coeffs,
-    Eigen::MatrixX<long double>& block_diagonal_matrix,
-    Eigen::MatrixX<long double>& eigenvectors,
-    Eigen::MatrixX<long double>& eigenvectors_inverse) {
+void decompose_slope_coeffs_impl(int num_stages,
+    const long double* slope_coeffs, long double* block_diagonal_matrix_coeffs,
+    long double* eigenvectors_coeffs,
+    long double* eigenvectors_inverse_coeffs) {
     using scalar_type = long double;
-    using slope_coeff_matrix_type = Eigen::MatrixX<scalar_type>;
+    using slope_coeff_matrix_type = Eigen::Matrix<scalar_type, Eigen::Dynamic,
+        Eigen::Dynamic, Eigen::ColMajor>;
 
-    Eigen::EigenSolver<slope_coeff_matrix_type> eigen_solver(slope_coeffs);
-    const bool is_coeffs_invertible =
-        (eigen_solver.eigenvalues().array().abs() >
-            std::numeric_limits<scalar_type>::epsilon())
-            .all();
+    const slope_coeff_matrix_type slope_coeffs_matrix =
+        Eigen::Map<const slope_coeff_matrix_type>(
+            slope_coeffs, num_stages, num_stages);
+
+    Eigen::EigenSolver<slope_coeff_matrix_type> eigen_solver(
+        slope_coeffs_matrix);
+    const long double max_abs_eigenvalue =
+        eigen_solver.eigenvalues().array().abs().maxCoeff();
+    const long double min_abs_eigenvalue =
+        eigen_solver.eigenvalues().array().abs().minCoeff();
+    const long double reciprocal_condition_number =
+        min_abs_eigenvalue / max_abs_eigenvalue;
+    const bool is_coeffs_invertible = reciprocal_condition_number >
+        std::numeric_limits<long double>::epsilon();
     if (!is_coeffs_invertible) {
         NUM_COLLECT_LOG_AND_THROW(algorithm_failure,
-            "Coefficients of intermidiate slopes are not invertible.");
+            "Coefficients of intermediate slopes are not invertible.");
     }
 
-    block_diagonal_matrix = eigen_solver.pseudoEigenvalueMatrix();
-    eigenvectors = eigen_solver.pseudoEigenvectors();
+    const slope_coeff_matrix_type block_diagonal_matrix =
+        eigen_solver.pseudoEigenvalueMatrix();
+    const slope_coeff_matrix_type& eigenvectors =
+        eigen_solver.pseudoEigenvectors();
 
     Eigen::FullPivLU<slope_coeff_matrix_type> eigenvectors_lu(eigenvectors);
     if (!eigenvectors_lu.isInvertible()) {
         NUM_COLLECT_LOG_AND_THROW(algorithm_failure,
-            "Eigenvectors of coefficients of intermidiate slopes are not "
+            "Eigenvectors of coefficients of intermediate slopes are not "
             "invertible.");
     }
-    eigenvectors_inverse = eigenvectors_lu.inverse();
+    const slope_coeff_matrix_type eigenvectors_inverse =
+        eigenvectors_lu.inverse();
+
+    Eigen::Map<slope_coeff_matrix_type>(block_diagonal_matrix_coeffs,
+        num_stages, num_stages) = block_diagonal_matrix;
+    Eigen::Map<slope_coeff_matrix_type>(
+        eigenvectors_coeffs, num_stages, num_stages) = eigenvectors;
+    Eigen::Map<slope_coeff_matrix_type>(eigenvectors_inverse_coeffs, num_stages,
+        num_stages) = eigenvectors_inverse;
 }
 
 }  // namespace num_collect::ode::runge_kutta::impl
