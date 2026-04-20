@@ -151,12 +151,11 @@ struct radau2a5_coefficients {
      * \return Data.
      */
     static auto formula_solver_data()
-        -> inexact_newton_decomposed_full_update_equation_solver_data<
-            scalar_type, stages> {
+        -> inexact_newton_decomposed_full_equation_solver_data<scalar_type,
+            stages> {
         static const auto data =
-            inexact_newton_decomposed_full_update_equation_solver_data<
-                scalar_type, stages>::from_butcher_tableau(slope_coeffs(),
-                time_coeffs());
+            inexact_newton_decomposed_full_equation_solver_data<scalar_type,
+                stages>::from_butcher_tableau(slope_coeffs(), time_coeffs());
         return data;
     };
 };

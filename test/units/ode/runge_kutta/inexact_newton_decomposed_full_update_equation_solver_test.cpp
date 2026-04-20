@@ -40,7 +40,7 @@ TEST_CASE(
     "num_collect::ode::runge_kutta::inexact_newton_decomposed_full_update_"
     "equation_solver_data") {
     using num_collect::ode::runge_kutta::
-        inexact_newton_decomposed_full_update_equation_solver_data;
+        inexact_newton_decomposed_full_equation_solver_data;
     using num_collect::ode::runge_kutta::radau2a5_formula;
 
     SECTION("create data") {
@@ -50,7 +50,7 @@ TEST_CASE(
         const auto& time_coeffs = formula_type::time_coeffs();
 
         using data_type =
-            inexact_newton_decomposed_full_update_equation_solver_data<double,
+            inexact_newton_decomposed_full_equation_solver_data<double,
                 formula_type::stages>;
         data_type data =
             data_type::from_butcher_tableau(slope_coeffs, time_coeffs);
@@ -76,9 +76,9 @@ TEST_CASE(
     "num_collect::ode::runge_kutta::inexact_newton_decomposed_full_update_"
     "equation_solver") {
     using num_collect::ode::runge_kutta::
-        inexact_newton_decomposed_full_update_equation_solver;
+        inexact_newton_decomposed_full_equation_solver_data;
     using num_collect::ode::runge_kutta::
-        inexact_newton_decomposed_full_update_equation_solver_data;
+        inexact_newton_decomposed_full_update_equation_solver;
     using num_collect::ode::runge_kutta::radau2a5_formula;
 
     SECTION("solve a scalar problem without mass") {
@@ -88,7 +88,7 @@ TEST_CASE(
             inexact_newton_decomposed_full_update_equation_solver<problem_type,
                 formula_type::stages>;
         using solver_data_type =
-            inexact_newton_decomposed_full_update_equation_solver_data<
+            inexact_newton_decomposed_full_equation_solver_data<
                 solver_type::scalar_type, formula_type::stages>;
         using update_type = solver_type::update_vector_type;
 
@@ -117,7 +117,7 @@ TEST_CASE(
             inexact_newton_decomposed_full_update_equation_solver<problem_type,
                 formula_type::stages>;
         using solver_data_type =
-            inexact_newton_decomposed_full_update_equation_solver_data<
+            inexact_newton_decomposed_full_equation_solver_data<
                 solver_type::scalar_type, formula_type::stages>;
         using update_type = solver_type::update_vector_type;
 
@@ -145,7 +145,7 @@ TEST_CASE(
             inexact_newton_decomposed_full_update_equation_solver<problem_type,
                 formula_type::stages>;
         using solver_data_type =
-            inexact_newton_decomposed_full_update_equation_solver_data<
+            inexact_newton_decomposed_full_equation_solver_data<
                 solver_type::scalar_type, formula_type::stages>;
         using update_type = solver_type::update_vector_type;
 
@@ -174,7 +174,7 @@ TEST_CASE(
             inexact_newton_decomposed_full_update_equation_solver<problem_type,
                 formula_type::stages>;
         using solver_data_type =
-            inexact_newton_decomposed_full_update_equation_solver_data<
+            inexact_newton_decomposed_full_equation_solver_data<
                 solver_type::scalar_type, formula_type::stages>;
         using update_type = solver_type::update_vector_type;
 
@@ -209,7 +209,7 @@ TEST_CASE(
             inexact_newton_decomposed_full_update_equation_solver<problem_type,
                 formula_type::stages>;
         using solver_data_type =
-            inexact_newton_decomposed_full_update_equation_solver_data<
+            inexact_newton_decomposed_full_equation_solver_data<
                 solver_type::scalar_type, formula_type::stages>;
         using update_type = solver_type::update_vector_type;
 
@@ -280,7 +280,7 @@ TEST_CASE(
             inexact_newton_decomposed_full_update_equation_solver<problem_type,
                 formula_type::stages>;
         using solver_data_type =
-            inexact_newton_decomposed_full_update_equation_solver_data<
+            inexact_newton_decomposed_full_equation_solver_data<
                 solver_type::scalar_type, formula_type::stages>;
         using update_type = solver_type::update_vector_type;
 

@@ -58,7 +58,7 @@ STAT_BENCH_CASE("full_update_equation_solver_exponential_problem",
         inexact_newton_decomposed_full_update_equation_solver<problem_type,
             formula_type::stages>;
     using solver_data_type = num_collect::ode::runge_kutta::
-        inexact_newton_decomposed_full_update_equation_solver_data<double,
+        inexact_newton_decomposed_full_equation_solver_data<double,
             formula_type::stages>;
 
     const solver_data_type data = solver_data_type::from_butcher_tableau(
@@ -112,7 +112,7 @@ STAT_BENCH_CASE("full_update_equation_solver_implicit_kaps_problem",
         inexact_newton_decomposed_full_update_equation_solver<problem_type,
             formula_type::stages>;
     using solver_data_type = num_collect::ode::runge_kutta::
-        inexact_newton_decomposed_full_update_equation_solver_data<double,
+        inexact_newton_decomposed_full_equation_solver_data<double,
             formula_type::stages>;
 
     const solver_data_type data = solver_data_type::from_butcher_tableau(
