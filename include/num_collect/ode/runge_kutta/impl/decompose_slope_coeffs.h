@@ -32,19 +32,19 @@ namespace num_collect::ode::runge_kutta::impl {
  *
  * \param[in] num_stages Number of stages.
  * \param[in] slope_coeffs Coefficients of intermediate slopes.
- * \param[in] block_diagonal_matrix_coeffs Coefficients of block-diagonal matrix
- * in eigenvalue decomposition.
- * \param[in] eigenvectors_coeffs Coefficients of eigenvectors in eigenvalue
+ * \param[out] block_diagonal_matrix_coeffs Coefficients of block-diagonal
+ * matrix in eigenvalue decomposition.
+ * \param[out] eigenvectors_coeffs Coefficients of eigenvectors in eigenvalue
  * decomposition.
- * \param[in] eigenvectors_inverse_coeffs Coefficients of inverse of
+ * \param[out] eigenvectors_inverse_coeffs Coefficients of inverse of
  * eigenvectors in eigenvalue decomposition.
  *
  * Each matrix is stored in column-major order as in Eigen.
  * Size of each matrix is num_stages x num_stages.
  *
- * \note This function was separated to a pre-built library to avoid too much
- * memory usage in compilation. Without this, compilers use 2.5 GB memory per a
- * compilation unit, and it caused PC to freeze every time when compiling.
+ * \note This function was extracted into a pre-built library to avoid excessive
+ * memory usage during compilation. Without this, compilers use 2.5 GB of memory
+ * per compilation unit, and it caused PC to freeze every time when compiling.
  */
 NUM_COLLECT_EXPORT void decompose_slope_coeffs_impl(int num_stages,
     const long double* slope_coeffs, long double* block_diagonal_matrix_coeffs,
@@ -54,10 +54,10 @@ NUM_COLLECT_EXPORT void decompose_slope_coeffs_impl(int num_stages,
  * \brief Decompose the coefficients of intermediate slopes.
  *
  * \param[in] slope_coeffs Coefficients of intermediate slopes.
- * \param[in] block_diagonal_matrix Block-diagonal matrix in eigenvalue
+ * \param[out] block_diagonal_matrix Block-diagonal matrix in eigenvalue
  * decomposition.
- * \param[in] eigenvectors Eigenvectors in eigenvalue decomposition.
- * \param[in] eigenvectors_inverse Inverse of eigenvectors in eigenvalue
+ * \param[out] eigenvectors Eigenvectors in eigenvalue decomposition.
+ * \param[out] eigenvectors_inverse Inverse of eigenvectors in eigenvalue
  * decomposition.
  */
 template <std::floating_point Scalar, int NumStages>
