@@ -268,7 +268,7 @@ private:
     //! Inverse of diagonal coefficients.
     vector_type inv_diag_{};
 
-    //! Intermidiate solution vector.
+    //! Intermediate solution vector.
     mutable vector_type intermediate_solution_{};
 };
 

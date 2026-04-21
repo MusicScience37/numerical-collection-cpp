@@ -167,7 +167,7 @@ private:
     vector_type residual_{};
 
     /*!
-     * \name Intermidiate variables.
+     * \name Intermediate variables.
      */
     ///@{
     //! Intermediate variable.

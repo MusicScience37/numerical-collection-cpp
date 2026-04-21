@@ -294,7 +294,7 @@ private:
             intermediate_layers_.front().restrict_matrix *
             residual_buffers_before_prolongation_.front();
 
-        // Intermidiate layers.
+        // Intermediate layers.
         for (std::size_t i = 1; i < intermediate_layers_.size(); ++i) {
             const intermediate_layer_data& layer = intermediate_layers_[i];
             solution_buffers_[i - 1U] =
@@ -313,7 +313,7 @@ private:
         solution_buffers_.back() =
             final_layer_.solver.solve(residual_buffers_.back());
 
-        // Intermidiate layers.
+        // Intermediate layers.
         for (std::size_t i = intermediate_layers_.size() - 1; i > 0; --i) {
             const intermediate_layer_data& layer = intermediate_layers_[i];
             solution_buffers_[i - 1U].noalias() +=

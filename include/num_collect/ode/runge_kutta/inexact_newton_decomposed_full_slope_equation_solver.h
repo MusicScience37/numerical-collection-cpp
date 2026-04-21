@@ -220,28 +220,39 @@ public:
             this->logger(), "Initialization must be done before iterations.");
 
         // Calculate slopes and the term of mass.
-        for (int i = 0; i < NumStages; ++i) {
-            temp_variable_ = variable_;
-            for (int j = 0; j < NumStages; ++j) {
-                temp_variable_ +=
-                    step_size_ * slope_coeffs_(i, j) * (*solution_)(j);
+        if constexpr (use_mass) {
+            for (int i = 0; i < NumStages; ++i) {
+                temp_variable_ = variable_;
+                for (int j = 0; j < NumStages; ++j) {
+                    temp_variable_ +=
+                        step_size_ * slope_coeffs_(i, j) * (*solution_)(j);
+                }
+                problem_->evaluate_on(time_ + time_coeffs_(i) * step_size_,
+                    temp_variable_,
+                    evaluation_type{.diff_coeff = true, .mass = use_mass});
+                slopes_(i) =
+                    problem_->diff_coeff() - problem_->mass() * (*solution_)(i);
             }
-            problem_->evaluate_on(time_ + time_coeffs_(i) * step_size_,
-                temp_variable_,
-                evaluation_type{.diff_coeff = true, .mass = use_mass});
-            slopes_(i) = problem_->diff_coeff();
-            if constexpr (use_mass) {
-                residual_in_eigenvector_space_(i) =
-                    -problem_->mass() * solution_in_eigenvector_space_(i);
-            } else {
-                residual_in_eigenvector_space_(i) =
-                    -solution_in_eigenvector_space_(i);
+            residual_in_eigenvector_space_ =
+                slope_coeffs_eigenvectors_inverse_ * slopes_;
+        } else {
+            for (int i = 0; i < NumStages; ++i) {
+                temp_variable_ = variable_;
+                for (int j = 0; j < NumStages; ++j) {
+                    temp_variable_ +=
+                        step_size_ * slope_coeffs_(i, j) * (*solution_)(j);
+                }
+                problem_->evaluate_on(time_ + time_coeffs_(i) * step_size_,
+                    temp_variable_,
+                    evaluation_type{.diff_coeff = true, .mass = use_mass});
+                slopes_(i) = problem_->diff_coeff();
             }
+            residual_in_eigenvector_space_ = -solution_in_eigenvector_space_;
+            residual_in_eigenvector_space_.noalias() +=
+                slope_coeffs_eigenvectors_inverse_ * slopes_;
         }
 
         // Calculate residuals.
-        residual_in_eigenvector_space_.noalias() +=
-            slope_coeffs_eigenvectors_inverse_ * slopes_;
         index_type diagonal_index = 0;
         for (auto& solver : decomposed_solvers_) {
             std::visit(
@@ -643,40 +654,55 @@ public:
         const index_type dimensions = variable_.size();
 
         // Calculate slopes and the term of mass.
-        for (int i = 0; i < NumStages; ++i) {
-            temp_variable_ = variable_;
-            for (int j = 0; j < NumStages; ++j) {
-                temp_variable_ += step_size_ * slope_coeffs_(i, j) *
-                    (*solution_)
-                        .segment(j * variable_.size(), variable_.size());
+        if constexpr (use_mass) {
+            for (int i = 0; i < NumStages; ++i) {
+                temp_variable_ = variable_;
+                for (int j = 0; j < NumStages; ++j) {
+                    temp_variable_ += step_size_ * slope_coeffs_(i, j) *
+                        (*solution_).segment(j * dimensions, dimensions);
+                }
+                problem_->evaluate_on(time_ + time_coeffs_(i) * step_size_,
+                    temp_variable_,
+                    evaluation_type{.diff_coeff = true, .mass = use_mass});
+                slopes_.segment(i * dimensions, dimensions) =
+                    problem_->diff_coeff() -
+                    problem_->mass() *
+                        (*solution_).segment(i * dimensions, dimensions);
             }
-            problem_->evaluate_on(time_ + time_coeffs_(i) * step_size_,
-                temp_variable_,
-                evaluation_type{.diff_coeff = true, .mass = use_mass});
-            slopes_.segment(i * variable_.size(), variable_.size()) =
-                problem_->diff_coeff();
-            if constexpr (use_mass) {
-                residual_in_eigenvector_space_.segment(i * variable_.size(),
-                    variable_.size()) = -problem_->mass() *
-                    solution_in_eigenvector_space_.segment(
-                        i * variable_.size(), variable_.size());
-            } else {
-                residual_in_eigenvector_space_.segment(
-                    i * variable_.size(), variable_.size()) =
-                    -solution_in_eigenvector_space_.segment(
-                        i * variable_.size(), variable_.size());
+            residual_in_eigenvector_space_.setZero();
+            for (int i = 0; i < NumStages; ++i) {
+                for (int j = 0; j < NumStages; ++j) {
+                    residual_in_eigenvector_space_.segment(
+                        i * dimensions, dimensions) +=
+                        slope_coeffs_eigenvectors_inverse_(i, j) *
+                        slopes_.segment(j * dimensions, dimensions);
+                }
+            }
+        } else {
+            for (int i = 0; i < NumStages; ++i) {
+                temp_variable_ = variable_;
+                for (int j = 0; j < NumStages; ++j) {
+                    temp_variable_ += step_size_ * slope_coeffs_(i, j) *
+                        (*solution_).segment(j * dimensions, dimensions);
+                }
+                problem_->evaluate_on(time_ + time_coeffs_(i) * step_size_,
+                    temp_variable_,
+                    evaluation_type{.diff_coeff = true, .mass = use_mass});
+                slopes_.segment(i * dimensions, dimensions) =
+                    problem_->diff_coeff();
+            }
+            residual_in_eigenvector_space_ = -solution_in_eigenvector_space_;
+            for (int i = 0; i < NumStages; ++i) {
+                for (int j = 0; j < NumStages; ++j) {
+                    residual_in_eigenvector_space_.segment(
+                        i * dimensions, dimensions) +=
+                        slope_coeffs_eigenvectors_inverse_(i, j) *
+                        slopes_.segment(j * dimensions, dimensions);
+                }
             }
         }
 
         // Calculate residuals.
-        for (int i = 0; i < NumStages; ++i) {
-            for (int j = 0; j < NumStages; ++j) {
-                residual_in_eigenvector_space_.segment(
-                    i * variable_.size(), variable_.size()) +=
-                    slope_coeffs_eigenvectors_inverse_(i, j) *
-                    slopes_.segment(j * variable_.size(), variable_.size());
-            }
-        }
         index_type diagonal_index = 0;
         for (auto& solver : decomposed_solvers_) {
             std::visit(

@@ -224,7 +224,7 @@ private:
     //! Type of the vector of intermediate updates.
     using update_vector_type = typename formula_solver_type::update_vector_type;
 
-    //! Intermidiate updates.
+    //! Intermediate updates.
     update_vector_type updates_;
 };
 

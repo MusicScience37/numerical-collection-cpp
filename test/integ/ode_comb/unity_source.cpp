@@ -1,5 +1,7 @@
+#include "changing_mass_exponential/auto_non_embedded.cpp"
 #include "changing_mass_exponential/embedded.cpp"
 #include "changing_mass_exponential/wrapped_embedded.cpp"
+#include "changing_mass_quadratic/auto_non_embedded.cpp"
 #include "changing_mass_quadratic/wrapped_embedded.cpp"
 #include "exponential/embedded.cpp"
 #include "exponential/non_embedded.cpp"

@@ -35,6 +35,7 @@
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
 #include "num_collect/ode/runge_kutta/full_implicit_formula_base.h"
 #include "num_collect/ode/runge_kutta/impl/inexact_newton_decomposed_jacobian_real_eigen_solver.h"
+#include "num_collect/ode/runge_kutta/inexact_newton_decomposed_full_slope_equation_solver.h"
 #include "num_collect/ode/runge_kutta/inexact_newton_decomposed_full_update_equation_solver.h"
 #include "num_collect/ode/simple_solver.h"
 
@@ -337,7 +338,7 @@ private:
         impl::inexact_newton_decomposed_jacobian_real_eigen_solver<
             problem_type>;
 
-    //! Intermidiate updates.
+    //! Intermediate updates.
     update_vector_type updates_;
 
     //! Solver for the real eigenvalue.
@@ -351,6 +352,112 @@ private:
 
     //! Coefficients for error estimation.
     std::array<scalar_type, 4> error_coeffs_{};
+};
+
+/*!
+ * \brief Class of Radau IIA method of order 5 \cite Hairer1991 for changing
+ * mass matrix.
+ *
+ * \tparam Problem Type of problem.
+ */
+template <concepts::differentiable_problem Problem>
+class radau2a5_changing_mass_formula
+    : public full_implicit_formula_base<radau2a5_changing_mass_formula<Problem>,
+          Problem,
+          inexact_newton_decomposed_full_slope_equation_solver<Problem, 3>> {
+public:
+    //! Type of base class.
+    using base_type =
+        full_implicit_formula_base<radau2a5_changing_mass_formula<Problem>,
+            Problem,
+            inexact_newton_decomposed_full_slope_equation_solver<Problem, 3>>;
+
+    using typename base_type::formula_solver_type;
+    using typename base_type::problem_type;
+    using typename base_type::scalar_type;
+    using typename base_type::variable_type;
+
+    using base_type::base_type;
+    using base_type::formula_solver;
+    using base_type::problem;
+
+protected:
+    using base_type::coeff;
+
+public:
+    //! Number of stages of this formula.
+    static constexpr index_type stages = 3;
+
+    //! Order of this formula.
+    static constexpr index_type order = 5;
+
+    //! Log tag.
+    static constexpr auto log_tag = logging::log_tag_view(
+        "num_collect::ode::runge_kutta::radau2a5_changing_mass_formula");
+
+    /*!
+     * \brief Get the coefficients of intermediate slopes in the formula.
+     *
+     * \return Coefficients.
+     */
+    static auto slope_coeffs() -> Eigen::Matrix<scalar_type, 3, 3> {
+        return impl::radau2a5_coefficients<scalar_type>::slope_coeffs();
+    }
+
+    /*!
+     * \brief Get the coefficients of time in the formula.
+     *
+     * \return Coefficients.
+     */
+    static auto time_coeffs() -> Eigen::Vector3<scalar_type> {
+        return impl::radau2a5_coefficients<scalar_type>::time_coeffs();
+    }
+
+    /*!
+     * \brief Get the coefficients of intermediate updates in the formula.
+     *
+     * \return Coefficients.
+     */
+    static auto update_coeffs() -> Eigen::Vector3<scalar_type> {
+        return impl::radau2a5_coefficients<scalar_type>::update_coeffs();
+    }
+
+    /*!
+     * \brief Constructor.
+     *
+     * \param[in] problem Problem.
+     */
+    explicit radau2a5_changing_mass_formula(
+        const problem_type& problem = problem_type())
+        : base_type(problem,
+              impl::radau2a5_coefficients<scalar_type>::formula_solver_data()) {
+    }
+
+    //! \copydoc ode::formula_base::step
+    void step(scalar_type time, scalar_type step_size,
+        const variable_type& current, variable_type& estimate) {
+        slopes_.resize(get_size(current) * stages);
+        slopes_.setZero();
+        formula_solver().init(problem(), time, step_size, current, slopes_);
+        formula_solver().solve();
+        if constexpr (base::concepts::dense_vector<variable_type>) {
+            estimate = current +
+                step_size * slopes_.reshaped(get_size(current), stages) *
+                    update_coeffs_;
+        } else {
+            estimate = current + step_size * slopes_.dot(update_coeffs_);
+        }
+    }
+
+private:
+    //! Type of the vector of intermediate slopes.
+    using slope_vector_type = typename formula_solver_type::slope_vector_type;
+
+    //! Intermediate slopes.
+    slope_vector_type slopes_;
+
+    //! Coefficients of updates.
+    Eigen::Vector3<scalar_type> update_coeffs_{update_coeffs()};
 };
 
 /*!
@@ -370,5 +477,25 @@ using radau2a5_solver = simple_solver<radau2a5_formula<Problem>>;
 template <concepts::differentiable_problem Problem>
 using radau2a5_auto_solver =
     non_embedded_auto_solver<radau2a5_formula<Problem>>;
+
+/*!
+ * \brief Class of solver using Radau IIA method of order 5 with changing mass
+ * matrix.
+ *
+ * \tparam Problem Type of problem.
+ */
+template <concepts::differentiable_problem Problem>
+using radau2a5_changing_mass_solver =
+    simple_solver<radau2a5_changing_mass_formula<Problem>>;
+
+/*!
+ * \brief Class of solver using Radau IIA method of order 5 with automatic step
+ * sizes for changing mass matrix.
+ *
+ * \tparam Problem Type of problem.
+ */
+template <concepts::differentiable_problem Problem>
+using radau2a5_changing_mass_auto_solver =
+    non_embedded_auto_solver<radau2a5_changing_mass_formula<Problem>>;
 
 }  // namespace num_collect::ode::runge_kutta

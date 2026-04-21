@@ -31,6 +31,7 @@
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/ode/concepts/embedded_formula.h"
+#include "num_collect/ode/concepts/mass_problem.h"
 #include "num_collect/ode/concepts/step_size_controller.h"
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/initial_step_size_calculator.h"
@@ -77,6 +78,9 @@ public:
     using base_type::formula;
     using base_type::problem;
 
+    //! Whether to use mass.
+    static constexpr bool use_mass = concepts::mass_problem<problem_type>;
+
     //! \copydoc ode::solver_base::init
     void init(scalar_type time, const variable_type& variable) {
         time_ = time;
@@ -89,14 +93,25 @@ public:
             NUM_COLLECT_LOG_DEBUG(this->logger(),
                 "Using user-specified initial step size {}.", *step_size_);
         } else {
-            NUM_COLLECT_LOG_TRACE(
-                this->logger(), "Automatically calculate initial step size.");
-            step_size_ = initial_step_size_calculator<formula_type>().calculate(
-                this->problem(), time_, variable_,
-                step_size_controller_.limits(),
-                step_size_controller_.tolerances());
-            NUM_COLLECT_LOG_DEBUG(this->logger(),
-                "Automatically selected initial step size {}.", *step_size_);
+            if constexpr (use_mass) {
+                // TODO Implement automatic step size calculation for this case.
+                constexpr auto default_step_size =
+                    static_cast<scalar_type>(0.1);
+                NUM_COLLECT_LOG_DEBUG(this->logger(),
+                    "Use the default initial step size {}.", default_step_size);
+                step_size_ = default_step_size;
+            } else {
+                NUM_COLLECT_LOG_TRACE(this->logger(),
+                    "Automatically calculate initial step size.");
+                step_size_ =
+                    initial_step_size_calculator<formula_type>().calculate(
+                        this->problem(), time_, variable_,
+                        step_size_controller_.limits(),
+                        step_size_controller_.tolerances());
+                NUM_COLLECT_LOG_DEBUG(this->logger(),
+                    "Automatically selected initial step size {}.",
+                    *step_size_);
+            }
         }
     }
 
