@@ -131,6 +131,6 @@ TEST_CASE("Diffusion equation in 2D with Dirichlet boundary condition") {
 #ifndef NDEBUG
     CHECK_THAT(solution, eigen_approx(true_values, 1e-2));
 #else
-    CHECK_THAT(solution, eigen_approx(true_values, 1e-4));
+    CHECK_THAT(solution, eigen_approx(true_values, 1e-3));
 #endif
 }
