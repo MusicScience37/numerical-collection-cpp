@@ -26,11 +26,14 @@
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "comparison_approvals.h"
+#include "num_collect/logging/logger.h"
 #include "num_prob_collect/ode/exponential_problem.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
 
 TEST_CASE("num_collect::ode::runge_kutta::radau2a_formula<5>") {
     using num_collect::ode::runge_kutta::radau2a_formula;
+
+    num_collect::logging::logger logger;
 
     SECTION("static definition") {
         using problem_type = num_prob_collect::ode::exponential_problem;
@@ -48,13 +51,19 @@ TEST_CASE("num_collect::ode::runge_kutta::radau2a_formula<5>") {
         const auto time_coeffs = formula_type::time_coeffs();
         const auto update_coeffs = formula_type::update_coeffs();
 
-        CHECK_THAT(slope_coeffs.row(0).sum(),
-            Catch::Matchers::WithinRel(time_coeffs(0)));
-        CHECK_THAT(slope_coeffs.row(1).sum(),
-            Catch::Matchers::WithinRel(time_coeffs(1)));
-        CHECK_THAT(slope_coeffs.row(2).sum(),
-            Catch::Matchers::WithinRel(time_coeffs(2)));
-        CHECK_THAT(update_coeffs.sum(), Catch::Matchers::WithinRel(1.0));
+        for (int i = 0; i < formula_type::stages; ++i) {
+            INFO("i = " << i);
+            const double slope_sum = slope_coeffs.row(i).sum();
+            const double time_coeff = time_coeffs(i);
+            NUM_COLLECT_LOG_DEBUG(logger,
+                "i= {}, slope_sum = {}, time_coeff = {}, error = {}", i,
+                slope_sum, time_coeff, slope_sum - time_coeff);
+            CHECK_THAT(slope_sum, Catch::Matchers::WithinRel(time_coeff));
+        }
+        const double update_sum = update_coeffs.sum();
+        NUM_COLLECT_LOG_DEBUG(logger, "update_sum = {}, error = {}", update_sum,
+            update_sum - 1.0);
+        CHECK_THAT(update_sum, Catch::Matchers::WithinRel(1.0));
     }
 
     SECTION("step in one-dimensional problem") {
@@ -92,6 +101,8 @@ TEST_CASE("num_collect::ode::runge_kutta::radau2a_formula<5>") {
 TEST_CASE("num_collect::ode::runge_kutta::radau2a_formula<9>") {
     using num_collect::ode::runge_kutta::radau2a_formula;
 
+    num_collect::logging::logger logger;
+
     SECTION("static definition") {
         using problem_type = num_prob_collect::ode::exponential_problem;
         using formula_type = radau2a_formula<9, problem_type>;
@@ -108,16 +119,19 @@ TEST_CASE("num_collect::ode::runge_kutta::radau2a_formula<9>") {
         const auto time_coeffs = formula_type::time_coeffs();
         const auto update_coeffs = formula_type::update_coeffs();
 
-        // Error is large in MSVC.
-        constexpr double tolerance = 1e-10;
-        CHECK_THAT(slope_coeffs.row(0).sum(),
-            Catch::Matchers::WithinRel(time_coeffs(0), tolerance));
-        CHECK_THAT(slope_coeffs.row(1).sum(),
-            Catch::Matchers::WithinRel(time_coeffs(1), tolerance));
-        CHECK_THAT(slope_coeffs.row(2).sum(),
-            Catch::Matchers::WithinRel(time_coeffs(2), tolerance));
-        CHECK_THAT(
-            update_coeffs.sum(), Catch::Matchers::WithinRel(1.0, tolerance));
+        for (int i = 0; i < formula_type::stages; ++i) {
+            INFO("i = " << i);
+            const double slope_sum = slope_coeffs.row(i).sum();
+            const double time_coeff = time_coeffs(i);
+            NUM_COLLECT_LOG_DEBUG(logger,
+                "i= {}, slope_sum = {}, time_coeff = {}, error = {}", i,
+                slope_sum, time_coeff, slope_sum - time_coeff);
+            CHECK_THAT(slope_sum, Catch::Matchers::WithinRel(time_coeff));
+        }
+        const double update_sum = update_coeffs.sum();
+        NUM_COLLECT_LOG_DEBUG(logger, "update_sum = {}, error = {}", update_sum,
+            update_sum - 1.0);
+        CHECK_THAT(update_sum, Catch::Matchers::WithinRel(1.0));
     }
 
     SECTION("step in one-dimensional problem") {
