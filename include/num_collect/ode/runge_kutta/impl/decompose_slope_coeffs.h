@@ -69,10 +69,11 @@ void decompose_slope_coeffs(
     Eigen::Matrix<Scalar, NumStages, NumStages>& eigenvectors_inverse) {
     constexpr std::size_t buffer_size = static_cast<std::size_t>(NumStages) *
         static_cast<std::size_t>(NumStages);
-    std::array<long double, buffer_size> slope_coeffs_vec;
-    std::array<long double, buffer_size> block_diagonal_matrix_vec;
-    std::array<long double, buffer_size> eigenvectors_vec;
-    std::array<long double, buffer_size> eigenvectors_inverse_vec;
+    // Initialization is not needed here.
+    std::array<long double, buffer_size> slope_coeffs_vec;           // NOLINT
+    std::array<long double, buffer_size> block_diagonal_matrix_vec;  // NOLINT
+    std::array<long double, buffer_size> eigenvectors_vec;           // NOLINT
+    std::array<long double, buffer_size> eigenvectors_inverse_vec;   // NOLINT
 
     using mapped_matrix_type =
         Eigen::Matrix<long double, NumStages, NumStages, Eigen::ColMajor>;
