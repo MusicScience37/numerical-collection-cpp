@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <algorithm>
 #include <limits>
 
 #include "num_collect/base/concepts/real_scalar.h"
@@ -46,7 +47,8 @@ constexpr auto default_step_size_upper_limit = static_cast<Scalar>(1);
  */
 template <base::concepts::real_scalar Scalar>
 constexpr Scalar default_step_size_lower_limit =
-    functions::sqrt(std::numeric_limits<Scalar>::epsilon());
+    std::max(functions::sqrt(std::numeric_limits<Scalar>::epsilon()),
+        static_cast<Scalar>(1e-6));
 
 }  // namespace impl
 

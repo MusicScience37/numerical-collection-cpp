@@ -37,8 +37,7 @@ TEST_CASE("num_collect::ode::step_size_limits") {
 
         CHECK_THAT(limits.apply(1.1), Catch::Matchers::WithinRel(1.0));
 
-        const double lower_limit =
-            std::sqrt(std::numeric_limits<double>::epsilon());
+        const double lower_limit = 1e-6;
 
         CHECK_THAT(limits.apply(lower_limit * 1.1),
             Catch::Matchers::WithinRel(lower_limit * 1.1));
