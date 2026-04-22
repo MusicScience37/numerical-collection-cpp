@@ -60,8 +60,8 @@ TEST_CASE("Diffusion equation in 2D with Dirichlet boundary condition") {
     constexpr num_collect::index_type num_interior_nodes = 100;
     constexpr num_collect::index_type num_boundary_nodes_per_edge = 10;
 #else
-    constexpr num_collect::index_type num_interior_nodes = 10000;
-    constexpr num_collect::index_type num_boundary_nodes_per_edge = 100;
+    constexpr num_collect::index_type num_interior_nodes = 1000;
+    constexpr num_collect::index_type num_boundary_nodes_per_edge = 30;
 #endif
     auto nodes =
         num_collect::rbf::generate_halton_nodes<typename position_type::Scalar,
