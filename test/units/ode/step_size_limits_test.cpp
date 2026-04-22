@@ -31,11 +31,11 @@ TEST_CASE("num_collect::ode::step_size_limits") {
     SECTION("apply default limits") {
         const auto limits = step_size_limits<double>();
 
-        CHECK_THAT(limits.apply(0.09), Catch::Matchers::WithinRel(0.09));
+        CHECK_THAT(limits.apply(0.9), Catch::Matchers::WithinRel(0.9));
 
-        CHECK_THAT(limits.apply(0.1), Catch::Matchers::WithinRel(0.1));
+        CHECK_THAT(limits.apply(1.0), Catch::Matchers::WithinRel(1.0));
 
-        CHECK_THAT(limits.apply(0.11), Catch::Matchers::WithinRel(0.1));
+        CHECK_THAT(limits.apply(1.1), Catch::Matchers::WithinRel(1.0));
 
         const double lower_limit = 1e-6;
 

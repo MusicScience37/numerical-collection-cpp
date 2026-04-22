@@ -38,7 +38,7 @@ namespace impl {
  * \tparam Scalar Type of scalars.
  */
 template <base::concepts::real_scalar Scalar>
-constexpr auto default_step_size_upper_limit = static_cast<Scalar>(0.1);
+constexpr auto default_step_size_upper_limit = static_cast<Scalar>(1);
 
 /*!
  * \brief Default lower limit of the step size.
