@@ -32,6 +32,8 @@
 #include "runge_kutta/impl/inexact_newton_decomposed_jacobian_real_eigen_solver_test.cpp"
 #include "runge_kutta/impl/radau2a_table_test.cpp"
 #include "runge_kutta/implicit_euler_formula_test.cpp"
+#include "runge_kutta/inexact_newton_decomposed_full_equation_solver_data_test.cpp"
+#include "runge_kutta/inexact_newton_decomposed_full_slope_equation_solver_test.cpp"
 #include "runge_kutta/inexact_newton_decomposed_full_update_equation_solver_test.cpp"
 #include "runge_kutta/inexact_newton_full_update_equation_solver_test.cpp"
 #include "runge_kutta/inexact_newton_slope_equation_solver_test.cpp"

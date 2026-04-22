@@ -32,6 +32,7 @@
 #include "num_collect/ode/problems/linear_first_order_dae_problem.h"
 #include "num_collect/ode/problems/linear_first_order_ode_problem.h"
 #include "num_collect/util/vector.h"
+#include "num_prob_collect/ode/changing_mass_exponential_problem.h"
 #include "num_prob_collect/ode/exponential_problem.h"
 #include "num_prob_collect/ode/implicit_exponential_problem.h"
 #include "num_prob_collect/ode/implicit_kaps_problem.h"
@@ -106,6 +107,31 @@ TEST_CASE(
     SECTION("use mass if exists") {
         using problem_type =
             num_prob_collect::ode::implicit_exponential_problem;
+        using solver_type =
+            num_collect::ode::runge_kutta::inexact_newton_slope_equation_solver<
+                problem_type>;
+        solver_type solver;
+
+        problem_type problem;
+        constexpr double init_time = 0.0;
+        constexpr double step_size = 1e-4;
+        constexpr double init_var = 1.0;
+        constexpr double solution_coeff = 1.0;
+
+        solver.update_jacobian(
+            problem, init_time, step_size, init_var, solution_coeff);
+        double solution{0.0};
+        solver.init(solution);
+        solver.solve();
+
+        const double variable = init_var + step_size * solution;
+        const double reference = std::exp(step_size);
+        comparison_approvals::verify_with_reference(variable, reference);
+    }
+
+    SECTION("use changing mass") {
+        using problem_type =
+            num_prob_collect::ode::changing_mass_exponential_problem;
         using solver_type =
             num_collect::ode::runge_kutta::inexact_newton_slope_equation_solver<
                 problem_type>;

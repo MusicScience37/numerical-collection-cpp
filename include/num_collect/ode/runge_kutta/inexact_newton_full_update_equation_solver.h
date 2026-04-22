@@ -114,14 +114,14 @@ public:
     static_assert(base::concepts::real_scalar<scalar_type>,
         "Current implementation only supports real scalars.");
 
-    //! Type of the matrix of coefficients of intermidiate slopes.
+    //! Type of the matrix of coefficients of intermediate slopes.
     using slope_coeff_matrix_type =
         Eigen::Matrix<scalar_type, NumStages, NumStages>;
 
-    //! Type of the vector of intermidiate updates.
+    //! Type of the vector of intermediate updates.
     using update_coeff_vector_type = Eigen::Vector<scalar_type, NumStages>;
 
-    //! Type of the vector of intermidiate updates.
+    //! Type of the vector of intermediate updates.
     using update_vector_type = Eigen::Vector<scalar_type, NumStages>;
 
     //! Whether to use mass.
@@ -130,10 +130,10 @@ public:
     /*!
      * \brief Constructor.
      *
-     * \param[in] slope_coeffs Coefficients of intermidiate slopes in the
+     * \param[in] slope_coeffs Coefficients of intermediate slopes in the
      * formula.
      * \param[in] time_coeffs Coefficients of time in the formula.
-     * \param[in] update_coeffs Coefficients of intermidiate updates in the
+     * \param[in] update_coeffs Coefficients of intermediate updates in the
      * formula.
      */
     inexact_newton_full_update_equation_solver(
@@ -311,13 +311,13 @@ public:
     }
 
 private:
-    //! Coefficients of intermidiate slopes.
+    //! Coefficients of intermediate slopes.
     slope_coeff_matrix_type slope_coeffs_{};
 
     //! Coefficients of time.
     update_coeff_vector_type time_coeffs_{};
 
-    //! Coefficients of intermidiate updates.
+    //! Coefficients of intermediate updates.
     update_coeff_vector_type update_coeffs_{};
 
     //! Pointer to the problem.
@@ -418,11 +418,11 @@ public:
     static_assert(base::concepts::real_scalar<scalar_type>,
         "Current implementation only supports real scalars.");
 
-    //! Type of the matrix of coefficients of intermidiate slopes.
+    //! Type of the matrix of coefficients of intermediate slopes.
     using slope_coeff_matrix_type =
         Eigen::Matrix<scalar_type, NumStages, NumStages>;
 
-    //! Type of the vector of intermidiate updates.
+    //! Type of the vector of intermediate updates.
     using update_coeff_vector_type = Eigen::Vector<scalar_type, NumStages>;
 
     //! Whether to use mass.
@@ -432,13 +432,13 @@ public:
     static constexpr int num_dimensions_at_compile_time =
         variable_type::SizeAtCompileTime;
 
-    //! Size of the vectors of intermidiate updates at compile-time.
+    //! Size of the vectors of intermediate updates at compile-time.
     static constexpr int update_vector_size_at_compile_time =
         (num_dimensions_at_compile_time == Eigen::Dynamic)
         ? Eigen::Dynamic
         : NumStages * num_dimensions_at_compile_time;
 
-    //! Type of the vector of intermidiate updates.
+    //! Type of the vector of intermediate updates.
     using update_vector_type =
         Eigen::Vector<scalar_type, update_vector_size_at_compile_time>;
 
@@ -449,10 +449,10 @@ public:
     /*!
      * \brief Constructor.
      *
-     * \param[in] slope_coeffs Coefficients of intermidiate slopes in the
+     * \param[in] slope_coeffs Coefficients of intermediate slopes in the
      * formula.
      * \param[in] time_coeffs Coefficients of time in the formula.
-     * \param[in] update_coeffs Coefficients of intermidiate updates in the
+     * \param[in] update_coeffs Coefficients of intermediate updates in the
      * formula.
      */
     inexact_newton_full_update_equation_solver(
@@ -670,13 +670,13 @@ public:
     }
 
 private:
-    //! Coefficients of intermidiate slopes.
+    //! Coefficients of intermediate slopes.
     slope_coeff_matrix_type slope_coeffs_{};
 
     //! Coefficients of time.
     update_coeff_vector_type time_coeffs_{};
 
-    //! Coefficients of intermidiate updates.
+    //! Coefficients of intermediate updates.
     update_coeff_vector_type update_coeffs_{};
 
     //! Pointer to the problem.

@@ -26,7 +26,6 @@
 #include <catch2/matchers/catch_matchers.hpp>
 
 #include "comparison_approvals.h"
-#include "eigen_approx.h"
 #include "num_collect/base/constants.h"
 #include "num_collect/ode/problems/linear_first_order_dae_problem.h"
 #include "num_collect/ode/problems/linear_first_order_ode_problem.h"
@@ -38,47 +37,11 @@
 
 TEST_CASE(
     "num_collect::ode::runge_kutta::inexact_newton_decomposed_full_update_"
-    "equation_solver_data") {
-    using num_collect::ode::runge_kutta::
-        inexact_newton_decomposed_full_update_equation_solver_data;
-    using num_collect::ode::runge_kutta::radau2a5_formula;
-
-    SECTION("create data") {
-        using formula_type =
-            radau2a5_formula<num_prob_collect::ode::exponential_problem>;
-        const auto& slope_coeffs = formula_type::slope_coeffs();
-        const auto& time_coeffs = formula_type::time_coeffs();
-
-        using data_type =
-            inexact_newton_decomposed_full_update_equation_solver_data<double,
-                formula_type::stages>;
-        data_type data =
-            data_type::from_butcher_tableau(slope_coeffs, time_coeffs);
-
-        // Inputs.
-        CHECK_THAT(data.time_coeffs(), eigen_approx(time_coeffs));
-
-        // Eigenvectors.
-        const Eigen::Matrix3d eigenvectors_inverse_times_eigenvectors =
-            data.eigenvectors_inverse() * data.eigenvectors();
-        const Eigen::Matrix3d identity = Eigen::Matrix3d::Identity();
-        CHECK_THAT(
-            eigenvectors_inverse_times_eigenvectors, eigen_approx(identity));
-
-        // Block-diagonal matrix.
-        const Eigen::Matrix3d reconstructed_slope_coeffs = data.eigenvectors() *
-            data.block_diagonal_matrix() * data.eigenvectors_inverse();
-        CHECK_THAT(reconstructed_slope_coeffs, eigen_approx(slope_coeffs));
-    }
-}
-
-TEST_CASE(
-    "num_collect::ode::runge_kutta::inexact_newton_decomposed_full_update_"
     "equation_solver") {
     using num_collect::ode::runge_kutta::
-        inexact_newton_decomposed_full_update_equation_solver;
+        inexact_newton_decomposed_full_equation_solver_data;
     using num_collect::ode::runge_kutta::
-        inexact_newton_decomposed_full_update_equation_solver_data;
+        inexact_newton_decomposed_full_update_equation_solver;
     using num_collect::ode::runge_kutta::radau2a5_formula;
 
     SECTION("solve a scalar problem without mass") {
@@ -88,7 +51,7 @@ TEST_CASE(
             inexact_newton_decomposed_full_update_equation_solver<problem_type,
                 formula_type::stages>;
         using solver_data_type =
-            inexact_newton_decomposed_full_update_equation_solver_data<
+            inexact_newton_decomposed_full_equation_solver_data<
                 solver_type::scalar_type, formula_type::stages>;
         using update_type = solver_type::update_vector_type;
 
@@ -117,7 +80,7 @@ TEST_CASE(
             inexact_newton_decomposed_full_update_equation_solver<problem_type,
                 formula_type::stages>;
         using solver_data_type =
-            inexact_newton_decomposed_full_update_equation_solver_data<
+            inexact_newton_decomposed_full_equation_solver_data<
                 solver_type::scalar_type, formula_type::stages>;
         using update_type = solver_type::update_vector_type;
 
@@ -145,7 +108,7 @@ TEST_CASE(
             inexact_newton_decomposed_full_update_equation_solver<problem_type,
                 formula_type::stages>;
         using solver_data_type =
-            inexact_newton_decomposed_full_update_equation_solver_data<
+            inexact_newton_decomposed_full_equation_solver_data<
                 solver_type::scalar_type, formula_type::stages>;
         using update_type = solver_type::update_vector_type;
 
@@ -174,7 +137,7 @@ TEST_CASE(
             inexact_newton_decomposed_full_update_equation_solver<problem_type,
                 formula_type::stages>;
         using solver_data_type =
-            inexact_newton_decomposed_full_update_equation_solver_data<
+            inexact_newton_decomposed_full_equation_solver_data<
                 solver_type::scalar_type, formula_type::stages>;
         using update_type = solver_type::update_vector_type;
 
@@ -209,7 +172,7 @@ TEST_CASE(
             inexact_newton_decomposed_full_update_equation_solver<problem_type,
                 formula_type::stages>;
         using solver_data_type =
-            inexact_newton_decomposed_full_update_equation_solver_data<
+            inexact_newton_decomposed_full_equation_solver_data<
                 solver_type::scalar_type, formula_type::stages>;
         using update_type = solver_type::update_vector_type;
 
@@ -280,7 +243,7 @@ TEST_CASE(
             inexact_newton_decomposed_full_update_equation_solver<problem_type,
                 formula_type::stages>;
         using solver_data_type =
-            inexact_newton_decomposed_full_update_equation_solver_data<
+            inexact_newton_decomposed_full_equation_solver_data<
                 solver_type::scalar_type, formula_type::stages>;
         using update_type = solver_type::update_vector_type;
 

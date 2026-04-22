@@ -56,7 +56,7 @@ namespace num_collect::ode::runge_kutta::impl {
  *
  * where
  * - \f$h\f$ is the step size,
- * - \f$\gamma\f$ is the eigenvalue of the coefficients of intermidiate slopes,
+ * - \f$\gamma\f$ is the eigenvalue of the coefficients of intermediate slopes,
  * - \f$M\f$ is the mass matrix (identity matrix if the problem is not a mass
  * problem),
  * - \f$J\f$ is the Jacobian matrix of the problem.
@@ -78,7 +78,7 @@ class inexact_newton_decomposed_jacobian_real_eigen_solver;
  *
  * where
  * - \f$h\f$ is the step size,
- * - \f$\gamma\f$ is the eigenvalue of the coefficients of intermidiate slopes,
+ * - \f$\gamma\f$ is the eigenvalue of the coefficients of intermediate slopes,
  * - \f$M\f$ is the mass matrix (identity matrix if the problem is not a mass
  * problem),
  * - \f$J\f$ is the Jacobian matrix of the problem.
@@ -112,7 +112,7 @@ public:
     /*!
      * \brief Constructor.
      *
-     * \param[in] eigenvalue Eigenvalue of the coefficients of intermidiate
+     * \param[in] eigenvalue Eigenvalue of the coefficients of intermediate
      * slopes.
      */
     explicit inexact_newton_decomposed_jacobian_real_eigen_solver(
@@ -168,7 +168,7 @@ public:
     }
 
     /*!
-     * \brief Get the eigenvalue of the coefficients of intermidiate slopes.
+     * \brief Get the eigenvalue of the coefficients of intermediate slopes.
      *
      * \return Eigenvalue.
      */
@@ -177,7 +177,7 @@ public:
     }
 
 private:
-    //! Eigenvalue of the coefficients of intermidiate slopes.
+    //! Eigenvalue of the coefficients of intermediate slopes.
     scalar_type eigenvalue_;
 
     //! Inverse of the coefficient of the linear equation.
@@ -198,7 +198,7 @@ private:
  *
  * where
  * - \f$h\f$ is the step size,
- * - \f$\gamma\f$ is the eigenvalue of the coefficients of intermidiate slopes,
+ * - \f$\gamma\f$ is the eigenvalue of the coefficients of intermediate slopes,
  * - \f$M\f$ is the mass matrix (identity matrix if the problem is not a mass
  * problem),
  * - \f$J\f$ is the Jacobian matrix of the problem.
@@ -228,7 +228,7 @@ public:
     /*!
      * \brief Constructor.
      *
-     * \param[in] eigenvalue Eigenvalue of the coefficients of intermidiate
+     * \param[in] eigenvalue Eigenvalue of the coefficients of intermediate
      * slopes.
      */
     explicit inexact_newton_decomposed_jacobian_real_eigen_solver(
@@ -301,7 +301,7 @@ public:
     }
 
     /*!
-     * \brief Get the eigenvalue of the coefficients of intermidiate slopes.
+     * \brief Get the eigenvalue of the coefficients of intermediate slopes.
      *
      * \return Eigenvalue.
      */
@@ -310,7 +310,7 @@ public:
     }
 
 private:
-    //! Eigenvalue of the coefficients of intermidiate slopes.
+    //! Eigenvalue of the coefficients of intermediate slopes.
     scalar_type eigenvalue_;
 
     //! Buffer of the coefficient matrix.
@@ -340,7 +340,7 @@ private:
  *
  * where
  * - \f$h\f$ is the step size,
- * - \f$\gamma\f$ is the eigenvalue of the coefficients of intermidiate slopes,
+ * - \f$\gamma\f$ is the eigenvalue of the coefficients of intermediate slopes,
  * - \f$M\f$ is the mass matrix (identity matrix if the problem is not a mass
  * problem),
  * - \f$J\f$ is the Jacobian matrix of the problem.
@@ -370,7 +370,7 @@ public:
     /*!
      * \brief Constructor.
      *
-     * \param[in] eigenvalue Eigenvalue of the coefficients of intermidiate
+     * \param[in] eigenvalue Eigenvalue of the coefficients of intermediate
      * slopes.
      */
     explicit inexact_newton_decomposed_jacobian_real_eigen_solver(
@@ -443,7 +443,7 @@ public:
     }
 
     /*!
-     * \brief Get the eigenvalue of the coefficients of intermidiate slopes.
+     * \brief Get the eigenvalue of the coefficients of intermediate slopes.
      *
      * \return Eigenvalue.
      */
@@ -452,7 +452,7 @@ public:
     }
 
 private:
-    //! Eigenvalue of the coefficients of intermidiate slopes.
+    //! Eigenvalue of the coefficients of intermediate slopes.
     scalar_type eigenvalue_;
 
     //! Buffer of the coefficient matrix.

@@ -49,7 +49,7 @@ struct radau2a3_coefficients {
     static constexpr index_type stages = 2;
 
     /*!
-     * \brief Get the coefficients of intermidiate slopes in the formula.
+     * \brief Get the coefficients of intermediate slopes in the formula.
      *
      * \return Coefficients.
      */
@@ -79,7 +79,7 @@ struct radau2a3_coefficients {
     }
 
     /*!
-     * \brief Get the coefficients of intermidiate updates in the formula.
+     * \brief Get the coefficients of intermediate updates in the formula.
      *
      * \return Coefficients.
      */
@@ -97,12 +97,11 @@ struct radau2a3_coefficients {
      * \return Data.
      */
     static auto formula_solver_data()
-        -> inexact_newton_decomposed_full_update_equation_solver_data<
-            scalar_type, stages> {
+        -> inexact_newton_decomposed_full_equation_solver_data<scalar_type,
+            stages> {
         static const auto data =
-            inexact_newton_decomposed_full_update_equation_solver_data<
-                scalar_type, stages>::from_butcher_tableau(slope_coeffs(),
-                time_coeffs());
+            inexact_newton_decomposed_full_equation_solver_data<scalar_type,
+                stages>::from_butcher_tableau(slope_coeffs(), time_coeffs());
         return data;
     };
 };
@@ -150,7 +149,7 @@ public:
         "num_collect::ode::runge_kutta::radau2a3_formula");
 
     /*!
-     * \brief Get the coefficients of intermidiate slopes in the formula.
+     * \brief Get the coefficients of intermediate slopes in the formula.
      *
      * \return Coefficients.
      */
@@ -168,7 +167,7 @@ public:
     }
 
     /*!
-     * \brief Get the coefficients of intermidiate updates in the formula.
+     * \brief Get the coefficients of intermediate updates in the formula.
      *
      * \return Coefficients.
      */
@@ -201,10 +200,10 @@ public:
     }
 
 private:
-    //! Type of the vector of intermidiate updates.
+    //! Type of the vector of intermediate updates.
     using update_vector_type = typename formula_solver_type::update_vector_type;
 
-    //! Intermidiate updates.
+    //! Intermediate updates.
     update_vector_type updates_;
 };
 

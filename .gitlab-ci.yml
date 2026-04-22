@@ -113,6 +113,7 @@ spell check:
       "**/*.json"
       "**/*.sh"
       --exclude "**/*.approved.*"
+      --exclude "cspell.json"
   interruptible: true
 
 .test linux base:

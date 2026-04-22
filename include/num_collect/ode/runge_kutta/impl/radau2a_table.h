@@ -61,7 +61,7 @@ public:
     /*!
      * \brief Constructor.
      *
-     * \param[in] slope_coeffs Coefficients of intermidiate slopes in the
+     * \param[in] slope_coeffs Coefficients of intermediate slopes in the
      * formula.
      * \param[in] time_coeffs Coefficients of time in the formula.
      */
@@ -70,7 +70,7 @@ public:
         : slope_coeffs_(slope_coeffs), time_coeffs_(time_coeffs) {}
 
     /*!
-     * \brief Get the coefficients of intermidiate slopes in the formula in the
+     * \brief Get the coefficients of intermediate slopes in the formula in the
      * specified type.
      *
      * \tparam ResultScalar Type of scalars in the result.
@@ -95,7 +95,7 @@ public:
     }
 
 private:
-    //! Coefficients of intermidiate slopes in the formula.
+    //! Coefficients of intermediate slopes in the formula.
     matrix_type slope_coeffs_;
 
     //! Coefficients of time in the formula.
@@ -193,11 +193,11 @@ private:
     }
 
     /*!
-     * \brief Compute coefficients of intermidiate slopes in the formula from
+     * \brief Compute coefficients of intermediate slopes in the formula from
      * the given coefficients of time.
      *
      * \param[in] time_coeffs Coefficients of time in the formula.
-     * \return Coefficients of intermidiate slopes in the formula.
+     * \return Coefficients of intermediate slopes in the formula.
      */
     [[nodiscard]] static auto compute_slope_coeffs(
         const Eigen::VectorX<scalar_type>& time_coeffs)

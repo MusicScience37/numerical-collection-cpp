@@ -1,6 +1,8 @@
 set(SOURCE_FILES
+    changing_mass_exponential/auto_non_embedded.cpp
     changing_mass_exponential/embedded.cpp
     changing_mass_exponential/wrapped_embedded.cpp
+    changing_mass_quadratic/auto_non_embedded.cpp
     changing_mass_quadratic/wrapped_embedded.cpp
     exponential/embedded.cpp
     exponential/non_embedded.cpp
