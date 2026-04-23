@@ -225,6 +225,27 @@ using radau2a_auto_solver =
     non_embedded_auto_solver<radau2a_formula<Stages, Problem>>;
 
 /*!
+ * \brief Class of solver using Radau IIA method of order 7.
+ *
+ * \tparam Stages Number of stages.
+ * \tparam Problem Type of problem.
+ */
+template <concepts::differentiable_problem Problem>
+using radau2a7_solver = radau2a_solver<4, Problem>;
+
+/*!
+ * \brief Class of solver using Radau IIA method of order 7 with automatic step
+ * sizes.
+ *
+ * \tparam Stages Number of stages.
+ * \tparam Problem Type of problem.
+ *
+ * \warning This class is experimental and not working well currently.
+ */
+template <concepts::differentiable_problem Problem>
+using radau2a7_auto_solver = radau2a_auto_solver<4, Problem>;
+
+/*!
  * \brief Class of solver using Radau IIA method of order 9.
  *
  * \tparam Stages Number of stages.
@@ -239,6 +260,8 @@ using radau2a9_solver = radau2a_solver<5, Problem>;
  *
  * \tparam Stages Number of stages.
  * \tparam Problem Type of problem.
+ *
+ * \warning This class is experimental and not working well currently.
  */
 template <concepts::differentiable_problem Problem>
 using radau2a9_auto_solver = radau2a_auto_solver<5, Problem>;

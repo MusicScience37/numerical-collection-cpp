@@ -68,6 +68,7 @@ auto create_line_dash_map() -> std::unordered_map<std::string, std::string> {
         {"LobattoIIIC6", "dash"},
         {"RadauIIA3", "dash"},
         {"RadauIIA5", "dash"},
+        {"RadauIIA7", "dash"},
         {"RadauIIA9", "dash"},
         {"RadauIIA13", "dash"},
         {"RadauIIA17", "dash"},

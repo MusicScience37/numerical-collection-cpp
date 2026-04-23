@@ -31,6 +31,8 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
+#include "num_collect/multi_double/quad.h"
+#include "num_collect/multi_double/quad_math.h"  // IWYU pragma: keep
 #include "num_collect/polynomials/compute_polynomial_zeros.h"
 #include "num_collect/polynomials/polynomial.h"
 #include "num_collect/util/assert.h"
@@ -189,7 +191,46 @@ private:
             zeros(i) = complex_zeros[i].real();
         }
         std::sort(zeros.data(), zeros.data() + zeros.size());
+        for (scalar_type& zero : zeros) {
+            make_zero_preciser(poly, zero);
+        }
         return zeros;
+    }
+
+    /*!
+     * \brief Make a zero of the polynomial more precise by Newton's method.
+     *
+     * \param[in] poly Polynomial.
+     * \param[in,out] zero Zero of the polynomial to be made more precise.
+     */
+    static void make_zero_preciser(
+        const num_collect::polynomials::polynomial<scalar_type>& poly,
+        scalar_type& zero) {
+        using num_collect::multi_double::quad;
+        quad solution = zero;
+        constexpr num_collect::index_type max_iterations = 10;
+        for (num_collect::index_type i = 0; i < max_iterations; ++i) {
+            quad value = quad(0.0);
+            quad derivative = quad(0.0);
+            const auto& coeffs = poly.coeffs();
+            for (num_collect::index_type j = 0; j < coeffs.size(); ++j) {
+                value += coeffs[j] * pow(solution, j);
+                if (j > 0) {
+                    // Here uses double for compatibility with quad class.
+                    derivative += static_cast<double>(j) * coeffs[j] *
+                        pow(solution, j - 1);
+                }
+            }
+            quad update = -value / derivative;
+            solution += update;
+            // Solution is in the range [0, 1], so relative error is not used.
+            if (static_cast<scalar_type>(std::abs(update.high())) <
+                std::numeric_limits<scalar_type>::epsilon()) {
+                break;
+            }
+        }
+        zero = static_cast<scalar_type>(solution.high()) +
+            static_cast<scalar_type>(solution.low());
     }
 
     /*!
