@@ -1,16 +1,3 @@
-target:
-  default: none
-  description: Target type
-  choices:
-    none:
-      short: None
-      long: No specification
-    linux-llvm:
-      short: Linux-LLVM
-      long: Linux with LLVM compilers
-      settings:
-        BUILD_SHARED_LIBS: ON
-
 buildType:
   default: none
   choices:
@@ -22,6 +9,7 @@ buildType:
       long: ASan and USan in Clang + Unit Tests
       buildType: Debug
       settings:
+        BUILD_SHARED_LIBS: ON
         NUM_COLLECT_ENABLE_AUSAN: ON
         NUM_COLLECT_TESTING: ON
         NUM_COLLECT_WRITE_JUNIT: OFF
@@ -39,6 +27,7 @@ buildType:
       long: ASan and USan in Clang + Unit Tests + Doxygen
       buildType: Debug
       settings:
+        BUILD_SHARED_LIBS: ON
         NUM_COLLECT_ENABLE_AUSAN: ON
         NUM_COLLECT_TESTING: ON
         NUM_COLLECT_WRITE_JUNIT: OFF
@@ -57,6 +46,7 @@ buildType:
       long: ASan and USan in Clang + Unit Tests + All documents
       buildType: Debug
       settings:
+        BUILD_SHARED_LIBS: ON
         NUM_COLLECT_ENABLE_AUSAN: ON
         NUM_COLLECT_TESTING: ON
         NUM_COLLECT_WRITE_JUNIT: OFF
@@ -75,6 +65,7 @@ buildType:
       long: Debug build + Unit Tests
       buildType: Debug
       settings:
+        BUILD_SHARED_LIBS: ON
         NUM_COLLECT_ENABLE_AUSAN: OFF
         NUM_COLLECT_TESTING: ON
         NUM_COLLECT_WRITE_JUNIT: OFF
@@ -87,11 +78,50 @@ buildType:
         NUM_COLLECT_ENABLE_CCACHE: ON
         NUM_COLLECT_ENABLE_CPP_WARNINGS: ON
         NUM_COLLECT_ENABLE_EIGEN_RUNTIME_NO_MALLOC: ON
+    debug-unit-dox:
+      short: Debug-Unit-Dox
+      long: Debug build + Unit Tests + Doxygen
+      buildType: Debug
+      settings:
+        BUILD_SHARED_LIBS: ON
+        NUM_COLLECT_ENABLE_AUSAN: OFF
+        NUM_COLLECT_TESTING: ON
+        NUM_COLLECT_WRITE_JUNIT: OFF
+        NUM_COLLECT_ENABLE_BENCH: ON
+        NUM_COLLECT_TEST_BENCHMARKS: OFF
+        NUM_COLLECT_BUILD_EXAMPLES: ON
+        NUM_COLLECT_BUILD_EXPERIMENTS: ON
+        NUM_COLLECT_BUILD_DOC: ON
+        NUM_COLLECT_BUILD_DOC_SPHINX: OFF
+        NUM_COLLECT_ENABLE_PROFILING: ON
+        NUM_COLLECT_ENABLE_CCACHE: ON
+        NUM_COLLECT_ENABLE_CPP_WARNINGS: ON
+        NUM_COLLECT_ENABLE_EIGEN_RUNTIME_NO_MALLOC: ON
+    debug-unit-docs:
+      short: Debug-Unit-Documents
+      long: Debug build + Unit Tests + All documents
+      buildType: Debug
+      settings:
+        BUILD_SHARED_LIBS: ON
+        NUM_COLLECT_ENABLE_AUSAN: OFF
+        NUM_COLLECT_TESTING: ON
+        NUM_COLLECT_WRITE_JUNIT: OFF
+        NUM_COLLECT_ENABLE_BENCH: ON
+        NUM_COLLECT_TEST_BENCHMARKS: OFF
+        NUM_COLLECT_BUILD_EXAMPLES: ON
+        NUM_COLLECT_BUILD_EXPERIMENTS: ON
+        NUM_COLLECT_BUILD_DOC: ON
+        NUM_COLLECT_BUILD_DOC_SPHINX: ON
+        NUM_COLLECT_ENABLE_PROFILING: ON
+        NUM_COLLECT_ENABLE_CCACHE: ON
+        NUM_COLLECT_ENABLE_CPP_WARNINGS: ON
+        NUM_COLLECT_ENABLE_EIGEN_RUNTIME_NO_MALLOC: ON
     relwithdebinfo-unit:
       short: RelWithDebInfo-Unit
       long: Release build with debug info + Unit Tests
       buildType: RelWithDebInfo
       settings:
+        BUILD_SHARED_LIBS: ON
         NUM_COLLECT_ENABLE_AUSAN: OFF
         NUM_COLLECT_TESTING: ON
         NUM_COLLECT_WRITE_JUNIT: OFF
@@ -109,6 +139,7 @@ buildType:
       long: Release build + Unit Tests
       buildType: Release
       settings:
+        BUILD_SHARED_LIBS: ON
         NUM_COLLECT_ENABLE_AUSAN: OFF
         NUM_COLLECT_TESTING: ON
         NUM_COLLECT_WRITE_JUNIT: OFF
@@ -126,6 +157,7 @@ buildType:
       long: Release build + Benchmarks execution
       buildType: Release
       settings:
+        BUILD_SHARED_LIBS: ON
         NUM_COLLECT_ENABLE_AUSAN: OFF
         NUM_COLLECT_TESTING: ON
         NUM_COLLECT_WRITE_JUNIT: OFF
