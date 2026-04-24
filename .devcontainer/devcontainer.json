@@ -20,7 +20,8 @@
     "CCACHE_DIR": "/cache_volume/ccache/",
     "VCPKG_DEFAULT_BINARY_CACHE": "/cache_volume/vcpkg/",
     "POETRY_CACHE_DIR": "/cache_volume/poetry/",
-    "PLAYWRIGHT_BROWSERS_PATH": "/cache_volume/playwright/"
+    "PLAYWRIGHT_BROWSERS_PATH": "/cache_volume/playwright/",
+    "LSAN_OPTIONS": "suppressions=/workspaces/numerical-collection-cpp/lsan.supp"
   },
   "customizations": {
     "vscode": {
