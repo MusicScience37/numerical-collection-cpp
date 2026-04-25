@@ -55,8 +55,16 @@ using problem_type =
         sparse_matrix_type>;
 
 static constexpr std::string_view problem_name = "diffusion2d_dirichlet";
-static constexpr std::string_view problem_description =
+static constexpr std::string_view problem_description_base =
     "2D Diffusion Equation with Dirichlet Boundary Conditions";
+
+#ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
+constexpr num_collect::index_type num_interior_nodes = 100;
+constexpr num_collect::index_type num_boundary_nodes_per_edge = 10;
+#else
+constexpr num_collect::index_type num_interior_nodes = 2500;
+constexpr num_collect::index_type num_boundary_nodes_per_edge = 50;
+#endif
 
 static constexpr double diffusion_coefficient = 0.1;
 
@@ -75,13 +83,6 @@ inline void bench_one(
 
     num_collect::logging::logger logger(benchmark_tag);
 
-#ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
-    constexpr num_collect::index_type num_interior_nodes = 100;
-    constexpr num_collect::index_type num_boundary_nodes_per_edge = 10;
-#else
-    constexpr num_collect::index_type num_interior_nodes = 2500;
-    constexpr num_collect::index_type num_boundary_nodes_per_edge = 50;
-#endif
     auto nodes =
         num_collect::rbf::generate_halton_nodes<typename position_type::Scalar,
             position_type::RowsAtCompileTime>(num_interior_nodes);
@@ -200,7 +201,10 @@ auto main(int argc, char** argv) -> int {
     bench_one<num_collect::ode::rosenbrock::rodaspr_solver<problem_type>>(
         "RODASPR", executor);
 
-    executor.write_result(problem_name, problem_description, output_directory);
+    executor.write_result(problem_name,
+        fmt::format("{} ({} Nodes)", problem_description_base,
+            num_interior_nodes + 4 * num_boundary_nodes_per_edge),
+        output_directory);
 
     return 0;
 }

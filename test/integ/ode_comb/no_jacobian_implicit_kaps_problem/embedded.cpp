@@ -30,11 +30,14 @@
 #include "num_collect/ode/rosenbrock/ros34prw_formula.h"
 #include "num_collect/ode/rosenbrock/ros34pw3_formula.h"
 #include "num_collect/ode/rosenbrock/ros3w_formula.h"
+#include "num_collect/ode/runge_kutta/sdirk4_formula.h"
 #include "num_prob_collect/ode/no_jacobian_implicit_kaps_problem.h"
 
 TEMPLATE_PRODUCT_TEST_CASE(
     "no_jacobian_implicit_kaps_problem with embedded formulas", "",
     (
+        // Runge-Kutta method.
+        num_collect::ode::runge_kutta::sdirk4_solver,
         // embedded Rosenbrock method.
         num_collect::ode::rosenbrock::rodasp_solver,
         num_collect::ode::rosenbrock::rodaspr_solver,

@@ -28,6 +28,7 @@
 
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/logging/logging_mixin.h"
@@ -143,11 +144,36 @@ public:
     }
 
     /*!
+     * \brief Set the rate of tolerance in this solver.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto tolerance_rate(scalar_type val) -> bicgstab& {
+        NUM_COLLECT_PRECONDITION(val > static_cast<scalar_type>(0),
+            "tolerance_rate must be positive.");
+        tolerance_rate_ = val;
+        return *this;
+    }
+
+    /*!
      * \brief Get the number of iterations.
      *
      * \return Number of iterations.
      */
     auto iterations() -> index_type { return iterations_; }
+
+    /*!
+     * \brief Set the maximum number of iterations.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto max_iterations(index_type val) -> bicgstab& {
+        NUM_COLLECT_PRECONDITION(val > 0, "max_iterations must be positive.");
+        max_iterations_ = val;
+        return *this;
+    }
 
 private:
     /*!

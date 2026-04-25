@@ -28,11 +28,6 @@
 #include "num_collect/ode/rosenbrock/rodaspr_formula.h"
 #include "num_collect/ode/rosenbrock/ros34prw_formula.h"
 #include "num_collect/ode/rosenbrock/ros34pw3_formula.h"
-#include "num_collect/ode/runge_kutta/lobatto3c4_formula.h"
-#include "num_collect/ode/runge_kutta/lobatto3c6_formula.h"
-#include "num_collect/ode/runge_kutta/radau2a3_formula.h"
-#include "num_collect/ode/runge_kutta/radau2a5_formula.h"
-#include "num_collect/ode/runge_kutta/radau2a_formula.h"
 #include "num_collect/ode/runge_kutta/sdirk4_formula.h"
 #include "num_collect/rbf/generate_halton_nodes.h"
 #include "num_collect/rbf/operators/laplacian_operator.h"
@@ -53,8 +48,16 @@ using problem_type =
 
 static constexpr std::string_view problem_name =
     "no_jacobian_diffusion2d_neumann";
-static constexpr std::string_view problem_description =
+static constexpr std::string_view problem_description_base =
     "2D Diffusion Equation with Neumann Boundary Conditions Without Jacobian";
+
+#ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
+constexpr num_collect::index_type num_interior_nodes = 25;
+constexpr num_collect::index_type num_boundary_nodes_per_edge = 5;
+#else
+constexpr num_collect::index_type num_interior_nodes = 900;
+constexpr num_collect::index_type num_boundary_nodes_per_edge = 30;
+#endif
 
 static constexpr double diffusion_coefficient = 0.1;
 
@@ -71,13 +74,6 @@ inline void bench_one(
     constexpr double initial_time = 0.0;
     constexpr double final_time = 1.0;
 
-#ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
-    constexpr num_collect::index_type num_interior_nodes = 25;
-    constexpr num_collect::index_type num_boundary_nodes_per_edge = 5;
-#else
-    constexpr num_collect::index_type num_interior_nodes = 900;
-    constexpr num_collect::index_type num_boundary_nodes_per_edge = 30;
-#endif
     auto nodes =
         num_collect::rbf::generate_halton_nodes<typename position_type::Scalar,
             position_type::RowsAtCompileTime>(num_interior_nodes);
@@ -213,6 +209,8 @@ auto main(int argc, char** argv) -> int {
 
     bench_executor executor{};
 
+    bench_one<num_collect::ode::runge_kutta::sdirk4_solver<problem_type>>(
+        "SDIRK4", executor);
     bench_one<num_collect::ode::rosenbrock::ros34prw_solver<problem_type>>(
         "ROS34PRw", executor);
     bench_one<num_collect::ode::rosenbrock::ros34pw3_solver<problem_type>>(
@@ -222,7 +220,10 @@ auto main(int argc, char** argv) -> int {
     bench_one<num_collect::ode::rosenbrock::rodaspr_solver<problem_type>>(
         "RODASPR", executor);
 
-    executor.write_result(problem_name, problem_description, output_directory);
+    executor.write_result(problem_name,
+        fmt::format("{} ({} Nodes)", problem_description_base,
+            num_interior_nodes + 4 * num_boundary_nodes_per_edge),
+        output_directory);
 
     return 0;
 }
