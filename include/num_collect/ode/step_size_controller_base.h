@@ -147,7 +147,7 @@ protected:
         const bool tolerance_satisfied = tolerances().check(variable, error);
         if (!tolerance_satisfied) {
             if (step_size > limits_.lower_limit()) {
-                NUM_COLLECT_LOG_TRACE(this->logger(),
+                NUM_COLLECT_LOG_DEBUG(this->logger(),
                     "Error tolerance not satisfied with step size {}.",
                     step_size);
                 step_size *= reduction_rate_;
