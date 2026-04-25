@@ -33,6 +33,7 @@
 #include "num_collect/ode/runge_kutta/lobatto3c6_formula.h"
 #include "num_collect/ode/runge_kutta/radau2a3_formula.h"
 #include "num_collect/ode/runge_kutta/radau2a5_formula.h"
+#include "num_collect/ode/runge_kutta/radau2a_formula.h"
 #include "num_collect/ode/runge_kutta/sdirk4_formula.h"
 #include "num_collect/rbf/generate_halton_nodes.h"
 #include "num_collect/rbf/operators/laplacian_operator.h"
@@ -225,6 +226,12 @@ auto main(int argc, char** argv) -> int {
     bench_one<
         num_collect::ode::runge_kutta::radau2a5_auto_solver<problem_type>>(
         "RadauIIA5", executor);
+    bench_one<
+        num_collect::ode::runge_kutta::radau2a9_auto_solver<problem_type>>(
+        "RadauIIA9", executor);
+    bench_one<
+        num_collect::ode::runge_kutta::radau2a13_auto_solver<problem_type>>(
+        "RadauIIA13", executor);
     bench_one<num_collect::ode::rosenbrock::ros34prw_solver<problem_type>>(
         "ROS34PRw", executor);
     bench_one<num_collect::ode::rosenbrock::ros34pw3_solver<problem_type>>(
