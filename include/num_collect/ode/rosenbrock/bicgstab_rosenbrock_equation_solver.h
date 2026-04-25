@@ -125,7 +125,9 @@ public:
             problem_ != nullptr, "evaluate_and_update_jacobian is not called.");
 
         const scalar_type target_norm = target.norm();
-        if (target_norm < std::numeric_limits<scalar_type>::min()) {
+        const scalar_type variable_norm = variable_.norm();
+        if (target_norm <
+            variable_norm * std::numeric_limits<scalar_type>::epsilon()) {
             result = variable_type::Zero(target.size());
             return;
         }
@@ -133,12 +135,14 @@ public:
             std::sqrt(std::numeric_limits<scalar_type>::epsilon()) /
             target_norm;
 
-        problem_->evaluate_on(time_, variable_ + diff_width * target,
-            evaluation_type{.diff_coeff = true});
+        variable_buffer_ = variable_ + diff_width * target;
+        problem_->evaluate_on(
+            time_, variable_buffer_, evaluation_type{.diff_coeff = true});
         result = problem_->diff_coeff();
 
-        problem_->evaluate_on(time_, variable_ - diff_width * target,
-            evaluation_type{.diff_coeff = true});
+        variable_buffer_ = variable_ - diff_width * target;
+        problem_->evaluate_on(
+            time_, variable_buffer_, evaluation_type{.diff_coeff = true});
         result -= problem_->diff_coeff();
         result /= static_cast<scalar_type>(2) * diff_width;
     }
@@ -170,7 +174,7 @@ public:
             this->apply_jacobian(target, result);
             result *= -step_size_ * inverted_jacobian_coeff_;
             if constexpr (use_mass) {
-                result += problem_->mass() * target;
+                result.noalias() += problem_->mass() * target;
             } else {
                 result += target;
             }
@@ -203,6 +207,9 @@ private:
 
     //! Variable.
     variable_type variable_{};
+
+    //! Buffer of a variable for finite difference.
+    variable_type variable_buffer_{};
 
     //! Partial derivative with respect to time.
     std::optional<variable_type> time_derivative_{};
