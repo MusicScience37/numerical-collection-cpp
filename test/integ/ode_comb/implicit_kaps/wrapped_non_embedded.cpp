@@ -39,7 +39,11 @@ TEMPLATE_PRODUCT_TEST_CASE("implicit_kaps_problem with non-embedded formulas",
         num_collect::ode::runge_kutta::radau2a3_auto_solver,
         num_collect::ode::runge_kutta::radau2a5_auto_solver,
         num_collect::ode::runge_kutta::radau2a7_auto_solver,
-        num_collect::ode::runge_kutta::radau2a9_auto_solver),
+        num_collect::ode::runge_kutta::radau2a9_auto_solver,
+        num_collect::ode::runge_kutta::radau2a11_auto_solver,
+        num_collect::ode::runge_kutta::radau2a13_auto_solver,
+        num_collect::ode::runge_kutta::radau2a15_auto_solver,
+        num_collect::ode::runge_kutta::radau2a17_auto_solver),
     (num_prob_collect::ode::implicit_kaps_problem)) {
     using problem_type = num_prob_collect::ode::implicit_kaps_problem;
     using solver_type = TestType;
