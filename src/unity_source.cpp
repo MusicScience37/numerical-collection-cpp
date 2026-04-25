@@ -6,3 +6,4 @@
 #include "num_collect/logging/sinks/simple_log_sink.cpp"
 #include "num_collect/logging/time_stamp.cpp"
 #include "num_collect/ode/runge_kutta/impl/decompose_slope_coeffs.cpp"
+#include "num_collect/ode/runge_kutta/impl/generate_radau2a_coeffs_impl.cpp"
