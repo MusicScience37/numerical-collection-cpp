@@ -19,7 +19,9 @@
  */
 #pragma once
 
+#include <algorithm>
 #include <cmath>
+#include <limits>
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
@@ -200,8 +202,13 @@ private:
         // reference.
         const scalar_type error_norm =
             this->tolerances().calc_norm(variable, error);
-        scalar_type factor = pow(error_norm, -current_step_error_exponent_) *
-            pow(previous_step_error_, previous_step_error_exponent_);
+        // Heuristics to prevent division by zeros.
+        const scalar_type small_error = static_cast<scalar_type>(1e+3) *
+            std::numeric_limits<scalar_type>::epsilon();
+        scalar_type factor = pow(std::max(error_norm, small_error),
+                                 -current_step_error_exponent_) *
+            pow(std::max(previous_step_error_, small_error),
+                previous_step_error_exponent_);
 
         // Secondly, change the factor for safety.
         using std::isfinite;
