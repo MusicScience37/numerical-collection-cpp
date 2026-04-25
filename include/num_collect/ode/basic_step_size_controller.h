@@ -19,7 +19,9 @@
  */
 #pragma once
 
+#include <algorithm>
 #include <cmath>
+#include <limits>
 
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
@@ -135,8 +137,11 @@ private:
             impl::get_least_known_order<Formula>();
         constexpr scalar_type exponent = -static_cast<scalar_type>(1) /
             static_cast<scalar_type>(order_for_exponent + 1);
+        // Heuristics to prevent division by zeros.
+        const scalar_type small_error = static_cast<scalar_type>(1e+3) *
+            std::numeric_limits<scalar_type>::epsilon();
         using std::pow;
-        scalar_type factor = pow(error_norm, exponent);
+        scalar_type factor = pow(std::max(error_norm, small_error), exponent);
 
         // Secondly, change the factor for safety.
         using std::isfinite;

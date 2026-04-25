@@ -123,6 +123,29 @@ public:
         return formula_.problem();
     }
 
+    /*!
+     * \brief Access to the logger.
+     *
+     * \return Logger.
+     */
+    [[nodiscard]] auto logger() const noexcept
+        -> const num_collect::logging::logger&
+        requires requires(base_formula_type& formula) { formula.logger(); }
+    {
+        return formula_.logger();
+    }
+
+    /*!
+     * \brief Access to the logger.
+     *
+     * \return Logger.
+     */
+    [[nodiscard]] auto logger() noexcept -> num_collect::logging::logger&
+        requires requires(base_formula_type& formula) { formula.logger(); }
+    {
+        return formula_.logger();
+    }
+
 private:
     //! Formula.
     base_formula_type formula_;
