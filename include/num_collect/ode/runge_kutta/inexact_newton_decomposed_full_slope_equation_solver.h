@@ -223,10 +223,8 @@ public:
         if constexpr (use_mass) {
             for (int i = 0; i < NumStages; ++i) {
                 temp_variable_ = variable_;
-                for (int j = 0; j < NumStages; ++j) {
-                    temp_variable_ +=
-                        step_size_ * slope_coeffs_(i, j) * (*solution_)(j);
-                }
+                temp_variable_ +=
+                    step_size_ * slope_coeffs_.row(i).dot(*solution_);
                 problem_->evaluate_on(time_ + time_coeffs_(i) * step_size_,
                     temp_variable_,
                     evaluation_type{.diff_coeff = true, .mass = use_mass});
@@ -238,10 +236,8 @@ public:
         } else {
             for (int i = 0; i < NumStages; ++i) {
                 temp_variable_ = variable_;
-                for (int j = 0; j < NumStages; ++j) {
-                    temp_variable_ +=
-                        step_size_ * slope_coeffs_(i, j) * (*solution_)(j);
-                }
+                temp_variable_ +=
+                    step_size_ * slope_coeffs_.row(i).dot(*solution_);
                 problem_->evaluate_on(time_ + time_coeffs_(i) * step_size_,
                     temp_variable_,
                     evaluation_type{.diff_coeff = true, .mass = use_mass});
@@ -615,14 +611,9 @@ public:
         const index_type dimensions = variable.size();
 
         solution_in_eigenvector_space_.resize(dimensions * NumStages);
-        solution_in_eigenvector_space_.setZero();
-        for (int j = 0; j < NumStages; ++j) {
-            for (int i = 0; i < NumStages; ++i) {
-                solution_in_eigenvector_space_.segment(i * dimensions,
-                    dimensions) += slope_coeffs_eigenvectors_inverse_(i, j) *
-                    solution.segment(j * dimensions, dimensions);
-            }
-        }
+        solution_in_eigenvector_space_.reshaped(dimensions, NumStages)
+            .noalias() = solution.reshaped(dimensions, NumStages) *
+            slope_coeffs_eigenvectors_inverse_.transpose();
         slopes_.resize(dimensions * NumStages);
         residual_in_eigenvector_space_.resize(dimensions * NumStages);
         update_in_eigenvector_space_.resize(dimensions * NumStages);
@@ -657,10 +648,9 @@ public:
         if constexpr (use_mass) {
             for (int i = 0; i < NumStages; ++i) {
                 temp_variable_ = variable_;
-                for (int j = 0; j < NumStages; ++j) {
-                    temp_variable_ += step_size_ * slope_coeffs_(i, j) *
-                        (*solution_).segment(j * dimensions, dimensions);
-                }
+                temp_variable_.noalias() += step_size_ *
+                    (*solution_).reshaped(dimensions, NumStages) *
+                    slope_coeffs_.row(i).transpose();
                 problem_->evaluate_on(time_ + time_coeffs_(i) * step_size_,
                     temp_variable_,
                     evaluation_type{.diff_coeff = true, .mass = use_mass});
@@ -669,22 +659,15 @@ public:
                     problem_->mass() *
                         (*solution_).segment(i * dimensions, dimensions);
             }
-            residual_in_eigenvector_space_.setZero();
-            for (int i = 0; i < NumStages; ++i) {
-                for (int j = 0; j < NumStages; ++j) {
-                    residual_in_eigenvector_space_.segment(
-                        i * dimensions, dimensions) +=
-                        slope_coeffs_eigenvectors_inverse_(i, j) *
-                        slopes_.segment(j * dimensions, dimensions);
-                }
-            }
+            residual_in_eigenvector_space_.reshaped(dimensions, NumStages)
+                .noalias() = slopes_.reshaped(dimensions, NumStages) *
+                slope_coeffs_eigenvectors_inverse_.transpose();
         } else {
             for (int i = 0; i < NumStages; ++i) {
                 temp_variable_ = variable_;
-                for (int j = 0; j < NumStages; ++j) {
-                    temp_variable_ += step_size_ * slope_coeffs_(i, j) *
-                        (*solution_).segment(j * dimensions, dimensions);
-                }
+                temp_variable_.noalias() += step_size_ *
+                    (*solution_).reshaped(dimensions, NumStages) *
+                    slope_coeffs_.row(i).transpose();
                 problem_->evaluate_on(time_ + time_coeffs_(i) * step_size_,
                     temp_variable_,
                     evaluation_type{.diff_coeff = true, .mass = use_mass});
@@ -692,14 +675,9 @@ public:
                     problem_->diff_coeff();
             }
             residual_in_eigenvector_space_ = -solution_in_eigenvector_space_;
-            for (int i = 0; i < NumStages; ++i) {
-                for (int j = 0; j < NumStages; ++j) {
-                    residual_in_eigenvector_space_.segment(
-                        i * dimensions, dimensions) +=
-                        slope_coeffs_eigenvectors_inverse_(i, j) *
-                        slopes_.segment(j * dimensions, dimensions);
-                }
-            }
+            residual_in_eigenvector_space_.reshaped(dimensions, NumStages)
+                .noalias() += slopes_.reshaped(dimensions, NumStages) *
+                slope_coeffs_eigenvectors_inverse_.transpose();
         }
 
         // Calculate residuals.
@@ -753,15 +731,9 @@ public:
         }
 
         solution_in_eigenvector_space_ += update_in_eigenvector_space_;
-        update_.setZero();
-        for (int i = 0; i < NumStages; ++i) {
-            for (int j = 0; j < NumStages; ++j) {
-                update_.segment(i * dimensions, dimensions) +=
-                    slope_coeffs_eigenvectors_(i, j) *
-                    update_in_eigenvector_space_.segment(
-                        j * dimensions, dimensions);
-            }
-        }
+        update_.reshaped(dimensions, NumStages).noalias() =
+            update_in_eigenvector_space_.reshaped(dimensions, NumStages) *
+            slope_coeffs_eigenvectors_.transpose();
         *solution_ += update_;
 
         scalar_type update_norm = static_cast<scalar_type>(0);
