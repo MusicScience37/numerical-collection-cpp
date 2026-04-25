@@ -38,6 +38,9 @@
 #include "num_collect/util/vector.h"
 #include "num_prob_collect/ode/external_force_vibration_problem.h"
 #include "num_prob_collect/ode/implicit_kaps_problem.h"
+#include "num_prob_collect/ode/kaps_problem.h"
+#include "num_prob_collect/ode/no_jacobian_implicit_kaps_problem.h"
+#include "num_prob_collect/ode/no_jacobian_kaps_problem.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
 
 TEST_CASE("num_collect::ode::rosenbrock::bicgstab_rosenbrock_equation_solver") {
@@ -316,5 +319,72 @@ TEST_CASE("num_collect::ode::rosenbrock::bicgstab_rosenbrock_equation_solver") {
         comparison_approvals::verify_with_reference(result, expected_result);
     }
 
-    // TODO Test without Jacobian matrix.
+    SECTION("solve without Jacobian") {
+        using problem_type = num_prob_collect::ode::no_jacobian_kaps_problem;
+        using problem_with_jacobian_type = num_prob_collect::ode::kaps_problem;
+        using solver_type =
+            num_collect::ode::rosenbrock::bicgstab_rosenbrock_equation_solver<
+                problem_type>;
+
+        constexpr double inverted_jacobian_coeff = 0.2;
+        solver_type solver{inverted_jacobian_coeff};
+        solver.tolerances(
+            num_collect::ode::error_tolerances<Eigen::Vector2d>());
+
+        constexpr double epsilon = 0.1;
+        problem_type problem{epsilon};
+        constexpr double time = 0.0;
+        const Eigen::Vector2d variable = Eigen::Vector2d(1.0, 1.0);
+        constexpr double step_size = 0.01;
+        solver.evaluate_and_update_jacobian(problem, time, step_size, variable);
+
+        const Eigen::Vector2d expected_result = Eigen::Vector2d(0.123, -0.234);
+        problem_with_jacobian_type problem_with_jacobian{epsilon};
+        problem_with_jacobian.evaluate_on(time, variable,
+            num_collect::ode::evaluation_type{.jacobian = true, .mass = true});
+        const Eigen::Vector2d rhs = expected_result -
+            step_size * inverted_jacobian_coeff *
+                problem_with_jacobian.jacobian() * expected_result;
+
+        Eigen::Vector2d result;
+        solver.solve(rhs, result);
+
+        comparison_approvals::verify_with_reference(result, expected_result);
+    }
+
+    SECTION("solve without Jacobian but with mass") {
+        using problem_type =
+            num_prob_collect::ode::no_jacobian_implicit_kaps_problem;
+        using problem_with_jacobian_type =
+            num_prob_collect::ode::implicit_kaps_problem;
+        using solver_type =
+            num_collect::ode::rosenbrock::bicgstab_rosenbrock_equation_solver<
+                problem_type>;
+
+        constexpr double inverted_jacobian_coeff = 0.2;
+        solver_type solver{inverted_jacobian_coeff};
+        solver.tolerances(
+            num_collect::ode::error_tolerances<Eigen::Vector2d>());
+
+        constexpr double epsilon = 0.1;
+        problem_type problem{epsilon};
+        constexpr double time = 0.0;
+        const Eigen::Vector2d variable = Eigen::Vector2d(1.0, 1.0);
+        constexpr double step_size = 0.01;
+        solver.evaluate_and_update_jacobian(problem, time, step_size, variable);
+
+        const Eigen::Vector2d expected_result = Eigen::Vector2d(0.123, -0.234);
+        problem_with_jacobian_type problem_with_jacobian{epsilon};
+        problem_with_jacobian.evaluate_on(time, variable,
+            num_collect::ode::evaluation_type{.jacobian = true, .mass = true});
+        const Eigen::Vector2d rhs =
+            problem_with_jacobian.mass() * expected_result -
+            step_size * inverted_jacobian_coeff *
+                problem_with_jacobian.jacobian() * expected_result;
+
+        Eigen::Vector2d result;
+        solver.solve(rhs, result);
+
+        comparison_approvals::verify_with_reference(result, expected_result);
+    }
 }

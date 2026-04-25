@@ -24,16 +24,10 @@
 
 #include "diagram_common.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/ode/problems/linear_first_order_dae_problem.h"
 #include "num_collect/ode/rosenbrock/rodasp_formula.h"
 #include "num_collect/ode/rosenbrock/rodaspr_formula.h"
 #include "num_collect/ode/rosenbrock/ros34prw_formula.h"
 #include "num_collect/ode/rosenbrock/ros34pw3_formula.h"
-#include "num_collect/ode/runge_kutta/lobatto3c4_formula.h"
-#include "num_collect/ode/runge_kutta/lobatto3c6_formula.h"
-#include "num_collect/ode/runge_kutta/radau2a3_formula.h"
-#include "num_collect/ode/runge_kutta/radau2a5_formula.h"
-#include "num_collect/ode/runge_kutta/radau2a_formula.h"
 #include "num_collect/ode/runge_kutta/sdirk4_formula.h"
 #include "num_collect/rbf/generate_halton_nodes.h"
 #include "num_collect/rbf/operators/laplacian_operator.h"
@@ -43,24 +37,26 @@
 #include "num_collect/util/nearest_neighbor_searcher.h"
 #include "num_collect/util/vector.h"
 #include "num_collect/util/vector_view.h"
+#include "num_prob_collect/ode/no_jacobian_linear_first_order_dae_problem.h"
 
 using position_type = Eigen::Vector2d;
 using solution_type = Eigen::VectorXd;
 using sparse_matrix_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 using problem_type =
-    num_collect::ode::problems::linear_first_order_dae_problem<solution_type,
-        sparse_matrix_type>;
+    num_prob_collect::ode::no_jacobian_linear_first_order_dae_problem<
+        solution_type, sparse_matrix_type>;
 
-static constexpr std::string_view problem_name = "diffusion2d_neumann";
+static constexpr std::string_view problem_name =
+    "no_jacobian_diffusion2d_neumann";
 static constexpr std::string_view problem_description_base =
-    "2D Diffusion Equation with Neumann Boundary Conditions";
+    "2D Diffusion Equation with Neumann Boundary Conditions Without Jacobian";
 
 #ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
 constexpr num_collect::index_type num_interior_nodes = 25;
 constexpr num_collect::index_type num_boundary_nodes_per_edge = 5;
 #else
-constexpr num_collect::index_type num_interior_nodes = 2500;
-constexpr num_collect::index_type num_boundary_nodes_per_edge = 50;
+constexpr num_collect::index_type num_interior_nodes = 900;
+constexpr num_collect::index_type num_boundary_nodes_per_edge = 30;
 #endif
 
 static constexpr double diffusion_coefficient = 0.1;
@@ -215,24 +211,6 @@ auto main(int argc, char** argv) -> int {
 
     bench_one<num_collect::ode::runge_kutta::sdirk4_solver<problem_type>>(
         "SDIRK4", executor);
-    bench_one<
-        num_collect::ode::runge_kutta::lobatto3c4_auto_solver<problem_type>>(
-        "LobattoIIIC4", executor);
-    bench_one<
-        num_collect::ode::runge_kutta::lobatto3c6_auto_solver<problem_type>>(
-        "LobattoIIIC6", executor);
-    bench_one<
-        num_collect::ode::runge_kutta::radau2a3_auto_solver<problem_type>>(
-        "RadauIIA3", executor);
-    bench_one<
-        num_collect::ode::runge_kutta::radau2a5_auto_solver<problem_type>>(
-        "RadauIIA5", executor);
-    bench_one<
-        num_collect::ode::runge_kutta::radau2a9_auto_solver<problem_type>>(
-        "RadauIIA9", executor);
-    bench_one<
-        num_collect::ode::runge_kutta::radau2a13_auto_solver<problem_type>>(
-        "RadauIIA13", executor);
     bench_one<num_collect::ode::rosenbrock::ros34prw_solver<problem_type>>(
         "ROS34PRw", executor);
     bench_one<num_collect::ode::rosenbrock::ros34pw3_solver<problem_type>>(

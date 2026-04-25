@@ -33,6 +33,8 @@
 #include "num_prob_collect/ode/exponential_problem.h"
 #include "num_prob_collect/ode/implicit_exponential_problem.h"
 #include "num_prob_collect/ode/implicit_kaps_problem.h"
+#include "num_prob_collect/ode/no_jacobian_implicit_kaps_problem.h"
+#include "num_prob_collect/ode/no_jacobian_kaps_problem.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
 
 TEST_CASE(
@@ -450,6 +452,91 @@ TEST_CASE(
             reference(i) = test_function(init_time + step_size,
                 static_cast<double>(i + 1) * space_resolution);
         }
+        comparison_approvals::verify_with_reference(variable, reference);
+    }
+
+    SECTION("solve without Jacobian") {
+        using problem_type = num_prob_collect::ode::no_jacobian_kaps_problem;
+        using solver_type = num_collect::ode::runge_kutta::
+            inexact_newton_update_equation_solver<problem_type>;
+
+        solver_type solver;
+
+        constexpr double epsilon = 0.1;
+        problem_type problem{epsilon};
+        constexpr double init_time = 0.0;
+        constexpr double step_size = 0.01;
+        const Eigen::Vector2d init_var = Eigen::Vector2d(1.0, 1.0);
+
+        constexpr double a21 = 1.0 / 3.0;
+        constexpr double a22 = 1.0 / 3.0;
+        constexpr double b2 = a21 + a22;
+        constexpr double c1 = 1.0 / 4.0;
+        constexpr double c2 = 3.0 / 4.0;
+
+        // First stage.
+        problem.evaluate_on(init_time, init_var,
+            num_collect::ode::evaluation_type{.diff_coeff = true});
+        const Eigen::Vector2d k1 = problem.diff_coeff();
+
+        // Second stage.
+        solver.update_jacobian(
+            problem, init_time + b2 * step_size, step_size, init_var, a22);
+        Eigen::Vector2d z2 = Eigen::Vector2d::Zero();
+        solver.init(step_size * a21 * k1, z2);
+        solver.solve();
+        problem.evaluate_on(init_time + b2 * step_size, init_var + z2,
+            num_collect::ode::evaluation_type{.diff_coeff = true});
+        const Eigen::Vector2d k2 =
+            (z2 - solver.solution_offset()) / (step_size * a22);
+
+        const Eigen::Vector2d variable =
+            init_var + step_size * (c1 * k1 + c2 * k2);
+        const Eigen::Vector2d reference =
+            Eigen::Vector2d(std::exp(-2.0 * step_size), std::exp(-step_size));
+        comparison_approvals::verify_with_reference(variable, reference);
+    }
+
+    SECTION("solve without Jacobian but with mass") {
+        using problem_type =
+            num_prob_collect::ode::no_jacobian_implicit_kaps_problem;
+        using solver_type = num_collect::ode::runge_kutta::
+            inexact_newton_update_equation_solver<problem_type>;
+
+        solver_type solver;
+
+        constexpr double epsilon = 0.1;
+        problem_type problem{epsilon};
+        constexpr double init_time = 0.0;
+        constexpr double step_size = 0.01;
+        const Eigen::Vector2d init_var = Eigen::Vector2d(1.0, 1.0);
+
+        constexpr double a21 = 1.0 / 3.0;
+        constexpr double a22 = 1.0 / 3.0;
+        constexpr double b2 = a21 + a22;
+        constexpr double c1 = 1.0 / 4.0;
+        constexpr double c2 = 3.0 / 4.0;
+
+        // First stage.
+        problem.evaluate_on(init_time, init_var,
+            num_collect::ode::evaluation_type{.diff_coeff = true});
+        const Eigen::Vector2d k1 = problem.diff_coeff();
+
+        // Second stage.
+        solver.update_jacobian(
+            problem, init_time + b2 * step_size, step_size, init_var, a22);
+        Eigen::Vector2d z2 = Eigen::Vector2d::Zero();
+        solver.init(step_size * a21 * k1, z2);
+        solver.solve();
+        problem.evaluate_on(init_time + b2 * step_size, init_var + z2,
+            num_collect::ode::evaluation_type{.diff_coeff = true});
+        const Eigen::Vector2d k2 =
+            (z2 - solver.solution_offset()) / (step_size * a22);
+
+        const Eigen::Vector2d variable =
+            init_var + step_size * (c1 * k1 + c2 * k2);
+        const Eigen::Vector2d reference =
+            Eigen::Vector2d(std::exp(-2.0 * step_size), std::exp(-step_size));
         comparison_approvals::verify_with_reference(variable, reference);
     }
 }
