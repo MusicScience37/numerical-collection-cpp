@@ -93,8 +93,7 @@ struct radau2a_coefficients {
         -> inexact_newton_decomposed_full_equation_solver_data<scalar_type,
             stages> {
         static const auto data =
-            inexact_newton_decomposed_full_equation_solver_data<scalar_type,
-                stages>::from_butcher_tableau(slope_coeffs(), time_coeffs());
+            get_radau2a_table<stages>().template solver_data<scalar_type>();
         return data;
     }
 };
