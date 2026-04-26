@@ -3,7 +3,7 @@ name = "numerical-collection-cpp"
 version = "0.0.0"
 description = ""
 readme = "README.md"
-requires-python = ">=3.12,<3.14"
+requires-python = ">=3.13,<3.14"
 authors = [
     { name = "Kenta Kabashima", email = "kenta_program37@hotmail.co.jp" },
 ]
@@ -39,6 +39,7 @@ ipywidgets = "^8.1.8"
 ipython = "^9.13.0"
 ipykernel = "^7.2.0"
 myst-nb = "^1.4.0"
+ms37-designs = {git = "https://gitlab.com/MusicScience37Projects/utility-libraries/ms37-designs.git", rev = "f1f39517a2de68e48dc5e96caa7012c24cec0f8c"}
 
 [tool.poetry.group.dev.dependencies]
 black = "^26.3.1"

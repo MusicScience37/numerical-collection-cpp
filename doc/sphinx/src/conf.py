@@ -35,14 +35,19 @@ nb_execution_cache_path = str(THIS_DIR.parent.parent.parent / ".jupyter_cache")
 
 # setting of MathJax
 # Extension for MathJax is already enabled by myst_nb.
-# MathJax URL working with Plotly was written in https://www.npmjs.com/package/plotly.js/v/2.16.4#mathjax.
-mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"
+# MathJax URL working with Plotly was written in https://www.npmjs.com/package/plotly.js/v/3.0.1.
+mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"
 mathjax3_config = {
     "tex": {
+        "inlineMath": [["$", "$"], ["\\(", "\\)"]],
+        "displayMath": [["$$", "$$"], ["\\[", "\\]"]],
         "macros": {
             "bm": ["{\\boldsymbol{#1}}", 1],
         },
     },
+}
+mathjax_options = {
+    "defer": None,
 }
 
 # setting of todo
