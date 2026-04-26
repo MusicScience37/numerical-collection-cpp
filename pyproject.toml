@@ -3,7 +3,7 @@ name = "numerical-collection-cpp"
 version = "0.0.0"
 description = ""
 readme = "README.md"
-requires-python = ">=3.12,<3.14"
+requires-python = ">=3.13,<3.14"
 authors = [
     { name = "Kenta Kabashima", email = "kenta_program37@hotmail.co.jp" },
 ]
@@ -12,6 +12,7 @@ dependencies = ["setuptools (>=82.0.1)"]
 [tool.poetry]
 packages = [
     { include = "num_collect_test_utils", from = "scripts" },
+    { include = "num_collect_docs_utils", from = "scripts" },
     { include = "num_collect_colors", from = "scripts" },
 ]
 
@@ -34,6 +35,12 @@ sphinx-orange-book-theme = "^0.19.0"
 myst-parser = "^5.0.0"
 sphinxcontrib-plantuml = "^0.31"
 sphinxcontrib-bibtex = "^2.6.5"
+jupyterlab = "^4.5.6"
+ipywidgets = "^8.1.8"
+ipython = "^9.13.0"
+ipykernel = "^7.2.0"
+myst-nb = "^1.4.0"
+ms37-designs = { git = "https://gitlab.com/MusicScience37Projects/utility-libraries/ms37-designs.git", rev = "f1f39517a2de68e48dc5e96caa7012c24cec0f8c" }
 
 [tool.poetry.group.dev.dependencies]
 black = "^26.3.1"

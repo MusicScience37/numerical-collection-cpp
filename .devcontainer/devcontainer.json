@@ -48,7 +48,8 @@
         "ms-python.flake8",
         "ms-python.mypy-type-checker",
         "ms-python.pylint",
-        "executablebookproject.myst-highlight"
+        "executablebookproject.myst-highlight",
+        "ms-toolsai.jupyter"
       ],
       "settings": {
         "cmakeFormat.exePath": "/workspaces/numerical-collection-cpp/.venv/bin/cmake-format",
