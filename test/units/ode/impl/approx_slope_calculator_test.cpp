@@ -112,7 +112,8 @@ TEST_CASE("num_collect::ode::impl::approx_slope_calculator") {
 
             const Eigen::Vector2d expected_slope =
                 problem.mass().partialPivLu().solve(problem.diff_coeff());
-            CHECK_THAT(slope, eigen_approx(expected_slope));
+            constexpr double tol = 1e-4;  // GCC can't solve correctly.
+            CHECK_THAT(slope, eigen_approx(expected_slope, tol));
         }
 
         SECTION("with singular mass matrix") {
