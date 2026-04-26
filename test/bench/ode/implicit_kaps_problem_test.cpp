@@ -93,6 +93,16 @@ auto main(int argc, char** argv) -> int {
 
         bench_one<num_collect::ode::runge_kutta::sdirk4_solver<problem_type>>(
             "SDIRK4", epsilon, executor);
+        if (epsilon > 0.0) {
+            // Solvers which does not support DAEs.
+            bench_one<num_collect::ode::runge_kutta::ark43_esdirk_solver<
+                problem_type>>("ARK4(3)-ESDIRK", epsilon, executor);
+            bench_one<num_collect::ode::runge_kutta::ark54_esdirk_solver<
+                problem_type>>("ARK5(4)-ESDIRK", epsilon, executor);
+            bench_one<
+                num_collect::ode::runge_kutta::esdirk45_solver<problem_type>>(
+                "ESDIRK45c", epsilon, executor);
+        }
         bench_one<num_collect::ode::runge_kutta::lobatto3c4_auto_solver<
             problem_type>>("LobattoIIIC4", epsilon, executor);
         bench_one<num_collect::ode::runge_kutta::lobatto3c6_auto_solver<
@@ -122,17 +132,6 @@ auto main(int argc, char** argv) -> int {
             "RODASP", epsilon, executor);
         bench_one<num_collect::ode::rosenbrock::rodaspr_solver<problem_type>>(
             "RODASPR", epsilon, executor);
-
-        if (epsilon > 0.0) {
-            // Solvers which does not support DAEs.
-            bench_one<num_collect::ode::runge_kutta::ark43_esdirk_solver<
-                problem_type>>("ARK4(3)-ESDIRK", epsilon, executor);
-            bench_one<num_collect::ode::runge_kutta::ark54_esdirk_solver<
-                problem_type>>("ARK5(4)-ESDIRK", epsilon, executor);
-            bench_one<
-                num_collect::ode::runge_kutta::esdirk45_solver<problem_type>>(
-                "ESDIRK45c", epsilon, executor);
-        }
 
         executor.write_result(problem_name,
             fmt::format("Kaps' problem (epsilon={:.0e})", epsilon),
