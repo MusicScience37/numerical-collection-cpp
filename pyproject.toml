@@ -12,6 +12,7 @@ dependencies = ["setuptools (>=82.0.1)"]
 [tool.poetry]
 packages = [
     { include = "num_collect_test_utils", from = "scripts" },
+    { include = "num_collect_docs_utils", from = "scripts" },
     { include = "num_collect_colors", from = "scripts" },
 ]
 
@@ -39,7 +40,7 @@ ipywidgets = "^8.1.8"
 ipython = "^9.13.0"
 ipykernel = "^7.2.0"
 myst-nb = "^1.4.0"
-ms37-designs = {git = "https://gitlab.com/MusicScience37Projects/utility-libraries/ms37-designs.git", rev = "f1f39517a2de68e48dc5e96caa7012c24cec0f8c"}
+ms37-designs = { git = "https://gitlab.com/MusicScience37Projects/utility-libraries/ms37-designs.git", rev = "f1f39517a2de68e48dc5e96caa7012c24cec0f8c" }
 
 [tool.poetry.group.dev.dependencies]
 black = "^26.3.1"
