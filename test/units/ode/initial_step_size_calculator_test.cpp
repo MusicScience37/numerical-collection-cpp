@@ -25,10 +25,13 @@
 
 #include "fmt_approval_tests.h"
 #include "num_collect/ode/error_tolerances.h"
+#include "num_collect/ode/rosenbrock/rodasp_formula.h"
 #include "num_collect/ode/rosenbrock/ros3w_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
 #include "num_collect/ode/step_size_limits.h"
 #include "num_prob_collect/ode/exponential_problem.h"
+#include "num_prob_collect/ode/implicit_kaps_problem.h"
+#include "num_prob_collect/ode/kaps_problem.h"
 #include "num_prob_collect/ode/pendulum_movement_problem.h"
 
 TEST_CASE("num_collect::ode::initial_step_size_calculator(actual problem)") {
@@ -68,6 +71,52 @@ TEST_CASE("num_collect::ode::initial_step_size_calculator(actual problem)") {
         calculator_type calculator;
         constexpr double initial_time = 0.0;
         const auto initial_variable = Eigen::Vector2d{{0.0, 1.0}};
+        const auto limits =
+            step_size_limits<double>().lower_limit(1e-8).upper_limit(1e+10);
+        const auto tolerances =
+            error_tolerances<Eigen::Vector2d>()
+                .tol_rel_error(Eigen::Vector2d{{1e-6, 1e-6}})
+                .tol_abs_error(Eigen::Vector2d{{1e-6, 1e-6}});
+
+        const double step_size = calculator.calculate(
+            problem, initial_time, initial_variable, limits, tolerances);
+        ApprovalTests::Approvals::verify(fmt::format("{:.3e}", step_size));
+    }
+
+    SECTION("Kaps problem with RODASP formula") {
+        using problem_type = num_prob_collect::ode::kaps_problem;
+        using formula_type =
+            num_collect::ode::rosenbrock::rodasp_formula<problem_type>;
+        using calculator_type = initial_step_size_calculator<formula_type>;
+
+        constexpr double epsilon = 1e-3;
+        problem_type problem{epsilon};
+        calculator_type calculator;
+        constexpr double initial_time = 0.0;
+        const auto initial_variable = Eigen::Vector2d{{1.0, 1.0}};
+        const auto limits =
+            step_size_limits<double>().lower_limit(1e-8).upper_limit(1e+10);
+        const auto tolerances =
+            error_tolerances<Eigen::Vector2d>()
+                .tol_rel_error(Eigen::Vector2d{{1e-6, 1e-6}})
+                .tol_abs_error(Eigen::Vector2d{{1e-6, 1e-6}});
+
+        const double step_size = calculator.calculate(
+            problem, initial_time, initial_variable, limits, tolerances);
+        ApprovalTests::Approvals::verify(fmt::format("{:.3e}", step_size));
+    }
+
+    SECTION("implicit Kaps problem with RODASP formula") {
+        using problem_type = num_prob_collect::ode::implicit_kaps_problem;
+        using formula_type =
+            num_collect::ode::rosenbrock::rodasp_formula<problem_type>;
+        using calculator_type = initial_step_size_calculator<formula_type>;
+
+        constexpr double epsilon = 0.0;
+        problem_type problem{epsilon};
+        calculator_type calculator;
+        constexpr double initial_time = 0.0;
+        const auto initial_variable = Eigen::Vector2d{{1.0, 1.0}};
         const auto limits =
             step_size_limits<double>().lower_limit(1e-8).upper_limit(1e+10);
         const auto tolerances =

@@ -93,25 +93,14 @@ public:
             NUM_COLLECT_LOG_DEBUG(this->logger(),
                 "Using user-specified initial step size {}.", *step_size_);
         } else {
-            if constexpr (use_mass) {
-                // TODO Implement automatic step size calculation for this case.
-                constexpr auto default_step_size =
-                    static_cast<scalar_type>(0.1);
-                NUM_COLLECT_LOG_DEBUG(this->logger(),
-                    "Use the default initial step size {}.", default_step_size);
-                step_size_ = default_step_size;
-            } else {
-                NUM_COLLECT_LOG_TRACE(this->logger(),
-                    "Automatically calculate initial step size.");
-                step_size_ =
-                    initial_step_size_calculator<formula_type>().calculate(
-                        this->problem(), time_, variable_,
-                        step_size_controller_.limits(),
-                        step_size_controller_.tolerances());
-                NUM_COLLECT_LOG_DEBUG(this->logger(),
-                    "Automatically selected initial step size {}.",
-                    *step_size_);
-            }
+            NUM_COLLECT_LOG_TRACE(
+                this->logger(), "Automatically calculate initial step size.");
+            step_size_ = initial_step_size_calculator<formula_type>().calculate(
+                this->problem(), time_, variable_,
+                step_size_controller_.limits(),
+                step_size_controller_.tolerances());
+            NUM_COLLECT_LOG_DEBUG(this->logger(),
+                "Automatically selected initial step size {}.", *step_size_);
         }
     }
 
