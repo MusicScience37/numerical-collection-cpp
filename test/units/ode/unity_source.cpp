@@ -5,6 +5,7 @@
 #include "embedded_solver_test.cpp"
 #include "error_tolerances_test.cpp"
 #include "evaluation_type_test.cpp"
+#include "impl/approx_slope_calculator_test.cpp"
 #include "impl/bicgstab_test.cpp"
 #include "impl/get_least_known_order_test.cpp"
 #include "impl/gmres_test.cpp"
