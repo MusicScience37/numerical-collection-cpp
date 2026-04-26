@@ -68,5 +68,5 @@ repos:
         require_serial: true
         types_or: [python]
         exclude: \.cmake-format\.py|conftest\.py
-# Automatically generated files and image files should be excluded.
-exclude: "\\.approved\\.|\\.svg$|\\.png$|\\.ico$"
+# Automatically generated files, binary data and image files should be excluded.
+exclude: "\\.approved\\.|\\.svg$|\\.png$|\\.ico|\\.data$"

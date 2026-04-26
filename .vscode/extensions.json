@@ -26,7 +26,8 @@
     "ms-python.flake8",
     "ms-python.mypy-type-checker",
     "ms-python.pylint",
-    "executablebookproject.myst-highlight"
+    "executablebookproject.myst-highlight",
+    "ms-toolsai.jupyter"
   ],
   // List of extensions recommended by VS Code that should not be recommended for users of this workspace.
   "unwantedRecommendations": []

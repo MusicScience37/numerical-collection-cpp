@@ -23,13 +23,15 @@ templates_path = ["_templates"]
 
 exclude_patterns: list[str] = []
 
-# settings of myst-parser
-extensions += ["myst_parser"]
+# settings of myst-parser and myst-nb
+extensions += ["myst_nb"]
 myst_enable_extensions = [
     "amsmath",
     "dollarmath",
 ]
 myst_heading_anchors = 2
+nb_execution_mode = "cache"
+nb_execution_cache_path = str(THIS_DIR.parent.parent.parent / ".jupyter_cache")
 
 # setting of MathJax
 # Extension for MathJax is already enabled by myst_nb.

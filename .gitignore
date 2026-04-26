@@ -667,6 +667,9 @@ FodyWeavers.xsd
 # Caches
 /.clang-tidy-cache/
 
+# Jupyter Notebook cache
+/.jupyter_cache/
+
 # Install directory of CMake
 /install/
 

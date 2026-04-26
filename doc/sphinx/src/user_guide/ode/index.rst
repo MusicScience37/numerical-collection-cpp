@@ -6,3 +6,4 @@ ODE module
 
    ode_solver_selection
    formula_properties
+   bench/index
