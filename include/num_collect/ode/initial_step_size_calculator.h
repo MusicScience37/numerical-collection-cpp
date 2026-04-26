@@ -28,7 +28,7 @@
 #include "num_collect/logging/logging_mixin.h"
 #include "num_collect/ode/concepts/formula.h"
 #include "num_collect/ode/error_tolerances.h"
-#include "num_collect/ode/evaluation_type.h"
+#include "num_collect/ode/impl/approx_slope_calculator.h"
 #include "num_collect/ode/impl/get_least_known_order.h"
 #include "num_collect/ode/step_size_limits.h"
 
@@ -77,11 +77,10 @@ public:
     [[nodiscard]] auto calculate(problem_type& problem,
         const scalar_type& initial_time, const variable_type& initial_variable,
         const step_size_limits<scalar_type>& limits,
-        const error_tolerances<variable_type>& tolerances) const
-        -> scalar_type {
-        problem.evaluate_on(initial_time, initial_variable,
-            evaluation_type{.diff_coeff = true});
-        const variable_type initial_diff = problem.diff_coeff();
+        const error_tolerances<variable_type>& tolerances) -> scalar_type {
+        variable_type initial_diff;
+        approx_slope_calculator_(
+            problem, initial_time, initial_variable, initial_diff);
 
         const auto [step_size_from_diff, initial_diff_norm] =
             calculate_step_size_from_diff(
@@ -119,7 +118,7 @@ private:
     [[nodiscard]] auto calculate_step_size_from_diff(
         const variable_type& initial_variable,
         const variable_type& initial_diff,
-        const error_tolerances<variable_type>& tolerances) const
+        const error_tolerances<variable_type>& tolerances)
         -> std::tuple<scalar_type, scalar_type> {
         // d0 in Hairer1993
         const scalar_type initial_variable_norm =
@@ -167,14 +166,14 @@ private:
         const variable_type& initial_diff,
         const scalar_type& step_size_from_diff,
         const scalar_type& initial_diff_norm,
-        const error_tolerances<variable_type>& tolerances) const {
+        const error_tolerances<variable_type>& tolerances) {
         // y1 in Hairer1993 (Explicit Euler method)
         const variable_type euler_updated_variable =
             initial_variable + step_size_from_diff * initial_diff;
 
-        problem.evaluate_on(initial_time + step_size_from_diff,
-            euler_updated_variable, evaluation_type{.diff_coeff = true});
-        const variable_type& euler_updated_diff = problem.diff_coeff();
+        variable_type euler_updated_diff;
+        approx_slope_calculator_(problem, initial_time + step_size_from_diff,
+            euler_updated_variable, euler_updated_diff);
 
         // d2 in Hairer1993 (Evaluation of second derivative)
         const scalar_type second_diff_norm =
@@ -202,6 +201,9 @@ private:
 
         return step_size_from_second_diff;
     }
+
+    //! Calculator of approximate slopes.
+    impl::approx_slope_calculator<problem_type> approx_slope_calculator_;
 };
 
 }  // namespace num_collect::ode
