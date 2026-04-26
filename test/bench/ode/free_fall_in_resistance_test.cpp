@@ -40,6 +40,7 @@
 #include "num_collect/ode/runge_kutta/esdirk45_formula.h"
 #include "num_collect/ode/runge_kutta/lobatto3c6_formula.h"
 #include "num_collect/ode/runge_kutta/radau2a5_formula.h"
+#include "num_collect/ode/runge_kutta/radau2a_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
 #include "num_collect/ode/runge_kutta/sdirk4_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka1_formula.h"
@@ -59,7 +60,7 @@ inline void bench_one(
     constexpr double init_time = 0.0;
     constexpr double end_time = 10.0;
     const Eigen::Vector2d init_var = Eigen::Vector2d(0.0, 0.0);
-    constexpr double k = 1e+2;
+    constexpr double k = 10.0;
     constexpr double g = 1.0;
     const Eigen::Vector2d reference =
         Eigen::Vector2d((g / k) * std::expm1(-k * end_time),
@@ -117,6 +118,12 @@ auto main(int argc, char** argv) -> int {
     bench_one<
         num_collect::ode::runge_kutta::radau2a5_auto_solver<problem_type>>(
         "RadauIIA5", executor);
+    bench_one<
+        num_collect::ode::runge_kutta::radau2a9_auto_solver<problem_type>>(
+        "RadauIIA9", executor);
+    bench_one<
+        num_collect::ode::runge_kutta::radau2a13_auto_solver<problem_type>>(
+        "RadauIIA13", executor);
     bench_one<num_collect::ode::rosenbrock::ros3w_solver<problem_type>>(
         "ROS3w", executor);
     bench_one<num_collect::ode::rosenbrock::ros34prw_solver<problem_type>>(
