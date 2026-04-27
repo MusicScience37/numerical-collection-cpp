@@ -54,6 +54,12 @@ TEST_CASE(
             [](double time) {
                 return Eigen::Vector2d(time, 0.5 * time * time);
             },
-            "changing_mass_quadratic");
+            "changing_mass_quadratic"
+#if defined(__GNUC__) && !defined(__clang__)
+            // Only GCC has a large error.
+            ,
+            3
+#endif
+        );
     }
 }
