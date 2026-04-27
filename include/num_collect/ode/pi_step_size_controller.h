@@ -23,11 +23,9 @@
 #include <cmath>
 #include <limits>
 
-#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/logging/logging_macros.h"
 #include "num_collect/ode/concepts/formula.h"
 #include "num_collect/ode/error_tolerances.h"  // IWYU pragma: keep
 #include "num_collect/ode/impl/get_least_known_order.h"
@@ -94,21 +92,44 @@ public:
     }
 
     /*!
-     * \brief Check the error estimate and calculate the next step size.
+     * \brief Calculate the next step size.
      *
      * \param[in,out] step_size Step size.
      * \param[in] variable Variable.
      * \param[in] error Error estimate.
-     * \retval true Given error satisfies tolerances.
-     * \retval false Given error doesn't satisfy tolerances.
      */
-    [[nodiscard]] auto check_and_calc_next(scalar_type& step_size,
-        const variable_type& variable, const variable_type& error) -> bool {
-        if (this->reduce_if_needed(step_size, variable, error)) {
-            return false;
+    void calc_next(scalar_type& step_size, const variable_type& variable,
+        const variable_type& error) {
+        // First, calculate factor of step size using a formula in the
+        // reference.
+        const scalar_type error_norm =
+            this->tolerances().calc_norm(variable, error);
+        // Heuristics to prevent division by zeros.
+        const scalar_type small_error = static_cast<scalar_type>(1e+3) *
+            std::numeric_limits<scalar_type>::epsilon();
+        scalar_type factor = pow(std::max(error_norm, small_error),
+                                 -current_step_error_exponent_) *
+            pow(std::max(previous_step_error_, small_error),
+                previous_step_error_exponent_);
+
+        // Secondly, change the factor for safety.
+        using std::isfinite;
+        factor *= step_size_factor_safety_coeff_;
+        if (!isfinite(factor)) {
+            factor = static_cast<scalar_type>(1);
         }
-        calc_next(step_size, variable, error);
-        return true;
+        if (factor > max_step_size_factor_) {
+            factor = max_step_size_factor_;
+        } else if (factor < min_step_size_factor_) {
+            factor = min_step_size_factor_;
+        }
+
+        // Finally, multiply the factor to the step size.
+        step_size *= factor;
+        step_size = this->limits().apply(step_size);
+
+        // Prepare for the next step.
+        previous_step_error_ = error_norm;
     }
 
     /*!
@@ -189,47 +210,6 @@ public:
     }
 
 private:
-    /*!
-     * \brief Calculate the next step size.
-     *
-     * \param[in,out] step_size Step size.
-     * \param[in] variable Variable.
-     * \param[in] error Error estimate.
-     */
-    void calc_next(scalar_type& step_size, const variable_type& variable,
-        const variable_type& error) {
-        // First, calculate factor of step size using a formula in the
-        // reference.
-        const scalar_type error_norm =
-            this->tolerances().calc_norm(variable, error);
-        // Heuristics to prevent division by zeros.
-        const scalar_type small_error = static_cast<scalar_type>(1e+3) *
-            std::numeric_limits<scalar_type>::epsilon();
-        scalar_type factor = pow(std::max(error_norm, small_error),
-                                 -current_step_error_exponent_) *
-            pow(std::max(previous_step_error_, small_error),
-                previous_step_error_exponent_);
-
-        // Secondly, change the factor for safety.
-        using std::isfinite;
-        factor *= step_size_factor_safety_coeff_;
-        if (!isfinite(factor)) {
-            factor = static_cast<scalar_type>(1);
-        }
-        if (factor > max_step_size_factor_) {
-            factor = max_step_size_factor_;
-        } else if (factor < min_step_size_factor_) {
-            factor = min_step_size_factor_;
-        }
-
-        // Finally, multiply the factor to the step size.
-        step_size *= factor;
-        step_size = this->limits().apply(step_size);
-
-        // Prepare for the next step.
-        previous_step_error_ = error_norm;
-    }
-
     //! Error of the previous time step.
     scalar_type previous_step_error_{static_cast<scalar_type>(1)};
 

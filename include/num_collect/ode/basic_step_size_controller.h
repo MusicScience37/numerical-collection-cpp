@@ -23,11 +23,9 @@
 #include <cmath>
 #include <limits>
 
-#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/logging/logging_macros.h"
 #include "num_collect/ode/concepts/formula.h"
 #include "num_collect/ode/error_tolerances.h"  // IWYU pragma: keep
 #include "num_collect/ode/impl/get_least_known_order.h"
@@ -73,54 +71,6 @@ public:
     }
 
     /*!
-     * \brief Check the error estimate and calculate the next step size.
-     *
-     * \param[in,out] step_size Step size.
-     * \param[in] variable Variable.
-     * \param[in] error Error estimate.
-     * \retval true Given error satisfies tolerances.
-     * \retval false Given error doesn't satisfy tolerances.
-     */
-    [[nodiscard]] auto check_and_calc_next(scalar_type& step_size,
-        const variable_type& variable, const variable_type& error) -> bool {
-        if (this->reduce_if_needed(step_size, variable, error)) {
-            return false;
-        }
-        calc_next(step_size, variable, error);
-        return true;
-    }
-
-    /*!
-     * \brief Set the safety coefficient for factors of step sizes.
-     *
-     * \param[in] val Value.
-     * \return This.
-     */
-    auto step_size_factor_safety_coeff(const scalar_type& val)
-        -> basic_step_size_controller& {
-        NUM_COLLECT_PRECONDITION(val > static_cast<scalar_type>(0),
-            "Safety coefficient for factors of step sizes must be a positive "
-            "value.");
-        step_size_factor_safety_coeff_ = val;
-        return *this;
-    }
-
-    /*!
-     * \brief Set the maximum factor of step sizes.
-     *
-     * \param[in] val Value.
-     * \return This.
-     */
-    auto max_step_size_factor(const scalar_type& val)
-        -> basic_step_size_controller& {
-        NUM_COLLECT_PRECONDITION(val > static_cast<scalar_type>(0),
-            "Maximum factor of step sizes must be a positive value.");
-        max_step_size_factor_ = val;
-        return *this;
-    }
-
-private:
-    /*!
      * \brief Calculate the next step size.
      *
      * \param[in,out] step_size Step size.
@@ -155,6 +105,36 @@ private:
         step_size = this->limits().apply(step_size);
     }
 
+    /*!
+     * \brief Set the safety coefficient for factors of step sizes.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto step_size_factor_safety_coeff(const scalar_type& val)
+        -> basic_step_size_controller& {
+        NUM_COLLECT_PRECONDITION(val > static_cast<scalar_type>(0),
+            "Safety coefficient for factors of step sizes must be a positive "
+            "value.");
+        step_size_factor_safety_coeff_ = val;
+        return *this;
+    }
+
+    /*!
+     * \brief Set the maximum factor of step sizes.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto max_step_size_factor(const scalar_type& val)
+        -> basic_step_size_controller& {
+        NUM_COLLECT_PRECONDITION(val > static_cast<scalar_type>(0),
+            "Maximum factor of step sizes must be a positive value.");
+        max_step_size_factor_ = val;
+        return *this;
+    }
+
+private:
     //! Default safety coefficient for factors of step sizes.
     static constexpr auto default_step_size_factor_safety_coeff =
         static_cast<scalar_type>(0.8);

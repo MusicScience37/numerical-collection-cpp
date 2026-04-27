@@ -57,12 +57,16 @@ concept step_size_controller = requires() {
 
     requires requires(T& obj) { obj.init(); };
 
+    requires requires(T& obj, typename T::scalar_type& step_size) {
+        {
+            obj.reduce_if_possible(step_size)
+        } -> base::concepts::decayed_to<bool>;
+    };
+
     requires requires(T& obj, typename T::scalar_type& step_size,
         const typename T::variable_type& variable,
         const typename T::variable_type& error) {
-        {
-            obj.check_and_calc_next(step_size, variable, error)
-        } -> base::concepts::decayed_to<bool>;
+        obj.calc_next(step_size, variable, error);
     };
 
     requires requires(

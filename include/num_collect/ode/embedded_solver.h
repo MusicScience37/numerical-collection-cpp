@@ -114,19 +114,39 @@ public:
 
         formula().step_embedded(
             time_, *step_size_, prev_variable_, variable_, error_);
+
         constexpr index_type max_retry = 10000;  // safe guard
         for (index_type i = 0; i < max_retry; ++i) {
-            const scalar_type last_step_size = *step_size_;
-            if (step_size_controller_.check_and_calc_next(
-                    *step_size_, variable_, error_)) {
-                time_ += last_step_size;
-                ++steps_;
-                last_step_size_ = last_step_size;
-                return;
+            last_step_size_ = *step_size_;
+
+            const bool tolerance_satisfied =
+                step_size_controller_.tolerances().check(variable_, error_);
+            if (tolerance_satisfied) {
+                break;
             }
+
+            const bool reduced =
+                step_size_controller_.reduce_if_possible(*step_size_);
+            if (!reduced) {
+                NUM_COLLECT_LOG_WARNING(this->logger(),
+                    "Error tolerance not satisfied even with the lowest step "
+                    "size {} (error: {}).",
+                    *step_size_,
+                    step_size_controller_.tolerances().calc_norm(
+                        variable_, error_));
+                break;
+            }
+            NUM_COLLECT_LOG_DEBUG(this->logger(),
+                "Error tolerance not satisfied with step size {}.",
+                last_step_size_);
+
             formula().step_embedded(
                 time_, *step_size_, prev_variable_, variable_, error_);
         }
+
+        step_size_controller_.calc_next(*step_size_, variable_, error_);
+        time_ += last_step_size_;
+        ++steps_;
     }
 
     //! \copydoc ode::solver_base::configure_iteration_logger
