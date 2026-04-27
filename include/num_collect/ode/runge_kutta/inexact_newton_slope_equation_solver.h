@@ -30,13 +30,11 @@
 
 #include "num_collect/base/concepts/dense_matrix.h"
 #include "num_collect/base/concepts/sparse_matrix.h"
-#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/iterative_solver_base.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/logging/logging_macros.h"
 #include "num_collect/ode/concepts/mass_problem.h"
 #include "num_collect/ode/concepts/multi_variate_differentiable_problem.h"
 #include "num_collect/ode/concepts/multi_variate_problem.h"
@@ -45,6 +43,7 @@
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/evaluation_type.h"
 #include "num_collect/ode/impl/gmres.h"
+#include "num_collect/ode/ode_errors.h"
 
 namespace num_collect::ode::runge_kutta {
 
@@ -142,8 +141,8 @@ public:
         coeff_inverse_ = static_cast<jacobian_type>(1) / inverted_value;
         using std::isfinite;
         if (!isfinite(coeff_inverse_)) {
-            NUM_COLLECT_LOG_AND_THROW(
-                algorithm_failure, "Failed to calculate inverse.");
+            NUM_COLLECT_ODE_THROW_LINEAR_SOLVER_FAILURE(
+                this->logger(), "Failed to calculate inverse.");
         }
     }
 
@@ -450,7 +449,7 @@ public:
         }
         update_ = -lu_.solve(residual_);
         if (!update_.array().isFinite().all()) {
-            NUM_COLLECT_LOG_AND_THROW(algorithm_failure,
+            NUM_COLLECT_ODE_THROW_LINEAR_SOLVER_FAILURE(this->logger(),
                 "Failed to solve an equation. step_size={}, cond={}.",
                 step_size_, lu_.rcond());
         }
@@ -719,7 +718,7 @@ public:
         update_ = solver_.solve(residual_);
         update_ = -update_;
         if (!update_.array().isFinite().all()) {
-            NUM_COLLECT_LOG_AND_THROW(algorithm_failure,
+            NUM_COLLECT_ODE_THROW_LINEAR_SOLVER_FAILURE(this->logger(),
                 "Failed to solve an equation. step_size={}.", step_size_);
         }
         *solution_ += update_;
@@ -988,7 +987,7 @@ public:
         solver_.solve(coeff_function, residual_, update_);
         update_ = -update_;
         if (!update_.array().isFinite().all()) {
-            NUM_COLLECT_LOG_AND_THROW(algorithm_failure,
+            NUM_COLLECT_ODE_THROW_LINEAR_SOLVER_FAILURE(this->logger(),
                 "Failed to solve an equation. step_size={}.", step_size_);
         }
         *solution_ += update_;

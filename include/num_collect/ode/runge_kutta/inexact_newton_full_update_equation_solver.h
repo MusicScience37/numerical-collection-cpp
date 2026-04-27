@@ -28,19 +28,18 @@
 
 #include "num_collect/base/concepts/dense_matrix.h"
 #include "num_collect/base/concepts/real_scalar.h"
-#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/iterative_solver_base.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/logging/logging_macros.h"
 #include "num_collect/ode/concepts/differentiable_problem.h"
 #include "num_collect/ode/concepts/mass_problem.h"
 #include "num_collect/ode/concepts/multi_variate_differentiable_problem.h"
 #include "num_collect/ode/concepts/single_variate_differentiable_problem.h"
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/evaluation_type.h"
+#include "num_collect/ode/ode_errors.h"
 
 namespace num_collect::ode::runge_kutta {
 
@@ -215,7 +214,7 @@ public:
         residual_.noalias() -= step_size_ * slope_coeffs_ * slopes_;
         update_ = solver_.solve(residual_);
         if (!update_.array().isFinite().all()) {
-            NUM_COLLECT_LOG_AND_THROW(algorithm_failure,
+            NUM_COLLECT_ODE_THROW_LINEAR_SOLVER_FAILURE(this->logger(),
                 "Failed to solve an equation. step_size={}.", step_size_);
         }
         *solution_ -= update_;
@@ -573,7 +572,7 @@ public:
         }
         update_ = solver_.solve(residual_);
         if (!update_.array().isFinite().all()) {
-            NUM_COLLECT_LOG_AND_THROW(algorithm_failure,
+            NUM_COLLECT_ODE_THROW_LINEAR_SOLVER_FAILURE(this->logger(),
                 "Failed to solve an equation. step_size={}.", step_size_);
         }
         *solution_ -= update_;
