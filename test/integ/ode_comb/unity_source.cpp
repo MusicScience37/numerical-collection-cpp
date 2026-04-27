@@ -11,6 +11,7 @@
 #include "implicit_kaps/embedded.cpp"
 #include "implicit_kaps/wrapped_non_embedded.cpp"
 #include "no_jacobian_implicit_kaps_problem/embedded.cpp"
+#include "previous_failures/radau2a5_changing_mass_quadratic.cpp"
 #include "spring_movement/embedded.cpp"
 #include "spring_movement/non_embedded.cpp"
 #include "spring_movement/wrapped_non_embedded.cpp"
