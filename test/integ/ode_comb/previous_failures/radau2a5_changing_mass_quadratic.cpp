@@ -27,9 +27,8 @@
 #include "num_prob_collect/ode/changing_mass_quadratic_problem.h"
 
 TEST_CASE(
-    "changing_mass_quadratic_problem with radau2a5_changing_mass_auto_solver",
-    // TODO Fix this test in this branch.
-    "[!mayfail]") {
+    "changing_mass_quadratic_problem with "
+    "radau2a5_changing_mass_auto_solver", ) {
     using problem_type = num_prob_collect::ode::changing_mass_quadratic_problem;
     using solver_type =
         num_collect::ode::runge_kutta::radau2a5_changing_mass_auto_solver<

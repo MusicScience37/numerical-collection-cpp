@@ -28,9 +28,7 @@
 #include "num_prob_collect/ode/changing_mass_exponential_problem.h"
 
 TEMPLATE_PRODUCT_TEST_CASE(
-    "changing_mass_exponential_problem with non-embedded formulas",
-    // TODO Fix this test in this branch.
-    "[!mayfail]",
+    "changing_mass_exponential_problem with non-embedded formulas", "",
     (
         // non-embedded Runge-Kutta method.
         num_collect::ode::runge_kutta::radau2a5_changing_mass_auto_solver),
