@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 MusicScience37 (Kenta Kabashima)
+ * Copyright 2026 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of basic_step_size_controller class.
+ * \brief Definition of classic_step_size_controller class.
  */
 #pragma once
 
@@ -23,86 +23,88 @@
 #include <cmath>
 #include <limits>
 
+#include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
-#include "num_collect/logging/log_tag_view.h"
-#include "num_collect/ode/concepts/formula.h"
-#include "num_collect/ode/error_tolerances.h"  // IWYU pragma: keep
-#include "num_collect/ode/impl/get_least_known_order.h"
-#include "num_collect/ode/step_size_controller_base.h"
-#include "num_collect/ode/step_size_limits.h"  // IWYU pragma: keep
+#include "num_collect/ode/concepts/problem.h"
+#include "num_collect/ode/step_size_controller.h"
 
 namespace num_collect::ode {
 
-//! Log tag.
-constexpr auto basic_step_size_controller_log_tag =
-    logging::log_tag_view("num_collect::ode::basic_step_size_controller");
-
 /*!
- * \brief Class to control step sizes using well-known method \cite Hairer1993.
+ * \brief Class of the strategy to calculate next step sizes using a classic
+ * method written in \cite Hairer1993.
  *
- * \tparam Formula Type of the formula.
+ * \tparam Scalar Type of scalars.
  */
-template <concepts::formula Formula>
-class basic_step_size_controller
-    : public step_size_controller_base<basic_step_size_controller<Formula>,
-          Formula> {
+template <base::concepts::real_scalar Scalar>
+class classic_step_size_strategy {
 public:
-    //! Base class.
-    using base_type =
-        step_size_controller_base<basic_step_size_controller<Formula>, Formula>;
-
-    using typename base_type::formula_type;
-    using typename base_type::problem_type;
-    using typename base_type::scalar_type;
-    using typename base_type::variable_type;
+    //! Type of scalars.
+    using scalar_type = Scalar;
 
     /*!
      * \brief Constructor.
+     *
+     * \param[in] method_order Order of the method.
      */
-    basic_step_size_controller()
-        : base_type(basic_step_size_controller_log_tag) {}
+    explicit classic_step_size_strategy(index_type method_order)
+        : method_order_(method_order) {
+        NUM_COLLECT_PRECONDITION(method_order_ > 0,
+            "Order of the method must be a positive integer.");
+    }
 
     /*!
-     * \brief Initialize.
+     * \brief Initialize the internal state.
      */
-    void init() {
-        // no operation.
-    }
+    void init() { is_previous_step_size_accepted_ = true; }
 
     /*!
      * \brief Calculate the next step size.
      *
      * \param[in,out] step_size Step size.
-     * \param[in] variable Variable.
-     * \param[in] error Error estimate.
+     * \param[in] error_norm Norm of error estimates calculated by
+     * calc_norm function in
+     * \ref num_collect::ode::error_tolerances class.
      */
-    void calc_next(scalar_type& step_size, const variable_type& variable,
-        const variable_type& error) {
+    void calc_next(scalar_type& step_size, const scalar_type& error_norm) {
+        using std::isfinite;
+        if (!isfinite(error_norm) ||
+            error_norm <= static_cast<scalar_type>(0)) {
+            // No change in step size.
+            return;
+        }
+
         // First, calculate factor of step size using a formula in the
-        // reference.
-        const scalar_type error_norm =
-            this->tolerances().calc_norm(variable, error);
-        constexpr index_type order_for_exponent =
-            impl::get_least_known_order<Formula>();
-        constexpr scalar_type exponent = -static_cast<scalar_type>(1) /
-            static_cast<scalar_type>(order_for_exponent + 1);
-        // Heuristics to prevent division by zeros.
-        const scalar_type small_error = static_cast<scalar_type>(1e+3) *
+        // reference with heuristics to prevent division by zeros.
+        const scalar_type exponent = -static_cast<scalar_type>(1) /
+            static_cast<scalar_type>(method_order_ + 1);
+        constexpr scalar_type small_error = static_cast<scalar_type>(1e+3) *
             std::numeric_limits<scalar_type>::epsilon();
         using std::pow;
         scalar_type factor = pow(std::max(error_norm, small_error), exponent);
 
         // Secondly, change the factor for safety.
-        using std::isfinite;
         factor *= step_size_factor_safety_coeff_;
-        if (factor > max_step_size_factor_ || !isfinite(factor)) {
-            factor = max_step_size_factor_;
+        const scalar_type max_step_size_factor = is_previous_step_size_accepted_
+            ? max_step_size_factor_
+            : static_cast<scalar_type>(1);
+        if (factor > max_step_size_factor) {
+            factor = max_step_size_factor;
         }
 
         // Finally, multiply the factor to the step size.
         step_size *= factor;
-        step_size = this->limits().apply(step_size);
+
+        // Prepare for the next step.
+        is_previous_step_size_accepted_ = true;
+    }
+
+    /*!
+     * \brief Notify that the previous step size was rejected.
+     */
+    void notify_previous_step_size_rejected() {
+        is_previous_step_size_accepted_ = false;
     }
 
     /*!
@@ -112,7 +114,7 @@ public:
      * \return This.
      */
     auto step_size_factor_safety_coeff(const scalar_type& val)
-        -> basic_step_size_controller& {
+        -> classic_step_size_strategy& {
         NUM_COLLECT_PRECONDITION(val > static_cast<scalar_type>(0),
             "Safety coefficient for factors of step sizes must be a positive "
             "value.");
@@ -127,7 +129,7 @@ public:
      * \return This.
      */
     auto max_step_size_factor(const scalar_type& val)
-        -> basic_step_size_controller& {
+        -> classic_step_size_strategy& {
         NUM_COLLECT_PRECONDITION(val > static_cast<scalar_type>(0),
             "Maximum factor of step sizes must be a positive value.");
         max_step_size_factor_ = val;
@@ -135,6 +137,12 @@ public:
     }
 
 private:
+    //! Whether the previous step size is accepted.
+    bool is_previous_step_size_accepted_{true};
+
+    //! Order of the method.
+    index_type method_order_;
+
     //! Default safety coefficient for factors of step sizes.
     static constexpr auto default_step_size_factor_safety_coeff =
         static_cast<scalar_type>(0.8);
@@ -150,5 +158,15 @@ private:
     //! Maximum factor of step sizes.
     scalar_type max_step_size_factor_{default_max_step_size_factor};
 };
+
+/*!
+ * \brief Class to control step sizes using a classic method written in
+ * \cite Hairer1993.
+ *
+ * \tparam Problem Type of problems.
+ */
+template <concepts::problem Problem>
+using classic_step_size_controller = step_size_controller<Problem,
+    classic_step_size_strategy<typename Problem::scalar_type>>;
 
 }  // namespace num_collect::ode

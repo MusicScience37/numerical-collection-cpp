@@ -25,28 +25,32 @@
 #include <fmt/format.h>
 
 #include "diagram_common.h"
-#include "num_collect/ode/basic_step_size_controller.h"
+#include "num_collect/ode/classic_step_size_controller.h"
 #include "num_collect/ode/embedded_solver.h"
+#include "num_collect/ode/non_embedded_formula_wrapper.h"
 #include "num_collect/ode/pi_step_size_controller.h"
 #include "num_collect/ode/rosenbrock/rodasp_formula.h"
 #include "num_collect/ode/rosenbrock/ros3w_formula.h"
+#include "num_collect/ode/runge_kutta/radau2a5_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
-#include "num_prob_collect/ode/spring_movement_problem.h"
+#include "num_prob_collect/ode/kaps_problem.h"
 
-using problem_type = num_prob_collect::ode::spring_movement_problem;
+using problem_type = num_prob_collect::ode::kaps_problem;
+constexpr double epsilon = 1e-3;
 
 static constexpr std::string_view problem_name =
-    "spring_movement_step_size_controllers";
-static constexpr std::string_view problem_description = "Spring Movement";
+    "kaps_problem_step_size_controllers";
+static constexpr std::string_view problem_description =
+    "Kaps' Problem (epsilon=1e-3)";
 
 template <typename Solver>
 inline void bench_one(
     const std::string& solver_name, bench_executor& executor) {
     constexpr double init_time = 0.0;
-    constexpr double end_time = 10.0;
-    const Eigen::Vector2d init_var = Eigen::Vector2d(1.0, 0.0);
-    const Eigen::Vector2d reference =
-        Eigen::Vector2d(std::cos(end_time), std::sin(end_time));
+    constexpr double end_time = 1.0;
+    const Eigen::Vector2d init_var{{1.0, 1.0}};
+    const Eigen::Vector2d reference{
+        {std::exp(-2.0 * end_time), std::exp(-end_time)}};
 
 #ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
     constexpr num_collect::index_type repetitions = 10;
@@ -58,7 +62,7 @@ inline void bench_one(
         1e-2, 1e-3, 1e-4, 1e-5, 1e-6};
 
     for (const double tol : tolerance_list) {
-        const problem_type problem;
+        const problem_type problem{epsilon};
         executor.perform<problem_type, Solver>(solver_name, problem, init_time,
             end_time, init_var, reference, repetitions, tol);
     }
@@ -78,38 +82,44 @@ auto main(int argc, char** argv) -> int {
 
     bench_one<num_collect::ode::embedded_solver<
         num_collect::ode::runge_kutta::rkf45_formula<problem_type>,
-        num_collect::ode::basic_step_size_controller<
-            num_collect::ode::runge_kutta::rkf45_formula<problem_type>>>>(
-        "RKF45_basic", executor);
+        num_collect::ode::classic_step_size_controller<problem_type>>>(
+        "RKF45_classic", executor);
 
     bench_one<num_collect::ode::embedded_solver<
         num_collect::ode::runge_kutta::rkf45_formula<problem_type>,
-        num_collect::ode::pi_step_size_controller<
-            num_collect::ode::runge_kutta::rkf45_formula<problem_type>>>>(
+        num_collect::ode::pi_step_size_controller<problem_type>>>(
         "RKF45_pi", executor);
 
     bench_one<num_collect::ode::embedded_solver<
-        num_collect::ode::rosenbrock::ros3w_formula<problem_type>,
-        num_collect::ode::basic_step_size_controller<
-            num_collect::ode::rosenbrock::ros3w_formula<problem_type>>>>(
-        "ROS3w_basic", executor);
+        num_collect::ode::non_embedded_formula_wrapper<
+            num_collect::ode::runge_kutta::radau2a5_formula<problem_type>>,
+        num_collect::ode::classic_step_size_controller<problem_type>>>(
+        "Radau2A5_classic", executor);
+
+    bench_one<num_collect::ode::embedded_solver<
+        num_collect::ode::non_embedded_formula_wrapper<
+            num_collect::ode::runge_kutta::radau2a5_formula<problem_type>>,
+        num_collect::ode::pi_step_size_controller<problem_type>>>(
+        "Radau2A5_pi", executor);
 
     bench_one<num_collect::ode::embedded_solver<
         num_collect::ode::rosenbrock::ros3w_formula<problem_type>,
-        num_collect::ode::pi_step_size_controller<
-            num_collect::ode::rosenbrock::ros3w_formula<problem_type>>>>(
+        num_collect::ode::classic_step_size_controller<problem_type>>>(
+        "ROS3w_classic", executor);
+
+    bench_one<num_collect::ode::embedded_solver<
+        num_collect::ode::rosenbrock::ros3w_formula<problem_type>,
+        num_collect::ode::pi_step_size_controller<problem_type>>>(
         "ROS3w_pi", executor);
 
     bench_one<num_collect::ode::embedded_solver<
         num_collect::ode::rosenbrock::rodasp_formula<problem_type>,
-        num_collect::ode::basic_step_size_controller<
-            num_collect::ode::rosenbrock::rodasp_formula<problem_type>>>>(
-        "RODASP_basic", executor);
+        num_collect::ode::classic_step_size_controller<problem_type>>>(
+        "RODASP_classic", executor);
 
     bench_one<num_collect::ode::embedded_solver<
         num_collect::ode::rosenbrock::rodasp_formula<problem_type>,
-        num_collect::ode::pi_step_size_controller<
-            num_collect::ode::rosenbrock::rodasp_formula<problem_type>>>>(
+        num_collect::ode::pi_step_size_controller<problem_type>>>(
         "RODASP_pi", executor);
 
     executor.write_result(problem_name, problem_description, output_directory);

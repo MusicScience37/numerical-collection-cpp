@@ -26,8 +26,6 @@
 
 #include "diagram_common.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/ode/basic_step_size_controller.h"
-#include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/rosenbrock/rodasp_formula.h"
 #include "num_collect/ode/rosenbrock/rodaspr_formula.h"
 #include "num_collect/ode/rosenbrock/ros34pw3_formula.h"

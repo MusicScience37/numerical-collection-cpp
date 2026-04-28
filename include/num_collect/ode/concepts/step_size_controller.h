@@ -23,7 +23,7 @@
 
 #include "num_collect/base/concepts/const_reference_of.h"
 #include "num_collect/base/concepts/decayed_to.h"
-#include "num_collect/ode/concepts/formula.h"
+#include "num_collect/base/index_type.h"
 #include "num_collect/ode/concepts/problem.h"
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/step_size_limits.h"
@@ -37,13 +37,8 @@ namespace num_collect::ode::concepts {
  */
 template <typename T>
 concept step_size_controller = requires() {
-    typename T::formula_type;
-    requires formula<typename T::formula_type>;
-
     typename T::problem_type;
     requires problem<typename T::problem_type>;
-    requires std::is_same_v<typename T::formula_type::problem_type,
-        typename T::problem_type>;
 
     typename T::variable_type;
     requires std::is_same_v<typename T::problem_type::variable_type,
@@ -53,7 +48,7 @@ concept step_size_controller = requires() {
     requires std::is_same_v<typename T::problem_type::scalar_type,
         typename T::scalar_type>;
 
-    requires requires() { T(); };
+    requires requires(index_type method_order) { T(method_order); };
 
     requires requires(T& obj) { obj.init(); };
 

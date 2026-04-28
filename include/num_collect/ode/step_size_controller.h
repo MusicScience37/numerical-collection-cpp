@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 MusicScience37 (Kenta Kabashima)
+ * Copyright 2026 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,39 +15,56 @@
  */
 /*!
  * \file
- * \brief Definition of step_size_controller_base class.
+ * \brief Definition of step_size_controller class.
  */
 #pragma once
 
+#include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_mixin.h"
-#include "num_collect/ode/concepts/formula.h"
+#include "num_collect/ode/concepts/problem.h"
+#include "num_collect/ode/concepts/step_size_strategy.h"
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/step_size_limits.h"
 
 namespace num_collect::ode {
 
-/*!
- * \brief Base class of classes to control step sizes.
- *
- * \tparam Derived Type of derived class.
- * \tparam Formula Type of the formula.
- */
-template <typename Derived, concepts::formula Formula>
-class step_size_controller_base : public logging::logging_mixin {
-public:
-    //! Type of formula.
-    using formula_type = Formula;
+//! Log tag.
+constexpr auto step_size_controller_log_tag =
+    logging::log_tag_view("num_collect::ode::step_size_controller");
 
-    //! Type of problem.
-    using problem_type = typename formula_type::problem_type;
+/*!
+ * \brief Class to control step sizes adaptively.
+ *
+ * \tparam Problem Type of the problem.
+ * \tparam Strategy Type of the strategy to calculate next step sizes.
+ */
+template <concepts::problem Problem, concepts::step_size_strategy Strategy>
+class step_size_controller : public logging::logging_mixin {
+public:
+    //! Type of the problem.
+    using problem_type = Problem;
 
     //! Type of variables.
     using variable_type = typename problem_type::variable_type;
 
     //! Type of scalars.
     using scalar_type = typename problem_type::scalar_type;
+
+    /*!
+     * \brief Constructor.
+     *
+     * \param[in] method_order Order of the method.
+     */
+    explicit step_size_controller(index_type method_order)
+        : logging::logging_mixin(step_size_controller_log_tag),
+          strategy_(method_order) {}
+
+    /*!
+     * \brief Initialize the internal state.
+     */
+    void init() { strategy_.init(); }
 
     /*!
      * \brief Reduce step size if possible.
@@ -60,9 +77,25 @@ public:
         if (step_size > limits_.lower_limit()) {
             step_size *= reduction_rate_;
             step_size = limits_.apply(step_size);
+            strategy_.notify_previous_step_size_rejected();
             return true;
         }
         return false;
+    }
+
+    /*!
+     * \brief Calculate the next step size.
+     *
+     * \param[in,out] step_size Step size.
+     * \param[in] variable Variable.
+     * \param[in] error Error estimate.
+     */
+    void calc_next(scalar_type& step_size, const variable_type& variable,
+        const variable_type& error) {
+        const scalar_type error_norm =
+            this->tolerances().calc_norm(variable, error);
+        strategy_.calc_next(step_size, error_norm);
+        step_size = this->limits().apply(step_size);
     }
 
     /*!
@@ -71,9 +104,10 @@ public:
      * \param[in] val Value.
      * \return This.
      */
-    auto limits(const step_size_limits<scalar_type>& val) -> Derived& {
+    auto limits(const step_size_limits<scalar_type>& val)
+        -> step_size_controller& {
         limits_ = val;
-        return derived();
+        return *this;
     }
 
     /*!
@@ -91,9 +125,10 @@ public:
      * \param[in] val Value.
      * \return This.
      */
-    auto tolerances(const error_tolerances<variable_type>& val) -> Derived& {
+    auto tolerances(const error_tolerances<variable_type>& val)
+        -> step_size_controller& {
         tolerances_ = val;
-        return derived();
+        return *this;
     }
 
     /*!
@@ -112,39 +147,31 @@ public:
      * \param[in] val Value.
      * \return This.
      */
-    auto reduction_rate(const scalar_type& val) -> Derived& {
+    auto reduction_rate(const scalar_type& val) -> step_size_controller& {
         NUM_COLLECT_PRECONDITION(val > static_cast<scalar_type>(0),
             "Rate to reduce step sizes when error is large must be a positive "
             "value.");
+        NUM_COLLECT_PRECONDITION(val < static_cast<scalar_type>(1),
+            "Rate to reduce step sizes when error is large must be less than "
+            "1.");
         reduction_rate_ = val;
-        return derived();
-    }
-
-protected:
-    /*!
-     * \brief Constructor.
-     *
-     * \param[in] tag Log tag.
-     */
-    explicit step_size_controller_base(logging::log_tag_view tag)
-        : logging::logging_mixin(tag) {}
-
-    /*!
-     * \brief Access derived object.
-     *
-     * \return Reference to the derived object.
-     */
-    [[nodiscard]] auto derived() noexcept -> Derived& {
-        return *static_cast<Derived*>(this);
+        return *this;
     }
 
     /*!
-     * \brief Access derived object.
+     * \brief Access the strategy.
      *
-     * \return Reference to the derived object.
+     * \return Strategy.
      */
-    [[nodiscard]] auto derived() const noexcept -> const Derived& {
-        return *static_cast<const Derived*>(this);
+    [[nodiscard]] auto strategy() noexcept -> Strategy& { return strategy_; }
+
+    /*!
+     * \brief Access the strategy.
+     *
+     * \return Strategy.
+     */
+    [[nodiscard]] auto strategy() const noexcept -> const Strategy& {
+        return strategy_;
     }
 
 private:
@@ -160,6 +187,9 @@ private:
 
     //! Rate to reduce step sizes when error is large.
     scalar_type reduction_rate_{default_reduction_rate};
+
+    //! Strategy to calculate next step sizes.
+    Strategy strategy_;
 };
 
 }  // namespace num_collect::ode

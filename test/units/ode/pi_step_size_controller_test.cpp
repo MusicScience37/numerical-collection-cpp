@@ -26,9 +26,9 @@
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+#include "num_collect/base/index_type.h"
 #include "num_collect/ode/concepts/step_size_controller.h"
 #include "num_collect/ode/error_tolerances.h"
-#include "num_collect/ode/runge_kutta/rkf45_formula.h"
 #include "num_collect/ode/step_size_limits.h"
 #include "num_prob_collect/ode/exponential_problem.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
@@ -37,7 +37,6 @@ TEST_CASE("num_collect::ode::pi_step_size_controller") {
     using num_collect::ode::error_tolerances;
     using num_collect::ode::pi_step_size_controller;
     using num_collect::ode::step_size_limits;
-    using num_collect::ode::runge_kutta::rkf45_formula;
     using num_prob_collect::ode::exponential_problem;
     using num_prob_collect::ode::spring_movement_problem;
 
@@ -45,18 +44,17 @@ TEST_CASE("num_collect::ode::pi_step_size_controller") {
 
     SECTION("check concept") {
         using problem_type = spring_movement_problem;
-        using formula_type = rkf45_formula<problem_type>;
-        using controller_type = pi_step_size_controller<formula_type>;
+        using controller_type = pi_step_size_controller<problem_type>;
         STATIC_CHECK(
             num_collect::ode::concepts::step_size_controller<controller_type>);
     }
 
     SECTION("reduce step size if possible") {
         using problem_type = spring_movement_problem;
-        using formula_type = rkf45_formula<problem_type>;
-        using controller_type = pi_step_size_controller<formula_type>;
+        using controller_type = pi_step_size_controller<problem_type>;
 
-        controller_type controller;
+        constexpr num_collect::index_type method_order = 4;
+        controller_type controller{method_order};
 
         controller.init();
 
@@ -71,10 +69,11 @@ TEST_CASE("num_collect::ode::pi_step_size_controller") {
         controller.tolerances(tolerances);
 
         constexpr double step_size_factor_safety_coeff = 0.8;
-        controller.step_size_factor_safety_coeff(step_size_factor_safety_coeff);
+        controller.strategy().step_size_factor_safety_coeff(
+            step_size_factor_safety_coeff);
 
         constexpr double max_step_size_factor = 5.0;
-        controller.max_step_size_factor(max_step_size_factor);
+        controller.strategy().max_step_size_factor(max_step_size_factor);
 
         SECTION("step size in limit") {
             constexpr double reduction_rate = 0.5;
@@ -105,10 +104,10 @@ TEST_CASE("num_collect::ode::pi_step_size_controller") {
 
     SECTION("calculate the next step size") {
         using problem_type = exponential_problem;
-        using formula_type = rkf45_formula<problem_type>;
-        using controller_type = pi_step_size_controller<formula_type>;
+        using controller_type = pi_step_size_controller<problem_type>;
 
-        controller_type controller;
+        constexpr num_collect::index_type method_order = 4;
+        controller_type controller{method_order};
 
         constexpr double variable = 0.1;
         controller.init();
@@ -125,19 +124,27 @@ TEST_CASE("num_collect::ode::pi_step_size_controller") {
         controller.reduction_rate(reduction_rate);
 
         constexpr double current_step_error_exponent = 0.5;
-        controller.current_step_error_exponent(current_step_error_exponent);
+        constexpr double current_step_error_exponent_coeff =
+            current_step_error_exponent * static_cast<double>(method_order + 1);
+        controller.strategy().current_step_error_exponent_coeff(
+            current_step_error_exponent_coeff);
 
         constexpr double previous_step_error_exponent = 0.25;
-        controller.previous_step_error_exponent(previous_step_error_exponent);
+        constexpr double previous_step_error_exponent_coeff =
+            previous_step_error_exponent *
+            static_cast<double>(method_order + 1);
+        controller.strategy().previous_step_error_exponent_coeff(
+            previous_step_error_exponent_coeff);
 
         constexpr double step_size_factor_safety_coeff = 0.8;
-        controller.step_size_factor_safety_coeff(step_size_factor_safety_coeff);
+        controller.strategy().step_size_factor_safety_coeff(
+            step_size_factor_safety_coeff);
 
         constexpr double max_step_size_factor = 5.0;
-        controller.max_step_size_factor(max_step_size_factor);
+        controller.strategy().max_step_size_factor(max_step_size_factor);
 
         constexpr double min_step_size_factor = 0.1;
-        controller.min_step_size_factor(min_step_size_factor);
+        controller.strategy().min_step_size_factor(min_step_size_factor);
 
         SECTION("step size in limit") {
             double step_size = 0.4;
@@ -164,11 +171,11 @@ TEST_CASE("num_collect::ode::pi_step_size_controller") {
             CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.5));
         }
 
-        SECTION("no error resulting in the maximum step size") {
+        SECTION("no error resulting in no change") {
             double step_size = 0.5;
             const double current_error = 0.0;
             controller.calc_next(step_size, variable, current_error);
-            CHECK_THAT(step_size, Catch::Matchers::WithinRel(1.0));
+            CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.5));
         }
 
         SECTION("factor too large") {
