@@ -35,6 +35,7 @@
 #include "num_collect/ode/concepts/mass_problem.h"
 #include "num_collect/ode/concepts/step_size_controller.h"
 #include "num_collect/ode/error_tolerances.h"
+#include "num_collect/ode/impl/get_least_known_order.h"
 #include "num_collect/ode/initial_step_size_calculator.h"
 #include "num_collect/ode/ode_errors.h"
 #include "num_collect/ode/pi_step_size_controller.h"
@@ -51,7 +52,7 @@ namespace num_collect::ode {
  */
 template <concepts::embedded_formula Formula,
     concepts::step_size_controller StepSizeController =
-        pi_step_size_controller<Formula>>
+        pi_step_size_controller<typename Formula::problem_type>>
 class embedded_solver
     : public solver_base<embedded_solver<Formula, StepSizeController>,
           Formula> {
@@ -71,8 +72,8 @@ public:
     //! Type of the controller of step sizes.
     using step_size_controller_type = StepSizeController;
 
-    static_assert(std::is_same_v<formula_type,
-        typename step_size_controller_type::formula_type>);
+    static_assert(std::is_same_v<problem_type,
+        typename step_size_controller_type::problem_type>);
 
     //! Order of lesser coefficients of this formula.
     static constexpr index_type lesser_order = formula_type::lesser_order;
@@ -354,7 +355,8 @@ private:
     variable_type error_{};
 
     //! Controller of step sizes.
-    step_size_controller_type step_size_controller_{};
+    step_size_controller_type step_size_controller_{
+        impl::get_least_known_order<formula_type>()};
 
     //! Time.
     scalar_type time_{};

@@ -1,7 +1,7 @@
 #include "avf/avf2_formula_test.cpp"
 #include "avf/avf3_formula_test.cpp"
 #include "avf/avf4_formula_test.cpp"
-#include "basic_step_size_controller_test.cpp"
+#include "classic_step_size_controller_test.cpp"
 #include "embedded_solver_test.cpp"
 #include "error_tolerances_test.cpp"
 #include "evaluation_type_test.cpp"

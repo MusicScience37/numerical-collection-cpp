@@ -25,7 +25,7 @@
 #include <fmt/format.h>
 
 #include "diagram_common.h"
-#include "num_collect/ode/basic_step_size_controller.h"
+#include "num_collect/ode/classic_step_size_controller.h"
 #include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/pi_step_size_controller.h"
 #include "num_collect/ode/rosenbrock/rodasp_formula.h"
@@ -78,38 +78,32 @@ auto main(int argc, char** argv) -> int {
 
     bench_one<num_collect::ode::embedded_solver<
         num_collect::ode::runge_kutta::rkf45_formula<problem_type>,
-        num_collect::ode::basic_step_size_controller<
-            num_collect::ode::runge_kutta::rkf45_formula<problem_type>>>>(
-        "RKF45_basic", executor);
+        num_collect::ode::classic_step_size_controller<problem_type>>>(
+        "RKF45_classic", executor);
 
     bench_one<num_collect::ode::embedded_solver<
         num_collect::ode::runge_kutta::rkf45_formula<problem_type>,
-        num_collect::ode::pi_step_size_controller<
-            num_collect::ode::runge_kutta::rkf45_formula<problem_type>>>>(
+        num_collect::ode::pi_step_size_controller<problem_type>>>(
         "RKF45_pi", executor);
 
     bench_one<num_collect::ode::embedded_solver<
         num_collect::ode::rosenbrock::ros3w_formula<problem_type>,
-        num_collect::ode::basic_step_size_controller<
-            num_collect::ode::rosenbrock::ros3w_formula<problem_type>>>>(
-        "ROS3w_basic", executor);
+        num_collect::ode::classic_step_size_controller<problem_type>>>(
+        "ROS3w_classic", executor);
 
     bench_one<num_collect::ode::embedded_solver<
         num_collect::ode::rosenbrock::ros3w_formula<problem_type>,
-        num_collect::ode::pi_step_size_controller<
-            num_collect::ode::rosenbrock::ros3w_formula<problem_type>>>>(
+        num_collect::ode::pi_step_size_controller<problem_type>>>(
         "ROS3w_pi", executor);
 
     bench_one<num_collect::ode::embedded_solver<
         num_collect::ode::rosenbrock::rodasp_formula<problem_type>,
-        num_collect::ode::basic_step_size_controller<
-            num_collect::ode::rosenbrock::rodasp_formula<problem_type>>>>(
-        "RODASP_basic", executor);
+        num_collect::ode::classic_step_size_controller<problem_type>>>(
+        "RODASP_classic", executor);
 
     bench_one<num_collect::ode::embedded_solver<
         num_collect::ode::rosenbrock::rodasp_formula<problem_type>,
-        num_collect::ode::pi_step_size_controller<
-            num_collect::ode::rosenbrock::rodasp_formula<problem_type>>>>(
+        num_collect::ode::pi_step_size_controller<problem_type>>>(
         "RODASP_pi", executor);
 
     executor.write_result(problem_name, problem_description, output_directory);

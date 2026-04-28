@@ -25,8 +25,6 @@
 #include "num_collect/ode/avf/avf2_formula.h"
 #include "num_collect/ode/avf/avf3_formula.h"
 #include "num_collect/ode/avf/avf4_formula.h"
-#include "num_collect/ode/basic_step_size_controller.h"
-#include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/rosenbrock/rodasp_formula.h"
 #include "num_collect/ode/rosenbrock/rodaspr_formula.h"
 #include "num_collect/ode/rosenbrock/ros34prw_formula.h"

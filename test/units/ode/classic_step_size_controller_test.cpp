@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 MusicScience37 (Kenta Kabashima)
+ * Copyright 2026 MusicScience37 (Kenta Kabashima)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,44 +15,118 @@
  */
 /*!
  * \file
- * \brief Test of basic_step_size_controller class.
+ * \brief Test of classic_step_size_controller class.
  */
-#include "num_collect/ode/basic_step_size_controller.h"
+#include "num_collect/ode/classic_step_size_controller.h"
 
-#include <Eigen/Core>
+#include <limits>
+
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+#include "num_collect/base/index_type.h"
 #include "num_collect/ode/concepts/step_size_controller.h"
-#include "num_collect/ode/error_tolerances.h"
-#include "num_collect/ode/runge_kutta/rkf45_formula.h"
-#include "num_collect/ode/step_size_limits.h"
 #include "num_prob_collect/ode/exponential_problem.h"
 #include "num_prob_collect/ode/spring_movement_problem.h"
 
-TEST_CASE("num_collect::ode::basic_step_size_controller") {
-    using num_collect::ode::basic_step_size_controller;
+TEST_CASE("num_collect::ode::classic_step_size_strategy") {
+    using num_collect::ode::classic_step_size_strategy;
+
+    SECTION("calculate the next step size") {
+        constexpr num_collect::index_type method_order = 4;
+        classic_step_size_strategy<double> strategy(method_order);
+
+        constexpr double step_size_factor_safety_coeff = 0.8;
+        constexpr double max_step_size_factor = 2.0;
+        strategy.step_size_factor_safety_coeff(step_size_factor_safety_coeff);
+        strategy.max_step_size_factor(max_step_size_factor);
+
+        SECTION("use a factor without change") {
+            double step_size = 0.4;
+            constexpr double error_norm = 0.1;
+
+            strategy.calc_next(step_size, error_norm);
+
+            constexpr double expected_step_size = 0.5071658216;
+            constexpr double rel_tol = 1e-5;
+            CHECK_THAT(step_size,
+                Catch::Matchers::WithinRel(expected_step_size, rel_tol));
+        }
+
+        SECTION("use a factor slightly lower than the maximum") {
+            double step_size = 0.4;
+            constexpr double error_norm = 0.011;
+            // Factor is 1.9715.
+
+            strategy.calc_next(step_size, error_norm);
+
+            constexpr double expected_step_size = 0.7886266359;
+            constexpr double rel_tol = 1e-5;
+            CHECK_THAT(step_size,
+                Catch::Matchers::WithinRel(expected_step_size, rel_tol));
+        }
+
+        SECTION("use a factor limited by the maximum") {
+            double step_size = 0.4;
+            constexpr double error_norm = 0.01;
+            // Factor is 2.0095.
+
+            strategy.calc_next(step_size, error_norm);
+
+            constexpr double expected_step_size = 0.8;
+            constexpr double rel_tol = 1e-5;
+            CHECK_THAT(step_size,
+                Catch::Matchers::WithinRel(expected_step_size, rel_tol));
+        }
+
+        SECTION("handle too small error norms") {
+            double step_size = 0.4;
+            constexpr double error_norm = 1e-20;
+
+            strategy.calc_next(step_size, error_norm);
+
+            constexpr double expected_step_size = 0.8;
+            constexpr double rel_tol = 1e-5;
+            CHECK_THAT(step_size,
+                Catch::Matchers::WithinRel(expected_step_size, rel_tol));
+        }
+
+        SECTION("handle non-finite factors") {
+            double step_size = 0.4;
+            constexpr double error_norm =
+                std::numeric_limits<double>::quiet_NaN();
+
+            strategy.calc_next(step_size, error_norm);
+
+            constexpr double expected_step_size = 0.4;
+            constexpr double rel_tol = 1e-5;
+            CHECK_THAT(step_size,
+                Catch::Matchers::WithinRel(expected_step_size, rel_tol));
+        }
+    }
+}
+
+TEST_CASE("num_collect::ode::classic_step_size_controller") {
+    using num_collect::ode::classic_step_size_controller;
     using num_collect::ode::error_tolerances;
     using num_collect::ode::step_size_limits;
-    using num_collect::ode::runge_kutta::rkf45_formula;
     using num_prob_collect::ode::exponential_problem;
     using num_prob_collect::ode::spring_movement_problem;
 
     SECTION("check concept") {
         using problem_type = spring_movement_problem;
-        using formula_type = rkf45_formula<problem_type>;
-        using controller_type = basic_step_size_controller<formula_type>;
+        using controller_type = classic_step_size_controller<problem_type>;
         STATIC_CHECK(
             num_collect::ode::concepts::step_size_controller<controller_type>);
     }
 
     SECTION("reduce step size if possible") {
         using problem_type = spring_movement_problem;
-        using formula_type = rkf45_formula<problem_type>;
-        using controller_type = basic_step_size_controller<formula_type>;
+        using controller_type = classic_step_size_controller<problem_type>;
 
-        controller_type controller;
+        constexpr num_collect::index_type method_order = 4;
+        controller_type controller{method_order};
 
         controller.init();
 
@@ -67,10 +141,11 @@ TEST_CASE("num_collect::ode::basic_step_size_controller") {
         controller.tolerances(tolerances);
 
         constexpr double step_size_factor_safety_coeff = 0.8;
-        controller.step_size_factor_safety_coeff(step_size_factor_safety_coeff);
+        controller.strategy().step_size_factor_safety_coeff(
+            step_size_factor_safety_coeff);
 
         constexpr double max_step_size_factor = 5.0;
-        controller.max_step_size_factor(max_step_size_factor);
+        controller.strategy().max_step_size_factor(max_step_size_factor);
 
         SECTION("step size in limit") {
             constexpr double reduction_rate = 0.5;
@@ -101,10 +176,10 @@ TEST_CASE("num_collect::ode::basic_step_size_controller") {
 
     SECTION("calculate the next step size") {
         using problem_type = exponential_problem;
-        using formula_type = rkf45_formula<problem_type>;
-        using controller_type = basic_step_size_controller<formula_type>;
+        using controller_type = classic_step_size_controller<problem_type>;
 
-        controller_type controller;
+        constexpr num_collect::index_type method_order = 4;
+        controller_type controller{method_order};
 
         constexpr double variable = 0.1;
         controller.init();
@@ -118,10 +193,11 @@ TEST_CASE("num_collect::ode::basic_step_size_controller") {
         controller.tolerances(tolerances);
 
         constexpr double step_size_factor_safety_coeff = 0.8;
-        controller.step_size_factor_safety_coeff(step_size_factor_safety_coeff);
+        controller.strategy().step_size_factor_safety_coeff(
+            step_size_factor_safety_coeff);
 
         constexpr double max_step_size_factor = 5.0;
-        controller.max_step_size_factor(max_step_size_factor);
+        controller.strategy().max_step_size_factor(max_step_size_factor);
 
         constexpr double reduction_rate = 0.5;
         controller.reduction_rate(reduction_rate);
