@@ -102,10 +102,12 @@ auto create_line_dash_map() -> std::unordered_map<std::string, std::string> {
         {"RODASP_bicgstab", "dot"},
         // Classic step size controller.
         {"RKF45_classic", "solid"},
+        {"Radau2A5_classic", "solid"},
         {"ROS3w_classic", "solid"},
         {"RODASP_classic", "solid"},
         // PI step size controller.
         {"RKF45_pi", "dot"},
+        {"Radau2A5_pi", "dot"},
         {"ROS3w_pi", "dot"},
         {"RODASP_pi", "dot"},
         //
