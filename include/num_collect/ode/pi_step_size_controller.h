@@ -239,7 +239,7 @@ private:
 
     //! Default safety coefficient for factors of step sizes.
     static constexpr auto default_step_size_factor_safety_coeff =
-        static_cast<scalar_type>(0.9);
+        static_cast<scalar_type>(1.0);
 
     //! Safety coefficient for factors of step sizes.
     scalar_type step_size_factor_safety_coeff_{
