@@ -56,12 +56,8 @@ public:
 
     /*!
      * \brief Initialize the internal state.
-     *
-     * \note No operation is needed for this strategy.
      */
-    void init() {
-        // no operation.
-    }
+    void init() { is_previous_step_size_accepted_ = true; }
 
     /*!
      * \brief Calculate the next step size.
@@ -72,6 +68,13 @@ public:
      * \ref num_collect::ode::error_tolerances class.
      */
     void calc_next(scalar_type& step_size, const scalar_type& error_norm) {
+        using std::isfinite;
+        if (!isfinite(error_norm) ||
+            error_norm <= static_cast<scalar_type>(0)) {
+            // No change in step size.
+            return;
+        }
+
         // First, calculate factor of step size using a formula in the
         // reference with heuristics to prevent division by zeros.
         const scalar_type exponent = -static_cast<scalar_type>(1) /
@@ -82,17 +85,26 @@ public:
         scalar_type factor = pow(std::max(error_norm, small_error), exponent);
 
         // Secondly, change the factor for safety.
-        using std::isfinite;
         factor *= step_size_factor_safety_coeff_;
-        if (factor > max_step_size_factor_) {
-            factor = max_step_size_factor_;
-        } else if (!isfinite(factor)) {
-            // No change in step size.
-            return;
+        const scalar_type max_step_size_factor = is_previous_step_size_accepted_
+            ? max_step_size_factor_
+            : static_cast<scalar_type>(1);
+        if (factor > max_step_size_factor) {
+            factor = max_step_size_factor;
         }
 
         // Finally, multiply the factor to the step size.
         step_size *= factor;
+
+        // Prepare for the next step.
+        is_previous_step_size_accepted_ = true;
+    }
+
+    /*!
+     * \brief Notify that the previous step size was rejected.
+     */
+    void notify_previous_step_size_rejected() {
+        is_previous_step_size_accepted_ = false;
     }
 
     /*!
@@ -125,6 +137,9 @@ public:
     }
 
 private:
+    //! Whether the previous step size is accepted.
+    bool is_previous_step_size_accepted_{true};
+
     //! Order of the method.
     index_type method_order_;
 

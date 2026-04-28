@@ -40,6 +40,8 @@ concept step_size_strategy = requires() {
         const typename T::scalar_type& error_norm) {
         obj.calc_next(step_size, error_norm);
     };
+
+    requires requires(T& obj) { obj.notify_previous_step_size_rejected(); };
 };
 
 }  // namespace num_collect::ode::concepts

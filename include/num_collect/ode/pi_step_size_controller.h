@@ -59,7 +59,10 @@ public:
      *
      * \note No operation is needed for this strategy.
      */
-    void init() { previous_step_error_ = static_cast<scalar_type>(1); }
+    void init() {
+        previous_step_error_ = static_cast<scalar_type>(1);
+        is_previous_step_size_accepted_ = true;
+    }
 
     /*!
      * \brief Calculate the next step size.
@@ -70,6 +73,13 @@ public:
      * \ref num_collect::ode::error_tolerances class.
      */
     void calc_next(scalar_type& step_size, const scalar_type& error_norm) {
+        using std::isfinite;
+        if (!isfinite(error_norm) ||
+            error_norm <= static_cast<scalar_type>(0)) {
+            // No change in step size.
+            return;
+        }
+
         // First, calculate factor of step size using a formula in the
         // reference with heuristics to prevent division by zeros.
         const scalar_type current_step_error_exponent =
@@ -78,21 +88,21 @@ public:
         const scalar_type previous_step_error_exponent =
             previous_step_error_exponent_coeff_ /
             static_cast<scalar_type>(method_order_ + 1);
-        const scalar_type small_error = static_cast<scalar_type>(1e+3) *
+        constexpr scalar_type small_error = static_cast<scalar_type>(1e+3) *
             std::numeric_limits<scalar_type>::epsilon();
+        using std::pow;
         scalar_type factor = pow(std::max(error_norm, small_error),
                                  current_step_error_exponent) *
             pow(std::max(previous_step_error_, small_error),
                 previous_step_error_exponent);
 
         // Secondly, change the factor for safety.
-        using std::isfinite;
         factor *= step_size_factor_safety_coeff_;
-        if (!isfinite(factor)) {
-            factor = static_cast<scalar_type>(1);
-        }
-        if (factor > max_step_size_factor_) {
-            factor = max_step_size_factor_;
+        const scalar_type max_step_size_factor = is_previous_step_size_accepted_
+            ? max_step_size_factor_
+            : static_cast<scalar_type>(1);
+        if (factor > max_step_size_factor) {
+            factor = max_step_size_factor;
         } else if (factor < min_step_size_factor_) {
             factor = min_step_size_factor_;
         }
@@ -102,6 +112,14 @@ public:
 
         // Prepare for the next step.
         previous_step_error_ = error_norm;
+        is_previous_step_size_accepted_ = true;
+    }
+
+    /*!
+     * \brief Notify that the previous step size was rejected.
+     */
+    void notify_previous_step_size_rejected() {
+        is_previous_step_size_accepted_ = false;
     }
 
     /*!
@@ -184,11 +202,14 @@ public:
     }
 
 private:
-    //! Order of the method.
-    index_type method_order_;
-
     //! Error of the previous time step.
     scalar_type previous_step_error_{static_cast<scalar_type>(1)};
+
+    //! Whether the previous step size is accepted.
+    bool is_previous_step_size_accepted_{true};
+
+    //! Order of the method.
+    index_type method_order_;
 
     /*!
      * \brief Default coefficient of the exponent of the error of the current

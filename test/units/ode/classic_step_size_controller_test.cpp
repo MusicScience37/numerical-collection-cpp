@@ -80,6 +80,38 @@ TEST_CASE("num_collect::ode::classic_step_size_strategy") {
                 Catch::Matchers::WithinRel(expected_step_size, rel_tol));
         }
 
+        SECTION(
+            "use a factor without change when the previous step size is "
+            "rejected") {
+            double step_size = 0.4;
+            constexpr double error_norm = 0.4;
+            // Factor is 0.96.
+
+            strategy.notify_previous_step_size_rejected();
+            strategy.calc_next(step_size, error_norm);
+
+            constexpr double expected_step_size = 0.3843598189;
+            constexpr double rel_tol = 1e-5;
+            CHECK_THAT(step_size,
+                Catch::Matchers::WithinRel(expected_step_size, rel_tol));
+        }
+
+        SECTION(
+            "use a factor limited by the maximum when the previous step size "
+            "is rejected") {
+            double step_size = 0.4;
+            constexpr double error_norm = 0.3;
+            // Factor is 1.0178.
+
+            strategy.notify_previous_step_size_rejected();
+            strategy.calc_next(step_size, error_norm);
+
+            constexpr double expected_step_size = 0.4;
+            constexpr double rel_tol = 1e-5;
+            CHECK_THAT(step_size,
+                Catch::Matchers::WithinRel(expected_step_size, rel_tol));
+        }
+
         SECTION("handle too small error norms") {
             double step_size = 0.4;
             constexpr double error_norm = 1e-20;
@@ -217,7 +249,7 @@ TEST_CASE("num_collect::ode::classic_step_size_controller") {
         }
 
         SECTION("no error resulting in invalid factor") {
-            double step_size = 0.1;
+            double step_size = 0.5;
             const double error = 0.0;
             controller.calc_next(step_size, variable, error);
             CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.5));

@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_mixin.h"
@@ -76,6 +77,7 @@ public:
         if (step_size > limits_.lower_limit()) {
             step_size *= reduction_rate_;
             step_size = limits_.apply(step_size);
+            strategy_.notify_previous_step_size_rejected();
             return true;
         }
         return false;
@@ -149,6 +151,9 @@ public:
         NUM_COLLECT_PRECONDITION(val > static_cast<scalar_type>(0),
             "Rate to reduce step sizes when error is large must be a positive "
             "value.");
+        NUM_COLLECT_PRECONDITION(val < static_cast<scalar_type>(1),
+            "Rate to reduce step sizes when error is large must be less than "
+            "1.");
         reduction_rate_ = val;
         return *this;
     }

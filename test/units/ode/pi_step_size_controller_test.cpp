@@ -171,11 +171,11 @@ TEST_CASE("num_collect::ode::pi_step_size_controller") {
             CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.5));
         }
 
-        SECTION("no error resulting in the maximum step size") {
+        SECTION("no error resulting in no change") {
             double step_size = 0.5;
             const double current_error = 0.0;
             controller.calc_next(step_size, variable, current_error);
-            CHECK_THAT(step_size, Catch::Matchers::WithinRel(1.0));
+            CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.5));
         }
 
         SECTION("factor too large") {
