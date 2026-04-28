@@ -19,10 +19,8 @@
  */
 #pragma once
 
-#include "num_collect/base/exception.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/logging/log_tag_view.h"
-#include "num_collect/logging/logging_macros.h"
 #include "num_collect/logging/logging_mixin.h"
 #include "num_collect/ode/concepts/formula.h"
 #include "num_collect/ode/error_tolerances.h"
@@ -50,6 +48,22 @@ public:
 
     //! Type of scalars.
     using scalar_type = typename problem_type::scalar_type;
+
+    /*!
+     * \brief Reduce step size if possible.
+     *
+     * \param[in,out] step_size Step size.
+     * \return true Step size was reduced.
+     * \return false Step size was not reduced.
+     */
+    [[nodiscard]] auto reduce_if_possible(scalar_type& step_size) -> bool {
+        if (step_size > limits_.lower_limit()) {
+            step_size *= reduction_rate_;
+            step_size = limits_.apply(step_size);
+            return true;
+        }
+        return false;
+    }
 
     /*!
      * \brief Set the limits of step sizes.
@@ -131,35 +145,6 @@ protected:
      */
     [[nodiscard]] auto derived() const noexcept -> const Derived& {
         return *static_cast<const Derived*>(this);
-    }
-
-    /*!
-     * \brief Reduce step size if needed.
-     *
-     * \param[in,out] step_size Step size.
-     * \param[in] variable Variable.
-     * \param[in] error Error estimate.
-     * \retval true Step size was reduced.
-     * \retval false Otherwise.
-     */
-    [[nodiscard]] auto reduce_if_needed(scalar_type& step_size,
-        const variable_type& variable, const variable_type& error) -> bool {
-        const bool tolerance_satisfied = tolerances().check(variable, error);
-        if (!tolerance_satisfied) {
-            if (step_size > limits_.lower_limit()) {
-                NUM_COLLECT_LOG_DEBUG(this->logger(),
-                    "Error tolerance not satisfied with step size {}.",
-                    step_size);
-                step_size *= reduction_rate_;
-                step_size = limits_.apply(step_size);
-                return true;
-            }
-            NUM_COLLECT_LOG_WARNING(this->logger(),
-                "Error tolerance not satisfied even with the lowest step size "
-                "{} (error: {}).",
-                step_size, tolerances().calc_norm(variable, error));
-        }
-        return false;
     }
 
 private:

@@ -24,13 +24,13 @@
 #include <Eigen/Core>  // IWYU pragma: keep
 #include <Eigen/LU>
 
-#include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/logging/logging_mixin.h"
 #include "num_collect/ode/concepts/multi_variate_differentiable_problem.h"
 #include "num_collect/ode/evaluation_type.h"
+#include "num_collect/ode/ode_errors.h"
 
 namespace num_collect::ode::rosenbrock {
 
@@ -190,7 +190,7 @@ private:
 
         inverse_ = lu_.inverse();
         if (!inverse_.array().isFinite().all()) {
-            NUM_COLLECT_LOG_AND_THROW(algorithm_failure,
+            NUM_COLLECT_ODE_THROW_LINEAR_SOLVER_FAILURE(this->logger(),
                 "Failed to solve an equation. step_size={}, cond={}.",
                 step_size_, lu_.rcond());
         }

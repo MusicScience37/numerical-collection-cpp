@@ -41,6 +41,7 @@
 #include "num_collect/ode/concepts/single_variate_differentiable_problem.h"
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/evaluation_type.h"
+#include "num_collect/ode/ode_errors.h"
 #include "num_collect/ode/runge_kutta/impl/inexact_newton_decomposed_jacobian_complex_eigen_solver.h"
 #include "num_collect/ode/runge_kutta/impl/inexact_newton_decomposed_jacobian_real_eigen_solver.h"
 #include "num_collect/ode/runge_kutta/inexact_newton_decomposed_full_equation_solver_data.h"
@@ -293,6 +294,10 @@ public:
                     }
                 },
                 solver);
+        }
+        if (!update_in_eigenvector_space_.allFinite()) {
+            NUM_COLLECT_ODE_THROW_LINEAR_SOLVER_FAILURE(this->logger(),
+                "Failed to solve an equation. step_size={}.", step_size_);
         }
 
         solution_in_eigenvector_space_ += update_in_eigenvector_space_;
@@ -728,6 +733,10 @@ public:
                     }
                 },
                 solver);
+        }
+        if (!update_in_eigenvector_space_.allFinite()) {
+            NUM_COLLECT_ODE_THROW_LINEAR_SOLVER_FAILURE(this->logger(),
+                "Failed to solve an equation. step_size={}.", step_size_);
         }
 
         solution_in_eigenvector_space_ += update_in_eigenvector_space_;

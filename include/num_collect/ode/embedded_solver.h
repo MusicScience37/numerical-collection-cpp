@@ -20,6 +20,7 @@
 #pragma once
 
 #include <cmath>
+#include <cstdint>
 #include <limits>
 #include <optional>
 #include <type_traits>  // IWYU pragma: keep
@@ -35,8 +36,10 @@
 #include "num_collect/ode/concepts/step_size_controller.h"
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/initial_step_size_calculator.h"
+#include "num_collect/ode/ode_errors.h"
 #include "num_collect/ode/pi_step_size_controller.h"
 #include "num_collect/ode/solver_base.h"
+#include "num_collect/util/assert.h"
 
 namespace num_collect::ode {
 
@@ -112,21 +115,30 @@ public:
 
         prev_variable_ = variable_;
 
-        formula().step_embedded(
-            time_, *step_size_, prev_variable_, variable_, error_);
+        auto trial_result = try_step();
+
         constexpr index_type max_retry = 10000;  // safe guard
         for (index_type i = 0; i < max_retry; ++i) {
-            const scalar_type last_step_size = *step_size_;
-            if (step_size_controller_.check_and_calc_next(
-                    *step_size_, variable_, error_)) {
-                time_ += last_step_size;
-                ++steps_;
-                last_step_size_ = last_step_size;
-                return;
+            last_step_size_ = *step_size_;
+
+            if (trial_result == step_trial_result::success) {
+                break;
             }
-            formula().step_embedded(
-                time_, *step_size_, prev_variable_, variable_, error_);
+
+            const bool reduced =
+                step_size_controller_.reduce_if_possible(*step_size_);
+            if (!reduced) {
+                handle_step_size_reduction_failure(trial_result);
+                break;
+            }
+            handle_step_size_reduction(trial_result);
+
+            trial_result = try_step();
         }
+
+        step_size_controller_.calc_next(*step_size_, variable_, error_);
+        time_ += last_step_size_;
+        ++steps_;
     }
 
     //! \copydoc ode::solver_base::configure_iteration_logger
@@ -230,6 +242,87 @@ public:
     }
 
 private:
+    //! Enumeration of results of trials of steps.
+    enum class step_trial_result : std::uint8_t {
+        //! Success. (No error occurred in formulas and error tolerances are satisfied.)
+        success,
+
+        //! Error tolerances are not satisfied.
+        error_tolerance_not_satisfied,
+
+        //! The formula class failed to solve a linear solver.
+        linear_solver_failure
+    };
+
+    /*!
+     * \brief Try to solve a step.
+     *
+     * \return Result of the trial.
+     */
+    [[nodiscard]] auto try_step() -> step_trial_result {
+        try {
+            formula().step_embedded(
+                time_, *step_size_, prev_variable_, variable_, error_);
+        } catch (const linear_solver_failure& /*exception*/) {
+            return step_trial_result::linear_solver_failure;
+        }
+        const bool tolerance_satisfied =
+            step_size_controller_.tolerances().check(variable_, error_);
+        if (!tolerance_satisfied) {
+            return step_trial_result::error_tolerance_not_satisfied;
+        }
+        return step_trial_result::success;
+    }
+
+    /*!
+     * \brief Handle a failure of reduction of a step size.
+     *
+     * \param[in] trial_result Result of the trial of a step.
+     */
+    void handle_step_size_reduction_failure(step_trial_result trial_result) {
+        switch (trial_result) {
+        case step_trial_result::error_tolerance_not_satisfied:
+            NUM_COLLECT_LOG_WARNING(this->logger(),
+                "Error tolerance not satisfied even with the lowest step size "
+                "{} (error: {}).",
+                *step_size_,
+                step_size_controller_.tolerances().calc_norm(
+                    variable_, error_));
+            break;
+        case step_trial_result::linear_solver_failure:
+            NUM_COLLECT_LOG_AND_THROW(algorithm_failure, this->logger(),
+                "Failed to solve linear equations in the formula even with the "
+                "lowest step size {}.",
+                *step_size_);
+            // In this case, an exception is thrown, so `break` is not needed.
+        case step_trial_result::success:
+            NUM_COLLECT_ASSERT(false);
+        }
+    }
+
+    /*!
+     * \brief Handle reduction of a step size.
+     *
+     * \param[in] trial_result Result of the trial of a step.
+     */
+    void handle_step_size_reduction(step_trial_result trial_result) {
+        switch (trial_result) {
+        case step_trial_result::error_tolerance_not_satisfied:
+            NUM_COLLECT_LOG_DEBUG(this->logger(),
+                "Error tolerance not satisfied with the step size {}.",
+                last_step_size_);
+            break;
+        case step_trial_result::linear_solver_failure:
+            NUM_COLLECT_LOG_DEBUG(this->logger(),
+                "Failed to solve a linear equation in the formula with the "
+                "step size {}.",
+                last_step_size_);
+            break;
+        case step_trial_result::success:
+            NUM_COLLECT_ASSERT(false);
+        }
+    }
+
     /*!
      * \brief Get the norm of a variable.
      *

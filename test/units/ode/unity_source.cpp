@@ -12,6 +12,7 @@
 #include "implicit_problem_test.cpp"
 #include "initial_step_size_calculator_test.cpp"
 #include "non_embedded_formula_wrapper_test.cpp"
+#include "ode_errors_test.cpp"
 #include "pi_step_size_controller_test.cpp"
 #include "rosenbrock/bicgstab_rosenbrock_equation_solver_test.cpp"
 #include "rosenbrock/default_rosenbrock_equation_solver_test.cpp"

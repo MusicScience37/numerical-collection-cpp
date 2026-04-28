@@ -12,6 +12,7 @@ set(SOURCE_FILES
     implicit_kaps/embedded.cpp
     implicit_kaps/wrapped_non_embedded.cpp
     no_jacobian_implicit_kaps_problem/embedded.cpp
+    previous_failures/radau2a5_changing_mass_quadratic.cpp
     spring_movement/embedded.cpp
     spring_movement/non_embedded.cpp
     spring_movement/wrapped_non_embedded.cpp

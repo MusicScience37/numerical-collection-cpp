@@ -47,14 +47,13 @@ TEST_CASE("num_collect::ode::basic_step_size_controller") {
             num_collect::ode::concepts::step_size_controller<controller_type>);
     }
 
-    SECTION("check when error is large") {
+    SECTION("reduce step size if possible") {
         using problem_type = spring_movement_problem;
         using formula_type = rkf45_formula<problem_type>;
         using controller_type = basic_step_size_controller<formula_type>;
 
         controller_type controller;
 
-        const auto variable = Eigen::Vector2d{{0.0, 1.0}};
         controller.init();
 
         const auto limits =
@@ -78,9 +77,8 @@ TEST_CASE("num_collect::ode::basic_step_size_controller") {
             controller.reduction_rate(reduction_rate);
 
             double step_size = 0.5;
-            const auto error = Eigen::Vector2d{{2e-2, 2e-2}};
-            CHECK_FALSE(
-                controller.check_and_calc_next(step_size, variable, error));
+            CHECK(controller.reduce_if_possible(step_size));
+
             CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.25));
         }
 
@@ -89,20 +87,19 @@ TEST_CASE("num_collect::ode::basic_step_size_controller") {
             controller.reduction_rate(reduction_rate);
 
             double step_size = 0.5;
-            const auto error = Eigen::Vector2d{{2e-2, 2e-2}};
-            CHECK_FALSE(
-                controller.check_and_calc_next(step_size, variable, error));
+            CHECK(controller.reduce_if_possible(step_size));
+
             CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.2));
         }
 
         SECTION("already small step size") {
             double step_size = 0.1;
-            const auto error = Eigen::Vector2d{{2e-2, 2e-2}};
-            CHECK(controller.check_and_calc_next(step_size, variable, error));
+            CHECK_FALSE(controller.reduce_if_possible(step_size));
+            CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.1));
         }
     }
 
-    SECTION("check when error satisfies tolerances") {
+    SECTION("calculate the next step size") {
         using problem_type = exponential_problem;
         using formula_type = rkf45_formula<problem_type>;
         using controller_type = basic_step_size_controller<formula_type>;
@@ -132,28 +129,28 @@ TEST_CASE("num_collect::ode::basic_step_size_controller") {
         SECTION("step size in limit") {
             double step_size = 0.4;
             const double error = 2e-3 / std::pow(2.0, 5);
-            CHECK(controller.check_and_calc_next(step_size, variable, error));
+            controller.calc_next(step_size, variable, error);
             CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.64));
         }
 
         SECTION("factor too large") {
             double step_size = 0.1;
             const double error = 2e-3 / std::pow(10.0, 5);
-            CHECK(controller.check_and_calc_next(step_size, variable, error));
+            controller.calc_next(step_size, variable, error);
             CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.5));
         }
 
         SECTION("no error resulting in invalid factor") {
             double step_size = 0.1;
             const double error = 0.0;
-            CHECK(controller.check_and_calc_next(step_size, variable, error));
+            controller.calc_next(step_size, variable, error);
             CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.5));
         }
 
         SECTION("step size too large") {
             double step_size = 0.5;
             const double error = 2e-3 / std::pow(10.0, 5);
-            CHECK(controller.check_and_calc_next(step_size, variable, error));
+            controller.calc_next(step_size, variable, error);
             CHECK_THAT(step_size, Catch::Matchers::WithinRel(1.0));
         }
     }

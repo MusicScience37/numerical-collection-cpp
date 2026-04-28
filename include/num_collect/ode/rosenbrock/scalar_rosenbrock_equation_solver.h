@@ -25,14 +25,18 @@
 
 #include <fmt/format.h>  // IWYU pragma: keep
 
-#include "num_collect/base/exception.h"
-#include "num_collect/logging/logging_macros.h"
+#include "num_collect/logging/logging_mixin.h"
 #include "num_collect/ode/concepts/mass_problem.h"
 #include "num_collect/ode/concepts/single_variate_differentiable_problem.h"
 #include "num_collect/ode/concepts/time_differentiable_problem.h"
 #include "num_collect/ode/evaluation_type.h"
+#include "num_collect/ode/ode_errors.h"
 
 namespace num_collect::ode::rosenbrock {
+
+//! Log tag.
+constexpr auto scalar_rosenbrock_equation_solver_tag = logging::log_tag_view(
+    "num_collect::ode::rosenbrock::scalar_rosenbrock_equation_solver");
 
 /*!
  * \brief Class to solve equations in Rosenbrock methods for single-variate
@@ -41,7 +45,7 @@ namespace num_collect::ode::rosenbrock {
  * \tparam Problem Type of the problem.
  */
 template <concepts::single_variate_differentiable_problem Problem>
-class scalar_rosenbrock_equation_solver {
+class scalar_rosenbrock_equation_solver : public logging::logging_mixin {
 public:
     //! Type of problem.
     using problem_type = Problem;
@@ -70,7 +74,8 @@ public:
      */
     explicit scalar_rosenbrock_equation_solver(
         const scalar_type& inverted_jacobian_coeff)
-        : inverted_jacobian_coeff_(inverted_jacobian_coeff) {}
+        : logging::logging_mixin(scalar_rosenbrock_equation_solver_tag),
+          inverted_jacobian_coeff_(inverted_jacobian_coeff) {}
 
     /*!
      * \brief Update Jacobian and internal parameters.
@@ -100,7 +105,7 @@ public:
         inverted_value -= step_size * inverted_jacobian_coeff_ * jacobian_;
         using std::abs;
         if (abs(inverted_value) < std::numeric_limits<scalar_type>::epsilon()) {
-            NUM_COLLECT_LOG_AND_THROW(algorithm_failure,
+            NUM_COLLECT_ODE_THROW_LINEAR_SOLVER_FAILURE(this->logger(),
                 "Value to invert is too small: {}.", inverted_value);
         }
         inverted_coeff_ = static_cast<scalar_type>(1) / inverted_value;

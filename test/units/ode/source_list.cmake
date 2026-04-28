@@ -13,6 +13,7 @@ set(SOURCE_FILES
     implicit_problem_test.cpp
     initial_step_size_calculator_test.cpp
     non_embedded_formula_wrapper_test.cpp
+    ode_errors_test.cpp
     pi_step_size_controller_test.cpp
     rosenbrock/bicgstab_rosenbrock_equation_solver_test.cpp
     rosenbrock/default_rosenbrock_equation_solver_test.cpp
