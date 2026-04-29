@@ -110,6 +110,11 @@ auto create_line_dash_map() -> std::unordered_map<std::string, std::string> {
         {"Radau2A5_pi", "dot"},
         {"ROS3w_pi", "dot"},
         {"RODASP_pi", "dot"},
+        // step size controller with memory.
+        {"RKF45_memory", "dash"},
+        {"Radau2A5_memory", "dash"},
+        {"ROS3w_memory", "dash"},
+        {"RODASP_memory", "dash"},
         //
     };
 }
