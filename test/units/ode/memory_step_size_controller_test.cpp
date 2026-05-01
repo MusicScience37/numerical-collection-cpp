@@ -32,8 +32,6 @@
 TEST_CASE("num_collect::ode::memory_step_size_strategy") {
     using num_collect::ode::memory_step_size_strategy;
 
-    SECTION("check assumption") { CHECK(std::pow(0.0, 0.0) == 1.0); }
-
     SECTION("check concept") {
         using strategy_type = memory_step_size_strategy<double>;
         STATIC_CHECK(

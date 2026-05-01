@@ -82,8 +82,7 @@ public:
         NUM_COLLECT_ASSERT(isfinite(step_size));
         NUM_COLLECT_ASSERT(step_size > static_cast<scalar_type>(0));
 
-        if (!isfinite(error_norm) ||
-            error_norm <= static_cast<scalar_type>(0)) {
+        if (!isfinite(error_norm) || error_norm < static_cast<scalar_type>(0)) {
             // No change in step size.
             return;
         }

@@ -74,8 +74,7 @@ public:
      */
     void calc_next(scalar_type& step_size, const scalar_type& error_norm) {
         using std::isfinite;
-        if (!isfinite(error_norm) ||
-            error_norm <= static_cast<scalar_type>(0)) {
+        if (!isfinite(error_norm) || error_norm < static_cast<scalar_type>(0)) {
             // No change in step size.
             return;
         }

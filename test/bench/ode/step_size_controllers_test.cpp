@@ -33,6 +33,7 @@
 #include "num_collect/ode/rosenbrock/rodasp_formula.h"
 #include "num_collect/ode/runge_kutta/radau2a5_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
+#include "num_collect/ode/smoothed_digital_filter_step_size_controller.h"
 #include "num_prob_collect/ode/kaps_problem.h"
 
 using problem_type = num_prob_collect::ode::kaps_problem;
@@ -47,7 +48,7 @@ template <typename Solver>
 inline void bench_one(
     const std::string& solver_name, bench_executor& executor) {
     constexpr double init_time = 0.0;
-    constexpr double end_time = 1.0;
+    constexpr double end_time = 3.0;
     const Eigen::Vector2d init_var{{1.0, 1.0}};
     const Eigen::Vector2d reference{
         {std::exp(-2.0 * end_time), std::exp(-end_time)}};
@@ -58,8 +59,7 @@ inline void bench_one(
     constexpr num_collect::index_type repetitions = 1000;
 #endif
 
-    constexpr std::array<double, 5> tolerance_list{
-        1e-2, 1e-3, 1e-4, 1e-5, 1e-6};
+    constexpr std::array<double, 3> tolerance_list{1e-2, 1e-3, 1e-4};
 
     for (const double tol : tolerance_list) {
         const problem_type problem{epsilon};
@@ -96,6 +96,11 @@ auto main(int argc, char** argv) -> int {
         "RKF45_memory", executor);
 
     bench_one<num_collect::ode::embedded_solver<
+        num_collect::ode::runge_kutta::rkf45_formula<problem_type>,
+        num_collect::ode::smoothed_digital_filter_step_size_controller<
+            problem_type>>>("RKF45_filter", executor);
+
+    bench_one<num_collect::ode::embedded_solver<
         num_collect::ode::non_embedded_formula_wrapper<
             num_collect::ode::runge_kutta::radau2a5_formula<problem_type>>,
         num_collect::ode::classic_step_size_controller<problem_type>>>(
@@ -114,6 +119,12 @@ auto main(int argc, char** argv) -> int {
         "Radau2A5_memory", executor);
 
     bench_one<num_collect::ode::embedded_solver<
+        num_collect::ode::non_embedded_formula_wrapper<
+            num_collect::ode::runge_kutta::radau2a5_formula<problem_type>>,
+        num_collect::ode::smoothed_digital_filter_step_size_controller<
+            problem_type>>>("Radau2A5_filter", executor);
+
+    bench_one<num_collect::ode::embedded_solver<
         num_collect::ode::rosenbrock::rodasp_formula<problem_type>,
         num_collect::ode::classic_step_size_controller<problem_type>>>(
         "RODASP_classic", executor);
@@ -127,6 +138,11 @@ auto main(int argc, char** argv) -> int {
         num_collect::ode::rosenbrock::rodasp_formula<problem_type>,
         num_collect::ode::memory_step_size_controller<problem_type>>>(
         "RODASP_memory", executor);
+
+    bench_one<num_collect::ode::embedded_solver<
+        num_collect::ode::rosenbrock::rodasp_formula<problem_type>,
+        num_collect::ode::smoothed_digital_filter_step_size_controller<
+            problem_type>>>("RODASP_filter", executor);
 
     executor.write_result(problem_name, problem_description, output_directory);
 

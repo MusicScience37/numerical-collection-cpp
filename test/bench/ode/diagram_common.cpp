@@ -115,6 +115,11 @@ auto create_line_dash_map() -> std::unordered_map<std::string, std::string> {
         {"Radau2A5_memory", "dash"},
         {"ROS3w_memory", "dash"},
         {"RODASP_memory", "dash"},
+        // step size controller with a smoothed digital filter.
+        {"RKF45_filter", "dashdot"},
+        {"Radau2A5_filter", "dashdot"},
+        {"ROS3w_filter", "dashdot"},
+        {"RODASP_filter", "dashdot"},
         //
     };
 }

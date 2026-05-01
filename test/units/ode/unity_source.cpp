@@ -53,6 +53,7 @@
 #include "runge_kutta/tanaka1_formula_test.cpp"
 #include "runge_kutta/tanaka2_formula_test.cpp"
 #include "simple_solver_test.cpp"
+#include "smoothed_digital_filter_step_size_controller_test.cpp"
 #include "step_size_limits_test.cpp"
 #include "symplectic/leap_frog_formula_test.cpp"
 #include "symplectic/symplectic_forest4_formula_test.cpp"
