@@ -12,6 +12,7 @@ set(SOURCE_FILES
     impl/gmres_test.cpp
     implicit_problem_test.cpp
     initial_step_size_calculator_test.cpp
+    memory_step_size_controller_test.cpp
     non_embedded_formula_wrapper_test.cpp
     ode_errors_test.cpp
     pi_step_size_controller_test.cpp
