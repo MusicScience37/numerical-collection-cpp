@@ -38,7 +38,7 @@
 #include "num_collect/ode/impl/get_least_known_order.h"
 #include "num_collect/ode/initial_step_size_calculator.h"
 #include "num_collect/ode/ode_errors.h"
-#include "num_collect/ode/pi_step_size_controller.h"
+#include "num_collect/ode/smoothed_digital_filter_step_size_controller.h"
 #include "num_collect/ode/solver_base.h"
 #include "num_collect/util/assert.h"
 
@@ -52,7 +52,8 @@ namespace num_collect::ode {
  */
 template <concepts::embedded_formula Formula,
     concepts::step_size_controller StepSizeController =
-        pi_step_size_controller<typename Formula::problem_type>>
+        smoothed_digital_filter_step_size_controller<
+            typename Formula::problem_type>>
 class embedded_solver
     : public solver_base<embedded_solver<Formula, StepSizeController>,
           Formula> {
