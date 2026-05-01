@@ -54,6 +54,7 @@ set(SOURCE_FILES
     runge_kutta/tanaka1_formula_test.cpp
     runge_kutta/tanaka2_formula_test.cpp
     simple_solver_test.cpp
+    smoothed_digital_filter_step_size_controller_test.cpp
     step_size_limits_test.cpp
     symplectic/leap_frog_formula_test.cpp
     symplectic/symplectic_forest4_formula_test.cpp

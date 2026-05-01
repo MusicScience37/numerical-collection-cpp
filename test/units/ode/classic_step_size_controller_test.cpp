@@ -248,8 +248,8 @@ TEST_CASE("num_collect::ode::classic_step_size_controller") {
             CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.5));
         }
 
-        SECTION("no error resulting in invalid factor") {
-            double step_size = 0.5;
+        SECTION("no error") {
+            double step_size = 0.1;
             const double error = 0.0;
             controller.calc_next(step_size, variable, error);
             CHECK_THAT(step_size, Catch::Matchers::WithinRel(0.5));
