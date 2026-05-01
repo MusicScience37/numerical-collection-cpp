@@ -207,6 +207,7 @@ public:
                 *update_reduction_rate_ = min_rate;
             }
         }
+        previous_update_reduction_rate_.reset();
         iterations_ = 0;
     }
 
@@ -312,6 +313,7 @@ public:
         }
         update_norm = std::sqrt(update_norm);
         if (update_norm_) {
+            previous_update_reduction_rate_ = update_reduction_rate_;
             update_reduction_rate_ = update_norm / (*update_norm_);
         }
         update_norm_ = update_norm;
@@ -372,6 +374,24 @@ public:
             return static_cast<scalar_type>(0);
         }
         return *update_norm_;
+    }
+
+    /*!
+     * \brief Get the contractivity factor.
+     *
+     * \return Contractivity factor.
+     */
+    [[nodiscard]] auto contractivity_factor() const
+        -> std::optional<scalar_type> {
+        if (!update_reduction_rate_) {
+            return std::nullopt;
+        }
+        if (!previous_update_reduction_rate_) {
+            return *update_reduction_rate_;
+        }
+        using std::sqrt;
+        return sqrt(
+            (*update_reduction_rate_) * (*previous_update_reduction_rate_));
     }
 
     /*!
@@ -477,6 +497,9 @@ private:
 
     //! Rate in which update is reduced from the previous step.
     std::optional<scalar_type> update_reduction_rate_{};
+
+    //! Previous value of update_reduction_rate_.
+    std::optional<scalar_type> previous_update_reduction_rate_{};
 
     //! Default rate of tolerance in this solver.
     static constexpr auto default_tolerance_rate =
@@ -643,6 +666,7 @@ public:
                 *update_reduction_rate_ = min_rate;
             }
         }
+        previous_update_reduction_rate_.reset();
         iterations_ = 0;
     }
 
@@ -762,6 +786,7 @@ public:
         }
         update_norm = std::sqrt(update_norm);
         if (update_norm_) {
+            previous_update_reduction_rate_ = update_reduction_rate_;
             update_reduction_rate_ = update_norm / (*update_norm_);
         }
         update_norm_ = update_norm;
@@ -822,6 +847,24 @@ public:
             return static_cast<scalar_type>(0);
         }
         return *update_norm_;
+    }
+
+    /*!
+     * \brief Get the contractivity factor.
+     *
+     * \return Contractivity factor.
+     */
+    [[nodiscard]] auto contractivity_factor() const
+        -> std::optional<scalar_type> {
+        if (!update_reduction_rate_) {
+            return std::nullopt;
+        }
+        if (!previous_update_reduction_rate_) {
+            return *update_reduction_rate_;
+        }
+        using std::sqrt;
+        return sqrt(
+            (*update_reduction_rate_) * (*previous_update_reduction_rate_));
     }
 
     /*!
@@ -927,6 +970,9 @@ private:
 
     //! Rate in which update is reduced from the previous step.
     std::optional<scalar_type> update_reduction_rate_{};
+
+    //! Previous value of update_reduction_rate_.
+    std::optional<scalar_type> previous_update_reduction_rate_{};
 
     //! Default rate of tolerance in this solver.
     static constexpr auto default_tolerance_rate =
