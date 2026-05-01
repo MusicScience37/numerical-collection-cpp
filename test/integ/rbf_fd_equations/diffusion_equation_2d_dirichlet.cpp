@@ -117,7 +117,7 @@ TEST_CASE("Diffusion equation in 2D with Dirichlet boundary condition") {
     solver_type solver(problem);
     const solution_type initial_variable = solution.head(num_interior_nodes);
     solver.init(initial_time, initial_variable);
-    solver.solve_till(final_time);
+    solver.solve_until(final_time);
     solution.head(num_interior_nodes) = solver.variable();
 
     NUM_COLLECT_LOG_DEBUG(logger, "Evaluate the solution.");

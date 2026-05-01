@@ -52,7 +52,7 @@ static auto calculate_reference(double init_time, double end_time,
 #endif
     solver.step_size(step_size);
     solver.init(init_time, init_var);
-    solver.solve_till(end_time);
+    solver.solve_until(end_time);
     return solver.variable();
 }
 

@@ -121,7 +121,7 @@ TEST_CASE(
         REQUIRE(solver.steps() == 1);
     }
 
-    SECTION("solve_till") {
+    SECTION("solve_until") {
         auto solver = solver_type(problem_type());
 
         constexpr double init_time = 1.234;
@@ -130,7 +130,7 @@ TEST_CASE(
 
         constexpr double duration = 2.345;
         constexpr double end_time = init_time + duration;
-        REQUIRE_NOTHROW(solver.solve_till(end_time));
+        REQUIRE_NOTHROW(solver.solve_until(end_time));
 
         REQUIRE_THAT(solver.time(), Catch::Matchers::WithinRel(end_time));
         const double reference = std::exp(duration);

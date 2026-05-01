@@ -88,11 +88,11 @@ public:
      * \brief Compute the variable at the given time.
      *
      * \warning `init` function is assumed to have been called before call to
-     * `solve_till` function.
+     * `solve_until` function.
      *
      * \param[in] end_time Time to compute the variable at.
      */
-    void solve_till(scalar_type end_time) {
+    void solve_until(scalar_type end_time) {
         auto& iter_logger = this->initialize_iteration_logger();
         iter_logger.write_iteration(&derived());
         while (time() < end_time) {
