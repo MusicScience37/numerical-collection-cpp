@@ -32,7 +32,7 @@
 #include "num_prob_collect/ode/spring_movement_problem.h"
 
 TEMPLATE_TEST_CASE_SIG("num_collect::ode::runge_kutta::radau2a_formula", "",
-    ((int Stages), Stages), (4), (5), (6), (7), (8), (9)) {
+    ((int Stages), Stages), (1), (2), (3), (4), (5), (6), (7), (8), (9)) {
     using num_collect::ode::runge_kutta::radau2a_formula;
 
     num_collect::logging::logger logger;
@@ -78,6 +78,8 @@ TEMPLATE_TEST_CASE_SIG("num_collect::ode::runge_kutta::radau2a_formula", "",
         constexpr double prev_var = 1.0;
         double next_var = 0.0;
         formula.step(time, step_size, prev_var, next_var);
+        NUM_COLLECT_LOG_DEBUG(logger, "Contractivity factor = {}",
+            formula.formula_solver().contractivity_factor().value_or(0.0));
 
         const double reference = std::exp(step_size);
         comparison_approvals::verify_with_reference(next_var, reference);
@@ -93,6 +95,8 @@ TEMPLATE_TEST_CASE_SIG("num_collect::ode::runge_kutta::radau2a_formula", "",
         const Eigen::Vector2d prev_var(1.0, 0.0);
         Eigen::Vector2d next_var;
         formula.step(time, step_size, prev_var, next_var);
+        NUM_COLLECT_LOG_DEBUG(logger, "Contractivity factor = {}",
+            formula.formula_solver().contractivity_factor().value_or(0.0));
 
         const Eigen::Vector2d reference =
             Eigen::Vector2d(std::cos(step_size), std::sin(step_size));
