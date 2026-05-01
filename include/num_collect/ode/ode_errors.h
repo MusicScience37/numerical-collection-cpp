@@ -47,6 +47,17 @@ public:
     using ode_exception::ode_exception;
 };
 
+/*!
+ * \brief Class of exceptions for no convergence of iterative algorithms.
+ *
+ * \note This type of errors can be sometimes recoverable by reducing step size,
+ * so a specific type is defined for exceptions of this type.
+ */
+class no_convergence : public ode_exception {
+public:
+    using ode_exception::ode_exception;
+};
+
 namespace impl {
 
 /*!
@@ -124,4 +135,17 @@ template <
 #define NUM_COLLECT_ODE_THROW_LINEAR_SOLVER_FAILURE(LOGGER, ...) \
     INTERNAL_NUM_COLLECT_ODE_LOG_AND_THROW(                      \
         ::num_collect::ode::linear_solver_failure,               \
+        ::num_collect::logging::log_level::debug, LOGGER, __VA_ARGS__)
+
+/*!
+ * \brief Throw an exception for no convergence of iterative algorithms with a
+ * log.
+ *
+ * \param[in] LOGGER Logger.
+ *
+ * Remaining arguments are the format string and its arguments of the error
+ * message.
+ */
+#define NUM_COLLECT_ODE_THROW_NO_CONVERGENCE(LOGGER, ...)                      \
+    INTERNAL_NUM_COLLECT_ODE_LOG_AND_THROW(::num_collect::ode::no_convergence, \
         ::num_collect::logging::log_level::debug, LOGGER, __VA_ARGS__)

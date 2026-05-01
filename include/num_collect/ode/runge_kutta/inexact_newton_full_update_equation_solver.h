@@ -29,7 +29,6 @@
 #include "num_collect/base/concepts/dense_matrix.h"
 #include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/base/iterative_solver_base.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
@@ -40,6 +39,7 @@
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/evaluation_type.h"
 #include "num_collect/ode/ode_errors.h"
+#include "num_collect/ode/runge_kutta/iterative_equation_solver_base.h"
 
 namespace num_collect::ode::runge_kutta {
 
@@ -91,7 +91,7 @@ class inexact_newton_full_update_equation_solver;
 template <concepts::single_variate_differentiable_problem Problem,
     int NumStages>
 class inexact_newton_full_update_equation_solver<Problem, NumStages>
-    : public iterative_solver_base<
+    : public iterative_equation_solver_base<
           inexact_newton_full_update_equation_solver<Problem, NumStages>> {
 public:
     //! This class.
@@ -139,7 +139,7 @@ public:
         const slope_coeff_matrix_type& slope_coeffs,
         const update_coeff_vector_type& time_coeffs,
         const update_coeff_vector_type& update_coeffs)
-        : iterative_solver_base<
+        : iterative_equation_solver_base<
               inexact_newton_full_update_equation_solver<Problem, NumStages>>(
               inexact_newton_full_update_equation_solver_tag),
           slope_coeffs_(slope_coeffs),
@@ -235,11 +235,11 @@ public:
     }
 
     /*!
-     * \brief Determine if stopping criteria of the algorithm are satisfied.
+     * \brief Determine if the algorithm converged.
      *
-     * \return If stopping criteria of the algorithm are satisfied.
+     * \return If the algorithm converged.
      */
-    [[nodiscard]] auto is_stop_criteria_satisfied() const -> bool {
+    [[nodiscard]] auto is_converged() const -> bool {
         bool converged = false;
         if (update_norm_ && update_reduction_rate_ &&
             *update_reduction_rate_ < static_cast<scalar_type>(1)) {
@@ -249,7 +249,16 @@ public:
                     (*update_norm_) <=
                 tolerance_rate_;
         }
+        return converged;
+    }
 
+    /*!
+     * \brief Determine if stopping criteria of the algorithm are satisfied.
+     *
+     * \return If stopping criteria of the algorithm are satisfied.
+     */
+    [[nodiscard]] auto is_stop_criteria_satisfied() const -> bool {
+        const bool converged = is_converged();
         constexpr index_type max_iterations = 1000;  // safe guard
         return converged || (iterations_ > max_iterations);
     }
@@ -395,7 +404,7 @@ private:
 template <concepts::multi_variate_differentiable_problem Problem, int NumStages>
     requires base::concepts::dense_matrix<typename Problem::jacobian_type>
 class inexact_newton_full_update_equation_solver<Problem, NumStages>
-    : public iterative_solver_base<
+    : public iterative_equation_solver_base<
           inexact_newton_full_update_equation_solver<Problem, NumStages>> {
 public:
     //! This class.
@@ -458,7 +467,7 @@ public:
         const slope_coeff_matrix_type& slope_coeffs,
         const update_coeff_vector_type& time_coeffs,
         const update_coeff_vector_type& update_coeffs)
-        : iterative_solver_base<
+        : iterative_equation_solver_base<
               inexact_newton_full_update_equation_solver<Problem, NumStages>>(
               inexact_newton_full_update_equation_solver_tag),
           slope_coeffs_(slope_coeffs),
@@ -594,11 +603,11 @@ public:
     }
 
     /*!
-     * \brief Determine if stopping criteria of the algorithm are satisfied.
+     * \brief Determine if the algorithm converged.
      *
-     * \return If stopping criteria of the algorithm are satisfied.
+     * \return If the algorithm converged.
      */
-    [[nodiscard]] auto is_stop_criteria_satisfied() const -> bool {
+    [[nodiscard]] auto is_converged() const -> bool {
         bool converged = false;
         if (update_norm_ && update_reduction_rate_ &&
             *update_reduction_rate_ < static_cast<scalar_type>(1)) {
@@ -608,7 +617,16 @@ public:
                     (*update_norm_) <=
                 tolerance_rate_;
         }
+        return converged;
+    }
 
+    /*!
+     * \brief Determine if stopping criteria of the algorithm are satisfied.
+     *
+     * \return If stopping criteria of the algorithm are satisfied.
+     */
+    [[nodiscard]] auto is_stop_criteria_satisfied() const -> bool {
+        const bool converged = is_converged();
         constexpr index_type max_iterations = 1000;  // safe guard
         return converged || (iterations_ > max_iterations);
     }
