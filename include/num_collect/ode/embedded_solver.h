@@ -253,7 +253,10 @@ private:
         error_tolerance_not_satisfied,
 
         //! The formula class failed to solve a linear solver.
-        linear_solver_failure
+        linear_solver_failure,
+
+        //! The formula class failed with no convergence.
+        no_convergence
     };
 
     /*!
@@ -267,6 +270,8 @@ private:
                 time_, *step_size_, prev_variable_, variable_, error_);
         } catch (const linear_solver_failure& /*exception*/) {
             return step_trial_result::linear_solver_failure;
+        } catch (const no_convergence& /*exception*/) {
+            return step_trial_result::no_convergence;
         }
         const bool tolerance_satisfied =
             step_size_controller_.tolerances().check(variable_, error_);
@@ -297,6 +302,12 @@ private:
                 "lowest step size {}.",
                 *step_size_);
             // In this case, an exception is thrown, so `break` is not needed.
+        case step_trial_result::no_convergence:
+            NUM_COLLECT_LOG_AND_THROW(algorithm_failure, this->logger(),
+                "Failed to solve the formula due to no convergence even with "
+                "the lowest step size {}.",
+                *step_size_);
+            // In this case, an exception is thrown, so `break` is not needed.
         case step_trial_result::success:
             NUM_COLLECT_ASSERT(false);
         }
@@ -317,6 +328,12 @@ private:
         case step_trial_result::linear_solver_failure:
             NUM_COLLECT_LOG_DEBUG(this->logger(),
                 "Failed to solve a linear equation in the formula with the "
+                "step size {}.",
+                last_step_size_);
+            break;
+        case step_trial_result::no_convergence:
+            NUM_COLLECT_LOG_DEBUG(this->logger(),
+                "Failed to solve the formula due to no convergence with the "
                 "step size {}.",
                 last_step_size_);
             break;
