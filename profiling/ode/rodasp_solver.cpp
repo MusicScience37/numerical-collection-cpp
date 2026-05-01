@@ -35,7 +35,7 @@ static void test() {
 
     solver_type solver{problem_type{k, g}};
     solver.init(init_time, init_var);
-    solver.solve_till(end_time);
+    solver.solve_until(end_time);
 }
 
 auto main() -> int {

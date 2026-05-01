@@ -37,7 +37,7 @@ auto main() -> int {
     constexpr double init_var = 1.0;
     constexpr double end_time = 1.0;
     solver.init(init_time, init_var);
-    solver.solve_till(end_time);
+    solver.solve_until(end_time);
 
     constexpr int precision = 15;
     std::cout << std::setprecision(precision);

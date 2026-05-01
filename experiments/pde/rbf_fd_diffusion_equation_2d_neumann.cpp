@@ -250,7 +250,7 @@ static void solve_system(const ode_problem_type& problem,
         if (next_time > final_time - time_threshold) {
             next_time = final_time;
         }
-        solver.solve_till(next_time);
+        solver.solve_until(next_time);
 
         time = solver.time();
         time_list.push_back(time);

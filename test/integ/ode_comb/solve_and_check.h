@@ -63,7 +63,7 @@ inline void solve_and_check_with_reference(Solver& solver,
             static_cast<scalar_type>(num_time_samples);
         const scalar_type time =
             time_rate * (finish_time - init_time) + init_time;
-        REQUIRE_NOTHROW(solver.solve_till(time));
+        REQUIRE_NOTHROW(solver.solve_until(time));
         time_list.push_back(time);
         actual_variable_list.push_back(solver.variable());
         reference_variable_list.push_back(reference_function(time));

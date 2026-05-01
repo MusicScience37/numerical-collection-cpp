@@ -56,7 +56,7 @@ package ode {
     class solver<Formula> {
         + init(time: scalar_type, variable: variable_type)
         + step()
-        + solve_till(end_time: scalar_type)
+        + solve_until(end_time: scalar_type)
         + time() : scalar_type
         + variable() : const variable_type&
         + step_size() : scalar_type

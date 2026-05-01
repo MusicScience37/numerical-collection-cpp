@@ -146,7 +146,7 @@ public:
                     .tol_abs_error(create_constant_variable(init_var, tol)));
 
             solver.init(init_time, init_var);
-            solver.solve_till(end_time);
+            solver.solve_until(end_time);
 
             const typename Problem::scalar_type min_error =
                 num_collect::norm(reference) *
@@ -173,7 +173,7 @@ public:
                     .tol_abs_error(tol));
 
             solver.init(init_time, init_var);
-            solver.solve_till(end_time);
+            solver.solve_until(end_time);
 
             prevent_ordering();
         }
