@@ -189,7 +189,7 @@ private:
 
     //! Default safety coefficient for error norms.
     static constexpr auto default_error_norm_safety_coeff =
-        static_cast<scalar_type>(0.9);
+        static_cast<scalar_type>(0.1);
 
     //! Safety coefficient for error norms.
     scalar_type error_norm_safety_coeff_{default_error_norm_safety_coeff};
