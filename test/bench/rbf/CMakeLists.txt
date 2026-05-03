@@ -2,5 +2,6 @@ add_executable(bench_rbf_interp interp_1d.cpp interp_2d.cpp interp_3d.cpp
                                 compute_kernel_matrix.cpp)
 target_add_to_benchmark(bench_rbf_interp)
 
-add_executable(bench_rbf_fd rbf_fd_assemble_laplacian_2d.cpp)
+add_executable(bench_rbf_fd rbf_fd_assemble_laplacian_2d.cpp
+                            rbf_fd_approximate_laplacian_2d.cpp)
 target_add_to_benchmark(bench_rbf_fd)
