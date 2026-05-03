@@ -171,8 +171,6 @@ auto main(int argc, char** argv) -> int {
 
     bench_executor executor{};
 
-    // RKF45, implicit Euler, and Crank-Nicolson cannot solve this problem.
-
     bench_one<num_collect::ode::runge_kutta::rkf45_adaptive_step_solver<
         problem_type>>("RKF45", executor);
     bench_one<num_collect::ode::runge_kutta::
