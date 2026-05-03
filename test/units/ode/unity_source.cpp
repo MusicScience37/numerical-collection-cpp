@@ -32,6 +32,7 @@
 #include "runge_kutta/ark54_esdirk_formula_test.cpp"
 #include "runge_kutta/crank_nicolson_formula_test.cpp"
 #include "runge_kutta/dopri5_formula_test.cpp"
+#include "runge_kutta/esdirk32_formula_test.cpp"
 #include "runge_kutta/esdirk45_formula_test.cpp"
 #include "runge_kutta/impl/inexact_newton_decomposed_jacobian_complex_eigen_solver_test.cpp"
 #include "runge_kutta/impl/inexact_newton_decomposed_jacobian_real_eigen_solver_test.cpp"
