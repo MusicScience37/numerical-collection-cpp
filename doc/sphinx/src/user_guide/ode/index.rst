@@ -4,6 +4,6 @@ ODE module
 .. toctree::
    :maxdepth: 1
 
+   formulas
    ode_solver_selection
-   formula_properties
    bench/index

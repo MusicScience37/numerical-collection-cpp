@@ -33,7 +33,7 @@ TEST_CASE("num_collect::ode::runge_kutta::implicit_euler_formula") {
 
     SECTION("static definition") {
         STATIC_REQUIRE(formula_type::stages == 1);
-        STATIC_REQUIRE(formula_type::order == 2);
+        STATIC_REQUIRE(formula_type::order == 1);
     }
 
     SECTION("initialize") {
