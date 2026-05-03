@@ -23,6 +23,7 @@ Some notes on the properties are written below the tables.
 | Runge-Kutta | Radau IIA order 5 {cite:p}`Hairer1991`       | `radau2a5`             | No       | 3      | 5      |
 | Runge-Kutta | Radau IIA other orders {cite:p}`Hairer1991`  | `radau2a`              | No       | $s$    | $2s-1$ |
 | Runge-Kutta | Implicit Euler                               | `implicit_euler`       | No       | 1      | 1      |
+| Runge-Kutta | Crank-Nicolson                               | `crank_nicolson`       | No       | 2      | 2      |
 | Rosenbrock  | RODASP                                       | `rodasp`               | No       | 6      | 4, ?   |
 | Rosenbrock  | RODASPR {cite:p}`Rang2015`                   | `rodaspr`              | No       | 6      | 4, ?   |
 | Rosenbrock  | ROS3w {cite:p}`Rang2005`                     | `ros3w`                | No       | 3      | 3, 2   |
@@ -53,6 +54,7 @@ Some notes on the properties are written below the tables.
 | Runge-Kutta | Radau IIA order 5 {cite:p}`Hairer1991`      | Yes              | Yes      | Yes      | Yes      |          |
 | Runge-Kutta | Radau IIA other orders {cite:p}`Hairer1991` | Yes              | Yes      | Yes      | Yes      |          |
 | Runge-Kutta | Implicit Euler                              | Yes              | Yes      | Yes      | Yes      |          |
+| Runge-Kutta | Crank-Nicolson                              | Yes              | Yes      |          | Yes      |          |
 | Rosenbrock  | RODASP                                      | Yes              | Yes      |          | Yes      |          |
 | Rosenbrock  | RODASPR {cite:p}`Rang2015`                  | Yes              | Yes      |          | Yes      |          |
 | Rosenbrock  | ROS3w {cite:p}`Rang2005`                    | No               | Yes      |          | Yes      | W-method |
@@ -91,6 +93,7 @@ Some notes on the properties are written below the tables.
 | Runge-Kutta | Radau IIA order 5 {cite:p}`Hairer1991`       | Yes           | (See below)     | Index 3 |
 | Runge-Kutta | Radau IIA other orders {cite:p}`Hairer1991`  | Yes           | No              | Index 2 |
 | Runge-Kutta | Implicit Euler                               | Yes           | Yes             | Index 1 |
+| Runge-Kutta | Crank-Nicolson                               | Yes           | Yes             | None    |
 | Rosenbrock  | RODASP                                       | Yes           | No              | Index 1 |
 | Rosenbrock  | RODASPR {cite:p}`Rang2015`                   | Yes           | No              | Index 2 |
 | Rosenbrock  | ROS3w {cite:p}`Rang2005`                     | Yes           | No              | Index 1 |
