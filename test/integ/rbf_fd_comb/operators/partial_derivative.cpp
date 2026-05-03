@@ -77,6 +77,7 @@ TEMPLATE_TEST_CASE_SIG(
 
     NUM_COLLECT_LOG_DEBUG(logger, "Assemble the matrix.");
     assembler_type assembler(Degree);
+    assembler.num_neighbors_at_least(15);
     num_collect::util::vector<Eigen::Triplet<double>> triplets;
     const num_collect::util::nearest_neighbor_searcher<position_type>
         nearest_neighbor_searcher(nodes);
