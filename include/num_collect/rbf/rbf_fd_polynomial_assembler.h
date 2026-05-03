@@ -37,6 +37,7 @@
 #include "num_collect/rbf/polynomial_term_generator.h"
 #include "num_collect/rbf/rbfs/gaussian_m1_rbf.h"
 #include "num_collect/rbf/rbfs/polyharmonic_spline_rbf.h"
+#include "num_collect/util/assert.h"
 #include "num_collect/util/nearest_neighbor_searcher.h"
 #include "num_collect/util/vector_view.h"
 
@@ -245,6 +246,28 @@ public:
             "Number of neighbors must be greater than the number of polynomial "
             "terms.");
         num_neighbors_ = value;
+    }
+
+    /*!
+     * \brief Get the minimum required number of neighbors to use in RBF-FD.
+     *
+     * \return Minimum required number of neighbors to use in RBF-FD.
+     */
+    [[nodiscard]] auto min_num_neighbors() const noexcept -> index_type {
+        return polynomial_term_generator_.terms().size() + 1;
+    }
+
+    /*!
+     * \brief Set the number of neighbors to use in RBF-FD at least the given
+     * value.
+     *
+     * \param[in] value Value.
+     */
+    void num_neighbors_at_least(index_type value) {
+        const index_type min_value = min_num_neighbors();
+        num_neighbors_ = std::max(value, min_value);
+        NUM_COLLECT_ASSERT(
+            num_neighbors_ > polynomial_term_generator_.terms().size());
     }
 
     /*!
