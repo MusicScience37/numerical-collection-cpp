@@ -132,6 +132,7 @@ For properties of formulas of ODE solvers, see [Lists of Formulas in ODE Solvers
 | ARK4(3)6L[2]SA-ESDIRK formula {cite:p}`Kennedy2003`   | `num_collect::ode::runge_kutta::ark43_esdirk_formula`   |
 | ARK5(4)8L[2]SA-ESDIRK formula {cite:p}`Kennedy2003`   | `num_collect::ode::runge_kutta::ark54_esdirk_formula`   |
 | DOPRI5 formula {cite:p}`Hairer1991`                   | `num_collect::ode::runge_kutta::dopri5_formula`         |
+| ESDIRK 3/2 a formula {cite:p}`Kvaerno2004`            | `num_collect::ode::runge_kutta::esdirk32_formula`       |
 | ESDIRK45c formula {cite:p}`Jorgensen2018`             | `num_collect::ode::runge_kutta::esdirk45_formula`       |
 | Runge-Kutta 4 (RK4) {cite:p}`Hairer1993`              | `num_collect::ode::runge_kutta::rk4_formula`            |
 | Runge-Kutta-Fehlberg 45 (RKF45) {cite:p}`Hairer1993`  | `num_collect::ode::runge_kutta::rkf45_formula`          |
