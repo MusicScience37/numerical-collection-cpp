@@ -60,8 +60,8 @@ static constexpr std::string_view problem_description_base =
 constexpr num_collect::index_type num_interior_nodes = 25;
 constexpr num_collect::index_type num_boundary_nodes_per_edge = 5;
 #else
-constexpr num_collect::index_type num_interior_nodes = 2500;
-constexpr num_collect::index_type num_boundary_nodes_per_edge = 50;
+constexpr num_collect::index_type num_interior_nodes = 1000;
+constexpr num_collect::index_type num_boundary_nodes_per_edge = 30;
 #endif
 
 static constexpr double diffusion_coefficient = 0.1;
@@ -97,7 +97,7 @@ inline void bench_one(
     const num_collect::util::nearest_neighbor_searcher<position_type>
         column_variables_nearest_neighbor_searcher(nodes);
 
-    constexpr num_collect::index_type num_neighbors = 15;
+    constexpr num_collect::index_type num_neighbors = 20;
     num_collect::util::vector<Eigen::Triplet<double>> stiffness_triplets;
     stiffness_triplets.reserve(nodes.size() * num_neighbors);
     num_collect::util::vector<Eigen::Triplet<double>> mass_triplets;
@@ -106,7 +106,8 @@ inline void bench_one(
 
     using assembler_type =
         num_collect::rbf::phs_rbf_fd_polynomial_assembler<position_type>;
-    assembler_type assembler;
+    constexpr int polynomial_degree = 4;
+    assembler_type assembler(polynomial_degree);
     assembler.num_neighbors(num_neighbors);
 
     // Equations for interior nodes.
@@ -190,7 +191,7 @@ inline void bench_one(
 #endif
 
 #ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
-    constexpr std::array<double, 3> tolerance_list{1e-1, 1e-2, 1e-3};
+    constexpr std::array<double, 2> tolerance_list{1e-1, 1e-2};
 #else
     constexpr std::array<double, 3> tolerance_list{1e-1, 1e-2, 1e-3};
 #endif
