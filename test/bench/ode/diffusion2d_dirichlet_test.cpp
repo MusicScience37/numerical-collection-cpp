@@ -31,6 +31,7 @@
 #include "num_collect/ode/rosenbrock/ros34prw_formula.h"
 #include "num_collect/ode/rosenbrock/ros34pw3_formula.h"
 #include "num_collect/ode/rosenbrock/ros3w_formula.h"
+#include "num_collect/ode/runge_kutta/crank_nicolson_formula.h"
 #include "num_collect/ode/runge_kutta/esdirk45_formula.h"
 #include "num_collect/ode/runge_kutta/implicit_euler_formula.h"
 #include "num_collect/ode/runge_kutta/lobatto3c4_formula.h"
@@ -169,6 +170,12 @@ auto main(int argc, char** argv) -> int {
 
     bench_one<num_collect::ode::runge_kutta::rkf45_adaptive_step_solver<
         problem_type>>("RKF45", executor);
+    bench_one<num_collect::ode::runge_kutta::
+            implicit_euler_adaptive_step_solver<problem_type>>(
+        "ImplicitEuler", executor);
+    bench_one<num_collect::ode::runge_kutta::
+            crank_nicolson_adaptive_step_solver<problem_type>>(
+        "CrankNicolson", executor);
     bench_one<num_collect::ode::runge_kutta::sdirk4_adaptive_step_solver<
         problem_type>>("SDIRK4", executor);
     bench_one<num_collect::ode::runge_kutta::esdirk45_adaptive_step_solver<
@@ -177,9 +184,6 @@ auto main(int argc, char** argv) -> int {
         problem_type>>("LobattoIIIC4", executor);
     bench_one<num_collect::ode::runge_kutta::lobatto3c6_adaptive_step_solver<
         problem_type>>("LobattoIIIC6", executor);
-    bench_one<num_collect::ode::runge_kutta::
-            implicit_euler_adaptive_step_solver<problem_type>>(
-        "ImplicitEuler", executor);
     bench_one<num_collect::ode::runge_kutta::radau2a3_adaptive_step_solver<
         problem_type>>("RadauIIA3", executor);
     bench_one<num_collect::ode::runge_kutta::radau2a5_adaptive_step_solver<

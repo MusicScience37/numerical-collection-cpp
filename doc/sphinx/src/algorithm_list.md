@@ -126,23 +126,25 @@ For properties of formulas of ODE solvers, see [Lists of Formulas in ODE Solvers
 
 ### Formulas of Runge-Kutta method
 
-| Formula                                               | Class                                                 |
-| :---------------------------------------------------- | :---------------------------------------------------- |
-| ARK4(3)6L[2]SA-ERK formula {cite:p}`Kennedy2003`      | `num_collect::ode::runge_kutta::ark43_erk_formula`    |
-| ARK4(3)6L[2]SA-ESDIRK formula {cite:p}`Kennedy2003`   | `num_collect::ode::runge_kutta::ark43_esdirk_formula` |
-| ARK5(4)8L[2]SA-ESDIRK formula {cite:p}`Kennedy2003`   | `num_collect::ode::runge_kutta::ark54_esdirk_formula` |
-| DOPRI5 formula {cite:p}`Hairer1991`                   | `num_collect::ode::runge_kutta::dopri5_formula`       |
-| ESDIRK45c formula {cite:p}`Jorgensen2018`             | `num_collect::ode::runge_kutta::esdirk45_formula`     |
-| Runge-Kutta 4 (RK4) {cite:p}`Hairer1993`              | `num_collect::ode::runge_kutta::rk4_formula`          |
-| Runge-Kutta-Fehlberg 45 (RKF45) {cite:p}`Hairer1993`  | `num_collect::ode::runge_kutta::rkf45_formula`        |
-| 4th order SDIRK {cite:p}`Hairer1991`                  | `num_collect::ode::runge_kutta::sdirk4_formula`       |
-| Tanaka Formula 1 {cite:p}`Togawa2007`                 | `num_collect::ode::runge_kutta::tanaka1_formula`      |
-| Tanaka Formula 2 {cite:p}`Togawa2007`                 | `num_collect::ode::runge_kutta::tanaka2_formula`      |
-| Radau IIA method of order 3 {cite:p}`Hairer1991`      | `num_collect::ode::runge_kutta::radau2a3_formula`     |
-| Radau IIA method of order 5 {cite:p}`Hairer1991`      | `num_collect::ode::runge_kutta::radau2a5_formula`     |
-| Radau IIA method of other orders {cite:p}`Hairer1991` | `num_collect::ode::runge_kutta::radau2a_formula`      |
-| Lobatto IIIC method of order 4 {cite:p}`Hairer1991`   | `num_collect::ode::runge_kutta::lobatto3c4_formula`   |
-| Lobatto IIIC method of order 6 {cite:p}`Hairer1991`   | `num_collect::ode::runge_kutta::lobatto3c6_formula`   |
+| Formula                                               | Class                                                   |
+| :---------------------------------------------------- | :------------------------------------------------------ |
+| ARK4(3)6L[2]SA-ERK formula {cite:p}`Kennedy2003`      | `num_collect::ode::runge_kutta::ark43_erk_formula`      |
+| ARK4(3)6L[2]SA-ESDIRK formula {cite:p}`Kennedy2003`   | `num_collect::ode::runge_kutta::ark43_esdirk_formula`   |
+| ARK5(4)8L[2]SA-ESDIRK formula {cite:p}`Kennedy2003`   | `num_collect::ode::runge_kutta::ark54_esdirk_formula`   |
+| DOPRI5 formula {cite:p}`Hairer1991`                   | `num_collect::ode::runge_kutta::dopri5_formula`         |
+| ESDIRK45c formula {cite:p}`Jorgensen2018`             | `num_collect::ode::runge_kutta::esdirk45_formula`       |
+| Runge-Kutta 4 (RK4) {cite:p}`Hairer1993`              | `num_collect::ode::runge_kutta::rk4_formula`            |
+| Runge-Kutta-Fehlberg 45 (RKF45) {cite:p}`Hairer1993`  | `num_collect::ode::runge_kutta::rkf45_formula`          |
+| 4th order SDIRK {cite:p}`Hairer1991`                  | `num_collect::ode::runge_kutta::sdirk4_formula`         |
+| Tanaka Formula 1 {cite:p}`Togawa2007`                 | `num_collect::ode::runge_kutta::tanaka1_formula`        |
+| Tanaka Formula 2 {cite:p}`Togawa2007`                 | `num_collect::ode::runge_kutta::tanaka2_formula`        |
+| Radau IIA method of order 3 {cite:p}`Hairer1991`      | `num_collect::ode::runge_kutta::radau2a3_formula`       |
+| Radau IIA method of order 5 {cite:p}`Hairer1991`      | `num_collect::ode::runge_kutta::radau2a5_formula`       |
+| Radau IIA method of other orders {cite:p}`Hairer1991` | `num_collect::ode::runge_kutta::radau2a_formula`        |
+| Lobatto IIIC method of order 4 {cite:p}`Hairer1991`   | `num_collect::ode::runge_kutta::lobatto3c4_formula`     |
+| Lobatto IIIC method of order 6 {cite:p}`Hairer1991`   | `num_collect::ode::runge_kutta::lobatto3c6_formula`     |
+| Implicit Euler method                                 | `num_collect::ode::runge_kutta::implicit_euler_formula` |
+| Crank-Nicolson method                                 | `num_collect::ode::runge_kutta::crank_nicolson_formula` |
 
 ### Formulas of Rosenbrock method
 
@@ -169,18 +171,14 @@ For properties of formulas of ODE solvers, see [Lists of Formulas in ODE Solvers
 | Leap-frog formula                                                   | `num_collect::ode::symplectic::leap_frog_formula`          |
 | Fourth-order symplectic integration formula in {cite:p}`Forest1990` | `num_collect::ode::symplectic::symplectic_forest4_formula` |
 
-### Other formulas
-
-| Formula                | Class                                                   |
-| :--------------------- | :------------------------------------------------------ |
-| Implicit Euler formula | `num_collect::ode::runge_kutta::implicit_euler_formula` |
-
 ### Controllers of step sizes
 
-| Algorithm                               | Class                                          |
-| :-------------------------------------- | :--------------------------------------------- |
-| Basic algorithm in {cite:p}`Hairer1993` | `num_collect::ode::basic_step_size_controller` |
-| PI controller {cite:p}`Gustafsson1991`  | `num_collect::ode::pi_step_size_controller`    |
+| Algorithm                                             | Class                                                            |
+| :---------------------------------------------------- | :--------------------------------------------------------------- |
+| Basic algorithm in {cite:p}`Hairer1993`               | `num_collect::ode::classic_step_size_controller`                 |
+| PI controller {cite:p}`Gustafsson1991`                | `num_collect::ode::pi_step_size_controller`                      |
+| Step size controller with memory {cite:p}`Hairer1999` | `num_collect::ode::memory_step_size_controller`                  |
+| Digital filter with smooth limiter {cite:p}`Blom2013` | `num_collect::ode::smoothed_digital_filter_step_size_controller` |
 
 ## Solvers of Linear Equations (`linear` Module)
 

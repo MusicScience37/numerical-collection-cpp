@@ -214,15 +214,15 @@ auto main(int argc, char** argv) -> int {
 
     bench_executor executor{};
 
+    bench_one<num_collect::ode::runge_kutta::
+            implicit_euler_adaptive_step_solver<problem_type>>(
+        "ImplicitEuler", executor);
     bench_one<num_collect::ode::runge_kutta::sdirk4_adaptive_step_solver<
         problem_type>>("SDIRK4", executor);
     bench_one<num_collect::ode::runge_kutta::lobatto3c4_adaptive_step_solver<
         problem_type>>("LobattoIIIC4", executor);
     bench_one<num_collect::ode::runge_kutta::lobatto3c6_adaptive_step_solver<
         problem_type>>("LobattoIIIC6", executor);
-    bench_one<num_collect::ode::runge_kutta::
-            implicit_euler_adaptive_step_solver<problem_type>>(
-        "ImplicitEuler", executor);
     bench_one<num_collect::ode::runge_kutta::radau2a3_adaptive_step_solver<
         problem_type>>("RadauIIA3", executor);
     bench_one<num_collect::ode::runge_kutta::radau2a5_adaptive_step_solver<

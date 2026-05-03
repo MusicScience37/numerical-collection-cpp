@@ -1,0 +1,124 @@
+/*
+ * Copyright 2026 MusicScience37 (Kenta Kabashima)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*!
+ * \file
+ * \brief Definition of crank_nicolson_formula class.
+ */
+#pragma once
+
+#include "num_collect/base/index_type.h"
+#include "num_collect/logging/log_tag_view.h"
+#include "num_collect/ode/concepts/problem.h"
+#include "num_collect/ode/concepts/update_equation_solver.h"
+#include "num_collect/ode/fixed_step_solver.h"
+#include "num_collect/ode/non_embedded_formula_wrapper.h"
+#include "num_collect/ode/runge_kutta/implicit_formula_base.h"
+#include "num_collect/ode/runge_kutta/inexact_newton_update_equation_solver.h"
+#include "num_collect/ode/runge_kutta/slope_calculator.h"
+
+namespace num_collect::ode::runge_kutta {
+
+/*!
+ * \brief Class of the formula of Crank-Nicolson method.
+ *
+ * \tparam Problem Type of problem.
+ * \tparam FormulaSolver Type of solver of formula.
+ */
+template <concepts::problem Problem,
+    concepts::update_equation_solver FormulaSolver =
+        inexact_newton_update_equation_solver<Problem>>
+class crank_nicolson_formula
+    : public implicit_formula_base<
+          crank_nicolson_formula<Problem, FormulaSolver>, Problem,
+          FormulaSolver> {
+public:
+    //! Type of this class.
+    using this_type = crank_nicolson_formula<Problem, FormulaSolver>;
+
+    //! Type of base class.
+    using base_type =
+        implicit_formula_base<crank_nicolson_formula<Problem, FormulaSolver>,
+            Problem, FormulaSolver>;
+
+    using typename base_type::problem_type;
+    using typename base_type::scalar_type;
+    using typename base_type::variable_type;
+
+    using base_type::base_type;
+    using base_type::formula_solver;
+    using base_type::problem;
+
+    //! Number of stages of this formula.
+    static constexpr index_type stages = 2;
+
+    //! Order of this formula.
+    static constexpr index_type order = 2;
+
+    //! Log tag.
+    static constexpr auto log_tag = logging::log_tag_view(
+        "num_collect::ode::runge_kutta::crank_nicolson_formula");
+
+    //! \copydoc runge_kutta::implicit_formula_base::step
+    void step(scalar_type time, scalar_type step_size,
+        const variable_type& current, variable_type& estimate) {
+        // Coefficients of this formula.
+        constexpr auto half = static_cast<scalar_type>(0.5);
+
+        formula_solver().update_jacobian(
+            problem(), time, step_size, current, half);
+
+        slope_calculator_(problem(), time, current, k1_);
+
+        z2_ = step_size * half * k1_;
+        formula_solver().init(time + step_size, z2_, z2_);
+        formula_solver().solve();
+
+        estimate = current + z2_;
+    }
+
+private:
+    /*!
+     * \name Intermediate variables.
+     */
+    ///@{
+    //! Intermediate variable.
+    variable_type k1_{};
+    variable_type z2_{};
+    ///@}
+
+    //! Calculator of slopes.
+    slope_calculator<problem_type> slope_calculator_;
+};
+
+/*!
+ * \brief Class of solver using Crank-Nicolson method with fixed step sizes.
+ *
+ * \tparam Problem Type of problem.
+ */
+template <concepts::problem Problem>
+using crank_nicolson_fixed_step_solver =
+    fixed_step_solver<crank_nicolson_formula<Problem>>;
+
+/*!
+ * \brief Class of solver using Crank-Nicolson method with adaptive step sizes.
+ *
+ * \tparam Problem Type of problem.
+ */
+template <concepts::problem Problem>
+using crank_nicolson_adaptive_step_solver =
+    non_embedded_adaptive_step_solver<crank_nicolson_formula<Problem>>;
+
+}  // namespace num_collect::ode::runge_kutta

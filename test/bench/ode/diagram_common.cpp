@@ -57,6 +57,8 @@ auto create_line_dash_map() -> std::unordered_map<std::string, std::string> {
         {"ARK4(3)-ERK", "solid"},
         {"RK4", "solid"},
         // Implicit Runge-Kutta.
+        {"ImplicitEuler", "dot"},
+        {"CrankNicolson", "dot"},
         {"Tanaka1", "dot"},
         {"Tanaka2", "dot"},
         {"SDIRK4", "dot"},
@@ -66,7 +68,6 @@ auto create_line_dash_map() -> std::unordered_map<std::string, std::string> {
         // Full implicit Runge-Kutta.
         {"LobattoIIIC4", "dash"},
         {"LobattoIIIC6", "dash"},
-        {"ImplicitEuler", "dash"},
         {"RadauIIA3", "dash"},
         {"RadauIIA5", "dash"},
         {"RadauIIA7", "dash"},
