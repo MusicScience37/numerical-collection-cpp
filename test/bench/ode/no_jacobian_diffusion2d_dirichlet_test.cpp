@@ -30,6 +30,7 @@
 #include "num_collect/ode/rosenbrock/ros34prw_formula.h"
 #include "num_collect/ode/rosenbrock/ros34pw3_formula.h"
 #include "num_collect/ode/rosenbrock/ros3w_formula.h"
+#include "num_collect/ode/runge_kutta/crank_nicolson_formula.h"
 #include "num_collect/ode/runge_kutta/esdirk45_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
 #include "num_collect/ode/runge_kutta/sdirk4_formula.h"
@@ -96,8 +97,9 @@ inline void bench_one(
     using assembler_type =
         num_collect::rbf::phs_rbf_fd_polynomial_assembler<position_type>;
     using ode_problem_type = problem_type;
-    assembler_type assembler;
-    assembler.num_neighbors(15);
+    constexpr int polynomial_degree = 4;
+    assembler_type assembler(polynomial_degree);
+    assembler.num_neighbors(20);
     num_collect::util::vector<Eigen::Triplet<double>> triplets;
 
     const num_collect::util::nearest_neighbor_searcher<position_type>
@@ -136,7 +138,7 @@ inline void bench_one(
 #endif
 
 #ifndef NUM_COLLECT_ENABLE_HEAVY_BENCH
-    constexpr std::array<double, 3> tolerance_list{1e-1, 1e-2, 1e-3};
+    constexpr std::array<double, 2> tolerance_list{1e-1, 1e-2};
 #else
     constexpr std::array<double, 3> tolerance_list{1e-1, 1e-2, 1e-3};
 #endif
@@ -162,6 +164,9 @@ auto main(int argc, char** argv) -> int {
 
     bench_one<num_collect::ode::runge_kutta::rkf45_adaptive_step_solver<
         problem_type>>("RKF45", executor);
+    bench_one<num_collect::ode::runge_kutta::
+            crank_nicolson_adaptive_step_solver<problem_type>>(
+        "CrankNicolson", executor);
     bench_one<num_collect::ode::runge_kutta::sdirk4_adaptive_step_solver<
         problem_type>>("SDIRK4", executor);
     bench_one<num_collect::ode::runge_kutta::esdirk45_adaptive_step_solver<
