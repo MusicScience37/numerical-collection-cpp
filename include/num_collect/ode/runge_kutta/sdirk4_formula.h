@@ -22,10 +22,10 @@
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/ode/adaptive_step_solver.h"
 #include "num_collect/ode/concepts/mass_problem.h"
 #include "num_collect/ode/concepts/problem.h"
 #include "num_collect/ode/concepts/update_equation_solver.h"
-#include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/runge_kutta/implicit_formula_base.h"
 #include "num_collect/ode/runge_kutta/inexact_newton_update_equation_solver.h"
 
@@ -221,11 +221,12 @@ private:
 
 /*!
  * \brief Class of solver using 4th order SDIRK (singly diagonally implicit
- * Runge-Kutta) formula in \cite Hairer1991.
+ * Runge-Kutta) formula in \cite Hairer1991 with adaptive step sizes.
  *
  * \tparam Problem Type of problem.
  */
 template <concepts::problem Problem>
-using sdirk4_solver = embedded_solver<sdirk4_formula<Problem>>;
+using sdirk4_adaptive_step_solver =
+    adaptive_step_solver<sdirk4_formula<Problem>>;
 
 }  // namespace num_collect::ode::runge_kutta

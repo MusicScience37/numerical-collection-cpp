@@ -40,9 +40,9 @@ TEMPLATE_PRODUCT_TEST_CASE(
     "",
     (
         // embedded Runge-Kutta method.
-        num_collect::ode::runge_kutta::ark43_erk_solver,
-        num_collect::ode::runge_kutta::dopri5_solver,
-        num_collect::ode::runge_kutta::rkf45_solver),
+        num_collect::ode::runge_kutta::ark43_erk_adaptive_step_solver,
+        num_collect::ode::runge_kutta::dopri5_adaptive_step_solver,
+        num_collect::ode::runge_kutta::rkf45_adaptive_step_solver),
     (wrapped_changing_mass_exponential_problem)) {
     using problem_type =
         num_prob_collect::ode::changing_mass_exponential_problem;

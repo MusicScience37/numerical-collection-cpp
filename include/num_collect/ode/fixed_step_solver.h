@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of simple_solver class.
+ * \brief Definition of fixed_step_solver class.
  */
 #pragma once
 
@@ -30,18 +30,19 @@
 namespace num_collect::ode {
 
 /*!
- * \brief Class of simple solver of ODEs.
+ * \brief Class of solvers of ODEs with fixed step sizes.
  *
  * \tparam Formula Type of formula.
  */
 template <concepts::formula Formula>
-class simple_solver : public solver_base<simple_solver<Formula>, Formula> {
+class fixed_step_solver
+    : public solver_base<fixed_step_solver<Formula>, Formula> {
 public:
     //! This type.
-    using this_type = simple_solver<Formula>;
+    using this_type = fixed_step_solver<Formula>;
 
     //! Type of base class.
-    using base_type = solver_base<simple_solver<Formula>, Formula>;
+    using base_type = solver_base<fixed_step_solver<Formula>, Formula>;
 
     using typename base_type::formula_type;
     using typename base_type::problem_type;

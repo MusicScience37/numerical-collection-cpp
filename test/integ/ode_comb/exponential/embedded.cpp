@@ -43,21 +43,21 @@
 TEMPLATE_PRODUCT_TEST_CASE("exponential_problem with embedded formulas", "",
     (
         // embedded Runge-Kutta method.
-        num_collect::ode::runge_kutta::ark43_erk_solver,
-        num_collect::ode::runge_kutta::ark43_esdirk_solver,
-        num_collect::ode::runge_kutta::ark54_esdirk_solver,
-        num_collect::ode::runge_kutta::dopri5_solver,
-        num_collect::ode::runge_kutta::esdirk45_solver,
-        num_collect::ode::runge_kutta::rkf45_solver,
-        num_collect::ode::runge_kutta::sdirk4_solver,
-        num_collect::ode::runge_kutta::tanaka1_solver,
-        num_collect::ode::runge_kutta::tanaka2_solver,
+        num_collect::ode::runge_kutta::ark43_erk_adaptive_step_solver,
+        num_collect::ode::runge_kutta::ark43_esdirk_adaptive_step_solver,
+        num_collect::ode::runge_kutta::ark54_esdirk_adaptive_step_solver,
+        num_collect::ode::runge_kutta::dopri5_adaptive_step_solver,
+        num_collect::ode::runge_kutta::esdirk45_adaptive_step_solver,
+        num_collect::ode::runge_kutta::rkf45_adaptive_step_solver,
+        num_collect::ode::runge_kutta::sdirk4_adaptive_step_solver,
+        num_collect::ode::runge_kutta::tanaka1_adaptive_step_solver,
+        num_collect::ode::runge_kutta::tanaka2_adaptive_step_solver,
         // embedded Rosenbrock method.
-        num_collect::ode::rosenbrock::rodasp_solver,
-        num_collect::ode::rosenbrock::rodaspr_solver,
-        num_collect::ode::rosenbrock::ros34prw_solver,
-        num_collect::ode::rosenbrock::ros34pw3_solver,
-        num_collect::ode::rosenbrock::ros3w_solver),
+        num_collect::ode::rosenbrock::rodasp_adaptive_step_solver,
+        num_collect::ode::rosenbrock::rodaspr_adaptive_step_solver,
+        num_collect::ode::rosenbrock::ros34prw_adaptive_step_solver,
+        num_collect::ode::rosenbrock::ros34pw3_adaptive_step_solver,
+        num_collect::ode::rosenbrock::ros3w_adaptive_step_solver),
     (num_prob_collect::ode::exponential_problem)) {
     using problem_type = num_prob_collect::ode::exponential_problem;
     using solver_type = TestType;

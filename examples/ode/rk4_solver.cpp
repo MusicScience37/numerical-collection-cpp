@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Example to use rk4_solver class.
+ * \brief Example to use rk4_fixed_step_solver class.
  */
 #include <cmath>
 #include <iomanip>
@@ -29,7 +29,8 @@ auto main() -> int {
     configure_logging();
 
     using problem_type = num_prob_collect::ode::exponential_problem;
-    using solver_type = num_collect::ode::runge_kutta::rk4_solver<problem_type>;
+    using solver_type =
+        num_collect::ode::runge_kutta::rk4_fixed_step_solver<problem_type>;
 
     auto solver = solver_type(problem_type());
     constexpr double init_time = 0.0;

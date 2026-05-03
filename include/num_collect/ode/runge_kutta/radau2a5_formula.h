@@ -32,12 +32,12 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/concepts/differentiable_problem.h"
+#include "num_collect/ode/fixed_step_solver.h"
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
 #include "num_collect/ode/runge_kutta/full_implicit_formula_base.h"
 #include "num_collect/ode/runge_kutta/impl/inexact_newton_decomposed_jacobian_real_eigen_solver.h"
 #include "num_collect/ode/runge_kutta/inexact_newton_decomposed_full_slope_equation_solver.h"
 #include "num_collect/ode/runge_kutta/inexact_newton_decomposed_full_update_equation_solver.h"
-#include "num_collect/ode/simple_solver.h"
 
 namespace num_collect::ode::runge_kutta {
 
@@ -461,41 +461,42 @@ private:
 };
 
 /*!
- * \brief Class of solver using Radau IIA method of order 5.
- *
- * \tparam Problem Type of problem.
- */
-template <concepts::differentiable_problem Problem>
-using radau2a5_solver = simple_solver<radau2a5_formula<Problem>>;
-
-/*!
- * \brief Class of solver using Radau IIA method of order 5 with automatic step
+ * \brief Class of solver using Radau IIA method of order 5 with fixed step
  * sizes.
  *
  * \tparam Problem Type of problem.
  */
 template <concepts::differentiable_problem Problem>
-using radau2a5_auto_solver =
-    non_embedded_auto_solver<radau2a5_formula<Problem>>;
+using radau2a5_fixed_step_solver = fixed_step_solver<radau2a5_formula<Problem>>;
 
 /*!
- * \brief Class of solver using Radau IIA method of order 5 with changing mass
- * matrix.
+ * \brief Class of solver using Radau IIA method of order 5 with adaptive step
+ * sizes.
  *
  * \tparam Problem Type of problem.
  */
 template <concepts::differentiable_problem Problem>
-using radau2a5_changing_mass_solver =
-    simple_solver<radau2a5_changing_mass_formula<Problem>>;
+using radau2a5_adaptive_step_solver =
+    non_embedded_adaptive_step_solver<radau2a5_formula<Problem>>;
 
 /*!
- * \brief Class of solver using Radau IIA method of order 5 with automatic step
+ * \brief Class of solver using Radau IIA method of order 5 with changing mass
+ * matrix with fixed step sizes.
+ *
+ * \tparam Problem Type of problem.
+ */
+template <concepts::differentiable_problem Problem>
+using radau2a5_changing_mass_fixed_step_solver =
+    fixed_step_solver<radau2a5_changing_mass_formula<Problem>>;
+
+/*!
+ * \brief Class of solver using Radau IIA method of order 5 with adaptive step
  * sizes for changing mass matrix.
  *
  * \tparam Problem Type of problem.
  */
 template <concepts::differentiable_problem Problem>
-using radau2a5_changing_mass_auto_solver =
-    non_embedded_auto_solver<radau2a5_changing_mass_formula<Problem>>;
+using radau2a5_changing_mass_adaptive_step_solver =
+    non_embedded_adaptive_step_solver<radau2a5_changing_mass_formula<Problem>>;
 
 }  // namespace num_collect::ode::runge_kutta

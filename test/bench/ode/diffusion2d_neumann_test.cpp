@@ -213,34 +213,28 @@ auto main(int argc, char** argv) -> int {
 
     bench_executor executor{};
 
-    bench_one<num_collect::ode::runge_kutta::sdirk4_solver<problem_type>>(
-        "SDIRK4", executor);
-    bench_one<
-        num_collect::ode::runge_kutta::lobatto3c4_auto_solver<problem_type>>(
-        "LobattoIIIC4", executor);
-    bench_one<
-        num_collect::ode::runge_kutta::lobatto3c6_auto_solver<problem_type>>(
-        "LobattoIIIC6", executor);
-    bench_one<
-        num_collect::ode::runge_kutta::radau2a3_auto_solver<problem_type>>(
-        "RadauIIA3", executor);
-    bench_one<
-        num_collect::ode::runge_kutta::radau2a5_auto_solver<problem_type>>(
-        "RadauIIA5", executor);
-    bench_one<
-        num_collect::ode::runge_kutta::radau2a9_auto_solver<problem_type>>(
-        "RadauIIA9", executor);
-    bench_one<
-        num_collect::ode::runge_kutta::radau2a13_auto_solver<problem_type>>(
-        "RadauIIA13", executor);
-    bench_one<num_collect::ode::rosenbrock::ros34prw_solver<problem_type>>(
-        "ROS34PRw", executor);
-    bench_one<num_collect::ode::rosenbrock::ros34pw3_solver<problem_type>>(
-        "ROS34PW3", executor);
-    bench_one<num_collect::ode::rosenbrock::rodasp_solver<problem_type>>(
-        "RODASP", executor);
-    bench_one<num_collect::ode::rosenbrock::rodaspr_solver<problem_type>>(
-        "RODASPR", executor);
+    bench_one<num_collect::ode::runge_kutta::sdirk4_adaptive_step_solver<
+        problem_type>>("SDIRK4", executor);
+    bench_one<num_collect::ode::runge_kutta::lobatto3c4_adaptive_step_solver<
+        problem_type>>("LobattoIIIC4", executor);
+    bench_one<num_collect::ode::runge_kutta::lobatto3c6_adaptive_step_solver<
+        problem_type>>("LobattoIIIC6", executor);
+    bench_one<num_collect::ode::runge_kutta::radau2a3_adaptive_step_solver<
+        problem_type>>("RadauIIA3", executor);
+    bench_one<num_collect::ode::runge_kutta::radau2a5_adaptive_step_solver<
+        problem_type>>("RadauIIA5", executor);
+    bench_one<num_collect::ode::runge_kutta::radau2a9_adaptive_step_solver<
+        problem_type>>("RadauIIA9", executor);
+    bench_one<num_collect::ode::runge_kutta::radau2a13_adaptive_step_solver<
+        problem_type>>("RadauIIA13", executor);
+    bench_one<num_collect::ode::rosenbrock::ros34prw_adaptive_step_solver<
+        problem_type>>("ROS34PRw", executor);
+    bench_one<num_collect::ode::rosenbrock::ros34pw3_adaptive_step_solver<
+        problem_type>>("ROS34PW3", executor);
+    bench_one<num_collect::ode::rosenbrock::rodasp_adaptive_step_solver<
+        problem_type>>("RODASP", executor);
+    bench_one<num_collect::ode::rosenbrock::rodaspr_adaptive_step_solver<
+        problem_type>>("RODASPR", executor);
 
     executor.write_result(problem_name,
         fmt::format("{} ({} Nodes)", problem_description_base,

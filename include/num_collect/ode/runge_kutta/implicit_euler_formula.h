@@ -25,9 +25,9 @@
 #include "num_collect/ode/concepts/mass_problem.h"
 #include "num_collect/ode/concepts/problem.h"
 #include "num_collect/ode/concepts/slope_equation_solver.h"
+#include "num_collect/ode/fixed_step_solver.h"
 #include "num_collect/ode/runge_kutta/implicit_formula_base.h"
 #include "num_collect/ode/runge_kutta/inexact_newton_slope_equation_solver.h"
-#include "num_collect/ode/simple_solver.h"
 
 namespace num_collect::ode::runge_kutta {
 
@@ -104,11 +104,12 @@ private:
 };
 
 /*!
- * \brief Class of solver using implicit Euler method.
+ * \brief Class of solver using implicit Euler method with fixed step sizes.
  *
  * \tparam Problem Type of problem.
  */
 template <concepts::problem Problem>
-using implicit_euler_solver = simple_solver<implicit_euler_formula<Problem>>;
+using implicit_euler_fixed_step_solver =
+    fixed_step_solver<implicit_euler_formula<Problem>>;
 
 }  // namespace num_collect::ode::runge_kutta

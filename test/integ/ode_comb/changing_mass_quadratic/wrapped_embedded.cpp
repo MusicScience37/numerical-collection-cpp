@@ -39,10 +39,10 @@ TEMPLATE_PRODUCT_TEST_CASE(
     "",
     (
         // embedded Runge-Kutta method.
-        num_collect::ode::runge_kutta::ark43_erk_solver,
-        num_collect::ode::runge_kutta::dopri5_solver
-        // TODO: Why num_collect::ode::runge_kutta::rkf45_solver can't solve
-        // this?
+        num_collect::ode::runge_kutta::ark43_erk_adaptive_step_solver,
+        num_collect::ode::runge_kutta::dopri5_adaptive_step_solver
+        // TODO: Why num_collect::ode::runge_kutta::rkf45_adaptive_step_solver
+        // can't solve this?
         ),
     (wrapped_changing_mass_quadratic_problem)) {
     using problem_type = num_prob_collect::ode::changing_mass_quadratic_problem;

@@ -36,13 +36,13 @@
 TEMPLATE_PRODUCT_TEST_CASE("implicit_kaps_problem with embedded formulas", "",
     (
         // embedded Rosenbrock method.
-        num_collect::ode::rosenbrock::rodasp_solver,
-        num_collect::ode::rosenbrock::rodaspr_solver,
-        num_collect::ode::rosenbrock::ros34prw_solver,
-        num_collect::ode::rosenbrock::ros34pw3_solver,
-        num_collect::ode::rosenbrock::ros3w_solver,
+        num_collect::ode::rosenbrock::rodasp_adaptive_step_solver,
+        num_collect::ode::rosenbrock::rodaspr_adaptive_step_solver,
+        num_collect::ode::rosenbrock::ros34prw_adaptive_step_solver,
+        num_collect::ode::rosenbrock::ros34pw3_adaptive_step_solver,
+        num_collect::ode::rosenbrock::ros3w_adaptive_step_solver,
         // embedded Runge-Kutta method.
-        num_collect::ode::runge_kutta::sdirk4_solver),
+        num_collect::ode::runge_kutta::sdirk4_adaptive_step_solver),
     (num_prob_collect::ode::implicit_kaps_problem)) {
     using problem_type = num_prob_collect::ode::implicit_kaps_problem;
     using solver_type = TestType;

@@ -25,7 +25,7 @@
 static void test() {
     using problem_type = num_prob_collect::ode::free_fall_in_resistance_problem;
     using solver_type =
-        num_collect::ode::rosenbrock::rodasp_solver<problem_type>;
+        num_collect::ode::rosenbrock::rodasp_adaptive_step_solver<problem_type>;
 
     constexpr double k = 1e+3;
     constexpr double g = 1.0;
@@ -40,7 +40,7 @@ static void test() {
 
 auto main() -> int {
     constexpr std::size_t repetition = 50000;
-    ProfilerStart("profile_ode_rodasp_solver.prof");
+    ProfilerStart("profile_ode_rodasp_adaptive_step_solver.prof");
     for (std::size_t i = 0; i < repetition; ++i) {
         test();
     }

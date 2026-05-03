@@ -28,10 +28,10 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/concepts/differentiable_problem.h"
+#include "num_collect/ode/fixed_step_solver.h"
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
 #include "num_collect/ode/runge_kutta/full_implicit_formula_base.h"
 #include "num_collect/ode/runge_kutta/inexact_newton_decomposed_full_update_equation_solver.h"
-#include "num_collect/ode/simple_solver.h"
 
 namespace num_collect::ode::runge_kutta {
 
@@ -256,21 +256,23 @@ private:
 };
 
 /*!
- * \brief Class of solver using Lobatto IIIC method of order 6.
+ * \brief Class of solver using Lobatto IIIC method of order 6 with fixed step
+ * sizes.
  *
  * \tparam Problem Type of problem.
  */
 template <concepts::differentiable_problem Problem>
-using lobatto3c6_solver = simple_solver<lobatto3c6_formula<Problem>>;
+using lobatto3c6_fixed_step_solver =
+    fixed_step_solver<lobatto3c6_formula<Problem>>;
 
 /*!
- * \brief Class of solver using Lobatto IIIC method of order 6 with automatic
+ * \brief Class of solver using Lobatto IIIC method of order 6 with adaptive
  * step sizes.
  *
  * \tparam Problem Type of problem.
  */
 template <concepts::differentiable_problem Problem>
-using lobatto3c6_auto_solver =
-    non_embedded_auto_solver<lobatto3c6_formula<Problem>>;
+using lobatto3c6_adaptive_step_solver =
+    non_embedded_adaptive_step_solver<lobatto3c6_formula<Problem>>;
 
 }  // namespace num_collect::ode::runge_kutta

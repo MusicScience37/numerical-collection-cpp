@@ -21,9 +21,9 @@
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/ode/adaptive_step_solver.h"
 #include "num_collect/ode/concepts/problem.h"
 #include "num_collect/ode/concepts/rosenbrock_equation_solver.h"
-#include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/evaluation_type.h"
 #include "num_collect/ode/rosenbrock/default_rosenbrock_equation_solver.h"
 #include "num_collect/ode/rosenbrock/rosenbrock_formula_base.h"
@@ -223,11 +223,13 @@ private:
 };
 
 /*!
- * \brief Class of solver using ROS34PRw formula in \cite Rang2015.
+ * \brief Class of solver using ROS34PRw formula in \cite Rang2015 with adaptive
+ * step sizes.
  *
  * \tparam Problem Type of problem.
  */
 template <concepts::problem Problem>
-using ros34prw_solver = embedded_solver<ros34prw_formula<Problem>>;
+using ros34prw_adaptive_step_solver =
+    adaptive_step_solver<ros34prw_formula<Problem>>;
 
 }  // namespace num_collect::ode::rosenbrock

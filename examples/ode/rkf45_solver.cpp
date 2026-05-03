@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Example to use rkf45_solver class.
+ * \brief Example to use rkf45_adaptive_step_solver class.
  */
 #include <cmath>
 #include <iomanip>
@@ -30,7 +30,7 @@ auto main() -> int {
 
     using problem_type = num_prob_collect::ode::exponential_problem;
     using solver_type =
-        num_collect::ode::runge_kutta::rkf45_solver<problem_type>;
+        num_collect::ode::runge_kutta::rkf45_adaptive_step_solver<problem_type>;
 
     auto solver = solver_type(problem_type());
     constexpr double init_time = 0.0;

@@ -27,8 +27,8 @@
 #include "num_collect/ode/concepts/multi_variate_problem.h"
 #include "num_collect/ode/concepts/problem.h"
 #include "num_collect/ode/evaluation_type.h"
+#include "num_collect/ode/fixed_step_solver.h"
 #include "num_collect/ode/formula_base.h"
-#include "num_collect/ode/simple_solver.h"
 
 namespace num_collect::ode::symplectic {
 
@@ -113,7 +113,7 @@ public:
 };
 
 /*!
- * \brief Class of solver using leap-frog formula.
+ * \brief Class of solver using leap-frog formula with fixed step size.
  *
  * This formula solves initial value problems of ODEs with following structure:
  *
@@ -136,6 +136,7 @@ public:
  * \tparam Problem Type of problem.
  */
 template <concepts::problem Problem>
-using leap_frog_solver = simple_solver<leap_frog_formula<Problem>>;
+using leap_frog_fixed_step_solver =
+    fixed_step_solver<leap_frog_formula<Problem>>;
 
 }  // namespace num_collect::ode::symplectic

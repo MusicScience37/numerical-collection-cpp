@@ -28,16 +28,15 @@
 
 TEST_CASE(
     "changing_mass_quadratic_problem with "
-    "radau2a5_changing_mass_auto_solver", ) {
+    "radau2a5_changing_mass_adaptive_step_solver", ) {
     // Previous implementation had a bug that the equation solver fails with
     // NaNs.
     // In addition, no convergence occurred in this combination without handling
     // of no convergence.
 
     using problem_type = num_prob_collect::ode::changing_mass_quadratic_problem;
-    using solver_type =
-        num_collect::ode::runge_kutta::radau2a5_changing_mass_auto_solver<
-            problem_type>;
+    using solver_type = num_collect::ode::runge_kutta::
+        radau2a5_changing_mass_adaptive_step_solver<problem_type>;
 
     SECTION("solve") {
         auto solver = solver_type(problem_type());

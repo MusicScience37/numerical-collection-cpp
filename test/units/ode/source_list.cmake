@@ -1,11 +1,12 @@
 set(SOURCE_FILES
+    adaptive_step_solver_test.cpp
     avf/avf2_formula_test.cpp
     avf/avf3_formula_test.cpp
     avf/avf4_formula_test.cpp
     classic_step_size_controller_test.cpp
-    embedded_solver_test.cpp
     error_tolerances_test.cpp
     evaluation_type_test.cpp
+    fixed_step_solver_test.cpp
     impl/approx_slope_calculator_test.cpp
     impl/bicgstab_test.cpp
     impl/get_least_known_order_test.cpp
@@ -53,7 +54,6 @@ set(SOURCE_FILES
     runge_kutta/slope_calculator_test.cpp
     runge_kutta/tanaka1_formula_test.cpp
     runge_kutta/tanaka2_formula_test.cpp
-    simple_solver_test.cpp
     smoothed_digital_filter_step_size_controller_test.cpp
     step_size_limits_test.cpp
     symplectic/leap_frog_formula_test.cpp

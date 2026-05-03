@@ -66,7 +66,7 @@ auto main(int argc, char** argv) -> int {
 
     using problem_type = num_prob_collect::ode::string_wave_1d_problem;
     using solver_type =
-        num_collect::ode::rosenbrock::rodasp_solver<problem_type>;
+        num_collect::ode::rosenbrock::rodasp_adaptive_step_solver<problem_type>;
 
     const auto config = toml::parse_file(config_filepath);
     const double speed = get_config_value<double>(config, "speed");

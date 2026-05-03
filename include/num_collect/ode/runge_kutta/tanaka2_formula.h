@@ -22,10 +22,10 @@
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/ode/adaptive_step_solver.h"
 #include "num_collect/ode/concepts/mass_problem.h"
 #include "num_collect/ode/concepts/problem.h"
 #include "num_collect/ode/concepts/slope_equation_solver.h"
-#include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/runge_kutta/implicit_formula_base.h"
 #include "num_collect/ode/runge_kutta/inexact_newton_slope_equation_solver.h"
 
@@ -177,11 +177,12 @@ private:
 };
 
 /*!
- * \brief Class of solver using Tanaka Formula 2.
+ * \brief Class of solver using Tanaka Formula 2 with adaptive step sizes.
  *
  * \tparam Problem Type of problem.
  */
 template <concepts::problem Problem>
-using tanaka2_solver = embedded_solver<tanaka2_formula<Problem>>;
+using tanaka2_adaptive_step_solver =
+    adaptive_step_solver<tanaka2_formula<Problem>>;
 
 }  // namespace num_collect::ode::runge_kutta

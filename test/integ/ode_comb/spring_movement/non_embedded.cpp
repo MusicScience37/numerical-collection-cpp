@@ -36,14 +36,15 @@
 
 TEMPLATE_PRODUCT_TEST_CASE("spring_movement_problem with non-embedded formulas",
     "",
-    (num_collect::ode::runge_kutta::implicit_euler_solver,
-        num_collect::ode::runge_kutta::rk4_solver,
+    (num_collect::ode::runge_kutta::implicit_euler_fixed_step_solver,
+        num_collect::ode::runge_kutta::rk4_fixed_step_solver,
         // AVF methods.
-        num_collect::ode::avf::avf2_solver, num_collect::ode::avf::avf3_solver,
-        num_collect::ode::avf::avf4_solver,
+        num_collect::ode::avf::avf2_fixed_step_solver,
+        num_collect::ode::avf::avf3_fixed_step_solver,
+        num_collect::ode::avf::avf4_fixed_step_solver,
         // Symplectic methods.
-        num_collect::ode::symplectic::leap_frog_solver,
-        num_collect::ode::symplectic::symplectic_forest4_solver),
+        num_collect::ode::symplectic::leap_frog_fixed_step_solver,
+        num_collect::ode::symplectic::symplectic_fixed_step_forest4_solver),
     (num_prob_collect::ode::spring_movement_problem)) {
     using problem_type = num_prob_collect::ode::spring_movement_problem;
     using solver_type = TestType;

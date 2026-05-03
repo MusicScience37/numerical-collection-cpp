@@ -28,8 +28,8 @@
 #include "num_collect/ode/concepts/multi_variate_problem.h"
 #include "num_collect/ode/concepts/problem.h"
 #include "num_collect/ode/evaluation_type.h"
+#include "num_collect/ode/fixed_step_solver.h"
 #include "num_collect/ode/formula_base.h"
-#include "num_collect/ode/simple_solver.h"
 
 namespace num_collect::ode::symplectic {
 
@@ -156,7 +156,7 @@ public:
 
 /*!
  * \brief Class of fourth-order symplectic integration formula in
- * \cite Forest1990.
+ * \cite Forest1990 with fixed step sizes.
  *
  * This formula solves initial value problems of ODEs with following structure:
  *
@@ -177,7 +177,7 @@ public:
  * \tparam Problem Type of problem.
  */
 template <concepts::problem Problem>
-using symplectic_forest4_solver =
-    simple_solver<symplectic_forest4_formula<Problem>>;
+using symplectic_fixed_step_forest4_solver =
+    fixed_step_solver<symplectic_forest4_formula<Problem>>;
 
 }  // namespace num_collect::ode::symplectic

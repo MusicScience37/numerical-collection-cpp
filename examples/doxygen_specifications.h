@@ -35,12 +35,12 @@
 
 /*!
  * \example ode/rk4_solver.cpp
- * Example to use rk4_solver class.
+ * Example to use rk4_fixed_step_solver class.
  */
 
 /*!
  * \example ode/rkf45_solver.cpp
- * Example to use rkf45_solver class.
+ * Example to use rkf45_adaptive_step_solver class.
  */
 
 /*!
