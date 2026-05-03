@@ -40,7 +40,7 @@ static void test() {
 
 auto main() -> int {
     constexpr std::size_t repetition = 50000;
-    ProfilerStart("profile_ode_rodasp_adaptive_step_solver.prof");
+    ProfilerStart("profile_ode_rodasp_solver.prof");
     for (std::size_t i = 0; i < repetition; ++i) {
         test();
     }
