@@ -26,6 +26,7 @@
 #include "num_collect/ode/concepts/problem.h"
 #include "num_collect/ode/concepts/slope_equation_solver.h"
 #include "num_collect/ode/fixed_step_solver.h"
+#include "num_collect/ode/non_embedded_formula_wrapper.h"
 #include "num_collect/ode/runge_kutta/implicit_formula_base.h"
 #include "num_collect/ode/runge_kutta/inexact_newton_slope_equation_solver.h"
 
@@ -69,7 +70,7 @@ public:
     static constexpr index_type stages = 1;
 
     //! Order of this formula.
-    static constexpr index_type order = 2;
+    static constexpr index_type order = 1;
 
     //! Log tag.
     static constexpr auto log_tag = logging::log_tag_view(
@@ -111,5 +112,14 @@ private:
 template <concepts::problem Problem>
 using implicit_euler_fixed_step_solver =
     fixed_step_solver<implicit_euler_formula<Problem>>;
+
+/*!
+ * \brief Class of solver using implicit Euler method with adaptive step sizes.
+ *
+ * \tparam Problem Type of problem.
+ */
+template <concepts::problem Problem>
+using implicit_euler_adaptive_step_solver =
+    non_embedded_adaptive_step_solver<implicit_euler_formula<Problem>>;
 
 }  // namespace num_collect::ode::runge_kutta
