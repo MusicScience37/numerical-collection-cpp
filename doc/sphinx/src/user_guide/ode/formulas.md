@@ -11,6 +11,7 @@ Some notes on the properties are written below the tables.
 | Runge-Kutta | ARK4(3)6L[2]SA-ESDIRK {cite:p}`Kennedy2003`  | `ark43_esdirk`         | No       | 6      | 4, 3   |
 | Runge-Kutta | ARK5(4)8L[2]SA-ESDIRK {cite:p}`Kennedy2003`  | `ark54_esdirk`         | No       | 8      | 5, 4   |
 | Runge-Kutta | DOPRI5 {cite:p}`Hairer1991`                  | `dopri5`               | Yes      | 7      | 5, 4   |
+| Runge-Kutta | ESDIRK 3/2 a {cite:p}`Kvaerno2004`           | `esdirk32`             | No       | 4      | 3, 2   |
 | Runge-Kutta | ESDIRK45c {cite:p}`Jorgensen2018`            | `esdirk45`             | No       | 6      | 4, 5   |
 | Runge-Kutta | RK4 {cite:p}`Hairer1993`                     | `rk4`                  | Yes      | 4      | 4      |
 | Runge-Kutta | RKF45 {cite:p}`Hairer1993`                   | `rkf45`                | Yes      | 6      | 4, 5   |
@@ -44,6 +45,7 @@ Some notes on the properties are written below the tables.
 | :---------- | :------------------------------------------ | :--------------- | :------- | :------- | :------- | :------- |
 | Runge-Kutta | ARK4(3)6L[2]SA-ESDIRK {cite:p}`Kennedy2003` | Yes              | Yes      |          | Yes      |          |
 | Runge-Kutta | ARK5(4)8L[2]SA-ESDIRK {cite:p}`Kennedy2003` | Yes              | Yes      |          | Yes      |          |
+| Runge-Kutta | ESDIRK 3/2 a {cite:p}`Kvaerno2004`          | Yes              | Yes      |          | Yes      |          |
 | Runge-Kutta | ESDIRK45c {cite:p}`Jorgensen2018`           | Yes              | Yes      |          | Yes      |          |
 | Runge-Kutta | 4th order SDIRK {cite:p}`Hairer1991`        | Yes              | Yes      |          | Yes      |          |
 | Runge-Kutta | Tanaka Formula 1 {cite:p}`Togawa2007`       | No               |          |          |          |          |
@@ -81,6 +83,7 @@ Some notes on the properties are written below the tables.
 | Runge-Kutta | ARK4(3)6L[2]SA-ESDIRK {cite:p}`Kennedy2003`  | Yes           | Yes             | None    |
 | Runge-Kutta | ARK5(4)8L[2]SA-ESDIRK {cite:p}`Kennedy2003`  | Yes           | Yes             | None    |
 | Runge-Kutta | DOPRI5 {cite:p}`Hairer1991`                  | No            | No              | None    |
+| Runge-Kutta | ESDIRK 3/2 a {cite:p}`Kvaerno2004`           | Yes           | Yes             | None    |
 | Runge-Kutta | ESDIRK45c {cite:p}`Jorgensen2018`            | Yes           | Yes             | None    |
 | Runge-Kutta | RK4 {cite:p}`Hairer1993`                     | No            | No              | None    |
 | Runge-Kutta | RKF45 {cite:p}`Hairer1993`                   | No            | No              | None    |

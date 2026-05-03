@@ -32,6 +32,7 @@
 #include "num_collect/ode/rosenbrock/ros34pw3_formula.h"
 #include "num_collect/ode/rosenbrock/ros3w_formula.h"
 #include "num_collect/ode/runge_kutta/crank_nicolson_formula.h"
+#include "num_collect/ode/runge_kutta/esdirk32_formula.h"
 #include "num_collect/ode/runge_kutta/esdirk45_formula.h"
 #include "num_collect/ode/runge_kutta/implicit_euler_formula.h"
 #include "num_collect/ode/runge_kutta/lobatto3c4_formula.h"
@@ -178,6 +179,8 @@ auto main(int argc, char** argv) -> int {
         "CrankNicolson", executor);
     bench_one<num_collect::ode::runge_kutta::sdirk4_adaptive_step_solver<
         problem_type>>("SDIRK4", executor);
+    bench_one<num_collect::ode::runge_kutta::esdirk32_adaptive_step_solver<
+        problem_type>>("ESDIRK32a", executor);
     bench_one<num_collect::ode::runge_kutta::esdirk45_adaptive_step_solver<
         problem_type>>("ESDIRK45c", executor);
     bench_one<num_collect::ode::runge_kutta::lobatto3c4_adaptive_step_solver<
