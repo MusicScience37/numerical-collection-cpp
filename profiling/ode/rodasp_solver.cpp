@@ -25,7 +25,7 @@
 static void test() {
     using problem_type = num_prob_collect::ode::free_fall_in_resistance_problem;
     using solver_type =
-        num_collect::ode::rosenbrock::rodasp_solver<problem_type>;
+        num_collect::ode::rosenbrock::rodasp_adaptive_step_solver<problem_type>;
 
     constexpr double k = 1e+3;
     constexpr double g = 1.0;

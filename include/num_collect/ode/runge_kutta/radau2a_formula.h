@@ -26,11 +26,11 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/concepts/differentiable_problem.h"
+#include "num_collect/ode/fixed_step_solver.h"
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
 #include "num_collect/ode/runge_kutta/full_implicit_formula_base.h"
 #include "num_collect/ode/runge_kutta/impl/radau2a_table.h"
 #include "num_collect/ode/runge_kutta/inexact_newton_decomposed_full_update_equation_solver.h"
-#include "num_collect/ode/simple_solver.h"
 
 namespace num_collect::ode::runge_kutta {
 
@@ -204,36 +204,38 @@ private:
 };
 
 /*!
- * \brief Class of solver using Radau IIA method.
+ * \brief Class of solver using Radau IIA method with fixed step sizes.
  *
  * \tparam Stages Number of stages.
  * \tparam Problem Type of problem.
  */
 template <index_type Stages, concepts::differentiable_problem Problem>
-using radau2a_solver = simple_solver<radau2a_formula<Stages, Problem>>;
+using radau2a_fixed_step_solver =
+    fixed_step_solver<radau2a_formula<Stages, Problem>>;
 
 /*!
- * \brief Class of solver using Radau IIA method with automatic step
+ * \brief Class of solver using Radau IIA method with adaptive step
  * sizes.
  *
  * \tparam Stages Number of stages.
  * \tparam Problem Type of problem.
  */
 template <index_type Stages, concepts::differentiable_problem Problem>
-using radau2a_auto_solver =
-    non_embedded_auto_solver<radau2a_formula<Stages, Problem>>;
+using radau2a_adaptive_step_solver =
+    non_embedded_adaptive_step_solver<radau2a_formula<Stages, Problem>>;
 
 /*!
- * \brief Class of solver using Radau IIA method of order 7.
+ * \brief Class of solver using Radau IIA method of order 7 with fixed step
+ * sizes.
  *
  * \tparam Stages Number of stages.
  * \tparam Problem Type of problem.
  */
 template <concepts::differentiable_problem Problem>
-using radau2a7_solver = radau2a_solver<4, Problem>;
+using radau2a7_fixed_step_solver = radau2a_fixed_step_solver<4, Problem>;
 
 /*!
- * \brief Class of solver using Radau IIA method of order 7 with automatic step
+ * \brief Class of solver using Radau IIA method of order 7 with adaptive step
  * sizes.
  *
  * \tparam Stages Number of stages.
@@ -242,19 +244,20 @@ using radau2a7_solver = radau2a_solver<4, Problem>;
  * \warning This class is experimental and not working well currently.
  */
 template <concepts::differentiable_problem Problem>
-using radau2a7_auto_solver = radau2a_auto_solver<4, Problem>;
+using radau2a7_adaptive_step_solver = radau2a_adaptive_step_solver<4, Problem>;
 
 /*!
- * \brief Class of solver using Radau IIA method of order 9.
+ * \brief Class of solver using Radau IIA method of order 9 with fixed step
+ * sizes.
  *
  * \tparam Stages Number of stages.
  * \tparam Problem Type of problem.
  */
 template <concepts::differentiable_problem Problem>
-using radau2a9_solver = radau2a_solver<5, Problem>;
+using radau2a9_fixed_step_solver = radau2a_fixed_step_solver<5, Problem>;
 
 /*!
- * \brief Class of solver using Radau IIA method of order 9 with automatic step
+ * \brief Class of solver using Radau IIA method of order 9 with adaptive step
  * sizes.
  *
  * \tparam Stages Number of stages.
@@ -263,19 +266,20 @@ using radau2a9_solver = radau2a_solver<5, Problem>;
  * \warning This class is experimental and not working well currently.
  */
 template <concepts::differentiable_problem Problem>
-using radau2a9_auto_solver = radau2a_auto_solver<5, Problem>;
+using radau2a9_adaptive_step_solver = radau2a_adaptive_step_solver<5, Problem>;
 
 /*!
- * \brief Class of solver using Radau IIA method of order 11.
+ * \brief Class of solver using Radau IIA method of order 11 with fixed step
+ * sizes.
  *
  * \tparam Stages Number of stages.
  * \tparam Problem Type of problem.
  */
 template <concepts::differentiable_problem Problem>
-using radau2a11_solver = radau2a_solver<6, Problem>;
+using radau2a11_fixed_step_solver = radau2a_fixed_step_solver<6, Problem>;
 
 /*!
- * \brief Class of solver using Radau IIA method of order 11 with automatic step
+ * \brief Class of solver using Radau IIA method of order 11 with adaptive step
  * sizes.
  *
  * \tparam Stages Number of stages.
@@ -284,19 +288,20 @@ using radau2a11_solver = radau2a_solver<6, Problem>;
  * \warning This class is experimental and not working well currently.
  */
 template <concepts::differentiable_problem Problem>
-using radau2a11_auto_solver = radau2a_auto_solver<6, Problem>;
+using radau2a11_adaptive_step_solver = radau2a_adaptive_step_solver<6, Problem>;
 
 /*!
- * \brief Class of solver using Radau IIA method of order 13.
+ * \brief Class of solver using Radau IIA method of order 13 with fixed step
+ * sizes.
  *
  * \tparam Stages Number of stages.
  * \tparam Problem Type of problem.
  */
 template <concepts::differentiable_problem Problem>
-using radau2a13_solver = radau2a_solver<7, Problem>;
+using radau2a13_fixed_step_solver = radau2a_fixed_step_solver<7, Problem>;
 
 /*!
- * \brief Class of solver using Radau IIA method of order 13 with automatic step
+ * \brief Class of solver using Radau IIA method of order 13 with adaptive step
  * sizes.
  *
  * \tparam Stages Number of stages.
@@ -305,19 +310,20 @@ using radau2a13_solver = radau2a_solver<7, Problem>;
  * \warning This class is experimental and not working well currently.
  */
 template <concepts::differentiable_problem Problem>
-using radau2a13_auto_solver = radau2a_auto_solver<7, Problem>;
+using radau2a13_adaptive_step_solver = radau2a_adaptive_step_solver<7, Problem>;
 
 /*!
- * \brief Class of solver using Radau IIA method of order 15.
+ * \brief Class of solver using Radau IIA method of order 15 with fixed step
+ * sizes.
  *
  * \tparam Stages Number of stages.
  * \tparam Problem Type of problem.
  */
 template <concepts::differentiable_problem Problem>
-using radau2a15_solver = radau2a_solver<8, Problem>;
+using radau2a15_fixed_step_solver = radau2a_fixed_step_solver<8, Problem>;
 
 /*!
- * \brief Class of solver using Radau IIA method of order 15 with automatic step
+ * \brief Class of solver using Radau IIA method of order 15 with adaptive step
  * sizes.
  *
  * \tparam Stages Number of stages.
@@ -326,19 +332,20 @@ using radau2a15_solver = radau2a_solver<8, Problem>;
  * \warning This class is experimental and not working well currently.
  */
 template <concepts::differentiable_problem Problem>
-using radau2a15_auto_solver = radau2a_auto_solver<8, Problem>;
+using radau2a15_adaptive_step_solver = radau2a_adaptive_step_solver<8, Problem>;
 
 /*!
- * \brief Class of solver using Radau IIA method of order 17.
+ * \brief Class of solver using Radau IIA method of order 17 with fixed step
+ * sizes.
  *
  * \tparam Stages Number of stages.
  * \tparam Problem Type of problem.
  */
 template <concepts::differentiable_problem Problem>
-using radau2a17_solver = radau2a_solver<9, Problem>;
+using radau2a17_fixed_step_solver = radau2a_fixed_step_solver<9, Problem>;
 
 /*!
- * \brief Class of solver using Radau IIA method of order 17 with automatic step
+ * \brief Class of solver using Radau IIA method of order 17 with adaptive step
  * sizes.
  *
  * \tparam Stages Number of stages.
@@ -347,6 +354,6 @@ using radau2a17_solver = radau2a_solver<9, Problem>;
  * \warning This class is experimental and not working well currently.
  */
 template <concepts::differentiable_problem Problem>
-using radau2a17_auto_solver = radau2a_auto_solver<9, Problem>;
+using radau2a17_adaptive_step_solver = radau2a_adaptive_step_solver<9, Problem>;
 
 }  // namespace num_collect::ode::runge_kutta

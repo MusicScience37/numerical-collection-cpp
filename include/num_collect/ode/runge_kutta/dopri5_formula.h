@@ -21,8 +21,8 @@
 
 #include "num_collect/base/index_type.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/ode/adaptive_step_solver.h"
 #include "num_collect/ode/concepts/problem.h"
-#include "num_collect/ode/embedded_solver.h"
 #include "num_collect/ode/evaluation_type.h"
 #include "num_collect/ode/formula_base.h"
 
@@ -211,11 +211,12 @@ private:
 
 /*!
  * \brief Class of solver using DOPRI5 formula with coefficients in
- * \cite Hairer1991.
+ * \cite Hairer1991 with adaptive step sizes.
  *
  * \tparam Problem Type of problem.
  */
 template <concepts::problem Problem>
-using dopri5_solver = embedded_solver<dopri5_formula<Problem>>;
+using dopri5_adaptive_step_solver =
+    adaptive_step_solver<dopri5_formula<Problem>>;
 
 }  // namespace num_collect::ode::runge_kutta

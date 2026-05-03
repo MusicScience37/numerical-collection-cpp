@@ -113,7 +113,8 @@ TEST_CASE("Diffusion equation in 2D with Dirichlet boundary condition") {
 
     NUM_COLLECT_LOG_DEBUG(logger, "Solve the system.");
     using solver_type =
-        num_collect::ode::rosenbrock::rodaspr_solver<ode_problem_type>;
+        num_collect::ode::rosenbrock::rodaspr_adaptive_step_solver<
+            ode_problem_type>;
     solver_type solver(problem);
     const solution_type initial_variable = solution.head(num_interior_nodes);
     solver.init(initial_time, initial_variable);

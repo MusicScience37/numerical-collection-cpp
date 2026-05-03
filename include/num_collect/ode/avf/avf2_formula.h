@@ -29,8 +29,8 @@
 #include "num_collect/ode/avf/impl/avf_integrand.h"
 #include "num_collect/ode/concepts/problem.h"
 #include "num_collect/ode/evaluation_type.h"
+#include "num_collect/ode/fixed_step_solver.h"
 #include "num_collect/ode/non_embedded_formula_wrapper.h"
-#include "num_collect/ode/simple_solver.h"
 
 namespace num_collect::ode::avf {
 
@@ -151,20 +151,21 @@ private:
 
 /*!
  * \brief Class of solver using 2nd order average vector field (AVF) method
- * \cite Quispel2008.
+ * \cite Quispel2008 with fixed step sizes.
  *
  * \tparam Problem Type of problem.
  */
 template <concepts::problem Problem>
-using avf2_solver = simple_solver<avf2_formula<Problem>>;
+using avf2_fixed_step_solver = fixed_step_solver<avf2_formula<Problem>>;
 
 /*!
  * \brief Class of solver using 2nd order average vector field (AVF) method
- * \cite Quispel2008 with automatic step sizes.
+ * \cite Quispel2008 with adaptive step sizes.
  *
  * \tparam Problem Type of problem.
  */
 template <concepts::problem Problem>
-using avf2_auto_solver = non_embedded_auto_solver<avf2_formula<Problem>>;
+using avf2_adaptive_step_solver =
+    non_embedded_adaptive_step_solver<avf2_formula<Problem>>;
 
 }  // namespace num_collect::ode::avf

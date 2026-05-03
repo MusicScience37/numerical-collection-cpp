@@ -22,8 +22,8 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/functions/pow.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/ode/adaptive_step_solver.h"
 #include "num_collect/ode/concepts/formula.h"
-#include "num_collect/ode/embedded_solver.h"
 
 namespace num_collect::ode {
 
@@ -163,7 +163,7 @@ private:
  * \tparam Formula Type of formula.
  */
 template <typename Formula>
-using non_embedded_auto_solver =
-    embedded_solver<non_embedded_formula_wrapper<Formula>>;
+using non_embedded_adaptive_step_solver =
+    adaptive_step_solver<non_embedded_formula_wrapper<Formula>>;
 
 }  // namespace num_collect::ode

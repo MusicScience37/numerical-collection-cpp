@@ -31,8 +31,8 @@
 
 TEMPLATE_PRODUCT_TEST_CASE(
     "external_force_vibration_problem with non-embedded formulas", "",
-    (num_collect::ode::runge_kutta::implicit_euler_solver,
-        num_collect::ode::runge_kutta::rk4_solver),
+    (num_collect::ode::runge_kutta::implicit_euler_fixed_step_solver,
+        num_collect::ode::runge_kutta::rk4_fixed_step_solver),
     (num_prob_collect::ode::external_force_vibration_problem)) {
     using problem_type =
         num_prob_collect::ode::external_force_vibration_problem;

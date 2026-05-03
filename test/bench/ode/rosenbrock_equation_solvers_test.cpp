@@ -25,7 +25,7 @@
 #include <fmt/format.h>
 
 #include "diagram_common.h"
-#include "num_collect/ode/embedded_solver.h"
+#include "num_collect/ode/adaptive_step_solver.h"
 #include "num_collect/ode/rosenbrock/bicgstab_rosenbrock_equation_solver.h"
 #include "num_collect/ode/rosenbrock/gmres_rosenbrock_equation_solver.h"
 #include "num_collect/ode/rosenbrock/lu_rosenbrock_equation_solver.h"
@@ -82,59 +82,59 @@ auto main(int argc, char** argv) -> int {
 
     bench_executor executor{};
 
-    bench_one<num_collect::ode::embedded_solver<
+    bench_one<num_collect::ode::adaptive_step_solver<
         num_collect::ode::rosenbrock::ros3w_formula<problem_type,
             num_collect::ode::rosenbrock::lu_rosenbrock_equation_solver<
                 problem_type>>>>("ROS3w_lu", executor);
 
-    bench_one<num_collect::ode::embedded_solver<
+    bench_one<num_collect::ode::adaptive_step_solver<
         num_collect::ode::rosenbrock::ros3w_formula<problem_type,
             num_collect::ode::rosenbrock::
                 mixed_broyden_rosenbrock_equation_solver<problem_type>>>>(
         "ROS3w_broyden", executor);
 
-    bench_one<num_collect::ode::embedded_solver<
+    bench_one<num_collect::ode::adaptive_step_solver<
         num_collect::ode::rosenbrock::ros3w_formula<problem_type,
             num_collect::ode::rosenbrock::gmres_rosenbrock_equation_solver<
                 problem_type>>>>("ROS3w_gmres", executor);
 
-    bench_one<num_collect::ode::embedded_solver<
+    bench_one<num_collect::ode::adaptive_step_solver<
         num_collect::ode::rosenbrock::ros3w_formula<problem_type,
             num_collect::ode::rosenbrock::bicgstab_rosenbrock_equation_solver<
                 problem_type>>>>("ROS3w_bicgstab", executor);
 
-    bench_one<num_collect::ode::embedded_solver<
+    bench_one<num_collect::ode::adaptive_step_solver<
         num_collect::ode::rosenbrock::ros34pw3_formula<problem_type,
             num_collect::ode::rosenbrock::lu_rosenbrock_equation_solver<
                 problem_type>>>>("ROS34PW3_lu", executor);
 
-    bench_one<num_collect::ode::embedded_solver<
+    bench_one<num_collect::ode::adaptive_step_solver<
         num_collect::ode::rosenbrock::ros34pw3_formula<problem_type,
             num_collect::ode::rosenbrock::
                 mixed_broyden_rosenbrock_equation_solver<problem_type>>>>(
         "ROS34PW3_broyden", executor);
 
-    bench_one<num_collect::ode::embedded_solver<
+    bench_one<num_collect::ode::adaptive_step_solver<
         num_collect::ode::rosenbrock::ros34pw3_formula<problem_type,
             num_collect::ode::rosenbrock::gmres_rosenbrock_equation_solver<
                 problem_type>>>>("ROS34PW3_gmres", executor);
 
-    bench_one<num_collect::ode::embedded_solver<
+    bench_one<num_collect::ode::adaptive_step_solver<
         num_collect::ode::rosenbrock::ros34pw3_formula<problem_type,
             num_collect::ode::rosenbrock::bicgstab_rosenbrock_equation_solver<
                 problem_type>>>>("ROS34PW3_bicgstab", executor);
 
-    bench_one<num_collect::ode::embedded_solver<
+    bench_one<num_collect::ode::adaptive_step_solver<
         num_collect::ode::rosenbrock::rodasp_formula<problem_type,
             num_collect::ode::rosenbrock::lu_rosenbrock_equation_solver<
                 problem_type>>>>("RODASP_lu", executor);
 
-    bench_one<num_collect::ode::embedded_solver<
+    bench_one<num_collect::ode::adaptive_step_solver<
         num_collect::ode::rosenbrock::rodasp_formula<problem_type,
             num_collect::ode::rosenbrock::gmres_rosenbrock_equation_solver<
                 problem_type>>>>("RODASP_gmres", executor);
 
-    bench_one<num_collect::ode::embedded_solver<
+    bench_one<num_collect::ode::adaptive_step_solver<
         num_collect::ode::rosenbrock::rodasp_formula<problem_type,
             num_collect::ode::rosenbrock::bicgstab_rosenbrock_equation_solver<
                 problem_type>>>>("RODASP_bicgstab", executor);

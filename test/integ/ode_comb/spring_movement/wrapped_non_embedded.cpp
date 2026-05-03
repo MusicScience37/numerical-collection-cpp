@@ -36,11 +36,11 @@ TEMPLATE_PRODUCT_TEST_CASE(
     "spring_movement_problem with non-embedded formulas with automatic step "
     "sizes",
     "",
-    (num_collect::ode::runge_kutta::rk4_auto_solver,
+    (num_collect::ode::runge_kutta::rk4_adaptive_step_solver,
         // AVF methods.
-        num_collect::ode::avf::avf2_auto_solver,
-        num_collect::ode::avf::avf3_auto_solver,
-        num_collect::ode::avf::avf4_auto_solver),
+        num_collect::ode::avf::avf2_adaptive_step_solver,
+        num_collect::ode::avf::avf3_adaptive_step_solver,
+        num_collect::ode::avf::avf4_adaptive_step_solver),
     (num_prob_collect::ode::spring_movement_problem)) {
     using problem_type = num_prob_collect::ode::spring_movement_problem;
     using solver_type = TestType;

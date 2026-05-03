@@ -89,47 +89,46 @@ auto main(int argc, char** argv) -> int {
 
         bench_executor executor{};
 
-        bench_one<num_collect::ode::runge_kutta::sdirk4_solver<problem_type>>(
-            "SDIRK4", epsilon, executor);
+        bench_one<num_collect::ode::runge_kutta::sdirk4_adaptive_step_solver<
+            problem_type>>("SDIRK4", epsilon, executor);
         if (epsilon > 0.0) {
             // Solvers which does not support DAEs.
-            bench_one<num_collect::ode::runge_kutta::ark43_esdirk_solver<
-                problem_type>>("ARK4(3)-ESDIRK", epsilon, executor);
-            bench_one<num_collect::ode::runge_kutta::ark54_esdirk_solver<
-                problem_type>>("ARK5(4)-ESDIRK", epsilon, executor);
-            bench_one<
-                num_collect::ode::runge_kutta::esdirk45_solver<problem_type>>(
+            bench_one<num_collect::ode::runge_kutta::
+                    ark43_esdirk_adaptive_step_solver<problem_type>>(
+                "ARK4(3)-ESDIRK", epsilon, executor);
+            bench_one<num_collect::ode::runge_kutta::
+                    ark54_esdirk_adaptive_step_solver<problem_type>>(
+                "ARK5(4)-ESDIRK", epsilon, executor);
+            bench_one<num_collect::ode::runge_kutta::
+                    esdirk45_adaptive_step_solver<problem_type>>(
                 "ESDIRK45c", epsilon, executor);
         }
-        bench_one<num_collect::ode::runge_kutta::lobatto3c4_auto_solver<
-            problem_type>>("LobattoIIIC4", epsilon, executor);
-        bench_one<num_collect::ode::runge_kutta::lobatto3c6_auto_solver<
-            problem_type>>("LobattoIIIC6", epsilon, executor);
-        bench_one<
-            num_collect::ode::runge_kutta::radau2a3_auto_solver<problem_type>>(
-            "RadauIIA3", epsilon, executor);
-        bench_one<
-            num_collect::ode::runge_kutta::radau2a5_auto_solver<problem_type>>(
-            "RadauIIA5", epsilon, executor);
-        bench_one<
-            num_collect::ode::runge_kutta::radau2a9_auto_solver<problem_type>>(
-            "RadauIIA9", epsilon, executor);
-        bench_one<
-            num_collect::ode::runge_kutta::radau2a13_auto_solver<problem_type>>(
-            "RadauIIA13", epsilon, executor);
-        bench_one<
-            num_collect::ode::runge_kutta::radau2a17_auto_solver<problem_type>>(
-            "RadauIIA17", epsilon, executor);
-        bench_one<num_collect::ode::rosenbrock::ros3w_solver<problem_type>>(
-            "ROS3w", epsilon, executor);
-        bench_one<num_collect::ode::rosenbrock::ros34prw_solver<problem_type>>(
-            "ROS34PRw", epsilon, executor);
-        bench_one<num_collect::ode::rosenbrock::ros34pw3_solver<problem_type>>(
-            "ROS34PW3", epsilon, executor);
-        bench_one<num_collect::ode::rosenbrock::rodasp_solver<problem_type>>(
-            "RODASP", epsilon, executor);
-        bench_one<num_collect::ode::rosenbrock::rodaspr_solver<problem_type>>(
-            "RODASPR", epsilon, executor);
+        bench_one<num_collect::ode::runge_kutta::
+                lobatto3c4_adaptive_step_solver<problem_type>>(
+            "LobattoIIIC4", epsilon, executor);
+        bench_one<num_collect::ode::runge_kutta::
+                lobatto3c6_adaptive_step_solver<problem_type>>(
+            "LobattoIIIC6", epsilon, executor);
+        bench_one<num_collect::ode::runge_kutta::radau2a3_adaptive_step_solver<
+            problem_type>>("RadauIIA3", epsilon, executor);
+        bench_one<num_collect::ode::runge_kutta::radau2a5_adaptive_step_solver<
+            problem_type>>("RadauIIA5", epsilon, executor);
+        bench_one<num_collect::ode::runge_kutta::radau2a9_adaptive_step_solver<
+            problem_type>>("RadauIIA9", epsilon, executor);
+        bench_one<num_collect::ode::runge_kutta::radau2a13_adaptive_step_solver<
+            problem_type>>("RadauIIA13", epsilon, executor);
+        bench_one<num_collect::ode::runge_kutta::radau2a17_adaptive_step_solver<
+            problem_type>>("RadauIIA17", epsilon, executor);
+        bench_one<num_collect::ode::rosenbrock::ros3w_adaptive_step_solver<
+            problem_type>>("ROS3w", epsilon, executor);
+        bench_one<num_collect::ode::rosenbrock::ros34prw_adaptive_step_solver<
+            problem_type>>("ROS34PRw", epsilon, executor);
+        bench_one<num_collect::ode::rosenbrock::ros34pw3_adaptive_step_solver<
+            problem_type>>("ROS34PW3", epsilon, executor);
+        bench_one<num_collect::ode::rosenbrock::rodasp_adaptive_step_solver<
+            problem_type>>("RODASP", epsilon, executor);
+        bench_one<num_collect::ode::rosenbrock::rodaspr_adaptive_step_solver<
+            problem_type>>("RODASPR", epsilon, executor);
 
         executor.write_result(problem_name,
             fmt::format("Kaps' problem (epsilon={:.0e})", epsilon),

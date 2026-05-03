@@ -79,13 +79,14 @@ TEST_CASE(
 }
 
 TEST_CASE(
-    "num_collect::ode::non_embedded_auto_solver<num_collect::ode::runge_kutta::"
+    "num_collect::ode::non_embedded_adaptive_step_solver<num_collect::ode::"
+    "runge_kutta::"
     "rk4_formula<num_prob_collect::ode::exponential_problem>>") {
     using problem_type = num_prob_collect::ode::exponential_problem;
     using base_formula_type =
         num_collect::ode::runge_kutta::rk4_formula<problem_type>;
     using solver_type =
-        num_collect::ode::non_embedded_auto_solver<base_formula_type>;
+        num_collect::ode::non_embedded_adaptive_step_solver<base_formula_type>;
 
     SECTION("initialize") {
         auto solver = solver_type(problem_type());

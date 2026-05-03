@@ -172,7 +172,8 @@ TEST_CASE("Diffusion equation in 2D with Neumann boundary conditions") {
 
     NUM_COLLECT_LOG_DEBUG(logger, "Solve the system.");
     using solver_type =
-        num_collect::ode::rosenbrock::rodaspr_solver<ode_problem_type>;
+        num_collect::ode::rosenbrock::rodaspr_adaptive_step_solver<
+            ode_problem_type>;
     solver_type solver(ode_problem);
     solver.init(initial_time, solution);
     solver.solve_until(final_time);

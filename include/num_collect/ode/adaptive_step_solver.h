@@ -15,7 +15,7 @@
  */
 /*!
  * \file
- * \brief Definition of embedded_solver class.
+ * \brief Definition of adaptive_step_solver class.
  */
 #pragma once
 
@@ -54,16 +54,16 @@ template <concepts::embedded_formula Formula,
     concepts::step_size_controller StepSizeController =
         smoothed_digital_filter_step_size_controller<
             typename Formula::problem_type>>
-class embedded_solver
-    : public solver_base<embedded_solver<Formula, StepSizeController>,
+class adaptive_step_solver
+    : public solver_base<adaptive_step_solver<Formula, StepSizeController>,
           Formula> {
 public:
     //! This type.
-    using this_type = embedded_solver<Formula, StepSizeController>;
+    using this_type = adaptive_step_solver<Formula, StepSizeController>;
 
     //! Type of base class.
     using base_type =
-        solver_base<embedded_solver<Formula, StepSizeController>, Formula>;
+        solver_base<adaptive_step_solver<Formula, StepSizeController>, Formula>;
 
     using typename base_type::formula_type;
     using typename base_type::problem_type;
@@ -232,7 +232,7 @@ public:
      * \return This.
      */
     auto tolerances(const error_tolerances<variable_type>& val)
-        -> embedded_solver& {
+        -> adaptive_step_solver& {
         step_size_controller_.tolerances(val);
         if constexpr (requires(formula_type& formula,
                           const error_tolerances<variable_type>& val) {

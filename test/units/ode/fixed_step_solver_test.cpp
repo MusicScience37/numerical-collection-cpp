@@ -15,9 +15,9 @@
  */
 /*!
  * \file
- * \brief Test of simple_solver_test class.
+ * \brief Test of fixed_step_solver_test class.
  */
-#include "num_collect/ode/simple_solver.h"
+#include "num_collect/ode/fixed_step_solver.h"
 
 #include <cmath>
 
@@ -33,12 +33,12 @@
 #include "num_prob_collect/ode/spring_movement_problem.h"
 
 TEST_CASE(
-    "num_collect::ode::simple_solver<num_collect::ode::runge_"
+    "num_collect::ode::fixed_step_solver<num_collect::ode::runge_"
     "kutta::rk4_formula<num_prob_collect::ode::exponential_problem>>") {
     using problem_type = num_prob_collect::ode::exponential_problem;
     using formula_type =
         num_collect::ode::runge_kutta::rk4_formula<problem_type>;
-    using solver_type = num_collect::ode::simple_solver<formula_type>;
+    using solver_type = num_collect::ode::fixed_step_solver<formula_type>;
 
     SECTION("initialize") {
         auto solver = solver_type(problem_type());
@@ -95,12 +95,12 @@ TEST_CASE(
 }
 
 TEST_CASE(
-    "num_collect::ode::simple_solver<num_collect::ode::runge_"
+    "num_collect::ode::fixed_step_solver<num_collect::ode::runge_"
     "kutta::rk4_formula<num_prob_collect::ode::spring_movement_problem>>") {
     using problem_type = num_prob_collect::ode::spring_movement_problem;
     using formula_type =
         num_collect::ode::runge_kutta::rk4_formula<problem_type>;
-    using solver_type = num_collect::ode::simple_solver<formula_type>;
+    using solver_type = num_collect::ode::fixed_step_solver<formula_type>;
 
     SECTION("initialize") {
         auto solver = solver_type(problem_type());

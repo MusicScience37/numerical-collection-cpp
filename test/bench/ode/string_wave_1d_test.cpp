@@ -86,24 +86,25 @@ auto main(int argc, char** argv) -> int {
 
     bench_executor executor{};
 
-    bench_one<num_collect::ode::runge_kutta::rkf45_solver<problem_type>>(
-        "RKF45", executor);
-    bench_one<num_collect::ode::runge_kutta::dopri5_solver<problem_type>>(
-        "DOPRI5", executor);
-    bench_one<num_collect::ode::runge_kutta::ark43_erk_solver<problem_type>>(
-        "ARK4(3)-ERK", executor);
+    bench_one<num_collect::ode::runge_kutta::rkf45_adaptive_step_solver<
+        problem_type>>("RKF45", executor);
+    bench_one<num_collect::ode::runge_kutta::dopri5_adaptive_step_solver<
+        problem_type>>("DOPRI5", executor);
+    bench_one<num_collect::ode::runge_kutta::ark43_erk_adaptive_step_solver<
+        problem_type>>("ARK4(3)-ERK", executor);
 
     // Implicit formulas are too slow with large step sizes.
     executor.step_size_limits(
         num_collect::ode::step_size_limits<double>().upper_limit(1e-2));
-    bench_one<num_collect::ode::rosenbrock::ros3w_solver<problem_type>>(
+    bench_one<
+        num_collect::ode::rosenbrock::ros3w_adaptive_step_solver<problem_type>>(
         "ROS3w", executor);
-    bench_one<num_collect::ode::rosenbrock::ros34pw3_solver<problem_type>>(
-        "ROS34PW3", executor);
-    bench_one<num_collect::ode::rosenbrock::rodasp_solver<problem_type>>(
-        "RODASP", executor);
-    bench_one<num_collect::ode::rosenbrock::rodaspr_solver<problem_type>>(
-        "RODASPR", executor);
+    bench_one<num_collect::ode::rosenbrock::ros34pw3_adaptive_step_solver<
+        problem_type>>("ROS34PW3", executor);
+    bench_one<num_collect::ode::rosenbrock::rodasp_adaptive_step_solver<
+        problem_type>>("RODASP", executor);
+    bench_one<num_collect::ode::rosenbrock::rodaspr_adaptive_step_solver<
+        problem_type>>("RODASPR", executor);
 
     executor.write_result(problem_name, problem_description, output_directory);
 

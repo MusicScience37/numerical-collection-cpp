@@ -240,7 +240,8 @@ static void solve_system(const ode_problem_type& problem,
     time_list.push_back(time);
 
     using solver_type =
-        num_collect::ode::rosenbrock::rodaspr_solver<ode_problem_type>;
+        num_collect::ode::rosenbrock::rodaspr_adaptive_step_solver<
+            ode_problem_type>;
     solver_type solver(problem);
     solver.step_size(0.01);  // Prevent too small step sizes at the beginning.
     solver.init(time, solution);

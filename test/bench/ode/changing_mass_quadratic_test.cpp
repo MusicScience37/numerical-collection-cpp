@@ -80,16 +80,17 @@ auto main(int argc, char** argv) -> int {
 
     bench_executor executor{};
 
-    bench_one<num_collect::ode::runge_kutta::sdirk4_solver<problem_type>>(
-        "SDIRK4", executor);
-    bench_one<num_collect::ode::runge_kutta::ark43_esdirk_solver<problem_type>>(
-        "ARK4(3)-ESDIRK", executor);
-    bench_one<num_collect::ode::runge_kutta::ark54_esdirk_solver<problem_type>>(
-        "ARK5(4)-ESDIRK", executor);
-    bench_one<num_collect::ode::runge_kutta::esdirk45_solver<problem_type>>(
-        "ESDIRK45c", executor);
-    bench_one<num_collect::ode::runge_kutta::radau2a5_changing_mass_auto_solver<
-        problem_type>>("RadauIIA5", executor);
+    bench_one<num_collect::ode::runge_kutta::sdirk4_adaptive_step_solver<
+        problem_type>>("SDIRK4", executor);
+    bench_one<num_collect::ode::runge_kutta::ark43_esdirk_adaptive_step_solver<
+        problem_type>>("ARK4(3)-ESDIRK", executor);
+    bench_one<num_collect::ode::runge_kutta::ark54_esdirk_adaptive_step_solver<
+        problem_type>>("ARK5(4)-ESDIRK", executor);
+    bench_one<num_collect::ode::runge_kutta::esdirk45_adaptive_step_solver<
+        problem_type>>("ESDIRK45c", executor);
+    bench_one<num_collect::ode::runge_kutta::
+            radau2a5_changing_mass_adaptive_step_solver<problem_type>>(
+        "RadauIIA5", executor);
 
     executor.write_result(problem_name, problem_description, output_directory);
 

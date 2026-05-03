@@ -31,7 +31,8 @@ TEMPLATE_PRODUCT_TEST_CASE(
     "changing_mass_quadratic_problem with non-embedded formulas", "",
     (
         // non-embedded Runge-Kutta method.
-        num_collect::ode::runge_kutta::radau2a5_changing_mass_auto_solver),
+        num_collect::ode::runge_kutta::
+            radau2a5_changing_mass_adaptive_step_solver),
     (num_prob_collect::ode::changing_mass_quadratic_problem)) {
     using problem_type = num_prob_collect::ode::changing_mass_quadratic_problem;
     using solver_type = TestType;
