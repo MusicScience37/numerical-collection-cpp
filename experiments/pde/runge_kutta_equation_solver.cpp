@@ -202,6 +202,7 @@ static void fixed_point_iteration(Function&& function, solution_type& solution,
     num_collect::index_type iterations = 0;
     double error_norm = 0.0;
     double previous_error_norm = 0.0;
+    double error_reduction_rate = std::numeric_limits<double>::quiet_NaN();
 
     constexpr auto log_tag =
         num_collect::logging::log_tag_view("fixed_point_iteration");
@@ -209,8 +210,8 @@ static void fixed_point_iteration(Function&& function, solution_type& solution,
     num_collect::logging::iterations::iteration_logger iteration_logger(logger);
     iteration_logger.append("Iter.", iterations);
     iteration_logger.append("Error", error_norm);
+    iteration_logger.append("Err. Reduction", error_reduction_rate);
     iteration_logger.append("Relax. Coeff.", relaxation_coefficient);
-    iteration_logger.write_iteration();
 
     solution_type error;
     function(solution, error);
@@ -219,6 +220,7 @@ static void fixed_point_iteration(Function&& function, solution_type& solution,
     previous_error_norm = error_norm;
     solution_type non_relaxed_update = error;
     solution_type previous_solution;
+    iteration_logger.write_iteration();
     while (iterations < 10000) {
         previous_solution = solution;
 
@@ -244,6 +246,7 @@ static void fixed_point_iteration(Function&& function, solution_type& solution,
         }
         constexpr double relaxation_coefficient_increase_rate = 1.05;
         relaxation_coefficient *= relaxation_coefficient_increase_rate;
+        error_reduction_rate = error_norm / previous_error_norm;
 
         ++iterations;
         iteration_logger.write_iteration();
