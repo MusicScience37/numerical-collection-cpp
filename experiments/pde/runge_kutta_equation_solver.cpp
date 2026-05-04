@@ -25,8 +25,6 @@
  */
 #include <chrono>
 #include <cmath>
-#include <concepts>
-#include <limits>
 #include <ratio>
 #include <string_view>
 
@@ -36,13 +34,12 @@
 #include "num_collect/base/constants.h"
 #include "num_collect/base/exception.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/load_logging_config.h"
-#include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/evaluation_type.h"
+#include "num_collect/ode/impl/fixed_point_iteration_solver.h"
 #include "num_collect/ode/runge_kutta/inexact_newton_update_equation_solver.h"
 #include "num_collect/rbf/generate_halton_nodes.h"
 #include "num_collect/rbf/operators/laplacian_operator.h"
@@ -182,86 +179,6 @@ static void step_with_inexact_newton(ode_problem_type& problem,
 }
 
 /*!
- * \brief Perform fixed-point iteration.
- *
- * \tparam Function Type of the function to calculate the updated solution
- * without relaxation.
- * \param[in] function Function to calculate the updated solution without
- * relaxation.
- * \param[in,out] solution Solution vector.
- * \param[in] relaxation_coefficient Initial value of the relaxation coefficient
- * for the fixed-point iteration.
- * \param[in] tolerances Error tolerances.
- */
-template <
-    std::invocable<const solution_type& /*input*/, solution_type& /*output*/>
-        Function>
-static void fixed_point_iteration(Function&& function, solution_type& solution,
-    double relaxation_coefficient,
-    const num_collect::ode::error_tolerances<solution_type>& tolerances) {
-    num_collect::index_type iterations = 0;
-    double error_norm = 0.0;
-    double previous_error_norm = 0.0;
-    double error_reduction_rate = std::numeric_limits<double>::quiet_NaN();
-
-    constexpr auto log_tag =
-        num_collect::logging::log_tag_view("fixed_point_iteration");
-    num_collect::logging::logger logger(log_tag);
-    num_collect::logging::iterations::iteration_logger iteration_logger(logger);
-    iteration_logger.append("Iter.", iterations);
-    iteration_logger.append("Error", error_norm);
-    iteration_logger.append("Err. Reduction", error_reduction_rate);
-    iteration_logger.append("Relax. Coeff.", relaxation_coefficient);
-
-    solution_type error;
-    function(solution, error);
-    error -= solution;
-    error_norm = tolerances.calc_norm(solution, error);
-    previous_error_norm = error_norm;
-    solution_type non_relaxed_update = error;
-    solution_type previous_solution;
-    iteration_logger.write_iteration();
-    while (iterations < 10000) {
-        previous_solution = solution;
-
-        solution =
-            previous_solution + relaxation_coefficient * non_relaxed_update;
-        function(solution, error);
-        error -= solution;
-        error_norm = tolerances.calc_norm(solution, error);
-        while (error_norm > previous_error_norm) {
-            constexpr double relaxation_coefficient_reduction_rate = 0.5;
-            relaxation_coefficient *= relaxation_coefficient_reduction_rate;
-            if (relaxation_coefficient <
-                std::numeric_limits<double>::epsilon()) {
-                NUM_COLLECT_LOG_AND_THROW(num_collect::algorithm_failure,
-                    logger, "Failed to converge.");
-            }
-
-            solution =
-                previous_solution + relaxation_coefficient * non_relaxed_update;
-            function(solution, error);
-            error -= solution;
-            error_norm = tolerances.calc_norm(solution, error);
-        }
-        constexpr double relaxation_coefficient_increase_rate = 1.05;
-        relaxation_coefficient *= relaxation_coefficient_increase_rate;
-        error_reduction_rate = error_norm / previous_error_norm;
-
-        ++iterations;
-        iteration_logger.write_iteration();
-
-        constexpr double tolerance_rate = 1e-4;
-        if (error_norm <= tolerance_rate) {
-            break;
-        }
-        previous_error_norm = error_norm;
-        non_relaxed_update = error;
-    }
-    iteration_logger.write_summary();
-}
-
-/*!
  * \brief Solve for a time step with fixed-point iteration.
  *
  * \param[in] problem Problem.
@@ -274,6 +191,8 @@ static void fixed_point_iteration(Function&& function, solution_type& solution,
 static void step_with_fixed_point_iteration(ode_problem_type& problem,
     double time_step_size, double& time, solution_type& solution,
     double relaxation_coefficient) {
+    (void)relaxation_coefficient;  // Currently not used. This may be removed in
+                                   // the future.
     constexpr double slope_coeff =
         0.5;  // Coefficient of slope in Crank-Nicolson.
 
@@ -296,7 +215,10 @@ static void step_with_fixed_point_iteration(ode_problem_type& problem,
             solution_offset;
     };
 
-    fixed_point_iteration(function, z2, relaxation_coefficient, tolerances);
+    num_collect::ode::impl::fixed_point_iteration_solver<solution_type>
+        equation_solver;
+
+    equation_solver.solve(function, z2, solution);
 
     solution += z2;
     time += time_step_size;
@@ -324,6 +246,8 @@ static void perform_test(ode_problem_type& problem, double time_step_size,
     double relaxation_coefficient) {
     num_collect::logging::logger logger;
 
+    NUM_COLLECT_LOG_INFO(logger, "Start solving a time step.");
+
     double time = 0.0;
     solution_type solution = solution_type::Zero(num_interior_nodes);
     for (num_collect::index_type i = 0; i < num_interior_nodes; ++i) {
@@ -346,7 +270,7 @@ static void perform_test(ode_problem_type& problem, double time_step_size,
             end_time - start_time)
             .count();
     NUM_COLLECT_LOG_INFO(
-        logger, "Elapsed time for the step: {:.5f} ms", elapsed_time_ms);
+        logger, "Finished a time step with {:.5f} ms", elapsed_time_ms);
 
     solution_type true_values = solution_type::Zero(num_interior_nodes);
     for (num_collect::index_type i = 0; i < num_interior_nodes; ++i) {
