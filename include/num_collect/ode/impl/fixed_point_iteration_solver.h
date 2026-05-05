@@ -24,6 +24,7 @@
 
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/base/precondition.h"
 #include "num_collect/functions/sqrt.h"
 #include "num_collect/logging/iterations/iteration_logger_mixin.h"
 #include "num_collect/logging/log_tag_view.h"
@@ -110,7 +111,7 @@ public:
         while (!is_converged()) {
             step(function, solution, tolerance_reference);
             iteration_logger.write_iteration(this);
-            if (iterations_ >= max_iterations_) {
+            if (!is_converged() && iterations_ >= max_iterations_) {
                 NUM_COLLECT_ODE_THROW_NO_CONVERGENCE(this->logger(),
                     "Failed to solve an equation due to no convergence.");
             }
@@ -130,7 +131,7 @@ public:
         iteration_logger.template append<scalar_type>(
             "Residual", &this_type::residual_norm);
         iteration_logger.template append<scalar_type>(
-            "Residual Reduction", &this_type::residual_reduction_rate);
+            "Reduction", &this_type::residual_reduction_rate);
         iteration_logger.template append<scalar_type>(
             "Relax. Coeff.", &this_type::relaxation_coefficient);
     }
@@ -182,7 +183,117 @@ public:
         return relaxation_coefficient_;
     }
 
-    // TODO Setter of parameters.
+    /*!
+     * \brief Set the error tolerances.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto tolerances(const error_tolerances<variable_type>& val)
+        -> fixed_point_iteration_solver& {
+        tolerances_ = val;
+        return *this;
+    }
+
+    /*!
+     * \brief Set the tolerance rate.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto tolerance_rate(scalar_type val) -> fixed_point_iteration_solver& {
+        NUM_COLLECT_PRECONDITION(val > static_cast<scalar_type>(0),
+            "Tolerance rate must be positive.");
+        tolerance_rate_ = val;
+        return *this;
+    }
+
+    /*!
+     * \brief Set the maximum number of iterations.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto max_iterations(index_type val) -> fixed_point_iteration_solver& {
+        NUM_COLLECT_PRECONDITION(
+            val > 0, "Maximum number of iterations must be positive.");
+        max_iterations_ = val;
+        return *this;
+    }
+
+    /*!
+     * \brief Set the initial relaxation coefficient.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto initial_relaxation_coefficient(scalar_type val)
+        -> fixed_point_iteration_solver& {
+        NUM_COLLECT_PRECONDITION(val > static_cast<scalar_type>(0),
+            "Initial relaxation coefficient must be positive.");
+        initial_relaxation_coefficient_ = val;
+        return *this;
+    }
+
+    /*!
+     * \brief Set the maximum relaxation coefficient.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto max_relaxation_coefficient(scalar_type val)
+        -> fixed_point_iteration_solver& {
+        NUM_COLLECT_PRECONDITION(val > static_cast<scalar_type>(0),
+            "Maximum relaxation coefficient must be positive.");
+        max_relaxation_coefficient_ = val;
+        return *this;
+    }
+
+    /*!
+     * \brief Set the minimum relaxation coefficient.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto min_relaxation_coefficient(scalar_type val)
+        -> fixed_point_iteration_solver& {
+        NUM_COLLECT_PRECONDITION(val > static_cast<scalar_type>(0),
+            "Minimum relaxation coefficient must be positive.");
+        min_relaxation_coefficient_ = val;
+        return *this;
+    }
+
+    /*!
+     * \brief Set the rate of reduction of relaxation coefficient when the error
+     * increases.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto relaxation_coefficient_reduction_rate(scalar_type val)
+        -> fixed_point_iteration_solver& {
+        NUM_COLLECT_PRECONDITION(val > static_cast<scalar_type>(0),
+            "Relaxation coefficient reduction rate must be positive.");
+        NUM_COLLECT_PRECONDITION(val < static_cast<scalar_type>(1),
+            "Relaxation coefficient reduction rate must be less than 1.");
+        relaxation_coefficient_reduction_rate_ = val;
+        return *this;
+    }
+
+    /*!
+     * \brief Set the rate of increase of relaxation coefficient when the error
+     * decreases.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto relaxation_coefficient_increase_rate(scalar_type val)
+        -> fixed_point_iteration_solver& {
+        NUM_COLLECT_PRECONDITION(val > static_cast<scalar_type>(1),
+            "Relaxation coefficient increase rate must be greater than 1.");
+        relaxation_coefficient_increase_rate_ = val;
+        return *this;
+    }
 
 private:
     /*!
@@ -200,6 +311,7 @@ private:
             Function>
     void init(Function&& function, const variable_type& solution,
         const variable_type& tolerance_reference) {
+        residual_.resize(solution.size());
         function(solution, residual_);
         residual_ -= solution;
         residual_norm_ = tolerances_.calc_norm(tolerance_reference, residual_);
@@ -290,15 +402,15 @@ private:
     //! Error tolerances.
     error_tolerances<variable_type> tolerances_{};
 
-    //! Default maximum number of iterations.
-    static constexpr index_type default_max_iterations = 1000;
-
     //! Default tolerance rate.
     static constexpr auto default_tolerance_rate =
         static_cast<scalar_type>(1e-4);
 
     //! Tolerance rate.
     scalar_type tolerance_rate_{default_tolerance_rate};
+
+    //! Default maximum number of iterations.
+    static constexpr index_type default_max_iterations = 1000;
 
     //! Maximum number of iterations.
     index_type max_iterations_{default_max_iterations};

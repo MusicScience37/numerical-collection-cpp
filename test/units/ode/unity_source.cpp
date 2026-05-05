@@ -8,6 +8,7 @@
 #include "fixed_step_solver_test.cpp"
 #include "impl/approx_slope_calculator_test.cpp"
 #include "impl/bicgstab_test.cpp"
+#include "impl/fixed_point_iteration_solver_test.cpp"
 #include "impl/get_least_known_order_test.cpp"
 #include "impl/gmres_test.cpp"
 #include "implicit_problem_test.cpp"
