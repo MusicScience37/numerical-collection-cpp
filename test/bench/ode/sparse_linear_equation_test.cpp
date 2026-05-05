@@ -30,8 +30,7 @@
 
 #include "num_collect/base/constants.h"
 #include "num_collect/base/index_type.h"
-#include "num_collect/ode/error_tolerances.h"
-#include "num_collect/ode/impl/bicgstab.h"
+#include "num_collect/linear/functional_bicgstab.h"
 #include "num_collect/ode/impl/gmres.h"
 #include "num_collect/rbf/generate_halton_nodes.h"
 #include "num_collect/rbf/operators/laplacian_operator.h"
@@ -201,13 +200,9 @@ STAT_BENCH_CASE_F(gmres_fixture, "sparse_linear_equation", "repeated_gmres") {
 }
 
 STAT_BENCH_CASE_F(sparse_linear_equation_test_fixture, "sparse_linear_equation",
-    "BiCGSTAB_functional") {
-    num_collect::ode::impl::bicgstab<Eigen::VectorXd> solver;
-    const auto tol_abs_error_per_elem =
-        1e+2 * rel_tol * rhs_.norm() / std::sqrt(rhs_.size());
-    solver.tolerances(num_collect::ode::error_tolerances<Eigen::VectorXd>()
-            .tol_rel_error(0.0)
-            .tol_abs_error(tol_abs_error_per_elem));
+    "functional_bicgstab") {
+    num_collect::linear::functional_bicgstab<Eigen::VectorXd> solver;
+    solver.tolerance(rel_tol);
     const auto coeff_function = [coeff_ptr = &coeff_](
                                     const auto& target, auto& result) {
         result = (*coeff_ptr) * target;
