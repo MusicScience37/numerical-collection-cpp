@@ -59,7 +59,7 @@ class fixed_point_iteration_solver;
  * \f$ x = f(x) \f$
  * using fixed-point iteration with relaxation.
  */
-template <concepts::real_scalar_dense_vector Variable>
+template <base::concepts::real_scalar_dense_vector Variable>
 class fixed_point_iteration_solver<Variable>
     : public logging::logging_mixin,
       public logging::iterations::iteration_logger_mixin<
