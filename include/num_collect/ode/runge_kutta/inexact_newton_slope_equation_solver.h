@@ -32,6 +32,7 @@
 #include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
+#include "num_collect/functions/root.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/concepts/mass_problem.h"
@@ -1118,6 +1119,14 @@ public:
     }
 
 private:
+    //! Machine epsilon.
+    static constexpr scalar_type epsilon =
+        std::numeric_limits<scalar_type>::epsilon();
+
+    //! Width of finite difference for Jacobian application.
+    static constexpr scalar_type jacobian_diff_width =
+        functions::root(epsilon, 3);
+
     /*!
      * \brief Multiply Jacobian matrix to a vector.
      *
@@ -1130,10 +1139,6 @@ private:
         NUM_COLLECT_PRECONDITION(
             problem_ != nullptr, "update_jacobian is not called.");
 
-        using std::sqrt;
-        const scalar_type epsilon = std::numeric_limits<scalar_type>::epsilon();
-        const scalar_type sqrt_epsilon = sqrt(epsilon);
-
         const scalar_type target_norm = target.norm();
         const scalar_type variable_norm = temp_variable_.norm();
         if (target_norm < variable_norm * epsilon) {
@@ -1141,7 +1146,8 @@ private:
             return;
         }
         const scalar_type diff_width =
-            std::max(sqrt_epsilon * variable_norm / target_norm, sqrt_epsilon);
+            std::max(jacobian_diff_width * variable_norm / target_norm,
+                jacobian_diff_width);
 
         variable_buffer_ = temp_variable_ + diff_width * target;
         problem_->evaluate_on(
