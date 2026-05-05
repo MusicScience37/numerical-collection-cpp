@@ -1,4 +1,8 @@
 add_experiment(experiment_pde_rbf_fd_weights_2d rbf_fd_weights_2d.cpp)
+
+add_experiment(experiment_pde_runge_kutta_equation_solver
+               runge_kutta_equation_solver.cpp)
+
 if(VTK_FOUND)
     add_experiment(experiment_pde_rbf_fd_laplacian_matrix_2d
                    rbf_fd_laplacian_matrix_2d.cpp)

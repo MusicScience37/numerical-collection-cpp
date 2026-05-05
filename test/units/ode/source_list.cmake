@@ -9,6 +9,7 @@ set(SOURCE_FILES
     fixed_step_solver_test.cpp
     impl/approx_slope_calculator_test.cpp
     impl/bicgstab_test.cpp
+    impl/fixed_point_iteration_solver_test.cpp
     impl/get_least_known_order_test.cpp
     impl/gmres_test.cpp
     implicit_problem_test.cpp
