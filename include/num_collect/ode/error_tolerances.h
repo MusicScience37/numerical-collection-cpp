@@ -36,6 +36,15 @@ namespace impl {
  * \brief Default tolerance of relative errors.
  *
  * \tparam Scalar Type of scalars.
+ *
+ * Reference:
+ *
+ * - MATLAB is using 1e-3 by default.
+ *   See
+ *   https://jp.mathworks.com/help/matlab/ref/ode.html
+ * - SciPy is using 1.49012e-8 by default.
+ *   See
+ *   https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.odeint.html.
  */
 template <base::concepts::real_scalar Scalar>
 constexpr Scalar default_tol_rel_error = static_cast<Scalar>(1e-6);
@@ -44,6 +53,15 @@ constexpr Scalar default_tol_rel_error = static_cast<Scalar>(1e-6);
  * \brief Default tolerance of absolute errors.
  *
  * \tparam Scalar Type of scalars.
+ *
+ * Reference:
+ *
+ * - MATLAB is using 1e-6 by default.
+ *   See
+ *   https://jp.mathworks.com/help/matlab/ref/ode.html
+ * - SciPy is using 1.49012e-8 by default.
+ *   See
+ *   https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.odeint.html.
  */
 template <base::concepts::real_scalar Scalar>
 constexpr Scalar default_tol_abs_error = static_cast<Scalar>(1e-6);

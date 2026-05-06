@@ -33,6 +33,10 @@ tag = "num_collect::ode::impl::fixed_point_iteration_solver"
 iteration_output_period = 100
 
 [[num_collect.logging.tag_configs]]
+tag = "num_collect::ode::runge_kutta::inexact_newton_update_equation_solver"
+output_log_level = "trace"
+
+[[num_collect.logging.tag_configs]]
 tag = "num_collect::linear::functional_bicgstab"
 output_log_level = "trace"
 
