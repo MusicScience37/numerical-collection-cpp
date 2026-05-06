@@ -33,6 +33,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/functions/root.h"
+#include "num_collect/linear/functional_gmres.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/concepts/mass_problem.h"
@@ -42,7 +43,6 @@
 #include "num_collect/ode/concepts/single_variate_differentiable_problem.h"
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/evaluation_type.h"
-#include "num_collect/ode/impl/gmres.h"
 #include "num_collect/ode/ode_errors.h"
 #include "num_collect/ode/runge_kutta/iterative_equation_solver_base.h"
 
@@ -1081,7 +1081,9 @@ public:
         problem_->evaluate_on(time_, variable_,
             evaluation_type{.diff_coeff = true, .mass = use_mass});
 
-        solver_.max_subspace_dim(std::min(variable_.size(), max_subspace_dim_));
+        solver_.tolerance(std::pow(std::numeric_limits<scalar_type>::epsilon(),
+                              static_cast<scalar_type>(0.66666)) *
+            static_cast<scalar_type>(10));  // TODO Temporary implementation.
     }
 
     /*!
@@ -1342,7 +1344,7 @@ private:
     variable_type* solution_{nullptr};
 
     //! Solver of the current coefficient matrix.
-    ode::impl::gmres<variable_type> solver_{};
+    linear::functional_gmres<variable_type> solver_{};
 
     //! Temporary variable.
     variable_type temp_variable_{};

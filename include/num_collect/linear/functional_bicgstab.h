@@ -131,6 +131,8 @@ public:
                     iterations_, residual_norm);
                 return;
             }
+            NUM_COLLECT_LOG_TRACE(this->logger(),
+                "iterations={}, residual_norm={}", iterations_, residual_norm);
 
             const scalar_type rho_old = rho_;
             rho_ = r0_.dot(residual_);
