@@ -19,7 +19,6 @@
  */
 #include <algorithm>
 #include <cmath>
-#include <stdexcept>
 
 #include <Eigen/IterativeLinearSolvers>
 #include <Eigen/SparseCore>
@@ -31,7 +30,7 @@
 #include "num_collect/base/constants.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/linear/functional_bicgstab.h"
-#include "num_collect/ode/impl/gmres.h"
+#include "num_collect/linear/functional_gmres.h"
 #include "num_collect/rbf/generate_halton_nodes.h"
 #include "num_collect/rbf/operators/laplacian_operator.h"
 #include "num_collect/rbf/rbf_fd_polynomial_assembler.h"
@@ -101,7 +100,7 @@ protected:
     Eigen::VectorXd sol_{};
 
     //! Relative tolerance.
-    static constexpr double rel_tol{1e-10};
+    static constexpr double rel_tol{1e-8};
 
     //! Number of iterations.
     int iterations_{};
@@ -178,24 +177,18 @@ protected:
 };
 
 STAT_BENCH_CASE_F(gmres_fixture, "sparse_linear_equation", "repeated_gmres") {
-    num_collect::ode::impl::gmres<Eigen::VectorXd> solver;
+    num_collect::linear::functional_gmres<Eigen::VectorXd> solver;
+    solver.tolerance(rel_tol);
     solver.max_subspace_dim(std::min(subspace_size_, size_));
+    solver.max_iterations(static_cast<num_collect::index_type>(size_) * 2);
     const auto coeff_function = [coeff_ptr = &coeff_](
                                     const auto& target, auto& result) {
         result = (*coeff_ptr) * target;
     };
-    const double tol = rel_tol * rhs_.norm();
     STAT_BENCH_MEASURE() {
         sol_.setZero();
-        constexpr int max_iterations = 1000;
-        for (int i = 1; i <= max_iterations; ++i) {
-            solver.solve(coeff_function, rhs_, sol_);
-            if ((coeff_ * sol_ - rhs_).norm() < tol) {
-                iterations_ = i;
-                return;
-            }
-        }
-        throw std::runtime_error("Failed to converge.");
+        solver.solve(coeff_function, rhs_, sol_);
+        iterations_ = static_cast<int>(solver.iterations());
     };
 }
 

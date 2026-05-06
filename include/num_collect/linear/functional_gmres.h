@@ -102,7 +102,7 @@ public:
 
         // Vectors below this threshold may not work in dot products.
         const scalar_type basis_vector_norm_thresh =
-            std::sqrt(std::numeric_limits<scalar_type>::epsilon());
+            std::sqrt(std::numeric_limits<scalar_type>::min());
 
         const scalar_type rhs_norm = rhs.stableNorm();
         const scalar_type absolute_tolerance =
@@ -185,6 +185,15 @@ public:
      */
     [[nodiscard]] auto iterations() const noexcept -> index_type {
         return iterations_;
+    }
+
+    /*!
+     * \brief Get the norm of the residual.
+     *
+     * \return Norm of the residual.
+     */
+    [[nodiscard]] auto residual_norm() const noexcept -> scalar_type {
+        return residual_norm_;
     }
 
     /*!
