@@ -146,7 +146,9 @@ public:
      *
      * \return Number of iterations.
      */
-    auto iterations() -> index_type { return iterations_; }
+    [[nodiscard]] auto iterations() const noexcept -> index_type {
+        return iterations_;
+    }
 
     /*!
      * \brief Set the maximum number of iterations.

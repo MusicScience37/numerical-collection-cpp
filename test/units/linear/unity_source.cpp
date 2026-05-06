@@ -2,6 +2,7 @@
 #include "amg_preconditioner_test.cpp"
 #include "cuthill_mckee_ordering_test.cpp"
 #include "functional_bicgstab_test.cpp"
+#include "functional_gmres_test.cpp"
 #include "gauss_seidel_iterative_solver_test.cpp"
 #include "impl/amg/build_first_coarse_grid_candidate_test.cpp"
 #include "impl/amg/compute_strong_connection_list_test.cpp"
