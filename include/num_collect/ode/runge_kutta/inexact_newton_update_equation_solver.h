@@ -1416,9 +1416,9 @@ private:
     //! Absolute tolerance of the residual.
     std::optional<scalar_type> absolute_residual_tolerance_{};
 
-    //! Default rate of tolerance in this solver.
+    //! Default rate of tolerance in this solver. (Strict value is needed for stable computation of the Runge-Kutta method.)
     static constexpr auto default_tolerance_rate =
-        static_cast<scalar_type>(1e-2);
+        static_cast<scalar_type>(1e-4);
 
     //! Rate of tolerance in this solver.
     scalar_type tolerance_rate_{default_tolerance_rate};
