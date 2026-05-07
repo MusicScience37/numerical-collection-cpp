@@ -96,9 +96,14 @@ public:
             coeff_function(p_, ap_);
             const scalar_type r0_ap_dot = r0_.dot(ap_);
             if (abs(r0_ap_dot) < std::numeric_limits<scalar_type>::min()) {
-                NUM_COLLECT_LOG_WARNING(
-                    this->logger(), "No further iteration can be done.");
-                return;
+                // Restart with random r0.
+                coeff_function(solution, residual_);
+                residual_ = rhs - residual_;
+                r0_.setRandom();
+                p_ = residual_;
+                rho_ = r0_.dot(residual_);
+                ++iterations_;  // Add iteration count to prevent infinite loop.
+                continue;
             }
             const scalar_type mu = rho_ / r0_ap_dot;
             solution += mu * p_;
