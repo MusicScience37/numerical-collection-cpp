@@ -7,6 +7,7 @@ set(SOURCE_FILES
     error_tolerances_test.cpp
     evaluation_type_test.cpp
     fixed_step_solver_test.cpp
+    impl/accelerated_fixed_point_iteration_solver_test.cpp
     impl/approx_slope_calculator_test.cpp
     impl/bicgstab_test.cpp
     impl/fixed_point_iteration_solver_test.cpp

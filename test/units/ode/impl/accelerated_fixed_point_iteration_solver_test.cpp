@@ -15,9 +15,9 @@
  */
 /*!
  * \file
- * \brief Test of fixed_point_iteration_solver class.
+ * \brief Test of accelerated_fixed_point_iteration_solver class.
  */
-#include "num_collect/ode/impl/fixed_point_iteration_solver.h"
+#include "num_collect/ode/impl/accelerated_fixed_point_iteration_solver.h"
 
 #include <cmath>
 
@@ -27,16 +27,18 @@
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "num_collect/base/constants.h"
+#include "num_collect/logging/log_tag_config_node.h"
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/ode_errors.h"
 
-TEST_CASE("num_collect::ode::impl::fixed_point_iteration_solver") {
+TEST_CASE("num_collect::ode::impl::accelerated_fixed_point_iteration_solver") {
     using num_collect::ode::error_tolerances;
-    using num_collect::ode::impl::fixed_point_iteration_solver;
+    using num_collect::ode::impl::accelerated_fixed_point_iteration_solver;
 
     SECTION("solve an equation") {
         using variable_type = Eigen::Vector2d;
-        using solver_type = fixed_point_iteration_solver<variable_type>;
+        using solver_type =
+            accelerated_fixed_point_iteration_solver<variable_type>;
         solver_type solver;
 
         const auto function = [](const variable_type& input,
@@ -63,7 +65,8 @@ TEST_CASE("num_collect::ode::impl::fixed_point_iteration_solver") {
 
     SECTION("start iteration from the solution") {
         using variable_type = Eigen::Vector2d;
-        using solver_type = fixed_point_iteration_solver<variable_type>;
+        using solver_type =
+            accelerated_fixed_point_iteration_solver<variable_type>;
         solver_type solver;
 
         const auto function = [](const variable_type& input,
@@ -93,7 +96,8 @@ TEST_CASE("num_collect::ode::impl::fixed_point_iteration_solver") {
         // Almost same as the ordinary case, but the maximum number of
         // iterations is set to 1 to cause no convergence.
         using variable_type = Eigen::Vector2d;
-        using solver_type = fixed_point_iteration_solver<variable_type>;
+        using solver_type =
+            accelerated_fixed_point_iteration_solver<variable_type>;
         solver_type solver;
 
         const auto function = [](const variable_type& input,
@@ -120,7 +124,8 @@ TEST_CASE("num_collect::ode::impl::fixed_point_iteration_solver") {
     SECTION(
         "fail to solve an equation due to an equation which has no solution") {
         using variable_type = Eigen::Vector2d;
-        using solver_type = fixed_point_iteration_solver<variable_type>;
+        using solver_type =
+            accelerated_fixed_point_iteration_solver<variable_type>;
         solver_type solver;
 
         const auto function = [](const variable_type& input,
@@ -139,16 +144,28 @@ TEST_CASE("num_collect::ode::impl::fixed_point_iteration_solver") {
 
     SECTION("set the tolerance rate") {
         using variable_type = Eigen::VectorXd;
-        using solver_type = fixed_point_iteration_solver<variable_type>;
+        using solver_type =
+            accelerated_fixed_point_iteration_solver<variable_type>;
         solver_type solver;
 
         CHECK_NOTHROW(solver.tolerance_rate(0.5));
         CHECK_THROWS(solver.tolerance_rate(0.0));
     }
 
+    SECTION("set the maximum size of history") {
+        using variable_type = Eigen::VectorXd;
+        using solver_type =
+            accelerated_fixed_point_iteration_solver<variable_type>;
+        solver_type solver;
+
+        CHECK_NOTHROW(solver.max_history_size(1));
+        CHECK_THROWS(solver.max_history_size(0));
+    }
+
     SECTION("set the max iterations") {
         using variable_type = Eigen::VectorXd;
-        using solver_type = fixed_point_iteration_solver<variable_type>;
+        using solver_type =
+            accelerated_fixed_point_iteration_solver<variable_type>;
         solver_type solver;
 
         CHECK_NOTHROW(solver.max_iterations(100));
@@ -157,7 +174,8 @@ TEST_CASE("num_collect::ode::impl::fixed_point_iteration_solver") {
 
     SECTION("set the initial relaxation coefficient") {
         using variable_type = Eigen::VectorXd;
-        using solver_type = fixed_point_iteration_solver<variable_type>;
+        using solver_type =
+            accelerated_fixed_point_iteration_solver<variable_type>;
         solver_type solver;
 
         CHECK_NOTHROW(solver.initial_relaxation_coefficient(0.5));
@@ -166,7 +184,8 @@ TEST_CASE("num_collect::ode::impl::fixed_point_iteration_solver") {
 
     SECTION("set the max relaxation coefficient") {
         using variable_type = Eigen::VectorXd;
-        using solver_type = fixed_point_iteration_solver<variable_type>;
+        using solver_type =
+            accelerated_fixed_point_iteration_solver<variable_type>;
         solver_type solver;
 
         CHECK_NOTHROW(solver.max_relaxation_coefficient(1.0));
@@ -175,7 +194,8 @@ TEST_CASE("num_collect::ode::impl::fixed_point_iteration_solver") {
 
     SECTION("set the min relaxation coefficient") {
         using variable_type = Eigen::VectorXd;
-        using solver_type = fixed_point_iteration_solver<variable_type>;
+        using solver_type =
+            accelerated_fixed_point_iteration_solver<variable_type>;
         solver_type solver;
 
         CHECK_NOTHROW(solver.min_relaxation_coefficient(1e-8));
@@ -184,7 +204,8 @@ TEST_CASE("num_collect::ode::impl::fixed_point_iteration_solver") {
 
     SECTION("set the relaxation coefficient reduction rate") {
         using variable_type = Eigen::VectorXd;
-        using solver_type = fixed_point_iteration_solver<variable_type>;
+        using solver_type =
+            accelerated_fixed_point_iteration_solver<variable_type>;
         solver_type solver;
 
         CHECK_NOTHROW(solver.relaxation_coefficient_reduction_rate(0.5));
@@ -194,7 +215,8 @@ TEST_CASE("num_collect::ode::impl::fixed_point_iteration_solver") {
 
     SECTION("set the relaxation coefficient increase rate") {
         using variable_type = Eigen::VectorXd;
-        using solver_type = fixed_point_iteration_solver<variable_type>;
+        using solver_type =
+            accelerated_fixed_point_iteration_solver<variable_type>;
         solver_type solver;
 
         CHECK_NOTHROW(solver.relaxation_coefficient_increase_rate(1.05));

@@ -39,6 +39,7 @@
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/evaluation_type.h"
+#include "num_collect/ode/impl/accelerated_fixed_point_iteration_solver.h"
 #include "num_collect/ode/impl/fixed_point_iteration_solver.h"
 #include "num_collect/ode/runge_kutta/inexact_newton_update_equation_solver.h"
 #include "num_collect/rbf/generate_halton_nodes.h"
@@ -225,6 +226,54 @@ static void step_with_fixed_point_iteration(ode_problem_type& problem,
 }
 
 /*!
+ * \brief Solve for a time step with fixed-point iteration with Anderson
+ * acceleration.
+ *
+ * \param[in] problem Problem.
+ * \param[in] time_step_size Time step size.
+ * \param[in] time Current time.
+ * \param[in,out] solution Solution vector.
+ * \param[in] relaxation_coefficient Relaxation coefficient for the fixed-point
+ * iteration.
+ */
+static void step_with_accelerated_fixed_point_iteration(
+    ode_problem_type& problem, double time_step_size, double& time,
+    solution_type& solution, double relaxation_coefficient) {
+    (void)relaxation_coefficient;  // Currently not used. This may be removed in
+                                   // the future.
+    constexpr double slope_coeff =
+        0.5;  // Coefficient of slope in Crank-Nicolson.
+
+    num_collect::ode::error_tolerances<solution_type> tolerances;
+
+    problem.evaluate_on(
+        time, solution, num_collect::ode::evaluation_type{.diff_coeff = true});
+    const solution_type k1 = problem.diff_coeff();
+
+    // Initial guess using the result of the first stage.
+    const solution_type solution_offset = time_step_size * slope_coeff * k1;
+    solution_type z2 = solution_offset;
+    solution_type temp_variable;
+
+    auto function = [&](const solution_type& input, solution_type& output) {
+        temp_variable = solution + input;
+        problem.evaluate_on(time + time_step_size, temp_variable,
+            num_collect::ode::evaluation_type{.diff_coeff = true});
+        output = time_step_size * slope_coeff * problem.diff_coeff() +
+            solution_offset;
+    };
+
+    num_collect::ode::impl::accelerated_fixed_point_iteration_solver<
+        solution_type>
+        equation_solver;
+
+    equation_solver.solve(function, z2, solution);
+
+    solution += z2;
+    time += time_step_size;
+}
+
+/*!
  * \brief Solve for a time step and verify the solution.
  *
  * \param[in] problem Problem.
@@ -259,6 +308,10 @@ static void perform_test(ode_problem_type& problem, double time_step_size,
         step_with_inexact_newton(problem, time_step_size, time, solution);
     } else if (equation_solver_type_str == "fixed_point_iteration") {
         step_with_fixed_point_iteration(
+            problem, time_step_size, time, solution, relaxation_coefficient);
+    } else if (equation_solver_type_str ==
+        "accelerated_fixed_point_iteration") {
+        step_with_accelerated_fixed_point_iteration(
             problem, time_step_size, time, solution, relaxation_coefficient);
     } else {
         NUM_COLLECT_LOG_AND_THROW(num_collect::invalid_argument, logger,
