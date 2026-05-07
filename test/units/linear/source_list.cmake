@@ -2,6 +2,8 @@ set(SOURCE_FILES
     algebraic_multigrid_solver_test.cpp
     amg_preconditioner_test.cpp
     cuthill_mckee_ordering_test.cpp
+    functional_bicgstab_test.cpp
+    functional_gmres_test.cpp
     gauss_seidel_iterative_solver_test.cpp
     impl/amg/build_first_coarse_grid_candidate_test.cpp
     impl/amg/compute_strong_connection_list_test.cpp

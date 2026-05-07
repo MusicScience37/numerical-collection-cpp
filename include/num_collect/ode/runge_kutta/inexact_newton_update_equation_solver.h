@@ -32,8 +32,11 @@
 #include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
+#include "num_collect/functions/root.h"
+#include "num_collect/linear/functional_gmres.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
+#include "num_collect/logging/logging_macros.h"
 #include "num_collect/ode/concepts/mass_problem.h"
 #include "num_collect/ode/concepts/multi_variate_differentiable_problem.h"
 #include "num_collect/ode/concepts/multi_variate_problem.h"
@@ -41,8 +44,8 @@
 #include "num_collect/ode/concepts/single_variate_differentiable_problem.h"
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/evaluation_type.h"
-#include "num_collect/ode/impl/gmres.h"
 #include "num_collect/ode/ode_errors.h"
+#include "num_collect/ode/runge_kutta/impl/inexact_newton_forcing_term_calculator.h"
 #include "num_collect/ode/runge_kutta/iterative_equation_solver_base.h"
 
 namespace num_collect::ode::runge_kutta {
@@ -1050,7 +1053,10 @@ public:
     inexact_newton_update_equation_solver()
         : iterative_equation_solver_base<
               inexact_newton_update_equation_solver<Problem>>(
-              inexact_newton_update_equation_solver_tag) {}
+              inexact_newton_update_equation_solver_tag) {
+        this->configure_child_algorithm_logger_if_exists(solver_);
+        forcing_term_calculator_.min_forcing_term(min_forcing_term);
+    }
 
     /*!
      * \brief Update Jacobian and internal parameters.
@@ -1079,8 +1085,6 @@ public:
         // because formulas assumes that an evaluation is done here.
         problem_->evaluate_on(time_, variable_,
             evaluation_type{.diff_coeff = true, .mass = use_mass});
-
-        solver_.max_subspace_dim(std::min(variable_.size(), max_subspace_dim_));
     }
 
     /*!
@@ -1107,6 +1111,7 @@ public:
                 *update_reduction_rate_ = min_rate;
             }
         }
+        absolute_residual_tolerance_.reset();
         iterations_ = 0;
     }
 
@@ -1151,6 +1156,35 @@ public:
                 step_size_ * slope_coeff_ * problem_->diff_coeff() -
                 solution_offset_;
         }
+        residual_norm_ = residual_.stableNorm();
+
+        if (!absolute_residual_tolerance_) {
+            // Use the same coefficient as the minimum forcing term to prevent
+            // errors due to Jacobian approximation.
+            constexpr scalar_type residual_tolerance_rate = min_forcing_term;
+            absolute_residual_tolerance_ =
+                residual_tolerance_rate * (*residual_norm_);
+            forcing_term_calculator_.absolute_tolerance(
+                *absolute_residual_tolerance_);
+            NUM_COLLECT_LOG_TRACE(this->logger(),
+                "Set absolute residual tolerance to {}.",
+                *absolute_residual_tolerance_);
+        }
+
+        if ((*residual_norm_) < (*absolute_residual_tolerance_)) {
+            NUM_COLLECT_LOG_TRACE(this->logger(),
+                "Stopped iterations because residual norm is small enough. "
+                "residual_norm={}, absolute_residual_tolerance={}.",
+                *residual_norm_, *absolute_residual_tolerance_);
+            return;
+        }
+
+        const scalar_type forcing_term =
+            forcing_term_calculator_.calculate(*residual_norm_);
+        NUM_COLLECT_LOG_TRACE(this->logger(),
+            "Calculated forcing term. residual_norm={}, forcing_term={}.",
+            *residual_norm_, forcing_term);
+        solver_.tolerance(forcing_term);
 
         const auto coeff_function = [this](const auto& target, auto& result) {
             this->apply_jacobian(target, result);
@@ -1186,16 +1220,22 @@ public:
      * \return If the algorithm converged.
      */
     [[nodiscard]] auto is_converged() const -> bool {
-        bool converged = false;
+        if (absolute_residual_tolerance_ && residual_norm_ &&
+            *residual_norm_ < *absolute_residual_tolerance_) {
+            return true;
+        }
         if (update_norm_ && update_reduction_rate_ &&
             *update_reduction_rate_ < static_cast<scalar_type>(1)) {
-            converged =
+            const bool converged =
                 (*update_reduction_rate_ /
                     (static_cast<scalar_type>(1) - *update_reduction_rate_)) *
                     (*update_norm_) <=
                 tolerance_rate_;
+            if (converged) {
+                return true;
+            }
         }
-        return converged;
+        return false;
     }
 
     /*!
@@ -1274,6 +1314,22 @@ public:
     }
 
 private:
+    //! Machine epsilon.
+    static constexpr scalar_type epsilon =
+        std::numeric_limits<scalar_type>::epsilon();
+
+    //! Width of finite difference for Jacobian application.
+    static constexpr scalar_type jacobian_diff_width =
+        functions::root(epsilon, 3);
+
+    //! Expected precision of finite difference for Jacobian application.
+    static constexpr scalar_type jacobian_diff_precision =
+        jacobian_diff_width * jacobian_diff_width;
+
+    //! Minimum forcing term to prevent numerical instability due to the error of finite difference.
+    static constexpr scalar_type min_forcing_term =
+        100 * jacobian_diff_precision;
+
     /*!
      * \brief Multiply Jacobian matrix to a vector.
      *
@@ -1286,10 +1342,6 @@ private:
         NUM_COLLECT_PRECONDITION(
             problem_ != nullptr, "update_jacobian is not called.");
 
-        using std::sqrt;
-        const scalar_type epsilon = std::numeric_limits<scalar_type>::epsilon();
-        const scalar_type sqrt_epsilon = sqrt(epsilon);
-
         const scalar_type target_norm = target.norm();
         const scalar_type variable_norm = temp_variable_.norm();
         if (target_norm < variable_norm * epsilon) {
@@ -1297,7 +1349,8 @@ private:
             return;
         }
         const scalar_type diff_width =
-            std::max(sqrt_epsilon * variable_norm / target_norm, sqrt_epsilon);
+            std::max(jacobian_diff_width * variable_norm / target_norm,
+                jacobian_diff_width);
 
         variable_buffer_ = temp_variable_ + diff_width * target;
         problem_->evaluate_on(
@@ -1335,8 +1388,12 @@ private:
     //! Solution.
     variable_type* solution_{nullptr};
 
+    //! Calculator of the forcing term.
+    impl::inexact_newton_forcing_term_calculator<scalar_type>
+        forcing_term_calculator_{};
+
     //! Solver of the current coefficient matrix.
-    ode::impl::gmres<variable_type> solver_{};
+    linear::functional_gmres<variable_type> solver_{};
 
     //! Temporary variable.
     variable_type temp_variable_{};
@@ -1347,13 +1404,19 @@ private:
     //! Update vector.
     variable_type update_{};
 
+    //! Norm of residual.
+    std::optional<scalar_type> residual_norm_{};
+
     //! Norm of update.
     std::optional<scalar_type> update_norm_{};
 
     //! Rate in which update is reduced from the previous step.
     std::optional<scalar_type> update_reduction_rate_{};
 
-    //! Default rate of tolerance in this solver.
+    //! Absolute tolerance of the residual.
+    std::optional<scalar_type> absolute_residual_tolerance_{};
+
+    //! Default rate of tolerance in this solver. (Strict value is needed for stable computation of the Runge-Kutta method.)
     static constexpr auto default_tolerance_rate =
         static_cast<scalar_type>(1e-4);
 

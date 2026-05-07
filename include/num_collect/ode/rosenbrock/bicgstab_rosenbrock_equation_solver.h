@@ -31,6 +31,7 @@
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/precondition.h"
+#include "num_collect/functions/root.h"
 #include "num_collect/ode/concepts/mass_problem.h"
 #include "num_collect/ode/concepts/multi_variate_differentiable_problem.h"
 #include "num_collect/ode/concepts/multi_variate_problem.h"
@@ -126,14 +127,13 @@ public:
 
         const scalar_type target_norm = target.norm();
         const scalar_type variable_norm = variable_.norm();
-        if (target_norm <
-            variable_norm * std::numeric_limits<scalar_type>::epsilon()) {
+        if (target_norm < variable_norm * epsilon) {
             result = variable_type::Zero(target.size());
             return;
         }
         const scalar_type diff_width =
-            std::sqrt(std::numeric_limits<scalar_type>::epsilon()) /
-            target_norm;
+            std::max(jacobian_diff_width * variable_norm / target_norm,
+                jacobian_diff_width);
 
         variable_buffer_ = variable_ + diff_width * target;
         problem_->evaluate_on(
@@ -196,6 +196,14 @@ public:
     }
 
 private:
+    //! Machine epsilon.
+    static constexpr scalar_type epsilon =
+        std::numeric_limits<scalar_type>::epsilon();
+
+    //! Width of finite difference for Jacobian application.
+    static constexpr scalar_type jacobian_diff_width =
+        functions::root(epsilon, 3);
+
     //! Problem.
     problem_type* problem_{nullptr};
 
