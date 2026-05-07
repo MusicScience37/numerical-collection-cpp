@@ -382,6 +382,9 @@ private:
         const variable_type& tolerance_reference) {
         if (use_history_) {
             if (!calculate_update_with_history(solution)) {
+                history_size_ = 0;
+                next_history_index_ = 0;
+                use_history_ = false;
                 calculate_update_without_history();
             }
         } else {
