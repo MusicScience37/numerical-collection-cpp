@@ -84,6 +84,8 @@ public:
 
         const scalar_type rhs_norm = rhs.norm();
         const scalar_type absolute_tolerance = rhs_norm * tolerance_;
+        constexpr scalar_type epsilon =
+            std::numeric_limits<scalar_type>::epsilon();
 
         scalar_type residual_norm = residual_.norm();
         if (residual_norm <= absolute_tolerance) {
@@ -95,7 +97,8 @@ public:
         while (true) {
             coeff_function(p_, ap_);
             const scalar_type r0_ap_dot = r0_.dot(ap_);
-            if (abs(r0_ap_dot) < std::numeric_limits<scalar_type>::min()) {
+            if (abs(r0_ap_dot) <
+                r0_.stableNorm() * ap_.stableNorm() * epsilon) {
                 // Restart with random r0.
                 coeff_function(solution, residual_);
                 residual_ = rhs - residual_;
