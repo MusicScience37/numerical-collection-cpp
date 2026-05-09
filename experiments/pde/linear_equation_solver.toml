@@ -13,6 +13,9 @@ num_neighbors = 20
 diffusion_coefficient = 0.1
 # Time step size.
 time_step_size = 0.01
+# Solver type.
+# solver_type = "functional_gmres"
+solver_type = "functional_preconditioned_gmres"
 
 [[num_collect.logging.tag_configs]]
 tag = ""
@@ -31,4 +34,8 @@ output_log_level = "trace"
 
 [[num_collect.logging.tag_configs]]
 tag = "num_collect::linear::functional_gmres"
+output_log_level = "trace"
+
+[[num_collect.logging.tag_configs]]
+tag = "num_collect::linear::functional_preconditioned_gmres"
 output_log_level = "trace"

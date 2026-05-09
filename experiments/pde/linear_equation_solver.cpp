@@ -20,6 +20,7 @@
 #include <chrono>
 #include <cmath>
 #include <ratio>
+#include <string>
 #include <string_view>
 #include <utility>
 
@@ -29,6 +30,7 @@
 #include "num_collect/base/constants.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/linear/functional_gmres.h"
+#include "num_collect/linear/functional_preconditioned_gmres.h"
 #include "num_collect/logging/load_logging_config.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/logging/logging_macros.h"
@@ -219,19 +221,34 @@ static auto create_linear_system(
     return std::make_pair(std::move(coeff), std::move(rhs));
 }
 
-static void solve_linear_system(
-    const sparse_matrix_type& coeff, const solution_type& rhs) {
+static void solve_linear_system(const sparse_matrix_type& coeff,
+    const solution_type& rhs, std::string_view solver_type) {
     num_collect::logging::logger logger;
 
     NUM_COLLECT_LOG_INFO(logger, "Start solving the linear system.");
 
     const auto start_time = std::chrono::steady_clock::now();
 
-    num_collect::linear::functional_gmres<solution_type> solver;
-    solution_type solution = solution_type::Zero(rhs.size());
-    solver.solve([&coeff](const solution_type& input,
-                     solution_type& output) { output = coeff * input; },
-        rhs, solution);
+    constexpr double rel_tol = 1e-4;
+    if (solver_type == "functional_gmres") {
+        num_collect::linear::functional_gmres<solution_type> solver;
+        solver.tolerance(rel_tol);
+        solution_type solution = solution_type::Zero(rhs.size());
+        solver.solve([&coeff](const solution_type& input,
+                         solution_type& output) { output = coeff * input; },
+            rhs, solution);
+    } else if (solver_type == "functional_preconditioned_gmres") {
+        num_collect::linear::functional_preconditioned_gmres<solution_type>
+            solver;
+        solver.tolerance(rel_tol);
+        solver.prepare_preconditioner(coeff.diagonal());
+        solution_type solution = solution_type::Zero(rhs.size());
+        solver.solve([&coeff](const solution_type& input,
+                         solution_type& output) { output = coeff * input; },
+            rhs, solution);
+    } else {
+        NUM_COLLECT_LOG_ERROR(logger, "Unknown solver type: {}", solver_type);
+    }
 
     const auto end_time = std::chrono::steady_clock::now();
     const auto elapsed_time_ms =
@@ -265,6 +282,8 @@ auto main(int argc, const char** argv) -> int {
         parser.get<double>("linear_equation_solver.diffusion_coefficient");
     const auto time_step_size =
         parser.get<double>("linear_equation_solver.time_step_size");
+    const auto solver_type =
+        parser.get<std::string>("linear_equation_solver.solver_type");
     NUM_COLLECT_LOG_INFO(
         logger, "Number of interior nodes: {}", num_interior_nodes);
     NUM_COLLECT_LOG_INFO(logger, "Number of boundary nodes per edge: {}",
@@ -274,6 +293,7 @@ auto main(int argc, const char** argv) -> int {
     NUM_COLLECT_LOG_INFO(
         logger, "Diffusion coefficient: {}", diffusion_coefficient);
     NUM_COLLECT_LOG_INFO(logger, "Time step size: {}", time_step_size);
+    NUM_COLLECT_LOG_INFO(logger, "Solver type: {}", solver_type);
 
     const auto nodes =
         generate_nodes(num_interior_nodes, num_boundary_nodes_per_edge);
@@ -283,7 +303,7 @@ auto main(int argc, const char** argv) -> int {
         num_boundary_nodes_per_edge, polynomial_order, num_neighbors,
         diffusion_coefficient, time_step_size);
 
-    solve_linear_system(coeff, rhs);
+    solve_linear_system(coeff, rhs, solver_type);
 
     NUM_COLLECT_LOG_INFO(logger, "Finished.");
 
