@@ -1,0 +1,34 @@
+"$schema" = "https://numcollect.musicscience37.com/config_schema/v3/config_schema.json"
+
+[linear_equation_solver]
+# Number of nodes in the interior of the domain.
+num_interior_nodes = 1000
+# Number of nodes on each edge of the boundary.
+num_boundary_nodes_per_edge = 30
+# Order of polynomials used in RBF-FD.
+polynomial_order = 4
+# Number of neighbors used in RBF-FD.
+num_neighbors = 20
+# Diffusion coefficient.
+diffusion_coefficient = 0.1
+# Time step size.
+time_step_size = 0.01
+
+[[num_collect.logging.tag_configs]]
+tag = ""
+sink = "default"
+output_log_level = "iteration"
+iteration_output_period = 1
+output_log_level_in_child_iterations = "summary"
+
+[[num_collect.logging.tag_configs]]
+tag = "num_collect::ode::runge_kutta::inexact_newton_update_equation_solver"
+output_log_level = "trace"
+
+[[num_collect.logging.tag_configs]]
+tag = "num_collect::linear::functional_bicgstab"
+output_log_level = "trace"
+
+[[num_collect.logging.tag_configs]]
+tag = "num_collect::linear::functional_gmres"
+output_log_level = "trace"
