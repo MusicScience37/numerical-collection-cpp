@@ -72,7 +72,6 @@ public:
      *
      * \param[in] coeff_diagonal Diagonal coefficients of the coefficient
      * matrix.
-     * \return This.
      */
     void prepare_preconditioner(const vector_type& coeff_diagonal) {
         if (!preconditioner_diagonal_) {
