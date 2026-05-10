@@ -19,6 +19,7 @@
  */
 #include <chrono>
 #include <cmath>
+#include <random>
 #include <ratio>
 #include <string>
 #include <string_view>
@@ -221,8 +222,27 @@ static auto create_linear_system(
     return std::make_pair(std::move(coeff), std::move(rhs));
 }
 
+static auto estimate_diag(const sparse_matrix_type& coeff,
+    num_collect::index_type num_samples) -> solution_type {
+    const num_collect::index_type size = coeff.cols();
+    solution_type eval_vector;
+    solution_type diag_estimate;
+    eval_vector.resize(size);
+    diag_estimate.resize(size);
+    std::independent_bits_engine<std::mt19937, 1, unsigned> random_engine;
+    for (num_collect::index_type sample = 0; sample < num_samples; ++sample) {
+        for (num_collect::index_type i = 0; i < size; ++i) {
+            eval_vector(i) = (random_engine() == 0) ? 1.0 : -1.0;
+        }
+        diag_estimate += (coeff * eval_vector).cwiseProduct(eval_vector);
+    }
+    diag_estimate /= static_cast<double>(num_samples);
+    return diag_estimate;
+}
+
 static void solve_linear_system(const sparse_matrix_type& coeff,
-    const solution_type& rhs, std::string_view solver_type) {
+    const solution_type& rhs, std::string_view solver_type,
+    num_collect::index_type num_diag_estimation_samples) {
     num_collect::logging::logger logger;
 
     NUM_COLLECT_LOG_INFO(logger, "Start solving the linear system.");
@@ -242,6 +262,16 @@ static void solve_linear_system(const sparse_matrix_type& coeff,
             solver;
         solver.tolerance(rel_tol);
         solver.prepare_preconditioner(coeff.diagonal());
+        solution_type solution = solution_type::Zero(rhs.size());
+        solver.solve([&coeff](const solution_type& input,
+                         solution_type& output) { output = coeff * input; },
+            rhs, solution);
+    } else if (solver_type == "functional_preconditioned_gmres_approx") {
+        num_collect::linear::functional_preconditioned_gmres<solution_type>
+            solver;
+        solver.tolerance(rel_tol);
+        solver.prepare_preconditioner(
+            estimate_diag(coeff, num_diag_estimation_samples));
         solution_type solution = solution_type::Zero(rhs.size());
         solver.solve([&coeff](const solution_type& input,
                          solution_type& output) { output = coeff * input; },
@@ -284,6 +314,9 @@ auto main(int argc, const char** argv) -> int {
         parser.get<double>("linear_equation_solver.time_step_size");
     const auto solver_type =
         parser.get<std::string>("linear_equation_solver.solver_type");
+    const auto num_diag_estimation_samples =
+        parser.get<num_collect::index_type>(
+            "linear_equation_solver.num_diag_estimation_samples");
     NUM_COLLECT_LOG_INFO(
         logger, "Number of interior nodes: {}", num_interior_nodes);
     NUM_COLLECT_LOG_INFO(logger, "Number of boundary nodes per edge: {}",
@@ -294,6 +327,9 @@ auto main(int argc, const char** argv) -> int {
         logger, "Diffusion coefficient: {}", diffusion_coefficient);
     NUM_COLLECT_LOG_INFO(logger, "Time step size: {}", time_step_size);
     NUM_COLLECT_LOG_INFO(logger, "Solver type: {}", solver_type);
+    NUM_COLLECT_LOG_INFO(logger,
+        "Number of samples for diagonal estimation: {}",
+        num_diag_estimation_samples);
 
     const auto nodes =
         generate_nodes(num_interior_nodes, num_boundary_nodes_per_edge);
@@ -303,7 +339,7 @@ auto main(int argc, const char** argv) -> int {
         num_boundary_nodes_per_edge, polynomial_order, num_neighbors,
         diffusion_coefficient, time_step_size);
 
-    solve_linear_system(coeff, rhs, solver_type);
+    solve_linear_system(coeff, rhs, solver_type, num_diag_estimation_samples);
 
     NUM_COLLECT_LOG_INFO(logger, "Finished.");
 

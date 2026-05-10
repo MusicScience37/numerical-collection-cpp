@@ -15,7 +15,10 @@ diffusion_coefficient = 0.1
 time_step_size = 0.01
 # Solver type.
 # solver_type = "functional_gmres"
-solver_type = "functional_preconditioned_gmres"
+# solver_type = "functional_preconditioned_gmres"
+solver_type = "functional_preconditioned_gmres_approx"
+# Number of samples used in the diagonal estimation for preconditioning.
+num_diag_estimation_samples = 15
 
 [[num_collect.logging.tag_configs]]
 tag = ""
