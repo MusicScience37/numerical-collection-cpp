@@ -237,6 +237,24 @@ static auto estimate_diag(const sparse_matrix_type& coeff,
         diag_estimate += (coeff * eval_vector).cwiseProduct(eval_vector);
     }
     diag_estimate /= static_cast<double>(num_samples);
+
+    {
+        // Check the estimation error.
+        const solution_type true_diag = coeff.diagonal();
+        const double relative_error =
+            (diag_estimate - true_diag).norm() / true_diag.norm();
+        const double max_relative_error =
+            (diag_estimate - true_diag)
+                .cwiseAbs()
+                .cwiseQuotient(true_diag.cwiseAbs())
+                .maxCoeff();
+        num_collect::logging::logger logger;
+        NUM_COLLECT_LOG_INFO(logger,
+            "Estimated diagonal with {} samples. Relative error: {:.5e}, max "
+            "relative error: {:.5e}",
+            num_samples, relative_error, max_relative_error);
+    }
+
     return diag_estimate;
 }
 
