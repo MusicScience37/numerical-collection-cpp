@@ -38,7 +38,3 @@ output_log_level = "trace"
 [[num_collect.logging.tag_configs]]
 tag = "num_collect::linear::functional_gmres"
 output_log_level = "trace"
-
-[[num_collect.logging.tag_configs]]
-tag = "num_collect::linear::functional_preconditioned_gmres"
-output_log_level = "trace"

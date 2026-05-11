@@ -31,7 +31,6 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/linear/diagonal_estimator.h"
 #include "num_collect/linear/functional_gmres.h"
-#include "num_collect/linear/functional_preconditioned_gmres.h"
 #include "num_collect/logging/load_logging_config.h"
 #include "num_collect/logging/logger.h"
 #include "num_collect/logging/logging_macros.h"
@@ -269,8 +268,7 @@ static void solve_linear_system(const sparse_matrix_type& coeff,
                          solution_type& output) { output = coeff * input; },
             rhs, solution);
     } else if (solver_type == "functional_preconditioned_gmres") {
-        num_collect::linear::functional_preconditioned_gmres<solution_type>
-            solver;
+        num_collect::linear::functional_gmres<solution_type> solver;
         solver.tolerance(rel_tol);
         solver.prepare_preconditioner(coeff.diagonal());
         solution_type solution = solution_type::Zero(rhs.size());
@@ -278,8 +276,7 @@ static void solve_linear_system(const sparse_matrix_type& coeff,
                          solution_type& output) { output = coeff * input; },
             rhs, solution);
     } else if (solver_type == "functional_preconditioned_gmres_approx") {
-        num_collect::linear::functional_preconditioned_gmres<solution_type>
-            solver;
+        num_collect::linear::functional_gmres<solution_type> solver;
         solver.tolerance(rel_tol);
         solver.prepare_preconditioner(
             estimate_diag(coeff, num_diag_estimation_samples));
