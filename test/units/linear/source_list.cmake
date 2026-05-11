@@ -2,6 +2,7 @@ set(SOURCE_FILES
     algebraic_multigrid_solver_test.cpp
     amg_preconditioner_test.cpp
     cuthill_mckee_ordering_test.cpp
+    diagonal_estimator_test.cpp
     functional_bicgstab_test.cpp
     functional_gmres_test.cpp
     gauss_seidel_iterative_solver_test.cpp

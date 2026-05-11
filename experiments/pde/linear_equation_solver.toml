@@ -1,6 +1,6 @@
 "$schema" = "https://numcollect.musicscience37.com/config_schema/v3/config_schema.json"
 
-[runge_kutta_equation_solver]
+[linear_equation_solver]
 # Number of nodes in the interior of the domain.
 num_interior_nodes = 1000
 # Number of nodes on each edge of the boundary.
@@ -13,15 +13,12 @@ num_neighbors = 20
 diffusion_coefficient = 0.1
 # Time step size.
 time_step_size = 0.01
-# Type of the equation solver.
-# * "inexact_newton"
-# * "fixed_point_iteration"
-# * "accelerated_fixed_point_iteration"
-equation_solver_type = "inexact_newton"
-# equation_solver_type = "fixed_point_iteration"
-# equation_solver_type = "accelerated_fixed_point_iteration"
-# Relaxation coefficient for the fixed-point iteration.
-relaxation_coefficient = 1.0
+# Solver type.
+# solver_type = "functional_gmres"
+# solver_type = "functional_preconditioned_gmres"
+solver_type = "functional_preconditioned_gmres_approx"
+# Number of samples used in the diagonal estimation for preconditioning.
+num_diag_estimation_samples = 20
 
 [[num_collect.logging.tag_configs]]
 tag = ""
@@ -29,15 +26,6 @@ sink = "default"
 output_log_level = "iteration"
 iteration_output_period = 1
 output_log_level_in_child_iterations = "summary"
-
-[[num_collect.logging.tag_configs]]
-tag = "num_collect::ode::impl::fixed_point_iteration_solver"
-iteration_output_period = 100
-
-[[num_collect.logging.tag_configs]]
-tag = "num_collect::ode::impl::accelerated_fixed_point_iteration_solver"
-output_log_level = "trace"
-iteration_output_period = 10
 
 [[num_collect.logging.tag_configs]]
 tag = "num_collect::ode::runge_kutta::inexact_newton_update_equation_solver"
@@ -49,4 +37,4 @@ output_log_level = "trace"
 
 [[num_collect.logging.tag_configs]]
 tag = "num_collect::linear::functional_gmres"
-output_log_level_in_child_iterations = "trace"
+output_log_level = "trace"

@@ -25,6 +25,7 @@
 #include <cmath>
 #include <concepts>
 #include <limits>
+#include <optional>
 
 #include <Eigen/Core>
 #include <Eigen/QR>
@@ -51,6 +52,8 @@ constexpr auto functional_gmres_tag =
  *
  * \note This class in the default setting won't restart GMRES because
  * restarting GMRES in the current simple implementation doesn't work well.
+ * \note This class can use Jacobi preconditioning by calling
+ * \ref prepare_preconditioner before solve.
  */
 template <base::concepts::real_scalar_dense_vector Vector>
 class functional_gmres : public logging::logging_mixin {
@@ -63,6 +66,32 @@ public:
 
     //! Constructor.
     functional_gmres() : logging::logging_mixin(functional_gmres_tag) {}
+
+    /*!
+     * \brief Prepare the preconditioner.
+     *
+     * \param[in] coeff_diagonal Diagonal coefficients of the coefficient
+     * matrix.
+     */
+    void prepare_preconditioner(const vector_type& coeff_diagonal) {
+        if (!preconditioner_diagonal_) {
+            preconditioner_diagonal_.emplace();
+        }
+        preconditioner_diagonal_->resize(coeff_diagonal.size());
+
+        const scalar_type max_coeff = coeff_diagonal.cwiseAbs().maxCoeff();
+        const scalar_type coeff_thresh = tolerance_ * max_coeff;
+        for (index_type i = 0; i < coeff_diagonal.size(); ++i) {
+            const scalar_type current_coeff = coeff_diagonal(i);
+            using std::abs;
+            if (abs(current_coeff) > coeff_thresh) {
+                (*preconditioner_diagonal_)(i) =
+                    static_cast<scalar_type>(1) / current_coeff;
+            } else {
+                (*preconditioner_diagonal_)(i) = static_cast<scalar_type>(1);
+            }
+        }
+    }
 
     /*!
      * \brief Solve.
@@ -104,12 +133,18 @@ public:
         const scalar_type basis_vector_norm_thresh =
             std::sqrt(std::numeric_limits<scalar_type>::min());
 
-        const scalar_type rhs_norm = rhs.stableNorm();
+        const scalar_type rhs_norm = (preconditioner_diagonal_)
+            ? (rhs.cwiseProduct(*preconditioner_diagonal_)).stableNorm()
+            : rhs.stableNorm();
         const scalar_type absolute_tolerance =
             std::max(rhs_norm * tolerance_, basis_vector_norm_thresh);
 
         coeff_function(solution, basis_vector_buffer_);
         basis_vector_buffer_ = rhs - basis_vector_buffer_;
+        if (preconditioner_diagonal_) {
+            basis_vector_buffer_ =
+                basis_vector_buffer_.cwiseProduct(*preconditioner_diagonal_);
+        }
         residual_norm_ = basis_vector_buffer_.stableNorm();
         NUM_COLLECT_LOG_TRACE(
             this->logger(), "First residual_norm={}", residual_norm_);
@@ -131,6 +166,10 @@ public:
                 basis_.col(current_subspace_dim) = normalized_basis_vector_;
                 ++current_subspace_dim;
                 coeff_function(normalized_basis_vector_, basis_vector_buffer_);
+                if (preconditioner_diagonal_) {
+                    basis_vector_buffer_ = basis_vector_buffer_.cwiseProduct(
+                        *preconditioner_diagonal_);
+                }
                 for (index_type i = 0; i < current_subspace_dim; ++i) {
                     scalar_type& current_coeff =
                         hessenberg_(i, current_subspace_dim - 1);
@@ -167,6 +206,10 @@ public:
             // TODO Better restarting method.
             coeff_function(solution, basis_vector_buffer_);
             basis_vector_buffer_ = rhs - basis_vector_buffer_;
+            if (preconditioner_diagonal_) {
+                basis_vector_buffer_ = basis_vector_buffer_.cwiseProduct(
+                    *preconditioner_diagonal_);
+            }
             residual_norm_ = basis_vector_buffer_.stableNorm();
             NUM_COLLECT_LOG_TRACE(this->logger(),
                 "Finished one cycle of GMRES: iterations={}, residual_norm={}",
@@ -265,6 +308,9 @@ private:
 
     //! QR decomposition.
     Eigen::ColPivHouseholderQR<matrix_type> qr_{};
+
+    //! Diagonal coefficients of preconditioner.
+    std::optional<vector_type> preconditioner_diagonal_{};
 
     //! Number of iterations.
     index_type iterations_{};

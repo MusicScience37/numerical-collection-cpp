@@ -49,6 +49,25 @@ TEST_CASE("num_collect::linear::functional_gmres") {
         comparison_approvals::verify_with_reference(sol, true_sol);
     }
 
+    SECTION("solve with preconditioner") {
+        const Eigen::Matrix3d coeff{
+            {1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}, {7.0, 8.0, 10.0}};
+        const auto coeff_function = [coeff_ptr = &coeff](
+                                        const auto& target, auto& result) {
+            result = (*coeff_ptr) * target;
+        };
+        const Eigen::Vector3d true_sol{{1.0, 2.0, -3.0}};
+        const Eigen::Vector3d rhs = coeff * true_sol;
+
+        functional_gmres<Eigen::Vector3d> solver;
+        solver.prepare_preconditioner(coeff.diagonal());
+        Eigen::Vector3d sol = Eigen::Vector3d::Zero();
+        solver.solve(coeff_function, rhs, sol);
+
+        CHECK(solver.iterations() > 0);
+        comparison_approvals::verify_with_reference(sol, true_sol);
+    }
+
     SECTION("solve from true solution") {
         const Eigen::Matrix3d coeff{
             {1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}, {7.0, 8.0, 10.0}};
