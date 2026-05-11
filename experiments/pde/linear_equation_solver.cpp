@@ -19,7 +19,6 @@
  */
 #include <chrono>
 #include <cmath>
-#include <random>
 #include <ratio>
 #include <string>
 #include <string_view>
@@ -30,6 +29,7 @@
 
 #include "num_collect/base/constants.h"
 #include "num_collect/base/index_type.h"
+#include "num_collect/linear/diagonal_estimator.h"
 #include "num_collect/linear/functional_gmres.h"
 #include "num_collect/linear/functional_preconditioned_gmres.h"
 #include "num_collect/logging/load_logging_config.h"
@@ -224,19 +224,12 @@ static auto create_linear_system(
 
 static auto estimate_diag(const sparse_matrix_type& coeff,
     num_collect::index_type num_samples) -> solution_type {
-    const num_collect::index_type size = coeff.cols();
-    solution_type eval_vector;
+    num_collect::linear::diagonal_estimator<solution_type> estimator;
+    estimator.num_random_vectors(num_samples);
     solution_type diag_estimate;
-    eval_vector.resize(size);
-    diag_estimate.resize(size);
-    std::independent_bits_engine<std::mt19937, 1, unsigned> random_engine;
-    for (num_collect::index_type sample = 0; sample < num_samples; ++sample) {
-        for (num_collect::index_type i = 0; i < size; ++i) {
-            eval_vector(i) = (random_engine() == 0) ? 1.0 : -1.0;
-        }
-        diag_estimate += (coeff * eval_vector).cwiseProduct(eval_vector);
-    }
-    diag_estimate /= static_cast<double>(num_samples);
+    estimator.estimate([&coeff](const solution_type& input,
+                           solution_type& output) { output = coeff * input; },
+        coeff.cols(), diag_estimate);
 
     {
         // Check the estimation error.

@@ -1,6 +1,7 @@
 #include "algebraic_multigrid_solver_test.cpp"
 #include "amg_preconditioner_test.cpp"
 #include "cuthill_mckee_ordering_test.cpp"
+#include "diagonal_estimator_test.cpp"
 #include "functional_bicgstab_test.cpp"
 #include "functional_gmres_test.cpp"
 #include "functional_preconditioned_gmres_test.cpp"
