@@ -17,9 +17,9 @@ time_step_size = 0.01
 # * "inexact_newton"
 # * "fixed_point_iteration"
 # * "accelerated_fixed_point_iteration"
-# equation_solver_type = "inexact_newton"
+equation_solver_type = "inexact_newton"
 # equation_solver_type = "fixed_point_iteration"
-equation_solver_type = "accelerated_fixed_point_iteration"
+# equation_solver_type = "accelerated_fixed_point_iteration"
 # Relaxation coefficient for the fixed-point iteration.
 relaxation_coefficient = 1.0
 
@@ -49,4 +49,4 @@ output_log_level = "trace"
 
 [[num_collect.logging.tag_configs]]
 tag = "num_collect::linear::functional_gmres"
-output_log_level = "trace"
+output_log_level_in_child_iterations = "trace"

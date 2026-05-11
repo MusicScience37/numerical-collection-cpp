@@ -33,6 +33,7 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/functions/root.h"
+#include "num_collect/linear/diagonal_estimator.h"
 #include "num_collect/linear/functional_gmres.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
@@ -1080,11 +1081,24 @@ public:
         variable_ = variable;
         slope_coeff_ = slope_coeff;
 
-        // This actually does not evaluate Jacobian,
-        // but evaluate differential coefficient and mass
-        // because formulas assumes that an evaluation is done here.
+        temp_variable_ = variable_;
+        diagonal_estimator_.estimate(
+            [this](const variable_type& input, variable_type& output) {
+                this->apply_jacobian(input, output);
+            },
+            variable.size(), jacobian_diagonal_estimate_);
+
         problem_->evaluate_on(time_, variable_,
             evaluation_type{.diff_coeff = true, .mass = use_mass});
+        if constexpr (use_mass) {
+            coeff_matrix_diagonal_estimate_ = problem_->mass().diagonal();
+        } else {
+            coeff_matrix_diagonal_estimate_.resize(variable_.size());
+            coeff_matrix_diagonal_estimate_.setOnes();
+        }
+        coeff_matrix_diagonal_estimate_.noalias() -=
+            step_size_ * slope_coeff_ * jacobian_diagonal_estimate_;
+        solver_.prepare_preconditioner(coeff_matrix_diagonal_estimate_);
     }
 
     /*!
@@ -1394,6 +1408,15 @@ private:
 
     //! Solver of the current coefficient matrix.
     linear::functional_gmres<variable_type> solver_{};
+
+    //! Estimator of diagonal elements.
+    linear::diagonal_estimator<variable_type> diagonal_estimator_{};
+
+    //! Estimated diagonal elements of Jacobian.
+    variable_type jacobian_diagonal_estimate_{};
+
+    //! Estimated diagonal elements of the coefficient matrix.
+    variable_type coeff_matrix_diagonal_estimate_{};
 
     //! Temporary variable.
     variable_type temp_variable_{};
