@@ -26,8 +26,10 @@
 #include <Eigen/Core>  // IWYU pragma: keep
 
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"
+#include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
+#include "num_collect/functions/pow.h"
 #include "num_collect/functions/root.h"
 #include "num_collect/linear/diagonal_estimator.h"
 #include "num_collect/linear/functional_gmres.h"
@@ -267,6 +269,181 @@ private:
 
     //! Estimated diagonal elements of the coefficient matrix.
     variable_type coeff_matrix_diagonal_estimate_{};
+
+    //! Coefficient multiplied to Jacobian matrices in inverted matrices.
+    scalar_type inverted_jacobian_coeff_{static_cast<scalar_type>(1)};
+};
+
+/*!
+ * \brief Class to solve equations in Rosenbrock methods using GMRES.
+ *
+ * \tparam Problem Type of the problem.
+ */
+template <concepts::multi_variate_problem Problem>
+    requires base::concepts::sparse_matrix<typename Problem::jacobian_type>
+class gmres_rosenbrock_equation_solver<Problem> {
+public:
+    //! Type of problem.
+    using problem_type = Problem;
+
+    //! Type of variables.
+    using variable_type = typename problem_type::variable_type;
+
+    //! Type of scalars.
+    using scalar_type = typename problem_type::scalar_type;
+
+    //! Type of Jacobians.
+    using jacobian_type = typename problem_type::jacobian_type;
+
+    //! Whether to use partial derivative with respect to time.
+    static constexpr bool use_time_derivative =
+        concepts::time_differentiable_problem<problem_type>;
+
+    //! Whether to use mass.
+    static constexpr bool use_mass = concepts::mass_problem<problem_type>;
+
+    /*!
+     * \brief Constructor.
+     *
+     * \param[in] inverted_jacobian_coeff Coefficient multiplied to Jacobian
+     * matrices in inverted matrices.
+     */
+    explicit gmres_rosenbrock_equation_solver(
+        const scalar_type& inverted_jacobian_coeff)
+        : inverted_jacobian_coeff_(inverted_jacobian_coeff) {
+        gmres_.tolerance(gmres_tolerance_rate);
+    }
+
+    /*!
+     * \brief Update Jacobian matrix and internal parameters.
+     *
+     * \param[in] problem Problem.
+     * \param[in] time Time.
+     * \param[in] step_size Step size.
+     * \param[in] variable Variable.
+     */
+    void evaluate_and_update_jacobian(problem_type& problem,
+        const scalar_type& time, const scalar_type& step_size,
+        const variable_type& variable) {
+        problem.evaluate_on(time, variable,
+            evaluation_type{.diff_coeff = true,
+                .jacobian = true,
+                .time_derivative = use_time_derivative,
+                .mass = use_mass});
+        jacobian_ = problem.jacobian();
+        if constexpr (use_time_derivative) {
+            time_derivative_ = problem.time_derivative();
+        }
+
+        const index_type variable_size = variable.size();
+        if constexpr (use_mass) {
+            coeff_matrix_ = problem.mass();
+            coeff_matrix_ -= step_size * inverted_jacobian_coeff_ * jacobian_;
+        } else {
+            coeff_matrix_.resize(variable_size, variable_size);
+            coeff_matrix_.setIdentity();
+            coeff_matrix_ -= step_size * inverted_jacobian_coeff_ * jacobian_;
+        }
+
+        coeff_matrix_diagonal_ = coeff_matrix_.diagonal();
+        gmres_.prepare_preconditioner(coeff_matrix_diagonal_);
+    }
+
+    /*!
+     * \brief Multiply Jacobian matrix to a vector.
+     *
+     * \param[in] target Target.
+     * \param[out] result Result.
+     */
+    template <base::concepts::real_scalar_dense_vector Target,
+        base::concepts::real_scalar_dense_vector Result>
+    void apply_jacobian(const Target& target, Result& result) {
+        result = jacobian_ * target;
+    }
+
+    /*!
+     * \brief Add a term of partial derivative with respect to time.
+     *
+     * \param[in] step_size Step size.
+     * \param[in] coeff Coefficient in formula.
+     * \param[in,out] target Target variable.
+     */
+    void add_time_derivative_term(const scalar_type& step_size,
+        const scalar_type& coeff, variable_type& target) {
+        if constexpr (use_time_derivative) {
+            if (time_derivative_) {
+                target += step_size * coeff * (*time_derivative_);
+            }
+        }
+    }
+
+    /*!
+     * \brief Solve a linear equation.
+     *
+     * \param[in] rhs Right-hand-side value.
+     * \param[out] result Result.
+     */
+    void solve(const variable_type& rhs, variable_type& result) {
+        const auto coeff_function = [this](const auto& target, auto& result) {
+            result = coeff_matrix_ * target;
+        };
+        result = variable_type::Zero(rhs.size());
+        gmres_.solve(coeff_function, rhs, result);
+    }
+
+    /*!
+     * \brief Set the maximum number of dimensions of subspace used in GMRES.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto max_subspace_dim(index_type val) -> gmres_rosenbrock_equation_solver& {
+        gmres_.max_subspace_dim(val);
+        return *this;
+    }
+
+    /*!
+     * \brief Access to the logger.
+     *
+     * \return Logger.
+     */
+    [[nodiscard]] auto logger() const noexcept
+        -> const num_collect::logging::logger& {
+        return gmres_.logger();
+    }
+
+    /*!
+     * \brief Access to the logger.
+     *
+     * \return Logger.
+     */
+    [[nodiscard]] auto logger() noexcept -> num_collect::logging::logger& {
+        return gmres_.logger();
+    }
+
+private:
+    //! Machine epsilon.
+    static constexpr scalar_type epsilon =
+        std::numeric_limits<scalar_type>::epsilon();
+
+    //! Tolerance rate for GMRES. (Heuristic value to avoid over-solving.)
+    static constexpr scalar_type gmres_tolerance_rate =
+        functions::pow(functions::root(epsilon, 3), 2);
+
+    //! Jacobian matrix.
+    jacobian_type jacobian_{};
+
+    //! Partial derivative with respect to time.
+    std::optional<variable_type> time_derivative_{};
+
+    //! Coefficient matrix of the linear equation.
+    jacobian_type coeff_matrix_{};
+
+    //! GMRES solver.
+    linear::functional_gmres<variable_type> gmres_{};
+
+    //! Diagonal elements of the coefficient matrix.
+    variable_type coeff_matrix_diagonal_{};
 
     //! Coefficient multiplied to Jacobian matrices in inverted matrices.
     scalar_type inverted_jacobian_coeff_{static_cast<scalar_type>(1)};

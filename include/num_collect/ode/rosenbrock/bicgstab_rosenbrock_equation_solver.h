@@ -31,6 +31,7 @@
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/precondition.h"
+#include "num_collect/functions/pow.h"
 #include "num_collect/functions/root.h"
 #include "num_collect/ode/concepts/mass_problem.h"
 #include "num_collect/ode/concepts/multi_variate_differentiable_problem.h"
@@ -267,7 +268,9 @@ public:
      */
     explicit bicgstab_rosenbrock_equation_solver(
         const scalar_type& inverted_jacobian_coeff)
-        : inverted_jacobian_coeff_(inverted_jacobian_coeff) {}
+        : inverted_jacobian_coeff_(inverted_jacobian_coeff) {
+        bicgstab_.setTolerance(gmres_tolerance_rate);
+    }
 
     /*!
      * \brief Update Jacobian matrix and internal parameters.
@@ -355,6 +358,14 @@ public:
     }
 
 private:
+    //! Machine epsilon.
+    static constexpr scalar_type epsilon =
+        std::numeric_limits<scalar_type>::epsilon();
+
+    //! Tolerance rate for GMRES. (Heuristic value to avoid over-solving.)
+    static constexpr scalar_type gmres_tolerance_rate =
+        functions::pow(functions::root(epsilon, 3), 2);
+
     //! Jacobian matrix.
     jacobian_type jacobian_{};
 
