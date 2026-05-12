@@ -27,6 +27,7 @@
 
 #include "num_collect/ode/concepts/rosenbrock_equation_solver.h"
 #include "num_collect/ode/problems/linear_first_order_ode_problem.h"
+#include "num_collect/ode/rosenbrock/gmres_rosenbrock_equation_solver.h"
 #include "num_collect/ode/rosenbrock/lu_rosenbrock_equation_solver.h"
 #include "num_collect/ode/rosenbrock/scalar_rosenbrock_equation_solver.h"
 #include "num_prob_collect/ode/exponential_problem.h"
@@ -72,7 +73,7 @@ TEST_CASE(
         using problem_type = num_prob_collect::ode::string_wave_1d_problem;
         STATIC_REQUIRE(
             std::is_same_v<default_rosenbrock_equation_solver_t<problem_type>,
-                num_collect::ode::rosenbrock::
-                    bicgstab_rosenbrock_equation_solver<problem_type>>);
+                num_collect::ode::rosenbrock::gmres_rosenbrock_equation_solver<
+                    problem_type>>);
     }
 }
