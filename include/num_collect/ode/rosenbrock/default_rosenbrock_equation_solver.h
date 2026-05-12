@@ -20,11 +20,13 @@
 #pragma once
 
 #include "num_collect/base/concepts/dense_matrix.h"
+#include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/ode/concepts/multi_variate_differentiable_problem.h"
 #include "num_collect/ode/concepts/multi_variate_problem.h"
 #include "num_collect/ode/concepts/problem.h"
 #include "num_collect/ode/concepts/single_variate_differentiable_problem.h"
 #include "num_collect/ode/rosenbrock/bicgstab_rosenbrock_equation_solver.h"
+#include "num_collect/ode/rosenbrock/gmres_rosenbrock_equation_solver.h"
 #include "num_collect/ode/rosenbrock/lu_rosenbrock_equation_solver.h"
 #include "num_collect/ode/rosenbrock/scalar_rosenbrock_equation_solver.h"
 
@@ -72,11 +74,25 @@ public:
  *
  * \tparam Problem Type of the problem.
  */
-template <concepts::multi_variate_problem Problem>
+template <concepts::multi_variate_differentiable_problem Problem>
+    requires base::concepts::sparse_matrix<typename Problem::jacobian_type>
 struct default_rosenbrock_equation_solver<Problem> {
 public:
     //! Type of the solver.
     using type = bicgstab_rosenbrock_equation_solver<Problem>;
+};
+
+/*!
+ * \brief Class to get the default class to solve equations in Rosenbrock
+ * methods.
+ *
+ * \tparam Problem Type of the problem.
+ */
+template <concepts::multi_variate_problem Problem>
+struct default_rosenbrock_equation_solver<Problem> {
+public:
+    //! Type of the solver.
+    using type = gmres_rosenbrock_equation_solver<Problem>;
 };
 
 /*!

@@ -29,13 +29,22 @@
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
 #include "num_collect/functions/root.h"
+#include "num_collect/linear/diagonal_estimator.h"
+#include "num_collect/linear/functional_gmres.h"
+#include "num_collect/ode/concepts/mass_problem.h"
 #include "num_collect/ode/concepts/multi_variate_problem.h"
 #include "num_collect/ode/concepts/time_differentiable_problem.h"
-#include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/evaluation_type.h"
-#include "num_collect/ode/impl/gmres.h"
 
 namespace num_collect::ode::rosenbrock {
+
+/*!
+ * \brief Class to solve equations in Rosenbrock methods using GMRES.
+ *
+ * \tparam Problem Type of the problem.
+ */
+template <concepts::multi_variate_problem Problem>
+class gmres_rosenbrock_equation_solver;
 
 /*!
  * \brief Class to solve equations in Rosenbrock methods using GMRES.
@@ -58,9 +67,8 @@ public:
     static constexpr bool use_time_derivative =
         concepts::time_differentiable_problem<problem_type>;
 
-    static_assert(!problem_type::allowed_evaluations.mass,
-        "Mass matrix is not supported.");
-    // TODO: Support.
+    //! Whether to use mass.
+    static constexpr bool use_mass = concepts::mass_problem<problem_type>;
 
     /*!
      * \brief Constructor.
@@ -70,7 +78,9 @@ public:
      */
     explicit gmres_rosenbrock_equation_solver(
         const scalar_type& inverted_jacobian_coeff)
-        : inverted_jacobian_coeff_(inverted_jacobian_coeff) {}
+        : inverted_jacobian_coeff_(inverted_jacobian_coeff) {
+        gmres_.tolerance(gmres_tolerance_rate);
+    }
 
     /*!
      * \brief Update Jacobian matrix and internal parameters.
@@ -88,12 +98,27 @@ public:
         step_size_ = step_size;
         variable_ = variable;
 
+        diagonal_estimator_.estimate(
+            [this](const variable_type& input, variable_type& output) {
+                this->apply_jacobian(input, output);
+            },
+            variable.size(), jacobian_diagonal_estimate_);
+
         problem.evaluate_on(time, variable,
             evaluation_type{
                 .diff_coeff = true, .time_derivative = use_time_derivative});
         if constexpr (use_time_derivative) {
             time_derivative_ = problem.time_derivative();
         }
+        if constexpr (use_mass) {
+            coeff_matrix_diagonal_estimate_ = problem_->mass().diagonal();
+        } else {
+            coeff_matrix_diagonal_estimate_.resize(variable_.size());
+            coeff_matrix_diagonal_estimate_.setOnes();
+        }
+        coeff_matrix_diagonal_estimate_.noalias() -=
+            step_size_ * inverted_jacobian_coeff_ * jacobian_diagonal_estimate_;
+        gmres_.prepare_preconditioner(coeff_matrix_diagonal_estimate_);
     }
 
     /*!
@@ -118,12 +143,14 @@ public:
             std::max(jacobian_diff_width * variable_norm / target_norm,
                 jacobian_diff_width);
 
-        problem_->evaluate_on(time_, variable_ + diff_width * target,
-            evaluation_type{.diff_coeff = true});
+        variable_buffer_ = variable_ + diff_width * target;
+        problem_->evaluate_on(
+            time_, variable_buffer_, evaluation_type{.diff_coeff = true});
         result = problem_->diff_coeff();
 
-        problem_->evaluate_on(time_, variable_ - diff_width * target,
-            evaluation_type{.diff_coeff = true});
+        variable_buffer_ = variable_ - diff_width * target;
+        problem_->evaluate_on(
+            time_, variable_buffer_, evaluation_type{.diff_coeff = true});
         result -= problem_->diff_coeff();
         result /= static_cast<scalar_type>(2) * diff_width;
     }
@@ -151,22 +178,17 @@ public:
      * \param[out] result Result.
      */
     void solve(const variable_type& rhs, variable_type& result) {
-        static constexpr index_type max_iterations = 100;
         const auto coeff_function = [this](const auto& target, auto& result) {
             this->apply_jacobian(target, result);
             result *= -step_size_ * inverted_jacobian_coeff_;
-            result += target;
+            if constexpr (use_mass) {
+                result.noalias() += problem_->mass() * target;
+            } else {
+                result += target;
+            }
         };
         result = variable_type::Zero(rhs.size());
-        for (index_type i = 0; i < max_iterations; ++i) {
-            gmres_.solve(coeff_function, rhs, result);
-            coeff_function(result, residual_);
-            residual_ -= rhs;
-            if (tolerances_.calc_norm(variable_, residual_) <=
-                tolerance_rate_) {
-                return;
-            }
-        }
+        gmres_.solve(coeff_function, rhs, result);
     }
 
     /*!
@@ -181,15 +203,22 @@ public:
     }
 
     /*!
-     * \brief Set the error tolerances.
+     * \brief Access to the logger.
      *
-     * \param[in] val Value.
-     * \return This.
+     * \return Logger.
      */
-    auto tolerances(const error_tolerances<variable_type>& val)
-        -> gmres_rosenbrock_equation_solver& {
-        tolerances_ = val;
-        return *this;
+    [[nodiscard]] auto logger() const noexcept
+        -> const num_collect::logging::logger& {
+        return gmres_.logger();
+    }
+
+    /*!
+     * \brief Access to the logger.
+     *
+     * \return Logger.
+     */
+    [[nodiscard]] auto logger() noexcept -> num_collect::logging::logger& {
+        return gmres_.logger();
     }
 
 private:
@@ -200,6 +229,14 @@ private:
     //! Width of finite difference for Jacobian application.
     static constexpr scalar_type jacobian_diff_width =
         functions::root(epsilon, 3);
+
+    //! Expected precision of finite difference for Jacobian application.
+    static constexpr scalar_type jacobian_diff_precision =
+        jacobian_diff_width * jacobian_diff_width;
+
+    //! Tolerance rate for GMRES to prevent numerical instability due to the error of finite difference.
+    static constexpr scalar_type gmres_tolerance_rate =
+        100 * jacobian_diff_precision;
 
     //! Problem.
     problem_type* problem_{nullptr};
@@ -213,24 +250,23 @@ private:
     //! Variable.
     variable_type variable_{};
 
+    //! Buffer of a variable for finite difference.
+    variable_type variable_buffer_{};
+
     //! Partial derivative with respect to time.
     std::optional<variable_type> time_derivative_{};
 
     //! GMRES solver.
-    impl::gmres<variable_type> gmres_{};
+    linear::functional_gmres<variable_type> gmres_{};
 
-    //! Residual.
-    variable_type residual_{};
+    //! Estimator of diagonal elements.
+    linear::diagonal_estimator<variable_type> diagonal_estimator_{};
 
-    //! Default rate of tolerance in this solver.
-    static constexpr auto default_tolerance_rate =
-        static_cast<scalar_type>(1e-2);
+    //! Estimated diagonal elements of Jacobian.
+    variable_type jacobian_diagonal_estimate_{};
 
-    //! Rate of tolerance in this solver.
-    scalar_type tolerance_rate_{default_tolerance_rate};
-
-    //! Error tolerances.
-    error_tolerances<variable_type> tolerances_{};
+    //! Estimated diagonal elements of the coefficient matrix.
+    variable_type coeff_matrix_diagonal_estimate_{};
 
     //! Coefficient multiplied to Jacobian matrices in inverted matrices.
     scalar_type inverted_jacobian_coeff_{static_cast<scalar_type>(1)};
