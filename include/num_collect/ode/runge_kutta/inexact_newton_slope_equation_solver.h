@@ -32,6 +32,7 @@
 #include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
+#include "num_collect/functions/pow.h"
 #include "num_collect/functions/root.h"
 #include "num_collect/linear/diagonal_estimator.h"
 #include "num_collect/linear/functional_gmres.h"
@@ -659,7 +660,10 @@ public:
     inexact_newton_slope_equation_solver()
         : iterative_equation_solver_base<
               inexact_newton_slope_equation_solver<Problem>>(
-              inexact_newton_slope_equation_solver_tag) {}
+              inexact_newton_slope_equation_solver_tag) {
+        this->configure_child_algorithm_logger_if_exists(solver_);
+        forcing_term_calculator_.min_forcing_term(min_forcing_term);
+    }
 
     /*!
      * \brief Update Jacobian and internal parameters.
@@ -695,7 +699,8 @@ public:
             coeff_matrix_.setIdentity();
         }
         coeff_matrix_ -= step_size_ * solution_coeff_ * problem_->jacobian();
-        solver_.compute(coeff_matrix_);
+        coeff_matrix_diagonal_ = coeff_matrix_.diagonal();
+        solver_.prepare_preconditioner(coeff_matrix_diagonal_);
     }
 
     /*!
@@ -715,6 +720,7 @@ public:
                 *update_reduction_rate_ = min_rate;
             }
         }
+        absolute_residual_tolerance_.reset();
         iterations_ = 0;
     }
 
@@ -739,7 +745,41 @@ public:
         } else {
             residual_ = (*solution_) - problem_->diff_coeff();
         }
-        update_ = solver_.solve(residual_);
+        residual_norm_ = residual_.stableNorm();
+
+        if (!absolute_residual_tolerance_) {
+            // Use the same coefficient as the minimum forcing term to prevent
+            // over-solving.
+            constexpr scalar_type residual_tolerance_rate = min_forcing_term;
+            absolute_residual_tolerance_ =
+                residual_tolerance_rate * (*residual_norm_);
+            forcing_term_calculator_.absolute_tolerance(
+                *absolute_residual_tolerance_);
+            NUM_COLLECT_LOG_TRACE(this->logger(),
+                "Set absolute residual tolerance to {}.",
+                *absolute_residual_tolerance_);
+        }
+
+        if ((*residual_norm_) < (*absolute_residual_tolerance_)) {
+            NUM_COLLECT_LOG_TRACE(this->logger(),
+                "Stopped iterations because residual norm is small enough. "
+                "residual_norm={}, absolute_residual_tolerance={}.",
+                *residual_norm_, *absolute_residual_tolerance_);
+            return;
+        }
+
+        const scalar_type forcing_term =
+            forcing_term_calculator_.calculate(*residual_norm_);
+        NUM_COLLECT_LOG_TRACE(this->logger(),
+            "Calculated forcing term. residual_norm={}, forcing_term={}.",
+            *residual_norm_, forcing_term);
+        solver_.tolerance(forcing_term);
+
+        const auto coeff_function = [this](const auto& target, auto& result) {
+            result = coeff_matrix_ * target;
+        };
+        update_ = variable_type::Zero(variable_.size());
+        solver_.solve(coeff_function, residual_, update_);
         update_ = -update_;
         if (!update_.array().isFinite().all()) {
             NUM_COLLECT_ODE_THROW_LINEAR_SOLVER_FAILURE(this->logger(),
@@ -763,16 +803,22 @@ public:
      * \return If the algorithm converged.
      */
     [[nodiscard]] auto is_converged() const -> bool {
-        bool converged = false;
+        if (absolute_residual_tolerance_ && residual_norm_ &&
+            *residual_norm_ < *absolute_residual_tolerance_) {
+            return true;
+        }
         if (update_norm_ && update_reduction_rate_ &&
             *update_reduction_rate_ < static_cast<scalar_type>(1)) {
-            converged =
+            const bool converged =
                 (*update_reduction_rate_ /
                     (static_cast<scalar_type>(1) - *update_reduction_rate_)) *
                     (*update_norm_) <=
                 tolerance_rate_;
+            if (converged) {
+                return true;
+            }
         }
-        return converged;
+        return false;
     }
 
     /*!
@@ -842,6 +888,14 @@ public:
     }
 
 private:
+    //! Machine epsilon.
+    static constexpr scalar_type epsilon =
+        std::numeric_limits<scalar_type>::epsilon();
+
+    //! Minimum forcing term. (Heuristic value to avoid too small forcing term.)
+    static constexpr scalar_type min_forcing_term =
+        functions::pow(functions::root(epsilon, 3), 2);
+
     //! Pointer to the problem.
     problem_type* problem_{nullptr};
 
@@ -863,8 +917,15 @@ private:
     //! Buffer of the coefficient matrix.
     jacobian_type coeff_matrix_{};
 
+    //! Calculator of the forcing term.
+    impl::inexact_newton_forcing_term_calculator<scalar_type>
+        forcing_term_calculator_{};
+
     //! Solver of the current coefficient matrix.
-    Eigen::BiCGSTAB<jacobian_type> solver_{};
+    linear::functional_gmres<variable_type> solver_{};
+
+    //! Diagonal elements of the coefficient matrix.
+    variable_type coeff_matrix_diagonal_{};
 
     //! Temporary variable.
     variable_type temp_variable_{};
@@ -875,15 +936,21 @@ private:
     //! Update vector.
     variable_type update_{};
 
+    //! Norm of residual.
+    std::optional<scalar_type> residual_norm_{};
+
     //! Norm of update.
     std::optional<scalar_type> update_norm_{};
 
     //! Rate in which update is reduced from the previous step.
     std::optional<scalar_type> update_reduction_rate_{};
 
+    //! Absolute tolerance of the residual.
+    std::optional<scalar_type> absolute_residual_tolerance_{};
+
     //! Default rate of tolerance in this solver.
     static constexpr auto default_tolerance_rate =
-        static_cast<scalar_type>(1e-2);
+        static_cast<scalar_type>(1e-4);
 
     //! Rate of tolerance in this solver.
     scalar_type tolerance_rate_{default_tolerance_rate};
