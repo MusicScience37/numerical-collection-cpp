@@ -29,6 +29,7 @@
 #include "num_collect/ode/rosenbrock/ros34prw_formula.h"
 #include "num_collect/ode/rosenbrock/ros34pw3_formula.h"
 #include "num_collect/ode/runge_kutta/sdirk4_formula.h"
+#include "num_collect/ode/runge_kutta/sdirk6_formula.h"
 #include "num_collect/rbf/generate_halton_nodes.h"
 #include "num_collect/rbf/operators/laplacian_operator.h"
 #include "num_collect/rbf/operators/partial_derivative_operator.h"
@@ -212,6 +213,8 @@ auto main(int argc, char** argv) -> int {
 
     bench_one<num_collect::ode::runge_kutta::sdirk4_adaptive_step_solver<
         problem_type>>("SDIRK4", executor);
+    bench_one<num_collect::ode::runge_kutta::sdirk6_adaptive_step_solver<
+        problem_type>>("SDIRK6", executor);
     bench_one<num_collect::ode::rosenbrock::ros34prw_adaptive_step_solver<
         problem_type>>("ROS34PRw", executor);
     bench_one<num_collect::ode::rosenbrock::ros34pw3_adaptive_step_solver<

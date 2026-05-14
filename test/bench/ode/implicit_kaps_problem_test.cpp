@@ -42,6 +42,7 @@
 #include "num_collect/ode/runge_kutta/radau2a5_formula.h"
 #include "num_collect/ode/runge_kutta/radau2a_formula.h"
 #include "num_collect/ode/runge_kutta/sdirk4_formula.h"
+#include "num_collect/ode/runge_kutta/sdirk6_formula.h"
 
 using problem_type = num_prob_collect::ode::implicit_kaps_problem;
 
@@ -91,6 +92,8 @@ auto main(int argc, char** argv) -> int {
 
         bench_one<num_collect::ode::runge_kutta::sdirk4_adaptive_step_solver<
             problem_type>>("SDIRK4", epsilon, executor);
+        bench_one<num_collect::ode::runge_kutta::sdirk6_adaptive_step_solver<
+            problem_type>>("SDIRK6", epsilon, executor);
         if (epsilon > 0.0) {
             // Solvers which does not support DAEs.
             bench_one<num_collect::ode::runge_kutta::

@@ -33,6 +33,7 @@
 #include "num_collect/ode/runge_kutta/esdirk45_formula.h"
 #include "num_collect/ode/runge_kutta/radau2a5_formula.h"
 #include "num_collect/ode/runge_kutta/sdirk4_formula.h"
+#include "num_collect/ode/runge_kutta/sdirk6_formula.h"
 #include "num_prob_collect/ode/changing_mass_exponential_problem.h"
 
 using problem_type = num_prob_collect::ode::changing_mass_exponential_problem;
@@ -83,6 +84,8 @@ auto main(int argc, char** argv) -> int {
 
     bench_one<num_collect::ode::runge_kutta::sdirk4_adaptive_step_solver<
         problem_type>>("SDIRK4", executor);
+    bench_one<num_collect::ode::runge_kutta::sdirk6_adaptive_step_solver<
+        problem_type>>("SDIRK6", executor);
     bench_one<num_collect::ode::runge_kutta::ark43_esdirk_adaptive_step_solver<
         problem_type>>("ARK4(3)-ESDIRK", executor);
     bench_one<num_collect::ode::runge_kutta::ark54_esdirk_adaptive_step_solver<
