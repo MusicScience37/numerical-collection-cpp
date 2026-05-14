@@ -268,9 +268,7 @@ public:
      */
     explicit bicgstab_rosenbrock_equation_solver(
         const scalar_type& inverted_jacobian_coeff)
-        : inverted_jacobian_coeff_(inverted_jacobian_coeff) {
-        bicgstab_.setTolerance(gmres_tolerance_rate);
-    }
+        : inverted_jacobian_coeff_(inverted_jacobian_coeff) {}
 
     /*!
      * \brief Update Jacobian matrix and internal parameters.
@@ -283,6 +281,10 @@ public:
     void evaluate_and_update_jacobian(problem_type& problem,
         const scalar_type& time, const scalar_type& step_size,
         const variable_type& variable) {
+        bicgstab_.setTolerance(
+            std::max(tolerances_.min_tol_rel_error() * bicgstab_tolerance_rate_,
+                min_bicgstab_tolerance));
+
         problem.evaluate_on(time, variable,
             evaluation_type{.diff_coeff = true,
                 .jacobian = true,
@@ -347,24 +349,18 @@ public:
      *
      * \param[in] val Value.
      * \return This.
-     *
-     * \note This function does nothing because the default values of the
-     * internal BiCGstab solver works well.
      */
     auto tolerances(const error_tolerances<variable_type>& val)
         -> bicgstab_rosenbrock_equation_solver& {
-        (void)val;
+        tolerances_ = val;
         return *this;
     }
 
 private:
-    //! Machine epsilon.
-    static constexpr scalar_type epsilon =
-        std::numeric_limits<scalar_type>::epsilon();
-
-    //! Tolerance rate for GMRES. (Heuristic value to avoid over-solving.)
-    static constexpr scalar_type gmres_tolerance_rate =
-        functions::pow(functions::root(epsilon, 3), 2);
+    //! Minimum tolerance rate for BiCGstab. (Heuristic value to avoid over-solving.)
+    static constexpr scalar_type min_bicgstab_tolerance =
+        std::numeric_limits<scalar_type>::epsilon() *
+        static_cast<scalar_type>(100);
 
     //! Jacobian matrix.
     jacobian_type jacobian_{};
@@ -380,6 +376,16 @@ private:
 
     //! Coefficient multiplied to Jacobian matrices in inverted matrices.
     scalar_type inverted_jacobian_coeff_{static_cast<scalar_type>(1)};
+
+    //! Tolerance of errors.
+    error_tolerances<variable_type> tolerances_{};
+
+    //! Default value of the relative tolerance for BiCGstab.
+    static constexpr auto default_bicgstab_tolerance_rate =
+        static_cast<scalar_type>(1e-2);
+
+    //! Relative tolerance for BiCGstab.
+    scalar_type bicgstab_tolerance_rate_{default_bicgstab_tolerance_rate};
 };
 
 }  // namespace num_collect::ode::rosenbrock

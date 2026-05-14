@@ -25,7 +25,6 @@
 #include "num_collect/ode/concepts/multi_variate_problem.h"
 #include "num_collect/ode/concepts/problem.h"
 #include "num_collect/ode/concepts/single_variate_differentiable_problem.h"
-#include "num_collect/ode/rosenbrock/bicgstab_rosenbrock_equation_solver.h"
 #include "num_collect/ode/rosenbrock/gmres_rosenbrock_equation_solver.h"
 #include "num_collect/ode/rosenbrock/lu_rosenbrock_equation_solver.h"
 #include "num_collect/ode/rosenbrock/scalar_rosenbrock_equation_solver.h"
@@ -79,7 +78,7 @@ template <concepts::multi_variate_differentiable_problem Problem>
 struct default_rosenbrock_equation_solver<Problem> {
 public:
     //! Type of the solver.
-    using type = bicgstab_rosenbrock_equation_solver<Problem>;
+    using type = gmres_rosenbrock_equation_solver<Problem>;
 };
 
 /*!

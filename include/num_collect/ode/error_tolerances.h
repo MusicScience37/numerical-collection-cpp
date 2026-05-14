@@ -275,6 +275,24 @@ public:
         return *this;
     }
 
+    /*!
+     * \brief Get the minimum value of the tolerance of relative error.
+     *
+     * \return Minimum value.
+     */
+    [[nodiscard]] auto min_tol_rel_error() const -> scalar_type {
+        return std::visit(
+            [](const auto& tol_rel_error) {
+                using value_type = std::decay_t<decltype(tol_rel_error)>;
+                if constexpr (std::is_same_v<value_type, scalar_type>) {
+                    return tol_rel_error;
+                } else {
+                    return tol_rel_error.array().minCoeff();
+                }
+            },
+            tol_rel_error_);
+    }
+
 private:
     //! Type of variant used for tolerances.
     using variant_type = std::variant<scalar_type, variable_type>;
@@ -358,6 +376,15 @@ public:
             "Tolerance of absolute error must be a non-negative value.");
         tol_abs_error_ = val;
         return *this;
+    }
+
+    /*!
+     * \brief Get the minimum value of the tolerance of relative error.
+     *
+     * \return Minimum value.
+     */
+    [[nodiscard]] auto min_tol_rel_error() const -> scalar_type {
+        return tol_rel_error_;
     }
 
 private:
