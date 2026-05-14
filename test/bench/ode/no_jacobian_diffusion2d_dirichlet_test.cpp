@@ -34,6 +34,7 @@
 #include "num_collect/ode/runge_kutta/esdirk45_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
 #include "num_collect/ode/runge_kutta/sdirk4_formula.h"
+#include "num_collect/ode/runge_kutta/sdirk6_formula.h"
 #include "num_collect/rbf/generate_halton_nodes.h"
 #include "num_collect/rbf/operators/laplacian_operator.h"
 #include "num_collect/rbf/rbf_fd_polynomial_assembler.h"
@@ -169,6 +170,8 @@ auto main(int argc, char** argv) -> int {
         "CrankNicolson", executor);
     bench_one<num_collect::ode::runge_kutta::sdirk4_adaptive_step_solver<
         problem_type>>("SDIRK4", executor);
+    bench_one<num_collect::ode::runge_kutta::sdirk6_adaptive_step_solver<
+        problem_type>>("SDIRK6", executor);
     bench_one<num_collect::ode::runge_kutta::esdirk45_adaptive_step_solver<
         problem_type>>("ESDIRK45c", executor);
     bench_one<

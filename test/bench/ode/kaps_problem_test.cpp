@@ -44,6 +44,7 @@
 #include "num_collect/ode/runge_kutta/radau2a5_formula.h"
 #include "num_collect/ode/runge_kutta/rkf45_formula.h"
 #include "num_collect/ode/runge_kutta/sdirk4_formula.h"
+#include "num_collect/ode/runge_kutta/sdirk6_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka1_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka2_formula.h"
 
@@ -117,6 +118,8 @@ auto main(int argc, char** argv) -> int {
             problem_type>>("Tanaka2", epsilon, executor);
         bench_one<num_collect::ode::runge_kutta::sdirk4_adaptive_step_solver<
             problem_type>>("SDIRK4", epsilon, executor);
+        bench_one<num_collect::ode::runge_kutta::sdirk6_adaptive_step_solver<
+            problem_type>>("SDIRK6", epsilon, executor);
         bench_one<num_collect::ode::runge_kutta::
                 ark43_esdirk_adaptive_step_solver<problem_type>>(
             "ARK4(3)-ESDIRK", epsilon, executor);
