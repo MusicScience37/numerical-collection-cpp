@@ -137,6 +137,7 @@ For properties of formulas of ODE solvers, see [Lists of Formulas in ODE Solvers
 | Runge-Kutta 4 (RK4) {cite:p}`Hairer1993`              | `num_collect::ode::runge_kutta::rk4_formula`            |
 | Runge-Kutta-Fehlberg 45 (RKF45) {cite:p}`Hairer1993`  | `num_collect::ode::runge_kutta::rkf45_formula`          |
 | 4th order SDIRK {cite:p}`Hairer1991`                  | `num_collect::ode::runge_kutta::sdirk4_formula`         |
+| SDIRK(9,6)[1]SAL-[(9,5)A] {cite:p}`Alamri2023`        | `num_collect::ode::runge_kutta::sdirk6_formula`         |
 | Tanaka Formula 1 {cite:p}`Togawa2007`                 | `num_collect::ode::runge_kutta::tanaka1_formula`        |
 | Tanaka Formula 2 {cite:p}`Togawa2007`                 | `num_collect::ode::runge_kutta::tanaka2_formula`        |
 | Radau IIA method of order 3 {cite:p}`Hairer1991`      | `num_collect::ode::runge_kutta::radau2a3_formula`       |
