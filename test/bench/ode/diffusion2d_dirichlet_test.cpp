@@ -57,8 +57,7 @@ using problem_type =
     num_collect::ode::problems::linear_first_order_ode_problem<solution_type,
         sparse_matrix_type>;
 
-static constexpr std::string_view problem_name =
-    "diffusion2d_dirichlet_preciser";
+static constexpr std::string_view problem_name = "diffusion2d_dirichlet";
 static constexpr std::string_view problem_description_base =
     "2D Diffusion Equation with Dirichlet Boundary Conditions";
 
