@@ -65,8 +65,8 @@ TEST_CASE(
                 Eigen::VectorXd, Eigen::SparseMatrix<double, Eigen::RowMajor>>;
         STATIC_REQUIRE(
             std::is_same_v<default_rosenbrock_equation_solver_t<problem_type>,
-                num_collect::ode::rosenbrock::
-                    bicgstab_rosenbrock_equation_solver<problem_type>>);
+                num_collect::ode::rosenbrock::gmres_rosenbrock_equation_solver<
+                    problem_type>>);
     }
 
     SECTION("for multi-variate non-differentiable problem") {
