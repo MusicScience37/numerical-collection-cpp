@@ -33,6 +33,7 @@
 #include "num_collect/ode/runge_kutta/ark54_esdirk_formula.h"
 #include "num_collect/ode/runge_kutta/esdirk45_formula.h"
 #include "num_collect/ode/runge_kutta/sdirk4_formula.h"
+#include "num_collect/ode/runge_kutta/sdirk6_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka1_formula.h"
 #include "num_collect/ode/runge_kutta/tanaka2_formula.h"
 #include "num_prob_collect/ode/changing_mass_exponential_problem.h"
@@ -51,6 +52,7 @@ TEMPLATE_PRODUCT_TEST_CASE(
         num_collect::ode::runge_kutta::ark54_esdirk_adaptive_step_solver,
         num_collect::ode::runge_kutta::esdirk45_adaptive_step_solver,
         num_collect::ode::runge_kutta::sdirk4_adaptive_step_solver,
+        num_collect::ode::runge_kutta::sdirk6_adaptive_step_solver,
         num_collect::ode::runge_kutta::tanaka1_adaptive_step_solver,
         num_collect::ode::runge_kutta::tanaka2_adaptive_step_solver),
     (num_prob_collect::ode::changing_mass_exponential_problem)) {
