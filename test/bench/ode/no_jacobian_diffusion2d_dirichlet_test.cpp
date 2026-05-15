@@ -29,6 +29,7 @@
 #include "num_collect/ode/rosenbrock/rodaspr_formula.h"
 #include "num_collect/ode/rosenbrock/ros34prw_formula.h"
 #include "num_collect/ode/rosenbrock/ros34pw3_formula.h"
+#include "num_collect/ode/rosenbrock/ros3prl2_formula.h"
 #include "num_collect/ode/rosenbrock/ros3w_formula.h"
 #include "num_collect/ode/runge_kutta/crank_nicolson_formula.h"
 #include "num_collect/ode/runge_kutta/esdirk45_formula.h"
@@ -177,6 +178,8 @@ auto main(int argc, char** argv) -> int {
     bench_one<
         num_collect::ode::rosenbrock::ros3w_adaptive_step_solver<problem_type>>(
         "ROS3w", executor);
+    bench_one<num_collect::ode::rosenbrock::ros3prl2_adaptive_step_solver<
+        problem_type>>("ROS3PRL2", executor);
     bench_one<num_collect::ode::rosenbrock::ros34prw_adaptive_step_solver<
         problem_type>>("ROS34PRw", executor);
     bench_one<num_collect::ode::rosenbrock::ros34pw3_adaptive_step_solver<
