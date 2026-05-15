@@ -31,15 +31,15 @@
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/precondition.h"
-#include "num_collect/functions/pow.h"
 #include "num_collect/functions/root.h"
+#include "num_collect/linear/diagonal_estimator.h"
+#include "num_collect/linear/functional_bicgstab.h"
 #include "num_collect/ode/concepts/mass_problem.h"
 #include "num_collect/ode/concepts/multi_variate_differentiable_problem.h"
 #include "num_collect/ode/concepts/multi_variate_problem.h"
 #include "num_collect/ode/concepts/time_differentiable_problem.h"
 #include "num_collect/ode/error_tolerances.h"
 #include "num_collect/ode/evaluation_type.h"
-#include "num_collect/ode/impl/bicgstab.h"
 
 namespace num_collect::ode::rosenbrock {
 
@@ -105,6 +105,16 @@ public:
         step_size_ = step_size;
         variable_ = variable;
 
+        diagonal_estimator_.estimate(
+            [this](const variable_type& input, variable_type& output) {
+                this->apply_jacobian(input, output);
+            },
+            variable.size(), jacobian_diagonal_estimate_);
+
+        bicgstab_.tolerance(
+            std::max(tolerances_.min_tol_rel_error() * bicgstab_tolerance_rate_,
+                min_bicgstab_tolerance));
+
         problem.evaluate_on(time, variable,
             evaluation_type{.diff_coeff = true,
                 .time_derivative = use_time_derivative,
@@ -112,6 +122,15 @@ public:
         if constexpr (use_time_derivative) {
             time_derivative_ = problem.time_derivative();
         }
+        if constexpr (use_mass) {
+            coeff_matrix_diagonal_estimate_ = problem_->mass().diagonal();
+        } else {
+            coeff_matrix_diagonal_estimate_.resize(variable_.size());
+            coeff_matrix_diagonal_estimate_.setOnes();
+        }
+        coeff_matrix_diagonal_estimate_.noalias() -=
+            step_size_ * inverted_jacobian_coeff_ * jacobian_diagonal_estimate_;
+        bicgstab_.prepare_preconditioner(coeff_matrix_diagonal_estimate_);
     }
 
     /*!
@@ -185,6 +204,25 @@ public:
     }
 
     /*!
+     * \brief Access to the logger.
+     *
+     * \return Logger.
+     */
+    [[nodiscard]] auto logger() const noexcept
+        -> const num_collect::logging::logger& {
+        return bicgstab_.logger();
+    }
+
+    /*!
+     * \brief Access to the logger.
+     *
+     * \return Logger.
+     */
+    [[nodiscard]] auto logger() noexcept -> num_collect::logging::logger& {
+        return bicgstab_.logger();
+    }
+
+    /*!
      * \brief Set the error tolerances.
      *
      * \param[in] val Value.
@@ -192,7 +230,7 @@ public:
      */
     auto tolerances(const error_tolerances<variable_type>& val)
         -> bicgstab_rosenbrock_equation_solver& {
-        bicgstab_.tolerances(val);
+        tolerances_ = val;
         return *this;
     }
 
@@ -204,6 +242,14 @@ private:
     //! Width of finite difference for Jacobian application.
     static constexpr scalar_type jacobian_diff_width =
         functions::root(epsilon, 3);
+
+    //! Expected precision of finite difference for Jacobian application.
+    static constexpr scalar_type jacobian_diff_precision =
+        jacobian_diff_width * jacobian_diff_width;
+
+    //! Minimum value of the relative tolerance for BiCGstab to prevent numerical instability due to the error of finite difference.
+    static constexpr scalar_type min_bicgstab_tolerance =
+        100 * jacobian_diff_precision;
 
     //! Problem.
     problem_type* problem_{nullptr};
@@ -224,10 +270,29 @@ private:
     std::optional<variable_type> time_derivative_{};
 
     //! BiCGstab solver.
-    impl::bicgstab<variable_type> bicgstab_{};
+    linear::functional_bicgstab<variable_type> bicgstab_{};
+
+    //! Estimator of diagonal elements.
+    linear::diagonal_estimator<variable_type> diagonal_estimator_{};
+
+    //! Estimated diagonal elements of Jacobian.
+    variable_type jacobian_diagonal_estimate_{};
+
+    //! Estimated diagonal elements of the coefficient matrix.
+    variable_type coeff_matrix_diagonal_estimate_{};
 
     //! Coefficient multiplied to Jacobian matrices in inverted matrices.
     scalar_type inverted_jacobian_coeff_{static_cast<scalar_type>(1)};
+
+    //! Tolerance of errors.
+    error_tolerances<variable_type> tolerances_{};
+
+    //! Default value of the relative tolerance for BiCGstab.
+    static constexpr auto default_bicgstab_tolerance_rate =
+        static_cast<scalar_type>(1e-2);
+
+    //! Relative tolerance for BiCGstab.
+    scalar_type bicgstab_tolerance_rate_{default_bicgstab_tolerance_rate};
 };
 
 /*!
