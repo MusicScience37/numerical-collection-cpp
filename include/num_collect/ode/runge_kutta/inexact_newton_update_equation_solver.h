@@ -35,6 +35,7 @@
 #include "num_collect/functions/pow.h"
 #include "num_collect/functions/root.h"
 #include "num_collect/linear/diagonal_estimator.h"
+#include "num_collect/linear/functional_bicgstab.h"
 #include "num_collect/linear/functional_gmres.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
@@ -1041,7 +1042,7 @@ private:
         forcing_term_calculator_{};
 
     //! Solver of the current coefficient matrix.
-    linear::functional_gmres<variable_type> solver_{};
+    linear::functional_bicgstab<variable_type> solver_{};
 
     //! Diagonal elements of the coefficient matrix.
     variable_type coeff_matrix_diagonal_{};
