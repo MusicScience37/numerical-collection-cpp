@@ -29,6 +29,7 @@
 #include "num_collect/ode/rosenbrock/rodaspr_formula.h"
 #include "num_collect/ode/rosenbrock/ros34prw_formula.h"
 #include "num_collect/ode/rosenbrock/ros34pw3_formula.h"
+#include "num_collect/ode/rosenbrock/ros3w_formula.h"
 #include "num_collect/ode/runge_kutta/implicit_euler_formula.h"
 #include "num_collect/ode/runge_kutta/lobatto3c4_formula.h"
 #include "num_collect/ode/runge_kutta/lobatto3c6_formula.h"
@@ -235,6 +236,9 @@ auto main(int argc, char** argv) -> int {
         problem_type>>("RadauIIA9", executor);
     bench_one<num_collect::ode::runge_kutta::radau2a13_adaptive_step_solver<
         problem_type>>("RadauIIA13", executor);
+    bench_one<
+        num_collect::ode::rosenbrock::ros3w_adaptive_step_solver<problem_type>>(
+        "ROS3w", executor);
     bench_one<num_collect::ode::rosenbrock::ros34prw_adaptive_step_solver<
         problem_type>>("ROS34PRw", executor);
     bench_one<num_collect::ode::rosenbrock::ros34pw3_adaptive_step_solver<
