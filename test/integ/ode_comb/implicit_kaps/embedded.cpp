@@ -29,6 +29,7 @@
 #include "num_collect/ode/rosenbrock/rodaspr_formula.h"
 #include "num_collect/ode/rosenbrock/ros34prw_formula.h"
 #include "num_collect/ode/rosenbrock/ros34pw3_formula.h"
+#include "num_collect/ode/rosenbrock/ros3prl2_formula.h"
 #include "num_collect/ode/rosenbrock/ros3w_formula.h"
 #include "num_collect/ode/runge_kutta/sdirk4_formula.h"
 #include "num_collect/ode/runge_kutta/sdirk6_formula.h"
@@ -41,6 +42,7 @@ TEMPLATE_PRODUCT_TEST_CASE("implicit_kaps_problem with embedded formulas", "",
         num_collect::ode::rosenbrock::rodaspr_adaptive_step_solver,
         num_collect::ode::rosenbrock::ros34prw_adaptive_step_solver,
         num_collect::ode::rosenbrock::ros34pw3_adaptive_step_solver,
+        num_collect::ode::rosenbrock::ros3prl2_adaptive_step_solver,
         num_collect::ode::rosenbrock::ros3w_adaptive_step_solver,
         // embedded Runge-Kutta method.
         num_collect::ode::runge_kutta::sdirk4_adaptive_step_solver,
