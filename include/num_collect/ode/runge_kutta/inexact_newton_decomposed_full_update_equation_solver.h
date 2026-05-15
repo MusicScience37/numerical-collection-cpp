@@ -30,8 +30,11 @@
 #include <Eigen/IterativeLinearSolvers>
 #include <Eigen/LU>
 
+#include "num_collect/base/concepts/sparse_matrix.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
+#include "num_collect/functions/pow.h"
+#include "num_collect/functions/root.h"
 #include "num_collect/logging/iterations/iteration_logger.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/ode/concepts/differentiable_problem.h"
@@ -43,6 +46,7 @@
 #include "num_collect/ode/ode_errors.h"
 #include "num_collect/ode/runge_kutta/impl/inexact_newton_decomposed_jacobian_complex_eigen_solver.h"
 #include "num_collect/ode/runge_kutta/impl/inexact_newton_decomposed_jacobian_real_eigen_solver.h"
+#include "num_collect/ode/runge_kutta/impl/inexact_newton_forcing_term_calculator.h"
 #include "num_collect/ode/runge_kutta/inexact_newton_decomposed_full_equation_solver_data.h"
 #include "num_collect/ode/runge_kutta/iterative_equation_solver_base.h"
 #include "num_collect/util/vector.h"
@@ -949,6 +953,520 @@ private:
     //! Default rate of tolerance in this solver.
     static constexpr auto default_tolerance_rate =
         static_cast<scalar_type>(1e-2);
+
+    //! Rate of tolerance in this solver.
+    scalar_type tolerance_rate_{default_tolerance_rate};
+
+    //! Number of iterations.
+    index_type iterations_{0};
+
+    //! Error tolerances.
+    error_tolerances<variable_type> tolerances_{};
+};
+
+/*!
+ * \brief Class to solve equations of implicit updates in full implicit
+ * Runge-Kutta methods using inexact Newton method with eigenvalue
+ * decomposition \cite Hairer1991.
+ *
+ * \tparam Problem Type of the problem.
+ * \tparam NumStages Number of stages of the formula.
+ *
+ * This class solves following equation using the stop criterion written in
+ * \cite Hairer1991 :
+ *
+ * \f[
+ * \boldsymbol{z}_i = h \sum_{j=1}^s a_{ij}
+ * \boldsymbol{f}\left(t + b_i h, \boldsymbol{y}(t) + \boldsymbol{z}_j \right)
+ * \f]
+ *
+ * \note This class does not support changing mass.
+ * If the problem has mass, the mass is assumed to be constant.
+ */
+template <concepts::multi_variate_differentiable_problem Problem, int NumStages>
+    requires base::concepts::sparse_matrix<typename Problem::jacobian_type>
+class inexact_newton_decomposed_full_update_equation_solver<Problem, NumStages>
+    : public iterative_equation_solver_base<
+          inexact_newton_decomposed_full_update_equation_solver<Problem,
+              NumStages>> {
+public:
+    //! This class.
+    using this_type =
+        inexact_newton_decomposed_full_update_equation_solver<Problem,
+            NumStages>;
+
+    //! Type of problem.
+    using problem_type = Problem;
+
+    //! Type of variables.
+    using variable_type = typename problem_type::variable_type;
+
+    //! Type of scalars.
+    using scalar_type = typename problem_type::scalar_type;
+
+    //! Type of Jacobian.
+    using jacobian_type = typename problem_type::jacobian_type;
+
+    static_assert(std::floating_point<scalar_type>,
+        "Current implementation only supports real scalars.");
+
+    //! Type of the matrix of coefficients of intermediate slopes.
+    using slope_coeff_matrix_type =
+        Eigen::Matrix<scalar_type, NumStages, NumStages>;
+
+    //! Type of the vector of intermediate updates.
+    using update_coeff_vector_type = Eigen::Vector<scalar_type, NumStages>;
+
+    //! Whether to use mass.
+    static constexpr bool use_mass = concepts::mass_problem<problem_type>;
+
+    //! Number of dimension at compile-time.
+    static constexpr int num_dimensions_at_compile_time =
+        variable_type::SizeAtCompileTime;
+
+    //! Size of the vectors of intermediate updates at compile-time.
+    static constexpr int update_vector_size_at_compile_time =
+        (num_dimensions_at_compile_time == Eigen::Dynamic)
+        ? Eigen::Dynamic
+        : NumStages * num_dimensions_at_compile_time;
+
+    //! Type of the vector of intermediate updates.
+    using update_vector_type =
+        Eigen::Vector<scalar_type, update_vector_size_at_compile_time>;
+
+    //! Type of solvers of decomposed linear equations for real eigenvalues.
+    using real_eigen_decomposed_solver_type =
+        impl::inexact_newton_decomposed_jacobian_real_eigen_solver<
+            problem_type>;
+
+    //! Type of solvers of decomposed linear equations for complex eigenvalues.
+    using complex_eigen_decomposed_solver_type =
+        impl::inexact_newton_decomposed_jacobian_complex_eigen_solver<
+            problem_type>;
+
+    //! Type of variants of solvers of decomposed linear equations.
+    using decomposed_solver_type =
+        std::variant<real_eigen_decomposed_solver_type,
+            complex_eigen_decomposed_solver_type>;
+
+    /*!
+     * \brief Constructor.
+     *
+     * \param[in] data Data for the solver.
+     */
+    explicit inexact_newton_decomposed_full_update_equation_solver(
+        const inexact_newton_decomposed_full_equation_solver_data<scalar_type,
+            NumStages>& data)
+        : iterative_equation_solver_base<
+              inexact_newton_decomposed_full_update_equation_solver<Problem,
+                  NumStages>>(
+              inexact_newton_decomposed_full_update_equation_solver_tag),
+          time_coeffs_(data.time_coeffs()),
+          decomposed_solvers_(
+              impl::generate_decomposed_solvers<problem_type>(data)),
+          slope_coeffs_eigenvectors_(data.eigenvectors()),
+          slope_coeffs_eigenvectors_inverse_(data.eigenvectors_inverse()) {
+        forcing_term_calculator_.min_forcing_term(min_forcing_term);
+    }
+
+    /*!
+     * \brief Initialize the solver to calculate updates.
+     *
+     * \param[in] problem Problem.
+     * \param[in] time Time.
+     * \param[in] step_size Step size.
+     * \param[in] variable Variables.
+     * \param[in,out] solution Solution of updates. The initial values are used
+     * as the initial guess of the solution.
+     */
+    void init(problem_type& problem, scalar_type time, scalar_type step_size,
+        const variable_type& variable, update_vector_type& solution) {
+        problem_ = &problem;
+        time_ = time;
+        step_size_ = step_size;
+        variable_ = variable;
+        solution_ = &solution;
+
+        problem_->evaluate_on(time_, variable_,
+            evaluation_type{
+                .diff_coeff = true, .jacobian = true, .mass = use_mass});
+
+        for (auto& solver : decomposed_solvers_) {
+            std::visit(
+                [this](auto& concrete_solver) {
+                    concrete_solver.update_jacobian(*problem_, step_size_);
+                },
+                solver);
+        }
+
+        const index_type dimensions = variable.size();
+
+        solution_in_eigenvector_space_.resize(dimensions * NumStages);
+        solution_in_eigenvector_space_.reshaped(dimensions, NumStages)
+            .noalias() = solution.reshaped(dimensions, NumStages) *
+            slope_coeffs_eigenvectors_inverse_.transpose();
+        slopes_.resize(dimensions * NumStages);
+        residual_in_eigenvector_space_.resize(dimensions * NumStages);
+        update_in_eigenvector_space_.resize(dimensions * NumStages);
+        update_.resize(dimensions * NumStages);
+
+        update_norm_.reset();
+        if (update_reduction_rate_) {
+            constexpr auto exponent = static_cast<scalar_type>(0.8);
+            constexpr auto min_rate = static_cast<scalar_type>(0.5);
+            using std::pow;
+            *update_reduction_rate_ = pow(*update_reduction_rate_, exponent);
+            if (*update_reduction_rate_ < min_rate) {
+                *update_reduction_rate_ = min_rate;
+            }
+        }
+        absolute_residual_tolerance_.reset();
+        previous_update_reduction_rate_.reset();
+        iterations_ = 0;
+    }
+
+    /*!
+     * \brief Iterate the algorithm once.
+     *
+     * \warning Any required initializations (with init
+     * functions) are assumed to have been done.
+     */
+    void iterate() {
+        NUM_COLLECT_PRECONDITION(problem_ != nullptr && solution_ != nullptr,
+            this->logger(), "Initialization must be done before iterations.");
+
+        const index_type dimensions = variable_.size();
+
+        // Calculate slopes.
+        for (int i = 0; i < NumStages; ++i) {
+            temp_variable_ =
+                variable_ + (*solution_).segment(i * dimensions, dimensions);
+            problem_->evaluate_on(time_ + time_coeffs_(i) * step_size_,
+                temp_variable_, evaluation_type{.diff_coeff = true});
+            slopes_.segment(i * dimensions, dimensions) =
+                problem_->diff_coeff();
+        }
+
+        // Calculate residuals.
+        if constexpr (use_mass) {
+            residual_in_eigenvector_space_.reshaped(dimensions, NumStages)
+                .noalias() = problem_->mass() *
+                solution_in_eigenvector_space_.reshaped(dimensions, NumStages);
+        } else {
+            residual_in_eigenvector_space_ = solution_in_eigenvector_space_;
+        }
+        index_type diagonal_index = 0;
+        for (auto& solver : decomposed_solvers_) {
+            std::visit(
+                [this, &diagonal_index, dimensions](auto& concrete_solver) {
+                    using solver_type = std::decay_t<decltype(concrete_solver)>;
+                    if constexpr (std::is_same_v<solver_type,
+                                      real_eigen_decomposed_solver_type>) {
+                        concrete_solver.apply_eigenvalue_inverse(
+                            residual_in_eigenvector_space_.segment(
+                                diagonal_index, dimensions));
+                        diagonal_index += dimensions;
+                    } else {
+                        concrete_solver.apply_eigenvalue_inverse(
+                            residual_in_eigenvector_space_.segment(
+                                diagonal_index, 2 * dimensions));
+                        diagonal_index += 2 * dimensions;
+                    }
+                },
+                solver);
+        }
+        residual_in_eigenvector_space_ *=
+            -static_cast<scalar_type>(1) / step_size_;
+        residual_in_eigenvector_space_.reshaped(dimensions, NumStages)
+            .noalias() += slopes_.reshaped(dimensions, NumStages) *
+            slope_coeffs_eigenvectors_inverse_.transpose();
+        residual_norm_ = residual_in_eigenvector_space_.stableNorm();
+
+        if (!absolute_residual_tolerance_) {
+            // Use the same coefficient as the minimum forcing term to prevent
+            // over-solving.
+            constexpr scalar_type residual_tolerance_rate = min_forcing_term;
+            absolute_residual_tolerance_ =
+                residual_tolerance_rate * (*residual_norm_);
+            forcing_term_calculator_.absolute_tolerance(
+                *absolute_residual_tolerance_);
+            NUM_COLLECT_LOG_TRACE(this->logger(),
+                "Set absolute residual tolerance to {}.",
+                *absolute_residual_tolerance_);
+        }
+
+        if ((*residual_norm_) < (*absolute_residual_tolerance_)) {
+            NUM_COLLECT_LOG_TRACE(this->logger(),
+                "Stopped iterations because residual norm is small enough. "
+                "residual_norm={}, absolute_residual_tolerance={}.",
+                *residual_norm_, *absolute_residual_tolerance_);
+            return;
+        }
+
+        const scalar_type forcing_term =
+            forcing_term_calculator_.calculate(*residual_norm_);
+        NUM_COLLECT_LOG_TRACE(this->logger(),
+            "Calculated forcing term. residual_norm={}, forcing_term={}.",
+            *residual_norm_, forcing_term);
+
+        // Solve the linear equation.
+        diagonal_index = 0;
+        for (auto& solver : decomposed_solvers_) {
+            std::visit(
+                [this, &diagonal_index, dimensions, forcing_term](
+                    auto& concrete_solver) {
+                    using solver_type = std::decay_t<decltype(concrete_solver)>;
+                    concrete_solver.tolerance(forcing_term);
+                    if constexpr (std::is_same_v<solver_type,
+                                      real_eigen_decomposed_solver_type>) {
+                        concrete_solver.solve(
+                            residual_in_eigenvector_space_.segment(
+                                diagonal_index, dimensions),
+                            update_in_eigenvector_space_.segment(
+                                diagonal_index, dimensions));
+                        diagonal_index += dimensions;
+                    } else {
+                        concrete_solver.solve(
+                            residual_in_eigenvector_space_.segment(
+                                diagonal_index, 2 * dimensions),
+                            update_in_eigenvector_space_.segment(
+                                diagonal_index, 2 * dimensions));
+                        diagonal_index += 2 * dimensions;
+                    }
+                },
+                solver);
+        }
+        if (!update_in_eigenvector_space_.allFinite()) {
+            NUM_COLLECT_ODE_THROW_LINEAR_SOLVER_FAILURE(this->logger(),
+                "Failed to solve an equation. step_size={}.", step_size_);
+        }
+
+        solution_in_eigenvector_space_ += update_in_eigenvector_space_;
+        update_.reshaped(dimensions, NumStages).noalias() =
+            update_in_eigenvector_space_.reshaped(dimensions, NumStages) *
+            slope_coeffs_eigenvectors_.transpose();
+        *solution_ += update_;
+
+        scalar_type update_norm = static_cast<scalar_type>(0);
+        for (int i = 0; i < NumStages; ++i) {
+            const scalar_type stage_update_norm = tolerances().calc_norm(
+                variable_, update_.segment(i * dimensions, dimensions));
+            update_norm += stage_update_norm * stage_update_norm;
+        }
+        update_norm = std::sqrt(update_norm);
+        if (update_norm_) {
+            previous_update_reduction_rate_ = update_reduction_rate_;
+            update_reduction_rate_ = update_norm / (*update_norm_);
+        }
+        update_norm_ = update_norm;
+
+        ++iterations_;
+    }
+
+    /*!
+     * \brief Determine if the algorithm converged.
+     *
+     * \return If the algorithm converged.
+     */
+    [[nodiscard]] auto is_converged() const -> bool {
+        if (absolute_residual_tolerance_ && residual_norm_ &&
+            *residual_norm_ < *absolute_residual_tolerance_) {
+            return true;
+        }
+        if (update_norm_ && update_reduction_rate_ &&
+            *update_reduction_rate_ < static_cast<scalar_type>(1)) {
+            const bool converged =
+                (*update_reduction_rate_ /
+                    (static_cast<scalar_type>(1) - *update_reduction_rate_)) *
+                    (*update_norm_) <=
+                tolerance_rate_;
+            if (converged) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*!
+     * \brief Determine if stopping criteria of the algorithm are satisfied.
+     *
+     * \return If stopping criteria of the algorithm are satisfied.
+     */
+    [[nodiscard]] auto is_stop_criteria_satisfied() const -> bool {
+        const bool converged = is_converged();
+        constexpr index_type max_iterations = 1000;  // safe guard
+        return converged || (iterations_ > max_iterations);
+    }
+
+    /*!
+     * \brief Configure an iteration logger.
+     *
+     * \param[in] iteration_logger Iteration logger.
+     */
+    void configure_iteration_logger(
+        logging::iterations::iteration_logger<this_type>& iteration_logger)
+        const {
+        iteration_logger.template append<index_type>(
+            "Iter.", &this_type::iterations);
+        iteration_logger.template append<scalar_type>(
+            "Update", &this_type::update_norm);
+    }
+
+    /*!
+     * \brief Get the norm of update.
+     *
+     * \return Norm of update.
+     */
+    [[nodiscard]] auto update_norm() const -> scalar_type {
+        if (!update_norm_) {
+            return static_cast<scalar_type>(0);
+        }
+        return *update_norm_;
+    }
+
+    /*!
+     * \brief Get the contractivity factor.
+     *
+     * \return Contractivity factor.
+     */
+    [[nodiscard]] auto contractivity_factor() const
+        -> std::optional<scalar_type> {
+        if (!update_reduction_rate_) {
+            return std::nullopt;
+        }
+        if (!previous_update_reduction_rate_) {
+            return *update_reduction_rate_;
+        }
+        using std::sqrt;
+        return sqrt(
+            (*update_reduction_rate_) * (*previous_update_reduction_rate_));
+    }
+
+    /*!
+     * \brief Get the number of iterations.
+     *
+     * \return Number of iterations.
+     */
+    [[nodiscard]] auto iterations() const -> index_type { return iterations_; }
+
+    /*!
+     * \brief Set the error tolerances.
+     *
+     * \param[in] val Value.
+     * \return This.
+     */
+    auto tolerances(const error_tolerances<variable_type>& val)
+        -> inexact_newton_decomposed_full_update_equation_solver& {
+        tolerances_ = val;
+        return *this;
+    }
+
+    /*!
+     * \brief Get the error tolerances.
+     *
+     * \return Error tolerances.
+     */
+    [[nodiscard]] auto tolerances() const
+        -> const error_tolerances<variable_type>& {
+        return tolerances_;
+    }
+
+    /*!
+     * \brief Get the solvers of decomposed linear equations.
+     *
+     * \return Solvers of decomposed linear equations.
+     */
+    [[nodiscard]] auto decomposed_solvers() const noexcept
+        -> const util::vector<decomposed_solver_type>& {
+        return decomposed_solvers_;
+    }
+
+    /*!
+     * \brief Get the solvers of decomposed linear equations.
+     *
+     * \return Solvers of decomposed linear equations.
+     */
+    [[nodiscard]] auto decomposed_solvers() noexcept
+        -> util::vector<decomposed_solver_type>& {
+        return decomposed_solvers_;
+    }
+
+private:
+    //! Machine epsilon.
+    static constexpr scalar_type epsilon =
+        std::numeric_limits<scalar_type>::epsilon();
+
+    //! Minimum forcing term. (Heuristic value to avoid too small forcing term.)
+    static constexpr scalar_type min_forcing_term =
+        functions::pow(functions::root(epsilon, 3), 2);
+
+    //! Coefficients of time.
+    update_coeff_vector_type time_coeffs_;
+
+    //! Solvers of decomposed linear equations.
+    util::vector<decomposed_solver_type> decomposed_solvers_;
+
+    //! Eigenvectors of coefficients of intermediate slopes.
+    slope_coeff_matrix_type slope_coeffs_eigenvectors_;
+
+    //! Inverse of eigenvectors of coefficients of intermediate slopes.
+    slope_coeff_matrix_type slope_coeffs_eigenvectors_inverse_;
+
+    //! Calculator of the forcing term.
+    impl::inexact_newton_forcing_term_calculator<scalar_type>
+        forcing_term_calculator_{};
+
+    //! Pointer to the problem.
+    problem_type* problem_{nullptr};
+
+    //! Time.
+    scalar_type time_{};
+
+    //! Step size.
+    scalar_type step_size_{};
+
+    //! Variable.
+    variable_type variable_{};
+
+    //! Solution of updates.
+    update_vector_type* solution_{nullptr};
+
+    //! Solution in eigenvector space.
+    update_vector_type solution_in_eigenvector_space_{};
+
+    //! Temporary variable.
+    variable_type temp_variable_{};
+
+    //! Buffer of slopes.
+    update_vector_type slopes_{};
+
+    //! Residual vector in eigenvector space.
+    update_vector_type residual_in_eigenvector_space_{};
+
+    //! Newton update vector in eigenvector space.
+    update_vector_type update_in_eigenvector_space_{};
+
+    //! Newton update vector.
+    update_vector_type update_{};
+
+    //! Norm of residual.
+    std::optional<scalar_type> residual_norm_{};
+
+    //! Norm of update.
+    std::optional<scalar_type> update_norm_{};
+
+    //! Rate in which update is reduced from the previous step.
+    std::optional<scalar_type> update_reduction_rate_{};
+
+    //! Previous value of update_reduction_rate_.
+    std::optional<scalar_type> previous_update_reduction_rate_{};
+
+    //! Absolute tolerance of the residual.
+    std::optional<scalar_type> absolute_residual_tolerance_{};
+
+    //! Default rate of tolerance in this solver.
+    static constexpr auto default_tolerance_rate =
+        static_cast<scalar_type>(1e-4);
 
     //! Rate of tolerance in this solver.
     scalar_type tolerance_rate_{default_tolerance_rate};

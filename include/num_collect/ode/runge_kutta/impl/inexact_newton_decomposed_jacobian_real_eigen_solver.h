@@ -435,6 +435,13 @@ public:
         return eigenvalue_;
     }
 
+    /*!
+     * \brief Set the relative tolerance of the iterative solver.
+     *
+     * \param[in] value Relative tolerance.
+     */
+    void tolerance(scalar_type value) { solver_->setTolerance(value); }
+
 private:
     //! Eigenvalue of the coefficients of intermediate slopes.
     scalar_type eigenvalue_;
