@@ -24,6 +24,7 @@
 #include <cmath>
 #include <concepts>
 #include <limits>
+#include <optional>
 
 #include <Eigen/Core>
 
@@ -57,6 +58,32 @@ public:
 
     //! Constructor.
     functional_bicgstab() : logging::logging_mixin(functional_bicgstab_tag) {}
+
+    /*!
+     * \brief Prepare the preconditioner.
+     *
+     * \param[in] coeff_diagonal Diagonal coefficients of the coefficient
+     * matrix.
+     */
+    void prepare_preconditioner(const vector_type& coeff_diagonal) {
+        if (!preconditioner_diagonal_) {
+            preconditioner_diagonal_.emplace();
+        }
+        preconditioner_diagonal_->resize(coeff_diagonal.size());
+
+        const scalar_type max_coeff = coeff_diagonal.cwiseAbs().maxCoeff();
+        const scalar_type coeff_thresh = tolerance_ * max_coeff;
+        for (index_type i = 0; i < coeff_diagonal.size(); ++i) {
+            const scalar_type current_coeff = coeff_diagonal(i);
+            using std::abs;
+            if (abs(current_coeff) > coeff_thresh) {
+                (*preconditioner_diagonal_)(i) =
+                    static_cast<scalar_type>(1) / current_coeff;
+            } else {
+                (*preconditioner_diagonal_)(i) = static_cast<scalar_type>(1);
+            }
+        }
+    }
 
     /*!
      * \brief Solve.
@@ -95,7 +122,13 @@ public:
         }
 
         while (true) {
-            coeff_function(p_, ap_);
+            if (preconditioner_diagonal_) {
+                preconditioner_buffer_ =
+                    p_.cwiseProduct(*preconditioner_diagonal_);
+                coeff_function(preconditioner_buffer_, ap_);
+            } else {
+                coeff_function(p_, ap_);
+            }
             const scalar_type r0_ap_dot = r0_.dot(ap_);
             if (abs(r0_ap_dot) <
                 r0_.stableNorm() * ap_.stableNorm() * epsilon) {
@@ -109,7 +142,11 @@ public:
                 continue;
             }
             const scalar_type mu = rho_ / r0_ap_dot;
-            solution += mu * p_;
+            if (preconditioner_diagonal_) {
+                solution += mu * preconditioner_buffer_;
+            } else {
+                solution += mu * p_;
+            }
             residual_ -= mu * ap_;  // s in reference.
 
             residual_norm = residual_.norm();
@@ -120,7 +157,13 @@ public:
                 return;
             }
 
-            coeff_function(residual_, as_);
+            if (preconditioner_diagonal_) {
+                preconditioner_buffer_ =
+                    residual_.cwiseProduct(*preconditioner_diagonal_);
+                coeff_function(preconditioner_buffer_, as_);
+            } else {
+                coeff_function(residual_, as_);
+            }
             const scalar_type as_norm2 = as_.squaredNorm();
             if (abs(as_norm2) < std::numeric_limits<scalar_type>::min()) {
                 initialize(coeff_function, rhs, solution);
@@ -128,7 +171,11 @@ public:
                 continue;
             }
             const scalar_type omega = residual_.dot(as_) / as_norm2;
-            solution += omega * residual_;
+            if (preconditioner_diagonal_) {
+                solution += omega * preconditioner_buffer_;
+            } else {
+                solution += omega * residual_;
+            }
             residual_ -= omega * as_;  // r in reference.
 
             residual_norm = residual_.norm();
@@ -235,6 +282,12 @@ private:
     vector_type ap_{};
     vector_type as_{};
     ///@}
+
+    //! Diagonal coefficients of preconditioner.
+    std::optional<vector_type> preconditioner_diagonal_{};
+
+    //! Buffer of the vector to apply preconditioner.
+    vector_type preconditioner_buffer_{};
 };
 
 }  // namespace num_collect::linear

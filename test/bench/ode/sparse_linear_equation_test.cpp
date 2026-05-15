@@ -34,6 +34,7 @@
 #include "num_collect/rbf/generate_halton_nodes.h"
 #include "num_collect/rbf/operators/laplacian_operator.h"
 #include "num_collect/rbf/rbf_fd_polynomial_assembler.h"
+#include "num_collect/util/generate_rectangle_boundary_nodes.h"
 #include "num_collect/util/vector.h"
 
 STAT_BENCH_MAIN
@@ -63,8 +64,9 @@ public:
 
         true_sol_.resize(size_);
         for (int i = 0; i < size_; ++i) {
-            const double position = nodes_[i];
-            true_sol_(i) = std::sin(position * num_collect::pi<double>);
+            const auto& position = nodes_[i];
+            true_sol_(i) = std::sin(num_collect::pi<double> * position(0)) *
+                std::sin(num_collect::pi<double> * position(1));
         }
 
         rhs_ = coeff_ * true_sol_;
@@ -85,7 +87,7 @@ protected:
     int size_{};
 
     //! Nodes.
-    num_collect::util::vector<double> nodes_{};
+    num_collect::util::vector<Eigen::Vector2d> nodes_{};
 
     //! Coefficient matrix.
     sparse_matrix_type coeff_{};
@@ -109,13 +111,19 @@ protected:
 
 private:
     void create_coeff_matrix() {
-        using position_type = double;
+        using position_type = Eigen::Vector2d;
 
         const num_collect::index_type num_interior_nodes = size_;
-        nodes_ = num_collect::rbf::generate_1d_halton_nodes<position_type>(
+        nodes_ = num_collect::rbf::generate_halton_nodes<double, 2>(
             num_interior_nodes);
-        nodes_.push_back(0.0);
-        nodes_.push_back(1.0);
+        const num_collect::index_type num_boundary_nodes_per_edge =
+            static_cast<num_collect::index_type>(std::sqrt(num_interior_nodes));
+        const auto boundary_nodes =
+            num_collect::util::generate_rectangle_boundary_nodes(
+                Eigen::Vector2d(0.0, 0.0), Eigen::Vector2d(1.0, 1.0),
+                num_boundary_nodes_per_edge);
+        nodes_.insert(
+            nodes_.end(), boundary_nodes.begin(), boundary_nodes.end());
         const auto interior_nodes =
             num_collect::util::vector_view<const position_type>(nodes_).first(
                 num_interior_nodes);
@@ -143,7 +151,7 @@ private:
         whole_coefficients.setFromTriplets(triplets.begin(), triplets.end());
         coeff_.resize(size_, size_);
         coeff_.setIdentity();
-        coeff_ -= 0.1 * whole_coefficients.leftCols(num_interior_nodes);
+        coeff_ -= 0.01 * whole_coefficients.leftCols(num_interior_nodes);
     }
 };
 
@@ -157,7 +165,6 @@ public:
             ->add(50)
             ->add(100)
             ->add(200)
-            ->add(500)
 #endif
             ;
     }
@@ -176,7 +183,7 @@ protected:
     // NOLINTEND(cppcoreguidelines-non-private-member-variables-in-classes)
 };
 
-STAT_BENCH_CASE_F(gmres_fixture, "sparse_linear_equation", "repeated_gmres") {
+STAT_BENCH_CASE_F(gmres_fixture, "sparse_linear_equation", "functional_gmres") {
     num_collect::linear::functional_gmres<Eigen::VectorXd> solver;
     solver.tolerance(rel_tol);
     solver.max_subspace_dim(std::min(subspace_size_, size_));
@@ -192,10 +199,44 @@ STAT_BENCH_CASE_F(gmres_fixture, "sparse_linear_equation", "repeated_gmres") {
     };
 }
 
+STAT_BENCH_CASE_F(gmres_fixture, "sparse_linear_equation",
+    "functional_gmres_preconditioned") {
+    num_collect::linear::functional_gmres<Eigen::VectorXd> solver;
+    solver.tolerance(rel_tol);
+    solver.max_subspace_dim(std::min(subspace_size_, size_));
+    solver.max_iterations(static_cast<num_collect::index_type>(size_) * 2);
+    solver.prepare_preconditioner(coeff_.diagonal());
+    const auto coeff_function = [coeff_ptr = &coeff_](
+                                    const auto& target, auto& result) {
+        result = (*coeff_ptr) * target;
+    };
+    STAT_BENCH_MEASURE() {
+        sol_.setZero();
+        solver.solve(coeff_function, rhs_, sol_);
+        iterations_ = static_cast<int>(solver.iterations());
+    };
+}
+
 STAT_BENCH_CASE_F(sparse_linear_equation_test_fixture, "sparse_linear_equation",
     "functional_bicgstab") {
     num_collect::linear::functional_bicgstab<Eigen::VectorXd> solver;
     solver.tolerance(rel_tol);
+    const auto coeff_function = [coeff_ptr = &coeff_](
+                                    const auto& target, auto& result) {
+        result = (*coeff_ptr) * target;
+    };
+    STAT_BENCH_MEASURE() {
+        sol_.setZero();
+        solver.solve(coeff_function, rhs_, sol_);
+        iterations_ = static_cast<int>(solver.iterations());
+    };
+}
+
+STAT_BENCH_CASE_F(sparse_linear_equation_test_fixture, "sparse_linear_equation",
+    "functional_bicgstab_preconditioned") {
+    num_collect::linear::functional_bicgstab<Eigen::VectorXd> solver;
+    solver.tolerance(rel_tol);
+    solver.prepare_preconditioner(coeff_.diagonal());
     const auto coeff_function = [coeff_ptr = &coeff_](
                                     const auto& target, auto& result) {
         result = (*coeff_ptr) * target;
