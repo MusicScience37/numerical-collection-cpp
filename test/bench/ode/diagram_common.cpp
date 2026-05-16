@@ -78,6 +78,8 @@ auto create_line_dash_map() -> std::unordered_map<std::string, std::string> {
         {"RadauIIA17", "dash"},
         // Rosenbrock.
         {"ROS3w", "dashdot"},
+        {"ROS3Dw", "dashdot"},
+        {"ROS3PRL2", "dashdot"},
         {"ROS34PRw", "dashdot"},
         {"ROS34PW3", "dashdot"},
         {"RODASP", "dashdot"},

@@ -155,8 +155,10 @@ For properties of formulas of ODE solvers, see [Lists of Formulas in ODE Solvers
 | RODASP formula                      | `num_collect::ode::rosenbrock::rodasp_formula`   |
 | RODASPR formula {cite:p}`Rang2015`  | `num_collect::ode::rosenbrock::rodaspr_formula`  |
 | ROS3w formula {cite:p}`Rang2005`    | `num_collect::ode::rosenbrock::ros3w_formula`    |
+| ROS3Dw formula {cite:p}`Rang2005`   | `num_collect::ode::rosenbrock::ros3dw_formula`   |
+| ROS3PRL2 formula {cite:p}`Rang2015` | `num_collect::ode::rosenbrock::ros3prl2_formula` |
 | ROS34PW3 formula {cite:p}`Rang2005` | `num_collect::ode::rosenbrock::ros34pw3_formula` |
-| ROS34PRW formula {cite:p}`Rang2015` | `num_collect::ode::rosenbrock::ros34prw_formula` |
+| ROS34PRw formula {cite:p}`Rang2015` | `num_collect::ode::rosenbrock::ros34prw_formula` |
 
 ### Average vector field (AVF) method {cite:p}`Quispel2008`
 

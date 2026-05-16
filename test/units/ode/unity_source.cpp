@@ -27,6 +27,8 @@
 #include "rosenbrock/rodaspr_formula_test.cpp"
 #include "rosenbrock/ros34prw_formula_test.cpp"
 #include "rosenbrock/ros34pw3_formula_test.cpp"
+#include "rosenbrock/ros3dw_formula_test.cpp"
+#include "rosenbrock/ros3prl2_formula_test.cpp"
 #include "rosenbrock/ros3w_formula_test.cpp"
 #include "rosenbrock/scalar_rosenbrock_equation_solver_test.cpp"
 #include "runge_kutta/ark43_erk_formula_test.cpp"

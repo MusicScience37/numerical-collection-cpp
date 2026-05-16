@@ -28,6 +28,8 @@ set(SOURCE_FILES
     rosenbrock/rodaspr_formula_test.cpp
     rosenbrock/ros34prw_formula_test.cpp
     rosenbrock/ros34pw3_formula_test.cpp
+    rosenbrock/ros3dw_formula_test.cpp
+    rosenbrock/ros3prl2_formula_test.cpp
     rosenbrock/ros3w_formula_test.cpp
     rosenbrock/scalar_rosenbrock_equation_solver_test.cpp
     runge_kutta/ark43_erk_formula_test.cpp
