@@ -29,8 +29,10 @@ Some notes on the properties are written below the tables.
 | Rosenbrock  | RODASP                                         | `rodasp`               | No       | 6      | 4, ?   |
 | Rosenbrock  | RODASPR {cite:p}`Rang2015`                     | `rodaspr`              | No       | 6      | 4, ?   |
 | Rosenbrock  | ROS3w {cite:p}`Rang2005`                       | `ros3w`                | No       | 3      | 3, 2   |
+| Rosenbrock  | ROS3Dw {cite:p}`Rang2005`                      | `ros3dw`               | No       | 3      | 3, 2   |
+| Rosenbrock  | ROS3PRL2 {cite:p}`Rang2015`                    | `ros3prl2`             | No       | 4      | 3, 2   |
 | Rosenbrock  | ROS34PW3 {cite:p}`Rang2005`                    | `ros34pw3`             | No       | 4      | 4, 2   |
-| Rosenbrock  | ROS34PRW {cite:p}`Rang2015`                    | `ros34prw`             | No       | 4      | 3, 2   |
+| Rosenbrock  | ROS34PRw {cite:p}`Rang2015`                    | `ros34prw`             | No       | 4      | 3, 2   |
 | AVF         | AVF order 2 {cite:p}`Quispel2008`              | `avf2`                 | No       | 1      | 2      |
 | AVF         | AVF order 3 {cite:p}`Quispel2008`              | `avf3`                 | No       | 1      | 3      |
 | AVF         | AVF order 4 {cite:p}`Quispel2008`              | `avf4`                 | No       | 1      | 4      |
@@ -61,9 +63,11 @@ Some notes on the properties are written below the tables.
 | Runge-Kutta | Crank-Nicolson                                 | Yes              | Yes      |          | Yes      |          |
 | Rosenbrock  | RODASP                                         | Yes              | Yes      |          | Yes      |          |
 | Rosenbrock  | RODASPR {cite:p}`Rang2015`                     | Yes              | Yes      |          | Yes      |          |
-| Rosenbrock  | ROS3w {cite:p}`Rang2005`                       | No               | Yes      |          | Yes      | W-method |
-| Rosenbrock  | ROS34PW3 {cite:p}`Rang2005`                    | No               | Yes      |          |          | W-method |
-| Rosenbrock  | ROS34PRW {cite:p}`Rang2015`                    | No               | Yes      |          |          | W-method |
+| Rosenbrock  | ROS3w {cite:p}`Rang2005`                       | No               | Yes      |          | Yes      |          |
+| Rosenbrock  | ROS3Dw {cite:p}`Rang2005`                      | No               | Yes      |          | Yes      |          |
+| Rosenbrock  | ROS3PRL2 {cite:p}`Rang2015`                    | Yes              | Yes      |          | Yes      |          |
+| Rosenbrock  | ROS34PW3 {cite:p}`Rang2005`                    | No               | Yes      |          |          | Yes      |
+| Rosenbrock  | ROS34PRw {cite:p}`Rang2015`                    | No               | Yes      |          |          | Yes      |
 
 - Stiffly-Accurate: The last stage of the method is the same as the final solution.
   This property is desirable for stiff problems.
@@ -100,11 +104,13 @@ Some notes on the properties are written below the tables.
 | Runge-Kutta | Radau IIA other orders {cite:p}`Hairer1991`    | Yes           | No              | Index 2 |
 | Runge-Kutta | Implicit Euler                                 | Yes           | Yes             | Index 1 |
 | Runge-Kutta | Crank-Nicolson                                 | Yes           | Yes             | None    |
-| Rosenbrock  | RODASP                                         | Yes           | No              | Index 1 |
+| Rosenbrock  | RODASP                                         | Yes           | No              | Index 2 |
 | Rosenbrock  | RODASPR {cite:p}`Rang2015`                     | Yes           | No              | Index 2 |
 | Rosenbrock  | ROS3w {cite:p}`Rang2005`                       | Yes           | No              | Index 1 |
+| Rosenbrock  | ROS3Dw {cite:p}`Rang2005`                      | Yes           | No              | Index 1 |
+| Rosenbrock  | ROS3PRL2 {cite:p}`Rang2015`                    | Yes           | No              | Index 2 |
 | Rosenbrock  | ROS34PW3 {cite:p}`Rang2005`                    | Yes           | No              | Index 1 |
-| Rosenbrock  | ROS34PRW {cite:p}`Rang2015`                    | Yes           | No              | Index 2 |
+| Rosenbrock  | ROS34PRw {cite:p}`Rang2015`                    | Yes           | No              | Index 2 |
 | AVF         | AVF order 2 {cite:p}`Quispel2008`              | No            | No              | None    |
 | AVF         | AVF order 3 {cite:p}`Quispel2008`              | No            | No              | None    |
 | AVF         | AVF order 4 {cite:p}`Quispel2008`              | No            | No              | None    |
