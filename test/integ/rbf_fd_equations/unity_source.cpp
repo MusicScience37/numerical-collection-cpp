@@ -3,3 +3,4 @@
 #include "poisson_1d.cpp"
 #include "poisson_2d.cpp"
 #include "poisson_3d.cpp"
+#include "wave_equation_1d_string.cpp"
