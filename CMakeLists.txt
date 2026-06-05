@@ -60,6 +60,7 @@ find_package(Eigen3 REQUIRED)
 find_package(cpp-hash-tables REQUIRED)
 find_package(concurrentqueue REQUIRED)
 find_package(nanoflann REQUIRED)
+find_package(Boost REQUIRED COMPONENTS math)
 
 # toml++
 find_package(PkgConfig REQUIRED)

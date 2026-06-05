@@ -16,6 +16,7 @@
     "libpng",
     "bfgroup-lyra",
     "pkgconf",
-    "metis"
+    "metis",
+    "boost-math"
   ]
 }

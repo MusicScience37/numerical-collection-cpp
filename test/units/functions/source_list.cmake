@@ -1,4 +1,5 @@
 set(SOURCE_FILES
+    bessel_test.cpp
     cbrt_test.cpp
     ceil_test.cpp
     compile_time_legendre_test.cpp

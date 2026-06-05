@@ -1,3 +1,4 @@
+#include "num_collect/functions/bessel.cpp"
 #include "num_collect/logging/load_logging_config.cpp"
 #include "num_collect/logging/log_tag_config_node.cpp"
 #include "num_collect/logging/sinks/async_log_sink.cpp"

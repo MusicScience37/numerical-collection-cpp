@@ -1,3 +1,4 @@
+#include "bessel_test.cpp"
 #include "cbrt_test.cpp"
 #include "ceil_test.cpp"
 #include "compile_time_legendre_test.cpp"
