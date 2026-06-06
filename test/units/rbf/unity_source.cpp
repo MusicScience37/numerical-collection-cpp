@@ -32,6 +32,7 @@
 #include "rbf_fd_polynomial_assembler_test.cpp"
 #include "rbf_interpolator_test.cpp"
 #include "rbf_polynomial_interpolator_test.cpp"
+#include "rbfs/bessel_rbf_test.cpp"
 #include "rbfs/gaussian_from_square_rbf_test.cpp"
 #include "rbfs/gaussian_m1_rbf_test.cpp"
 #include "rbfs/gaussian_rbf_test.cpp"

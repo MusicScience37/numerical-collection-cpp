@@ -33,6 +33,7 @@ set(SOURCE_FILES
     rbf_fd_polynomial_assembler_test.cpp
     rbf_interpolator_test.cpp
     rbf_polynomial_interpolator_test.cpp
+    rbfs/bessel_rbf_test.cpp
     rbfs/gaussian_from_square_rbf_test.cpp
     rbfs/gaussian_m1_rbf_test.cpp
     rbfs/gaussian_rbf_test.cpp

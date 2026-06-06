@@ -28,12 +28,15 @@
 
 #include "comparison_approvals.h"
 #include "num_collect/base/constants.h"
+#include "num_collect/rbf/rbfs/bessel_rbf.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
 #include "num_collect/rbf/rbfs/inverse_multi_quadric_rbf.h"
 #include "num_collect/rbf/rbfs/inverse_quadratic_rbf.h"
 
 TEMPLATE_TEST_CASE("gaussian_process_interpolator with different RBFs", "",
     num_collect::rbf::rbfs::gaussian_rbf<double>,
+    (num_collect::rbf::rbfs::bessel_rbf<double, 2>),
+    (num_collect::rbf::rbfs::bessel_rbf<double, 3>),
     num_collect::rbf::rbfs::inverse_multi_quadric_rbf<double>,
     num_collect::rbf::rbfs::inverse_quadratic_rbf<double>) {
     using num_collect::rbf::gaussian_process_interpolator;

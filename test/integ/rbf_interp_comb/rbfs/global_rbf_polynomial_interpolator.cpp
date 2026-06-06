@@ -28,6 +28,7 @@
 #include "num_collect/base/constants.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/rbf/rbf_polynomial_interpolator.h"
+#include "num_collect/rbf/rbfs/bessel_rbf.h"
 #include "num_collect/rbf/rbfs/gaussian_m1_rbf.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
 #include "num_collect/rbf/rbfs/inverse_multi_quadric_rbf.h"
@@ -41,6 +42,9 @@
 TEMPLATE_TEST_CASE("global_rbf_polynomial_interpolator with different RBFs", "",
     num_collect::rbf::rbfs::gaussian_rbf<double>,
     num_collect::rbf::rbfs::gaussian_m1_rbf<double>,
+    (num_collect::rbf::rbfs::bessel_rbf<double, 1>),
+    (num_collect::rbf::rbfs::bessel_rbf<double, 2>),
+    (num_collect::rbf::rbfs::bessel_rbf<double, 3>),
     num_collect::rbf::rbfs::multi_quadric_rbf<double>,
     num_collect::rbf::rbfs::inverse_multi_quadric_rbf<double>,
     num_collect::rbf::rbfs::inverse_quadratic_rbf<double>,
