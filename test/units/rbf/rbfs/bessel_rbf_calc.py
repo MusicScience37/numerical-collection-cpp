@@ -12,6 +12,10 @@ def cli() -> None:
 DISTANCE_RATE_STR_LIST = [
     "0.0",
     "1e-6",
+    # Implementation has a branch for distance_rate < 1e-2.
+    "0.00999",
+    "0.01",
+    "0.01001",
     "0.1",
     "0.4",
     "1.23",

@@ -42,8 +42,8 @@ TEST_CASE("num_collect::rbf::rbfs::bessel_rbf") {
         CHECK(bessel_rbf<double, 3>::is_positive_definite == true);
     }
 
-    constexpr double rel_tol = 1e-5;
-    constexpr double abs_tol = 1e-5;
+    constexpr double rel_tol = 1e-12;
+    constexpr double abs_tol = 1e-12;
 
     SECTION("calculate values") {
         SECTION("Dimension = 1") {
@@ -56,6 +56,9 @@ TEST_CASE("num_collect::rbf::rbfs::bessel_rbf") {
                 GENERATE(table<double, double>({
                     std::make_tuple(0.0, 0.7978845608028654),
                     std::make_tuple(1e-6, 0.7978845608024664),
+                    std::make_tuple(0.00999, 0.79784474665451),
+                    std::make_tuple(0.01, 0.797844666907276),
+                    std::make_tuple(0.01001, 0.7978445870802575),
                     std::make_tuple(0.1, 0.7938984614098792),
                     std::make_tuple(0.4, 0.7349003466726426),
                     std::make_tuple(1.23, 0.2666831221104817),
@@ -80,6 +83,9 @@ TEST_CASE("num_collect::rbf::rbfs::bessel_rbf") {
                 GENERATE(table<double, double>({
                     std::make_tuple(0.0, 1.0),
                     std::make_tuple(1e-6, 0.99999999999975),
+                    std::make_tuple(0.00999, 0.9999750501306255),
+                    std::make_tuple(0.01, 0.9999750001562496),
+                    std::make_tuple(0.01001, 0.9999749501318755),
                     std::make_tuple(0.1, 0.99750156206604),
                     std::make_tuple(0.4, 0.9603982266595635),
                     std::make_tuple(1.23, 0.656070571706025),
@@ -104,6 +110,9 @@ TEST_CASE("num_collect::rbf::rbfs::bessel_rbf") {
                 GENERATE(table<double, double>({
                     std::make_tuple(0.0, 0.7978845608028654),
                     std::make_tuple(1e-6, 0.7978845608027324),
+                    std::make_tuple(0.00999, 0.7978712893759306),
+                    std::make_tuple(0.01, 0.7978712627933422),
+                    std::make_tuple(0.01001, 0.7978712361841585),
                     std::make_tuple(0.1, 0.7965554179470395),
                     std::make_tuple(0.4, 0.7767772075537937),
                     std::make_tuple(1.23, 0.6113798892608872),
@@ -128,6 +137,9 @@ TEST_CASE("num_collect::rbf::rbfs::bessel_rbf") {
                 GENERATE(table<double, double>({
                     std::make_tuple(0.0, 0.5),
                     std::make_tuple(1e-6, 0.4999999999999375),
+                    std::make_tuple(0.00999, 0.4999937625196876),
+                    std::make_tuple(0.01, 0.4999937500260416),
+                    std::make_tuple(0.01001, 0.4999937375198959),
                     std::make_tuple(0.1, 0.49937526036242),
                     std::make_tuple(0.4, 0.4900664448882969),
                     std::make_tuple(1.23, 0.4112199777464196),
