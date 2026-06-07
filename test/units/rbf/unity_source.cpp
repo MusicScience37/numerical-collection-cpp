@@ -38,6 +38,7 @@
 #include "rbfs/gaussian_rbf_test.cpp"
 #include "rbfs/inverse_multi_quadric_rbf_test.cpp"
 #include "rbfs/inverse_quadratic_rbf_test.cpp"
+#include "rbfs/matern_rbf_test.cpp"
 #include "rbfs/multi_quadric_rbf_test.cpp"
 #include "rbfs/polyharmonic_spline_rbf_test.cpp"
 #include "rbfs/sech_rbf_test.cpp"

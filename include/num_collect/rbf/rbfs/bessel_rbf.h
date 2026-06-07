@@ -20,10 +20,10 @@
 #pragma once
 
 #include <cmath>
+#include <concepts>
 #include <cstdlib>
 #include <limits>
 
-#include "num_collect/base/concepts/real_scalar.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/functions/bessel.h"
 #include "num_collect/functions/gamma.h"
@@ -34,7 +34,8 @@ namespace num_collect::rbf::rbfs {
 /*!
  * \brief Class of Bessel RBF \cite Fornberg2015.
  *
- * \tparam Scalar Type of scalars.
+ * \tparam Scalar Type of scalars. Current implementation supports only `float`
+ * and `double`.
  * \tparam Dimension Dimension of the space of the RBF.
  *
  * This RBF is positive definite if the dimension of the space is less than or
@@ -60,7 +61,7 @@ namespace num_collect::rbf::rbfs {
  * \left(\frac{r}{2}\right)^{2m}
  * \f]
  */
-template <base::concepts::real_scalar Scalar, index_type Dimension>
+template <std::floating_point Scalar, index_type Dimension>
     requires(Dimension >= 1)
 class bessel_rbf {
 public:
