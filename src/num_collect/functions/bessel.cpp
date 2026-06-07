@@ -35,4 +35,40 @@ auto cyl_bessel_j(long double nu, long double x) -> long double {
     return boost::math::cyl_bessel_j(nu, x);
 }
 
+auto cyl_neumann(float nu, float x) -> float {
+    return boost::math::cyl_neumann(nu, x);
+}
+
+auto cyl_neumann(double nu, double x) -> double {
+    return boost::math::cyl_neumann(nu, x);
+}
+
+auto cyl_neumann(long double nu, long double x) -> long double {
+    return boost::math::cyl_neumann(nu, x);
+}
+
+auto cyl_bessel_i(float nu, float x) -> float {
+    return boost::math::cyl_bessel_i(nu, x);
+}
+
+auto cyl_bessel_i(double nu, double x) -> double {
+    return boost::math::cyl_bessel_i(nu, x);
+}
+
+auto cyl_bessel_i(long double nu, long double x) -> long double {
+    return boost::math::cyl_bessel_i(nu, x);
+}
+
+auto cyl_bessel_k(float nu, float x) -> float {
+    return boost::math::cyl_bessel_k(nu, x);
+}
+
+auto cyl_bessel_k(double nu, double x) -> double {
+    return boost::math::cyl_bessel_k(nu, x);
+}
+
+auto cyl_bessel_k(long double nu, long double x) -> long double {
+    return boost::math::cyl_bessel_k(nu, x);
+}
+
 }  // namespace num_collect::functions

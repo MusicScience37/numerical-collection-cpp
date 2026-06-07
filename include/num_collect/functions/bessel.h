@@ -24,8 +24,8 @@
 namespace num_collect::functions {
 
 /*!
- * \brief Calculate the cylindrical Bessel function of the first kind, \f$
- * J_{\nu}(x) \f$.
+ * \brief Calculate the cylindrical Bessel function of the first kind,
+ * \f$ J_{\nu}(x) \f$.
  *
  * \param[in] nu Order of the Bessel function.
  * \param[in] x Argument of the Bessel function.
@@ -39,8 +39,8 @@ namespace num_collect::functions {
 NUM_COLLECT_EXPORT auto cyl_bessel_j(float nu, float x) -> float;
 
 /*!
- * \brief Calculate the cylindrical Bessel function of the first kind, \f$
- * J_{\nu}(x) \f$.
+ * \brief Calculate the cylindrical Bessel function of the first kind,
+ * \f$ J_{\nu}(x) \f$.
  *
  * \param[in] nu Order of the Bessel function.
  * \param[in] x Argument of the Bessel function.
@@ -54,8 +54,8 @@ NUM_COLLECT_EXPORT auto cyl_bessel_j(float nu, float x) -> float;
 NUM_COLLECT_EXPORT auto cyl_bessel_j(double nu, double x) -> double;
 
 /*!
- * \brief Calculate the cylindrical Bessel function of the first kind, \f$
- * J_{\nu}(x) \f$.
+ * \brief Calculate the cylindrical Bessel function of the first kind,
+ * \f$ J_{\nu}(x) \f$.
  *
  * \param[in] nu Order of the Bessel function.
  * \param[in] x Argument of the Bessel function.
@@ -69,6 +69,145 @@ NUM_COLLECT_EXPORT auto cyl_bessel_j(double nu, double x) -> double;
 NUM_COLLECT_EXPORT auto cyl_bessel_j(long double nu, long double x)
     -> long double;
 
-// TODO Other Bessel functions.
+/*!
+ * \brief Calculate the cylindrical Bessel function of the second kind (Neumann
+ * function),
+ * \f$ Y_{\nu}(x) \f$.
+ *
+ * \param[in] nu Order of the Bessel function.
+ * \param[in] x Argument of the Bessel function.
+ * \return Value of the Bessel function.
+ *
+ * \note This function is an implementation of `std::cyl_neumann` function in
+ * C++ standard library. This function is implemented because some environments
+ * do not support `std::cyl_neumann` function.
+ * This function is implemented as a wrapper of Boost.Math library.
+ */
+NUM_COLLECT_EXPORT auto cyl_neumann(float nu, float x) -> float;
+
+/*!
+ * \brief Calculate the cylindrical Bessel function of the second kind (Neumann
+ * function),
+ * \f$ Y_{\nu}(x) \f$.
+ *
+ * \param[in] nu Order of the Bessel function.
+ * \param[in] x Argument of the Bessel function.
+ * \return Value of the Bessel function.
+ *
+ * \note This function is an implementation of `std::cyl_neumann` function in
+ * C++ standard library. This function is implemented because some environments
+ * do not support `std::cyl_neumann` function.
+ * This function is implemented as a wrapper of Boost.Math library.
+ */
+NUM_COLLECT_EXPORT auto cyl_neumann(double nu, double x) -> double;
+
+/*!
+ * \brief Calculate the cylindrical Bessel function of the second kind (Neumann
+ * function),
+ * \f$ Y_{\nu}(x) \f$.
+ *
+ * \param[in] nu Order of the Bessel function.
+ * \param[in] x Argument of the Bessel function.
+ * \return Value of the Bessel function.
+ *
+ * \note This function is an implementation of `std::cyl_neumann` function in
+ * C++ standard library. This function is implemented because some environments
+ * do not support `std::cyl_neumann` function.
+ * This function is implemented as a wrapper of Boost.Math library.
+ */
+NUM_COLLECT_EXPORT auto cyl_neumann(long double nu, long double x)
+    -> long double;
+
+/*!
+ * \brief Calculate the modified Bessel function of the first kind,
+ * \f$ I_{\nu}(x) \f$.
+ *
+ * \param[in] nu Order of the Bessel function.
+ * \param[in] x Argument of the Bessel function.
+ * \return Value of the Bessel function.
+ *
+ * \note This function is an implementation of `std::cyl_bessel_i` function in
+ * C++ standard library. This function is implemented because some environments
+ * do not support `std::cyl_bessel_i` function.
+ * This function is implemented as a wrapper of Boost.Math library.
+ */
+NUM_COLLECT_EXPORT auto cyl_bessel_i(float nu, float x) -> float;
+
+/*!
+ * \brief Calculate the modified Bessel function of the first kind,
+ * \f$ I_{\nu}(x) \f$.
+ *
+ * \param[in] nu Order of the Bessel function.
+ * \param[in] x Argument of the Bessel function.
+ * \return Value of the Bessel function.
+ *
+ * \note This function is an implementation of `std::cyl_bessel_i` function in
+ * C++ standard library. This function is implemented because some environments
+ * do not support `std::cyl_bessel_i` function.
+ * This function is implemented as a wrapper of Boost.Math library.
+ */
+NUM_COLLECT_EXPORT auto cyl_bessel_i(double nu, double x) -> double;
+
+/*!
+ * \brief Calculate the modified Bessel function of the first kind,
+ * \f$ I_{\nu}(x) \f$.
+ *
+ * \param[in] nu Order of the Bessel function.
+ * \param[in] x Argument of the Bessel function.
+ * \return Value of the Bessel function.
+ *
+ * \note This function is an implementation of `std::cyl_bessel_i` function in
+ * C++ standard library. This function is implemented because some environments
+ * do not support `std::cyl_bessel_i` function.
+ * This function is implemented as a wrapper of Boost.Math library.
+ */
+NUM_COLLECT_EXPORT auto cyl_bessel_i(long double nu, long double x)
+    -> long double;
+
+/*!
+ * \brief Calculate the modified Bessel function of the second kind,
+ * \f$ K_{\nu}(x) \f$.
+ *
+ * \param[in] nu Order of the Bessel function.
+ * \param[in] x Argument of the Bessel function.
+ * \return Value of the Bessel function.
+ *
+ * \note This function is an implementation of `std::cyl_bessel_k` function in
+ * C++ standard library. This function is implemented because some environments
+ * do not support `std::cyl_bessel_k` function.
+ * This function is implemented as a wrapper of Boost.Math library.
+ */
+NUM_COLLECT_EXPORT auto cyl_bessel_k(float nu, float x) -> float;
+
+/*!
+ * \brief Calculate the modified Bessel function of the second kind,
+ * \f$ K_{\nu}(x) \f$.
+ *
+ * \param[in] nu Order of the Bessel function.
+ * \param[in] x Argument of the Bessel function.
+ * \return Value of the Bessel function.
+ *
+ * \note This function is an implementation of `std::cyl_bessel_k` function in
+ * C++ standard library. This function is implemented because some environments
+ * do not support `std::cyl_bessel_k` function.
+ * This function is implemented as a wrapper of Boost.Math library.
+ */
+NUM_COLLECT_EXPORT auto cyl_bessel_k(double nu, double x) -> double;
+
+/*!
+ * \brief Calculate the modified Bessel function of the second kind,
+ * \f$ K_{\nu}(x) \f$.
+ *
+ * \param[in] nu Order of the Bessel function.
+ * \param[in] x Argument of the Bessel function.
+ * \return Value of the Bessel function.
+ *
+ * \note This function is an implementation of `std::cyl_bessel_k` function in
+ * C++ standard library. This function is implemented because some environments
+ * do not support `std::cyl_bessel_k` function.
+ * This function is implemented as a wrapper of Boost.Math library.
+ */
+NUM_COLLECT_EXPORT auto cyl_bessel_k(long double nu, long double x)
+    -> long double;
 
 }  // namespace num_collect::functions
