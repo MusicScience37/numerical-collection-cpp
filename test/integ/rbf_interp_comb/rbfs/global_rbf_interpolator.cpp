@@ -26,14 +26,21 @@
 #include "comparison_approvals.h"
 #include "num_collect/base/constants.h"
 #include "num_collect/rbf/rbf_interpolator.h"
+#include "num_collect/rbf/rbfs/bessel_rbf.h"
 #include "num_collect/rbf/rbfs/gaussian_rbf.h"
 #include "num_collect/rbf/rbfs/inverse_multi_quadric_rbf.h"
 #include "num_collect/rbf/rbfs/inverse_quadratic_rbf.h"
+#include "num_collect/rbf/rbfs/matern_rbf.h"
 #include "num_collect/rbf/rbfs/multi_quadric_rbf.h"
 #include "num_collect/rbf/rbfs/sech_rbf.h"
 
 TEMPLATE_TEST_CASE("global_rbf_interpolator with different RBFs", "",
     num_collect::rbf::rbfs::gaussian_rbf<double>,
+    // (num_collect::rbf::rbfs::bessel_rbf<double, 1>), // Unstable.
+    (num_collect::rbf::rbfs::bessel_rbf<double, 2>),
+    (num_collect::rbf::rbfs::bessel_rbf<double, 3>),
+    (num_collect::rbf::rbfs::matern_rbf<double, 1.5>),
+    (num_collect::rbf::rbfs::matern_rbf<double, 2.5>),
     num_collect::rbf::rbfs::multi_quadric_rbf<double>,
     num_collect::rbf::rbfs::inverse_multi_quadric_rbf<double>,
     num_collect::rbf::rbfs::inverse_quadratic_rbf<double>,

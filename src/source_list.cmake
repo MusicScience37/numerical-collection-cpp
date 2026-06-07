@@ -1,4 +1,5 @@
 set(SOURCE_FILES
+    num_collect/functions/bessel.cpp
     num_collect/logging/load_logging_config.cpp
     num_collect/logging/log_tag_config_node.cpp
     num_collect/logging/sinks/async_log_sink.cpp

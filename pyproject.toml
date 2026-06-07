@@ -63,6 +63,8 @@ pyyaml = "^6.0.3"
 types-pyyaml = "^6.0.12.20260518"
 colour-science = "^0.4.7"
 networkx = "^3.6.1"
+scipy = "^1.17.1"
+scipy-stubs = "^1.17.1.5"
 
 [build-system]
 requires = ["poetry-core"]

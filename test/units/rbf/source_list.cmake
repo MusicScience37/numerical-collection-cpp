@@ -33,11 +33,13 @@ set(SOURCE_FILES
     rbf_fd_polynomial_assembler_test.cpp
     rbf_interpolator_test.cpp
     rbf_polynomial_interpolator_test.cpp
+    rbfs/bessel_rbf_test.cpp
     rbfs/gaussian_from_square_rbf_test.cpp
     rbfs/gaussian_m1_rbf_test.cpp
     rbfs/gaussian_rbf_test.cpp
     rbfs/inverse_multi_quadric_rbf_test.cpp
     rbfs/inverse_quadratic_rbf_test.cpp
+    rbfs/matern_rbf_test.cpp
     rbfs/multi_quadric_rbf_test.cpp
     rbfs/polyharmonic_spline_rbf_test.cpp
     rbfs/sech_rbf_test.cpp
