@@ -134,7 +134,7 @@ static auto generate_nodes(num_collect::index_type num_interior_nodes)
 //   nodes: All nodes (interior + boundary), where first num_interior_nodes are
 //     interior nodes
 //   num_interior_nodes: Number of interior nodes
-//   polynomial_order: Order of polynomial augmentation in RBF-FD
+//   polynomial_order: Order of polynomials in RBF-FD
 //   num_neighbors: Number of neighboring nodes used in each RBF-FD stencil
 //   wave_speed: Wave propagation speed (c in the equation)
 //

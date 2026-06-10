@@ -1,17 +1,18 @@
 "$schema" = "https://numcollect.musicscience37.com/config_schema/v3/config_schema.json"
 
 [rbf_fd_wave_equation_1d_string]
-# Number of nodes in the interior of the domain.
+# Number of interior nodes in the domain (0 < x < 1).
 num_interior_nodes = 100
-# Order of polynomials used in RBF-FD.
+# Order of polynomials in RBF-FD.
 polynomial_order = 4
-# Number of neighbors used in RBF-FD.
+# Number of neighboring nodes used in each RBF-FD stencil.
 num_neighbors = 20
-# Wave speed.
+# Wave propagation speed.
 wave_speed = 1.0
-# Time step size.
+# Time step size for output.
+# Note: The ODE solver uses adaptive internal time stepping.
 time_step_size = 0.1
-# Final time.
+# End time of simulation.
 final_time = 1.0
 
 [[num_collect.logging.tag_configs]]
