@@ -43,6 +43,7 @@ concept length_parameter_calculator = requires() {
     typename T::distance_function_type;
     typename T::variable_type;
     typename T::scalar_type;
+    T::uses_global_length_parameter;
 
     requires distance_function<typename T::distance_function_type>;
     requires base::concepts::real_scalar<typename T::scalar_type>;

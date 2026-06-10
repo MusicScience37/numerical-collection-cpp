@@ -33,7 +33,7 @@
 #include "num_collect/base/precondition.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/rbf/compute_polynomial_term_matrix.h"
-#include "num_collect/rbf/concepts/length_parameter_calculator.h"
+#include "num_collect/rbf/concepts/global_length_parameter_calculator.h"
 #include "num_collect/rbf/concepts/rbf.h"
 #include "num_collect/rbf/concepts/rbf_fd_operator_with.h"
 #include "num_collect/rbf/impl/compute_kernel_matrix_serial.h"
@@ -55,7 +55,8 @@ namespace num_collect::rbf::impl {
  * \note This class is not thread safe. For parallel processing,
  * create one instance of this class for each thread.
  */
-template <concepts::length_parameter_calculator LengthParameterCalculator>
+template <
+    concepts::global_length_parameter_calculator LengthParameterCalculator>
 class rbf_fd_polynomial_row_calculator {
 public:
     //! Type of the calculator of length parameters.
@@ -237,11 +238,12 @@ private:
 
         right_hand_side_.resize(num_neighbors + num_polynomials);
         for (index_type i = 0; i < num_neighbors; ++i) {
+            constexpr auto kernel_coeff = static_cast<scalar_type>(1);
             right_hand_side_(i) =
                 operator_evaluator_type::evaluate_for_one_sample(
                     distance_function, rbf,
                     length_parameter_calculator_.length_parameter_at(0),
-                    target_operator, neighbor_variables_[i], 1.0);
+                    target_operator, neighbor_variables_[i], kernel_coeff);
         }
         for (num_collect::index_type i = 0; i < num_polynomials; ++i) {
             const auto& term = polynomial_term_generator.terms()[i];

@@ -59,7 +59,7 @@ static auto test_function(
  *
  * \param[in] num_interior_nodes Number of nodes in the interior of the domain.
  * \return Generated nodes. First num_interior_nodes nodes are in the interior,
- * and the rest are on the boundary in the counter-clockwise order.
+ * and the rest are on the boundary.
  */
 static auto generate_nodes(num_collect::index_type num_interior_nodes)
     -> num_collect::util::vector<position_type> {
@@ -140,6 +140,7 @@ static auto assemble_system(
         2 * num_interior_nodes, 2 * num_interior_nodes);
     coefficients.setFromTriplets(triplets.begin(), triplets.end());
 
+    // Boundary conditions are u = 0 at both ends, so constant term is zero.
     const solution_type constant_term =
         solution_type::Zero(2 * num_interior_nodes);
 
