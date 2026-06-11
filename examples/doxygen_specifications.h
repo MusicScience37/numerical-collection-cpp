@@ -75,6 +75,11 @@
  */
 
 /*!
+ * \example pde/rbf_fd_wave_equation_1d_string.cpp
+ * Example to solve 1D wave equation on a string using RBF-FD method.
+ */
+
+/*!
  * \example rbf/generate_2d_halton_nodes.cpp
  * Example to generate Halton nodes in 2D.
  */

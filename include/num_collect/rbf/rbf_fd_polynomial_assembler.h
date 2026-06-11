@@ -56,7 +56,7 @@ template <typename Variable,
             euclidean_distance_function<Variable>::value_type>,
     concepts::distance_function DistanceFunction =
         distance_functions::euclidean_distance_function<Variable>,
-    concepts::length_parameter_calculator LengthParameterCalculator =
+    concepts::global_length_parameter_calculator LengthParameterCalculator =
         length_parameter_calculators::global_length_parameter_calculator<
             DistanceFunction>>
     requires std::is_same_v<Variable,
