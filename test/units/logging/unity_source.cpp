@@ -34,7 +34,6 @@
 #include "logging_mixin_test.cpp"
 #include "sinks/async_log_sink_test.cpp"
 #include "sinks/combined_log_sink_test.cpp"
-#include "sinks/file_wrapper_test.cpp"
 #include "sinks/log_sink_test.cpp"
 #include "sinks/simple_log_sink_test.cpp"
 #include "time_stamp_test.cpp"

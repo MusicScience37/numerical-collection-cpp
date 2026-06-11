@@ -36,20 +36,4 @@ if(VTK_FOUND)
         PRIVATE ${VTK_LIBRARIES} cpp_plotly_plotter::plotly_plotter)
     vtk_module_autoinit(TARGETS experiment_pde_rbf_fd_poisson_equation_3d
                         MODULES ${VTK_LIBRARIES})
-
-    add_experiment(experiment_pde_rbf_fd_diffusion_equation_2d_dirichlet
-                   rbf_fd_diffusion_equation_2d_dirichlet.cpp)
-    target_link_libraries(experiment_pde_rbf_fd_diffusion_equation_2d_dirichlet
-                          PRIVATE ${VTK_LIBRARIES})
-    vtk_module_autoinit(
-        TARGETS experiment_pde_rbf_fd_diffusion_equation_2d_dirichlet MODULES
-        ${VTK_LIBRARIES})
-
-    add_experiment(experiment_pde_rbf_fd_diffusion_equation_2d_neumann
-                   rbf_fd_diffusion_equation_2d_neumann.cpp)
-    target_link_libraries(experiment_pde_rbf_fd_diffusion_equation_2d_neumann
-                          PRIVATE ${VTK_LIBRARIES})
-    vtk_module_autoinit(
-        TARGETS experiment_pde_rbf_fd_diffusion_equation_2d_neumann MODULES
-        ${VTK_LIBRARIES})
 endif()

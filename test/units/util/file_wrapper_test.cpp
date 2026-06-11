@@ -17,15 +17,15 @@
  * \file
  * \brief Test of file_wrapper class.
  */
-#include "num_collect/logging/sinks/file_wrapper.h"
+#include "num_collect/util/file_wrapper.h"
 
 #include <fstream>
 #include <iterator>
 
 #include <catch2/catch_test_macros.hpp>
 
-TEST_CASE("num_collect::logging::sinks::file_wrapper") {
-    using num_collect::logging::sinks::file_wrapper;
+TEST_CASE("num_collect::util::file_wrapper") {
+    using num_collect::util::file_wrapper;
 
     SECTION("default constructor") {
         file_wrapper file{};
@@ -40,7 +40,7 @@ TEST_CASE("num_collect::logging::sinks::file_wrapper") {
 
     SECTION("write to a file") {
         const std::string filepath =
-            "num_collect_test_units_logging_file_wrapper_text.txt";
+            "num_collect_test_units_util_file_wrapper_text.txt";
         const std::string data = "Test data 1.";
         {
             file_wrapper file{filepath, "w"};
@@ -55,9 +55,26 @@ TEST_CASE("num_collect::logging::sinks::file_wrapper") {
         }
     }
 
+    SECTION("write with formatting") {
+        const std::string filepath =
+            "num_collect_test_units_util_file_wrapper_text.txt";
+        {
+            file_wrapper file{filepath, "w"};
+            CHECK_NOTHROW(
+                file.write_with_format("Test data with formatting: {}", 123));
+        }
+        {
+            std::ifstream stream{filepath};
+            const auto actual_data =
+                std::string(std::istreambuf_iterator<char>(stream),
+                    std::istreambuf_iterator<char>());
+            CHECK(actual_data == "Test data with formatting: 123");
+        }
+    }
+
     SECTION("move constructor") {
         const std::string filepath =
-            "num_collect_test_units_logging_file_wrapper_text.txt";
+            "num_collect_test_units_util_file_wrapper_text.txt";
         const std::string data = "Test data 2.";
         {
             file_wrapper origin{filepath, "w"};
@@ -75,7 +92,7 @@ TEST_CASE("num_collect::logging::sinks::file_wrapper") {
 
     SECTION("move assignment operator") {
         const std::string filepath =
-            "num_collect_test_units_logging_file_wrapper_text.txt";
+            "num_collect_test_units_util_file_wrapper_text.txt";
         const std::string data = "Test data 3.";
         {
             file_wrapper file{};

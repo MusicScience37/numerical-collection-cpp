@@ -75,6 +75,18 @@
  */
 
 /*!
+ * \example pde/rbf_fd_diffusion_equation_2d_dirichlet.cpp
+ * Example to solve 2D diffusion equation with Dirichlet boundary conditions
+ * using RBF-FD method.
+ */
+
+/*!
+ * \example pde/rbf_fd_diffusion_equation_2d_neumann.cpp
+ * Example to solve 2D diffusion equation with Neumann boundary conditions
+ * using RBF-FD method.
+ */
+
+/*!
  * \example pde/rbf_fd_wave_equation_1d_string.cpp
  * Example to solve 1D wave equation on a string using RBF-FD method.
  */

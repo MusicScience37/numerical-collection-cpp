@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-// Example: Solving 1D wave equation on a string using RBF-FD method
+// Example: Solving 1D wave equation on a string using RBF-FD method.
 //
 // This example demonstrates how to solve the following 1D wave equation:
 //   ∂²u/∂t² = c² ∂²u/∂x²  (0 < x < 1, t > 0)
@@ -40,7 +40,7 @@
 // Output:
 //   - Errors are logged at each time step
 //   - Time evolution is visualized and saved as
-//     rbf_fd_wave_equation_1d_string.html
+//     rbf_fd_wave_equation_1d_string.html.
 #include <algorithm>
 #include <cmath>
 #include <string>
@@ -67,34 +67,35 @@
 #include "num_collect/util/vector_view.h"
 #include "toml_parser.h"
 
-// Type definitions for better readability
-// Node positions (x-coordinates)
+// Type definitions for better readability.
+// Node positions (x-coordinates).
 using position_type = double;
-// Solution vectors
+// Solution vectors.
 using solution_type = Eigen::VectorXd;
-// Sparse matrix (row-major for performance)
+// Sparse matrix (row-major for performance).
 using sparse_matrix_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 
-// ODE problem type for the first-order system
+// ODE problem type for the first-order system.
 // The wave equation ∂²u/∂t² = c²∇²u is converted to a first-order system:
 //   d/dt [∂u/∂t] = [c²∇²u    ]
 //        [u    ]   [∂u/∂t   ]
 // ODE variable structure (size 2*num_interior_nodes):
 //   variable[0 .. num_interior_nodes-1]: ∂u/∂t at interior nodes
-//   variable[num_interior_nodes .. 2*num_interior_nodes-1]: u at interior nodes
+//   variable[num_interior_nodes .. 2*num_interior_nodes-1]: u at interior
+//   nodes.
 using ode_problem_type =
     num_collect::ode::problems::linear_first_order_ode_problem<solution_type,
         sparse_matrix_type>;
 
-// Analytical solution: u(x, t) = sin(πx) cos(cπt)
-// Used for initial conditions and error evaluation
+// Analytical solution: u(x, t) = sin(πx) cos(cπt).
+// Used for initial conditions and error evaluation.
 static auto test_function(
     const position_type& position, double time, double wave_speed) -> double {
     return std::sin(num_collect::pi<double> * position) *
         std::cos(wave_speed * num_collect::pi<double> * time);
 }
 
-// Generate spatial discretization nodes
+// Generate spatial discretization nodes.
 //
 // Creates a set of nodes in the domain [0, 1]:
 //   - Interior nodes: Generated using Halton sequence
@@ -110,12 +111,12 @@ static auto test_function(
 //     - nodes[num_interior_nodes+1]: boundary node at x=1
 static auto generate_nodes(num_collect::index_type num_interior_nodes)
     -> num_collect::util::vector<position_type> {
-    // Generate interior nodes using Halton sequence
+    // Generate interior nodes using Halton sequence.
     auto interior_nodes =
         num_collect::rbf::generate_1d_halton_nodes<double>(num_interior_nodes);
     std::ranges::sort(interior_nodes);
 
-    // Combine interior and boundary nodes
+    // Combine interior and boundary nodes.
     num_collect::util::vector<position_type> nodes;
     nodes.reserve(interior_nodes.size() + 2);
     nodes.insert(nodes.end(), interior_nodes.begin(), interior_nodes.end());
@@ -124,7 +125,7 @@ static auto generate_nodes(num_collect::index_type num_interior_nodes)
     return nodes;
 }
 
-// Assemble the linear system for the wave equation ODE
+// Assemble the linear system for the wave equation ODE.
 //
 // This function constructs the coefficient matrix for the first-order ODE
 // system. The RBF-FD method is used to approximate the Laplacian operator
@@ -139,7 +140,7 @@ static auto generate_nodes(num_collect::index_type num_interior_nodes)
 //   wave_speed: Wave propagation speed (c in the equation)
 //
 // Returns:
-//   Linear first-order ODE problem: dv/dt = Av + b, where v = [∂u/∂t, u]ᵀ
+//   Linear first-order ODE problem: dv/dt = Av + b, where v = [∂u/∂t, u]ᵀ.
 static auto assemble_system(
     num_collect::util::vector_view<const position_type> nodes,
     num_collect::index_type num_interior_nodes, int polynomial_order,
@@ -154,13 +155,13 @@ static auto assemble_system(
     num_collect::util::vector<Eigen::Triplet<double>> laplacian_triplets;
 
     // Set up RBF-FD assembler with PHS (Polyharmonic Spline) + polynomial
-    // augmentation
+    // augmentation.
     using assembler_type =
         num_collect::rbf::phs_rbf_fd_polynomial_assembler<position_type>;
     assembler_type assembler(polynomial_order);
     assembler.num_neighbors(num_neighbors);
 
-    // Compute Laplacian matrix for interior nodes
+    // Compute Laplacian matrix for interior nodes.
     const auto interior_nodes = nodes.first(num_interior_nodes);
     const num_collect::util::nearest_neighbor_searcher<position_type>
         column_variables_nearest_neighbor_searcher(nodes);
@@ -174,13 +175,13 @@ static auto assemble_system(
         interior_nodes, nodes, column_variables_nearest_neighbor_searcher,
         laplacian_triplets, row_offset, column_offset);
 
-    // Build the coefficient matrix for the first-order ODE system
+    // Build the coefficient matrix for the first-order ODE system.
     // The matrix has the following block structure:
     //   [  0      c²∇²  ]  (top row: d(∂u/∂t)/dt = c²∇²u)
     //   [  I       0    ]  (bottom row: du/dt = ∂u/∂t)
     num_collect::util::vector<Eigen::Triplet<double>> triplets;
 
-    // Top right block: c²∇² applied to u variables
+    // Top right block: c²∇² applied to u variables.
     for (const auto& triplet : laplacian_triplets) {
         if (triplet.col() < num_interior_nodes) {
             triplets.emplace_back(triplet.row(),
@@ -189,19 +190,19 @@ static auto assemble_system(
         }
     }
 
-    // Bottom left block: Identity matrix for du/dt = ∂u/∂t
+    // Bottom left block: Identity matrix for du/dt = ∂u/∂t.
     for (num_collect::index_type i = 0; i < num_interior_nodes; ++i) {
         triplets.emplace_back(
             static_cast<int>(i + num_interior_nodes), static_cast<int>(i), 1.0);
     }
 
-    // Create sparse matrix
+    // Create sparse matrix.
     sparse_matrix_type coefficients(
         2 * num_interior_nodes, 2 * num_interior_nodes);
     coefficients.setFromTriplets(triplets.begin(), triplets.end());
 
     // Constant term is zero (homogeneous boundary conditions: u(0,t) = u(1,t) =
-    // 0)
+    // 0).
     const solution_type constant_term =
         solution_type::Zero(2 * num_interior_nodes);
 
@@ -210,7 +211,7 @@ static auto assemble_system(
     return ode_problem_type(coefficients, constant_term);
 }
 
-// Solve the wave equation ODE system and visualize results
+// Solve the wave equation ODE system and visualize results.
 //
 // This function integrates the first-order ODE system in time using the RODASPR
 // method (a Rosenbrock-type solver). At each time step, it compares the
@@ -220,14 +221,14 @@ static auto assemble_system(
 //   problem: Linear ODE problem assembled by assemble_system
 //   wave_speed: Wave propagation speed
 //   time_step_size: Time step for output (solver uses adaptive stepping
-//   internally)
+//     internally)
 //   final_time: End time of simulation
 //   nodes: All nodes (same as in assemble_system)
 //   num_interior_nodes: Number of interior nodes
 //
 // Output:
 //   - Logs error statistics at each time step
-//   - Saves visualization to rbf_fd_wave_equation_1d_string.html
+//   - Saves visualization to rbf_fd_wave_equation_1d_string.html.
 static void solve_system(const ode_problem_type& problem, double wave_speed,
     double time_step_size, double final_time,
     num_collect::util::vector_view<const position_type> nodes,
@@ -235,22 +236,22 @@ static void solve_system(const ode_problem_type& problem, double wave_speed,
     num_collect::logging::logger logger;
     NUM_COLLECT_LOG_INFO(logger, "Start to solve the system.");
 
-    // Initialize time and solution vector
+    // Initialize time and solution vector.
     double time = 0.0;
     solution_type variable = solution_type::Zero(2 * num_interior_nodes);
 
-    // Set initial condition: u(x,0) = sin(πx), ∂u/∂t(x,0) = 0
+    // Set initial condition: u(x,0) = sin(πx), ∂u/∂t(x,0) = 0.
     for (num_collect::index_type i = 0; i < num_interior_nodes; ++i) {
         variable(i + num_interior_nodes) =  // u at interior nodes
             test_function(nodes[i], time, wave_speed);
         // variable(i) = 0 (∂u/∂t = 0 initially)
     }
 
-    // Variables for error evaluation
+    // Variables for error evaluation.
     solution_type true_values = variable.tail(num_interior_nodes);
     solution_type errors = solution_type::Zero(num_interior_nodes);
 
-    // Prepare nodes for visualization (including boundary points)
+    // Prepare nodes for visualization (including boundary points).
     num_collect::util::vector<position_type> visualized_nodes;
     visualized_nodes.reserve(num_interior_nodes + 2);
     visualized_nodes.push_back(0.0);  // Left boundary
@@ -258,7 +259,7 @@ static void solve_system(const ode_problem_type& problem, double wave_speed,
         nodes.begin() + num_interior_nodes);  // Interior nodes
     visualized_nodes.push_back(1.0);          // Right boundary
 
-    // Initialize visualization
+    // Initialize visualization.
     solution_type visualized_solution =
         solution_type::Zero(visualized_nodes.size());
     visualized_solution.segment(1, num_interior_nodes) =
@@ -271,45 +272,44 @@ static void solve_system(const ode_problem_type& problem, double wave_speed,
     scatter.mode("lines");
     scatter.name(fmt::format("t = {:.3f}", time));
 
-    // Set up ODE solver
+    // Set up ODE solver.
     using solver_type =
         num_collect::ode::rosenbrock::rodaspr_adaptive_step_solver<
             ode_problem_type>;
     solver_type solver(problem);
     solver.init(time, variable);
 
-    // Time integration loop
+    // Time integration loop.
     while (time < final_time) {
-        // Determine next output time
+        // Determine next output time.
         double next_time = time + time_step_size;
         constexpr double time_threshold = 1e-4;
         if (next_time > final_time - time_threshold) {
             next_time = final_time;
         }
 
-        // Integrate to next_time (solver uses adaptive internal steps)
+        // Integrate to next_time (solver uses adaptive internal steps).
         solver.solve_until(next_time);
 
         time = solver.time();
         variable = solver.variable();
 
-        // Compute analytical solution at current time
+        // Compute analytical solution at current time.
         for (num_collect::index_type i = 0; i < num_interior_nodes; ++i) {
             true_values(i) = test_function(nodes[i], time, wave_speed);
         }
 
-        // Calculate errors
+        // Calculate errors.
         errors = (variable.tail(num_interior_nodes) - true_values).cwiseAbs();
         const double max_error = errors.maxCoeff();
         const double mean_error = errors.mean();
         const double max_value = true_values.cwiseAbs().maxCoeff();
-
         NUM_COLLECT_LOG_INFO(logger,
             "Time: {:.2e}, Max error: {:.2e}, Mean error: {:.2e}, Max value: "
             "{:.2e}",
             time, max_error, mean_error, max_value);
 
-        // Add current solution to visualization
+        // Add current solution to visualization.
         visualized_solution.segment(1, num_interior_nodes) =
             variable.tail(num_interior_nodes);
         scatter = figure.add_scatter();
@@ -319,22 +319,22 @@ static void solve_system(const ode_problem_type& problem, double wave_speed,
         scatter.name(fmt::format("t = {:.3f}", time));
     }
 
-    // Save visualization to HTML file
+    // Save visualization to HTML file.
     plotly_plotter::write_html("rbf_fd_wave_equation_1d_string.html", figure);
     NUM_COLLECT_LOG_INFO(logger, "Wrote rbf_fd_wave_equation_1d_string.html.");
 }
 
 auto main(int argc, const char** argv) -> int {
-    // Load configuration file
+    // Load configuration file.
     std::string_view config_file_path =
         "examples/pde/rbf_fd_wave_equation_1d_string.toml";
     if (argc == 2) {
-        config_file_path = argv[1];  // Use command-line argument if provided
+        config_file_path = argv[1];  // Use command-line argument if provided.
     }
     num_collect::logging::load_logging_config_file(config_file_path);
     num_collect::logging::logger logger;
 
-    // Parse simulation parameters from TOML configuration file
+    // Parse simulation parameters from TOML configuration file.
     toml_parser parser(config_file_path);
     const auto num_interior_nodes = parser.get<num_collect::index_type>(
         "rbf_fd_wave_equation_1d_string.num_interior_nodes");
@@ -349,7 +349,7 @@ auto main(int argc, const char** argv) -> int {
     const auto final_time =
         parser.get<double>("rbf_fd_wave_equation_1d_string.final_time");
 
-    // Log configuration parameters
+    // Log configuration parameters.
     NUM_COLLECT_LOG_INFO(
         logger, "Number of interior nodes: {}", num_interior_nodes);
     NUM_COLLECT_LOG_INFO(logger, "Polynomial order: {}", polynomial_order);
@@ -358,15 +358,15 @@ auto main(int argc, const char** argv) -> int {
     NUM_COLLECT_LOG_INFO(logger, "Time step size: {}", time_step_size);
     NUM_COLLECT_LOG_INFO(logger, "Final time: {}", final_time);
 
-    // Generate spatial discretization nodes
+    // Generate spatial discretization nodes.
     const auto nodes = generate_nodes(num_interior_nodes);
     NUM_COLLECT_LOG_INFO(logger, "Generated {} nodes.", nodes.size());
 
-    // Assemble the ODE system matrix
+    // Assemble the ODE system matrix.
     const auto problem = assemble_system(
         nodes, num_interior_nodes, polynomial_order, num_neighbors, wave_speed);
 
-    // Solve the ODE system and visualize
+    // Solve the ODE system and visualize.
     solve_system(problem, wave_speed, time_step_size, final_time, nodes,
         num_interior_nodes);
 

@@ -35,9 +35,9 @@
 #include "num_collect/logging/log_level.h"
 #include "num_collect/logging/sinks/console_log_sink.h"
 #include "num_collect/logging/sinks/file_log_sink.h"
-#include "num_collect/logging/sinks/file_wrapper.h"
 #include "num_collect/logging/sinks/log_sink.h"
 #include "num_collect/logging/time_stamp.h"
+#include "num_collect/util/file_wrapper.h"
 #include "num_collect/util/source_info_view.h"
 
 namespace num_collect::logging::sinks {
@@ -55,7 +55,7 @@ public:
      * \param[in] file File.
      * \param[in] formatter Formatter.
      */
-    simple_log_sink(file_wrapper file,
+    simple_log_sink(util::file_wrapper file,
         std::shared_ptr<formatters::log_formatter_base> formatter)
         : file_(std::move(file)), formatter_(std::move(formatter)) {}
 
@@ -101,7 +101,7 @@ public:
 
 private:
     //! File.
-    file_wrapper file_;
+    util::file_wrapper file_;
 
     //! Formatter.
     std::shared_ptr<formatters::log_formatter_base> formatter_;
@@ -117,12 +117,12 @@ auto create_single_file_sink(std::string_view filepath) -> log_sink {
     const auto dir_path = std::filesystem::absolute(filepath).parent_path();
     std::filesystem::create_directories(dir_path);
     return create_log_sink<simple_log_sink>(
-        file_wrapper{std::string(filepath), "w"},
+        util::file_wrapper{std::string(filepath), "w"},
         std::make_shared<formatters::detailed_log_formatter>());
 }
 
-auto create_stdout_file_wrapper() -> file_wrapper {
-    file_wrapper file{};
+auto create_stdout_file_wrapper() -> util::file_wrapper {
+    util::file_wrapper file{};
     file.set_stdout();
     return file;
 }
