@@ -220,7 +220,7 @@ static auto assemble_system(
 //   problem: Linear ODE problem assembled by assemble_system
 //   wave_speed: Wave propagation speed
 //   time_step_size: Time step for output (solver uses adaptive stepping
-//   internally)
+//     internally)
 //   final_time: End time of simulation
 //   nodes: All nodes (same as in assemble_system)
 //   num_interior_nodes: Number of interior nodes
@@ -303,7 +303,6 @@ static void solve_system(const ode_problem_type& problem, double wave_speed,
         const double max_error = errors.maxCoeff();
         const double mean_error = errors.mean();
         const double max_value = true_values.cwiseAbs().maxCoeff();
-
         NUM_COLLECT_LOG_INFO(logger,
             "Time: {:.2e}, Max error: {:.2e}, Mean error: {:.2e}, Max value: "
             "{:.2e}",
