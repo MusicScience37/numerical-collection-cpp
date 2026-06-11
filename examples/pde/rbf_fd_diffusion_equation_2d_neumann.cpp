@@ -15,7 +15,7 @@
  */
 
 // Example: Solving 2D diffusion equation with Neumann boundary conditions
-// using RBF-FD method
+// using RBF-FD method.
 //
 // This example demonstrates how to solve the following 2D diffusion equation:
 //   ∂u/∂t = α(∂²u/∂x² + ∂²u/∂y²)  (0 < x < 1, 0 < y < 0.5, t > 0)
@@ -68,27 +68,27 @@
 #include "toml_parser.h"
 #include "write_vtp_file_for_comparison.h"
 
-// Type definitions for better readability
-// Node positions in 2D space
+// Type definitions for better readability.
+// Node positions in 2D space.
 using position_type = Eigen::Vector2d;
-// Solution vectors
+// Solution vectors.
 using solution_type = Eigen::VectorXd;
-// Sparse matrix (row-major for performance with BiCGstab)
+// Sparse matrix (row-major for performance with BiCGstab).
 using sparse_matrix_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 
-// DAE problem type for the first-order system with Neumann boundaries
+// DAE problem type for the first-order system with Neumann boundaries.
 // The diffusion equation ∂u/∂t = α∇²u with mixed boundary conditions
-// is expressed as a differential-algebraic equation (DAE) system
+// is expressed as a differential-algebraic equation (DAE) system.
 using ode_problem_type =
     num_collect::ode::problems::linear_first_order_dae_problem<solution_type,
         sparse_matrix_type>;
 
-// Directory for output ParaView visualization files
+// Directory for output ParaView visualization files.
 static constexpr std::string_view output_directory =
     "rbf_fd_diffusion_equation_2d_neumann";
 
-// Analytical solution: u(x, y, t) = exp(-2απ²t) sin(πx) sin(πy)
-// Used for initial conditions and error evaluation
+// Analytical solution: u(x, y, t) = exp(-2απ²t) sin(πx) sin(πy).
+// Used for initial conditions and error evaluation.
 static auto test_function(const position_type& position, double time,
     double diffusion_coefficient) -> double {
     return std::exp(-2.0 * diffusion_coefficient * num_collect::pi<double> *
@@ -96,7 +96,7 @@ static auto test_function(const position_type& position, double time,
         (position.array() * num_collect::pi<double>).sin().prod();
 }
 
-// Generate spatial discretization nodes
+// Generate spatial discretization nodes.
 //
 // Creates a set of nodes in the rectangular domain [0, 1] × [0, 0.5]:
 //   - Interior nodes: Generated using Halton sequence, then scaled in
@@ -113,18 +113,18 @@ static auto test_function(const position_type& position, double time,
 static auto generate_nodes(num_collect::index_type num_interior_nodes,
     num_collect::index_type num_boundary_nodes_per_edge)
     -> num_collect::util::vector<position_type> {
-    // Generate interior nodes using Halton sequence and scale y-coordinates
+    // Generate interior nodes using Halton sequence and scale y-coordinates.
     auto interior_nodes =
         num_collect::rbf::generate_halton_nodes<double, 2>(num_interior_nodes);
     for (auto& node : interior_nodes) {
         node.y() *= 0.5;
     }
-    // Generate boundary nodes on all four edges
+    // Generate boundary nodes on all four edges.
     const auto boundary_nodes =
         num_collect::util::generate_rectangle_boundary_nodes(
             position_type(0.0, 0.0), position_type(1.0, 0.5),
             num_boundary_nodes_per_edge);
-    // Combine interior and boundary nodes
+    // Combine interior and boundary nodes.
     num_collect::util::vector<position_type> nodes;
     nodes.reserve(interior_nodes.size() + boundary_nodes.size());
     nodes.insert(nodes.end(), interior_nodes.begin(), interior_nodes.end());
@@ -132,7 +132,7 @@ static auto generate_nodes(num_collect::index_type num_interior_nodes,
     return nodes;
 }
 
-// Assemble the linear system for the diffusion equation DAE
+// Assemble the linear system for the diffusion equation DAE.
 //
 // This function constructs the coefficient matrices and load vector for the
 // differential-algebraic equation (DAE) system. The RBF-FD method is used to
@@ -170,13 +170,13 @@ static auto assemble_system(
     Eigen::VectorXd load_vector = Eigen::VectorXd::Zero(nodes.size());
 
     // Set up RBF-FD assembler with PHS (Polyharmonic Spline) + polynomial
-    // augmentation
+    // augmentation.
     using assembler_type =
         num_collect::rbf::phs_rbf_fd_polynomial_assembler<position_type>;
     assembler_type assembler(polynomial_order);
     assembler.num_neighbors(num_neighbors);
 
-    // Equations for interior nodes: du/dt = α∇²u
+    // Equations for interior nodes: du/dt = α∇²u.
     {
         using operator_type =
             num_collect::rbf::operators::laplacian_operator<position_type>;
@@ -189,14 +189,14 @@ static auto assemble_system(
             },
             interior_nodes, nodes, column_variables_nearest_neighbor_searcher,
             stiffness_triplets, row_offset, column_offset);
-        // Set mass matrix entries to 1 for interior nodes (du/dt on left side)
+        // Set mass matrix entries to 1 for interior nodes (du/dt on left side).
         for (num_collect::index_type i = 0; i < num_interior_nodes; ++i) {
             mass_triplets.emplace_back(
                 static_cast<int>(i), static_cast<int>(i), 1.0);
         }
     }
 
-    // Equations for Neumann boundary nodes: ∂u/∂y = 0 (excluding corners)
+    // Equations for Neumann boundary nodes: ∂u/∂y = 0 (excluding corners).
     const num_collect::index_type first_neumann_boundary_node_index =
         num_interior_nodes + 2 * num_boundary_nodes_per_edge + 1;
     const num_collect::index_type last_neumann_boundary_node_index =
@@ -218,7 +218,7 @@ static auto assemble_system(
             row_offset, column_offset);
     }
 
-    // Equations for Dirichlet boundary nodes: u = 0
+    // Equations for Dirichlet boundary nodes: u = 0.
     for (num_collect::index_type i = num_interior_nodes; i < nodes.size();
         ++i) {
         const bool is_neumann_boundary =
@@ -241,7 +241,7 @@ static auto assemble_system(
     return ode_problem_type(mass_matrix, stiffness_matrix, load_vector);
 }
 
-// Solve the diffusion equation DAE system and visualize results
+// Solve the diffusion equation DAE system and visualize results.
 //
 // This function integrates the first-order DAE system in time using the RODASPR
 // method (a Rosenbrock-type solver). At each time step, it compares the
@@ -274,11 +274,11 @@ static void solve_system(const ode_problem_type& problem,
     para_view_time_steps_data_file_writer para_view_writer(
         para_view_data_file_path);
 
-    // Initialize time and solution vector
+    // Initialize time and solution vector.
     num_collect::index_type time_index = 0;
     double time = 0.0;
 
-    // Set initial condition: u(x,y,0) = sin(πx) sin(πy), boundary values = 0
+    // Set initial condition: u(x,y,0) = sin(πx) sin(πy), boundary values = 0.
     solution_type solution = solution_type::Zero(nodes.size());
     for (num_collect::index_type i = 0; i < nodes.size(); ++i) {
         solution(i) = test_function(nodes[i], time, diffusion_coefficient);
@@ -292,37 +292,37 @@ static void solve_system(const ode_problem_type& problem,
         true_values, errors);
     para_view_writer.add_time_step(time, vtp_file_name);
 
-    // Set up ODE solver
+    // Set up ODE solver.
     using solver_type =
         num_collect::ode::rosenbrock::rodaspr_adaptive_step_solver<
             ode_problem_type>;
     solver_type solver(problem);
-    solver.step_size(0.01);  // Prevent too small step sizes at the beginning
+    solver.step_size(0.01);  // Prevent too small step sizes at the beginning.
     solver.init(time, solution);
 
-    // Time integration loop
+    // Time integration loop.
     while (time < final_time) {
-        // Determine next output time
+        // Determine next output time.
         double next_time = time + time_step_size;
         constexpr double time_threshold = 1e-4;
         if (next_time > final_time - time_threshold) {
             next_time = final_time;
         }
 
-        // Integrate to next_time (solver uses adaptive internal steps)
+        // Integrate to next_time (solver uses adaptive internal steps).
         solver.solve_until(next_time);
 
         time = solver.time();
         ++time_index;
         solution = solver.variable();
 
-        // Compute analytical solution at current time
+        // Compute analytical solution at current time.
         for (num_collect::index_type i = 0; i < nodes.size(); ++i) {
             true_values(i) =
                 test_function(nodes[i], time, diffusion_coefficient);
         }
 
-        // Calculate errors
+        // Calculate errors.
         errors = (solution - true_values).cwiseAbs();
         const double max_error = errors.maxCoeff();
         const double mean_error = errors.head(num_interior_nodes).mean();
@@ -332,7 +332,7 @@ static void solve_system(const ode_problem_type& problem,
             "{:.2e}",
             time, max_error, mean_error, max_value);
 
-        // Add current solution to visualization
+        // Add current solution to visualization.
         vtp_file_name = fmt::format(
             "rbf_fd_diffusion_equation_2d_neumann_{:04d}.vtp", time_index);
         write_vtp_file_for_comparison(
@@ -343,16 +343,16 @@ static void solve_system(const ode_problem_type& problem,
 }
 
 auto main(int argc, const char** argv) -> int {
-    // Load configuration file
+    // Load configuration file.
     std::string_view config_file_path =
         "examples/pde/rbf_fd_diffusion_equation_2d_neumann.toml";
     if (argc == 2) {
-        config_file_path = argv[1];  // Use command-line argument if provided
+        config_file_path = argv[1];  // Use command-line argument if provided.
     }
     num_collect::logging::load_logging_config_file(config_file_path);
     num_collect::logging::logger logger;
 
-    // Parse simulation parameters from TOML configuration file
+    // Parse simulation parameters from TOML configuration file.
     toml_parser parser(config_file_path);
     const auto num_interior_nodes = parser.get<num_collect::index_type>(
         "rbf_fd_diffusion_equation_2d_neumann.num_interior_nodes");
@@ -370,7 +370,7 @@ auto main(int argc, const char** argv) -> int {
     const auto final_time =
         parser.get<double>("rbf_fd_diffusion_equation_2d_neumann.final_time");
 
-    // Log configuration parameters
+    // Log configuration parameters.
     NUM_COLLECT_LOG_INFO(
         logger, "Number of interior nodes: {}", num_interior_nodes);
     NUM_COLLECT_LOG_INFO(logger, "Number of boundary nodes per edge: {}",
@@ -382,16 +382,16 @@ auto main(int argc, const char** argv) -> int {
     NUM_COLLECT_LOG_INFO(logger, "Time step size: {}", time_step_size);
     NUM_COLLECT_LOG_INFO(logger, "Final time: {}", final_time);
 
-    // Generate spatial discretization nodes
+    // Generate spatial discretization nodes.
     const auto nodes =
         generate_nodes(num_interior_nodes, num_boundary_nodes_per_edge);
     NUM_COLLECT_LOG_INFO(logger, "Generated {} nodes.", nodes.size());
 
-    // Assemble the DAE system matrix
+    // Assemble the DAE system matrix.
     const auto problem =
         assemble_system(nodes, num_interior_nodes, num_boundary_nodes_per_edge,
             polynomial_order, num_neighbors, diffusion_coefficient);
-    // Solve the DAE system and visualize
+    // Solve the DAE system and visualize.
     solve_system(problem, diffusion_coefficient, time_step_size, final_time,
         nodes, num_interior_nodes);
 
