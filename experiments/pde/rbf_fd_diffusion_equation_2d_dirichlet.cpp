@@ -26,7 +26,6 @@
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <fmt/format.h>
-#include <fmt/ostream.h>
 
 #include "num_collect/base/constants.h"
 #include "num_collect/base/index_type.h"
@@ -41,6 +40,7 @@
 #include "num_collect/util/nearest_neighbor_searcher.h"
 #include "num_collect/util/vector.h"
 #include "num_collect/util/vector_view.h"
+#include "para_view_time_steps_data_file_writer.h"
 #include "toml_parser.h"
 #include "write_vtp_file_for_comparison.h"
 
@@ -163,6 +163,11 @@ static void solve_system(const ode_problem_type& problem,
 
     std::filesystem::create_directories(output_directory);
 
+    const std::string para_view_data_file_path = fmt::format(
+        "{}/rbf_fd_diffusion_equation_2d_dirichlet.pvd", output_directory);
+    para_view_time_steps_data_file_writer para_view_writer(
+        para_view_data_file_path);
+
     num_collect::index_type time_index = 0;
     double time = 0.0;
     solution_type whole_variable = solution_type::Zero(nodes.size());
@@ -172,14 +177,12 @@ static void solve_system(const ode_problem_type& problem,
     }
     solution_type true_values = whole_variable;
     solution_type errors = solution_type::Zero(nodes.size());
-    std::string file_path =
-        fmt::format("{}/rbf_fd_diffusion_equation_2d_dirichlet_{:04d}.vtp",
-            output_directory, time_index);
+    std::string vtp_file_name = fmt::format(
+        "rbf_fd_diffusion_equation_2d_dirichlet_{:04d}.vtp", time_index);
     write_vtp_file_for_comparison(
-        file_path, nodes, whole_variable, true_values, errors);
-
-    num_collect::util::vector<double> time_list;
-    time_list.push_back(time);
+        fmt::format("{}/{}", output_directory, vtp_file_name), nodes,
+        whole_variable, true_values, errors);
+    para_view_writer.add_time_step(time, vtp_file_name);
 
     using solver_type =
         num_collect::ode::rosenbrock::rodaspr_adaptive_step_solver<
@@ -197,7 +200,6 @@ static void solve_system(const ode_problem_type& problem,
         solver.solve_until(next_time);
 
         time = solver.time();
-        time_list.push_back(time);
         ++time_index;
 
         whole_variable.head(num_interior_nodes) = solver.variable();
@@ -215,29 +217,13 @@ static void solve_system(const ode_problem_type& problem,
             "{:.2e}",
             time, max_error, mean_error, max_value);
 
-        file_path =
-            fmt::format("{}/rbf_fd_diffusion_equation_2d_dirichlet_{:04d}.vtp",
-                output_directory, time_index);
+        vtp_file_name = fmt::format(
+            "rbf_fd_diffusion_equation_2d_dirichlet_{:04d}.vtp", time_index);
         write_vtp_file_for_comparison(
-            file_path, nodes, whole_variable, true_values, errors);
+            fmt::format("{}/{}", output_directory, vtp_file_name), nodes,
+            whole_variable, true_values, errors);
+        para_view_writer.add_time_step(time, vtp_file_name);
     }
-
-    const std::string para_view_data_file_path = fmt::format(
-        "{}/rbf_fd_diffusion_equation_2d_dirichlet.pvd", output_directory);
-    std::ofstream para_view_data_file(para_view_data_file_path);
-    fmt::print(para_view_data_file, R"(<?xml version="1.0"?>
-<VTKFile type="Collection" version="0.1" byte_order="LittleEndian">
-  <Collection>
-)");
-    for (num_collect::index_type i = 0; i < time_list.size(); ++i) {
-        fmt::print(para_view_data_file,
-            R"(    <DataSet timestep="{:.2e}" file="rbf_fd_diffusion_equation_2d_dirichlet_{:04d}.vtp"/>
-)",
-            time_list[i], i);
-    }
-    fmt::print(para_view_data_file,
-        R"(  </Collection>
-</VTKFile>)");
 }
 
 auto main(int argc, const char** argv) -> int {

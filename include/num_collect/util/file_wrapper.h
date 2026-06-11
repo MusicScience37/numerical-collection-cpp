@@ -21,14 +21,18 @@
 
 #include <cerrno>
 #include <cstdio>
+#include <iterator>
 #include <string>
 #include <string_view>
 #include <utility>
 
+#include <fmt/base.h>
+#include <fmt/format.h>
+
 #include "num_collect/base/exception.h"
 #include "num_collect/util/format_errno.h"
 
-namespace num_collect::logging::sinks {
+namespace num_collect::util {
 
 /*!
  * \brief Class to wrap file pointer.
@@ -112,7 +116,7 @@ public:
         errno = 0;
         file_ = std::fopen(filepath.c_str(), mode);
         if (file_ == nullptr) {
-            throw file_error(util::format_errno(
+            throw file_error(format_errno(
                 "Failed to open {} with mode \"{}\"", filepath, mode));
         }
         close_on_destruction_ = true;
@@ -159,8 +163,23 @@ public:
         const std::size_t written_size =
             std::fwrite(data.data(), 1, data.size(), file_);
         if (written_size != data.size()) [[unlikely]] {
-            throw file_error(util::format_errno("Failed to write to file"));
+            throw file_error(format_errno("Failed to write to file"));
         }
+    }
+
+    /*!
+     * \brief Write a string with formatting.
+     *
+     * \tparam Args Types of arguments.
+     * \param[in] format Format string.
+     * \param[in] args Arguments.
+     */
+    template <typename... Args>
+    void write_with_format(fmt::format_string<Args...> format, Args&&... args) {
+        fmt::memory_buffer buffer;
+        fmt::format_to(
+            std::back_inserter(buffer), format, std::forward<Args>(args)...);
+        write(std::string_view(buffer.data(), buffer.size()));
     }
 
     /*!
@@ -174,7 +193,7 @@ public:
         errno = 0;
         const int result = std::fflush(file_);
         if (result != 0) [[unlikely]] {
-            throw file_error(util::format_errno("Failed to write to file"));
+            throw file_error(format_errno("Failed to write to file"));
         }
     }
 
@@ -193,4 +212,4 @@ private:
     bool close_on_destruction_{false};
 };
 
-}  // namespace num_collect::logging::sinks
+}  // namespace num_collect::util
