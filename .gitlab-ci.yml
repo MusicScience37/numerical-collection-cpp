@@ -319,13 +319,6 @@ sonar qube:
       "-DCMAKE_CXX_FLAGS=-stdlib=libc++ -fprofile-instr-generate -fcoverage-mapping"
       "-DCMAKE_MODULE_LINKER_FLAGS=-fprofile-instr-generate -fcoverage-mapping"
       -DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON
-    - mkdir coverage
-    - export LLVM_PROFILE_FILE=$(pwd)/coverage/coverage_%p.profraw
-    - cmake --build .
-    - ctest -V
-    - cd ../
-    - scripts/collect_llvm_coverage.sh build_clang_coverage
-    - poetry run lcov_cobertura $BUILD_DIR/coverage/coverage --output $BUILD_DIR/coverage.xml
     # SonarQube
     - curl -sSLo ./sonar-scanner.zip 'https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-7.2.0.5079-linux-x64.zip'
     - unzip -o sonar-scanner.zip
@@ -334,7 +327,6 @@ sonar qube:
       -Dsonar.host.url="${SONAR_HOST_URL}"
       -Dsonar.token="${SONAR_TOKEN}"
       -Dsonar.cfamily.compile-commands=${BUILD_DIR}/compile_commands.json
-      -Dsonar.cfamily.llvm-cov.reportPath=${BUILD_DIR}/coverage/coverage.txt
   # TODO Resolve memory consumption issue.
   allow_failure: true
 
