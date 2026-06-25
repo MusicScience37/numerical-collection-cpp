@@ -8,7 +8,7 @@ polynomial_order = 4
 # Number of neighboring nodes used in each RBF-FD stencil.
 num_neighbors = 20
 # Advection velocity.
-advection_velocity = 0.5
+advection_velocity = 0.7
 # Time step size for output.
 # Note: The ODE solver uses adaptive internal time stepping.
 time_step_size = 0.1

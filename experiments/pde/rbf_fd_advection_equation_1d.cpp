@@ -53,8 +53,8 @@ constexpr double left_boundary_position = 0.0;
 // Analytical solution
 static auto test_function(const position_type& position, double time,
     double advection_velocity) -> double {
-    constexpr double sigma = 0.1;
-    constexpr double first_center = 0.3;
+    constexpr double sigma = 0.03;
+    constexpr double first_center = 3.0 * sigma;
 
     double relative_position =
         position - advection_velocity * time - first_center;
