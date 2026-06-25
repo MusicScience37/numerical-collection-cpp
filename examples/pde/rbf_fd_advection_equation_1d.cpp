@@ -14,7 +14,34 @@
  * limitations under the License.
  */
 
-// Experiment: Solving 1D advection equation using RBF-FD method.
+// Example: Solving 1D advection equation using RBF-FD method.
+//
+// This example solves the following 1D advection equation:
+//   ∂u/∂t + c ∂u/∂x = 0  (0 < x < 1, t > 0)
+//
+// Boundary conditions:
+//   u(0, t) = analytical solution (inflow Dirichlet boundary)
+//   Right boundary (x = 1): free (outflow, included in ODE variables)
+//
+// Initial condition:
+//   u(x, 0) = exp(-(x - x₀)² / (2σ²))  (Gaussian pulse)
+//   where σ = 0.03, x₀ = 3σ
+//
+// Analytical solution:
+//   u(x, t) = exp(-(x - c*t - x₀)² / (2σ²))
+//   (Gaussian pulse translating at velocity c)
+//
+// Solution method:
+//   - Spatial discretization: RBF-FD (Radial Basis Function - Finite
+//     Difference) with quasi-random Halton nodes
+//   - Stabilization: Hyperviscosity using polyharmonic operator of order 3
+//   - Time integration: Rosenbrock method (RODASPR) for the first-order ODE
+//     system
+//
+// Output:
+//   - Errors are logged at each time step
+//   - Time evolution is visualized and saved as
+//     rbf_fd_advection_equation_1d.html
 
 #include <algorithm>
 #include <cmath>
@@ -51,7 +78,9 @@ using sparse_matrix_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 
 constexpr double left_boundary_position = 0.0;
 
-// Analytical solution
+// Analytical solution: u(x, t) = exp(-(x - c*t - x₀)² / (2σ²)).
+// Gaussian pulse translating at advection velocity c.
+// Used for initial and boundary conditions, and for error evaluation.
 static auto test_function(const position_type& position, double time,
     double advection_velocity) -> double {
     constexpr double sigma = 0.03;
@@ -63,46 +92,40 @@ static auto test_function(const position_type& position, double time,
     return std::exp(-coeff * relative_position * relative_position);
 }
 
+// ODE problem for the 1D advection equation with left Dirichlet boundary.
+//
+// The spatially discretized advection equation takes the form:
+//   du/dt = A*u + b*u_left(t)
+// where A is the stiffness matrix (RBF-FD approximation of -c ∂/∂x plus
+// hyperviscosity) and b*u_left(t) accounts for the inflow boundary condition.
+// ODE variable: u at interior nodes and the right boundary node (free outflow).
 class advection_ode_problem {
 public:
-    //! Type of vectors.
+    // Type of vectors.
     using vector_type = solution_type;
 
-    //! Type of coefficients matrix.
+    // Type of coefficients matrix.
     using matrix_type = sparse_matrix_type;
 
-    //! Type of scalars.
+    // Type of scalars.
     using scalar_type = typename vector_type::value_type;
 
-    //! Type of variables. (Used by ODE solvers.)
+    // Type of variables. (Used by ODE solvers.)
     using variable_type = vector_type;
 
-    //! Type of Jacobian. (Used by ODE solvers.)
+    // Type of Jacobian. (Used by ODE solvers.)
     using jacobian_type = matrix_type;
 
-    //! Allowed evaluations.
+    // Allowed evaluations.
     static constexpr auto allowed_evaluations =
         num_collect::ode::evaluation_type{.diff_coeff = true, .jacobian = true};
 
-    /*!
-     * \brief Constructor.
-     *
-     * \param[in] stiffness_matrix Stiffness matrix.
-     * \param[in] left_boundary_coeff Coefficients for the left boundary
-     * condition.
-     * \param[in] advection_velocity Velocity of advection.
-     */
     advection_ode_problem(const matrix_type& stiffness_matrix,
         const vector_type& left_boundary_coeff, double advection_velocity)
         : stiffness_matrix_(stiffness_matrix),
           left_boundary_coeff_(left_boundary_coeff),
           advection_velocity_(advection_velocity) {}
-    /*!
-     * \brief Evaluate on a (time, variable) pair.
-     *
-     * \param[in] time Time.
-     * \param[in] variable Variable.
-     */
+
     void evaluate_on(scalar_type time, const variable_type& variable,
         num_collect::ode::evaluation_type /*evaluations*/) {
         diff_coeff_ = stiffness_matrix_ * variable;
@@ -111,40 +134,43 @@ public:
         diff_coeff_ += left_boundary_coeff_ * left_boundary_value;
     }
 
-    /*!
-     * \brief Get the differential coefficient.
-     *
-     * \return Differential coefficient.
-     */
     [[nodiscard]] auto diff_coeff() const noexcept -> const variable_type& {
         return diff_coeff_;
     }
 
-    /*!
-     * \brief Get the Jacobian.
-     *
-     * \return Jacobian.
-     */
     [[nodiscard]] auto jacobian() const noexcept -> const jacobian_type& {
         return stiffness_matrix_;
     }
 
 private:
-    //! Stiffness matrix.
+    // Stiffness matrix.
     matrix_type stiffness_matrix_;
 
-    //! Coefficients for the left boundary condition.
+    // Coefficients for the left boundary condition.
     vector_type left_boundary_coeff_;
 
-    //! Speed of advection.
+    // Speed of advection.
     double advection_velocity_;
 
-    //! Differential coefficient.
+    // Differential coefficient.
     variable_type diff_coeff_;
 };
 
+// Type alias for similarity with other examples and experiments.
 using ode_problem_type = advection_ode_problem;
 
+// Generate spatial discretization nodes.
+//
+// Creates a set of nodes in the domain [0, 1]:
+//   - Interior nodes: Generated using 1D Halton sequence (sorted by position)
+//   - Boundary nodes: Right boundary (x=1) and left boundary (x=0)
+//
+// Parameters:
+//   num_interior_nodes: Number of nodes in the interior
+//
+// Returns:
+//   Vector of nodes where first num_interior_nodes are interior nodes,
+//   followed by the right boundary (x=1) and left boundary (x=0)
 static auto generate_nodes(num_collect::index_type num_interior_nodes)
     -> num_collect::util::vector<position_type> {
     // Generate interior nodes using Halton sequence.
@@ -161,6 +187,26 @@ static auto generate_nodes(num_collect::index_type num_interior_nodes)
     return nodes;
 }
 
+// Assemble the linear system for the advection equation ODE.
+//
+// Constructs the stiffness matrix and boundary coefficient vector for:
+//   du/dt = A*u + b*u_left(t)
+// using RBF-FD to approximate -c ∂/∂x (advection) plus a hyperviscosity
+// term for numerical stabilization:
+//   operator = -c ∂/∂x + (-1)^(p-1) ε h^(2p) Δ^p  (p = 3)
+//
+// Parameters:
+//   nodes: All nodes (interior + boundary), first num_interior_nodes are
+//     interior nodes
+//   num_interior_nodes: Number of interior nodes
+//   polynomial_order: Order of polynomials in RBF-FD augmentation
+//   num_neighbors: Number of neighboring nodes used in each RBF-FD stencil
+//   advection_velocity: Wave speed c in the advection equation
+//   hyperviscosity_rate: Scaling factor ε for the hyperviscosity term
+//
+// Returns:
+//   ODE problem du/dt = A*u + b*u_left(t), where u includes interior nodes
+//   and the right boundary node
 static auto assemble_system(
     num_collect::util::vector_view<const position_type> nodes,
     num_collect::index_type num_interior_nodes, int polynomial_order,
@@ -181,10 +227,14 @@ static auto assemble_system(
     static constexpr int hyperviscosity_order = 3;
     const double discretization_width =
         1.0 / static_cast<double>(num_interior_nodes);
+    // Hyperviscosity coefficient: (-1)^(p-1) ε h^(2p), scaled to the mesh
+    // width h = 1/N so the stabilization is proportional to the resolution.
     const double hyperviscosity_coeff =
         std::pow(-1.0, hyperviscosity_order - 1) * hyperviscosity_rate *
         std::pow(discretization_width, 2 * hyperviscosity_order);
 
+    // Rows correspond to interior nodes plus the right boundary node (free
+    // outflow); the left boundary is handled as an explicit forcing term.
     num_collect::util::vector<Eigen::Triplet<double>> advection_triplets;
     const auto interior_and_right_boundary_nodes =
         nodes.first(num_interior_nodes + 1);
@@ -211,6 +261,8 @@ static auto assemble_system(
     advection_coefficients.setFromTriplets(
         advection_triplets.begin(), advection_triplets.end());
 
+    // Extract columns for ODE variables (interior + right boundary) and the
+    // left boundary forcing term separately.
     const sparse_matrix_type stiffness_matrix =
         advection_coefficients.leftCols(num_interior_nodes + 1);
     const solution_type left_boundary_coeff =
@@ -222,6 +274,24 @@ static auto assemble_system(
         stiffness_matrix, left_boundary_coeff, advection_velocity);
 }
 
+// Solve the advection equation ODE system and visualize results.
+//
+// Integrates the first-order ODE system in time using the RODASPR method
+// (a Rosenbrock-type solver). At each time step, compares the numerical
+// solution with the analytical solution and logs the errors.
+//
+// Parameters:
+//   problem: ODE problem assembled by assemble_system
+//   advection_velocity: Wave speed c
+//   time_step_size: Time step for output (solver uses adaptive stepping
+//     internally)
+//   final_time: End time of simulation
+//   nodes: All nodes (same as in assemble_system)
+//   num_interior_nodes: Number of interior nodes
+//
+// Output:
+//   - Logs error statistics at each time step
+//   - Saves time evolution visualization to rbf_fd_advection_equation_1d.html
 static void solve_system(const ode_problem_type& problem,
     double advection_velocity, double time_step_size, double final_time,
     num_collect::util::vector_view<const position_type> nodes,
@@ -321,7 +391,7 @@ static void solve_system(const ode_problem_type& problem,
 auto main(int argc, const char** argv) -> int {
     // Load configuration file.
     std::string_view config_file_path =
-        "experiments/pde/rbf_fd_advection_equation_1d.toml";
+        "examples/pde/rbf_fd_advection_equation_1d.toml";
     if (argc == 2) {
         config_file_path = argv[1];  // Use command-line argument if provided.
     }
