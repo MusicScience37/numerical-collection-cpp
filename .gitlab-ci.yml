@@ -335,6 +335,8 @@ sonar qube:
       -Dsonar.token="${SONAR_TOKEN}"
       -Dsonar.cfamily.compile-commands=${BUILD_DIR}/compile_commands.json
       -Dsonar.cfamily.llvm-cov.reportPath=${BUILD_DIR}/coverage/coverage.txt
+  # TODO Resolve memory consumption issue.
+  allow_failure: true
 
 test asan ubsan:
   extends: .test linux base
