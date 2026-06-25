@@ -75,6 +75,11 @@
  */
 
 /*!
+ * \example pde/rbf_fd_advection_equation_1d.cpp
+ * Example to solve 1D advection equation using RBF-FD method.
+ */
+
+/*!
  * \example pde/rbf_fd_diffusion_equation_2d_dirichlet.cpp
  * Example to solve 2D diffusion equation with Dirichlet boundary conditions
  * using RBF-FD method.
