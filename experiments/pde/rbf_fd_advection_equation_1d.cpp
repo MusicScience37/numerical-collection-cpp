@@ -171,12 +171,14 @@ static auto assemble_system(
 
     // Set up RBF-FD assembler with PHS (Polyharmonic Spline) + polynomial
     // augmentation.
+    constexpr int phs_degree = 7;
     using assembler_type =
-        num_collect::rbf::phs_rbf_fd_polynomial_assembler<position_type>;
+        num_collect::rbf::phs_rbf_fd_polynomial_assembler<position_type,
+            phs_degree>;
     assembler_type assembler(polynomial_order);
     assembler.num_neighbors(num_neighbors);
 
-    static constexpr int hyperviscosity_order = 2;
+    static constexpr int hyperviscosity_order = 3;
     const double discretization_width =
         1.0 / static_cast<double>(num_interior_nodes);
     const double hyperviscosity_coeff =
