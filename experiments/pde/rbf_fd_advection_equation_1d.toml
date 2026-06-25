@@ -9,6 +9,8 @@ polynomial_order = 4
 num_neighbors = 20
 # Advection velocity.
 advection_velocity = 0.7
+# Rate of hyperviscosity.
+hyperviscosity_rate = 0.1
 # Time step size for output.
 # Note: The ODE solver uses adaptive internal time stepping.
 time_step_size = 0.1

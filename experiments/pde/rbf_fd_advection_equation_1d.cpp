@@ -34,6 +34,7 @@
 #include "num_collect/ode/rosenbrock/rodaspr_formula.h"
 #include "num_collect/rbf/generate_halton_nodes.h"
 #include "num_collect/rbf/operators/gradient_operator.h"
+#include "num_collect/rbf/operators/polyharmonic_operator.h"
 #include "num_collect/rbf/rbf_fd_polynomial_assembler.h"
 #include "num_collect/util/nearest_neighbor_searcher.h"
 #include "num_collect/util/vector.h"
@@ -163,8 +164,8 @@ static auto generate_nodes(num_collect::index_type num_interior_nodes)
 static auto assemble_system(
     num_collect::util::vector_view<const position_type> nodes,
     num_collect::index_type num_interior_nodes, int polynomial_order,
-    num_collect::index_type num_neighbors, double advection_velocity)
-    -> ode_problem_type {
+    num_collect::index_type num_neighbors, double advection_velocity,
+    double hyperviscosity_rate) -> ode_problem_type {
     num_collect::logging::logger logger;
     NUM_COLLECT_LOG_INFO(logger, "Start assembly of the system.");
 
@@ -175,6 +176,13 @@ static auto assemble_system(
     assembler_type assembler(polynomial_order);
     assembler.num_neighbors(num_neighbors);
 
+    static constexpr int hyperviscosity_order = 2;
+    const double discretization_width =
+        1.0 / static_cast<double>(num_interior_nodes);
+    const double hyperviscosity_coeff =
+        std::pow(-1.0, hyperviscosity_order - 1) * hyperviscosity_rate *
+        std::pow(discretization_width, 2 * hyperviscosity_order);
+
     num_collect::util::vector<Eigen::Triplet<double>> advection_triplets;
     const auto interior_and_right_boundary_nodes =
         nodes.first(num_interior_nodes + 1);
@@ -183,11 +191,14 @@ static auto assemble_system(
     constexpr num_collect::index_type row_offset = 0;
     constexpr num_collect::index_type column_offset = 0;
     assembler.compute_rows(
-        [advection_velocity](const position_type& position) {
-            // TODO Stabilization.
+        [advection_velocity, hyperviscosity_coeff](
+            const position_type& position) {
             return -advection_velocity *
                 num_collect::rbf::operators::gradient_operator<position_type>(
-                    position);
+                    position) +
+                hyperviscosity_coeff *
+                num_collect::rbf::operators::polyharmonic_operator<
+                    hyperviscosity_order, position_type>(position);
         },
         interior_and_right_boundary_nodes, nodes,
         column_variables_nearest_neighbor_searcher, advection_triplets,
@@ -325,6 +336,8 @@ auto main(int argc, const char** argv) -> int {
         "rbf_fd_advection_equation_1d.num_neighbors");
     const auto advection_velocity =
         parser.get<double>("rbf_fd_advection_equation_1d.advection_velocity");
+    const auto hyperviscosity_rate =
+        parser.get<double>("rbf_fd_advection_equation_1d.hyperviscosity_rate");
     const auto time_step_size =
         parser.get<double>("rbf_fd_advection_equation_1d.time_step_size");
     const auto final_time =
@@ -336,6 +349,8 @@ auto main(int argc, const char** argv) -> int {
     NUM_COLLECT_LOG_INFO(logger, "Polynomial order: {}", polynomial_order);
     NUM_COLLECT_LOG_INFO(logger, "Number of neighbors: {}", num_neighbors);
     NUM_COLLECT_LOG_INFO(logger, "Advection velocity: {}", advection_velocity);
+    NUM_COLLECT_LOG_INFO(
+        logger, "Hyperviscosity rate: {}", hyperviscosity_rate);
     NUM_COLLECT_LOG_INFO(logger, "Time step size: {}", time_step_size);
     NUM_COLLECT_LOG_INFO(logger, "Final time: {}", final_time);
 
@@ -344,8 +359,9 @@ auto main(int argc, const char** argv) -> int {
     NUM_COLLECT_LOG_INFO(logger, "Generated {} nodes.", nodes.size());
 
     // Assemble the ODE system matrix.
-    const auto problem = assemble_system(nodes, num_interior_nodes,
-        polynomial_order, num_neighbors, advection_velocity);
+    const auto problem =
+        assemble_system(nodes, num_interior_nodes, polynomial_order,
+            num_neighbors, advection_velocity, hyperviscosity_rate);
 
     // Solve the ODE system and visualize.
     solve_system(problem, advection_velocity, time_step_size, final_time, nodes,
