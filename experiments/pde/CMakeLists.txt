@@ -5,6 +5,11 @@ add_experiment(experiment_pde_runge_kutta_equation_solver
 
 add_experiment(experiment_pde_linear_equation_solver linear_equation_solver.cpp)
 
+add_experiment(experiment_pde_rbf_fd_advection_equation_1d
+               rbf_fd_advection_equation_1d.cpp)
+target_link_libraries(experiment_pde_rbf_fd_advection_equation_1d
+                      PRIVATE cpp_plotly_plotter::plotly_plotter)
+
 if(VTK_FOUND)
     add_experiment(experiment_pde_rbf_fd_laplacian_matrix_2d
                    rbf_fd_laplacian_matrix_2d.cpp)
