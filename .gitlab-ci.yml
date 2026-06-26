@@ -319,10 +319,11 @@ sonar qube:
       "-DCMAKE_CXX_FLAGS=-stdlib=libc++ -fprofile-instr-generate -fcoverage-mapping"
       "-DCMAKE_MODULE_LINKER_FLAGS=-fprofile-instr-generate -fcoverage-mapping"
       -DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON
+    - cd ..
     # SonarQube
-    - curl -sSLo ./sonar-scanner.zip 'https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-7.2.0.5079-linux-x64.zip'
+    - curl -sSLo ./sonar-scanner.zip 'https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-8.0.1.6346-linux-x64.zip'
     - unzip -o sonar-scanner.zip
-    - mv sonar-scanner-7.2.0.5079-linux-x64 sonar-scanner
+    - mv sonar-scanner-8.0.1.6346-linux-x64 sonar-scanner
     - sonar-scanner/bin/sonar-scanner
       -Dsonar.host.url="${SONAR_HOST_URL}"
       -Dsonar.token="${SONAR_TOKEN}"
