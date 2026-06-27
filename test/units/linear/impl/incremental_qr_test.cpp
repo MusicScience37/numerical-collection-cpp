@@ -20,6 +20,7 @@
 #include "num_collect/linear/impl/incremental_qr.h"
 
 #include <Eigen/Core>
+#include <Eigen/QR>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
@@ -111,6 +112,31 @@ TEST_CASE("num_collect::linear::impl::incremental_qr") {
         // Check that q * r equals the input matrix.
         const Eigen::MatrixXd qr_product = q * r;
         CHECK_THAT(qr_product, eigen_approx(input_matrix));
+
+        SECTION("then solve a linear system") {
+            const Eigen::VectorXd rhs{{1.0, 2.0}};
+
+            Eigen::VectorXd solution;
+            qr.solve(rhs, solution);
+
+            Eigen::ColPivHouseholderQR<Eigen::MatrixXd> reference_qr(
+                input_matrix);
+            const Eigen::VectorXd reference_solution = reference_qr.solve(rhs);
+            CHECK_THAT(solution, eigen_approx(reference_solution));
+        }
+
+        SECTION("then estimate the residual norm") {
+            const Eigen::VectorXd rhs{{1.0, 2.0}};
+
+            const double residual_norm = qr.estimate_residual_norm(rhs);
+
+            Eigen::VectorXd solution;
+            qr.solve(rhs, solution);
+            const double true_residual_norm =
+                (input_matrix * solution - rhs).norm();
+            CHECK_THAT(residual_norm,
+                Catch::Matchers::WithinRel(true_residual_norm, 1e-4));
+        }
     }
 
     SECTION("compute two columns") {
@@ -149,6 +175,31 @@ TEST_CASE("num_collect::linear::impl::incremental_qr") {
         // Check that q * r equals the input matrix.
         const Eigen::MatrixXd qr_product = q * r;
         CHECK_THAT(qr_product, eigen_approx(input_matrix));
+
+        SECTION("then solve a linear system") {
+            const Eigen::VectorXd rhs{{1.23, 4.56, 7.89}};
+
+            Eigen::VectorXd solution;
+            qr.solve(rhs, solution);
+
+            Eigen::ColPivHouseholderQR<Eigen::MatrixXd> reference_qr(
+                input_matrix);
+            const Eigen::VectorXd reference_solution = reference_qr.solve(rhs);
+            CHECK_THAT(solution, eigen_approx(reference_solution));
+        }
+
+        SECTION("then estimate the residual norm") {
+            const Eigen::VectorXd rhs{{1.23, 4.56, 7.89}};
+
+            const double residual_norm = qr.estimate_residual_norm(rhs);
+
+            Eigen::VectorXd solution;
+            qr.solve(rhs, solution);
+            const double true_residual_norm =
+                (input_matrix * solution - rhs).norm();
+            CHECK_THAT(residual_norm,
+                Catch::Matchers::WithinRel(true_residual_norm, 1e-4));
+        }
     }
 
     SECTION("compute three columns") {
@@ -189,5 +240,96 @@ TEST_CASE("num_collect::linear::impl::incremental_qr") {
         // Check that q * r equals the input matrix.
         const Eigen::MatrixXd qr_product = q * r;
         CHECK_THAT(qr_product, eigen_approx(input_matrix));
+
+        SECTION("then solve a linear system") {
+            const Eigen::VectorXd rhs{{1.23, 4.56, 7.89, 0.12}};
+
+            Eigen::VectorXd solution;
+            qr.solve(rhs, solution);
+
+            Eigen::ColPivHouseholderQR<Eigen::MatrixXd> reference_qr(
+                input_matrix);
+            const Eigen::VectorXd reference_solution = reference_qr.solve(rhs);
+            CHECK_THAT(solution, eigen_approx(reference_solution));
+        }
+
+        SECTION("then estimate the residual norm") {
+            const Eigen::VectorXd rhs{{1.23, 4.56, 7.89, 0.12}};
+
+            const double residual_norm = qr.estimate_residual_norm(rhs);
+
+            Eigen::VectorXd solution;
+            qr.solve(rhs, solution);
+            const double true_residual_norm =
+                (input_matrix * solution - rhs).norm();
+            CHECK_THAT(residual_norm,
+                Catch::Matchers::WithinRel(true_residual_norm, 1e-4));
+        }
+    }
+
+    SECTION("compute a matrix without full column rank") {
+        incremental_qr<double> qr;
+
+        const Eigen::MatrixXd input_matrix{
+            {1.0, 1.0, 1.0}, {2.0, 2.0, 2.0}, {0.0, 3.0, 3.0}, {0.0, 0.0, 0.0}};
+        qr.initialize(4, 3);
+        qr.append_column(input_matrix.col(0).head(2));
+        qr.append_column(input_matrix.col(1).head(3));
+        qr.append_column(input_matrix.col(2).head(4));
+
+        const Eigen::MatrixXd q = qr.q();
+        const Eigen::MatrixXd r = qr.r();
+        CHECK(q.rows() == 4);
+        CHECK(q.cols() == 4);
+        CHECK(r.rows() == 4);
+        CHECK(r.cols() == 3);
+
+        // Check that q is orthogonal.
+        const Eigen::MatrixXd qtq = q.transpose() * q;
+        const Eigen::MatrixXd expected_qtq = Eigen::MatrixXd::Identity(4, 4);
+        CHECK_THAT(qtq, eigen_approx(expected_qtq));
+        const Eigen::MatrixXd qqt = q * q.transpose();
+        const Eigen::MatrixXd expected_qqt = Eigen::MatrixXd::Identity(4, 4);
+        CHECK_THAT(qqt, eigen_approx(expected_qqt));
+
+        // Check that r is upper triangular.
+        for (num_collect::index_type i = 0; i < r.rows(); ++i) {
+            for (num_collect::index_type j = 0; j < r.cols(); ++j) {
+                if (i > j) {
+                    INFO("r(" << i << ", " << j << ") = " << r(i, j));
+                    CHECK_THAT(r(i, j), Catch::Matchers::WithinAbs(0.0, 1e-10));
+                }
+            }
+        }
+
+        // Check that q * r equals the input matrix.
+        const Eigen::MatrixXd qr_product = q * r;
+        CHECK_THAT(qr_product, eigen_approx(input_matrix));
+
+        SECTION("then solve a linear system") {
+            const Eigen::VectorXd rhs{{1.23, 4.56, 7.89, 0.12}};
+
+            Eigen::VectorXd solution;
+            qr.solve(rhs, solution);
+
+            Eigen::ColPivHouseholderQR<Eigen::MatrixXd> reference_qr(
+                input_matrix.leftCols(2));
+            Eigen::VectorXd reference_solution = Eigen::VectorXd::Zero(3);
+            reference_solution.head(2) = reference_qr.solve(rhs);
+            CHECK_THAT(solution, eigen_approx(reference_solution));
+        }
+
+        SECTION("then estimate the residual norm") {
+            const Eigen::VectorXd rhs{{1.23, 4.56, 7.89, 0.12}};
+
+            const double residual_norm = qr.estimate_residual_norm(rhs);
+
+            Eigen::VectorXd solution;
+            qr.solve(rhs, solution);
+            const double true_residual_norm =
+                (input_matrix * solution - rhs).norm();
+            CHECK_THAT(residual_norm,
+                Catch::Matchers::WithinRel(true_residual_norm, 1e-4));
+        }
     }
 }

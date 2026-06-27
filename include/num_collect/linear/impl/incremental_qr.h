@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <algorithm>
 #include <cstdlib>
 #include <limits>
 #include <utility>
@@ -87,6 +88,9 @@ template <typename Scalar>
  *
  * \note This class is designed for internal use in
  * num_collect::linear::functional_gmres.
+ * \note When the input matrix does not have full column rank,
+ * this class uses only the columns that can be usable in solving linear
+ * systems.
  */
 template <typename Scalar>
 class incremental_qr {
@@ -127,7 +131,7 @@ public:
      * this function.
      */
     template <typename Vector>
-    void append_column(const Eigen::EigenBase<Vector>& column) {
+    void append_column(const Eigen::DenseBase<Vector>& column) {
         NUM_COLLECT_PRECONDITION(
             column.cols() == 1, "Column must be a vector.");
         NUM_COLLECT_PRECONDITION(column.rows() >= rows_,
@@ -146,6 +150,72 @@ public:
         } else {
             handle_additional_column();
         }
+    }
+
+    /*!
+     * \brief Solve a linear system using the QR decomposition.
+     *
+     * \tparam RhsVector Type of the right-hand-side vector.
+     * \tparam SolutionVector Type of the solution vector.
+     * \param[in] rhs Right-hand-side vector.
+     * \param[out] solution Solution vector.
+     */
+    template <typename RhsVector, typename SolutionVector>
+    void solve(
+        const Eigen::DenseBase<RhsVector>& rhs, SolutionVector& solution) {
+        NUM_COLLECT_PRECONDITION(
+            rhs.cols() == 1, "Right-hand-side must be a vector.");
+        NUM_COLLECT_PRECONDITION(rhs.rows() == rows_,
+            "Right-hand-side must have the same number of rows as the input "
+            "matrix.");
+        NUM_COLLECT_PRECONDITION(
+            solution.cols() == 1, "Solution must be a vector.");
+
+        const index_type usable_cols = determine_usable_cols();
+        if (usable_cols < cols_) {
+            solution = Eigen::VectorX<scalar_type>::Zero(cols_);
+            if (usable_cols == 0) {
+                return;
+            }
+            rhs_buffer_ = q_.topLeftCorner(rows_, usable_cols).transpose() *
+                rhs.derived();
+            solution.head(usable_cols) =
+                r_.topLeftCorner(usable_cols, usable_cols)
+                    .template triangularView<Eigen::Upper>()
+                    .solve(rhs_buffer_);
+            return;
+        }
+
+        rhs_buffer_ =
+            q_.topLeftCorner(rows_, cols_).transpose() * rhs.derived();
+        solution = r_.topLeftCorner(cols_, cols_)
+                       .template triangularView<Eigen::Upper>()
+                       .solve(rhs_buffer_);
+    }
+
+    /*!
+     * \brief Estimate the residual norm when solving a linear system using the
+     * QR decomposition.
+     *
+     * \tparam RhsVector Type of the right-hand-side vector.
+     * \param[in] rhs Right-hand-side vector.
+     * \return Estimated residual norm.
+     */
+    template <typename RhsVector>
+    [[nodiscard]] auto estimate_residual_norm(
+        const Eigen::DenseBase<RhsVector>& rhs) -> scalar_type {
+        NUM_COLLECT_PRECONDITION(
+            rhs.cols() == 1, "Right-hand-side must be a vector.");
+        NUM_COLLECT_PRECONDITION(rhs.rows() == rows_,
+            "Right-hand-side must have the same number of rows as the input "
+            "matrix.");
+
+        const index_type usable_cols = determine_usable_cols();
+        rhs_buffer_ =
+            q_.topLeftCorner(rows_, rows_).transpose() * rhs.derived();
+        const scalar_type residual_norm =
+            rhs_buffer_.tail(rows_ - usable_cols).stableNorm();
+        return residual_norm;
     }
 
     /*!
@@ -201,6 +271,25 @@ private:
         }
     }
 
+    /*!
+     * \brief Calculate the number of columns usable in solving linear systems.
+     *
+     * \return Number of columns usable in solving linear systems.
+     */
+    [[nodiscard]] auto determine_usable_cols() const -> index_type {
+        const index_type min_dim = std::min(rows_, cols_);
+        const scalar_type max_diag =
+            r_.topLeftCorner(min_dim, min_dim).diagonal().cwiseAbs().maxCoeff();
+        const scalar_type diag_thresh =
+            std::numeric_limits<scalar_type>::epsilon() * max_diag;
+        for (index_type i = 0; i < min_dim; ++i) {
+            if (std::abs(r_(i, i)) <= diag_thresh) {
+                return i;
+            }
+        }
+        return min_dim;
+    }
+
     //! Matrix to decompose.
     matrix_type input_matrix_{};
 
@@ -215,6 +304,9 @@ private:
 
     //! Current number of rows in the input matrix.
     index_type rows_{};
+
+    //! Buffer for the right-hand-side vector in solving linear systems.
+    Eigen::VectorX<scalar_type> rhs_buffer_{};
 };
 
 }  // namespace num_collect::linear::impl
