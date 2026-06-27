@@ -20,6 +20,7 @@
 #pragma once
 
 #include <algorithm>
+#include <cmath>
 #include <cstdlib>
 #include <limits>
 #include <utility>
@@ -88,6 +89,8 @@ template <typename Scalar>
  *
  * \note This class is designed for internal use in
  * num_collect::linear::functional_gmres.
+ * So this class works only when the number of rows is equal to the number of
+ * columns plus one.
  * \note When the input matrix does not have full column rank,
  * this class uses only the columns that can be usable in solving linear
  * systems.
@@ -113,7 +116,11 @@ public:
      * \param[in] max_cols Maximum number of columns in the input matrix.
      */
     void initialize(index_type max_rows, index_type max_cols) {
-        input_matrix_ = matrix_type::Zero(max_rows, max_cols);
+        NUM_COLLECT_PRECONDITION(max_rows > 0, "max_rows must be positive.");
+        NUM_COLLECT_PRECONDITION(max_cols > 0, "max_cols must be positive.");
+        NUM_COLLECT_PRECONDITION(max_rows == max_cols + 1,
+            "Current implementation supports only max_rows = max_cols + 1.");
+
         q_ = matrix_type::Identity(max_rows, max_rows);
         r_ = matrix_type::Zero(max_rows, max_cols);
         cols_ = 0;
@@ -137,18 +144,17 @@ public:
         NUM_COLLECT_PRECONDITION(column.rows() >= rows_,
             "Additional column must have at least the same number of rows as "
             "the current input matrix.");
-        NUM_COLLECT_PRECONDITION(column.rows() <= input_matrix_.rows(),
+        NUM_COLLECT_PRECONDITION(column.rows() <= r_.rows(),
             "Additional column must have at most the maximum number of rows.");
-        NUM_COLLECT_PRECONDITION(cols_ < input_matrix_.cols(),
+        NUM_COLLECT_PRECONDITION(cols_ < r_.cols(),
             "Cannot append more columns than the maximum number of columns.");
 
         rows_ = column.rows();
-        input_matrix_.col(cols_).head(rows_) = column;
         ++cols_;
         if (cols_ == 1) {
-            handle_first_column();
+            handle_first_column(column);
         } else {
-            handle_additional_column();
+            handle_additional_column(column);
         }
     }
 
@@ -236,11 +242,15 @@ private:
     /*!
      * \brief Handle the first column of the input matrix.
      *
+     * \tparam Vector Type of the vector to append.
+     * \param[in] column First column of the input matrix.
+     *
      * This function performs the QR decomposition for the first column using
      * Givens rotations.
      */
-    void handle_first_column() {
-        r_.col(0).head(rows_) = input_matrix_.col(0).head(rows_);
+    template <typename Vector>
+    void handle_first_column(const Eigen::DenseBase<Vector>& column) {
+        r_.col(0).head(rows_) = column.derived();
         for (index_type i = rows_ - 1; i >= 1; --i) {
             const auto [c, s] =
                 compute_givens_rotation_coefficients(r_(i - 1, 0), r_(i, 0));
@@ -254,11 +264,14 @@ private:
 
     /*!
      * \brief Handle the additional column of the input matrix.
+     *
+     * \tparam Vector Type of the vector to append.
+     * \param[in] column Column of the input matrix to append.
      */
-    void handle_additional_column() {
+    template <typename Vector>
+    void handle_additional_column(const Eigen::DenseBase<Vector>& column) {
         r_.col(cols_ - 1).head(rows_) =
-            q_.topLeftCorner(rows_, rows_).transpose() *
-            input_matrix_.col(cols_ - 1).head(rows_);
+            q_.topLeftCorner(rows_, rows_).transpose() * column.derived();
         for (index_type i = rows_ - 1; i >= cols_; --i) {
             const auto [c, s] = compute_givens_rotation_coefficients(
                 r_(i - 1, cols_ - 1), r_(i, cols_ - 1));
@@ -289,9 +302,6 @@ private:
         }
         return min_dim;
     }
-
-    //! Matrix to decompose.
-    matrix_type input_matrix_{};
 
     //! Matrix Q in QR decomposition.
     matrix_type q_{};
