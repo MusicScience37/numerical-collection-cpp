@@ -141,7 +141,7 @@ public:
         rows_ = column.rows();
         input_matrix_.col(cols_).head(rows_) = column;
         ++cols_;
-        if (cols_ == 0) {
+        if (cols_ == 1) {
             handle_first_column();
         } else {
             handle_additional_column();
@@ -174,7 +174,7 @@ private:
         for (index_type i = rows_ - 1; i >= 1; --i) {
             const auto [c, s] =
                 compute_givens_rotation_coefficients(r_(i - 1, 0), r_(i, 0));
-            const Eigen::Matrix2d rotation_matrix{{c, s}, {-s, c}};
+            const Eigen::Matrix2<scalar_type> rotation_matrix{{c, s}, {-s, c}};
             r_.template block<2, 1>(i - 1, 0) =
                 rotation_matrix.transpose() * r_.template block<2, 1>(i - 1, 0);
             q_.block(0, i - 1, rows_, 2) =
@@ -186,13 +186,13 @@ private:
      * \brief Handle the additional column of the input matrix.
      */
     void handle_additional_column() {
-        r_.topLeftCorner(rows_, cols_) =
+        r_.col(cols_ - 1).head(rows_) =
             q_.topLeftCorner(rows_, rows_).transpose() *
-            input_matrix_.topLeftCorner(rows_, cols_);
+            input_matrix_.col(cols_ - 1).head(rows_);
         for (index_type i = rows_ - 1; i >= cols_; --i) {
             const auto [c, s] = compute_givens_rotation_coefficients(
                 r_(i - 1, cols_ - 1), r_(i, cols_ - 1));
-            const Eigen::Matrix2d rotation_matrix{{c, s}, {-s, c}};
+            const Eigen::Matrix2<scalar_type> rotation_matrix{{c, s}, {-s, c}};
             r_.template block<2, 1>(i - 1, cols_ - 1) =
                 rotation_matrix.transpose() *
                 r_.template block<2, 1>(i - 1, cols_ - 1);
