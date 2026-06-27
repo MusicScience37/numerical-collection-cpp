@@ -13,6 +13,7 @@ set(SOURCE_FILES
     impl/amg/index_score_table_test.cpp
     impl/amg/node_connection_list_test.cpp
     impl/amg/tune_coarse_grid_selection_test.cpp
+    impl/incremental_qr_test.cpp
     impl/operator_conjugate_gradient_test.cpp
     parallel_symmetric_successive_over_relaxation.cpp
     reverse_cuthill_mckee_ordering_test.cpp

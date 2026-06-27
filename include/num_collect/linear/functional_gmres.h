@@ -28,11 +28,11 @@
 #include <optional>
 
 #include <Eigen/Core>
-#include <Eigen/QR>
 
 #include "num_collect/base/concepts/real_scalar_dense_vector.h"
 #include "num_collect/base/index_type.h"
 #include "num_collect/base/precondition.h"
+#include "num_collect/linear/impl/incremental_qr.h"
 #include "num_collect/logging/log_tag_view.h"
 #include "num_collect/logging/logging_macros.h"
 #include "num_collect/logging/logging_mixin.h"
@@ -121,7 +121,6 @@ public:
         hessenberg_.resize(max_subspace_dim + 1, max_subspace_dim);
         temp_rhs_.resize(max_subspace_dim + 1);
         temp_sol_.resize(max_subspace_dim);
-        temp_vec_q_.resize(max_subspace_dim + 1);
 
         // temp_rhs_'s elements are zero except for the first element, which
         // will be set in iterations.
@@ -151,6 +150,7 @@ public:
         while (residual_norm_ > absolute_tolerance &&
             iterations_ < max_iterations_) {
             hessenberg_.setZero();
+            qr_.initialize(max_subspace_dim + 1, max_subspace_dim);
 
             // First subspace in GMRES.
             index_type current_subspace_dim = 0;
@@ -181,12 +181,10 @@ public:
                     basis_vector_norm;
 
                 // Compute the current residual norm.
-                // TODO Update QR decomposition incrementally.
-                qr_.compute(hessenberg_.topLeftCorner(
-                    current_subspace_dim + 1, current_subspace_dim));
-                temp_vec_q_ = qr_.householderQ().adjoint() *
-                    temp_rhs_.head(current_subspace_dim + 1);
-                residual_norm_ = std::abs(temp_vec_q_(current_subspace_dim));
+                qr_.append_column(hessenberg_.col(current_subspace_dim - 1)
+                        .head(current_subspace_dim + 1));
+                residual_norm_ = qr_.estimate_residual_norm(
+                    temp_rhs_.head(current_subspace_dim + 1));
 
                 ++iterations_;
                 NUM_COLLECT_LOG_TRACE(this->logger(),
@@ -197,8 +195,8 @@ public:
                 break;
             }
 
-            temp_sol_.head(current_subspace_dim) =
-                qr_.solve(temp_rhs_.head(current_subspace_dim + 1));
+            qr_.solve(temp_rhs_.head(current_subspace_dim + 1),
+                temp_sol_.head(current_subspace_dim));
             solution += basis_.leftCols(current_subspace_dim) *
                 temp_sol_.head(current_subspace_dim);
 
@@ -303,11 +301,8 @@ private:
     //! Temporary solution vector for solving internal equation.
     Eigen::VectorX<scalar_type> temp_sol_{};
 
-    //! Temporary vector in the space of QR decomposition for solving internal equation.
-    Eigen::VectorX<scalar_type> temp_vec_q_{};
-
     //! QR decomposition.
-    Eigen::ColPivHouseholderQR<matrix_type> qr_{};
+    impl::incremental_qr<scalar_type> qr_{};
 
     //! Diagonal coefficients of preconditioner.
     std::optional<vector_type> preconditioner_diagonal_{};
