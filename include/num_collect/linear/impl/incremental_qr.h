@@ -167,8 +167,8 @@ public:
      * \param[out] solution Solution vector.
      */
     template <typename RhsVector, typename SolutionVector>
-    void solve(
-        const Eigen::DenseBase<RhsVector>& rhs, SolutionVector& solution) {
+    void solve(const Eigen::DenseBase<RhsVector>& rhs,
+        const Eigen::DenseBase<SolutionVector>& solution) {
         NUM_COLLECT_PRECONDITION(
             rhs.cols() == 1, "Right-hand-side must be a vector.");
         NUM_COLLECT_PRECONDITION(rhs.rows() == rows_,
@@ -177,15 +177,19 @@ public:
         NUM_COLLECT_PRECONDITION(
             solution.cols() == 1, "Solution must be a vector.");
 
+        auto& solution_derived =
+            // NOLINTNEXTLINE: Eigen's expression requires non-const lvalue for output.
+            const_cast<Eigen::DenseBase<SolutionVector>&>(solution).derived();
+
         const index_type usable_cols = determine_usable_cols();
         if (usable_cols < cols_) {
-            solution = Eigen::VectorX<scalar_type>::Zero(cols_);
+            solution_derived = Eigen::VectorX<scalar_type>::Zero(cols_);
             if (usable_cols == 0) {
                 return;
             }
             rhs_buffer_ = q_.topLeftCorner(rows_, usable_cols).transpose() *
                 rhs.derived();
-            solution.head(usable_cols) =
+            solution_derived.head(usable_cols) =
                 r_.topLeftCorner(usable_cols, usable_cols)
                     .template triangularView<Eigen::Upper>()
                     .solve(rhs_buffer_);
@@ -194,9 +198,9 @@ public:
 
         rhs_buffer_ =
             q_.topLeftCorner(rows_, cols_).transpose() * rhs.derived();
-        solution = r_.topLeftCorner(cols_, cols_)
-                       .template triangularView<Eigen::Upper>()
-                       .solve(rhs_buffer_);
+        solution_derived = r_.topLeftCorner(cols_, cols_)
+                               .template triangularView<Eigen::Upper>()
+                               .solve(rhs_buffer_);
     }
 
     /*!
