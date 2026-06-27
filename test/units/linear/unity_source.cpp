@@ -12,6 +12,7 @@
 #include "impl/amg/index_score_table_test.cpp"
 #include "impl/amg/node_connection_list_test.cpp"
 #include "impl/amg/tune_coarse_grid_selection_test.cpp"
+#include "impl/incremental_qr_test.cpp"
 #include "impl/operator_conjugate_gradient_test.cpp"
 #include "parallel_symmetric_successive_over_relaxation.cpp"
 #include "reverse_cuthill_mckee_ordering_test.cpp"
