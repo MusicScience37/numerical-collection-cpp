@@ -136,8 +136,7 @@ STAT_BENCH_CASE_F(rbf_fd_assemble_laplacian_2d_fixture,
         num_collect::util::vector<Eigen::Triplet<double>> triplets;
         assembler.compute_rows<
             num_collect::rbf::operators::laplacian_operator<variable_type>>(
-            interior_nodes(), nodes(), nearest_neighbor_searcher(), triplets, 0,
-            0);
+            interior_nodes(), nodes(), nearest_neighbor_searcher(), triplets);
     };
 }
 
@@ -149,8 +148,7 @@ STAT_BENCH_CASE_F(rbf_fd_assemble_laplacian_2d_fixture,
         num_collect::util::vector<Eigen::Triplet<double>> triplets;
         assembler.compute_rows<
             num_collect::rbf::operators::laplacian_operator<variable_type>>(
-            interior_nodes(), nodes(), nearest_neighbor_searcher(), triplets, 0,
-            0);
+            interior_nodes(), nodes(), nearest_neighbor_searcher(), triplets);
     };
 }
 
@@ -162,7 +160,6 @@ STAT_BENCH_CASE_F(rbf_fd_assemble_laplacian_2d_fixture,
         num_collect::util::vector<Eigen::Triplet<double>> triplets;
         assembler.compute_rows<
             num_collect::rbf::operators::laplacian_operator<variable_type>>(
-            interior_nodes(), nodes(), nearest_neighbor_searcher(), triplets, 0,
-            0);
+            interior_nodes(), nodes(), nearest_neighbor_searcher(), triplets);
     };
 }

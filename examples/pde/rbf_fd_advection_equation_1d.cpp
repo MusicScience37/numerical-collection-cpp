@@ -240,8 +240,6 @@ static auto assemble_system(
         nodes.first(num_interior_nodes + 1);
     const num_collect::util::nearest_neighbor_searcher<position_type>
         column_variables_nearest_neighbor_searcher(nodes);
-    constexpr num_collect::index_type row_offset = 0;
-    constexpr num_collect::index_type column_offset = 0;
     assembler.compute_rows(
         [advection_velocity, hyperviscosity_coeff](
             const position_type& position) {
@@ -253,8 +251,7 @@ static auto assemble_system(
                     hyperviscosity_order, position_type>(position);
         },
         interior_and_right_boundary_nodes, nodes,
-        column_variables_nearest_neighbor_searcher, advection_triplets,
-        row_offset, column_offset);
+        column_variables_nearest_neighbor_searcher, advection_triplets);
 
     sparse_matrix_type advection_coefficients(
         num_interior_nodes + 1, nodes.size());

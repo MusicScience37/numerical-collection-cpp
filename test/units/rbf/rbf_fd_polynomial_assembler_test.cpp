@@ -57,7 +57,7 @@ TEST_CASE("num_collect::rbf::rbf_fd_polynomial_assembler") {
         num_collect::util::vector<Eigen::Triplet<scalar_type>> triplets;
 
         assembler.compute_rows<operator_type>(row_variables, column_variables,
-            column_variables_nearest_neighbor_searcher, triplets, 0, 0);
+            column_variables_nearest_neighbor_searcher, triplets);
 
         CHECK(triplets.size() == num_rows * assembler.num_neighbors());
         Eigen::SparseMatrix<scalar_type> matrix(num_rows, num_columns);
@@ -81,28 +81,6 @@ TEST_CASE("num_collect::rbf::rbf_fd_polynomial_assembler") {
 
         comparison_approvals::verify_with_reference(
             approximated_laplacian, expected_laplacian);
-
-        SECTION("take offsets into account") {
-            const num_collect::index_type row_offset = 5;
-            const num_collect::index_type column_offset = 10;
-            num_collect::util::vector<Eigen::Triplet<scalar_type>>
-                triplets_with_offset;
-
-            assembler.compute_rows<operator_type>(row_variables,
-                column_variables, column_variables_nearest_neighbor_searcher,
-                triplets_with_offset, row_offset, column_offset);
-
-            REQUIRE(triplets_with_offset.size() == triplets.size());
-            for (num_collect::index_type i = 0; i < triplets_with_offset.size();
-                ++i) {
-                CHECK(triplets_with_offset[i].row() ==
-                    row_offset + triplets[i].row());
-                CHECK(triplets_with_offset[i].col() ==
-                    column_offset + triplets[i].col());
-                CHECK_THAT(triplets_with_offset[i].value(),
-                    Catch::Matchers::WithinRel(triplets[i].value()));
-            }
-        }
     }
 
     SECTION("compute a matrix") {
@@ -117,7 +95,7 @@ TEST_CASE("num_collect::rbf::rbf_fd_polynomial_assembler") {
         num_collect::util::vector<Eigen::Triplet<scalar_type>> triplets;
 
         assembler.compute_rows<operator_type>(row_variables, column_variables,
-            column_variables_nearest_neighbor_searcher, triplets, 0, 0);
+            column_variables_nearest_neighbor_searcher, triplets);
 
         CHECK(triplets.size() == num_rows * assembler.num_neighbors());
         Eigen::SparseMatrix<scalar_type> matrix(num_rows, num_columns);
@@ -163,11 +141,11 @@ TEST_CASE("num_collect::rbf::rbf_fd_polynomial_assembler") {
         CHECK_NOTHROW(assembler.num_neighbors(num_columns));
         CHECK_NOTHROW(assembler.compute_rows<operator_type>(row_variables,
             column_variables, column_variables_nearest_neighbor_searcher,
-            triplets, 0, 0));
+            triplets));
 
         CHECK_NOTHROW(assembler.num_neighbors(num_columns + 1));
         CHECK_THROWS(assembler.compute_rows<operator_type>(row_variables,
             column_variables, column_variables_nearest_neighbor_searcher,
-            triplets, 0, 0));
+            triplets));
     }
 }

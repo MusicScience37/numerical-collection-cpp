@@ -85,7 +85,7 @@ TEMPLATE_TEST_CASE_SIG(
     const num_collect::util::nearest_neighbor_searcher<variable_type>
         column_variables_nearest_neighbor_searcher(nodes);
     assembler.template compute_rows<operator_type>(interior_nodes, nodes,
-        column_variables_nearest_neighbor_searcher, triplets, 0, 0);
+        column_variables_nearest_neighbor_searcher, triplets);
     for (num_collect::index_type i = 0; i < num_interior_nodes; ++i) {
         right_vec(i) = test_function_laplacian(interior_nodes[i]);
     }

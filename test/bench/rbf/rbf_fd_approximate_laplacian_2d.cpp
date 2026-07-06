@@ -185,7 +185,7 @@ STAT_BENCH_CASE_F(rbf_fd_approximate_laplacian_2d_fixture,
     STAT_BENCH_MEASURE() {
         triplets.clear();
         assembler.compute_rows<operator_type>(
-            test_nodes(), nodes(), nearest_neighbor_searcher(), triplets, 0, 0);
+            test_nodes(), nodes(), nearest_neighbor_searcher(), triplets);
     };
 
     sparse_matrix_type matrix(test_nodes().size(), nodes().size());

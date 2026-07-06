@@ -118,14 +118,12 @@ inline void bench_one(
     {
         using operator_type =
             num_collect::rbf::operators::laplacian_operator<position_type>;
-        constexpr num_collect::index_type row_offset = 0;
-        constexpr num_collect::index_type column_offset = 0;
         assembler.compute_rows(
             [](const position_type& position) {
                 return diffusion_coefficient * operator_type(position);
             },
             interior_nodes, nodes, column_variables_nearest_neighbor_searcher,
-            stiffness_triplets, row_offset, column_offset);
+            stiffness_triplets);
         for (num_collect::index_type i = 0; i < num_interior_nodes; ++i) {
             mass_triplets.emplace_back(
                 static_cast<int>(i), static_cast<int>(i), 1.0);
@@ -150,10 +148,16 @@ inline void bench_one(
                 first_neumann_boundary_node_index, num_neumann_boundary_nodes);
         const num_collect::index_type row_offset =
             first_neumann_boundary_node_index;
-        constexpr num_collect::index_type column_offset = 0;
+        num_collect::util::vector<Eigen::Triplet<double>>
+            boundary_stiffness_triplets;
         assembler.compute_rows<operator_type>(neumann_boundary_nodes, nodes,
-            column_variables_nearest_neighbor_searcher, stiffness_triplets,
-            row_offset, column_offset);
+            column_variables_nearest_neighbor_searcher,
+            boundary_stiffness_triplets);
+        for (const auto& triplet : boundary_stiffness_triplets) {
+            stiffness_triplets.emplace_back(
+                static_cast<int>(triplet.row() + row_offset), triplet.col(),
+                triplet.value());
+        }
         // Elements of the mass matrix and the load vector are left as zero.
     }
 

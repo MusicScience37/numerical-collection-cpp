@@ -127,14 +127,12 @@ static auto assemble_system(
     const auto interior_nodes = nodes.first(num_interior_nodes);
     const num_collect::util::nearest_neighbor_searcher<position_type>
         column_variables_nearest_neighbor_searcher(nodes);
-    constexpr num_collect::index_type row_offset = 0;
-    constexpr num_collect::index_type column_offset = 0;
     assembler.compute_rows(
         [diffusion_coefficient](const position_type& position) {
             return diffusion_coefficient * operator_type(position);
         },
         interior_nodes, nodes, column_variables_nearest_neighbor_searcher,
-        triplets, row_offset, column_offset);
+        triplets);
 
     sparse_matrix_type whole_coefficients(num_interior_nodes, nodes.size());
     whole_coefficients.setFromTriplets(triplets.begin(), triplets.end());

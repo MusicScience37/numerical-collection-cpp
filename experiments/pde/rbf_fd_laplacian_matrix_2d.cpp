@@ -151,8 +151,8 @@ static void test_laplacian_matrix_without_polynomial(
     assembler.num_neighbors(num_neighbors);
 
     num_collect::util::vector<Eigen::Triplet<double>> triplets;
-    assembler.compute_rows<operator_type>(nodes, nodes,
-        column_variables_nearest_neighbor_searcher, triplets, 0, 0);
+    assembler.compute_rows<operator_type>(
+        nodes, nodes, column_variables_nearest_neighbor_searcher, triplets);
     Eigen::SparseMatrix<double> laplacian_matrix(nodes.size(), nodes.size());
     laplacian_matrix.setFromTriplets(triplets.begin(), triplets.end());
 
@@ -183,8 +183,8 @@ static void test_laplacian_matrix_with_polynomial(
     assembler.num_neighbors(num_neighbors);
 
     num_collect::util::vector<Eigen::Triplet<double>> triplets;
-    assembler.compute_rows<operator_type>(nodes, nodes,
-        column_variables_nearest_neighbor_searcher, triplets, 0, 0);
+    assembler.compute_rows<operator_type>(
+        nodes, nodes, column_variables_nearest_neighbor_searcher, triplets);
     Eigen::SparseMatrix<double> laplacian_matrix(nodes.size(), nodes.size());
     laplacian_matrix.setFromTriplets(triplets.begin(), triplets.end());
 

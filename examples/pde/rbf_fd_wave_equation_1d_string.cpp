@@ -165,15 +165,13 @@ static auto assemble_system(
     const auto interior_nodes = nodes.first(num_interior_nodes);
     const num_collect::util::nearest_neighbor_searcher<position_type>
         column_variables_nearest_neighbor_searcher(nodes);
-    constexpr num_collect::index_type row_offset = 0;
-    constexpr num_collect::index_type column_offset = 0;
     const double squared_wave_speed = wave_speed * wave_speed;
     assembler.compute_rows(
         [squared_wave_speed](const position_type& position) {
             return squared_wave_speed * operator_type(position);
         },
         interior_nodes, nodes, column_variables_nearest_neighbor_searcher,
-        laplacian_triplets, row_offset, column_offset);
+        laplacian_triplets);
 
     // Build the coefficient matrix for the first-order ODE system.
     // The matrix has the following block structure:

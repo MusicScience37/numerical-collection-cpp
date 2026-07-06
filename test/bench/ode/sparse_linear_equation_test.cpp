@@ -138,14 +138,12 @@ private:
         num_collect::util::vector<Eigen::Triplet<double>> triplets;
         const num_collect::util::nearest_neighbor_searcher<position_type>
             column_variables_nearest_neighbor_searcher(nodes_);
-        constexpr num_collect::index_type row_offset = 0;
-        constexpr num_collect::index_type column_offset = 0;
         assembler.compute_rows(
             [](const position_type& position) {
                 return 0.1 * operator_type(position);
             },
             interior_nodes, nodes_, column_variables_nearest_neighbor_searcher,
-            triplets, row_offset, column_offset);
+            triplets);
         sparse_matrix_type whole_coefficients(
             num_interior_nodes, nodes_.size());
         whole_coefficients.setFromTriplets(triplets.begin(), triplets.end());
