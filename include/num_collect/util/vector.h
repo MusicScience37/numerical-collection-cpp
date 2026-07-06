@@ -22,10 +22,12 @@
 #include <cstddef>
 #include <initializer_list>
 #include <iterator>
+#include <ranges>
 #include <utility>
 #include <vector>
 
 #include "num_collect/base/index_type.h"
+#include "num_collect/util/concepts/container_compatible_range.h"
 #include "num_collect/util/trivial_vector.h"
 
 namespace num_collect::util {
@@ -280,6 +282,17 @@ public:
     }
 
     /*!
+     * \brief Append elements from a range.
+     *
+     * \tparam Range Type of the range.
+     * \param[in] range Range of elements.
+     */
+    template <util::concepts::container_compatible_range<value_type> Range>
+    void append_range(Range&& range) {
+        insert_range(end(), std::forward<Range>(range));
+    }
+
+    /*!
      * \brief Remove the last element.
      */
     void pop_back() { vector_.pop_back(); }
@@ -332,6 +345,26 @@ public:
     auto insert(const_iterator pos, InputIterator first, InputIterator last)
         -> iterator {
         return vector_.insert(pos, first, last);
+    }
+
+    /*!
+     * \brief Insert elements from a range.
+     *
+     * \tparam Range Type of the range.
+     * \param[in] pos Position to insert.
+     * \param[in] range Range of elements.
+     * \return Iterator to the first inserted element.
+     */
+    template <util::concepts::container_compatible_range<value_type> Range>
+    auto insert_range(const_iterator pos, Range&& range) -> iterator {
+        // TODO Use std::ranges::common_range concept when C++23 is available.
+        if constexpr (std::ranges::common_range<Range>) {
+            return vector_.insert(
+                pos, std::ranges::begin(range), std::ranges::end(range));
+        } else {
+            auto common = std::forward<Range>(range) | std::views::common;
+            return vector_.insert(pos, common.begin(), common.end());
+        }
     }
 
     /*!

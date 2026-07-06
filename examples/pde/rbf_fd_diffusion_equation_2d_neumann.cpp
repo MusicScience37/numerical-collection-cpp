@@ -215,11 +215,13 @@ static auto assemble_system(
         assembler.compute_rows<operator_type>(neumann_boundary_nodes, nodes,
             column_variables_nearest_neighbor_searcher,
             boundary_stiffness_triplets);
-        for (const auto& triplet : boundary_stiffness_triplets) {
-            stiffness_triplets.emplace_back(
-                static_cast<int>(triplet.row() + row_offset), triplet.col(),
-                triplet.value());
-        }
+        stiffness_triplets.append_range(boundary_stiffness_triplets |
+            std::views::transform(
+                [row_offset](const Eigen::Triplet<double>& triplet) {
+                    return Eigen::Triplet<double>(
+                        static_cast<int>(triplet.row() + row_offset),
+                        triplet.col(), triplet.value());
+                }));
     }
 
     // Equations for Dirichlet boundary nodes: u = 0.
