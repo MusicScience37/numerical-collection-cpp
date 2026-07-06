@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-// Example: Solving 1D convection diffusion equation using RBF-FD method.
+// Example: Solving 1D advection diffusion equation using RBF-FD method.
 //
-// This example solves the following 1D convection diffusion equation:
+// This example solves the following 1D advection diffusion equation:
 //   ∂u/∂t + c ∂u/∂x = D ∂²u/∂x²  (0 < x < 1, t > 0)
 //
 // Boundary conditions:
@@ -38,7 +38,7 @@
 // Output:
 //   - Errors are logged at each time step
 //   - Time evolution is visualized and saved as
-//     rbf_fd_convection_diffusion_equation_1d.html
+//     rbf_fd_advection_diffusion_equation_1d.html
 
 #include <algorithm>
 #include <cmath>
@@ -85,10 +85,10 @@ using ode_problem_type =
 //   u(x, t) = exp(c x / (2D) - (c²/(4D) + Dπ²)t) sin(πx).
 // Used for initial conditions and error evaluation.
 static auto test_function(const position_type& position, double time,
-    double convection_velocity, double diffusion_coefficient) -> double {
+    double advection_velocity, double diffusion_coefficient) -> double {
     return std::exp(
-               convection_velocity * position / (2.0 * diffusion_coefficient) -
-               (convection_velocity * convection_velocity /
+               advection_velocity * position / (2.0 * diffusion_coefficient) -
+               (advection_velocity * advection_velocity /
                        (4.0 * diffusion_coefficient) +
                    diffusion_coefficient * num_collect::pi<double> *
                        num_collect::pi<double>)*time) *
@@ -123,7 +123,7 @@ static auto generate_nodes(num_collect::index_type num_interior_nodes)
     return nodes;
 }
 
-// Assemble the linear system for the convection-diffusion equation ODE.
+// Assemble the linear system for the advection-diffusion equation ODE.
 //
 // Constructs the coefficient matrix for:
 //   du/dt = A*u
@@ -137,7 +137,7 @@ static auto generate_nodes(num_collect::index_type num_interior_nodes)
 //   num_interior_nodes: Number of interior nodes
 //   polynomial_order: Order of polynomials in RBF-FD augmentation
 //   num_neighbors: Number of neighboring nodes used in each RBF-FD stencil
-//   convection_velocity: Convection velocity c in the equation
+//   advection_velocity: Advection velocity c in the equation
 //   diffusion_coefficient: Diffusion coefficient D in the equation
 //   hyperviscosity_rate: Scaling factor ε for the hyperviscosity term
 //
@@ -147,7 +147,7 @@ static auto generate_nodes(num_collect::index_type num_interior_nodes)
 static auto assemble_system(
     num_collect::util::vector_view<const position_type> nodes,
     num_collect::index_type num_interior_nodes, int polynomial_order,
-    num_collect::index_type num_neighbors, double convection_velocity,
+    num_collect::index_type num_neighbors, double advection_velocity,
     double diffusion_coefficient, double hyperviscosity_rate)
     -> ode_problem_type {
     num_collect::logging::logger logger;
@@ -178,14 +178,14 @@ static auto assemble_system(
     constexpr num_collect::index_type row_offset = 0;
     constexpr num_collect::index_type column_offset = 0;
     assembler.compute_rows(
-        [convection_velocity, diffusion_coefficient, hyperviscosity_coeff](
+        [advection_velocity, diffusion_coefficient, hyperviscosity_coeff](
             const position_type& position) {
             return
-                // Convection term
-                -convection_velocity *
+                // Advection term
+                -advection_velocity *
                 num_collect::rbf::operators::gradient_operator<position_type>(
                     position)
-                // Hyperviscosity term for stabilization of the convection term
+                // Hyperviscosity term for stabilization of the advection term
                 + hyperviscosity_coeff *
                 num_collect::rbf::operators::polyharmonic_operator<
                     hyperviscosity_order, position_type>(position)
@@ -212,7 +212,7 @@ static auto assemble_system(
     return ode_problem_type(variable_coefficients, constant_term);
 }
 
-// Solve the convection-diffusion equation ODE system and visualize results.
+// Solve the advection-diffusion equation ODE system and visualize results.
 //
 // Integrates the first-order ODE system in time using the RODASPR method
 // (a Rosenbrock-type solver). At each time step, compares the numerical
@@ -220,7 +220,7 @@ static auto assemble_system(
 //
 // Parameters:
 //   problem: Linear ODE problem assembled by assemble_system
-//   convection_velocity: Convection velocity c
+//   advection_velocity: Advection velocity c
 //   diffusion_coefficient: Diffusion coefficient D
 //   time_step_size: Time step for output (solver uses adaptive stepping
 //     internally)
@@ -230,9 +230,9 @@ static auto assemble_system(
 //
 // Output:
 //   - Logs error statistics at each time step
-//   - Saves visualization to rbf_fd_convection_diffusion_equation_1d.html
+//   - Saves visualization to rbf_fd_advection_diffusion_equation_1d.html
 static void solve_system(const ode_problem_type& problem,
-    double convection_velocity, double diffusion_coefficient,
+    double advection_velocity, double diffusion_coefficient,
     double time_step_size, double final_time,
     num_collect::util::vector_view<const position_type> nodes,
     num_collect::index_type num_interior_nodes) {
@@ -247,7 +247,7 @@ static void solve_system(const ode_problem_type& problem,
     // Set initial condition
     for (num_collect::index_type i = 0; i < num_interior_nodes; ++i) {
         variable(i) = test_function(
-            nodes[i], time, convection_velocity, diffusion_coefficient);
+            nodes[i], time, advection_velocity, diffusion_coefficient);
     }
 
     // Variables for error evaluation.
@@ -299,7 +299,7 @@ static void solve_system(const ode_problem_type& problem,
         // Compute analytical solution at current time.
         for (num_collect::index_type i = 0; i < num_interior_nodes; ++i) {
             true_values(i) = test_function(
-                nodes[i], time, convection_velocity, diffusion_coefficient);
+                nodes[i], time, advection_velocity, diffusion_coefficient);
         }
 
         // Calculate errors.
@@ -323,15 +323,15 @@ static void solve_system(const ode_problem_type& problem,
 
     // Save visualization to HTML file.
     plotly_plotter::write_html(
-        "rbf_fd_convection_diffusion_equation_1d.html", figure);
+        "rbf_fd_advection_diffusion_equation_1d.html", figure);
     NUM_COLLECT_LOG_INFO(
-        logger, "Wrote rbf_fd_convection_diffusion_equation_1d.html.");
+        logger, "Wrote rbf_fd_advection_diffusion_equation_1d.html.");
 }
 
 auto main(int argc, const char** argv) -> int {
     // Load configuration file.
     std::string_view config_file_path =
-        "examples/pde/rbf_fd_convection_diffusion_equation_1d.toml";
+        "examples/pde/rbf_fd_advection_diffusion_equation_1d.toml";
     if (argc == 2) {
         config_file_path = argv[1];  // Use command-line argument if provided.
     }
@@ -341,29 +341,28 @@ auto main(int argc, const char** argv) -> int {
     // Parse simulation parameters from TOML configuration file.
     toml_parser parser(config_file_path);
     const auto num_interior_nodes = parser.get<num_collect::index_type>(
-        "rbf_fd_convection_diffusion_equation_1d.num_interior_nodes");
+        "rbf_fd_advection_diffusion_equation_1d.num_interior_nodes");
     const auto polynomial_order = parser.get<int>(
-        "rbf_fd_convection_diffusion_equation_1d.polynomial_order");
+        "rbf_fd_advection_diffusion_equation_1d.polynomial_order");
     const auto num_neighbors = parser.get<num_collect::index_type>(
-        "rbf_fd_convection_diffusion_equation_1d.num_neighbors");
-    const auto convection_velocity = parser.get<double>(
-        "rbf_fd_convection_diffusion_equation_1d.convection_velocity");
+        "rbf_fd_advection_diffusion_equation_1d.num_neighbors");
+    const auto advection_velocity = parser.get<double>(
+        "rbf_fd_advection_diffusion_equation_1d.advection_velocity");
     const auto diffusion_coefficient = parser.get<double>(
-        "rbf_fd_convection_diffusion_equation_1d.diffusion_coefficient");
+        "rbf_fd_advection_diffusion_equation_1d.diffusion_coefficient");
     const auto hyperviscosity_rate = parser.get<double>(
-        "rbf_fd_convection_diffusion_equation_1d.hyperviscosity_rate");
+        "rbf_fd_advection_diffusion_equation_1d.hyperviscosity_rate");
     const auto time_step_size = parser.get<double>(
-        "rbf_fd_convection_diffusion_equation_1d.time_step_size");
-    const auto final_time = parser.get<double>(
-        "rbf_fd_convection_diffusion_equation_1d.final_time");
+        "rbf_fd_advection_diffusion_equation_1d.time_step_size");
+    const auto final_time =
+        parser.get<double>("rbf_fd_advection_diffusion_equation_1d.final_time");
 
     // Log configuration parameters.
     NUM_COLLECT_LOG_INFO(
         logger, "Number of interior nodes: {}", num_interior_nodes);
     NUM_COLLECT_LOG_INFO(logger, "Polynomial order: {}", polynomial_order);
     NUM_COLLECT_LOG_INFO(logger, "Number of neighbors: {}", num_neighbors);
-    NUM_COLLECT_LOG_INFO(
-        logger, "Convection velocity: {}", convection_velocity);
+    NUM_COLLECT_LOG_INFO(logger, "Advection velocity: {}", advection_velocity);
     NUM_COLLECT_LOG_INFO(
         logger, "Diffusion coefficient: {}", diffusion_coefficient);
     NUM_COLLECT_LOG_INFO(
@@ -377,11 +376,11 @@ auto main(int argc, const char** argv) -> int {
 
     // Assemble the ODE system matrix.
     const auto problem = assemble_system(nodes, num_interior_nodes,
-        polynomial_order, num_neighbors, convection_velocity,
+        polynomial_order, num_neighbors, advection_velocity,
         diffusion_coefficient, hyperviscosity_rate);
 
     // Solve the ODE system and visualize.
-    solve_system(problem, convection_velocity, diffusion_coefficient,
+    solve_system(problem, advection_velocity, diffusion_coefficient,
         time_step_size, final_time, nodes, num_interior_nodes);
 
     NUM_COLLECT_LOG_INFO(logger, "Finished.");
