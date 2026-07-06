@@ -12,6 +12,11 @@ add_example(example_pde_rbf_fd_advection_equation_1d
 target_link_libraries(example_pde_rbf_fd_advection_equation_1d
                       PRIVATE cpp_plotly_plotter::plotly_plotter)
 
+add_example(example_pde_rbf_fd_convection_diffusion_equation_1d
+            rbf_fd_convection_diffusion_equation_1d.cpp)
+target_link_libraries(example_pde_rbf_fd_convection_diffusion_equation_1d
+                      PRIVATE cpp_plotly_plotter::plotly_plotter)
+
 if(VTK_FOUND)
     add_example(example_pde_rbf_fd_diffusion_equation_2d_dirichlet
                 rbf_fd_diffusion_equation_2d_dirichlet.cpp)
