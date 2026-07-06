@@ -4,6 +4,7 @@
 #include "concepts/comparator_test.cpp"
 #include "concepts/kahan_addable_test.cpp"
 #include "concepts/rhs_comparable_test.cpp"
+#include "eigen_triplets_util_test.cpp"
 #include "file_wrapper_test.cpp"
 #include "format_dense_matrix_test.cpp"
 #include "format_dense_vector_test.cpp"

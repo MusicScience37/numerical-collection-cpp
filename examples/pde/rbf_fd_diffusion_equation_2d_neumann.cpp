@@ -60,6 +60,7 @@
 #include "num_collect/rbf/operators/laplacian_operator.h"
 #include "num_collect/rbf/operators/partial_derivative_operator.h"
 #include "num_collect/rbf/rbf_fd_polynomial_assembler.h"
+#include "num_collect/util/eigen_triplets_util.h"
 #include "num_collect/util/generate_rectangle_boundary_nodes.h"
 #include "num_collect/util/nearest_neighbor_searcher.h"
 #include "num_collect/util/vector.h"
@@ -216,12 +217,7 @@ static auto assemble_system(
             column_variables_nearest_neighbor_searcher,
             boundary_stiffness_triplets);
         stiffness_triplets.append_range(boundary_stiffness_triplets |
-            std::views::transform(
-                [row_offset](const Eigen::Triplet<double>& triplet) {
-                    return Eigen::Triplet<double>(
-                        static_cast<int>(triplet.row() + row_offset),
-                        triplet.col(), triplet.value());
-                }));
+            num_collect::util::eigen_triplets::shift_rows(row_offset));
     }
 
     // Equations for Dirichlet boundary nodes: u = 0.

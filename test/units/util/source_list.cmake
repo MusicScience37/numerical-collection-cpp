@@ -5,6 +5,7 @@ set(SOURCE_FILES
     concepts/comparator_test.cpp
     concepts/kahan_addable_test.cpp
     concepts/rhs_comparable_test.cpp
+    eigen_triplets_util_test.cpp
     file_wrapper_test.cpp
     format_dense_matrix_test.cpp
     format_dense_vector_test.cpp
