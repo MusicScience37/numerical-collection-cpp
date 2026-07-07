@@ -62,6 +62,7 @@
 #include "num_collect/rbf/generate_halton_nodes.h"
 #include "num_collect/rbf/operators/laplacian_operator.h"
 #include "num_collect/rbf/rbf_fd_polynomial_assembler.h"
+#include "num_collect/util/eigen_triplets_util.h"
 #include "num_collect/util/nearest_neighbor_searcher.h"
 #include "num_collect/util/vector.h"
 #include "num_collect/util/vector_view.h"
@@ -152,8 +153,6 @@ static auto assemble_system(
     num_collect::logging::logger logger;
     NUM_COLLECT_LOG_INFO(logger, "Start assembly of the system.");
 
-    num_collect::util::vector<Eigen::Triplet<double>> laplacian_triplets;
-
     // Set up RBF-FD assembler with PHS (Polyharmonic Spline) + polynomial
     // augmentation.
     using assembler_type =
@@ -166,6 +165,7 @@ static auto assemble_system(
     const num_collect::util::nearest_neighbor_searcher<position_type>
         column_variables_nearest_neighbor_searcher(nodes);
     const double squared_wave_speed = wave_speed * wave_speed;
+    num_collect::util::vector<Eigen::Triplet<double>> laplacian_triplets;
     assembler.compute_rows(
         [squared_wave_speed](const position_type& position) {
             return squared_wave_speed * operator_type(position);
@@ -180,13 +180,11 @@ static auto assemble_system(
     num_collect::util::vector<Eigen::Triplet<double>> triplets;
 
     // Top right block: c²∇² applied to u variables.
-    for (const auto& triplet : laplacian_triplets) {
-        if (triplet.col() < num_interior_nodes) {
-            triplets.emplace_back(triplet.row(),
-                triplet.col() + static_cast<int>(num_interior_nodes),
-                triplet.value());
-        }
-    }
+    using num_collect::util::eigen_triplets::filter_columns;
+    using num_collect::util::eigen_triplets::shift_columns;
+    triplets.append_range(laplacian_triplets |
+        filter_columns(0, num_interior_nodes) |
+        shift_columns(num_interior_nodes));
 
     // Bottom left block: Identity matrix for du/dt = ∂u/∂t.
     for (num_collect::index_type i = 0; i < num_interior_nodes; ++i) {

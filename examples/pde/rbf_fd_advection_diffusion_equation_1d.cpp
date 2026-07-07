@@ -63,6 +63,7 @@
 #include "num_collect/rbf/operators/laplacian_operator.h"
 #include "num_collect/rbf/operators/polyharmonic_operator.h"
 #include "num_collect/rbf/rbf_fd_polynomial_assembler.h"
+#include "num_collect/util/eigen_triplets_util.h"
 #include "num_collect/util/nearest_neighbor_searcher.h"
 #include "num_collect/util/vector.h"
 #include "num_collect/util/vector_view.h"
@@ -195,14 +196,15 @@ static auto assemble_system(
         interior_nodes, nodes, column_variables_nearest_neighbor_searcher,
         triplets);
 
-    sparse_matrix_type whole_coefficients(num_interior_nodes, nodes.size());
-    whole_coefficients.setFromTriplets(triplets.begin(), triplets.end());
-
     // Use only the part corresponding to interior nodes for the ODE system
     // to express the Dirichlet boundary conditions (u = 0 on the boundary)
     // implicitly.
-    const sparse_matrix_type variable_coefficients =
-        whole_coefficients.leftCols(num_interior_nodes);
+    using num_collect::util::eigen_triplets::filter_columns;
+    using num_collect::util::eigen_triplets::to_sparse_matrix;
+    const auto variable_coefficients = triplets |
+        filter_columns(0, num_interior_nodes) |
+        to_sparse_matrix<sparse_matrix_type>(
+            num_interior_nodes, num_interior_nodes);
     const solution_type constant_term = solution_type::Zero(num_interior_nodes);
 
     NUM_COLLECT_LOG_INFO(logger, "Finished assembly of the system.");
