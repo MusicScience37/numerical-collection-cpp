@@ -17,6 +17,7 @@
 #include "hash_string_test.cpp"
 #include "impl/compiler_builtins_test.cpp"
 #include "impl/pointer_iterator_test.cpp"
+#include "impl/range_adaptor_closure_test.cpp"
 #include "iteration_period_checker_test.cpp"
 #include "kahan_adder_test.cpp"
 #include "least_common_multiple_test.cpp"
