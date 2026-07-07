@@ -157,3 +157,92 @@ TEST_CASE("num_collect::util::eigen_triplets::filter_columns") {
         CHECK(filtered_triplets[2].value() == 4.0);
     }
 }
+
+TEST_CASE("num_collect::util::eigen_triplets::to_vector") {
+    using num_collect::util::eigen_triplets::to_vector;
+
+    SECTION("convert a range to a vector") {
+        num_collect::util::vector<Eigen::Triplet<double>> triplets;
+        triplets.emplace_back(0, 0, 1.0);
+        triplets.emplace_back(1, 0, 2.0);
+        triplets.emplace_back(1, 1, 3.0);
+
+        const auto result = to_vector(triplets);
+
+        REQUIRE(result.size() == 3);
+        CHECK(result[0].row() == 0);
+        CHECK(result[0].col() == 0);
+        CHECK(result[0].value() == 1.0);
+        CHECK(result[1].row() == 1);
+        CHECK(result[1].col() == 0);
+        CHECK(result[1].value() == 2.0);
+        CHECK(result[2].row() == 1);
+        CHECK(result[2].col() == 1);
+        CHECK(result[2].value() == 3.0);
+    }
+
+    SECTION("convert a range to a vector using range adaptor closure") {
+        num_collect::util::vector<Eigen::Triplet<double>> triplets;
+        triplets.emplace_back(0, 0, 1.0);
+        triplets.emplace_back(1, 0, 2.0);
+        triplets.emplace_back(1, 1, 3.0);
+
+        const auto result = triplets | to_vector();
+
+        STATIC_REQUIRE(std::same_as<std::decay_t<decltype(result)>,
+            num_collect::util::vector<Eigen::Triplet<double>>>);
+        REQUIRE(result.size() == 3);
+        CHECK(result[0].row() == 0);
+        CHECK(result[0].col() == 0);
+        CHECK(result[0].value() == 1.0);
+        CHECK(result[1].row() == 1);
+        CHECK(result[1].col() == 0);
+        CHECK(result[1].value() == 2.0);
+        CHECK(result[2].row() == 1);
+        CHECK(result[2].col() == 1);
+        CHECK(result[2].value() == 3.0);
+    }
+}
+
+TEST_CASE("num_collect::util::eigen_triplets::to_sparse_matrix") {
+    using num_collect::util::eigen_triplets::to_sparse_matrix;
+
+    SECTION("convert a range to a sparse matrix") {
+        num_collect::util::vector<Eigen::Triplet<double>> triplets;
+        triplets.emplace_back(0, 0, 1.0);
+        triplets.emplace_back(1, 0, 2.0);
+        triplets.emplace_back(1, 1, 3.0);
+
+        const auto result =
+            to_sparse_matrix<Eigen::SparseMatrix<double>>(triplets, 2, 2);
+
+        STATIC_REQUIRE(std::same_as<std::decay_t<decltype(result)>,
+            Eigen::SparseMatrix<double>>);
+        REQUIRE(result.rows() == 2);
+        REQUIRE(result.cols() == 2);
+        CHECK(result.coeff(0, 0) == 1.0);
+        CHECK(result.coeff(0, 1) == 0.0);
+        CHECK(result.coeff(1, 0) == 2.0);
+        CHECK(result.coeff(1, 1) == 3.0);
+    }
+
+    SECTION("convert a range to a sparse matrix using range adaptor closure") {
+        num_collect::util::vector<Eigen::Triplet<double>> triplets;
+        triplets.emplace_back(0, 0, 1.0);
+        triplets.emplace_back(1, 0, 2.0);
+        triplets.emplace_back(1, 1, 3.0);
+
+        const auto result = triplets |
+            to_sparse_matrix<Eigen::SparseMatrix<double, Eigen::RowMajor>>(
+                2, 2);
+
+        STATIC_REQUIRE(std::same_as<std::decay_t<decltype(result)>,
+            Eigen::SparseMatrix<double, Eigen::RowMajor>>);
+        REQUIRE(result.rows() == 2);
+        REQUIRE(result.cols() == 2);
+        CHECK(result.coeff(0, 0) == 1.0);
+        CHECK(result.coeff(0, 1) == 0.0);
+        CHECK(result.coeff(1, 0) == 2.0);
+        CHECK(result.coeff(1, 1) == 3.0);
+    }
+}

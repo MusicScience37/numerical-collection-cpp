@@ -179,14 +179,12 @@ static auto assemble_system(
     // Use only the part corresponding to interior nodes for the ODE system
     // to express the Dirichlet boundary conditions (u = 0 on the boundary)
     // implicitly.
-    sparse_matrix_type variable_coefficients(
-        num_interior_nodes, num_interior_nodes);
-    auto variable_coefficients_triplets = triplets |
-        num_collect::util::eigen_triplets::filter_columns(
-            0, num_interior_nodes);
-    variable_coefficients.setFromTriplets(
-        variable_coefficients_triplets.begin(),
-        variable_coefficients_triplets.end());
+    using num_collect::util::eigen_triplets::filter_columns;
+    using num_collect::util::eigen_triplets::to_sparse_matrix;
+    const auto variable_coefficients = triplets |
+        filter_columns(0, num_interior_nodes) |
+        to_sparse_matrix<sparse_matrix_type>(
+            num_interior_nodes, num_interior_nodes);
     const solution_type constant_term = solution_type::Zero(num_interior_nodes);
 
     NUM_COLLECT_LOG_INFO(logger, "Finished assembly of the system.");
