@@ -211,11 +211,9 @@ static auto assemble_system(
             first_neumann_boundary_node_index, num_neumann_boundary_nodes);
         const num_collect::index_type row_offset =
             first_neumann_boundary_node_index;
-        num_collect::util::vector<Eigen::Triplet<double>>
-            boundary_stiffness_triplets;
-        assembler.compute_rows<operator_type>(neumann_boundary_nodes, nodes,
-            column_variables_nearest_neighbor_searcher,
-            boundary_stiffness_triplets);
+        const auto boundary_stiffness_triplets =
+            assembler.compute_rows<operator_type>(neumann_boundary_nodes, nodes,
+                column_variables_nearest_neighbor_searcher);
         stiffness_triplets.append_range(boundary_stiffness_triplets |
             num_collect::util::eigen_triplets::shift_rows(row_offset));
     }

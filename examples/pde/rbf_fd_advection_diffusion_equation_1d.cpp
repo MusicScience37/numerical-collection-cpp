@@ -172,11 +172,10 @@ static auto assemble_system(
         std::pow(-1.0, hyperviscosity_order - 1) * hyperviscosity_rate *
         std::pow(discretization_width, 2 * hyperviscosity_order);
 
-    num_collect::util::vector<Eigen::Triplet<double>> triplets;
     const auto interior_nodes = nodes.first(num_interior_nodes);
     const num_collect::util::nearest_neighbor_searcher<position_type>
         column_variables_nearest_neighbor_searcher(nodes);
-    assembler.compute_rows(
+    const auto triplets = assembler.compute_rows(
         [advection_velocity, diffusion_coefficient, hyperviscosity_coeff](
             const position_type& position) {
             return
@@ -193,8 +192,7 @@ static auto assemble_system(
                 num_collect::rbf::operators::laplacian_operator<position_type>(
                     position);
         },
-        interior_nodes, nodes, column_variables_nearest_neighbor_searcher,
-        triplets);
+        interior_nodes, nodes, column_variables_nearest_neighbor_searcher);
 
     // Use only the part corresponding to interior nodes for the ODE system
     // to express the Dirichlet boundary conditions (u = 0 on the boundary)

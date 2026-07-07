@@ -236,12 +236,11 @@ static auto assemble_system(
 
     // Rows correspond to interior nodes plus the right boundary node (free
     // outflow); the left boundary is handled as an explicit forcing term.
-    num_collect::util::vector<Eigen::Triplet<double>> advection_triplets;
     const auto interior_and_right_boundary_nodes =
         nodes.first(num_interior_nodes + 1);
     const num_collect::util::nearest_neighbor_searcher<position_type>
         column_variables_nearest_neighbor_searcher(nodes);
-    assembler.compute_rows(
+    const auto advection_triplets = assembler.compute_rows(
         [advection_velocity, hyperviscosity_coeff](
             const position_type& position) {
             return -advection_velocity *
@@ -252,7 +251,7 @@ static auto assemble_system(
                     hyperviscosity_order, position_type>(position);
         },
         interior_and_right_boundary_nodes, nodes,
-        column_variables_nearest_neighbor_searcher, advection_triplets);
+        column_variables_nearest_neighbor_searcher);
 
     // Extract columns for ODE variables (interior + right boundary) and the
     // left boundary forcing term separately.

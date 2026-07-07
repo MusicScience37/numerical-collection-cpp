@@ -156,8 +156,6 @@ static auto assemble_system(
     num_collect::logging::logger logger;
     NUM_COLLECT_LOG_INFO(logger, "Start assembly of the system.");
 
-    num_collect::util::vector<Eigen::Triplet<double>> triplets;
-
     // Set up RBF-FD assembler with PHS (Polyharmonic Spline) + polynomial
     // augmentation.
     using assembler_type =
@@ -169,12 +167,11 @@ static auto assemble_system(
     const auto interior_nodes = nodes.first(num_interior_nodes);
     const num_collect::util::nearest_neighbor_searcher<position_type>
         column_variables_nearest_neighbor_searcher(nodes);
-    assembler.compute_rows(
+    const auto triplets = assembler.compute_rows(
         [diffusion_coefficient](const position_type& position) {
             return diffusion_coefficient * operator_type(position);
         },
-        interior_nodes, nodes, column_variables_nearest_neighbor_searcher,
-        triplets);
+        interior_nodes, nodes, column_variables_nearest_neighbor_searcher);
 
     // Use only the part corresponding to interior nodes for the ODE system
     // to express the Dirichlet boundary conditions (u = 0 on the boundary)
