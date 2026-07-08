@@ -189,10 +189,9 @@ static auto assemble_system(
             interior_nodes, nodes, column_variables_nearest_neighbor_searcher,
             stiffness_triplets);
         // Set mass matrix entries to 1 for interior nodes (du/dt on left side).
-        for (num_collect::index_type i = 0; i < num_interior_nodes; ++i) {
-            mass_triplets.emplace_back(
-                static_cast<int>(i), static_cast<int>(i), 1.0);
-        }
+        mass_triplets.append_range(
+            num_collect::util::eigen_triplets::identity_triplets<double>(
+                num_interior_nodes));
     }
 
     // Equations for Neumann boundary nodes: ∂u/∂y = 0 (excluding corners).

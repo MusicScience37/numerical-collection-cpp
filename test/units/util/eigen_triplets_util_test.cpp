@@ -246,3 +246,44 @@ TEST_CASE("num_collect::util::eigen_triplets::to_sparse_matrix") {
         CHECK(result.coeff(1, 1) == 3.0);
     }
 }
+
+TEST_CASE("num_collect::util::eigen_triplets::constant_diagonal_triplets") {
+    using num_collect::util::eigen_triplets::constant_diagonal_triplets;
+
+    SECTION("create a range of Eigen::Triplet of diagonal matrix") {
+        num_collect::util::vector<Eigen::Triplet<double>> triplet_vector;
+        triplet_vector.append_range(
+            constant_diagonal_triplets<double>(3, 2.0, 1, 2));
+
+        REQUIRE(triplet_vector.size() == 3);
+        CHECK(triplet_vector[0].row() == 1);
+        CHECK(triplet_vector[0].col() == 2);
+        CHECK(triplet_vector[0].value() == 2.0);
+        CHECK(triplet_vector[1].row() == 2);
+        CHECK(triplet_vector[1].col() == 3);
+        CHECK(triplet_vector[1].value() == 2.0);
+        CHECK(triplet_vector[2].row() == 3);
+        CHECK(triplet_vector[2].col() == 4);
+        CHECK(triplet_vector[2].value() == 2.0);
+    }
+}
+
+TEST_CASE("num_collect::util::eigen_triplets::identity_triplets") {
+    using num_collect::util::eigen_triplets::identity_triplets;
+
+    SECTION("create a range of Eigen::Triplet of identity matrix") {
+        num_collect::util::vector<Eigen::Triplet<double>> triplet_vector;
+        triplet_vector.append_range(identity_triplets<double>(3, 1, 2));
+
+        REQUIRE(triplet_vector.size() == 3);
+        CHECK(triplet_vector[0].row() == 1);
+        CHECK(triplet_vector[0].col() == 2);
+        CHECK(triplet_vector[0].value() == 1.0);
+        CHECK(triplet_vector[1].row() == 2);
+        CHECK(triplet_vector[1].col() == 3);
+        CHECK(triplet_vector[1].value() == 1.0);
+        CHECK(triplet_vector[2].row() == 3);
+        CHECK(triplet_vector[2].col() == 4);
+        CHECK(triplet_vector[2].value() == 1.0);
+    }
+}

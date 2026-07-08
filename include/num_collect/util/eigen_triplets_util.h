@@ -251,4 +251,50 @@ template <base::concepts::sparse_matrix SparseMatrix>
     return impl::to_sparse_matrix_closure<SparseMatrix>(rows, cols);
 }
 
+/*!
+ * \brief Create a range of Eigen::Triplet of diagonal matrix with a specified
+ * value.
+ *
+ * \tparam Scalar Type of the scalar value.
+ * \tparam StorageIndex Type of the storage index.
+ * \param[in] size Size of the diagonal matrix.
+ * \param[in] value Value to fill the diagonal.
+ * \param[in] row_offset Row index offset for the diagonal entries.
+ * \param[in] column_offset Column index offset for the diagonal entries.
+ * \return A range of Eigen::Triplet representing the diagonal matrix.
+ */
+template <typename Scalar, typename StorageIndex = int>
+[[nodiscard]] auto constant_diagonal_triplets(index_type size, Scalar value,
+    index_type row_offset = 0, index_type column_offset = 0) {
+    const StorageIndex size_storage_index = static_cast<StorageIndex>(size);
+    const StorageIndex row_offset_storage_index =
+        static_cast<StorageIndex>(row_offset);
+    const StorageIndex column_offset_storage_index =
+        static_cast<StorageIndex>(column_offset);
+    return std::views::iota(static_cast<StorageIndex>(0), size_storage_index) |
+        std::views::transform([value, row_offset_storage_index,
+                                  column_offset_storage_index](auto i) {
+            return Eigen::Triplet<Scalar, StorageIndex>(
+                i + row_offset_storage_index, i + column_offset_storage_index,
+                value);
+        });
+}
+
+/*!
+ * \brief Create a range of Eigen::Triplet of identity matrix.
+ *
+ * \tparam Scalar Type of the scalar value.
+ * \tparam StorageIndex Type of the storage index.
+ * \param[in] size Size of the identity matrix.
+ * \param[in] row_offset Row index offset for the diagonal entries.
+ * \param[in] column_offset Column index offset for the diagonal entries.
+ * \return A range of Eigen::Triplet representing the identity matrix.
+ */
+template <typename Scalar, typename StorageIndex = int>
+[[nodiscard]] auto identity_triplets(
+    index_type size, index_type row_offset = 0, index_type column_offset = 0) {
+    return constant_diagonal_triplets<Scalar, StorageIndex>(
+        size, static_cast<Scalar>(1), row_offset, column_offset);
+}
+
 }  // namespace num_collect::util::eigen_triplets

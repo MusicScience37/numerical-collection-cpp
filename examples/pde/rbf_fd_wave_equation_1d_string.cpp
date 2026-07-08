@@ -185,10 +185,9 @@ static auto assemble_system(
         shift_columns(num_interior_nodes));
 
     // Bottom left block: Identity matrix for du/dt = ∂u/∂t.
-    for (num_collect::index_type i = 0; i < num_interior_nodes; ++i) {
-        triplets.emplace_back(
-            static_cast<int>(i + num_interior_nodes), static_cast<int>(i), 1.0);
-    }
+    triplets.append_range(
+        num_collect::util::eigen_triplets::identity_triplets<double>(
+            num_interior_nodes, num_interior_nodes, 0));
 
     // Create sparse matrix.
     sparse_matrix_type coefficients(
