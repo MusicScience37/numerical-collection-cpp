@@ -58,6 +58,7 @@
 #include "num_collect/rbf/generate_halton_nodes.h"
 #include "num_collect/rbf/operators/laplacian_operator.h"
 #include "num_collect/rbf/rbf_fd_polynomial_assembler.h"
+#include "num_collect/util/eigen_triplets_util.h"
 #include "num_collect/util/generate_rectangle_boundary_nodes.h"
 #include "num_collect/util/nearest_neighbor_searcher.h"
 #include "num_collect/util/vector.h"
@@ -155,8 +156,6 @@ static auto assemble_system(
     num_collect::logging::logger logger;
     NUM_COLLECT_LOG_INFO(logger, "Start assembly of the system.");
 
-    num_collect::util::vector<Eigen::Triplet<double>> triplets;
-
     // Set up RBF-FD assembler with PHS (Polyharmonic Spline) + polynomial
     // augmentation.
     using assembler_type =
@@ -168,23 +167,21 @@ static auto assemble_system(
     const auto interior_nodes = nodes.first(num_interior_nodes);
     const num_collect::util::nearest_neighbor_searcher<position_type>
         column_variables_nearest_neighbor_searcher(nodes);
-    constexpr num_collect::index_type row_offset = 0;
-    constexpr num_collect::index_type column_offset = 0;
-    assembler.compute_rows(
+    const auto triplets = assembler.compute_rows(
         [diffusion_coefficient](const position_type& position) {
             return diffusion_coefficient * operator_type(position);
         },
-        interior_nodes, nodes, column_variables_nearest_neighbor_searcher,
-        triplets, row_offset, column_offset);
-
-    sparse_matrix_type whole_coefficients(num_interior_nodes, nodes.size());
-    whole_coefficients.setFromTriplets(triplets.begin(), triplets.end());
+        interior_nodes, nodes, column_variables_nearest_neighbor_searcher);
 
     // Use only the part corresponding to interior nodes for the ODE system
     // to express the Dirichlet boundary conditions (u = 0 on the boundary)
     // implicitly.
-    const sparse_matrix_type variable_coefficients =
-        whole_coefficients.leftCols(num_interior_nodes);
+    using num_collect::util::eigen_triplets::filter_columns;
+    using num_collect::util::eigen_triplets::to_sparse_matrix;
+    const auto variable_coefficients = triplets |
+        filter_columns(0, num_interior_nodes) |
+        to_sparse_matrix<sparse_matrix_type>(
+            num_interior_nodes, num_interior_nodes);
     const solution_type constant_term = solution_type::Zero(num_interior_nodes);
 
     NUM_COLLECT_LOG_INFO(logger, "Finished assembly of the system.");

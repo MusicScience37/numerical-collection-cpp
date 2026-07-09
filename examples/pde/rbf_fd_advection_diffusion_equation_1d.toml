@@ -1,6 +1,6 @@
 "$schema" = "https://numcollect.musicscience37.com/config_schema/v3/config_schema.json"
 
-[rbf_fd_convection_diffusion_equation_1d]
+[rbf_fd_advection_diffusion_equation_1d]
 # Number of interior nodes in the domain (0 < x < 1).
 num_interior_nodes = 100
 # Order of polynomials in RBF-FD.
@@ -8,11 +8,11 @@ polynomial_order = 4
 # Number of neighboring nodes used in each RBF-FD stencil.
 num_neighbors = 20
 
-# Convection velocity.
-convection_velocity = 0.5
+# Advection velocity.
+advection_velocity = 0.5
 # Diffusion coefficient.
 diffusion_coefficient = 0.2
-# Note: Peclet number is convection_velocity / diffusion_coefficient.
+# Note: Peclet number is advection_velocity / diffusion_coefficient.
 
 # Rate of hyperviscosity.
 hyperviscosity_rate = 0.1

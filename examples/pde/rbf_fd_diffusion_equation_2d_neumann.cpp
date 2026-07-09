@@ -60,6 +60,7 @@
 #include "num_collect/rbf/operators/laplacian_operator.h"
 #include "num_collect/rbf/operators/partial_derivative_operator.h"
 #include "num_collect/rbf/rbf_fd_polynomial_assembler.h"
+#include "num_collect/util/eigen_triplets_util.h"
 #include "num_collect/util/generate_rectangle_boundary_nodes.h"
 #include "num_collect/util/nearest_neighbor_searcher.h"
 #include "num_collect/util/vector.h"
@@ -181,19 +182,16 @@ static auto assemble_system(
         using operator_type =
             num_collect::rbf::operators::laplacian_operator<position_type>;
         const auto interior_nodes = nodes.first(num_interior_nodes);
-        constexpr num_collect::index_type row_offset = 0;
-        constexpr num_collect::index_type column_offset = 0;
         assembler.compute_rows(
             [diffusion_coefficient](const position_type& position) {
                 return diffusion_coefficient * operator_type(position);
             },
             interior_nodes, nodes, column_variables_nearest_neighbor_searcher,
-            stiffness_triplets, row_offset, column_offset);
+            stiffness_triplets);
         // Set mass matrix entries to 1 for interior nodes (du/dt on left side).
-        for (num_collect::index_type i = 0; i < num_interior_nodes; ++i) {
-            mass_triplets.emplace_back(
-                static_cast<int>(i), static_cast<int>(i), 1.0);
-        }
+        mass_triplets.append_range(
+            num_collect::util::eigen_triplets::identity_triplets<double>(
+                num_interior_nodes));
     }
 
     // Equations for Neumann boundary nodes: ∂u/∂y = 0 (excluding corners).
@@ -212,10 +210,11 @@ static auto assemble_system(
             first_neumann_boundary_node_index, num_neumann_boundary_nodes);
         const num_collect::index_type row_offset =
             first_neumann_boundary_node_index;
-        constexpr num_collect::index_type column_offset = 0;
-        assembler.compute_rows<operator_type>(neumann_boundary_nodes, nodes,
-            column_variables_nearest_neighbor_searcher, stiffness_triplets,
-            row_offset, column_offset);
+        const auto boundary_stiffness_triplets =
+            assembler.compute_rows<operator_type>(neumann_boundary_nodes, nodes,
+                column_variables_nearest_neighbor_searcher);
+        stiffness_triplets.append_range(boundary_stiffness_triplets |
+            num_collect::util::eigen_triplets::shift_rows(row_offset));
     }
 
     // Equations for Dirichlet boundary nodes: u = 0.

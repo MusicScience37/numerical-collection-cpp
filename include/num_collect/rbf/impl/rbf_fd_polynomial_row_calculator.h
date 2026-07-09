@@ -113,7 +113,6 @@ public:
      * \param[out] triplets Output vector of triplets to set values in the
      * system matrix.
      * \param[in] row_index Row index to calculate.
-     * \param[in] column_offset Offset of column indices in the system matrix.
      *
      * \note Existing triplets are not cleared in this function
      * because this function will be called multiple times to assemble the whole
@@ -134,7 +133,7 @@ public:
             column_variables_nearest_neighbor_searcher,
         index_type num_neighbors,
         util::vector<Eigen::Triplet<scalar_type, StorageIndex>>& triplets,
-        index_type row_index, index_type column_offset) {
+        index_type row_index) {
         search_neighbors(row_variable, column_variables,
             column_variables_nearest_neighbor_searcher, num_neighbors);
         create_linear_system(distance_function, rbf, polynomial_term_generator,
@@ -144,7 +143,7 @@ public:
         for (index_type i = 0; i < num_neighbors; ++i) {
             triplets.emplace_back(static_cast<StorageIndex>(row_index),
                 static_cast<StorageIndex>(
-                    column_offset + neighbor_indices_and_distances_[i].first),
+                    neighbor_indices_and_distances_[i].first),
                 weights_(i));
         }
     }

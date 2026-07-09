@@ -81,7 +81,7 @@ TEMPLATE_TEST_CASE_SIG(
     const num_collect::util::nearest_neighbor_searcher<position_type>
         nearest_neighbor_searcher(nodes);
     assembler.compute_rows<operator_type>(
-        test_nodes, nodes, nearest_neighbor_searcher, triplets, 0, 0);
+        test_nodes, nodes, nearest_neighbor_searcher, triplets);
     sparse_matrix_type matrix(test_nodes.size(), nodes.size());
     matrix.setFromTriplets(triplets.begin(), triplets.end());
 

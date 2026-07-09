@@ -63,6 +63,7 @@
 #include "num_collect/rbf/operators/gradient_operator.h"
 #include "num_collect/rbf/operators/polyharmonic_operator.h"
 #include "num_collect/rbf/rbf_fd_polynomial_assembler.h"
+#include "num_collect/util/eigen_triplets_util.h"
 #include "num_collect/util/nearest_neighbor_searcher.h"
 #include "num_collect/util/vector.h"
 #include "num_collect/util/vector_view.h"
@@ -235,14 +236,11 @@ static auto assemble_system(
 
     // Rows correspond to interior nodes plus the right boundary node (free
     // outflow); the left boundary is handled as an explicit forcing term.
-    num_collect::util::vector<Eigen::Triplet<double>> advection_triplets;
     const auto interior_and_right_boundary_nodes =
         nodes.first(num_interior_nodes + 1);
     const num_collect::util::nearest_neighbor_searcher<position_type>
         column_variables_nearest_neighbor_searcher(nodes);
-    constexpr num_collect::index_type row_offset = 0;
-    constexpr num_collect::index_type column_offset = 0;
-    assembler.compute_rows(
+    const auto advection_triplets = assembler.compute_rows(
         [advection_velocity, hyperviscosity_coeff](
             const position_type& position) {
             return -advection_velocity *
@@ -253,20 +251,23 @@ static auto assemble_system(
                     hyperviscosity_order, position_type>(position);
         },
         interior_and_right_boundary_nodes, nodes,
-        column_variables_nearest_neighbor_searcher, advection_triplets,
-        row_offset, column_offset);
-
-    sparse_matrix_type advection_coefficients(
-        num_interior_nodes + 1, nodes.size());
-    advection_coefficients.setFromTriplets(
-        advection_triplets.begin(), advection_triplets.end());
+        column_variables_nearest_neighbor_searcher);
 
     // Extract columns for ODE variables (interior + right boundary) and the
     // left boundary forcing term separately.
-    const sparse_matrix_type stiffness_matrix =
-        advection_coefficients.leftCols(num_interior_nodes + 1);
-    const solution_type left_boundary_coeff =
-        advection_coefficients.col(num_interior_nodes + 1);
+    using num_collect::util::eigen_triplets::filter_columns;
+    using num_collect::util::eigen_triplets::shift_columns;
+    using num_collect::util::eigen_triplets::to_sparse_matrix;
+    using num_collect::util::eigen_triplets::to_vector;
+    const num_collect::index_type num_ode_variables = num_interior_nodes + 1;
+    const sparse_matrix_type stiffness_matrix = advection_triplets |
+        filter_columns(0, num_ode_variables) |
+        to_sparse_matrix<sparse_matrix_type>(
+            num_ode_variables, num_ode_variables);
+    const solution_type left_boundary_coeff = advection_triplets |
+        filter_columns(num_ode_variables, num_ode_variables + 1) |
+        shift_columns(-num_ode_variables) | to_vector() |
+        to_sparse_matrix<sparse_matrix_type>(num_ode_variables, 1);
 
     NUM_COLLECT_LOG_INFO(logger, "Finished assembly of the system.");
 

@@ -122,8 +122,6 @@ public:
      * searcher for the column variables.
      * \param[out] triplets Output vector of triplets to set values in the
      * system matrix.
-     * \param[in] row_offset Offset of row indices in the system matrix.
-     * \param[in] column_offset Offset of column indices in the system matrix.
      *
      * \note Existing triplets are not cleared in this function
      * because this function will be called multiple times to assemble the whole
@@ -138,8 +136,7 @@ public:
         util::vector_view<const variable_type> column_variables,
         const util::nearest_neighbor_searcher<variable_type>&
             column_variables_nearest_neighbor_searcher,
-        util::vector<Eigen::Triplet<scalar_type, StorageIndex>>& triplets,
-        index_type row_offset, index_type column_offset) {
+        util::vector<Eigen::Triplet<scalar_type, StorageIndex>>& triplets) {
         NUM_COLLECT_PRECONDITION(column_variables.size() >= num_neighbors_,
             "Number of column variables must be greater than or equal to the "
             "number of neighbors.");
@@ -164,8 +161,7 @@ public:
                         polynomial_term_generator_, target_operator,
                         row_variables[i], column_variables,
                         column_variables_nearest_neighbor_searcher,
-                        num_neighbors_, local_triplets, row_offset + i,
-                        column_offset);
+                        num_neighbors_, local_triplets, i);
                 }
 #pragma omp critical
                 {
@@ -182,7 +178,7 @@ public:
                     polynomial_term_generator_, target_operator,
                     row_variables[i], column_variables,
                     column_variables_nearest_neighbor_searcher, num_neighbors_,
-                    triplets, row_offset + i, column_offset);
+                    triplets, i);
             }
         }
     }
@@ -200,8 +196,6 @@ public:
      * searcher for the column variables.
      * \param[out] triplets Output vector of triplets to set values in the
      * system matrix.
-     * \param[in] row_offset Offset of row indices in the system matrix.
-     * \param[in] column_offset Offset of column indices in the system matrix.
      *
      * \note Existing triplets are not cleared in this function
      * because this function will be called multiple times to assemble the whole
@@ -215,15 +209,81 @@ public:
         util::vector_view<const variable_type> column_variables,
         const util::nearest_neighbor_searcher<variable_type>&
             column_variables_nearest_neighbor_searcher,
-        util::vector<Eigen::Triplet<scalar_type, StorageIndex>>& triplets,
-        index_type row_offset, index_type column_offset) {
+        util::vector<Eigen::Triplet<scalar_type, StorageIndex>>& triplets) {
         compute_rows(
             [](const variable_type& sample_variable) {
                 return Operator{sample_variable};
             },
             row_variables, column_variables,
-            column_variables_nearest_neighbor_searcher, triplets, row_offset,
-            column_offset);
+            column_variables_nearest_neighbor_searcher, triplets);
+    }
+
+    /*!
+     * \brief Compute rows of the system matrix.
+     *
+     * \tparam OperatorFactory Type of the factory to create the operator to
+     * assemble.
+     * \tparam StorageIndex Type of indices in the system matrix.
+     * \param[in] operator_factory Factory to create the operator to assemble.
+     * \param[in] row_variables Variables corresponding to rows of the system
+     * matrix.
+     * \param[in] column_variables Variables corresponding to the columns to
+     * calculate.
+     * \param[in] column_variables_nearest_neighbor_searcher Nearest neighbor
+     * searcher for the column variables.
+     * \return Vector of triplets to set values in the system matrix.
+     *
+     * \note Existing triplets are not cleared in this function
+     * because this function will be called multiple times to assemble the whole
+     * system matrix.
+     */
+    template <concepts::rbf_fd_operator_factory<rbf_type,
+        distance_function_type, length_parameter_calculator_type>
+            OperatorFactory>
+    [[nodiscard]] auto compute_rows(OperatorFactory&& operator_factory,
+        util::vector_view<const variable_type> row_variables,
+        util::vector_view<const variable_type> column_variables,
+        const util::nearest_neighbor_searcher<variable_type>&
+            column_variables_nearest_neighbor_searcher)
+        -> util::vector<Eigen::Triplet<scalar_type>> {
+        util::vector<Eigen::Triplet<scalar_type>> triplets;
+        compute_rows(std::forward<OperatorFactory>(operator_factory),
+            row_variables, column_variables,
+            column_variables_nearest_neighbor_searcher, triplets);
+        return triplets;
+    }
+
+    /*!
+     * \brief Compute rows of the system matrix.
+     *
+     * \tparam Operator Type of the operator to assemble.
+     * \tparam StorageIndex Type of indices in the system matrix.
+     * \param[in] row_variables Variables corresponding to rows of the system
+     * matrix.
+     * \param[in] column_variables Variables corresponding to the columns to
+     * calculate.
+     * \param[in] column_variables_nearest_neighbor_searcher Nearest neighbor
+     * searcher for the column variables.
+     * \return Vector of triplets to set values in the system matrix.
+     *
+     * \note Existing triplets are not cleared in this function
+     * because this function will be called multiple times to assemble the whole
+     * system matrix.
+     */
+    template <concepts::rbf_fd_operator_with<rbf_type, distance_function_type,
+                  length_parameter_calculator_type>
+                  Operator,
+        std::signed_integral StorageIndex = int>
+    [[nodiscard]] auto compute_rows(
+        util::vector_view<const variable_type> row_variables,
+        util::vector_view<const variable_type> column_variables,
+        const util::nearest_neighbor_searcher<variable_type>&
+            column_variables_nearest_neighbor_searcher)
+        -> util::vector<Eigen::Triplet<scalar_type, StorageIndex>> {
+        util::vector<Eigen::Triplet<scalar_type, StorageIndex>> triplets;
+        compute_rows<Operator>(row_variables, column_variables,
+            column_variables_nearest_neighbor_searcher, triplets);
+        return triplets;
     }
 
     /*!

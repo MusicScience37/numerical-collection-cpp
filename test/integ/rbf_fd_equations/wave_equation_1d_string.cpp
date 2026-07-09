@@ -81,8 +81,6 @@ TEST_CASE("Wave equation of a string in 1D") {
     assembler.num_neighbors(num_neighbors);
     const num_collect::util::nearest_neighbor_searcher<position_type>
         column_variables_nearest_neighbor_searcher(nodes);
-    constexpr num_collect::index_type row_offset = 0;
-    constexpr num_collect::index_type column_offset = 0;
     const double squared_wave_speed = wave_speed * wave_speed;
     num_collect::util::vector<Eigen::Triplet<double>> laplacian_triplets;
     assembler.compute_rows(
@@ -90,7 +88,7 @@ TEST_CASE("Wave equation of a string in 1D") {
             return squared_wave_speed * operator_type(position);
         },
         interior_nodes, nodes, column_variables_nearest_neighbor_searcher,
-        laplacian_triplets, row_offset, column_offset);
+        laplacian_triplets);
 
     num_collect::util::vector<Eigen::Triplet<double>> triplets;
     // Top right block.

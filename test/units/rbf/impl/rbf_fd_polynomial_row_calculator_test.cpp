@@ -78,13 +78,12 @@ TEST_CASE("num_collect::rbf::impl::rbf_fd_polynomial_row_calculator") {
             column_variables_nearest_neighbor_searcher(column_variables);
         const auto target_operator = laplacian_operator{row_variable};
         constexpr num_collect::index_type row_index = 0;
-        constexpr num_collect::index_type column_offset = 0;
         num_collect::util::vector<Eigen::Triplet<scalar_type>> triplets;
 
         row_calculator.compute_row(distance_function, rbf,
             polynomial_term_generator, target_operator, row_variable,
             column_variables, column_variables_nearest_neighbor_searcher,
-            num_neighbors, triplets, row_index, column_offset);
+            num_neighbors, triplets, row_index);
 
         CHECK(triplets.size() == num_neighbors);
         Eigen::SparseMatrix<scalar_type> row_matrix(1, num_columns);
@@ -98,27 +97,6 @@ TEST_CASE("num_collect::rbf::impl::rbf_fd_polynomial_row_calculator") {
         constexpr double tolerance = 1e-2;
         CHECK_THAT(approximated_value,
             Catch::Matchers::WithinRel(true_value, tolerance));
-
-        SECTION("take row_index and column_offset into account") {
-            constexpr num_collect::index_type row_index = 2;
-            constexpr num_collect::index_type column_offset = 5;
-            num_collect::util::vector<Eigen::Triplet<scalar_type>>
-                triplets_with_offset;
-
-            row_calculator.compute_row(distance_function, rbf,
-                polynomial_term_generator, target_operator, row_variable,
-                column_variables, column_variables_nearest_neighbor_searcher,
-                num_neighbors, triplets_with_offset, row_index, column_offset);
-
-            REQUIRE(triplets_with_offset.size() == num_neighbors);
-            for (num_collect::index_type i = 0; i < num_neighbors; ++i) {
-                CHECK(triplets_with_offset[i].row() == row_index);
-                CHECK(triplets_with_offset[i].col() ==
-                    column_offset + triplets[i].col());
-                CHECK_THAT(triplets_with_offset[i].value(),
-                    Catch::Matchers::WithinRel(triplets[i].value()));
-            }
-        }
     }
 
     SECTION("check number of neighbors") {
@@ -129,37 +107,36 @@ TEST_CASE("num_collect::rbf::impl::rbf_fd_polynomial_row_calculator") {
             column_variables_nearest_neighbor_searcher(column_variables);
         const auto target_operator = laplacian_operator{row_variable};
         constexpr num_collect::index_type row_index = 0;
-        constexpr num_collect::index_type column_offset = 0;
         num_collect::util::vector<Eigen::Triplet<scalar_type>> triplets;
 
         CHECK_THROWS(row_calculator.compute_row(distance_function, rbf,
             polynomial_term_generator, target_operator, row_variable,
             column_variables, column_variables_nearest_neighbor_searcher, -1,
-            triplets, row_index, column_offset));
+            triplets, row_index));
         CHECK_THROWS(row_calculator.compute_row(distance_function, rbf,
             polynomial_term_generator, target_operator, row_variable,
             column_variables, column_variables_nearest_neighbor_searcher, 0,
-            triplets, row_index, column_offset));
+            triplets, row_index));
         CHECK_THROWS(row_calculator.compute_row(distance_function, rbf,
             polynomial_term_generator, target_operator, row_variable,
             column_variables, column_variables_nearest_neighbor_searcher, 1,
-            triplets, row_index, column_offset));
+            triplets, row_index));
         CHECK_THROWS(row_calculator.compute_row(distance_function, rbf,
             polynomial_term_generator, target_operator, row_variable,
             column_variables, column_variables_nearest_neighbor_searcher, 6,
-            triplets, row_index, column_offset));
+            triplets, row_index));
         CHECK_NOTHROW(row_calculator.compute_row(distance_function, rbf,
             polynomial_term_generator, target_operator, row_variable,
             column_variables, column_variables_nearest_neighbor_searcher, 7,
-            triplets, row_index, column_offset));
+            triplets, row_index));
         CHECK_NOTHROW(row_calculator.compute_row(distance_function, rbf,
             polynomial_term_generator, target_operator, row_variable,
             column_variables, column_variables_nearest_neighbor_searcher,
-            num_columns, triplets, row_index, column_offset));
+            num_columns, triplets, row_index));
         CHECK_THROWS(row_calculator.compute_row(distance_function, rbf,
             polynomial_term_generator, target_operator, row_variable,
             column_variables, column_variables_nearest_neighbor_searcher,
-            num_columns + 1, triplets, row_index, column_offset));
+            num_columns + 1, triplets, row_index));
     }
 
     // TODO Test of ill-conditioned matrix.

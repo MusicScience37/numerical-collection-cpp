@@ -119,11 +119,8 @@ static auto assemble_system(
         assembler_type assembler;
         assembler.num_neighbors(num_neighbors);
         assembler.length_parameter_scale(length_parameter_scale);
-        constexpr num_collect::index_type row_offset = 0;
-        constexpr num_collect::index_type column_offset = 0;
         assembler.compute_rows<operator_type>(interior_nodes, nodes,
-            column_variables_nearest_neighbor_searcher, triplets, row_offset,
-            column_offset);
+            column_variables_nearest_neighbor_searcher, triplets);
         for (num_collect::index_type i = 0; i < num_interior_nodes; ++i) {
             right_vec(i) = test_function_laplacian(interior_nodes[i]);
         }
@@ -137,11 +134,8 @@ static auto assemble_system(
         assembler_type assembler(polynomial_order);
         assembler.num_neighbors(num_neighbors);
         assembler.length_parameter_scale(length_parameter_scale);
-        constexpr num_collect::index_type row_offset = 0;
-        constexpr num_collect::index_type column_offset = 0;
         assembler.compute_rows<operator_type>(interior_nodes, nodes,
-            column_variables_nearest_neighbor_searcher, triplets, row_offset,
-            column_offset);
+            column_variables_nearest_neighbor_searcher, triplets);
         for (num_collect::index_type i = 0; i < num_interior_nodes; ++i) {
             right_vec(i) = test_function_laplacian(interior_nodes[i]);
         }
