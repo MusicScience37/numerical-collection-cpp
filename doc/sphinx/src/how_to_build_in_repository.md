@@ -20,11 +20,12 @@ you will require following dependencies:
 - [CMake](https://cmake.org/)
 - C++ 23 Compiler
   - Following compilers are tested in CI:
-    - GCC 12
     - GCC 13
-    - Clang 19
+    - GCC 14
+    - GCC 15
     - Clang 20
     - Clang 21
+    - Clang 22
     - Visual Studio 2022
 
 Additionally, you will require following dependencies
@@ -56,7 +57,6 @@ execute the following commands to build:
    ```
 
 3. Build vcpkg.
-
    - On Windows:
 
      ```bat

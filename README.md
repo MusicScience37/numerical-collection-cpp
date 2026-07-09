@@ -15,11 +15,12 @@ A collection of algorithms in numerical analysis implemented in C++.
 
 Following compilers are tested in CI:
 
-- GCC 12
 - GCC 13
-- Clang 19
+- GCC 14
+- GCC 15
 - Clang 20
 - Clang 21
+- Clang 22
 - Visual Studio 2022
 
 ## Installation
