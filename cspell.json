@@ -89,6 +89,7 @@
     "ctest",
     "Cuthill",
     "Cwise",
+    "CXXFLAGS",
     "dashdot",
     "Davidon",
     "DBUILD",

@@ -74,7 +74,7 @@ TEST_TYPE_VARIABLES = {
 }
 
 
-def execute_command(command: typing.List[str], cwd: str) -> None:
+def execute_command(command: typing.List[str], cwd: str, env=None) -> None:
     """Execute a command in a subprocess.
 
     Args:
@@ -82,7 +82,7 @@ def execute_command(command: typing.List[str], cwd: str) -> None:
         cwd (str): Working directory for the command.
     """
     click.echo(click.style(f">> {command}", bold=True, fg="green"))
-    subprocess.run(command, check=True, cwd=cwd)
+    subprocess.run(command, check=True, cwd=cwd, env=env)
 
 
 def _ignore(_):
@@ -121,7 +121,14 @@ def check_tests_for_condition(
     command = command + ["-DNUM_COLLECT_ENABLE_CCACHE:BOOL=ON"]
     for key, value in TEST_TYPE_VARIABLES[test_type].items():
         command = command + [f"-D{key}={value}"]
-    execute_command(command, cwd=build_dir)
+
+    # Workaround issue with Clang 22.
+    env = None
+    if compiler_type == "clang22":
+        env = os.environ.copy()
+        env["CXXFLAGS"] = "--gcc-install-dir=/usr/lib/gcc/x86_64-linux-gnu/15"
+
+    execute_command(command, cwd=build_dir, env=env)
 
     # Build
     execute_command(["cmake", "--build", "."], cwd=build_dir)
