@@ -141,7 +141,7 @@ spell check:
     - mkdir -p $VCPKG_DEFAULT_BINARY_CACHE
     - mkdir $BUILD_DIR
     - apt-get update
-    - apt-get install -y --no-install-recommends libvtk9-dev
+    - apt-get install -y --no-install-recommends libvtk9-dev ninja-build
     - poetry run playwright install --only-shell --with-deps chromium
     - poetry run plotly_get_chrome -y
   script:
