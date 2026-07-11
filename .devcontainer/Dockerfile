@@ -1,9 +1,10 @@
-FROM registry.gitlab.com/musicscience37projects/docker/my-cpp-env-docker:clang21
+FROM registry.gitlab.com/musicscience37projects/docker/my-cpp-env-docker:clang22
 
 USER root
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     libvtk9-dev \
+    libstdc++-16-dev \
     && \
     apt-get autoremove -y && \
     apt-get autoclean && \
