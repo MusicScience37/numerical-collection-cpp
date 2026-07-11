@@ -1,0 +1,26 @@
+"$schema" = "https://numcollect.musicscience37.com/config_schema/v3/config_schema.json"
+
+[rbf_fd_advection_equation_2d]
+# Number of interior nodes in the domain (0 < x < 1, 0 < y < 1).
+num_interior_nodes = 1000
+# Number of nodes on each edge of the boundary.
+num_boundary_nodes_per_edge = 30
+# Order of polynomials in RBF-FD.
+polynomial_order = 2
+# Number of neighboring nodes used in each RBF-FD stencil.
+num_neighbors = 15
+# Advection velocity.
+advection_velocity = 0.5
+# Rate of hyperviscosity.
+hyperviscosity_rate = 0.5
+# Time step size for output.
+# Note: The ODE solver uses adaptive internal time stepping.
+time_step_size = 0.1
+# End time of simulation.
+final_time = 1.0
+
+[[num_collect.logging.tag_configs]]
+tag = ""
+sink = "default"
+output_log_level = "summary"
+output_log_level_in_child_iterations = "info"
