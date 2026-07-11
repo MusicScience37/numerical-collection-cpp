@@ -40,4 +40,12 @@ if(VTK_FOUND)
                           PRIVATE ${VTK_LIBRARIES})
     vtk_module_autoinit(TARGETS example_pde_rbf_fd_advection_equation_2d
                         MODULES ${VTK_LIBRARIES})
+
+    add_example(example_pde_rbf_fd_advection_diffusion_equation_2d
+                rbf_fd_advection_diffusion_equation_2d.cpp)
+    target_link_libraries(example_pde_rbf_fd_advection_diffusion_equation_2d
+                          PRIVATE ${VTK_LIBRARIES})
+    vtk_module_autoinit(
+        TARGETS example_pde_rbf_fd_advection_diffusion_equation_2d MODULES
+        ${VTK_LIBRARIES})
 endif()
