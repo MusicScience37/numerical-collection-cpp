@@ -1,0 +1,70 @@
+// Script to compute a reference solution for the example rbf_fd_burgers_equation_2d.cpp
+
+// Equation and solver constants
+real DiffusionCoeff = 0.01;
+real TimeStepSize = 0.01;
+int NumSteps = 100;
+int NumStepsPerPlot = 10;
+
+// Mesh and finite element space
+mesh Mesh = square(30, 30);
+fespace FESpace(Mesh, P2);
+FESpace Sol, SolPrev, Test;
+
+// Initial condition
+real CenterX = 0.4;
+real CenterY = 0.5;
+real Radius2 = 0.2^2;
+func real SmoothBump(real xx, real yy) {
+    real r2 = (xx - CenterX)^2 + (yy - CenterY)^2;
+    if (r2 >= Radius2) return 0.0;
+    real s = r2 / Radius2; // 0 <= s < 1
+    return exp(1.0 - 1.0 / (1.0 - s));
+}
+Sol = SmoothBump(x, y);
+
+// Weak form definition
+problem BurgersProblem(Sol, Test) =
+    int2d(Mesh)(Sol * Test / TimeStepSize)
+    - int2d(Mesh)(convect([SolPrev, 0], -TimeStepSize, SolPrev) * Test / TimeStepSize)
+    + int2d(Mesh)(DiffusionCoeff * (dx(Sol) * dx(Test) + dy(Sol) * dy(Test)))
+    + on(1, 2, 3, 4, Sol = 0);
+
+// Plot settings
+include "common/plot_colors.idp"
+macro PlotSol(Step) plot(Sol, cmm = "Step: " + Step, value=true, fill=true, hsv=PlotColors, wait=false); //
+PlotSol(0);
+
+// Prepare result output
+load "iovtk"
+load "shell"
+mesh MeshOut = splitmesh(Mesh, 2);
+fespace FESpaceOut(MeshOut, P1);
+int[int] VTKOrder = [1];
+FESpaceOut SolOut = Sol;
+mkdir("rbf_fd_burgers_equation_2d_ref");
+ofstream PvdFile("rbf_fd_burgers_equation_2d_ref/burgers2d.pvd");
+PvdFile << "<?xml version=\"1.0\"?>\n";
+PvdFile << "<VTKFile type=\"Collection\" version=\"0.1\" byte_order=\"LittleEndian\">\n";
+PvdFile << "  <Collection>\n";
+macro SaveVTK(Step)
+    savevtk("rbf_fd_burgers_equation_2d_ref/burgers2d_" + Step + ".vtu", MeshOut, SolOut, dataname="Solution", order=VTKOrder);
+    PvdFile << "    <DataSet timestep=\"" + Step * TimeStepSize + "\" file=\"burgers2d_" + Step + ".vtu\"/>\n";
+//
+SaveVTK(0);
+
+// Run the solver
+for (int step = 1; step <= NumSteps; ++step) {
+    SolPrev = Sol;
+    BurgersProblem;
+
+    if (step % NumStepsPerPlot == 0) {
+        PlotSol(step);
+
+        SolOut = Sol;
+        SaveVTK(step);
+    }
+}
+
+PvdFile << "  </Collection>\n";
+PvdFile << "</VTKFile>\n";
