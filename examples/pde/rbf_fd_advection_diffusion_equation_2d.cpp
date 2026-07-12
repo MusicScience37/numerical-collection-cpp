@@ -15,8 +15,32 @@
  */
 
 // Example: Solving 2D advection diffusion equation using RBF-FD method.
-
-// TODO further description.
+//
+// This example solves the following 2D advection diffusion equation:
+//   ∂u/∂t + c ∂u/∂x = D(∂²u/∂x² + ∂²u/∂y²)  (0 < x < 1, 0 < y < 1, t > 0)
+//
+// Boundary conditions:
+//   u = 0 on all boundaries (Dirichlet)
+//
+// Initial condition:
+//   A smooth, compactly supported bump centered at (0.2, 0.5) with radius
+//   r0 = 0.1:
+//     u(x, y, 0) = exp(1 - 1 / (1 - r² / r0²))  for r < r0
+//     u(x, y, 0) = 0                            otherwise
+//   where r is the distance from the center.
+//
+// Solution method:
+//   - Spatial discretization: RBF-FD (Radial Basis Function - Finite
+//     Difference) with quasi-random Halton nodes
+//   - Stabilization: Hyperviscosity using polyharmonic operator of order 3
+//   - Time integration: Rosenbrock method (RODASPR) for the first-order ODE
+//     system
+//
+// Output:
+//   - Maximum and minimum values are logged at each time step
+//   - Time evolution is visualized and saved as
+//     rbf_fd_advection_diffusion_equation_2d.pvd and
+//     rbf_fd_advection_diffusion_equation_2d_XXXX.vtp files for ParaView
 
 #include <cmath>
 #include <filesystem>
@@ -55,6 +79,10 @@ using solution_type = Eigen::VectorXd;
 using sparse_matrix_type = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 
 // ODE problem type for the first-order system.
+// The advection diffusion equation ∂u/∂t + c ∂u/∂x = D∇²u is a first-order
+// ODE:
+//   du/dt = A*u,  A = -c ∂/∂x + D∇²
+// ODE variable: u at interior nodes only (boundary values are always zero).
 using ode_problem_type =
     num_collect::ode::problems::linear_first_order_ode_problem<solution_type,
         sparse_matrix_type>;
@@ -63,8 +91,8 @@ using ode_problem_type =
 static constexpr std::string_view output_directory =
     "rbf_fd_advection_diffusion_equation_2d";
 
-// Initial solution.
-// This function is smooth and compactly supported.
+// Initial condition: a smooth, compactly supported bump centered at
+// (0.2, 0.5) with radius 0.1. Used to set the initial solution.
 static auto test_function(const position_type& position) -> double {
     constexpr double center_x = 0.2;
     constexpr double center_y = 0.5;
@@ -113,6 +141,26 @@ static auto generate_nodes(num_collect::index_type num_interior_nodes,
 }
 
 // Assemble the linear system for the advection diffusion equation ODE.
+//
+// Constructs the coefficient matrix for:
+//   du/dt = A*u
+// using RBF-FD to approximate
+//   -c ∂/∂x + D(∂²/∂x² + ∂²/∂y²) + (-1)^(p-1) ε h^(2p) Δ^p  (p = 3),
+// where the third term is hyperviscosity for stabilization.
+//
+// Parameters:
+//   nodes: All nodes (interior + boundary), where first num_interior_nodes
+//     are interior nodes
+//   num_interior_nodes: Number of interior nodes
+//   polynomial_order: Order of polynomials in RBF-FD augmentation
+//   num_neighbors: Number of neighboring nodes used in each RBF-FD stencil
+//   advection_velocity: Advection velocity c in the equation
+//   diffusion_coefficient: Diffusion coefficient D in the equation
+//   hyperviscosity_rate: Scaling factor ε for the hyperviscosity term
+//
+// Returns:
+//   Linear first-order ODE problem du/dt = A*u, where u is the solution at
+//   interior nodes only
 static auto assemble_system(
     num_collect::util::vector_view<const position_type> nodes,
     num_collect::index_type num_interior_nodes, int polynomial_order,
@@ -179,6 +227,25 @@ static auto assemble_system(
     return ode_problem_type(variable_coefficients, constant_term);
 }
 
+// Solve the advection-diffusion equation ODE system and visualize results.
+//
+// Integrates the first-order ODE system in time using the RODASPR method
+// (a Rosenbrock-type solver). At each time step, the current solution is
+// written to a ParaView file. There is no analytical solution for this
+// initial condition, so only the maximum and minimum values are logged.
+//
+// Parameters:
+//   problem: Linear ODE problem assembled by assemble_system
+//   time_step_size: Time step for output (solver uses adaptive stepping
+//     internally)
+//   final_time: End time of simulation
+//   nodes: All nodes (same as in assemble_system)
+//   num_interior_nodes: Number of interior nodes
+//
+// Output:
+//   - Logs the maximum and minimum values at each time step
+//   - Saves visualization to rbf_fd_advection_diffusion_equation_2d/
+//     directory in ParaView format (.pvd and .vtp files)
 static void solve_system(const ode_problem_type& problem, double time_step_size,
     double final_time,
     num_collect::util::vector_view<const position_type> nodes,
