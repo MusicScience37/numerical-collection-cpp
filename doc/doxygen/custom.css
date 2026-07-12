@@ -1,40 +1,51 @@
+/* Colors for doxygen-awesome-css. */
+/* Almost colors are taken from sphinx-orange-book-theme at
+   https://gitlab.com/MusicScience37Projects/utility-libraries/sphinx-orange-book-theme */
+
 html {
   /* primary colors */
-  --primary-color: #d66d32;
-  --primary-dark-color: #713514;
-  --primary-light-color: #c77f59;
+  --primary-color: #ca7639; /* --pst-color-primary */
+  --primary-dark-color: #7f4820; /* orange150 lightness 0.46 */
+  --primary-light-color: var(--primary-color);
 
   /* fragment colors */
-  --fragment-background: #fff3eb;
-  --fragment-keyword: #a68715;
-  --fragment-keywordtype: #a68715;
-  --fragment-keywordflow: #a68715;
+  --fragment-background: #fdf4ef; /* --pst-color-background */
+  --fragment-foreground: #2e2925; /* --pst-color-text-base */
+  --fragment-keyword: #7e9a50; /* --pst-color-secondary */
+  --fragment-keywordtype: var(--fragment-keyword);
+  --fragment-keywordflow: var(--fragment-keyword);
   --fragment-token: var(--primary-dark-color);
-  --fragment-comment: #707070;
+  --fragment-comment: #625851; /* --pst-color-text-muted */
   --fragment-link: var(--primary-color);
-  --fragment-preprocessor: #a68715;
+  --fragment-preprocessor: var(--fragment-keyword);
 
   --code-background: var(--fragment-background);
+  --page-foreground-color: #2e2925; /* --pst-color-text-base */
+  --page-background-color: #fefdfd; /* --pst-color-background */
+  --side-nav-background: #fdf4ef; /* --pst-color-surface */
 }
 
 @media (prefers-color-scheme: dark) {
   html:not(.light-mode) {
     /* primary colors */
-    --primary-color: #e68f60;
-    --primary-dark-color: #ffc399;
-    --primary-light-color: #b8724c;
+    --primary-color: #e49057; /* --pst-color-primary */
+    --primary-dark-color: #f5caaf; /* orange150 lightness 0.87 */
+    --primary-light-color: var(--primary-color);
 
     /* fragment colors */
-    --fragment-background: #1b0d02;
-    --fragment-foreground: #ffece1;
-    --fragment-keyword: #ddc484;
-    --fragment-keywordtype: #ddc484;
-    --fragment-keywordflow: #ddc484;
+    --fragment-background: #40210b; /* --pst-color-surface */
+    --fragment-foreground: #f7f6f5; /* --pst-color-text-base */
+    --fragment-keyword: #b5c69d; /* --pst-color-secondary */
+    --fragment-keywordtype: var(--fragment-keyword);
+    --fragment-keywordflow: var(--fragment-keyword);
     --fragment-token: var(--primary-dark-color);
-    --fragment-comment: #909090;
+    --fragment-comment: #dbd3cf; /* --pst-color-text-muted */
     --fragment-link: var(--primary-color);
-    --fragment-preprocessor: #ddc484;
+    --fragment-preprocessor: var(--fragment-keyword);
 
     --code-background: var(--fragment-background);
+    --page-foreground-color: #f7f6f5; /* --pst-color-text-base */
+    --page-background-color: #220f03; /* --pst-color-background */
+    --side-nav-background: #40210b; /* --pst-color-surface */
   }
 }
