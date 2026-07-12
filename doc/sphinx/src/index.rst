@@ -3,6 +3,9 @@ Numerical Collection C++
 
 A collection of algorithms in numerical analysis implemented in C++.
 
+API reference is separately generated and can be found
+`here <api>`_.
+
 .. toctree::
     :maxdepth: 1
     :caption: About
@@ -19,7 +22,6 @@ A collection of algorithms in numerical analysis implemented in C++.
     installation
     modules
     user_guide/index
-    API Reference <https://numcollect.musicscience37.com/api/index.html>
 
 .. toctree::
     :maxdepth: 1
