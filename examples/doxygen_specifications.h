@@ -90,6 +90,11 @@
  */
 
 /*!
+ * \example pde/rbf_fd_burgers_equation_2d.cpp
+ * Example to solve 2D Burgers' equation using RBF-FD method.
+ */
+
+/*!
  * \example pde/rbf_fd_diffusion_equation_2d_dirichlet.cpp
  * Example to solve 2D diffusion equation with Dirichlet boundary conditions
  * using RBF-FD method.
