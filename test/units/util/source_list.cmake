@@ -13,6 +13,7 @@ set(SOURCE_FILES
     format_sparse_matrix_test.cpp
     generate_cuboid_boundary_nodes_test.cpp
     generate_rectangle_boundary_nodes_test.cpp
+    generate_rectangle_boundary_nodes_without_corners_test.cpp
     gray_code_test.cpp
     greatest_common_divisor_test.cpp
     hash_string_test.cpp

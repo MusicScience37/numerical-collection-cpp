@@ -12,6 +12,7 @@
 #include "format_sparse_matrix_test.cpp"
 #include "generate_cuboid_boundary_nodes_test.cpp"
 #include "generate_rectangle_boundary_nodes_test.cpp"
+#include "generate_rectangle_boundary_nodes_without_corners_test.cpp"
 #include "gray_code_test.cpp"
 #include "greatest_common_divisor_test.cpp"
 #include "hash_string_test.cpp"

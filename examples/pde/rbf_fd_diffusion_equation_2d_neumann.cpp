@@ -61,7 +61,7 @@
 #include "num_collect/rbf/operators/partial_derivative_operator.h"
 #include "num_collect/rbf/rbf_fd_polynomial_assembler.h"
 #include "num_collect/util/eigen_triplets_util.h"
-#include "num_collect/util/generate_rectangle_boundary_nodes.h"
+#include "num_collect/util/generate_rectangle_boundary_nodes_without_corners.h"
 #include "num_collect/util/nearest_neighbor_searcher.h"
 #include "num_collect/util/vector.h"
 #include "num_collect/util/vector_view.h"
@@ -122,7 +122,7 @@ static auto generate_nodes(num_collect::index_type num_interior_nodes,
     }
     // Generate boundary nodes on all four edges.
     const auto boundary_nodes =
-        num_collect::util::generate_rectangle_boundary_nodes(
+        num_collect::util::generate_rectangle_boundary_nodes_without_corners(
             position_type(0.0, 0.0), position_type(1.0, 0.5),
             num_boundary_nodes_per_edge);
     // Combine interior and boundary nodes.
@@ -194,9 +194,9 @@ static auto assemble_system(
                 num_interior_nodes));
     }
 
-    // Equations for Neumann boundary nodes: ∂u/∂y = 0 (excluding corners).
+    // Equations for Neumann boundary nodes: ∂u/∂y = 0.
     const num_collect::index_type first_neumann_boundary_node_index =
-        num_interior_nodes + 2 * num_boundary_nodes_per_edge + 1;
+        num_interior_nodes + 2 * num_boundary_nodes_per_edge;
     const num_collect::index_type last_neumann_boundary_node_index =
         num_interior_nodes + 3 * num_boundary_nodes_per_edge - 1;
     {

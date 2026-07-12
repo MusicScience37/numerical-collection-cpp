@@ -62,7 +62,7 @@
 #include "num_collect/rbf/operators/polyharmonic_operator.h"
 #include "num_collect/rbf/rbf_fd_polynomial_assembler.h"
 #include "num_collect/util/eigen_triplets_util.h"
-#include "num_collect/util/generate_rectangle_boundary_nodes.h"
+#include "num_collect/util/generate_rectangle_boundary_nodes_without_corners.h"
 #include "num_collect/util/nearest_neighbor_searcher.h"
 #include "num_collect/util/vector.h"
 #include "num_collect/util/vector_view.h"
@@ -129,7 +129,7 @@ static auto generate_nodes(num_collect::index_type num_interior_nodes,
         num_collect::rbf::generate_halton_nodes<double, 2>(num_interior_nodes);
     // Generate boundary nodes on all four edges.
     const auto boundary_nodes =
-        num_collect::util::generate_rectangle_boundary_nodes(
+        num_collect::util::generate_rectangle_boundary_nodes_without_corners(
             position_type(0.0, 0.0), position_type(1.0, 1.0),
             num_boundary_nodes_per_edge);
     // Combine interior and boundary nodes.
