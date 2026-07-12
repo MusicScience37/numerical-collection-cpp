@@ -49,7 +49,8 @@
         "ms-python.mypy-type-checker",
         "ms-python.pylint",
         "executablebookproject.myst-highlight",
-        "ms-toolsai.jupyter"
+        "ms-toolsai.jupyter",
+        "Pierre-Marchand.vscode-freefem"
       ],
       "settings": {
         "cmakeFormat.exePath": "/workspaces/numerical-collection-cpp/.venv/bin/cmake-format",
