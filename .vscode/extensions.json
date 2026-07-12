@@ -27,7 +27,8 @@
     "ms-python.mypy-type-checker",
     "ms-python.pylint",
     "executablebookproject.myst-highlight",
-    "ms-toolsai.jupyter"
+    "ms-toolsai.jupyter",
+    "pierre-marchand.vscode-freefem"
   ],
   // List of extensions recommended by VS Code that should not be recommended for users of this workspace.
   "unwantedRecommendations": []

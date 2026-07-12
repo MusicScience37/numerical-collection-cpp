@@ -75,6 +75,16 @@
  */
 
 /*!
+ * \example pde/rbf_fd_advection_diffusion_equation_1d.cpp
+ * Example to solve 1D advection diffusion equation using RBF-FD method.
+ */
+
+/*!
+ * \example pde/rbf_fd_advection_diffusion_equation_2d.cpp
+ * Example to solve 2D advection diffusion equation using RBF-FD method.
+ */
+
+/*!
  * \example pde/rbf_fd_advection_equation_1d.cpp
  * Example to solve 1D advection equation using RBF-FD method.
  */
