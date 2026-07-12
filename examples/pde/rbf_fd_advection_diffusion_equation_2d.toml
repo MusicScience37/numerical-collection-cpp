@@ -6,7 +6,7 @@ num_interior_nodes = 1000
 # Number of nodes on each edge of the boundary.
 num_boundary_nodes_per_edge = 30
 # Order of polynomials in RBF-FD.
-polynomial_order = 2
+polynomial_order = 3
 # Number of neighboring nodes used in each RBF-FD stencil.
 num_neighbors = 15
 # Advection velocity.
@@ -14,7 +14,7 @@ advection_velocity = 0.5
 # Diffusion coefficient.
 diffusion_coefficient = 0.01
 # Rate of hyperviscosity.
-hyperviscosity_rate = 0.5
+hyperviscosity_rate = 0.1
 # Time step size for output.
 # Note: The ODE solver uses adaptive internal time stepping.
 time_step_size = 0.1
