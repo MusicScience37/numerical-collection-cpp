@@ -79,8 +79,8 @@ html_theme_options = {
         "image_dark": "../../icon_logo/logo-dark.svg",
         "text": html_title,
     },
-    "pygment_light_style": "gruvbox-light",
-    "pygment_dark_style": "native",
+    "pygments_light_style": "gruvbox-light",
+    "pygments_dark_style": "native",
     "repository_url": "https://gitlab.com/MusicScience37Projects/numerical-analysis/numerical-collection-cpp",
     "use_repository_button": True,
 }

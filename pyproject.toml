@@ -7,7 +7,7 @@ requires-python = ">=3.13,<3.14"
 authors = [
     { name = "Kenta Kabashima", email = "kenta_program37@hotmail.co.jp" },
 ]
-dependencies = ["setuptools (>=82.0.1,<83.0.0)"]
+dependencies = ["setuptools (>=83.0.0,<84.0.0)"]
 
 [tool.poetry]
 packages = [
@@ -19,7 +19,7 @@ packages = [
 [tool.poetry.group.test.dependencies]
 kaleido = "^1.3.0"
 pandas = "^3.0.3"
-plotly = "^6.8.0"
+plotly = "^6.9.0"
 pytest = "^9.1.1"
 pytest-approvaltests = "^0.2.4"
 fastjsonschema = "^2.21.2"
@@ -48,7 +48,7 @@ cmakelang = "^0.6.13"
 doc8 = "^2.0.0"
 pre-commit = "^4.6.0"
 sphinx-autobuild = "^2025.8.25"
-tqdm = "^4.68.3"
+tqdm = "^4.68.4"
 lizard = "^1.23.0"
 lcov-cobertura = "^2.1.1"
 clang-tidy-checker = "^0.6.0"
@@ -56,7 +56,7 @@ isort = "^8.0.1"
 jsonschema2md = "^1.7.0"
 pylint = "^4.0.6"
 flake8 = "^7.3.0"
-mypy = "^2.1.0"
+mypy = "^2.3.0"
 pandas-stubs = "^3.0.3.260530"
 types-tqdm = "^4.68.0.20260608"
 pyyaml = "^6.0.3"
@@ -64,7 +64,7 @@ types-pyyaml = "^6.0.12.20260518"
 colour-science = "^0.4.7"
 networkx = "^3.6.1"
 scipy = "^1.18.0"
-scipy-stubs = "^1.18.0.0"
+scipy-stubs = "^1.18.0.1"
 
 [build-system]
 requires = ["poetry-core"]
