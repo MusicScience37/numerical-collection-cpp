@@ -198,7 +198,11 @@ if(NUM_COLLECT_ENABLE_INSTALL)
         cmake/num-collect-config.cmake.in
         "${CMAKE_CURRENT_BINARY_DIR}/num-collect-config.cmake"
         INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/num-collect")
+    write_basic_package_version_file(
+        "${CMAKE_CURRENT_BINARY_DIR}/num-collect-config-version.cmake"
+        COMPATIBILITY SameMinorVersion)
 
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/num-collect-config.cmake"
+                  "${CMAKE_CURRENT_BINARY_DIR}/num-collect-config-version.cmake"
             DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/num-collect")
 endif()
