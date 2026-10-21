@@ -61,11 +61,7 @@ find_package(cpp-hash-tables REQUIRED)
 find_package(concurrentqueue REQUIRED)
 find_package(nanoflann REQUIRED)
 find_package(Boost REQUIRED COMPONENTS math)
-
-# toml++
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(tomlplusplus REQUIRED IMPORTED_TARGET tomlplusplus)
-add_library(tomlplusplus::tomlplusplus ALIAS PkgConfig::tomlplusplus)
+find_package(tomlplusplus REQUIRED)
 
 if(NUM_COLLECT_TESTING)
     find_package(Catch2 REQUIRED)
