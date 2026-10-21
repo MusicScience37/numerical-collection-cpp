@@ -15,7 +15,6 @@
     "approval-tests-cpp",
     "libpng",
     "bfgroup-lyra",
-    "pkgconf",
     "metis",
     "boost-math"
   ]
