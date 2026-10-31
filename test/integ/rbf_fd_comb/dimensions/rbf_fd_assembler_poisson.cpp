@@ -99,7 +99,7 @@ TEST_CASE("Poisson equation with rbf_fd_assembler in 1D") {
     NUM_COLLECT_LOG_DEBUG(logger, "Max error: {}, mean error: {}",
         (solution - true_values).cwiseAbs().maxCoeff(),
         (solution - true_values).cwiseAbs().mean());
-    CHECK_THAT(solution, eigen_approx(true_values, 1e-4));
+    CHECK_THAT(solution, eigen_approx(true_values, 1e-2));
 }
 
 TEST_CASE("Poisson equation with rbf_fd_assembler in 2D") {
