@@ -61,7 +61,7 @@ complexity:
     - poetry env use 3.13
     - poetry install
     - mkdir -p complexity
-    - poetry run lizard -o complexity/complexity_per_function.html include
+    - poetry run lizard -i -1 -o complexity/complexity_per_function.html include
   cache:
     key:
       prefix: cache-${CI_JOB_NAME}
