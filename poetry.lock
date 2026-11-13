@@ -2071,14 +2071,14 @@ files = [
 
 [[package]]
 name = "lizard"
-version = "1.24.3"
+version = "1.25.1"
 description = "A code analyzer without caring the C/C++ header files. It works with Java, C/C++, JavaScript, Python, Ruby, Swift, Objective C. Metrics includes cyclomatic complexity number etc."
 optional = false
 python-versions = "*"
 groups = ["dev"]
 files = [
-    {file = "lizard-1.24.3-py2.py3-none-any.whl", hash = "sha256:f7fccd909719170e323a240cc6927bfea65984d77a8f9c0e6405be582e9861db"},
-    {file = "lizard-1.24.3.tar.gz", hash = "sha256:7d2570ca711288388de1cf0f25512e97fbbc5e189f551c87b4e20d11d028b297"},
+    {file = "lizard-1.25.1-py2.py3-none-any.whl", hash = "sha256:789e7103875cb15aac273e1701cd72d4b9d5fa521790e258fe071dbf79dbc4ee"},
+    {file = "lizard-1.25.1.tar.gz", hash = "sha256:3513ce263d17ed580f8efa202658b02c684d5da2b39ef40c7663971be822a9d6"},
 ]
 
 [package.dependencies]
