@@ -1859,14 +1859,14 @@ files = [
 
 [[package]]
 name = "kaleido"
-version = "1.5.0"
+version = "1.5.1"
 description = "Plotly graph export library"
 optional = false
 python-versions = ">=3.9"
 groups = ["test"]
 files = [
-    {file = "kaleido-1.5.0-py3-none-any.whl", hash = "sha256:de301b73cc9fd6311e54b47087d3a7a5da3b7681ee9175e23b45dcffb4432ff2"},
-    {file = "kaleido-1.5.0.tar.gz", hash = "sha256:e724bbdf94be097879793365afaeba2990ae43e932efaf9c8e2e8d8ad0f1cba0"},
+    {file = "kaleido-1.5.1-py3-none-any.whl", hash = "sha256:0bd9b5d428362c1bd93ad09992271fb86af59e21b147da9c3691916423874aa0"},
+    {file = "kaleido-1.5.1.tar.gz", hash = "sha256:871b4dd87c716ec7fec414ac62d158575dbb98908ac9bc61faa27cb0dbdd8e72"},
 ]
 
 [package.dependencies]
