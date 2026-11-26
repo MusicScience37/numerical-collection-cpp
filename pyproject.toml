@@ -31,7 +31,7 @@ mpmath = "^1.4.1"
 
 [tool.poetry.group.doc.dependencies]
 sphinx = "^9.2.0"
-sphinx-orange-book-theme = "^0.21.0"
+sphinx-orange-book-theme = "^0.22.0"
 myst-parser = "^5.1.0"
 sphinxcontrib-plantuml = "^0.31"
 sphinxcontrib-bibtex = "^2.7.0"
