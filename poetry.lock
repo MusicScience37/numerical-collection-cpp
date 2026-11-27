@@ -1324,14 +1324,14 @@ traitlets = ">=5.4.0"
 
 [[package]]
 name = "ipython"
-version = "9.18.1"
+version = "9.19.1"
 description = "IPython: Productive Interactive Computing"
 optional = false
 python-versions = ">=3.11"
 groups = ["doc"]
 files = [
-    {file = "ipython-9.18.1-py3-none-any.whl", hash = "sha256:997ce9140d374531a61069c70c0f9ef299d6dd3559ea0f94b8af589726e3c1d5"},
-    {file = "ipython-9.18.1.tar.gz", hash = "sha256:6319c0f5372c196397899479e6db1783dd7937abae06815d1317e8d5d51aaaaf"},
+    {file = "ipython-9.19.1-py3-none-any.whl", hash = "sha256:06158707d8bb83f0bb0f03cc358de185dcf2fe99187bbce03e9971c22616a7c5"},
+    {file = "ipython-9.19.1.tar.gz", hash = "sha256:8d717edbe293adcb1b9fdeaad7ccfb1573f62d91bc10f0ae62604dbf31e6acac"},
 ]
 
 [package.dependencies]
@@ -4552,19 +4552,19 @@ test = ["beautifulsoup4", "coverage", "defusedxml", "myst-nb", "pytest", "pytest
 
 [[package]]
 name = "sphinx-orange-book-theme"
-version = "0.21.0"
+version = "0.22.0"
 description = "An orange version of sphinx-book-theme."
 optional = false
 python-versions = "<3.15,>=3.12"
 groups = ["doc"]
 files = [
-    {file = "sphinx_orange_book_theme-0.21.0-py3-none-any.whl", hash = "sha256:57c09276081c0a99f6db1f0b119b7665af90d932339a33897a5719580e0b473f"},
-    {file = "sphinx_orange_book_theme-0.21.0.tar.gz", hash = "sha256:6b2cc1115488aaf03cc038fc731ba9628f44e35ffc1ff10404c70174cdff88cb"},
+    {file = "sphinx_orange_book_theme-0.22.0-py3-none-any.whl", hash = "sha256:7791de830a63aa0537fea90ccb266516778ad2af5ecd2df8fabc0c863dbc3d69"},
+    {file = "sphinx_orange_book_theme-0.22.0.tar.gz", hash = "sha256:3fe3f4f1340bdb06f29638accbc4960e4f90f62061ecd01c3fa3b050c2a310a6"},
 ]
 
 [package.dependencies]
 sphinx = ">=9.1.0"
-sphinx-book-theme = ">=1.2.0"
+sphinx-book-theme = ">=1.4.0"
 
 [[package]]
 name = "sphinxcontrib-applehelp"
@@ -5500,4 +5500,4 @@ type = ["pytest-mypy (>=1.0.1) ; platform_python_implementation != \"PyPy\""]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13,<3.14"
-content-hash = "e778f68283b5857f489f1f151bbf9829fa23d34a367ec39ba50a08494d2e1f53"
+content-hash = "938dadd2b4d01aa34e7568e73c67b37134d4b27cd76e800717b17cbfd7c07e17"
